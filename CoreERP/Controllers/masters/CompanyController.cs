@@ -14,13 +14,7 @@ namespace CoreERP.Controllers
     public class CompanyController : ControllerBase
     {
         
-        //public CompanyController()
-        //{
-
-        //    _unitOfWork = unitOfWork;
-        //    _logger = logger;
-        //    _emailer = emailer;
-        //}
+     
 
         [HttpGet("masters/companies")]
         public async Task<IActionResult> GetAllCompanys()
@@ -35,7 +29,6 @@ namespace CoreERP.Controllers
 
                 return Ok(new { companies = ex.Message });
             }
-
         }
 
 
