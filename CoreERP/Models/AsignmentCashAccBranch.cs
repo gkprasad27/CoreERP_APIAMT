@@ -11,5 +11,6 @@ namespace CoreERP.Models
         public string CashGlacc { get; set; }
         public string Ext1 { get; set; }
         public string Ext2 { get; set; }
+        public string Active { get; set; }
     }
 }

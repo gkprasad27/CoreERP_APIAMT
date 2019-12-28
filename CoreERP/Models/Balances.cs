@@ -20,5 +20,6 @@ namespace CoreERP.Models
         public string TransactionType { get; set; }
         public string Ext4 { get; set; }
         public string Ext5 { get; set; }
+        public string Active { get; set; }
     }
 }

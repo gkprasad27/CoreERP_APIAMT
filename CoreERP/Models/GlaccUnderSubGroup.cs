@@ -11,5 +11,6 @@ namespace CoreERP.Models
         public string GroupName { get; set; }
         public string SubGroupName { get; set; }
         public string UnderSubGroupName { get; set; }
+        public string Active { get; set; }
     }
 }

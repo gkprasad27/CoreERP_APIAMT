@@ -38,5 +38,6 @@ namespace CoreERP.Models
         public string Pfnumber { get; set; }
         public string ReportingTo { get; set; }
         public string Uannumber { get; set; }
+        public string Active { get; set; }
     }
 }

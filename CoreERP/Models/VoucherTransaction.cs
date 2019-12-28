@@ -44,5 +44,6 @@ namespace CoreERP.Models
         public DateTime VoucherDate { get; set; }
         public string VoucherNo { get; set; }
         public string VoucherType { get; set; }
+        public string Active { get; set; }
     }
 }

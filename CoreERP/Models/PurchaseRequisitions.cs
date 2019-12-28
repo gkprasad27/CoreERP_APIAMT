@@ -68,5 +68,6 @@ namespace CoreERP.Models
         public string RecommendedBy { get; set; }
         public string ApprovedBy { get; set; }
         public string Status { get; set; }
+        public string Active { get; set; }
     }
 }

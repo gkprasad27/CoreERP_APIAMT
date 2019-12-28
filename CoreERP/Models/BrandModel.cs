@@ -25,5 +25,6 @@ namespace CoreERP.Models
         public string ModelName { get; set; }
         public string OutputTaxCode { get; set; }
         public string Size { get; set; }
+        public string Active { get; set; }
     }
 }

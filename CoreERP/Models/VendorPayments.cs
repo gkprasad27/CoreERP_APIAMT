@@ -29,5 +29,6 @@ namespace CoreERP.Models
         public string VoucherNo { get; set; }
         public string CustomerAccount { get; set; }
         public string PartyNo { get; set; }
+        public string Active { get; set; }
     }
 }

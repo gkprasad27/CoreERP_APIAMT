@@ -13,5 +13,6 @@ namespace CoreERP.Models
         public string MaterialGroup { get; set; }
         public string NoType { get; set; }
         public string NumberInterval { get; set; }
+        public string Active { get; set; }
     }
 }

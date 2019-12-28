@@ -20,5 +20,6 @@ namespace CoreERP.Models
         public bool InstallationboolAc { get; set; }
         public string OtherExpensesAc { get; set; }
         public bool OtherExpensesboolAc { get; set; }
+        public string Active { get; set; }
     }
 }

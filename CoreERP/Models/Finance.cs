@@ -58,5 +58,6 @@ namespace CoreERP.Models
         public string InvoiceNo { get; set; }
         public string LoanAmt { get; set; }
         public string LoanNo { get; set; }
+        public string Active { get; set; }
     }
 }

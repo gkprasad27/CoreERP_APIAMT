@@ -29,5 +29,6 @@ namespace CoreERP.Models
         public int ToMonth { get; set; }
         public string Ext3 { get; set; }
         public string Ext4 { get; set; }
+        public string Active { get; set; }
     }
 }

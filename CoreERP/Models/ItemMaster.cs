@@ -36,5 +36,6 @@ namespace CoreERP.Models
         public string SalesAccount { get; set; }
         public long Size { get; set; }
         public long WholePrice { get; set; }
+        public string Active { get; set; }
     }
 }

@@ -10,5 +10,6 @@ namespace CoreERP.Models
         public string CompanyDesc { get; set; }
         public string CompanyGroupCode { get; set; }
         public string EmployeeName { get; set; }
+        public string Active { get; set; }
     }
 }

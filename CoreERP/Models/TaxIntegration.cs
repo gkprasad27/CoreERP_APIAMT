@@ -15,5 +15,6 @@ namespace CoreERP.Models
         public string Igst { get; set; }
         public string Sgst { get; set; }
         public string Ugst { get; set; }
+        public string Active { get; set; }
     }
 }

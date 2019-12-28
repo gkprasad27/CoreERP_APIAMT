@@ -15,5 +15,6 @@ namespace CoreERP.Models
         public string NoSeries { get; set; }
         public string TransactionType { get; set; }
         public string Type { get; set; }
+        public string Active { get; set; }
     }
 }

@@ -15,5 +15,6 @@ namespace CoreERP.Models
         public string Ext4 { get; set; }
         public int? NumberRange { get; set; }
         public string Prefix { get; set; }
+        public string Active { get; set; }
     }
 }

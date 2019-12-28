@@ -31,5 +31,6 @@ namespace CoreERP.Models
         public string State { get; set; }
         public string UsefulHike { get; set; }
         public string UsefulHikemonth { get; set; }
+        public string Active { get; set; }
     }
 }

@@ -13,5 +13,6 @@ namespace CoreERP.Models
         public string NoType { get; set; }
         public string NumberSeries { get; set; }
         public string PartnerType { get; set; }
+        public string Active { get; set; }
     }
 }

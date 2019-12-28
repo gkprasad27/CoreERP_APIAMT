@@ -20,5 +20,6 @@ namespace CoreERP.Models
         public string Phone3 { get; set; }
         public string Email { get; set; }
         public string ResponsiblePerson { get; set; }
+        public string Active { get; set; }
     }
 }

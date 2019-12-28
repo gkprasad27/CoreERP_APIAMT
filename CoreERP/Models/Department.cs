@@ -15,5 +15,6 @@ namespace CoreERP.Models
         public bool IsActive { get; set; }
         public string ResponsiblePersonCode { get; set; }
         public string ResponsiblePersonDesc { get; set; }
+        public string Active { get; set; }
     }
 }

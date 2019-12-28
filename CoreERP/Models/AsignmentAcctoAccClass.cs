@@ -13,5 +13,6 @@ namespace CoreERP.Models
         public string PurchaseAcc { get; set; }
         public string SaleAcc { get; set; }
         public string TransactionType { get; set; }
+        public string Active { get; set; }
     }
 }

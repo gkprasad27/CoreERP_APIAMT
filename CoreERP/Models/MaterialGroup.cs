@@ -13,5 +13,6 @@ namespace CoreERP.Models
         public string GroupName { get; set; }
         public string HsnCode { get; set; }
         public string CustomerCare { get; set; }
+        public string Active { get; set; }
     }
 }

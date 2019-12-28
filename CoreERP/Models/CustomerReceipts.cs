@@ -26,5 +26,6 @@ namespace CoreERP.Models
         public DateTime CheckDate { get; set; }
         public string CheckNo { get; set; }
         public string PartyNo { get; set; }
+        public string Active { get; set; }
     }
 }

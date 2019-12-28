@@ -16,5 +16,6 @@ namespace CoreERP.Models
         public string TimeStamp { get; set; }
         public string Trmno { get; set; }
         public string Usrid { get; set; }
+        public string Active { get; set; }
     }
 }

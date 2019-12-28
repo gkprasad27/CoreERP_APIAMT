@@ -92,5 +92,6 @@ namespace CoreERP.Models
         public string UgstaccNumber { get; set; }
         public string IgstaccNumber { get; set; }
         public string State { get; set; }
+        public string Active { get; set; }
     }
 }

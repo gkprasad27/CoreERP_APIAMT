@@ -15,5 +15,6 @@ namespace CoreERP.Models
         public string Prefix { get; set; }
         public string Transaction { get; set; }
         public string VoucherType { get; set; }
+        public string Active { get; set; }
     }
 }

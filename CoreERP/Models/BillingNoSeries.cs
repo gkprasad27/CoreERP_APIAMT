@@ -12,5 +12,6 @@ namespace CoreERP.Models
         public string Ext2 { get; set; }
         public string NumberSeries { get; set; }
         public string Year { get; set; }
+        public string Active { get; set; }
     }
 }

@@ -46,5 +46,6 @@ namespace CoreERP.Models
         public string TaxBaseAmount { get; set; }
         public string TaxCode { get; set; }
         public string Ugst { get; set; }
+        public string Active { get; set; }
     }
 }

@@ -13,5 +13,6 @@ namespace CoreERP.Models
         public string Ext2 { get; set; }
         public string Nactureofaccount { get; set; }
         public string StatementType { get; set; }
+        public string Active { get; set; }
     }
 }

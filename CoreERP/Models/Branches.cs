@@ -33,5 +33,6 @@ namespace CoreERP.Models
         public string PinCode { get; set; }
         public string Place { get; set; }
         public string State { get; set; }
+        public string Active { get; set; }
     }
 }

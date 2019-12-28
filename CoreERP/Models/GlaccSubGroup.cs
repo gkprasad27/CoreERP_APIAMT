@@ -11,5 +11,6 @@ namespace CoreERP.Models
         public string Ext2 { get; set; }
         public string SubGroupName { get; set; }
         public string UnderSubGroupCode { get; set; }
+        public string Active { get; set; }
     }
 }
