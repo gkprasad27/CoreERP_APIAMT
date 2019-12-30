@@ -21,42 +21,200 @@ namespace CoreERP.Controllers
         {
             
             return Ok(
-                new {
-                //companys = _unitOfWork.Companys.GetAll(),
-                //branches = _unitOfWork.Branches.GetAll(),
-                purchase = PurchasesHelper.GetPurchaseList(),
-               // accounts = _unitOfWork.GLAccounts.GetAll() ,  
-               // materialTranstp = (from mattran in _unitOfWork.Mat_Tran_Types.GetAll().Where(x => x.TransactionType != null)
-               //                    where mattran.TransactionType.ToUpper() == MaterialTransationType.PURCHASE.ToString()
-               //                    select mattran),
-               //materialGroup = (from mattran in _unitOfWork.MaterialGroup.GetAll()
-               //                 select mattran),
-               // accToAccClass =(from acctoacc in _unitOfWork.AsignmentAcctoAccClass.GetAll()
-               //                 select acctoacc),
-               // taxmasterlist = (from taxm in _unitOfWork.TaxMasters.GetAll()
-               //                  //join taxi in _unitOfWork.TaxIntegration.GetAll()
-               //                  //on taxm.Code equals taxi.TaxCode
-               //                  where taxm.TaxType == "INPUT"
-               //                  select taxm),
-               // taxintegration = (from taxingr in _unitOfWork.TaxIntegration.GetAll() where taxingr.TaxCode != null select taxingr),
-               // models = (from md in _unitOfWork.BrandModel.GetAll()
-               //          // join itmmst in _unitOfWork.ItemMaster.GetAll()
-               //         //  on md.Code equals itmmst.Model
-               //           select md),
-               // itemmaster = _unitOfWork.ItemMaster.GetAll(),
-               // partnercreation = (from parttyp in _unitOfWork.PartnerType.GetAll()
-               //                    join partcr in _unitOfWork.PartnerCreation.GetAll()
-               //                    on parttyp.Code equals partcr.Partnertype
-               //                    where parttyp.AccountType == NatureOfAccounts.TRADEVENDORS.ToString()
-               //                    select partcr),
-               // brandList = (from br in _unitOfWork.Brand.GetAll()
-               //              select br),
-               // purchaseReturnsList = _unitOfWork.PurchaseReturns.GetAll().Where(x=>x.GoodsReceiptDate != null),
-               // accIntegrationList =_unitOfWork.Interpretation.GetAll(),
-               // materialGroupList =_unitOfWork.MaterialGroup.GetAll()
-            });
+                new 
+                {
+                   purchaseList = PurchasesHelper.GetPurchaseList(),
+                  // materialGroupList =_unitOfWork.MaterialGroup.GetAll()
+                });
 
         }
+
+
+
+        [HttpGet("mpurchase/getCompanys")]
+        public async Task<IActionResult> GetCompanys()
+        {
+            try
+            {
+                return Ok(new { companys = PurchasesHelper.GetCompanies().Select(x=> new { ID=x.Code,TEXT=x.Name}) });
+            }
+            catch(Exception ex)
+            {
+                return BadRequest("Failed to load companys.");
+            }
+        }
+
+        [HttpGet("mpurchase/getBranches")]
+        public async Task<IActionResult> GetBranches()
+        {
+            try
+            {
+                return Ok(new { branches = PurchasesHelper.GetBranches().Select(x => new { ID = x.Code, TEXT = x.Name }) });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load Branches.");
+            }
+        }
+        
+        [HttpGet("mpurchase/getGlAccounts")]
+        public async Task<IActionResult> GetGlAccounts()
+        {
+            try
+            {
+                return Ok(new { accounts = PurchasesHelper.GetGLAccounts().Select(x => new { ID = x.Glcode, TEXT = x.Description }) });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load GlAccounts.");
+            }
+        }
+
+        [HttpGet("mpurchase/getMatTranTypesList")]
+        public async Task<IActionResult> GetMatTranTypes()
+        {
+            try
+            {
+                return Ok(new { mattranstype = PurchasesHelper.GetMatTranTypes().Select(x => new { ID = x.Code, TEXT = x.Description }) });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load MatTranTypes.");
+            }
+        }
+
+         [HttpGet("mpurchase/getMaterialGroupList")]
+        public async Task<IActionResult> GetMaterialGroup()
+        {
+            try
+            {
+                return Ok(new { materialGroup = PurchasesHelper.GetMaterialGroup().Select(x => new { ID = x.Code, TEXT = x.GroupName }) });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load Material Group.");
+            }
+        }
+
+        [HttpGet("mpurchase/getAccountToAccountClassList")]
+        public async Task<IActionResult> GetAccountToAccountClass()
+        {
+            try
+            {
+                return Ok(new { acctoaccClass = PurchasesHelper.GetAccountToAccountClassList()});
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load Material Group.");
+            }
+        }
+
+        [HttpGet("mpurchase/getTAxMasterList")]
+        public async Task<IActionResult> GetTAxMasterList()
+        {
+            try
+            {
+                return Ok(new { taxmaster = PurchasesHelper.GetTAxMasterList()});
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load Tax Master.");
+            }
+        }
+
+        [HttpGet("mpurchase/getTaxIntegrationList")]
+        public async Task<IActionResult> GetTaxIntegrationList()
+        {
+            try
+            {
+                return Ok(new { taxIntegr = PurchasesHelper.GetTaxIntegrationList() });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load Tax Master.");
+            }
+        }
+
+
+         [HttpGet("mpurchase/getModelList")]
+        public async Task<IActionResult> GetModelList()
+        {
+            try
+            {
+                return Ok(new { taxIntegr = PurchasesHelper.GetModelList() });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load Tax Master.");
+            }
+        }
+
+        [HttpGet("mpurchase/getItemMasterList")]
+        public async Task<IActionResult> GetItemMasterList()
+        {
+            try
+            {
+                return Ok(new { itemMastr = PurchasesHelper.GetItemMasterList() });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load Tax Master.");
+            }
+        }
+
+        [HttpGet("mpurchase/getPartnerCreationList")]
+        public async Task<IActionResult> GetPartnerCreationList()
+        {
+            try
+            {
+                return Ok(new { partnerCreation = PurchasesHelper.GetPartnerCreationList() });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load Partner Creation List.");
+            }
+        }
+
+        [HttpGet("mpurchase/getBrandList")]
+        public async Task<IActionResult> GetBrandList()
+        {
+            try
+            {
+                return Ok(new { brandList = PurchasesHelper.GetBrandList() });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load Brand List.");
+            }
+        }
+
+        [HttpGet("mpurchase/getAccInterpretationList")]
+        public async Task<IActionResult> GetInterpretationList()
+        {
+            try
+            {
+                return Ok(new { accIntegrationList = PurchasesHelper.GetInterpretationList() });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load Brand List.");
+            }
+        }
+
+        [HttpGet("mpurchase/getPurchaseReturnsList")]
+        public async Task<IActionResult> GetPurchaseReturnsList()
+        {
+            try
+            {
+                return Ok(new { accIntegrationList = PurchasesHelper.GetPurchaseReturnsList() });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to load Brand List.");
+            }
+        }
+
+
 
         [HttpPost("mpurchase/register")]
         public async Task<IActionResult> RegisterPurchase([FromBody]Purchase[] purchase)
