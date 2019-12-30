@@ -17,7 +17,7 @@ namespace CoreERP.Controllers
         #region Purchase 
 
         [HttpGet("mpurchase")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetPurchaseList()
         {
             
             return Ok(
@@ -28,8 +28,6 @@ namespace CoreERP.Controllers
                 });
 
         }
-
-
 
         [HttpGet("mpurchase/getCompanys")]
         public async Task<IActionResult> GetCompanys()
@@ -83,7 +81,7 @@ namespace CoreERP.Controllers
             }
         }
 
-         [HttpGet("mpurchase/getMaterialGroupList")]
+        [HttpGet("mpurchase/getMaterialGroupList")]
         public async Task<IActionResult> GetMaterialGroup()
         {
             try
@@ -135,8 +133,7 @@ namespace CoreERP.Controllers
             }
         }
 
-
-         [HttpGet("mpurchase/getModelList")]
+        [HttpGet("mpurchase/getModelList")]
         public async Task<IActionResult> GetModelList()
         {
             try
@@ -214,8 +211,6 @@ namespace CoreERP.Controllers
             }
         }
 
-
-
         [HttpPost("mpurchase/register")]
         public async Task<IActionResult> RegisterPurchase([FromBody]Purchase[] purchase)
         {
@@ -232,7 +227,6 @@ namespace CoreERP.Controllers
 
             return BadRequest("Registration Failed");
         }
-
 
         [HttpPut("mpurchase/updatePurchase")]
         public async Task<IActionResult> UpdatePurchase(string code, [FromBody] Purchase purchase)
@@ -251,7 +245,6 @@ namespace CoreERP.Controllers
             return BadRequest("Updation Failed");
         }
 
-
         [HttpDelete("mpurchase/deletePurchase/{code}")]
         public async Task<IActionResult> DeletePurchase(string code)
         {
@@ -268,7 +261,6 @@ namespace CoreERP.Controllers
 
             return BadRequest("Delete Operation Failed");
         }
-
 
         [HttpGet("mpurchase/getPurchaseMaterialGrp")]
         public async Task<IActionResult> GetPurchaseMaterialGrp()
