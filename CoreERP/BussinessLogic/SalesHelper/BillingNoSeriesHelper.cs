@@ -16,7 +16,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 using(Repository<BillingNoSeries> repo=new Repository<BillingNoSeries>())
                 {
-                    return repo.BillingNoSeries.Where(bno => bno.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+                    return repo.BillingNoSeries.Where(bno => bno.Active.Equals("Y")).ToList();
                 }
             }
             catch { throw; }
@@ -29,7 +29,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using (Repository<BillingNoSeries> repo = new Repository<BillingNoSeries>())
                 {
                     return repo.BillingNoSeries
-                               .Where(bno => bno.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+                               .Where(bno => bno.Active.Equals("Y")
                                           && bno.Code== code  
                                ).FirstOrDefault();
                 }

@@ -8,12 +8,12 @@ using CoreERP.Models;
 
 namespace CoreERP.Controllers
 {
-
-    [Route("api/AsnBillsRcvBranch")]
-    public class AsnBillsRcvBranchController : Controller
+    [ApiController]
+    [Route("api/sales/AsnBillsRcvBranch")]
+    public class AsnBillsRcvBranchController : ControllerBase
     {
 
-        [HttpGet("sales/recivablebranch")]
+        [HttpGet("GetAsnBillsRcvBranchList")]
         public async Task<IActionResult> GetAsnBillsRcvBranchList()
         {
             return Ok(new { asnbillsrcvbranch = AsnBillsRcvBranchHelper.GetAsnBillsRcvBranchList()});
@@ -24,20 +24,20 @@ namespace CoreERP.Controllers
             // branches=_unitOfWork.Branches.GetAll()
         }
 
-        [HttpGet("sales/recivablebranch/GetGLBillRcvAccList")]
+        [HttpGet("GetGLBillReceivableAccountsList")]
         public async Task<IActionResult> GetGLBillReceivableAccountsList()
         {
             return Ok(new { accounts = AsnBillsRcvBranchHelper.GetGLBillReceivableAccountsList() });
         }
 
-        [HttpGet("sales/recivablebranch/GetBranchesList")]
+        [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
         {
             return Ok(new { branches = AsnBillsRcvBranchHelper.GetBranchesList() });
         }
 
-        [HttpPost("sales/recivablebranch/register")]
-        public async Task<IActionResult> Register([FromBody]AsnBillsRcvBranch asnbillsrcvbranch)
+        [HttpPost("RegisterAsnBillsRcvBranch")]
+        public async Task<IActionResult> RegisterAsnBillsRcvBranch([FromBody]AsnBillsRcvBranch asnbillsrcvbranch)
         {
            
             if (asnbillsrcvbranch == null)
@@ -56,8 +56,8 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpPut("sales/recivablebranch/UpdateAsnBillsRcvBranch")]
-        public async Task<IActionResult> Update([FromBody] AsnBillsRcvBranch asnbillsrcvbranch)
+        [HttpPut("UpdateAsnBillsRcvBranch")]
+        public async Task<IActionResult> UpdateAsnBillsRcvBranch([FromBody] AsnBillsRcvBranch asnbillsrcvbranch)
         {
             if (asnbillsrcvbranch == null)
                 return BadRequest("Request object cannot be null");
@@ -75,10 +75,8 @@ namespace CoreERP.Controllers
                 return BadRequest("Updation Failed");
             }
         }
-
-
        
-        [HttpPut("sales/recivablebranch/DeleteAsnBillsRcvBranch")]
+        [HttpPut("DeleteAsnBillsRcvBranch")]
         public async Task<IActionResult> DeleteAsnBillsRcvBranch([FromBody]AsnBillsRcvBranch asnBillsRcvBranch)
         {
             if (asnBillsRcvBranch == null)
