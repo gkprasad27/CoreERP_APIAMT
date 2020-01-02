@@ -16,7 +16,7 @@ namespace CoreERP.Controllers
     {
         #region Purchase 
 
-        [HttpGet("mpurchase")]
+        [HttpGet("getPurchaseList")]
         public async Task<IActionResult> GetPurchaseList()
         {
             
@@ -29,7 +29,7 @@ namespace CoreERP.Controllers
 
         }
 
-        [HttpGet("mpurchase/getCompanys")]
+        [HttpGet("getCompanys")]
         public async Task<IActionResult> GetCompanys()
         {
             try
@@ -42,7 +42,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("mpurchase/getBranches")]
+        [HttpGet("getBranches")]
         public async Task<IActionResult> GetBranches()
         {
             try
@@ -55,7 +55,7 @@ namespace CoreERP.Controllers
             }
         }
         
-        [HttpGet("mpurchase/getGlAccounts")]
+        [HttpGet("getGlAccounts")]
         public async Task<IActionResult> GetGlAccounts()
         {
             try
@@ -68,7 +68,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("mpurchase/getMatTranTypesList")]
+        [HttpGet("getMatTranTypesList")]
         public async Task<IActionResult> GetMatTranTypes()
         {
             try
@@ -81,7 +81,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("mpurchase/getMaterialGroupList")]
+        [HttpGet("getMaterialGroupList")]
         public async Task<IActionResult> GetMaterialGroup()
         {
             try
@@ -94,7 +94,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("mpurchase/getAccountToAccountClassList")]
+        [HttpGet("getAccountToAccountClassList")]
         public async Task<IActionResult> GetAccountToAccountClass()
         {
             try
@@ -107,7 +107,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("mpurchase/getTAxMasterList")]
+        [HttpGet("getTAxMasterList")]
         public async Task<IActionResult> GetTAxMasterList()
         {
             try
@@ -120,7 +120,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("mpurchase/getTaxIntegrationList")]
+        [HttpGet("getTaxIntegrationList")]
         public async Task<IActionResult> GetTaxIntegrationList()
         {
             try
@@ -133,7 +133,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("mpurchase/getModelList")]
+        [HttpGet("getModelList")]
         public async Task<IActionResult> GetModelList()
         {
             try
@@ -146,7 +146,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("mpurchase/getItemMasterList")]
+        [HttpGet("getItemMasterList")]
         public async Task<IActionResult> GetItemMasterList()
         {
             try
@@ -159,7 +159,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("mpurchase/getPartnerCreationList")]
+        [HttpGet("getPartnerCreationList")]
         public async Task<IActionResult> GetPartnerCreationList()
         {
             try
@@ -172,7 +172,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("mpurchase/getBrandList")]
+        [HttpGet("getBrandList")]
         public async Task<IActionResult> GetBrandList()
         {
             try
@@ -185,7 +185,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("mpurchase/getAccInterpretationList")]
+        [HttpGet("getAccInterpretationList")]
         public async Task<IActionResult> GetInterpretationList()
         {
             try
@@ -198,7 +198,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("mpurchase/getPurchaseReturnsList")]
+        [HttpGet("getPurchaseReturnsList")]
         public async Task<IActionResult> GetPurchaseReturnsList()
         {
             try
@@ -211,7 +211,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpPost("mpurchase/register")]
+        [HttpPost("registerPurchase")]
         public async Task<IActionResult> RegisterPurchase([FromBody]Purchase[] purchase)
         {
             if (purchase == null)
@@ -228,7 +228,7 @@ namespace CoreERP.Controllers
             return BadRequest("Registration Failed");
         }
 
-        [HttpPut("mpurchase/updatePurchase")]
+        [HttpPut("updatePurchase")]
         public async Task<IActionResult> UpdatePurchase(string code, [FromBody] Purchase purchase)
         {
             if (purchase == null)
@@ -245,7 +245,7 @@ namespace CoreERP.Controllers
             return BadRequest("Updation Failed");
         }
 
-        [HttpDelete("mpurchase/deletePurchase/{code}")]
+        [HttpDelete("deletePurchase/{code}")]
         public async Task<IActionResult> DeletePurchase(string code)
         {
             if (code == null)
@@ -253,16 +253,18 @@ namespace CoreERP.Controllers
 
             try
             {
-                int result = PurchasesHelper.DeletePurchase(code);
-                if (result > 0)
-                    return Ok(code);
+                var purchaseEntity = PurchasesHelper.GetPurchase(code);
+                purchaseEntity.Active = "N";
+                int response=PurchasesHelper.UpdatePurchase(purchaseEntity);
+                if (response> 0)
+                    return Ok(purchaseEntity);
             }
             catch { }
 
             return BadRequest("Delete Operation Failed");
         }
 
-        [HttpGet("mpurchase/getPurchaseMaterialGrp")]
+        [HttpGet("getPurchaseMaterialGrp")]
         public async Task<IActionResult> GetPurchaseMaterialGrp()
         {
 
