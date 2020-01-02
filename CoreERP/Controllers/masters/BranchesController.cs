@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/Branches")]
     public class BranchesController : ControllerBase
     {
        
@@ -95,8 +95,7 @@ namespace CoreERP.Controllers
         }
 
 
-        // Delete Branch
-        [HttpDelete("masters/branches/{code}")]
+        [HttpDelete("DeleteBranch")]
         public async Task<IActionResult> DeleteBranch(string code)
         {
             if (code == null)
@@ -104,7 +103,10 @@ namespace CoreERP.Controllers
 
             try
             {
-                int result = BrancheHelper.Delete(code);
+                Branches brch = BrancheHelper.GetBranches(code);
+                brch.Active = "N";
+                int result = BrancheHelper.Update(brch);
+
                 if (result > 0)
                     return Ok(code);
 
