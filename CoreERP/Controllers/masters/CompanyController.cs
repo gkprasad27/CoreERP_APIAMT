@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,18 +12,21 @@ namespace CoreERP.Controllers
 {
   
     [ApiController]
-    [Route("api/Company")]
+    [Route("api/masters/Company")]
     public class CompanyController : ControllerBase
     {
         
      
 
-        [HttpGet("masters/companies")]
-        public async Task<IActionResult> GetAllCompanys()
+        [HttpGet("GetCompanysList")]
+        public async Task<IActionResult> GetCompanysList()
         {
             try
             {
-                return   Ok(new { companies = CompaniesHelper.GetListOfCompanies() });
+                var companiesList = CompaniesHelper.GetListOfCompanies();
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.companiesList = companiesList;
+                return   Ok(new APIResponse{ status= APIStatus.PASS.ToString(), response= expdoObj });
             }
             catch(Exception ex) 
             {
@@ -32,11 +37,11 @@ namespace CoreERP.Controllers
         }
 
 
-            [HttpPost("masters/companies/register")]
-            public async Task<IActionResult> Register([FromBody]Companies company)
+            [HttpPost("RegisterCompany")]
+            public async Task<IActionResult> RegisterCompany([FromBody]Companies company)
             {
-               // listobh.Add(company);
-
+            // listobh.Add(company);
+            APIResponse apiResponse = null;
                 if (company == null)
                     return BadRequest($"{nameof(company)} cannot be null");
                 else
@@ -44,60 +49,81 @@ namespace CoreERP.Controllers
                 if (CompaniesHelper.GetListOfCompanies(company.Code).Count() > 0)
                     return BadRequest("Code =" + company.Code + " is already Exists,Please Use Another Code");
 
-                    try
-                    {
-                      int result= CompaniesHelper.Register(company);
+                try
+                {
+                    int result = CompaniesHelper.Register(company);
                     if (result > 0)
-                        return Ok(company);
-                    else
-                       return BadRequest($"{nameof(company)} Register Failed");
-                }
-                    catch(Exception ex)
                     {
-                       return BadRequest($"{nameof(company)} cannot be null");
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                     }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                    }
+
+                    return Ok(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest($"{nameof(company)} cannot be null");
+                }
                       
                 }
             }
 
 
 
-            [HttpPut("masters/companies/{code}")]
+            [HttpPut("UpdateCompany/{code}")]
             public async Task<IActionResult> UpdateCompany(string code, [FromBody] Companies company)
             {
-                if (company == null)
+            APIResponse apiResponse = null;
+            if (company == null)
                     return BadRequest($"{nameof(company)} cannot be null");
 
                 if (!string.IsNullOrWhiteSpace(company.Code) && code != company.Code)
                     return BadRequest("Conflicting role id in parameter and model data");
 
-                try
+            try
+            {
+                int result = CompaniesHelper.Update(company);
+                if (result > 0)
                 {
-                    int result =CompaniesHelper.Update(company);
-                    if (result > 0)
-                      return Ok(company);
-                    else
-                      return BadRequest($"{nameof(company)} Updation Failed");
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
-                catch(Exception ex)
+                else
                 {
-                  return BadRequest($"{nameof(company)} Updation Failed");
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
                 }
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{nameof(company)} Updation Failed");
+            }
 
             }
 
 
             // Delete 
-            [HttpDelete("masters/companies/{code}")]
+            [HttpDelete("DeleteCompany/{code}")]
             public async Task<IActionResult> DeleteCompany(string code)
             {
-                if (code == null)
+            APIResponse apiResponse = null;
+            if (code == null)
                     return BadRequest($"{nameof(code)}can not be null");
 
                try
                {
                 int result=CompaniesHelper.Delete(code);
-                return Ok(code);
+                if (result > 0)
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                }
+                return Ok(apiResponse);
                }
                catch(Exception ex)
                {

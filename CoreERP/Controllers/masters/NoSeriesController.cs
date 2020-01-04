@@ -4,23 +4,32 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.Models;
+using CoreERP.DataAccess;
+using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/NoSeries")]
+    [Route("api/masters/NoSeries")]
     public class NoSeriesController : ControllerBase
     {
-           [HttpPost("masters/noSeries/register")]
-        public async Task<IActionResult> Register([FromBody]NoSeries noSeries)
+           [HttpPost("RegisterNoSeries")]
+        public async Task<IActionResult> RegisterNoSeries([FromBody]NoSeries noSeries)
         {
+            APIResponse apiResponse = null;
             try
             {
         int result = NoSeriesHelper.RegisteNoSeries(noSeries);
-        if (result > 0)
-          return Ok(noSeries);
+                if (result > 0)
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                }
 
-        return BadRequest(" Registration Operation Failed");
+                return Ok(apiResponse);
       }
       catch (Exception ex)
       {
@@ -30,20 +39,26 @@ namespace CoreERP.Controllers
 
 
 
-        [HttpGet("masters/noSeries")]
-        public async Task<IActionResult> GetAllNoSeries()
+        [HttpGet("GetNoSeriesList")]
+        public async Task<IActionResult> GetNoSeriesList()
         {
-      return Ok(new
-      {
+            try
+            {
+                var noSeriesList = NoSeriesHelper.GetAllNoSeriesLists();
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.noSeriesList = noSeriesList;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+            }
+            catch
+            {
+                return BadRequest("No Data  Found");
+            }
+        }
 
-        noSerieslist = NoSeriesHelper.GetAllNoSeriesLists()
-       
-      });
-    }
-
-        [HttpPut("masters/noSeries/{code}")]
+        [HttpPut("UpdateNoSeries/{code}")]
         public async Task<IActionResult> UpdateNoSeries(string code, [FromBody] NoSeries noSeries)
         {
+            APIResponse apiResponse = null;
             if (noSeries == null)
                 return BadRequest($"{nameof(noSeries)} cannot be null");
 
@@ -54,11 +69,16 @@ namespace CoreERP.Controllers
             try
             {
              int rs = NoSeriesHelper.UpdateNoSeries(noSeries);
-        if (rs > 0)
-          return Ok(noSeries);
-
-        return BadRequest($"{nameof(noSeries)} Updation Failed");
-      }
+                if (rs > 0)
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                }
+                return Ok(apiResponse);
+            }
             catch(Exception ex)
             {
              return BadRequest($"{nameof(noSeries)} Updation Failed");
@@ -70,17 +90,23 @@ namespace CoreERP.Controllers
         [Produces(typeof(NoSeries))]
         public async Task<IActionResult> DeleteNoSeries(string noSeriesCode)
         {
+            APIResponse apiResponse = null;
             if (string.IsNullOrWhiteSpace(noSeriesCode))
                 return BadRequest($"{nameof(noSeriesCode)} cannot be null");
                         
             try
             {
         int rs = NoSeriesHelper.DeleteNoSeries(noSeriesCode);
-        if (rs > 0)
-          return Ok(noSeriesCode);
-
-        return BadRequest($"{nameof(noSeriesCode)} Updation Failed");
-      }
+                if (rs > 0)
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                }
+                return Ok(apiResponse);
+            }
             catch(Exception ex)
             {
                 return BadRequest();
@@ -94,16 +120,18 @@ namespace CoreERP.Controllers
         public async Task<IActionResult> GetAllCompanysMasters()
         {
 
-      try
-      {
-        return Ok(new { companies = CompaniesHelper.GetListOfCompanies() });
-      }
-      catch (Exception ex)
-      {
-
-        return Ok(new { companies = ex.Message });
-      }
-    }
+            try
+            {
+                var companiesList = CompaniesHelper.GetListOfCompanies();
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.companiesList = companiesList;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+            }
+            catch
+            {
+                return BadRequest("No Data  Found");
+            }
+        }
 
 
 

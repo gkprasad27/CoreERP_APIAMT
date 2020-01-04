@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,18 +13,21 @@ using Microsoft.Extensions.Logging;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/Employee")]
+    [Route("api/masters/Employee")]
     public class EmployeeController : ControllerBase
     {
 
-        [HttpGet("masters/employees")]
-        public async Task<IActionResult> GetAllEmployees()
+        [HttpGet("GetEmployeeList")]
+        public async Task<IActionResult> GetEmployeeList()
         {
             try
             {
-                return Ok(new { employees = EmployeeHelper.GetEmployes() });
+                var employeesList = EmployeeHelper.GetEmployes();
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.employeesList = employeesList;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -31,9 +36,10 @@ namespace CoreERP.Controllers
         }
 
 
-        [HttpPost("masters/employees/register")]
-        public async Task<IActionResult> Register([FromBody]Employees employee)
+        [HttpPost("RegisterEmployee")]
+        public async Task<IActionResult> RegisterEmployee([FromBody]Employees employee)
         {
+            APIResponse apiResponse = null;
             if (employee == null)
                 return BadRequest($"{nameof(employee)} cannot be null");
             try
@@ -43,10 +49,15 @@ namespace CoreERP.Controllers
 
                 int result = EmployeeHelper.Register(employee);
                 if (result > 0)
-                    return Ok(employee);
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                }
 
-                return BadRequest("Registration Failed");
-
+                return Ok(apiResponse);
             }
             catch
             {
@@ -57,9 +68,10 @@ namespace CoreERP.Controllers
 
 
 
-        [HttpPut("masters/employees/{code}")]
+        [HttpPut("UpdateEmployee/{code}")]
         public async Task<IActionResult> UpdateEmployee(string code, [FromBody] Employees employee)
         {
+            APIResponse apiResponse = null;
             try
             {
                 if (employee == null)
@@ -67,9 +79,14 @@ namespace CoreERP.Controllers
 
                 int result = EmployeeHelper.Update(employee);
                 if (result > 0)
-                    return Ok(employee);
-
-                return BadRequest("Updation Failed");
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                }
+                return Ok(apiResponse);
             }
             catch
             {
@@ -79,9 +96,10 @@ namespace CoreERP.Controllers
 
 
         // Delete Branch
-        [HttpDelete("masters/employees/{code}")]
+        [HttpDelete("DeleteEmployee/{code}")]
         public async Task<IActionResult> DeleteEmployee(string code)
         {
+            APIResponse apiResponse = null;
             if (code == null)
                 return BadRequest($"{nameof(code)}can not be null");
           
@@ -89,7 +107,14 @@ namespace CoreERP.Controllers
             {
                 int result = EmployeeHelper.Delete(code);
                 if (result > 0)
-                    return Ok(code);
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                }
+                return Ok(apiResponse);
             }
             catch{}
 
