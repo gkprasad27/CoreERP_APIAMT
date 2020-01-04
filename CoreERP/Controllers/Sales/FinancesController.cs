@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CoreERP.BussinessLogic.SalesHelper;
 using CoreERP.Models;
+using CoreERP.DataAccess;
+using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
@@ -14,58 +16,84 @@ namespace CoreERP.Controllers
         [HttpGet("GetFinanceList")]
         public async Task<IActionResult> GetFinanceList()
         {
-            return Ok(new {financeslist =BillingHelpers.GetFinances()}); 
+            APIResponse apiResponse = null;
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.financeslist = BillingHelpers.GetFinances();
+
+                return Ok(apiResponse = new APIResponse() { status = APIStatus.PASS.ToString() ,response= expando });
+            }
+            catch(Exception ex)
+            {
+                return Ok(apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load finance list." });
+            }
         }
 
         [HttpGet("GetFinancesCutomerGLAccounts")]
         public async Task<IActionResult> GetFinancesCutomerGLAccounts()
         {
-            try { return Ok(new { glacccts = BillingHelpers.GetFinancesCutomerGLAccounts() }); }
+           
+            try
+            {
+                APIResponse apiResponse = null;
+                dynamic expando = new ExpandoObject();
+                expando.glaccts = BillingHelpers.GetFinancesCutomerGLAccounts();
+
+                return Ok(apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
             catch { }
-            return NoContent();
+            return  Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load finance GL Accounts list." });
         }
 
         [HttpGet("GetBrandList")]
         public async Task<IActionResult> GetBrandList()
         {
-            try { return Ok(new { brandList = BillingHelpers.GetBrandList() }); }
+            try 
+            {
+                dynamic expando = new ExpandoObject();
+                expando.brandList = BillingHelpers.GetBrandList();
+
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
             catch { }
-            return NoContent();
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load Brand list." });
         }
 
         [HttpGet("GetBrandModelList")]
         public async Task<IActionResult> GetBrandModelList()
         {
-            try { return Ok(new { brandModelList = BillingHelpers.GetBrandModelList() }); }
+            try 
+            {
+                dynamic expando = new ExpandoObject();
+                expando.brandModelList = BillingHelpers.GetBrandModelList();
+             
+                return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= expando }); 
+            }
             catch { }
-            return NoContent();
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load Brand model list." });
         }
-
-
-
 
         [HttpPost("RegisterFiances")]
         public async Task<IActionResult> RegisterFiances([FromBody]Finance finances)
         {
-
             if (finances == null)
                 return BadRequest($"{nameof(finances)} cannot be null");
+
+           
             try
             {
                 var response = BillingHelpers.RegisterFiances(finances);
 
                 if (response != null)
-                    return Ok(finances);
-
-                return BadRequest("Registration Failed");
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
             }
             catch (Exception ex)
             {
-                return BadRequest("Registration Failed");
             }
+
+            return Ok( new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
         }
-
-
 
         [HttpPut("UpdateFinance")]
         public async Task<IActionResult> UpdateFinance([FromBody] Finance finances)
@@ -77,14 +105,13 @@ namespace CoreERP.Controllers
             {
                 var response = BillingHelpers.UpdateFinance(finances);
                 if (response != null)
-                    return Ok(response);
-
-                return BadRequest("Updation Failed");
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
             }
             catch (Exception ex)
             {
-                return BadRequest("Updation Failed");
             }
+
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
         }
 
 
@@ -102,14 +129,13 @@ namespace CoreERP.Controllers
                 financeEntity.Active = "N";
                 var reposne = BillingHelpers.UpdateFinance(financeEntity);
                 if (reposne != null)
-                    return Ok(reposne);
-                return BadRequest($"Delete Operation Failed");
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = reposne });
             }
             catch (Exception ex)
             {
-                return BadRequest("Delete Operation Failed");
             }
 
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
         }
     }
 }
