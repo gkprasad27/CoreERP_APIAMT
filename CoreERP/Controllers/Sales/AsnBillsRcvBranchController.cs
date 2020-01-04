@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CoreERP.BussinessLogic.SalesHelper;
 using CoreERP.Models;
+using System.Dynamic;
+using CoreERP.DataAccess;
 
 namespace CoreERP.Controllers
 {
@@ -16,24 +18,41 @@ namespace CoreERP.Controllers
         [HttpGet("GetAsnBillsRcvBranchList")]
         public async Task<IActionResult> GetAsnBillsRcvBranchList()
         {
-            return Ok(new { asnbillsrcvbranch = AsnBillsRcvBranchHelper.GetAsnBillsRcvBranchList()});
-           
-            //accounts = (from account in ( from glacc in _unitOfWork.GLAccounts.GetAll() where glacc.Nactureofaccount !=null select glacc)
-            //            where account.Nactureofaccount.ToUpper() == "BILLSRECEIVABLES"
-            //            select account).ToList(),
-            // branches=_unitOfWork.Branches.GetAll()
+            try
+            {
+                dynamic expanddo = new ExpandoObject();
+                expanddo.asnbillsrcvbranch = AsnBillsRcvBranchHelper.GetAsnBillsRcvBranchList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expanddo });
+            }
+            catch(Exception ex){ }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to Load Asn Bill Receivable Branches." });
+
         }
 
         [HttpGet("GetGLBillReceivableAccountsList")]
         public async Task<IActionResult> GetGLBillReceivableAccountsList()
         {
-            return Ok(new { accounts = AsnBillsRcvBranchHelper.GetGLBillReceivableAccountsList() });
+            try
+            {
+                dynamic expanddo = new ExpandoObject();
+                expanddo.accounts = AsnBillsRcvBranchHelper.GetGLBillReceivableAccountsList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expanddo });
+            }
+            catch (Exception ex) { }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to Load Asn Bill Receivable GL Accounts." });
         }
 
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
         {
-            return Ok(new { branches = AsnBillsRcvBranchHelper.GetBranchesList() });
+            try
+            {
+                dynamic expanddo = new ExpandoObject();
+                expanddo.branches = AsnBillsRcvBranchHelper.GetBranchesList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expanddo });
+            }
+            catch (Exception ex) { }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to Load Branches." });
         }
 
         [HttpPost("RegisterAsnBillsRcvBranch")]
@@ -46,14 +65,12 @@ namespace CoreERP.Controllers
             {
                 var response = AsnBillsRcvBranchHelper.RegisterAsnBillsRcvBranch(asnbillsrcvbranch);
                 if (response != null)
-                    return Ok(response);
-
-                return BadRequest("Registration Failed");
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
             }
             catch (Exception ex)
             {
-                return BadRequest("Registration Failed");
             }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
         }
 
         [HttpPut("UpdateAsnBillsRcvBranch")]
@@ -64,38 +81,35 @@ namespace CoreERP.Controllers
 
             try
             {
-                var respone = AsnBillsRcvBranchHelper.UpdateAsnBillsRcvBranch(asnbillsrcvbranch);
-                if (respone != null)
-                    return Ok(respone);
-
-                return BadRequest("Updation Failed");
+                var response = AsnBillsRcvBranchHelper.UpdateAsnBillsRcvBranch(asnbillsrcvbranch);
+                if (response != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
             }
             catch (Exception ex)
             {
-                return BadRequest("Updation Failed");
             }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
         }
-       
-        [HttpPut("DeleteAsnBillsRcvBranch")]
-        public async Task<IActionResult> DeleteAsnBillsRcvBranch([FromBody]AsnBillsRcvBranch asnBillsRcvBranch)
+
+        [HttpDelete("DeleteAsnBillsRcvBranch/{code}")]
+        public async Task<IActionResult> DeleteAsnBillsRcvBranch(string code)
         {
-            if (asnBillsRcvBranch == null)
+            if (code == null)
                 return BadRequest("Request object can not be null");
 
             try
             {
-                asnBillsRcvBranch.Active = "N";
-                var response = AsnBillsRcvBranchHelper.UpdateAsnBillsRcvBranch(asnBillsRcvBranch);
-                if(response !=null)
-                return Ok(response);
+                var asnBiLLRCvobject = AsnBillsRcvBranchHelper.GetAsnBillsRcvBranchList(code);
+                asnBiLLRCvobject.Active = "N";
+                var response = AsnBillsRcvBranchHelper.UpdateAsnBillsRcvBranch(asnBiLLRCvobject);
+                if (response != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
 
-                return BadRequest("Delete Operation Failed");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest("Delete Operation Failed");
             }
-            
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Delete Operation Failed." });
         }
     }
 }

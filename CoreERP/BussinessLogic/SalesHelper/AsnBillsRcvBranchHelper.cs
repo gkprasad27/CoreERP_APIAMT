@@ -21,6 +21,19 @@ namespace CoreERP.BussinessLogic.SalesHelper
             catch { throw; }
         }
 
+        public static AsnBillsRcvBranch GetAsnBillsRcvBranchList(string code)
+        {
+            try
+            {
+                using (Repository<AsnBillsRcvBranch> repo = new Repository<AsnBillsRcvBranch>())
+                {
+                    return repo.AsnBillsRcvBranch.Where(a => a.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+                                                          && a.Code == code).FirstOrDefault();
+                }
+            }
+            catch { throw; }
+        }
+
         public static List<Glaccounts> GetGLBillReceivableAccountsList()
         {
             try
