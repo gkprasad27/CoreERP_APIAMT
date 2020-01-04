@@ -19,6 +19,7 @@ namespace CoreERP.Models
         public virtual DbSet<ApprovalType> ApprovalType { get; set; }
         public virtual DbSet<AsignmentAcctoAccClass> AsignmentAcctoAccClass { get; set; }
         public virtual DbSet<AsignmentCashAccBranch> AsignmentCashAccBranch { get; set; }
+        public virtual DbSet<AsnBillsRcvBranch> AsnBillsRcvBranch { get; set; }
         public virtual DbSet<AssetMaster> AssetMaster { get; set; }
         public virtual DbSet<Balances> Balances { get; set; }
         public virtual DbSet<Billing> Billing { get; set; }
@@ -50,6 +51,7 @@ namespace CoreERP.Models
         public virtual DbSet<Gst> Gst { get; set; }
         public virtual DbSet<HolidayMaster> HolidayMaster { get; set; }
         public virtual DbSet<Interpretation> Interpretation { get; set; }
+        public virtual DbSet<Inventory> Inventory { get; set; }
         public virtual DbSet<ItemMaster> ItemMaster { get; set; }
         public virtual DbSet<LeaveTypes> LeaveTypes { get; set; }
         public virtual DbSet<Leaveopeningbalances> Leaveopeningbalances { get; set; }
@@ -192,6 +194,30 @@ namespace CoreERP.Models
                 entity.Property(e => e.Ext1).HasMaxLength(20);
 
                 entity.Property(e => e.Ext2).HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<AsnBillsRcvBranch>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("Asn_Bills_Rcv_Branch");
+
+                entity.Property(e => e.Code).HasMaxLength(20);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Branch).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(20);
+
+                entity.Property(e => e.Ext2).HasMaxLength(20);
+
+                entity.Property(e => e.Glaccount)
+                    .HasColumnName("GLAccount")
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<AssetMaster>(entity =>
@@ -1854,6 +1880,81 @@ namespace CoreERP.Models
                 entity.Property(e => e.InstallationChargesAc).HasMaxLength(50);
 
                 entity.Property(e => e.OtherExpensesAc).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Inventory>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.Property(e => e.Code).HasMaxLength(14);
+
+                entity.Property(e => e.Account).HasMaxLength(50);
+
+                entity.Property(e => e.Active)
+                    .IsRequired()
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.BranchCode).HasMaxLength(50);
+
+                entity.Property(e => e.BrandCode).HasMaxLength(50);
+
+                entity.Property(e => e.BrandName).HasMaxLength(50);
+
+                entity.Property(e => e.CompCode).HasMaxLength(50);
+
+                entity.Property(e => e.Drcrindicator)
+                    .HasColumnName("DRCRIndicator")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Empcode)
+                    .HasColumnName("EMPCode")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(20);
+
+                entity.Property(e => e.Ext2).HasMaxLength(50);
+
+                entity.Property(e => e.ItemCode).HasMaxLength(50);
+
+                entity.Property(e => e.ItemName).HasMaxLength(50);
+
+                entity.Property(e => e.MaterialTranType).HasMaxLength(50);
+
+                entity.Property(e => e.Model).HasMaxLength(50);
+
+                entity.Property(e => e.Narration).HasMaxLength(50);
+
+                entity.Property(e => e.OtherExpences).HasMaxLength(50);
+
+                entity.Property(e => e.PurchaseValue).HasMaxLength(50);
+
+                entity.Property(e => e.Quantity).HasMaxLength(50);
+
+                entity.Property(e => e.Rate).HasMaxLength(50);
+
+                entity.Property(e => e.ReceivingUnit).HasMaxLength(50);
+
+                entity.Property(e => e.ReferenceNo).HasMaxLength(50);
+
+                entity.Property(e => e.SaleValue).HasMaxLength(50);
+
+                entity.Property(e => e.SendingUnit).HasMaxLength(50);
+
+                entity.Property(e => e.Size).HasMaxLength(50);
+
+                entity.Property(e => e.SubGlacc)
+                    .HasColumnName("SubGLAcc")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TransactionType).HasMaxLength(50);
+
+                entity.Property(e => e.Uom)
+                    .HasColumnName("UOM")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Value).HasMaxLength(50);
             });
 
             modelBuilder.Entity<ItemMaster>(entity =>

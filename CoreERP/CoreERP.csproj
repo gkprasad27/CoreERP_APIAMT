@@ -17,6 +17,11 @@
     <Compile Remove="Controllers\purchase\OpeningBalanceController.cs" />
     <Compile Remove="Controllers\purchase\purchaseRequisitionsController.cs" />
     <Compile Remove="Controllers\purchase\VendorPaymentsController.cs" />
+    <Compile Remove="Controllers\Sales\BillingController.cs" />
+    <Compile Remove="Controllers\Sales\BillingReturnsController.cs" />
+    <Compile Remove="Controllers\Sales\BranchTransferController.cs" />
+    <Compile Remove="Controllers\Sales\MaterialTransactionTypesController.cs" />
+    <Compile Remove="Controllers\Sales\SalesItemLedgerController.cs" />
   </ItemGroup>
 
   <ItemGroup>
