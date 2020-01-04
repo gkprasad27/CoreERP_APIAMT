@@ -114,8 +114,8 @@ namespace CoreERP.Controllers
 
                try
                {
-                int result=CompaniesHelper.Delete(code);
-                if (result > 0)
+                var result=CompaniesHelper.DeleteCompanies(code);
+                if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
