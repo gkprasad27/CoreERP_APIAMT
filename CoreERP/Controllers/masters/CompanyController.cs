@@ -32,7 +32,8 @@ namespace CoreERP.Controllers
             {
                // return NotFound("No Data Found.");
 
-                return Ok(new { companies = ex.Message });
+               // return Ok(new { companies = ex.Message });
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "Failed to load Companies" });
             }
         }
 
@@ -46,7 +47,7 @@ namespace CoreERP.Controllers
                     return BadRequest($"{nameof(company)} cannot be null");
                 else
                 {
-                if (CompaniesHelper.GetListOfCompanies(company.Code).Count() > 0)
+                if (CompaniesHelper.GetCompanies(company.Code) !=null)
                     return BadRequest("Code =" + company.Code + " is already Exists,Please Use Another Code");
 
                 try
