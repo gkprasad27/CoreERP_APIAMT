@@ -34,5 +34,6 @@ namespace CoreERP.Models
         public string Uom { get; set; }
         public string Value { get; set; }
         public string MaterialTranType { get; set; }
+        public string Active { get; set; }
     }
 }
