@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,18 +12,21 @@ namespace CoreERP.Controllers
 {
   
     [ApiController]
-    [Route("api/Company")]
+    [Route("api/masters/Company")]
     public class CompanyController : ControllerBase
     {
         
      
 
-        [HttpGet("GetCompaniesList")]
-        public async Task<IActionResult> GetCompaniesList()
+        [HttpGet("GetCompanysList")]
+        public async Task<IActionResult> GetCompanysList()
         {
             try
             {
-                return   Ok(new { companies = CompaniesHelper.GetListOfCompanies() });
+                var companiesList = CompaniesHelper.GetListOfCompanies();
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.companiesList = companiesList;
+                return   Ok(new APIResponse{ status= APIStatus.PASS.ToString(), response= expdoObj });
             }
             catch(Exception ex) 
             {
@@ -32,77 +37,100 @@ namespace CoreERP.Controllers
         }
 
 
-        [HttpPost("RegisterCompany")]
-        public async Task<IActionResult> RegisterCompany([FromBody]Companies company)
-        {
-            // listobh.Add(company);
-
-            if (company == null)
-                return BadRequest($"{nameof(company)} cannot be null");
-            else
+            [HttpPost("RegisterCompany")]
+            public async Task<IActionResult> RegisterCompany([FromBody]Companies company)
             {
-                if (CompaniesHelper.GetCompanies(company.Code) != null)
+            // listobh.Add(company);
+            APIResponse apiResponse = null;
+                if (company == null)
+                    return BadRequest($"{nameof(company)} cannot be null");
+                else
+                {
+                if (CompaniesHelper.GetListOfCompanies(company.Code).Count() > 0)
                     return BadRequest("Code =" + company.Code + " is already Exists,Please Use Another Code");
 
                 try
                 {
                     int result = CompaniesHelper.Register(company);
                     if (result > 0)
-                        return Ok(company);
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    }
                     else
-                        return BadRequest($"{nameof(company)} Register Failed");
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                    }
+
+                    return Ok(apiResponse);
                 }
                 catch (Exception ex)
                 {
                     return BadRequest($"{nameof(company)} cannot be null");
                 }
-
+                      
+                }
             }
-        }
 
 
 
-        [HttpPut("UpdateCompany")]
-        public async Task<IActionResult> UpdateCompany([FromBody] Companies company)
-        {
+            [HttpPut("UpdateCompany/{code}")]
+            public async Task<IActionResult> UpdateCompany(string code, [FromBody] Companies company)
+            {
+            APIResponse apiResponse = null;
             if (company == null)
-                return BadRequest($"{nameof(company)} cannot be null");
+                    return BadRequest($"{nameof(company)} cannot be null");
+
+                if (!string.IsNullOrWhiteSpace(company.Code) && code != company.Code)
+                    return BadRequest("Conflicting role id in parameter and model data");
 
             try
             {
                 int result = CompaniesHelper.Update(company);
                 if (result > 0)
-                    return Ok(company);
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
                 else
-                    return BadRequest("Updation Failed");
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                }
+                return Ok(apiResponse);
             }
             catch (Exception ex)
             {
-                return BadRequest("Updation Failed");
+                return BadRequest($"{nameof(company)} Updation Failed");
             }
 
         }
 
 
-        // Delete 
-        [HttpDelete("DeleteCompany/{code}")]
-        public async Task<IActionResult> DeleteCompany(string code)
-        {
+            // Delete 
+            [HttpDelete("DeleteCompany/{code}")]
+            public async Task<IActionResult> DeleteCompany(string code)
+            {
+            APIResponse apiResponse = null;
             if (code == null)
-                return BadRequest($"{nameof(code)}can not be null");
+                    return BadRequest($"{nameof(code)}can not be null");
 
-            try
-            {
-                Companies comp = CompaniesHelper.GetCompanies(code);
-                comp.Active = "N";
-                int result = CompaniesHelper.Update(comp);
-                return Ok(code);
+               try
+               {
+                int result=CompaniesHelper.Delete(code);
+                if (result > 0)
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                }
+                return Ok(apiResponse);
+               }
+               catch(Exception ex)
+               {
+                 return BadRequest($"{nameof(code)} Deletion Failed");
+               }
+                
             }
-            catch (Exception ex)
-            {
-                return BadRequest("Deletion Failed");
-            }
-
-        }
+        
     }
 }

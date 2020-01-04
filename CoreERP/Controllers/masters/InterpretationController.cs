@@ -1,14 +1,16 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Dynamic;
 using System.Threading.Tasks;
 
 namespace CoreERP.Controllers
 {
 
     [ApiController]
-    [Route("api/Interpretation")]
+    [Route("api/masters/Interpretation")]
     public class InterpretationController : ControllerBase
     {
         //[HttpPut("masters/{ID}")]
@@ -18,18 +20,25 @@ namespace CoreERP.Controllers
         //}      
 
         
-        [HttpPost("masters/interpretation/register")]
-        public async Task<IActionResult> Register([FromBody]Interpretation interpretation)  
+        [HttpPost("RegisterInterpretation")]
+        public async Task<IActionResult> RegisterInterpretation([FromBody]Interpretation interpretation)  
         {
+            APIResponse apiResponse = null;
             if (interpretation == null)
                 return BadRequest($"{nameof(interpretation)} can not be null");
             try
             {
                 int result = InterpretationHelper.RegisterInterpretation(interpretation);
                 if (result > 0)
-                    return Ok(interpretation);
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                }
 
-                return BadRequest("Registration Failed");
+                return Ok(apiResponse);
             }
             catch
             {
@@ -39,20 +48,27 @@ namespace CoreERP.Controllers
 
 
 
-        [HttpGet("masters/interpretation")]
-        public async Task<IActionResult> GetAllInterpretation()
-        {            
-            return Ok(
-                new {
-                   interpretation= InterpretationHelper.GetInterpretationList()
-                  // glaccounts = _unitOfWork.GLAccounts.GetAll()
-                    
-                });
+        [HttpGet("GetInterpretationList")]
+        public async Task<IActionResult> GetInterpretationList()
+        {
+            try
+            {
+                var interpretationList = InterpretationHelper.GetInterpretationList();
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.interpretationList = interpretationList;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+            }
+            catch
+            {
+                return BadRequest("No Data  Found");
+            }
+
         }
 
-        [HttpPut("masters/interpretation/{code}")]
+        [HttpPut("UpdateInterpretation/{code}")]
         public async Task<IActionResult> UpdateInterpretation(string code, [FromBody] Interpretation interpretation)
         {
+            APIResponse apiResponse = null;
             try
             {
                 if (interpretation == null)
@@ -60,9 +76,14 @@ namespace CoreERP.Controllers
 
                 int rs =InterpretationHelper.UpdateInterpretation(interpretation);
                 if (rs > 0)
-                    return Ok(interpretation);
-
-                return BadRequest("Updation Failed");
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                }
+                return Ok(apiResponse);
             }
             catch
             {
@@ -71,14 +92,22 @@ namespace CoreERP.Controllers
         }
 
 
-        [HttpDelete("masters/interpretation/{code}")]
+        [HttpDelete("DeleteInterpretation/{code}")]
         public async Task<IActionResult> DeleteInterpretation(string code)
         {
+            APIResponse apiResponse = null;
             try
             {
                int result = InterpretationHelper.DeleteInterpretation(code);
-               if (result > 0)
-                        return Ok(code);
+                if (result > 0)
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                }
+                return Ok(apiResponse);
             }
             catch
             {

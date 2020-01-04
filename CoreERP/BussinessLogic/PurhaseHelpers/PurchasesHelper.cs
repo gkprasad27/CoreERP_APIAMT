@@ -21,6 +21,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 return _repo;
             }
         }
+
+
         public static List<Purchase> GetPurchaseList()
         {
             try
@@ -29,14 +31,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
-        public static Purchase GetPurchase(string code)
-        {
-            try
-            {
-                return repo.Purchase.Where(x => x.Code == code).FirstOrDefault();
-            }
-            catch { throw; }
-        }
+
+
         public static int RegisterPurchase(Purchase[] purchasesarr)
         {
             try
@@ -58,13 +54,11 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 }
 
 
-                purchasesarr[0].Active = "Y";
                 for (int i = 1; i < purchasesarr.Count(); i++)
                 {
                     purchasesarr[i].Code = (Convert.ToInt32(purchasesarr[i - 1].Code) + 1).ToString();
                     purchasesarr[i].AddDate = DateTime.Now;
                     purchasesarr[i].EditDate = DateTime.Now;
-                    purchasesarr[i].Active = "Y";
                 }
 
               
@@ -73,6 +67,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
+
+
         public static int UpdatePurchase(Purchase purchase)
         {
             try
@@ -83,16 +79,16 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             catch { throw; }
         }
 
-        //public static int DeletePurchase(string  code)
-        //{
-        //    try
-        //    {
-        //        var purchase = repo.Purchase.Where(x => x.Code == code).FirstOrDefault();
-        //        repo.Purchase.Remove(purchase);
-        //        return repo.SaveChanges();
-        //    }
-        //    catch { throw; }
-        //}
+        public static int DeletePurchase(string  code)
+        {
+            try
+            {
+                var purchase = repo.Purchase.Where(x => x.Code == code).FirstOrDefault();
+                repo.Purchase.Remove(purchase);
+                return repo.SaveChanges();
+            }
+            catch { throw; }
+        }
 
         public static List<MatTranTypes> GetPurchaseMaterialGroup()
         {
@@ -105,16 +101,21 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
+
+
         public static List<Companies> GetCompanies()
         {
             try { return masterHlepers.CompaniesHelper.GetListOfCompanies(); }
             catch { throw; }
         }
+        
         public static List<Branches> GetBranches()
         {
             try { return masterHlepers.BrancheHelper.GetBranches(); }
             catch { throw; }
         }
+
+
         public static List<Glaccounts> GetGLAccounts()
         {
             try 
@@ -123,6 +124,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
+
         public static List<MatTranTypes> GetMatTranTypes()
         {
             try
@@ -136,6 +138,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
+
+
         public static List<MaterialGroup> GetMaterialGroup()
         {
             try
@@ -144,6 +148,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
+
         public static List<TaxMasters> GetTAxMasterList()
         {
             try
@@ -170,6 +175,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
+
         public static List<BrandModel> GetModelList()
         {
             try
@@ -183,6 +189,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
+
         public static List<ItemMaster> GetItemMasterList()
         {
             try
@@ -191,6 +198,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
+
         public static List<PartnerCreation> GetPartnerCreationList()
         {
             try
@@ -211,6 +219,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
+
+
         public static List<Brand> GetBrandList()
         {
             try
@@ -219,6 +229,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
+
+        
         public static List<Interpretation> GetInterpretationList()
         {
             try
@@ -227,6 +239,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
+
         public static List<AsignmentAcctoAccClass> GetAccountToAccountClassList()
         {
             try
@@ -235,6 +248,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
+
+
         public static List<PurchaseReturns> GetPurchaseReturnsList()
         {
             try
