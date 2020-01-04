@@ -24,7 +24,6 @@ namespace CoreERP.Controllers
                 new 
                 {
                    purchaseList = PurchasesHelper.GetPurchaseList(),
-                  // materialGroupList =_unitOfWork.MaterialGroup.GetAll()
                 });
 
         }
