@@ -101,7 +101,7 @@ namespace CoreERP.Controllers
                 return BadRequest($"{nameof(company)} Updation Failed");
             }
 
-            }
+        }
 
 
             // Delete 

@@ -9,23 +9,27 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class BrancheHelper
     {
-        private static Repository<Branches> _repo = null;
-        private static Repository<Branches> repo
-        {
-            get
-            {
-                if (_repo == null)
-                    _repo = new Repository<Branches>();
-                return _repo;
-            }
-        }
-
-
         public static List<Branches> GetBranches()
         {
             try
             {
-              return  repo.GetAll().ToList();
+                using(Repository<Branches> repo=new Repository<Branches>())
+                {
+                    return repo.Branches.Where(b => b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+            }
+            catch { throw; }
+        }
+        public static Branches GetBranches(string code)
+        {
+            try
+            {
+                using (Repository<Branches> repo = new Repository<Branches>())
+                {
+                    return repo.Branches
+                               .Where(b => b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase) 
+                                        && b.Code == code).FirstOrDefault();
+                }
             }
             catch { throw; }
         }
@@ -35,10 +39,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-              return  repo.Branches
+                using (Repository<Branches> repo = new Repository<Branches>())
+                {
+                    return repo.Branches
                     .Where(b => b.Code.Contains(branchCode ?? b.Code)
-                            && b.Name.Contains(branchName ?? b.Name)
+                             && b.Name.Contains(branchName ?? b.Name)
+                             && b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
                     ).ToList();
+                }
             }
             catch { throw; }
         }
@@ -47,8 +55,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                return repo.Branches
-                      .Where(b => b.Code ==branchCode).ToList();
+                using (Repository<Branches> repo = new Repository<Branches>())
+                {
+                    return repo.Branches
+                      .Where(b => b.Code == branchCode
+                               && b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+                            )
+                      .ToList();
+                }
             }
             catch { throw; }
         }
@@ -58,8 +72,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                repo.Branches.Add(branches);
-               return repo.SaveChanges();
+                using (Repository<Branches> repo = new Repository<Branches>())
+                {
+                    branches.Active = "Y";
+                    repo.Branches.Add(branches);
+                    return repo.SaveChanges();
+                }
             }
             catch { throw; }
         }
@@ -69,23 +87,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                repo.Update(branches);
-                return repo.SaveChanges();
+                using (Repository<Branches> repo = new Repository<Branches>())
+                {
+                    repo.Update(branches);
+                    return repo.SaveChanges();
+                }
             }
             catch { throw; }
         }
-
-
-        public static int Delete(string branchCode)
-        {
-            try
-            {
-                var branch = repo.Branches.Where(x => x.Code == branchCode).FirstOrDefault();
-                repo.Branches.Remove(branch);
-                return repo.SaveChanges();
-            }
-            catch { throw; }
-        }
-
     }
 }

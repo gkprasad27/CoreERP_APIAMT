@@ -116,7 +116,7 @@ namespace CoreERP.Controllers
 
 
         // Delete Branch
-        [HttpDelete("DeleteBranch/{code}")]
+        [HttpDelete("masters/branches/{code}")]
         public async Task<IActionResult> DeleteBranch(string code)
         {
             APIResponse apiResponse = null;
@@ -125,7 +125,7 @@ namespace CoreERP.Controllers
 
             try
             {
-                int result = CompaniesHelper.Delete(code);
+                int result = BrancheHelper.Delete(code);
                 if (result > 0)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
