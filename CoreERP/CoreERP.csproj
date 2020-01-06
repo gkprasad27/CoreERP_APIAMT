@@ -43,6 +43,9 @@
   <ItemGroup>
     <Folder Include="Controllers\GeneralLedger\" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\Inventory\" />
+  </ItemGroup>
 
 
 </Project>
