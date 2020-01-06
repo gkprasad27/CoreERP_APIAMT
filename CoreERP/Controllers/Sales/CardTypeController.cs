@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CoreERP.BussinessLogic.SalesHelper;
 using CoreERP.Models;
+using CoreERP.DataAccess;
+using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
@@ -16,14 +18,34 @@ namespace CoreERP.Controllers
         [HttpGet("GetcardtypeList")]
         public async Task<IActionResult> GetcardtypeList()
         {
-            return Ok(new { cardtype = BillingHelpers.GetCardTypeList() });
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.cardtype = BillingHelpers.GetCardTypeList();
+
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch(Exception ex)
+            {
+
+            }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load Card Types." });
 
         }
 
         [HttpGet("GetGLAccountsList")]
         public async Task<IActionResult> GetGLAccountsList()
         {
-            return Ok(new { accounts = BillingHelpers.GetGlAccountsDRCR() });
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.accounts = BillingHelpers.GetGlAccountsDRCR();
+
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex) { }
+
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load GL Accounts." });
         }
 
         [HttpPost("RegisterCardType")]
@@ -36,10 +58,10 @@ namespace CoreERP.Controllers
             {
                 var reponse = BillingHelpers.RegisterCardType(cardType);
                 if (reponse != null)
-                    return Ok(reponse);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = reponse });
             }
             catch (Exception ex) { }
-            return BadRequest("Registration Failed");
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
         }
 
         [HttpPut("UpdateCardType")]
@@ -52,18 +74,13 @@ namespace CoreERP.Controllers
             {
                 var response = BillingHelpers.UpdateCardType(cardtype);
                 if (response != null)
-                    return Ok(response);
-
-
-                return BadRequest("Updation Failed");
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
             }
             catch (Exception ex)
             {
-                return BadRequest("Updation Failed");
             }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
         }
-
-
 
         [HttpDelete("DeleteCardType/{code}")]
         [Produces(typeof(CardType))]
@@ -75,16 +92,16 @@ namespace CoreERP.Controllers
             try
             {
                 var cardtype = BillingHelpers.GetCardTypeList(code);
+                cardtype.Active = "N";
                 var response = BillingHelpers.UpdateCardType(cardtype);
                 if (response != null)
-                    return Ok(response);
-                return Ok(cardtype);
-
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
             }
             catch (Exception ex)
             {
-                return BadRequest($"Delete Operation Failed");
             }
+
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
         }
     }
 }

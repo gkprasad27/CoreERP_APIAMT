@@ -125,8 +125,8 @@ namespace CoreERP.Controllers
 
             try
             {
-                int result = BrancheHelper.Delete(code);
-                if (result > 0)
+                var result = BrancheHelper.Delete(code);
+                if (result !=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }

@@ -1,29 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using CoreERP.BussinessLogic.SalesHelper;
 using CoreERP.Models;
+using System.Dynamic;
+using CoreERP.DataAccess;
 
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/BillingNoSeries")]
+    [Route("api/sales/BillingNoSeries")]
     public class BillingNoSeriesController : ControllerBase
     {
 
         [HttpGet("getBillingNoSeriesList")]
         public async Task<IActionResult> GetBillingNoSeriesList()
         {
-            return Ok(new { billinnoseries = BillingNoSeriesHelper.GetBillingNoSeriesList() });
+            try
+            {
+                dynamic expanddo = new ExpandoObject();
+                expanddo.billinnoseries = BillingNoSeriesHelper.GetBillingNoSeriesList();
+                return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= expanddo});
+            }
+            catch(Exception ex) { }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load Biiling No Series." });
         }
 
         [HttpGet("getCompanies")]
         public async Task<IActionResult> GetCompaniesList()
         {
-            return Ok(new {compnays = BillingNoSeriesHelper.GetCompaniesList()});
+            try
+            {
+                dynamic expanddo = new ExpandoObject();
+                expanddo.compnays = BillingNoSeriesHelper.GetCompaniesList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expanddo });
+            }
+            catch(Exception ex) { }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load Companies." });
         }
 
 
@@ -35,16 +48,15 @@ namespace CoreERP.Controllers
                 return BadRequest("Request object cannot be null");
             try
             {
+
                 var response = BillingNoSeriesHelper.RegisterBillingNoSeries(billinnoserries);
                 if (response != null)
-                    return Ok(response);
-
-                return BadRequest("Registration Failed");
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
             }
             catch (Exception ex)
             {
-                return BadRequest("Registration Failed");
             }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
         }
 
 
@@ -60,14 +72,12 @@ namespace CoreERP.Controllers
             {
                 var response = BillingNoSeriesHelper.UpdateBillingNoSeries(billingnoseries);
                 if (response !=null)
-                    return Ok(response);
-              
-                    return BadRequest("Updation Failed");
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
             }
             catch(Exception ex)
             {
-                return BadRequest("Updation Failed");
             }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
         }
 
 
@@ -86,15 +96,12 @@ namespace CoreERP.Controllers
                 var response = BillingNoSeriesHelper.UpdateBillingNoSeries(billingNoSeries);
 
                 if(response !=null)
-                return Ok(response);
-
-                return BadRequest("Delete Operation Failed");
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
             }
             catch(Exception ex)
             {
-                return BadRequest("Delete Operation Failed");
             }
-            
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
         }
     }
 }

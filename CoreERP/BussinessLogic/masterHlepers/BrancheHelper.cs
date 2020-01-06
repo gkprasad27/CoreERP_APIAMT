@@ -95,5 +95,23 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch { throw; }
         }
+
+        public static Branches Delete(string code)
+        {
+            try
+            {
+                using (Repository<Branches> repo = new Repository<Branches>())
+                {
+                    var bobj = GetBranches(code);
+                    bobj.Active = "N";
+                    repo.Update(bobj);
+                    if (repo.SaveChanges() > 0)
+                        return bobj;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
     }
 }

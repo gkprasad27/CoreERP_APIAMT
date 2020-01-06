@@ -64,5 +64,23 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch { throw; }
         }
+
+        public static Companies DeleteCompanies(string  code)
+        {
+            try
+            {
+                using (Repository<Companies> repo = new Repository<Companies>())
+                {
+                    var comp = repo.Companies.Where(x => x.Code == code).FirstOrDefault();
+                    comp.Active = "N";
+                    repo.Update(comp);
+                    if (repo.SaveChanges() > 0)
+                        return comp;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
     }
 }
