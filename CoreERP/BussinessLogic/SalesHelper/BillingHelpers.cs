@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess;
+﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -10,13 +11,27 @@ namespace CoreERP.BussinessLogic.SalesHelper
     public class BillingHelpers
     {
         #region Billing Returns
-        public static Billing GetBilling(string billNo)
+        public static List<Billing> GetBilling(string billNo)
         {
             try
             {
                 using (Repository<Billing> repo = new Repository<Billing>())
                 {
-                    return repo.Billing.Where(x => x.BillNo == billNo).FirstOrDefault();
+                    return repo.Billing.Where(x => x.BillNo == billNo).ToList();
+                }
+            }
+            catch { throw; }
+        }
+
+        public static bool IsBillExistsInBillReturns(string billNo)
+        {
+            try
+            {
+                using(Repository<BillingReturns> repo=new Repository<BillingReturns>())
+                {
+                    var result=repo.BillingReturns.Where(x => x.BillNo == billNo).ToList();
+
+                    return (result.Count() > 0);
                 }
             }
             catch { throw; }
@@ -302,5 +317,107 @@ namespace CoreERP.BussinessLogic.SalesHelper
             catch { throw; }
 
         }
+
+
+        #region Material Transaction Types
+        public static List<MatTranTypes> GetMatTranTypesList()
+        {
+            try
+            {
+                using(Repository<MatTranTypes> repo=new Repository<MatTranTypes>())
+                {
+                  return  repo.MatTranTypes.AsEnumerable()
+                              .Where(m => m.Active.Equals("Y", StringComparison.OrdinalIgnoreCase))
+                              .ToList();
+                }
+            }
+            catch { throw; }
+        }
+
+        public static MatTranTypes GetMatTranTypes(string code)
+        {
+            try
+            {
+                using (Repository<MatTranTypes> repo = new Repository<MatTranTypes>())
+                {
+                    return repo.MatTranTypes.AsEnumerable()
+                                .Where(m => m.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+                                        && m.Code == code
+                                )
+                                .FirstOrDefault();
+                }
+            }
+            catch { throw; }
+        }
+
+        public static List<Branches> GetBranchesList()
+        {
+            try
+            {
+              return  BrancheHelper.GetBranches();
+            }
+            catch { throw; }
+        }
+
+        public static MatTranTypes RegisterMatTransType(MatTranTypes matTranTypes)
+        {
+            try
+            {
+                using (Repository<MatTranTypes> repo = new Repository<MatTranTypes>())
+                {
+                    var lastreacord = repo.MatTranTypes.OrderByDescending(x => x.Code).FirstOrDefault();
+                    if (lastreacord != null)
+                    {
+                        matTranTypes.Code = (int.Parse(lastreacord.Code) + 1).ToString();
+                    }
+                    else
+                    {
+                        matTranTypes.Code = "1";
+                    }
+
+                    repo.MatTranTypes.Add(matTranTypes);
+                    if (repo.SaveChanges() > 0)
+                        return matTranTypes;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+
+        public static MatTranTypes UpdateMatTransType(MatTranTypes matTranTypes)
+        {
+            try
+            {
+                using (Repository<MatTranTypes> repo = new Repository<MatTranTypes>())
+                {
+                    repo.MatTranTypes.Add(matTranTypes);
+                    if (repo.SaveChanges() > 0)
+                        return matTranTypes;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+
+        public static MatTranTypes DeleteMatTransType(string  code)
+        {
+            try
+            {
+                using (Repository<MatTranTypes> repo = new Repository<MatTranTypes>())
+                {
+                    var mattransObj = repo.MatTranTypes.Where(m => m.Code == code).FirstOrDefault();
+                    mattransObj.Active = "N";
+                    repo.MatTranTypes.Update(mattransObj);
+                    if (repo.SaveChanges() > 0)
+                        return mattransObj;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+        #endregion
     }
 }
