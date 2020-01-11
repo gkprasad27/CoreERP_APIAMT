@@ -15,7 +15,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using(Repository<Branches> repo=new Repository<Branches>())
                 {
-                    return repo.Branches.Where(b => b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+                    return repo.Branches.AsEnumerable().Where(b => b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
                 }
             }
             catch { throw; }
@@ -26,7 +26,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<Branches> repo = new Repository<Branches>())
                 {
-                    return repo.Branches
+                    return repo.Branches.AsEnumerable()
                                .Where(b => b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase) 
                                         && b.BranchCode == code).FirstOrDefault();
                 }
@@ -41,7 +41,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<Branches> repo = new Repository<Branches>())
                 {
-                    return repo.Branches
+                    return repo.Branches.AsEnumerable()
                     .Where(b => b.BranchCode.Contains(branchCode ?? b.BranchCode)
                              && b.Name.Contains(branchName ?? b.Name)
                              && b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
@@ -57,7 +57,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<Branches> repo = new Repository<Branches>())
                 {
-                    return repo.Branches
+                    return repo.Branches.AsEnumerable()
                       .Where(b => b.BranchCode == branchCode
                                && b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
                             )
@@ -68,7 +68,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
         }
 
 
-        public static int Register(Branches branches)
+        public static Branches Register(Branches branches)
         {
             try
             {
@@ -76,21 +76,27 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 {
                     branches.Active = "Y";
                     repo.Branches.Add(branches);
-                    return repo.SaveChanges();
+                    if(repo.SaveChanges() > 0)
+                    return branches;
+
+                    return null;
                 }
             }
             catch { throw; }
         }
 
 
-        public static int Update(Branches branches)
+        public static Branches Update(Branches branches)
         {
             try
             {
                 using (Repository<Branches> repo = new Repository<Branches>())
                 {
-                    repo.Update(branches);
-                    return repo.SaveChanges();
+                    repo.Branches.Update(branches);
+                    if (repo.SaveChanges() > 0)
+                        return branches;
+
+                    return null;
                 }
             }
             catch { throw; }
@@ -104,7 +110,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 {
                     var bobj = GetBranches(code);
                     bobj.Active = "N";
-                    repo.Update(bobj);
+                    repo.Branches.Update(bobj);
                     if (repo.SaveChanges() > 0)
                         return bobj;
 

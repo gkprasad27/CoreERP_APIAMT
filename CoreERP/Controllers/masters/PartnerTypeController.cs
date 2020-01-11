@@ -1,78 +1,94 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Dynamic;
 using System.Threading.Tasks;
 
 namespace CoreERP.Controllers
 {
 
     [ApiController]
-    [Route("api/PartnerType")]
+    [Route("api/masters/PartnerType")]
     public class PartnerTypeController : ControllerBase
     {
 
-        [HttpPost("masters/partnerType/insertpartnerType")]
-        public async Task<IActionResult> Register([FromBody]PartnerType partnerType)
+        [HttpPost("RegisterPartnerType")]
+        public async Task<IActionResult> RegisterPartnerType([FromBody]PartnerType partnerType)
         {
             if (partnerType == null)
-                return BadRequest($"{nameof(partnerType)} can not be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(partnerType)} can not be null" });
             try
             {
-                int result = PartnerTypeHelper.RegistePartnerType(partnerType);
-                if(result > 0)
-                return Ok(partnerType);
-
+                var result = PartnerTypeHelper.RegistePartnerType(partnerType);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = partnerType });
             }
             catch
             {             
             }
-
-            return BadRequest("Registration Failed");
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
         }
 
 
 
-        [HttpGet("masters/partnerType")]
+        [HttpGet("GetPartnerTypesList")]
         public async Task<IActionResult> GetAllPartnerTypes()
-        {            
-            return Ok(
-                new {
-                   partnerType= PartnerTypeHelper.GetPartnerTypeList()
-                    
-                });
+        {
+            try
+            {
+                var partnerTypeList = PartnerTypeHelper.GetPartnerTypeList();
+                if(partnerTypeList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.partnerTypeList = partnerTypeList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+            }
+            catch(Exception ex)
+            {
+
+            }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
         }
 
-        [HttpPut("masters/partnerType/{code}")]
-        public async Task<IActionResult> UpdatePartnerType(string code, [FromBody] PartnerType partnerType)
+        [HttpPut("UpdatePartnerType")]
+        public async Task<IActionResult> UpdatePartnerType([FromBody] PartnerType partnerType)
         {
-            try {
+            try
+            {
                 if (partnerType == null)
-                    return BadRequest($"{nameof(partnerType)} cannot be null");
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(partnerType)} cannot be null" });
+         
+                var rs = PartnerTypeHelper.UpdatePartnerType(partnerType);
+                if (rs != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = rs });
 
-                int rs = PartnerTypeHelper.UpdatePartnerType(partnerType);
-                if (rs > 0)
-                    return Ok(partnerType);
-             
             }
             catch { throw; }
-            return BadRequest($"{nameof(partnerType)} Updation Failed");
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
         }
 
 
-        [HttpDelete("masters/PartnerType/{code}")]
+        [HttpDelete("DeletePartnerType/{code}")]
         public async Task<IActionResult> DeletePartnerTypeByID(string code)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(code))
-                    return BadRequest($"{nameof(code)} cannot be null");
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
+             
 
-                int result =PartnerTypeHelper.DeletePartnerType(code);
-                if(result > 0)
-                        return Ok(code);
+                var result =PartnerTypeHelper.DeletePartnerType(code);
+                if(result!=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
             }
             catch { }
-            return BadRequest("Deletion Failed");
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
         }
     }
 }

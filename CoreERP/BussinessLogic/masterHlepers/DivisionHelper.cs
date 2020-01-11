@@ -9,25 +9,17 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class DivisionHelper
     {
-        private static Repository<Divisions> _repo = null;
-        private static Repository<Divisions> repo
-        {
-            get
-            {
-                if (_repo == null)
-                    _repo = new Repository<Divisions>();
-                return _repo;
-            }
-        }
-
-
+        
         public static List<Divisions> GetList(string divisionCode)
         {
             try
             {
-                return repo.GetAll()
-                           .Where(x=> x.Code == divisionCode)
-                           .ToList();
+                using (Repository<Divisions> repo = new Repository<Divisions>())
+                {
+                    return repo.Divisions
+                               .Where(x => x.Code == divisionCode)
+                               .ToList();
+                }
             }
             catch { throw; }
         }
@@ -36,17 +28,27 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                return repo.GetAll().ToList();
+                using (Repository<Divisions> repo = new Repository<Divisions>())
+                {
+                    return repo.Divisions.AsEnumerable().Where(x => x.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+                }
             }
             catch { throw; }
         }
 
-        public static int Register(Divisions divisions)
+        public static Divisions Register(Divisions divisions)
         {
             try
             {
-                repo.Divisions.Add(divisions);
-               return repo.SaveChanges();
+                using (Repository<Divisions> repo = new Repository<Divisions>())
+                {
+                    divisions.Active = "Y";
+                    repo.Divisions.Add(divisions);
+                    if (repo.SaveChanges() > 0)
+                        return divisions;
+
+                    return null;
+                }
             }
             catch(Exception ex)
             {
@@ -54,12 +56,18 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
-        public static int Update(Divisions division)
+        public static Divisions Update(Divisions division)
         {
             try
             {
-                repo.Divisions.Update(division);
-                return repo.SaveChanges();
+                using (Repository<Divisions> repo = new Repository<Divisions>())
+                {
+                    repo.Divisions.Update(division);
+                    if (repo.SaveChanges() > 0)
+                        return division;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
@@ -67,13 +75,20 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
-        public static int Delete(string divisionCode)
+        public static Divisions Delete(string divisionCode)
         {
             try
             {
-                var division = repo.Divisions.Where(x => x.Code == divisionCode).FirstOrDefault();
-                repo.Divisions.Remove(division);
-               return repo.SaveChanges();
+                using (Repository<Divisions> repo = new Repository<Divisions>())
+                {
+                    var division = repo.Divisions.Where(x => x.Code == divisionCode).FirstOrDefault();
+                    division.Active = "N";
+                    repo.Divisions.Update(division);
+                    if (repo.SaveChanges() > 0)
+                        return division;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {

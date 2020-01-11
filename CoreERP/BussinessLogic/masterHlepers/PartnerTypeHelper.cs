@@ -9,61 +9,72 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class PartnerTypeHelper
     {
-        private static Repository<PartnerType> _repo = null;
-        private static Repository<PartnerType> repo
-        {
-            get
-            {
-                if (_repo == null)
-                    _repo = new Repository<PartnerType>();
-                return _repo;
-            }
-        }
-
-
-
+     
         public static List<PartnerType> GetPartnerTypeList()
         {
             try
             {
-                return repo.PartnerType.Select(p => p).ToList();
+                using (Repository<PartnerType> repo = new Repository<PartnerType>())
+                {
+                    return repo.PartnerType.AsEnumerable().Where(p => p.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)).ToList();
+                }
             }
             catch { throw; }
         }
 
 
 
-        public static int RegistePartnerType(PartnerType partnerType)
+        public static PartnerType RegistePartnerType(PartnerType partnerType)
         {
             try
             {
-                repo.PartnerType.Add(partnerType);
-                return repo.SaveChanges();
+                using (Repository<PartnerType> repo = new Repository<PartnerType>())
+                {
+                    partnerType.Active = "Y";
+                    repo.PartnerType.Add(partnerType);
+                    if (repo.SaveChanges() > 0)
+                        return partnerType;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
 
 
-        public static int UpdatePartnerType(PartnerType partnerType)
+        public static PartnerType UpdatePartnerType(PartnerType partnerType)
         {
             try
             {
-                repo.PartnerType.Update(partnerType);
-                return repo.SaveChanges();
+                using (Repository<PartnerType> repo = new Repository<PartnerType>())
+                {
+                    repo.PartnerType.Update(partnerType);
+                    if (repo.SaveChanges() > 0)
+                        return partnerType;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
 
 
-        public static int DeletePartnerType(string partnerTypeCode)
+        public static PartnerType DeletePartnerType(string partnerTypeCode)
         {
             try
             {
-                var prttyp = repo.PartnerType.Where(p => p.Code == partnerTypeCode).FirstOrDefault();
-                repo.PartnerType.Remove(prttyp);
-                return repo.SaveChanges();
+                using (Repository<PartnerType> repo = new Repository<PartnerType>())
+                {
+                    var prttyp = repo.PartnerType.Where(p => p.Code == partnerTypeCode).FirstOrDefault();
+                    prttyp.Active = "N";
+                    repo.PartnerType.Remove(prttyp);
+                    if (repo.SaveChanges() > 0)
+                        return prttyp;
+
+                    return null;
+                }
             }
             catch { throw; }
         }

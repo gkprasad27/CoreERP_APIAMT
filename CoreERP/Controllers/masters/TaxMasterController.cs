@@ -7,46 +7,53 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.Models;
+using System.Dynamic;
+using CoreERP.DataAccess;
 
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/TaxMaster")]
+    [Route("api/masters/TaxMaster")]
     public class TaxMasterController : ControllerBase
     {
-        [HttpGet("masters/taxmasters")]
+        [HttpGet("GetTaxmastersList")]
         public async Task<IActionResult> GetAllTaxMasters()
         {
 
             try
             {
-                return Ok(new
+                var taxmasterList = TaxmasterHelper.GetListOfTaxMasters();
+                if (taxmasterList.Count() > 0)
                 {
-                    taxMasters = TaxmasterHelper.GetListOfTaxMasters()
-                });
-            }
-            catch
-            {
-                return BadRequest("No Data  Found");
-            }
+                    dynamic expando = new ExpandoObject();
+                    expando.TaxmasterList = taxmasterList;
 
+                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= expando });
+                }
+                else
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch(Exception ex)
+            {
+            }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to loat Data ." });
         }
 
 
-        [HttpPost("masters/taxmasters/register")]
-        public async Task<IActionResult> Register([FromBody]TaxMasters taxmaster)
+        [HttpPost("RegisterTaxMasters")]
+        public async Task<IActionResult> RegisterTaxMasters([FromBody]TaxMasters taxmaster)
         {
             if (taxmaster == null)
-                return BadRequest($"{nameof(taxmaster)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(taxmaster)} cannot be null" });
            try
             {
                 if (TaxmasterHelper.GetListOfTaxMasters().Where(x => x.Code == taxmaster.Code).Count() > 0)
-                    return BadRequest($"Tax Master Code {nameof(taxmaster.Code)} is already exists ,Please Use Different Code ");
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Tax Master Code {nameof(taxmaster.Code)} is already exists ,Please Use Different Code " });
 
 
-                int result = TaxmasterHelper.RegisterTaxMaster(taxmaster);
-                if (result > 0)
-                    return Ok(taxmaster);
+                var result = TaxmasterHelper.RegisterTaxMaster(taxmaster);
+                if (result !=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
             }
             catch
@@ -57,33 +64,28 @@ namespace CoreERP.Controllers
 
 
 
-        [HttpPut("masters/taxmasters/{code}")]
-        public async Task<IActionResult> UpdateTaxMaster(string code, [FromBody] TaxMasters taxmaster)
+        [HttpPut("UpdateTaxMaster")]
+        public async Task<IActionResult> UpdateTaxMaster([FromBody] TaxMasters taxmaster)
         {
             if (taxmaster == null)
-                return BadRequest($"{nameof(taxmaster)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(taxmaster)} cannot be null" });
 
-            if (!string.IsNullOrWhiteSpace(taxmaster.Code) && code != taxmaster.Code)
-                return BadRequest("Conflicting role id in parameter and model data");
             try
             {
-                int result = TaxmasterHelper.UpdateTaxMaster(taxmaster);
-                if (result > 0)
-                    return Ok(taxmaster);
-
-                //otherwise return 
-                return BadRequest($"{nameof(taxmaster)} Updation Failed");
+                var result = TaxmasterHelper.UpdateTaxMaster(taxmaster);
+                if (result !=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
             }
             catch (Exception ex)
             {
                 return BadRequest(ex);
             }
-
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
         }
 
 
         // Delete Branch
-        [HttpDelete("masters/taxmasters/{code}")]
+        [HttpDelete("DeleteTaxMaster/{code}")]
         public async Task<IActionResult> DeleteTaxMaster(string code)
         {
             if (code == null)
@@ -91,17 +93,14 @@ namespace CoreERP.Controllers
 
             try
             {
-                int result = TaxmasterHelper.DeleteTaxMaster(code);
-                if (result > 0)
-                    return Ok(code);
-
-                return BadRequest("Deletion Failed");
+                var result = TaxmasterHelper.DeleteTaxMaster(code);
+                if (result !=null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = result });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
             }
-
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
         }
     }
 }

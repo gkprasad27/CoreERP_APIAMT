@@ -13,29 +13,23 @@ namespace CoreERP.Controllers
     [Route("api/masters/NoSeries")]
     public class NoSeriesController : ControllerBase
     {
-           [HttpPost("RegisterNoSeries")]
+        [HttpPost("RegisterNoSeries")]
         public async Task<IActionResult> RegisterNoSeries([FromBody]NoSeries noSeries)
         {
             APIResponse apiResponse = null;
             try
             {
-        int result = NoSeriesHelper.RegisteNoSeries(noSeries);
-                if (result > 0)
+                var result = NoSeriesHelper.RegisteNoSeries(noSeries);
+                if (result !=null)
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
                 }
-                else
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
-
-                return Ok(apiResponse);
-      }
-      catch (Exception ex)
-      {
-        return BadRequest(" Registration Operation Failed");
-      }
-    }
+            }
+            catch (Exception ex)
+            {
+            }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
+        }
 
 
 
@@ -45,31 +39,32 @@ namespace CoreERP.Controllers
             try
             {
                 var noSeriesList = NoSeriesHelper.GetAllNoSeriesLists();
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.noSeriesList = noSeriesList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                if (noSeriesList.Count > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.noSeriesList = noSeriesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch
             {
-                return BadRequest("No Data  Found");
             }
+            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
         }
 
-        [HttpPut("UpdateNoSeries/{code}")]
-        public async Task<IActionResult> UpdateNoSeries(string code, [FromBody] NoSeries noSeries)
+        [HttpPut("UpdateNoSeries")]
+        public async Task<IActionResult> UpdateNoSeries([FromBody] NoSeries noSeries)
         {
             APIResponse apiResponse = null;
             if (noSeries == null)
-                return BadRequest($"{nameof(noSeries)} cannot be null");
-
-            if (!string.IsNullOrWhiteSpace(noSeries.Code) && code != noSeries.Code)
-                return BadRequest("Conflicting role id in parameter and model data");
-
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(noSeries)} cannot be null" });
 
             try
             {
-             int rs = NoSeriesHelper.UpdateNoSeries(noSeries);
-                if (rs > 0)
+                var rs = NoSeriesHelper.UpdateNoSeries(noSeries);
+                if (rs !=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
                 }
@@ -79,25 +74,25 @@ namespace CoreERP.Controllers
                 }
                 return Ok(apiResponse);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-             return BadRequest($"{nameof(noSeries)} Updation Failed");
-            }  
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Updation Failed" });
+            }
         }
 
 
-        [HttpDelete("masters/noSeries/{code}")]
+        [HttpDelete("DeleteNoSeries/{noSeriesCode}")]
         [Produces(typeof(NoSeries))]
         public async Task<IActionResult> DeleteNoSeries(string noSeriesCode)
         {
             APIResponse apiResponse = null;
             if (string.IsNullOrWhiteSpace(noSeriesCode))
-                return BadRequest($"{nameof(noSeriesCode)} cannot be null");
-                        
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(noSeriesCode)} cannot be null" });
+
             try
             {
-        int rs = NoSeriesHelper.DeleteNoSeries(noSeriesCode);
-                if (rs > 0)
+                var rs = NoSeriesHelper.DeleteNoSeries(noSeriesCode);
+                if (rs !=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
                 }
@@ -107,64 +102,78 @@ namespace CoreERP.Controllers
                 }
                 return Ok(apiResponse);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest();
             }
 
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
+        }
 
-       }
-
-
-        [HttpGet("masters/noSeries/complist")]
-        public async Task<IActionResult> GetAllCompanysMasters()
+        [HttpGet("GetCompanyList")]
+        public async Task<IActionResult> GetCompanyList()
         {
 
             try
             {
                 var companiesList = CompaniesHelper.GetListOfCompanies();
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.companiesList = companiesList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                if (companiesList.Count > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.companiesList = companiesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch
             {
-                return BadRequest("No Data  Found");
             }
+            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
         }
 
-
-
-        [HttpGet("masters/noSeries/branchlist")]
-        public async Task<IActionResult> GetAllBranches()
+        [HttpGet("GetBranchesList")]
+        public async Task<IActionResult> GetBranchesList()
         {
+            try
+            {
+                var branches = BrancheHelper.GetBranches();
+                if (branches.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.branches = branches;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data  Found" });
+            }
+            catch
+            {
+            }
+            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+        }
 
-      try
-      {
-        return Ok(new
-        {
-          branches = BrancheHelper.GetBranches()
-        });
-      }
-      catch
-      {
-        return BadRequest("No Data  Found");
-      }
-
-    }
-
-    [HttpGet("masters/noSeries/partlist")]
+        [HttpGet("GetPartnerTypeList")]
         [Produces(typeof(List<PartnerType>))]
-        public async Task<IActionResult> GetAllPartners()
+        public async Task<IActionResult> GetPartnerTypeList()
         {
 
-      return Ok(
-          new
-          {
-            partnerType = PartnerTypeHelper.GetPartnerTypeList()
-
-          });
-    }
+            try
+            {
+                var partnerTypeList = PartnerTypeHelper.GetPartnerTypeList();
+                if (partnerTypeList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.partnerTypeList = partnerTypeList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data  Found" });
+            }
+            catch
+            {
+            }
+            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+        }
     }
 }
        

@@ -20,16 +20,15 @@ namespace CoreERP.Controllers
         {
             APIResponse apiResponse = null;
             if (division == null)
-                return BadRequest($"object can not be null");
-
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
                 if (DivisionHelper.GetList(division.Code).Count() > 0)
-                    return BadRequest($"Division Code {nameof(division.Code)} is already exists ,Please Use Different Code ");
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Division Code {nameof(division.Code)} is already exists ,Please Use Different Code " });
 
-                int result=DivisionHelper.Register(division);
-                if (result > 0)
+                var result=DivisionHelper.Register(division);
+                if (result !=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -43,9 +42,8 @@ namespace CoreERP.Controllers
             }
             catch
             {
-                return BadRequest("Regestration Failed");
             }
-           
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
         }
 
 
@@ -53,32 +51,35 @@ namespace CoreERP.Controllers
         [HttpGet("GetDivisionsList")]
         public async Task<IActionResult> GetDivisionsList()
         {
-            //try 
-            //{ 
-            //    return Ok(new { divisions = DivisionHelper.GetList() }); 
-            //}
             try
             {
                 var divisionsList = DivisionHelper.GetList();
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.divisionsList = divisionsList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                if (divisionsList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.divisionsList = divisionsList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
             }
             catch
             { return BadRequest(); }
         }
 
-        [HttpPut("UpdateDivision/{code}")]
-        public async Task<IActionResult> UpdateDivision(string code, [FromBody] Divisions division)
+        [HttpPut("UpdateDivision")]
+        public async Task<IActionResult> UpdateDivision([FromBody] Divisions division)
         {
             APIResponse apiResponse = null;
             if (division == null)
-                return BadRequest($"{nameof(division)} cannot be null");
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(division)} cannot be null" });
 
             try
             {
-                int rs = DivisionHelper.Update(division);
-                if (rs > 0)
+                var rs = DivisionHelper.Update(division);
+                if (rs!=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
                 }
@@ -90,21 +91,22 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"{nameof(division)} Updation Failed");
             }
+            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = " Updation Failed" });
         }
 
 
-        [HttpDelete("masters/divisions/{code}")]
+        [HttpDelete("DeleteDivision/{code}")]
         public async Task<IActionResult> DeleteDivisionByID(string code)
         {
             APIResponse apiResponse = null;
             try
             {
-                if(code == null)
-                    return BadRequest("code can not be null");
-                int rs = DivisionHelper.Delete(code);
-                if (rs > 0)
+                if (code == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
+
+                var rs = DivisionHelper.Delete(code);
+                if (rs !=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
                 }
@@ -116,10 +118,9 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Deletion Failed");
             }
 
-            
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
         }
     }
 }

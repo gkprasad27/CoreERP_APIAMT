@@ -38,7 +38,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
         }
 
 
-        public static int Register(Companies companies)
+        public static Companies Register(Companies companies)
         {
             try
             {
@@ -46,21 +46,27 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 {
                     companies.Active = "Y";
                     repo.Companies.Add(companies);
-                    return repo.SaveChanges();
+                    if(repo.SaveChanges() > 0)
+                    return companies;
+
+                    return null;
                 }
             }
             catch { throw; }
         }
 
 
-        public static int Update(Companies companies)
+        public static Companies Update(Companies companies)
         {
             try
             {
                 using(Repository<Companies> repo = new Repository<Companies>())
                 {
-                    repo.Update(companies);
-                    return repo.SaveChanges();
+                    repo.Companies.Update(companies);
+                    if (repo.SaveChanges() > 0)
+                        return companies;
+
+                    return null;
                 }
             }
             catch { throw; }
@@ -74,7 +80,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 {
                     var comp = repo.Companies.Where(x => x.CompanyCode == code).FirstOrDefault();
                     comp.Active = "N";
-                    repo.Update(comp);
+                    repo.Companies.Update(comp);
                     if (repo.SaveChanges() > 0)
                         return comp;
 

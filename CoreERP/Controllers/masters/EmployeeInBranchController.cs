@@ -16,18 +16,23 @@ namespace CoreERP.Controllers
     public class EmployeeInBranchController : ControllerBase
     {
        
-        [HttpGet("GetAllEmployeesInBranch")]
-        public async Task<IActionResult> GetAllEmployeesInBranch()
+        [HttpGet("GetAllEmployeesInBranch/{BranchCode}")]
+        public async Task<IActionResult> GetAllEmployeesInBranch(string BranchCode)
         {
             try
             {
-                var empinbrList = EmployeeHelper.GetEmployeeInBranches();
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.empinbrList = empinbrList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                var empinbrList = EmployeeHelper.GetEmployeeInBranches(null,BranchCode);
+                if (empinbrList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.empinbrList = empinbrList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "No Data Found." });
             }
-            catch { return BadRequest("No Data found"); }
-
+            catch { }
+            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
         }
 
 
@@ -38,12 +43,17 @@ namespace CoreERP.Controllers
             try
             {
                 var employeesList = EmployeeHelper.GetEmployes();
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.employeesList = employeesList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                if (employeesList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.employeesList = employeesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch { return BadRequest("No Data Found for Employees."); }
-
+            catch {  }
+            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
         }
 
 
@@ -53,11 +63,17 @@ namespace CoreERP.Controllers
             try
             {
                 var branchesList = BrancheHelper.GetBranches();
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.branchesList = branchesList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                if (branchesList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.branchesList = branchesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch { return BadRequest("No Data Found for Branches."); }
+            catch { }
+            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
         }
 
 
@@ -66,11 +82,11 @@ namespace CoreERP.Controllers
         {
             APIResponse apiResponse = null;
             if (employeeInBranch == null)
-                return BadRequest($"{nameof(employeeInBranch)} cannot be null");
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(employeeInBranch)} cannot be null" });
             try
             {
-                int result = EmployeeHelper.RegisterEmployeeInBranch(employeeInBranch);
-                if (result > 0)
+                var result = EmployeeHelper.RegisterEmployeeInBranch(employeeInBranch);
+                if (result !=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -83,22 +99,24 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Registration Failed");
             }
+
+            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
         }
 
 
 
-        [HttpPut("UpdateEmployeeInBranch/{code}")]
+        [HttpPut("UpdateEmployeeInBranch")]
         public async Task<IActionResult> UpdateEmployeeInBranch(string code, [FromBody] EmployeeInBranches employeeInBranch)
         {
             APIResponse apiResponse = null;
             if (employeeInBranch == null)
-                return BadRequest($"{nameof(employeeInBranch)} cannot be null");
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(employeeInBranch)} cannot be null." });
+
             try
             {
-                int result = EmployeeHelper.UpdateEmployeeInBranches(employeeInBranch);
-                if (result > 0)
+                var result = EmployeeHelper.UpdateEmployeeInBranches(employeeInBranch);
+                if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -110,8 +128,8 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"{nameof(employeeInBranch)} Updation Failed");
             }
+            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = " Updation Failed" });
         }
 
 
@@ -121,12 +139,12 @@ namespace CoreERP.Controllers
         {
             APIResponse apiResponse = null;
             if (code == null)
-                return BadRequest($"{nameof(code)}can not be null");
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
             {
-                int result = EmployeeHelper.DeleteEmployeeInBranches(code);
-                if (result > 0)
+                var result = EmployeeHelper.DeleteEmployeeInBranches(code);
+                if (result !=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -139,9 +157,8 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Delete Operation Failed");
             }
-
+            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
         }
     }
 }

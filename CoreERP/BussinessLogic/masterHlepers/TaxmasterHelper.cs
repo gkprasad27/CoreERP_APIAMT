@@ -9,53 +9,65 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class TaxmasterHelper
     {
-        private static Repository<TaxMasters> _repo = null;
-        private static Repository<TaxMasters> repo
-        {
-            get
-            {
-                if (_repo == null)
-                    _repo = new Repository<TaxMasters>();
-                return _repo;
-            }
-        }
-
+       
         public static List<TaxMasters> GetListOfTaxMasters()
         {
             try
-            {
-                return repo.GetAll().ToList();
+            {   using (Repository<TaxMasters> repo = new Repository<TaxMasters>())
+                {
+                    return repo.TaxMasters.AsEnumerable().Where(t => t.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+                }
             }
             catch { throw; }
         }
 
-        public static int RegisterTaxMaster(TaxMasters taxMaster)
+        public static TaxMasters RegisterTaxMaster(TaxMasters taxMaster)
         {
             try
             {
-                repo.TaxMasters.Add(taxMaster);
-                return repo.SaveChanges();
+                using (Repository<TaxMasters> repo = new Repository<TaxMasters>())
+                {
+                    taxMaster.Active = "Y";
+                    repo.TaxMasters.Add(taxMaster);
+                    if (repo.SaveChanges() > 0)
+                        return taxMaster;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
-        public static int UpdateTaxMaster(TaxMasters taxMaster)
+        public static TaxMasters UpdateTaxMaster(TaxMasters taxMaster)
         {
             try
             {
-                repo.TaxMasters.Update(taxMaster);
-                return repo.SaveChanges();
+                using (Repository<TaxMasters> repo = new Repository<TaxMasters>())
+                {
+                    repo.TaxMasters.Update(taxMaster);
+                    if (repo.SaveChanges() > 0)
+                        return taxMaster;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
-        public static int DeleteTaxMaster(string taxMasterCode)
+        public static TaxMasters DeleteTaxMaster(string taxMasterCode)
         {
             try
             {
-                var taxmstr = repo.TaxMasters.Where(a => a.Code == taxMasterCode).FirstOrDefault();
-                repo.TaxMasters.Remove(taxmstr);
-                return repo.SaveChanges();
+                using (Repository<TaxMasters> repo = new Repository<TaxMasters>())
+                {
+                    var taxmstr = repo.TaxMasters.Where(a => a.Code == taxMasterCode).FirstOrDefault();
+                    taxmstr.Active = "N";
+                    repo.TaxMasters.Remove(taxmstr);
+                    if (repo.SaveChanges() > 0)
+                        return taxmstr;
+
+                    return null;
+                }
             }
             catch { throw; }
         }

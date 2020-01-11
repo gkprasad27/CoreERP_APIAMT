@@ -23,13 +23,18 @@ namespace CoreERP.Controllers
             try
             {
                 var branchesList = BrancheHelper.GetBranches();
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.branchesList = branchesList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                if (branchesList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.branchesList = branchesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
             }
-            catch
+            catch(Exception ex)
             {
-                return BadRequest("No Data  Found");
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response ="Failed to load Data." });
             }
            
             
@@ -66,8 +71,8 @@ namespace CoreERP.Controllers
                     return BadRequest($"Branch Code {nameof(branch.BranchCode)} is already Present ,Please Use Different Code ");
                 try
                 {
-                    int result = BrancheHelper.Register(branch);
-                    if (result > 0)
+                    var result = BrancheHelper.Register(branch);
+                    if (result !=null)
                     {
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                     }
@@ -88,8 +93,8 @@ namespace CoreERP.Controllers
 
 
 
-        [HttpPut("UpdateBranch/{code}")]
-        public async Task<IActionResult> UpdateBranch(string code,[FromBody] Branches branch)
+        [HttpPut("UpdateBranch")]
+        public async Task<IActionResult> UpdateBranch([FromBody] Branches branch)
         {
             APIResponse apiResponse = null;
             if (branch == null)
@@ -97,8 +102,8 @@ namespace CoreERP.Controllers
 
             try
             {
-                int result=BrancheHelper.Update(branch);
-                if (result > 0)
+                var result=BrancheHelper.Update(branch);
+                if (result !=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -116,7 +121,7 @@ namespace CoreERP.Controllers
 
 
         // Delete Branch
-        [HttpDelete("masters/branches/{code}")]
+        [HttpDelete("DeleteBranches/{code}")]
         public async Task<IActionResult> DeleteBranch(string code)
         {
             APIResponse apiResponse = null;

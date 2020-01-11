@@ -9,23 +9,15 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class EmployeeHelper
     {
-        private static Repository<Employees> _repo = null;
-        private static Repository<Employees> repo
-        {
-            get
-            {
-                if (_repo == null)
-                    _repo = new Repository<Employees>();
-                return _repo;
-            }
-        }
-
-
+      
         public static List<Employees> GetEmployes()
         {
             try
             {
-                return repo.Employees.Select(x => x).ToList();
+                using (Repository<Employees> repo = new Repository<Employees>())
+                {
+                    return repo.Employees.AsEnumerable().Where(x => x.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)).ToList();
+                }
             }
             catch { throw; }
         }
@@ -34,9 +26,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-              return  repo.Employees
-                    .Where(x=> x.Code == empCode)
+                using (Repository<Employees> repo = new Repository<Employees>())
+                {
+                    return repo.Employees.AsEnumerable()
+                    .Where(x => x.Code == empCode && x.Active.Equals("Y", StringComparison.OrdinalIgnoreCase))
                     .Select(x => x).ToList();
+                }
             }
             catch { throw; }
         }
@@ -45,43 +40,66 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-             return   repo.Employees
+                using (Repository<Employees> repo = new Repository<Employees>())
+                {
+                    return repo.Employees
                    .Where(x => x.Name.ToLower() == name.ToLower())
                    .Select(x => x).ToList();
+                }
             }
             catch { throw; }
         }
 
 
-        public static int Register(Employees employees)
+        public static Employees Register(Employees employees)
         {
             try
             {
-                repo.Employees.Add(employees);
-                return repo.SaveChanges();
+                using (Repository<Employees> repo = new Repository<Employees>())
+                {
+                    employees.Active = "Y";
+                    repo.Employees.Add(employees);
+                    if (repo.SaveChanges() > 0)
+                        return employees;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
 
-        public static int Update(Employees employees)
+        public static Employees Update(Employees employees)
         {
             try
             {
-                repo.Employees.Update(employees);
-                return repo.SaveChanges();
+                using (Repository<Employees> repo = new Repository<Employees>())
+                {
+                    repo.Employees.Update(employees);
+                    if (repo.SaveChanges() > 0)
+                        return employees;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
 
-        public static int Delete(string empCode)
+        public static Employees Delete(string empCode)
         {
             try
             {
-                var emp = repo.Employees.Where(e => e.Code == empCode).FirstOrDefault();
-                repo.Employees.Remove(emp);
-                return repo.SaveChanges();
+                using (Repository<Employees> repo = new Repository<Employees>())
+                {
+                    var emp = repo.Employees.Where(e => e.Code == empCode).FirstOrDefault();
+                    emp.Active = "N";
+                    repo.Employees.Update(emp);
+                    if (repo.SaveChanges() > 0)
+                        return emp;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
@@ -92,54 +110,79 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                return repo.EmployeeInBranches
+                using (Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>())
+                {
+                    return repo.EmployeeInBranches.AsEnumerable()
                            .Where(x => x.EmpCode == (empCode ?? x.EmpCode)
-                                    && x.BranchCode == (branchCode?? x.BranchCode)
+                                    && x.BranchCode == (branchCode ?? x.BranchCode)
+                                    && x.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)
                            ).ToList();
+                }
             }
             catch { throw; }
         }
 
       
-        public static int RegisterEmployeeInBranch(EmployeeInBranches empbr)
+        public static EmployeeInBranches RegisterEmployeeInBranch(EmployeeInBranches empbr)
         {
             try
             {
-                var lastrecord = repo.EmployeeInBranches.Select(x=> x).OrderByDescending(emp => emp.Ext1).FirstOrDefault();
-                if (lastrecord != null)
+                using (Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>())
                 {
-                    empbr.Ext1 = (int.Parse(lastrecord.Ext1) + 1).ToString();
-                }
-                else
-                {
-                    empbr.Ext1 = "1";
-                }
+                    empbr.Active = "Y";
 
-                repo.EmployeeInBranches.Add(empbr);
-                return repo.SaveChanges();
+                    var lastrecord = repo.EmployeeInBranches.Select(x => x).OrderByDescending(emp => emp.Ext1).FirstOrDefault();
+                    if (lastrecord != null)
+                    {
+                        empbr.Ext1 = (int.Parse(lastrecord.Ext1) + 1).ToString();
+                    }
+                    else
+                    {
+                        empbr.Ext1 = "1";
+                    }
+
+                    repo.EmployeeInBranches.Add(empbr);
+                    if (repo.SaveChanges() > 0)
+                        return empbr;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
 
-        public static int UpdateEmployeeInBranches(EmployeeInBranches empbr)
+        public static EmployeeInBranches UpdateEmployeeInBranches(EmployeeInBranches empbr)
         {
             try
             {
-                repo.EmployeeInBranches.Update(empbr);
-                return repo.SaveChanges();
+                using (Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>())
+                {
+                    repo.EmployeeInBranches.Update(empbr);
+                    if (repo.SaveChanges() > 0)
+                        return empbr;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
 
-        public static int DeleteEmployeeInBranches(string empCode)
+        public static EmployeeInBranches DeleteEmployeeInBranches(string empCode)
         {
             try
             {
-                var emp = repo.EmployeeInBranches.Where(e => e.EmpCode == empCode).FirstOrDefault();
-                repo.EmployeeInBranches.Remove(emp);
-                return repo.SaveChanges();
+                using (Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>())
+                {
+                    var emp = repo.EmployeeInBranches.Where(e => e.EmpCode == empCode).FirstOrDefault();
+                    emp.Active = "N";
+                    repo.EmployeeInBranches.Remove(emp);
+                    if (repo.SaveChanges() > 0)
+                        return emp;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
