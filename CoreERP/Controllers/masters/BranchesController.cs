@@ -62,8 +62,8 @@ namespace CoreERP.Controllers
                 return BadRequest($"{nameof(branch)} cannot be null");
             else
             {
-                if (BrancheHelper.SearchBranch(branch.Code).Count() > 0)
-                    return BadRequest($"Branch Code {nameof(branch.Code)} is already Present ,Please Use Different Code ");
+                if (BrancheHelper.SearchBranch(branch.BranchCode).Count() > 0)
+                    return BadRequest($"Branch Code {nameof(branch.BranchCode)} is already Present ,Please Use Different Code ");
                 try
                 {
                     int result = BrancheHelper.Register(branch);

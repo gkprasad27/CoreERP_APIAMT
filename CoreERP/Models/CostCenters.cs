@@ -21,5 +21,7 @@ namespace CoreERP.Models
         public string Email { get; set; }
         public string ResponsiblePerson { get; set; }
         public string Active { get; set; }
+
+        public virtual Companies CompCodeNavigation { get; set; }
     }
 }

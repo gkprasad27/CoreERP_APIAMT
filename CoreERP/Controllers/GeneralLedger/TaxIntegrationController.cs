@@ -75,7 +75,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { companys = GLHelper.GetCompanies().Select(x => new { ID = x.Code, TEXT = x.Name }) });
+                return Ok(new { companys = GLHelper.GetCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.Name }) });
             }
             catch (Exception ex)
             {
@@ -88,7 +88,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { branches = GLHelper.GetBranches().Select(x => new { ID = x.Code, TEXT = x.Name }) });
+                return Ok(new { branches = GLHelper.GetBranches().Select(x => new { ID = x.CompanyCode, TEXT = x.Name }) });
             }
             catch (Exception ex)
             {
@@ -154,7 +154,7 @@ namespace CoreERP.Controllers
 
             try
             {
-                return Ok(new { companys = GLHelper.GetCompanies().Select(x => new { ID = x.Code, TEXT = x.Name }) });
+                return Ok(new { companys = GLHelper.GetCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.Name }) });
             }
             catch (Exception ex)
             {
@@ -170,7 +170,7 @@ namespace CoreERP.Controllers
 
             try
             {
-                return Ok(new { branches = GLHelper.GetBranches().Select(x => new { ID = x.Code, TEXT = x.Name }) });
+                return Ok(new { branches = GLHelper.GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.Name }) });
             }
             catch (Exception ex)
             {

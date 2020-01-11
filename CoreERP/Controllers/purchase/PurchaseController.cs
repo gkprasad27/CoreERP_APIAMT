@@ -33,7 +33,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { companys = PurchasesHelper.GetCompanies().Select(x=> new { ID=x.Code,TEXT=x.Name}) });
+                return Ok(new { companys = PurchasesHelper.GetCompanies().Select(x=> new { ID=x.CompanyCode,TEXT=x.Name}) });
             }
             catch(Exception ex)
             {
@@ -46,7 +46,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { branches = PurchasesHelper.GetBranches().Select(x => new { ID = x.Code, TEXT = x.Name }) });
+                return Ok(new { branches = PurchasesHelper.GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.Name }) });
             }
             catch (Exception ex)
             {
@@ -211,7 +211,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("registerPurchase")]
-        public async Task<IActionResult> RegisterPurchase([FromBody]Purchase[] purchase)
+        public async Task<IActionResult> RegisterPurchase([FromBody]Models.Purchase[] purchase)
         {
             if (purchase == null)
                 return BadRequest($"{nameof(purchase)} cannot be null");
@@ -228,7 +228,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("updatePurchase")]
-        public async Task<IActionResult> UpdatePurchase(string code, [FromBody] Purchase purchase)
+        public async Task<IActionResult> UpdatePurchase(string code, [FromBody] Models.Purchase purchase)
         {
             if (purchase == null)
                 return BadRequest($"{nameof(purchase)} cannot be null");

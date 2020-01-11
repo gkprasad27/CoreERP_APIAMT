@@ -11,12 +11,12 @@ namespace CoreERP.DataAccess
 {
     public class Repository<TEntity> : ERPContext, IRepository<TEntity> where TEntity : class
     {
-        protected readonly CoreERPContext _context;
+        protected readonly ERPContext _context;
         protected readonly DbSet<TEntity> _entities;
        
         public Repository()
         {
-            _context =new  CoreERPContext();
+            _context =new ERPContext();
             _entities = _context.Set<TEntity>();
 
 

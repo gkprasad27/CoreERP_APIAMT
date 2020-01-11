@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class Branches
     {
-        public string Code { get; set; }
+        public string BranchCode { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string Address3 { get; set; }
@@ -15,7 +15,7 @@ namespace CoreERP.Models
         public string BankBranch { get; set; }
         public string BankName { get; set; }
         public string Building { get; set; }
-        public string CompCode { get; set; }
+        public string CompanyCode { get; set; }
         public string Email { get; set; }
         public string Ext1 { get; set; }
         public string Ext2 { get; set; }
@@ -34,5 +34,7 @@ namespace CoreERP.Models
         public string Place { get; set; }
         public string State { get; set; }
         public string Active { get; set; }
+
+        public virtual Companies CompanyCodeNavigation { get; set; }
     }
 }

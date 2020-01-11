@@ -5,7 +5,13 @@ namespace CoreERP.Models
 {
     public partial class Companies
     {
-        public string Code { get; set; }
+        public Companies()
+        {
+            Branches = new HashSet<Branches>();
+            CostCenters = new HashSet<CostCenters>();
+        }
+
+        public string CompanyCode { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string Address3 { get; set; }
@@ -30,5 +36,8 @@ namespace CoreERP.Models
         public string Ext3 { get; set; }
         public string Ext4 { get; set; }
         public string Active { get; set; }
+
+        public virtual ICollection<Branches> Branches { get; set; }
+        public virtual ICollection<CostCenters> CostCenters { get; set; }
     }
 }

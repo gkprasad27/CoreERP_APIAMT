@@ -33,7 +33,7 @@ namespace CoreERP.Controllers
                // return NotFound("No Data Found.");
 
                // return Ok(new { companies = ex.Message });
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "Failed to load Companies" });
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load Companies" });
             }
         }
 
@@ -47,8 +47,8 @@ namespace CoreERP.Controllers
                     return BadRequest($"{nameof(company)} cannot be null");
                 else
                 {
-                if (CompaniesHelper.GetCompanies(company.Code) !=null)
-                    return BadRequest("Code =" + company.Code + " is already Exists,Please Use Another Code");
+                if (CompaniesHelper.GetCompanies(company.CompanyCode) !=null)
+                    return BadRequest("Code =" + company.CompanyCode + " is already Exists,Please Use Another Code");
 
                 try
                 {
@@ -81,7 +81,7 @@ namespace CoreERP.Controllers
             if (company == null)
                     return BadRequest($"{nameof(company)} cannot be null");
 
-                if (!string.IsNullOrWhiteSpace(company.Code) && code != company.Code)
+                if (!string.IsNullOrWhiteSpace(company.CompanyCode) && code != company.CompanyCode)
                     return BadRequest("Conflicting role id in parameter and model data");
 
             try

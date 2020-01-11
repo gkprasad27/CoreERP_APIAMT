@@ -826,9 +826,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<Branches>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.BranchCode);
 
-                entity.Property(e => e.Code).HasMaxLength(24);
+                entity.Property(e => e.BranchCode).HasMaxLength(24);
 
                 entity.Property(e => e.Address1).HasMaxLength(40);
 
@@ -848,7 +848,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Building).HasMaxLength(20);
 
-                entity.Property(e => e.CompCode).HasMaxLength(14);
+                entity.Property(e => e.CompanyCode).HasMaxLength(14);
 
                 entity.Property(e => e.Email).HasMaxLength(100);
 
@@ -980,9 +980,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<Companies>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.CompanyCode);
 
-                entity.Property(e => e.Code).HasMaxLength(4);
+                entity.Property(e => e.CompanyCode).HasMaxLength(4);
 
                 entity.Property(e => e.Address1).HasMaxLength(40);
 

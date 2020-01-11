@@ -28,7 +28,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 {
                     return repo.Branches
                                .Where(b => b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase) 
-                                        && b.Code == code).FirstOrDefault();
+                                        && b.BranchCode == code).FirstOrDefault();
                 }
             }
             catch { throw; }
@@ -42,7 +42,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using (Repository<Branches> repo = new Repository<Branches>())
                 {
                     return repo.Branches
-                    .Where(b => b.Code.Contains(branchCode ?? b.Code)
+                    .Where(b => b.BranchCode.Contains(branchCode ?? b.BranchCode)
                              && b.Name.Contains(branchName ?? b.Name)
                              && b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
                     ).ToList();
@@ -58,7 +58,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using (Repository<Branches> repo = new Repository<Branches>())
                 {
                     return repo.Branches
-                      .Where(b => b.Code == branchCode
+                      .Where(b => b.BranchCode == branchCode
                                && b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
                             )
                       .ToList();

@@ -900,9 +900,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<Branches>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.BranchCode);
 
-                entity.Property(e => e.Code).HasMaxLength(24);
+                entity.Property(e => e.BranchCode).HasMaxLength(20);
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
@@ -927,7 +927,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Building).HasMaxLength(20);
 
-                entity.Property(e => e.CompCode).HasMaxLength(20);
+                entity.Property(e => e.CompanyCode)
+                    .IsRequired()
+                    .HasMaxLength(20);
 
                 entity.Property(e => e.Email).HasMaxLength(100);
 
@@ -968,6 +970,12 @@ namespace CoreERP.Models
                 entity.Property(e => e.Place).HasMaxLength(30);
 
                 entity.Property(e => e.State).HasMaxLength(20);
+
+                entity.HasOne(d => d.CompanyCodeNavigation)
+                    .WithMany(p => p.Branches)
+                    .HasForeignKey(d => d.CompanyCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Branches_Companies");
             });
 
             modelBuilder.Entity<Brand>(entity =>
@@ -1074,9 +1082,10 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<Companies>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.CompanyCode)
+                    .HasName("PK_Companies_1");
 
-                entity.Property(e => e.Code).HasMaxLength(20);
+                entity.Property(e => e.CompanyCode).HasMaxLength(20);
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
@@ -1134,7 +1143,13 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<CostCenters>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => new { e.Code, e.CompCode });
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CompCode).HasMaxLength(20);
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
@@ -1155,14 +1170,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Address4)
                     .HasMaxLength(40)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Code)
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.CompCode)
-                    .HasMaxLength(20)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Email)
@@ -1203,6 +1210,12 @@ namespace CoreERP.Models
                 entity.Property(e => e.State)
                     .HasMaxLength(20)
                     .IsUnicode(false);
+
+                entity.HasOne(d => d.CompCodeNavigation)
+                    .WithMany(p => p.CostCenters)
+                    .HasForeignKey(d => d.CompCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CostCenters_Companies");
             });
 
             modelBuilder.Entity<Counters>(entity =>

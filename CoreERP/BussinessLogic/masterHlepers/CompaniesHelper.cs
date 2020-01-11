@@ -15,7 +15,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using(Repository<Companies> repo=new Repository<Companies>())
                 {
-                    return repo.Companies.Where(c=> c.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)).ToList();
+                    return repo.Companies.AsEnumerable().Where(c=> c.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)).ToList();
                 }
             }
             catch { throw; }
@@ -28,7 +28,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<Companies> repo = new Repository<Companies>())
                 {
-                    return repo.Companies.Where(x => x.Code == compCode 
+                    return repo.Companies.AsEnumerable()
+                               .Where(x => x.CompanyCode == compCode 
                                                  &&  x.Active.Equals("Y",StringComparison.OrdinalIgnoreCase))
                                          .FirstOrDefault();
                 }
@@ -71,7 +72,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<Companies> repo = new Repository<Companies>())
                 {
-                    var comp = repo.Companies.Where(x => x.Code == code).FirstOrDefault();
+                    var comp = repo.Companies.Where(x => x.CompanyCode == code).FirstOrDefault();
                     comp.Active = "N";
                     repo.Update(comp);
                     if (repo.SaveChanges() > 0)
