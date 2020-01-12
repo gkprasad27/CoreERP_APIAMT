@@ -7,58 +7,71 @@ using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
-  public class ProfitCenterHelper
-  {
-    private static Repository<ProfitCenters> _repo = null;
-    private static Repository<ProfitCenters> repo
+    public class ProfitCenterHelper
     {
-      get
-      {
-        if (_repo == null)
-          _repo = new Repository<ProfitCenters>();
-        return _repo;
-      }
-    }
 
-    public static List<ProfitCenters> GetProfitCenterList()
-    {
-      try
-      {
-        return repo.ProfitCenters.Select(p => p).ToList();
-      }
-      catch { throw; }
-    }
+        public static List<ProfitCenters> GetProfitCenterList()
+        {
+            try
+            {
+                using (Repository<ProfitCenters> repo = new Repository<ProfitCenters>())
+                {
+                    return repo.ProfitCenters.AsEnumerable().Where(p => p.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+            }
+            catch { throw; }
+        }
 
-    public static int RegisteProfitCenter(ProfitCenters profitCenter)
-    {
-      try
-      {
-        repo.ProfitCenters.Add(profitCenter);
-        return repo.SaveChanges();
-      }
-      catch { throw; }
-    }
+        public static ProfitCenters RegisteProfitCenter(ProfitCenters profitCenter)
+        {
+            try
+            {
+                using (Repository<ProfitCenters> repo = new Repository<ProfitCenters>())
+                {
+                    profitCenter.Active = "Y";
+                    repo.ProfitCenters.Add(profitCenter);
+                    if (repo.SaveChanges() > 0)
+                        return profitCenter;
 
-    public static int UpdateProfitCenter(ProfitCenters profitCenter)
-    {
-      try
-      {
-        repo.ProfitCenters.Update(profitCenter);
-        return repo.SaveChanges();
-      }
-      catch { throw; }
-    }
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+
+        public static ProfitCenters UpdateProfitCenter(ProfitCenters profitCenter)
+        {
+            try
+            {
+                using (Repository<ProfitCenters> repo = new Repository<ProfitCenters>())
+                {
+                    repo.ProfitCenters.Update(profitCenter);
+                    if (repo.SaveChanges() > 0)
+                        return profitCenter;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
 
 
-    public static int DeleteProfitCenter(string profitCenterCode)
-    {
-      try
-      {
-        var prftcntr = repo.ProfitCenters.Where(p => p.Code == profitCenterCode).FirstOrDefault();
-        repo.ProfitCenters.Remove(prftcntr);
-        return repo.SaveChanges();
-      }
-      catch { throw; }
+        public static ProfitCenters DeleteProfitCenter(int seqID)
+        {
+            try
+            {
+                using (Repository<ProfitCenters> repo = new Repository<ProfitCenters>())
+                {
+                    var prftcntr = repo.ProfitCenters.Where(p => p.SeqId == seqID).FirstOrDefault();
+                    prftcntr.Active = "N";
+                    repo.ProfitCenters.Update(prftcntr);
+                    if (repo.SaveChanges() > 0)
+                        return prftcntr;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
     }
-  }
 }

@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,99 +13,214 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/PartnerCreation")]
+    [Route("api/masters/PartnerCreation")]
     public class PartnerCreationController : ControllerBase
     {
 
-        [HttpPost("masters/partnercreation/insertpartnerType")]
-        public async Task<IActionResult> Register([FromBody]PartnerCreation partnercreation)
+        [HttpPost("RegisterPartnerType")]
+        public async Task<IActionResult> RegisterPartnerType([FromBody]PartnerCreation partnercreation)
         {
             try
             {
-                int result = PartnerCreationHelper.RegisterPartnerCreation(partnercreation);
-                if (result > 0)
-                    return Ok(partnercreation);
-
-                return BadRequest(" Registration Operation Failed");
+                var result = PartnerCreationHelper.RegisterPartnerCreation(partnercreation);
+                if (result !=null)
+                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
             }
             catch (Exception ex)
             {
-                return BadRequest(" Registration Operation Failed");
             }
-
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
         }
 
 
 
-        [HttpGet("masters/partnercreation")]
-        public async Task<IActionResult> GetAllData()
+        [HttpGet("GetPartnerCreationList")]
+        public async Task<IActionResult> GetPartnerCreationList()
         {
-            // return Ok(_unitOfWork.PartnerCreation.GetAll());
-            //return Json(new {
-            //    company=_unitOfWork.Companys.GetAll(),
-            //    branches=_unitOfWork.Branches.GetAll(),
-            //    partnertype =_unitOfWork.PartnerType.GetAll(),
-            //    partnercreation=_unitOfWork.PartnerCreation.GetAll().OrderBy(x=> int.Parse(x.Code)),
-            //    glaccount = (from glacc in ( from  glaccount1 in _unitOfWork.GLAccounts.GetAll()
-            //                                where  glaccount1.Nactureofaccount != null
-            //                               select  glaccount1)
-            //                  where glacc.Nactureofaccount.ToUpper() == NatureOfAccounts.TRADECUSTOMER.ToString().ToUpper() ||
-            //                        glacc.Nactureofaccount.ToUpper() == NatureOfAccounts.TRADEVENDORS.ToString().ToUpper()
-            //                  select glacc)
 
-            //});
-            return Ok(new
+            try
             {
-
-                partnerCreaetionList = PartnerCreationHelper.GetList()
-
-            });
+                var partnerCreationList = PartnerCreationHelper.GetList();
+                if (partnerCreationList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.partnerCreationList = partnerCreationList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch(Exception ex)
+            { 
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." }); 
+            }
+           
         }
 
-        [HttpPut("masters/partnercreation/{code}")]
+        [HttpPut("UpdatePartnerCreation")]
         [Produces(typeof(PartnerCreation))]
-        public async Task<IActionResult> Updatepartnercreation(string code, [FromBody] PartnerCreation partnercreation)
+        public async Task<IActionResult> UpdatePartnerCreation([FromBody] PartnerCreation partnercreation)
         {
             if (partnercreation == null)
-                return BadRequest($"{nameof(partnercreation)} cannot be null");
-
-            if (!string.IsNullOrWhiteSpace(partnercreation.Code) && code != partnercreation.Code)
-                return BadRequest("Conflicting role id in parameter and model data");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(partnercreation)} cannot be null" });
 
 
             try
             {
-                int rs = PartnerCreationHelper.UpdatePartnerCreation(partnercreation);
-                if (rs > 0)
-                    return Ok(partnercreation);
-
-                return BadRequest($"{nameof(partnercreation)} Updation Failed");
+                var rs = PartnerCreationHelper.UpdatePartnerCreation(partnercreation);
+                if (rs != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = rs });
             }
             catch (Exception ex)
             {
-                return BadRequest($"{nameof(partnercreation)} Updation Failed");
             }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
         }
 
 
-        [HttpDelete("masters/partnercreation/{code}")]
-        [Produces(typeof(PartnerCreation))]
-        public async Task<IActionResult> DeletepartnercreationByID(string code)
+        [HttpDelete("DeletePartnerCreation/{code}")]
+        public async Task<IActionResult> DeletePartnerCreation(string code)
         {
 
             if (string.IsNullOrWhiteSpace(code))
-                return BadRequest($"{nameof(code)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
+
             try
             {
-                int result = PartnerCreationHelper.DeletePartnerCreation(code);
-                if (result > 0)
-                    return Ok(code);
-
-                return BadRequest("Delete Operation Failed");
+                var result = PartnerCreationHelper.DeletePartnerCreation(code);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
             }
             catch (Exception ex)
             {
-                return BadRequest("Delete Operation Failed");
+            }
+
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
+        }
+
+        [HttpGet("GetBalanceTypes")]
+        public async Task<IActionResult> GetBalanceTypes()
+        {
+            try
+            {
+                var balanceTypeList = PartnerCreationHelper.GetBalanceType();
+                if (balanceTypeList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.partnerCreationList = balanceTypeList.Select(n => new { ID = n, Text = n }); ;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Blance Type not configured." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+            }
+        }
+
+        [HttpGet("GetNatureList")]
+        public async Task<IActionResult> GetNatureList()
+        {
+            try
+            {
+                var natureList = PartnerCreationHelper.GetNatureList();
+                if (natureList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.partnerCreationList = natureList.Select(n=>new {ID=n,Text=n });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Nature Value not configured." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+            }
+        }
+       
+        [HttpGet("GetGlAccounts")]
+        public async Task<IActionResult> GetGlAccounts()
+        {
+            try
+            {
+                var glAccountList = PartnerCreationHelper.GetGlaccounts();
+                if (glAccountList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.glAccountList = glAccountList.Select(n => new { ID = n.Glcode, Text = n.Description });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "NO Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+            }
+        }
+
+        [HttpGet("GetPartnerTypes")]
+        public async Task<IActionResult> GetPartnerTypes()
+        {
+            try
+            {
+                var partnerTypeList = PartnerCreationHelper.GetPartnerTypes();
+                if (partnerTypeList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.partnerTypeList = partnerTypeList.Select(n => new { ID = n.Code, Text = n.Description });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+            }
+        }
+
+        [HttpGet("GetBranchesList")]
+        public async Task<IActionResult> GetBranchesList()
+        {
+            try
+            {
+                var branchesList = PartnerCreationHelper.GetBranches();
+                if (branchesList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.branchesList = branchesList.Select(n => new { ID = n.BranchCode, Text = n.Name });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+            }
+        }
+
+        [HttpGet("GetCompaniesList")]
+        public async Task<IActionResult> GetCompaniesList()
+        {
+            try
+            {
+                var companiesList = PartnerCreationHelper.GetCompanies();
+                if (companiesList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.companiesList = companiesList.Select(n => new { ID = n.CompanyCode, Text = n.Name });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
             }
         }
     }

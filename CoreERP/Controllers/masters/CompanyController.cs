@@ -71,7 +71,7 @@ namespace CoreERP.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return BadRequest($"{nameof(company)} cannot be null");
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
                 }
 
             }

@@ -5,6 +5,7 @@ namespace CoreERP.Models
 {
     public partial class ProfitCenters
     {
+        public int SeqId { get; set; }
         public string Code { get; set; }
         public string CompCode { get; set; }
         public string Name { get; set; }

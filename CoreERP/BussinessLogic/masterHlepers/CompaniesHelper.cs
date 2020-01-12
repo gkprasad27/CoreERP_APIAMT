@@ -29,8 +29,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using (Repository<Companies> repo = new Repository<Companies>())
                 {
                     return repo.Companies.AsEnumerable()
-                               .Where(x => x.CompanyCode == compCode 
-                                                 &&  x.Active.Equals("Y",StringComparison.OrdinalIgnoreCase))
+                               .Where(x => x.CompanyCode.Equals(compCode))
                                          .FirstOrDefault();
                 }
             }

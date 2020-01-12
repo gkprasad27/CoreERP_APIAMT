@@ -17,13 +17,16 @@ namespace CoreERP.Controllers
     {
        
         [HttpPost("RegisterAssetMaster")]
-        public async Task<IActionResult> RegisterAssetMaster([FromBody]  AssetMaster assetMaster)//
+        public async Task<IActionResult> RegisterAssetMaster([FromBody]  AssetMaster assetMaster)
         {
             APIResponse apiResponse = null;
             try
             {
-                int result = AssetHelper.RegisterAssetMaster(assetMaster);
-                if (result > 0)
+                if (AssetHelper.GetList(assetMaster.AssetNo) != null)
+                    return Ok(new APIResponse() { status=APIStatus.FAIL.ToString(),response=$"AssetNo ={assetMaster.AssetNo} Aready Exists."});
+
+                var result = AssetHelper.RegisterAssetMaster(assetMaster);
+                if (result !=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -37,12 +40,10 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(" Registration Operation Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
             }
 
         }
-
-
 
         [HttpGet("GetAssetMasterList")]
         public async Task<IActionResult> GetAssetMasterList()
@@ -50,13 +51,18 @@ namespace CoreERP.Controllers
             try
             {
                 var assetmasterList = AssetHelper.GetList();
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.assetmasterList = assetmasterList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                if (assetmasterList.Count > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.assetmasterList = assetmasterList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "No Data  Found" });
             }
             catch
             {
-                return BadRequest("No Data  Found");
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "Failed to load data." });
             }
             //return Ok( new {
 
@@ -72,20 +78,18 @@ namespace CoreERP.Controllers
             //});
         }
 
-        
-
-        [HttpPut("UpdateAssetMaster/{code}")]
-        public async Task<IActionResult> UpdateAssetMaster(string code, [FromBody]AssetMaster assetMaster)
+        [HttpPut("UpdateAssetMaster")]
+        public async Task<IActionResult> UpdateAssetMaster([FromBody]AssetMaster assetMaster)
         {
             APIResponse apiResponse = null;
             if (assetMaster == null)
                 return BadRequest($"{nameof(assetMaster)} cannot be null");
             try
             {
-                int rs = AssetHelper.UpdateAssetMaster(assetMaster);
-                if (rs > 0)
+                var result = AssetHelper.UpdateAssetMaster(assetMaster);
+                if (result != null)
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
                 else
                 {
@@ -94,9 +98,9 @@ namespace CoreERP.Controllers
                 return Ok(apiResponse);
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-             return BadRequest($"{nameof(assetMaster)} Updation Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed"});
             }  
         }
 
@@ -107,12 +111,12 @@ namespace CoreERP.Controllers
             APIResponse apiResponse = null;
             // Division division = null;
             if (string.IsNullOrWhiteSpace(code))
-                return BadRequest($"{nameof(code)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try
             {
-                int result = AssetHelper.DeleteAssetMaster(code);
-                if (result > 0)
+                var result = AssetHelper.DeleteAssetMaster(code);
+                if (result !=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -125,10 +129,45 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Delete Operation Failed");
+                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
             }
        }
 
+        [HttpGet("isNoSeriesIsAuto")]
+        public async Task<IActionResult> IsNoSeriesIsAuto()
+        {
+            try
+            {
+                var noSrs = AssetHelper.GetNoSeries();
+                dynamic expando = new ExpandoObject();
+                if (noSrs != null)
+                    expando.isNoTypeAuto = noSrs.NoType.Equals("AUTO");
+                else
+                    expando.isNoTypeAuto = false;
+
+                return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=expando});
+            }
+            catch(Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("AutoGenerateAssetNo")]
+        public async Task<IActionResult> AutoGenerateAssetNo()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.AssetNo = AssetHelper.AutoIncrementAssetNo();
+
+                return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=expando});
+            }
+            catch(Exception ex)
+            { 
+            }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =null });
+        }
 
     }
 }

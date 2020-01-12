@@ -81,17 +81,17 @@ namespace CoreERP.Controllers
         }
 
 
-        [HttpDelete("DeleteNoSeries/{noSeriesCode}")]
+        [HttpDelete("DeleteNoSeries/{code}")]
         [Produces(typeof(NoSeries))]
-        public async Task<IActionResult> DeleteNoSeries(string noSeriesCode)
+        public async Task<IActionResult> DeleteNoSeries(string code)
         {
             APIResponse apiResponse = null;
-            if (string.IsNullOrWhiteSpace(noSeriesCode))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(noSeriesCode)} cannot be null" });
+            if (string.IsNullOrWhiteSpace(code))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try
             {
-                var rs = NoSeriesHelper.DeleteNoSeries(noSeriesCode);
+                var rs = NoSeriesHelper.DeleteNoSeries(code);
                 if (rs !=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };

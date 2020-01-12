@@ -7,91 +7,102 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.Models;
+using CoreERP.DataAccess;
+using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
-  [ApiController]
-    [Route("api/ProfitCenterMaster")]
+    [ApiController]
+    [Route("api/masters/ProfitCenter")]
     public class ProfitCenterMasterController : ControllerBase
     {
-        
 
-        [HttpGet("masters/profitMaster")]
-        public async Task<IActionResult> GetAllProfitCenters()
+
+        [HttpGet("GetProfitCenterList")]
+        public async Task<IActionResult> GetProfitCenterList()
         {
-
-           return Ok(new
-      {
-       profitCenter=ProfitCenterHelper.GetProfitCenterList()
-        
-           });
-
-    }
-
-
-        [HttpPost("masters/profitMaster/register")]
-        public async Task<IActionResult> Register([FromBody]ProfitCenters profitCenter)
-        {
-
-            if (profitCenter == null)
-                return BadRequest($"{nameof(profitCenter)} cannot be null");
-          
-        try
-        {
-          int result = ProfitCenterHelper.RegisteProfitCenter(profitCenter);
-          if (result > 0)
-            return Ok(profitCenter);
-
-            }
-            catch(Exception ex)
-            {
-                return BadRequest($"{nameof(profitCenter)} Registration Failed");
-            }
-      return BadRequest("Registration Failed");
-    }
-
-
-
-        [HttpPut("masters/profitMaster/{code}")]
-        public async Task<IActionResult> UpdateProfit(string code, [FromBody] ProfitCenters profitCenter)
-        {
-            if (profitCenter == null)
-                return BadRequest($"{nameof(profitCenter)} cannot be null");
             try
             {
-        if (profitCenter == null)
-          return BadRequest($"{nameof(profitCenter)} cannot be null");
+                var profitCenterList = ProfitCenterHelper.GetProfitCenterList();
+                if (profitCenterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.profitCenterList = profitCenterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+            }
+            catch (Exception e)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = e.Message });
+            }
+        }
 
-        int rs = ProfitCenterHelper.UpdateProfitCenter(profitCenter);
-        if (rs > 0)
-          return Ok(profitCenter);
 
-      }
-      catch { throw; }
-      return BadRequest($"{nameof(profitCenter)} Updation Failed");
-    }
+        [HttpPost("RegisterProfitCenters")]
+        public async Task<IActionResult> RegisterProfitCenters([FromBody]ProfitCenters profitCenter)
+        {
+
+            if (profitCenter == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(profitCenter)} cannot be null" });
+
+            try
+            {
+                var result = ProfitCenterHelper.RegisteProfitCenter(profitCenter);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
+        }
 
 
-        // Delete Branch
-        [HttpDelete("masters/profitMaster/{code}")]
-        public async Task<IActionResult> DeleteProfit(string code)
+        [HttpPut("UpdateProfitCenters")]
+        public async Task<IActionResult> UpdateProfitCenters(string code, [FromBody] ProfitCenters profitCenter)
+        {
+            if (profitCenter == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(profitCenter)} cannot be null" });
+            try
+            {
+
+                var result = ProfitCenterHelper.UpdateProfitCenter(profitCenter);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = profitCenter });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Updation Failed" });
+        }
+
+        [HttpDelete("DeleteProfitCenters/{code}")]
+        public async Task<IActionResult> DeleteProfitCenters(string code)
         {
             if (code == null)
-                return BadRequest($"{nameof(code)}can not be null");
-
-          
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
             try
             {
-        if (string.IsNullOrWhiteSpace(code))
-          return BadRequest($"{nameof(code)} cannot be null");
+                if (string.IsNullOrWhiteSpace(code))
+                    return BadRequest($"{nameof(code)} cannot be null");
 
-        int result = ProfitCenterHelper.DeleteProfitCenter(code);
-        if (result > 0)
-          return Ok(code);
+                var result = ProfitCenterHelper.DeleteProfitCenter(Convert.ToInt32(code));
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-      }
-      catch { throw; }
-      return BadRequest("Deletion Failed");
-    }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
+        }
     }
 }

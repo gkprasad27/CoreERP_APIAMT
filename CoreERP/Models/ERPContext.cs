@@ -1521,7 +1521,7 @@ namespace CoreERP.Models
                     .HasMaxLength(2)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Code)
+                entity.Property(e => e.KeyName)
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -2387,7 +2387,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<ProfitCenters>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.SeqId);
+
+                entity.Property(e => e.SeqId).HasColumnName("seqID");
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)

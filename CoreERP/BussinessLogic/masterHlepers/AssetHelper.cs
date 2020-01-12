@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess;
+﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -9,47 +10,51 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class AssetHelper
     {
-        private static Repository<AssetMaster> _repo = null;
-        private static Repository<AssetMaster> repo
-        {
-            get
-            {
-                if (_repo == null)
-                    _repo = new Repository<AssetMaster>();
-                return _repo;
-            }
-        }
-
-
         public static List<AssetMaster> GetList()
         {
             try
             {
-                return repo.AssetMaster.ToList();
+                using (Repository<AssetMaster> repo = new Repository<AssetMaster>())
+                {
+                    return repo.AssetMaster.AsEnumerable().Where(a=> a.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)).ToList();
+                }
             }
             catch { throw; }
         }
 
-      
-
-        public static int RegisterAssetMaster(AssetMaster assetMaster)
+        public static AssetMaster GetList(string assetNo)
         {
             try
             {
-                var record = ((from asiacc in repo.AssetMaster select asiacc.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
-                //var lstrcd = (from noasg in repo.NoSeries
-                //           .OrderByDescending(p => p.Code)
-                //              select noasg).FirstOrDefault();
-                if (record !=0)
+                return GetList().Where(x => x.AssetNo == assetNo).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+
+
+
+        public static AssetMaster RegisterAssetMaster(AssetMaster assetMaster)
+        {
+            try
+            {
+                using (Repository<AssetMaster> repo = new Repository<AssetMaster>())
                 {
-                    // noSeries.Code = (int.Parse(lstrcd.Code) + 1).ToString(); 
-                    assetMaster.Code = (record + 1).ToString();
+                    var record = ((from asiacc in repo.AssetMaster select asiacc.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
+                    if (record != 0)
+                    {
+                        // noSeries.Code = (int.Parse(lstrcd.Code) + 1).ToString(); 
+                        assetMaster.Code = (record + 1).ToString();
+                    }
+                    else
+                        assetMaster.Code = "1";
+
+                    assetMaster.Active = "Y";
+                    repo.AssetMaster.Add(assetMaster);
+                    if (repo.SaveChanges() > 0)
+                        return assetMaster;
+
+                    return null;
                 }
-                else
-                    assetMaster.Code = "1";
-                
-                repo.AssetMaster.Add(assetMaster);
-                return repo.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -57,12 +62,38 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
-        public static int UpdateAssetMaster(AssetMaster assetMaster)
+        public static AssetMaster UpdateAssetMaster(AssetMaster assetMaster)
         {
             try
             {
-                repo.AssetMaster.Update(assetMaster);
-                return repo.SaveChanges();
+                using (Repository<AssetMaster> repo = new Repository<AssetMaster>())
+                {
+                    repo.AssetMaster.Update(assetMaster);
+                    if (repo.SaveChanges() > 0)
+                        return assetMaster;
+
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public static AssetMaster DeleteAssetMaster(string code)
+        {
+            try
+            {
+                using (Repository<AssetMaster> repo = new Repository<AssetMaster>())
+                {
+                    var assetMaster = repo.AssetMaster.Where(x => x.Code == code).FirstOrDefault();
+                    assetMaster.Active = "N";
+                    repo.AssetMaster.Update(assetMaster);
+                    if (repo.SaveChanges() > 0)
+                        return assetMaster;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
@@ -70,18 +101,88 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
-        public static int DeleteAssetMaster(string code)
+
+        //return Ok( new {
+
+        //    assetmasterlist=AssetHelper.GetList()
+        //    //glAssetAccts=_unitOfWork.GLAccounts.GetAll().Where(x=>x.Nactureofaccount == "FIXEDASSETS"),
+        //noSeriesAssetRcd =(from nos in _unitOfWork.NoSeries.GetAll()
+        //                   join pt  in _unitOfWork.PartnerType.GetAll()
+        //                   on nos.PartnerType equals pt.Code
+        //                   where pt.AccountType == "FIXEDASSETS"
+        //                   select nos),
+        //    ////branch =BrancheHelper.GetBranches(),
+        //    //company =CompaniesHelper.GetListOfCompanies()
+        //});
+
+        public static List<Glaccounts> GetGlaccounts()
         {
             try
             {
-                var assetMaster = repo.AssetMaster.Where(x => x.Code == code).FirstOrDefault();
-                repo.AssetMaster.Remove(assetMaster);
-                return repo.SaveChanges();
+                return GLHelper.GetGLAccountsList()
+                               .Where(gl=> gl.Nactureofaccount.Equals(NatureOfAccounts.FIXEDASSETS.ToString(),StringComparison.OrdinalIgnoreCase))
+                               .ToList();
             }
-            catch (Exception ex)
+            catch { throw; }
+        }
+        public static NoSeries GetNoSeries()
+        {
+            try
             {
-                throw ex;
+                return (from nos in NoSeriesHelper.GetAllNoSeriesLists()
+                        join pt in PartnerTypeHelper.GetPartnerTypeList()
+                        on nos.PartnerType equals pt.Code
+                        where pt.AccountType.Equals("FIXEDASSETS")
+                        select nos).OrderByDescending(x => x.Code).FirstOrDefault();
             }
+            catch { throw; }
+        }
+        
+        public static string AutoIncrementAssetNo()
+        {
+            try
+            {
+                var noSeries = GetNoSeries();
+
+                int startno = 0, endno = 0, max = 0;
+                if (noSeries != null)
+                {
+                    if (noSeries.NoType == "AUTO")
+                    {
+
+                        var noRange = noSeries.NumberSeries.Split("-");
+                        if (noRange.Count() == 1)
+                        {
+                            startno = Convert.ToInt32(noRange[0]);
+                            endno = Convert.ToInt32(noRange[0]);
+                        }
+                        else
+                        {
+                            startno = Convert.ToInt32(noRange[0]);
+                            endno = Convert.ToInt32(noRange[1]);
+                        }
+
+                        var aseetMasterObj = AssetHelper.GetList().Where(x => x.Ext2 == noSeries.Code).OrderByDescending(x => x.AssetNo).FirstOrDefault();
+
+                        if (aseetMasterObj != null)
+                        {
+                            max = Convert.ToInt32(aseetMasterObj.AssetNo);
+                            if ((max + 1) > endno)
+                            {
+                                return ("No Series Rage Exceeded");
+                            }
+                            else
+                                max = max + 1;
+                        }
+                        else
+                            max = startno;
+                    }
+                    else
+                        return string.Empty;
+                }
+                return max.ToString();
+            }
+            catch { throw; }
         }
     }
 }

@@ -69,7 +69,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 {
                     var prttyp = repo.PartnerType.Where(p => p.Code == partnerTypeCode).FirstOrDefault();
                     prttyp.Active = "N";
-                    repo.PartnerType.Remove(prttyp);
+                    repo.PartnerType.Update(prttyp);
                     if (repo.SaveChanges() > 0)
                         return prttyp;
 
