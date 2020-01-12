@@ -5,87 +5,100 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.Models;
+using CoreERP.DataAccess;
+using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/SegmentMaster")]
+    [Route("api/masters/Segment")]
     public class SegmentMasterController : ControllerBase
     {
-        
-        
-        [HttpGet("masters/SegmentMaster")]
-        public async Task<IActionResult> GetAll()
+
+
+        [HttpGet("GetSegmentList")]
+        public async Task<IActionResult> GetSegmentList()
         {
-            return Ok(new
-            {
-           segment = SegmentHelper.GetSegmentList()
-
-         });
-    }
-
-
-        [HttpPost("masters/SegmentMaster/register")]
-        public async Task<IActionResult> Register([FromBody]Segment segment)
-        {
-             if (segment == null)
-                return BadRequest($"{nameof(segment)} cannot be null");
-           try
-            {
-        int result = SegmentHelper.RegisterSegment(segment);
-        if (result > 0)
-          return Ok(segment);
-      }
-            catch(Exception ex)
-            {
-               
-            }
-      return BadRequest("Registration Failed");
-    }
-
-
-
-        [HttpPut("masters/SegmentMaster/{code}")]
-        public async Task<IActionResult> UpdateSegment(string code, [FromBody] Segment segment)
-        {
-            if (segment == null)
-                return BadRequest($"{nameof(segment)} cannot be null");
             try
             {
-                 if (segment == null)
+                var segmentList = SegmentHelper.GetSegmentList();
+                if (segmentList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.segmentList = segmentList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("RegisterSegment")]
+        public async Task<IActionResult> RegisterSegment([FromBody]Segment segment)
+        {
+            if (segment == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(segment)} cannot be null" });
+            try
+            {
+                if(SegmentHelper.IsSegmentIDExists(segment.Id))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"ID={segment.Id} Already Exists." });
+
+                var result = SegmentHelper.RegisterSegment(segment);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+
+        [HttpPut("UpdateSegment")]
+        public async Task<IActionResult> UpdateSegment([FromBody] Segment segment)
+        {
+            if (segment == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(segment)} cannot be null" });
+            try
+            {
+                if (segment == null)
                     return BadRequest($"{nameof(segment)} cannot be null");
 
-                int rs = SegmentHelper.UpdateSegment(segment);
-                if (rs > 0)
-                    return Ok(segment);
-                    
+                var result = SegmentHelper.UpdateSegment(segment);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
             }
-            catch
+            catch (Exception ex)
             {
-              throw;
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-      return BadRequest($"{nameof(segment)} Updation Failed");             
-    }
+        }
 
-
-        // Delete Branch
-        [HttpDelete("masters/SegmentMaster/{ID}")]
+        [HttpDelete("DeleteSegment/{ID}")]
         public async Task<IActionResult> DeleteSegment(string ID)
         {
             if (ID == null)
-                return BadRequest($"{nameof(ID)}can not be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(ID)}can not be null" });
             try
             {
-        if (string.IsNullOrWhiteSpace(ID))
-          return BadRequest($"{nameof(ID)} cannot be null");
+                var result = SegmentHelper.DeleteSegment(Convert.ToInt32(ID));
+                if (result !=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-        int result = SegmentHelper.DeleteSegment(ID);
-        if (result > 0)
-          return Ok(ID);
-
-      }
-      catch { throw; }
-      return BadRequest("Deletion Failed");
-    }
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Registration Failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message});
+            }
+        }
     }
 }

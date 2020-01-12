@@ -3257,7 +3257,15 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<Segment>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.SeqId);
+
+                entity.Property(e => e.SeqId).HasColumnName("seqID");
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasDefaultValueSql("('Y')");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")

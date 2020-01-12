@@ -7,63 +7,88 @@ using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
-  public class CostCenterHelper
-  {
-    private static Repository<CostCenters> _repo = null;
-    private static Repository<CostCenters> repo
+    public class CostCenterHelper
     {
-      get
-      {
-        if (_repo == null)
-          _repo = new Repository<CostCenters>();
-        return _repo;
-      }
+        public static List<CostCenters> GetCostCenterList()
+        {
+            try
+            {
+                using (Repository<CostCenters> repo = new Repository<CostCenters>())
+                {
+                    return repo.CostCenters.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+            }
+            catch { throw; }
+        }
+
+        public static bool IsCodeExists(string code)
+        {
+            try
+            {
+                using (Repository<CostCenters> repo = new Repository<CostCenters>())
+                {
+                    return repo.CostCenters
+                               .AsEnumerable()
+                               .Where(c => c.Code == code)
+                               .Count() > 0;
+                }
+            }
+            catch { throw; }
+        }
+
+        public static CostCenters RegisterCostCenter(CostCenters costCenter)
+        {
+            try
+            {
+                using (Repository<CostCenters> repo = new Repository<CostCenters>())
+                {
+                    costCenter.Active = "Y";
+                    repo.CostCenters.Add(costCenter);
+                    if (repo.SaveChanges() > 0)
+                        return costCenter;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+
+
+
+        public static CostCenters UpdateCostCenter(CostCenters costCenters)
+        {
+            try
+            {
+                using (Repository<CostCenters> repo = new Repository<CostCenters>())
+                {
+                    repo.CostCenters.Update(costCenters);
+                    if (repo.SaveChanges() > 0)
+                        return costCenters;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+
+
+
+        public static CostCenters DeleteCostCenter(string costCenterCode)
+        {
+            try
+            {
+                using (Repository<CostCenters> repo = new Repository<CostCenters>())
+                {
+                    var costcntr = repo.CostCenters.Where(c => c.Code == costCenterCode).FirstOrDefault();
+                    costcntr.Active = "N";
+                    repo.CostCenters.Update(costcntr);
+                    if (repo.SaveChanges() > 0)
+                        return costcntr;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
     }
-
-    public static List<CostCenters> GetCostCenterList()
-    {
-      try
-      {
-        return repo.CostCenters.Select(c => c).ToList();
-      }
-      catch { throw; }
-    }
-
-
-
-    public static int RegisterCostCenter(CostCenters costCenter)
-    {
-      try
-      {
-        repo.CostCenters.Add(costCenter);
-        return repo.SaveChanges();
-      }
-      catch { throw; }
-    }
-
-
-
-    public static int UpdateCostCenter(CostCenters costCenters)
-    {
-      try
-      {
-        repo.CostCenters.Update(costCenters);
-        return repo.SaveChanges();
-      }
-      catch { throw; }
-    }
-
-
-
-    public static int DeleteCostCenter(string costCenterCode)
-    {
-      try
-      {
-        var costcntr = repo.CostCenters.Where(c => c.Code == costCenterCode).FirstOrDefault();
-        repo.CostCenters.Remove(costcntr);
-        return repo.SaveChanges();
-      }
-      catch { throw; }
-    }
-  }
 }

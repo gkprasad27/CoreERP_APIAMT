@@ -4,14 +4,15 @@ using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.Models;
 using System.Dynamic;
 using CoreERP.DataAccess;
+using System;
 
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/masters/CostCenterMaster")]
+    [Route("api/masters/CostCenter")]
     public class CostCenterMasterController : ControllerBase
     {
-        
+
 
         [HttpGet("GetCostCenterList")]
         public async Task<IActionResult> GetCostCenterList()
@@ -19,15 +20,20 @@ namespace CoreERP.Controllers
             try
             {
                 var costcenterList = CostCenterHelper.GetCostCenterList();
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.costcenterList = costcenterList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                if (costcenterList.Count > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.costcenterList = costcenterList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found" });
             }
-            catch 
-            { 
-                return BadRequest("No Data  Found");  
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-    }
+        }
 
 
         [HttpPost("RegisterCostCenter")]
@@ -35,11 +41,14 @@ namespace CoreERP.Controllers
         {
             APIResponse apiResponse = null;
             if (costCenter == null)
-                return BadRequest($"{nameof(costCenter)} cannot be null");
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(costCenter)} cannot be null" });
             try
             {
-                int result = CostCenterHelper.RegisterCostCenter(costCenter);
-                if (result > 0)
+                if(CostCenterHelper.IsCodeExists(costCenter.Code))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"Code ={costCenter.Code} Already Exists." });
+
+                var result = CostCenterHelper.RegisterCostCenter(costCenter);
+                if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -50,27 +59,25 @@ namespace CoreERP.Controllers
 
                 return Ok(apiResponse);
             }
-            catch
+            catch (Exception ex)
             {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-      return BadRequest("Registration Failed");
-    }
+        }
 
 
 
-        [HttpPut("UpdateCostCenter/{code}")]
-        public async Task<IActionResult> UpdateCostCenter(string code, [FromBody] CostCenters costCenter)
+        [HttpPut("UpdateCostCenter")]
+        public async Task<IActionResult> UpdateCostCenter([FromBody] CostCenters costCenter)
         {
             APIResponse apiResponse = null;
             if (costCenter == null)
-                return BadRequest($"{nameof(costCenter)} cannot be null");
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(costCenter)} cannot be null" });
             try
             {
-                if (costCenter == null)
-                    return BadRequest($"{nameof(costCenter)} cannot be null");
 
-                int rs = CostCenterHelper.UpdateCostCenter(costCenter);
-                if (rs > 0)
+                var rs = CostCenterHelper.UpdateCostCenter(costCenter);
+                if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
                 }
@@ -81,26 +88,22 @@ namespace CoreERP.Controllers
                 return Ok(apiResponse);
 
             }
-           catch { throw; }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
-
-        // Delete CostCenter
         [HttpDelete("DeleteCostCenter/{code}")]
         public async Task<IActionResult> DeleteCostCenter(string code)
         {
             APIResponse apiResponse = null;
-            if (code == null)
-                return BadRequest($"{nameof(code)}can not be null");
-
-           
+            if (string.IsNullOrWhiteSpace(code))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null"});
             try
             {
-                if (string.IsNullOrWhiteSpace(code))
-                    return BadRequest($"{nameof(code)} cannot be null");
-
-                int result =CostCenterHelper.DeleteCostCenter(code);
-                if (result > 0)
+                var result = CostCenterHelper.DeleteCostCenter(code);
+                if (result !=null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -110,8 +113,10 @@ namespace CoreERP.Controllers
                 }
                 return Ok(apiResponse);
             }
-            catch { return BadRequest("Deletion Failed"); }
-            
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
     }
 }
