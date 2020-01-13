@@ -1,4 +1,4 @@
-﻿namespace CoreERP.Controllers.Enums
+﻿namespace CoreERP
 {
     public enum AccountType
     {

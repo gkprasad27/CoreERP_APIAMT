@@ -29,9 +29,8 @@ namespace CoreERP.Controllers
             }
             catch(Exception ex)
             {
-
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load mat trans types." });
         }
 
         [HttpGet("GetBranchesList")]
@@ -45,31 +44,32 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message});
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load branches." });
         }
 
 
         [HttpPost("RegisterMatTransType")]
         public async Task<IActionResult> RegisterMatTransType([FromBody]MatTranTypes mattrantypes)
         {
-           
+
             if (mattrantypes == null)
-                return BadRequest($"{nameof(mattrantypes)} cannot be null");
-           try
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(mattrantypes)} cannot be null" });
+            try
             {
 
                 var response = BillingHelpers.RegisterMatTransType(mattrantypes);
-              if(response != null)
+                if (response != null)
                 {
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
                 }
-            }
-            catch(Exception ex)
-            {
-            }
 
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Failed." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
@@ -78,7 +78,7 @@ namespace CoreERP.Controllers
         public async Task<IActionResult> UpdateMatTranTypes(string code, [FromBody] MatTranTypes mattrantype)
         {
             if (mattrantype == null)
-                return BadRequest($"{nameof(mattrantype)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(mattrantype)} cannot be null" });
             try
             {
                 var result = BillingHelpers.UpdateMatTransType(mattrantype);
@@ -86,22 +86,23 @@ namespace CoreERP.Controllers
                 {
                     return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
                 }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
             }
             catch(Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message});
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
         }
 
 
        
-        [HttpDelete("sales/materialtrantypes/{code}")]
+        [HttpDelete("DeleteMatTranTypes/{code}")]
         [Produces(typeof(BillingNoSeries))]
-        public async Task<IActionResult> Delete(string code)
+        public async Task<IActionResult> DeleteMatTranTypes(string code)
         {
             if (code == null)
-                return BadRequest($"{nameof(code)}can not be null");
-
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
             try
             {
                 var result = BillingHelpers.DeleteMatTransType(code);
@@ -109,11 +110,12 @@ namespace CoreERP.Controllers
                 {
                     return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=result});
                 }
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Deletion Failed." });
             }
             catch(Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response =ex.Message});
             }
-            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Deletion Failed." });
         }
     }
 }

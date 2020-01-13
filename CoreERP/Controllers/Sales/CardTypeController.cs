@@ -20,32 +20,50 @@ namespace CoreERP.Controllers
         {
             try
             {
-                dynamic expando = new ExpandoObject();
-                expando.cardtype = BillingHelpers.GetCardTypeList();
-
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                var cardTypeList = BillingHelpers.GetCardTypeList();
+                if (cardTypeList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.cardtype = BillingHelpers.GetCardTypeList();
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load Card Types." });
-
         }
 
-        [HttpGet("GetGLAccountsList")]
-        public async Task<IActionResult> GetGLAccountsList()
+        [HttpGet("GetGLAccountsList/{accountType}")]
+        public async Task<IActionResult> GetGLAccountsList(string accountType)
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.accounts = BillingHelpers.GetGlAccountsDRCR();
-
+                expando.accounts = BillingHelpers.GetGlAccountsDRCR(accountType).Select(gl => new { ID = gl.Glcode, Text = gl.Description });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load GL Accounts." });
+        [HttpGet("GetTypeList")]
+        public async Task<IActionResult> GetTypeList(string accountType)
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.typeList = BillingHelpers.GetTypesList().Select(x => new { ID = x, Text = x });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpPost("RegisterCardType")]
@@ -53,33 +71,38 @@ namespace CoreERP.Controllers
         {
 
             if (cardType == null)
-                return BadRequest($"{nameof(cardType)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(cardType)} cannot be null" });
             try
             {
                 var reponse = BillingHelpers.RegisterCardType(cardType);
                 if (reponse != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = reponse });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
             }
-            catch (Exception ex) { }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpPut("UpdateCardType")]
         public async Task<IActionResult> UpdateCardType([FromBody] CardType cardtype)
         {
             if (cardtype == null)
-                return BadRequest($"{nameof(cardtype)} cannot be null");
-
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(cardtype)} cannot be null" });
             try
             {
                 var response = BillingHelpers.UpdateCardType(cardtype);
                 if (response != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
         }
 
         [HttpDelete("DeleteCardType/{code}")]
@@ -87,21 +110,19 @@ namespace CoreERP.Controllers
         public async Task<IActionResult> DeleteCardType(string code)
         {
             if (code == null)
-                return BadRequest($"{nameof(code)}can not be null");
-
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
             try
             {
-                var cardtype = BillingHelpers.GetCardTypeList(code);
-                cardtype.Active = "N";
-                var response = BillingHelpers.UpdateCardType(cardtype);
+                var response = BillingHelpers.DeleteCardType(code);
                 if (response != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
         }
     }
 }

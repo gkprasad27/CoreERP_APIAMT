@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess;
+﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 using (Repository<AsnBillsRcvBranch> repo = new Repository<AsnBillsRcvBranch>())
                 {
-                    return repo.AsnBillsRcvBranch.Where(a => a.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)).ToList();
+                    return repo.AsnBillsRcvBranch.AsEnumerable().Where(a => a.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)).ToList();
                 }
             }
             catch { throw; }
@@ -27,8 +28,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 using (Repository<AsnBillsRcvBranch> repo = new Repository<AsnBillsRcvBranch>())
                 {
-                    return repo.AsnBillsRcvBranch.Where(a => a.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
-                                                          && a.Code == code).FirstOrDefault();
+                    return repo.AsnBillsRcvBranch.AsEnumerable()
+                               .Where(a => a.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+                                        && a.Code == code).FirstOrDefault();
                 }
             }
             catch { throw; }
@@ -45,8 +47,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 string accountType = "BILLSRECEIVABLES";
                 using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
                 {
-                    return repo.Glaccounts
-                               .Where(gl => accountType.Equals(gl.Nactureofaccount, StringComparison.OrdinalIgnoreCase)
+                    return repo.Glaccounts.AsEnumerable()
+                               .Where(gl => NatureOfAccounts.BILLSRECEIVABLES.ToString().Equals(gl.Nactureofaccount, StringComparison.OrdinalIgnoreCase)
                                           && gl.Active.Equals("Y"))
                                .ToList();
                 }
@@ -58,10 +60,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                using (Repository<Branches> repo = new Repository<Branches>())
-                {
-                    return repo.Branches.Where(b => b.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)).ToList();
-                }
+                return BrancheHelper.GetBranches();
             }
             catch { throw; }
         }
@@ -103,6 +102,24 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     repo.AsnBillsRcvBranch.Update(asnBillsRcvBranch);
                     if (repo.SaveChanges() > 0)
                         return asnBillsRcvBranch;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+
+        public static AsnBillsRcvBranch DelteAsnBillsRcvBranch(string code)
+        {
+            try
+            {
+                using (Repository<AsnBillsRcvBranch> repo = new Repository<AsnBillsRcvBranch>())
+                {
+                    var asnBiLLRCvobject = AsnBillsRcvBranchHelper.GetAsnBillsRcvBranchList(code);
+                    asnBiLLRCvobject.Active = "N";
+                    repo.AsnBillsRcvBranch.Update(asnBiLLRCvobject);
+                    if (repo.SaveChanges() > 0)
+                        return asnBiLLRCvobject;
 
                     return null;
                 }

@@ -65,7 +65,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             catch { throw; }
         }
 
-        public static List<Glaccounts> GetGlAccountsDRCR()
+        public static List<Glaccounts> GetGlAccountsDRCR(string natureofAccount)
         {
             try
             {
@@ -73,11 +73,19 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 {
                     return repo.Glaccounts
                           .Where(x => x.Active.Equals("Y")
-                                   && (x.Nactureofaccount.Equals("DR")
-                                   || x.Nactureofaccount.Equals("CR"))
+                                  && (x.Nactureofaccount.Equals(natureofAccount))
                                 )
                           .ToList();
                 }
+            }
+            catch { throw; }
+        }
+
+        public static List<string> GetTypesList()
+        {
+            try
+            {
+                return new List<string>() { NatureOfAccounts.DR.ToString(), NatureOfAccounts.DR.ToString() };
             }
             catch { throw; }
         }
@@ -116,6 +124,25 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     repo.CardType.Update(cardType);
                     if (repo.SaveChanges() > 0)
                         return cardType;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+
+        public static CardType DeleteCardType(string code)
+        {
+            try
+            {
+                using (Repository<CardType> repo = new Repository<CardType>())
+                {
+
+                    var cardtype = BillingHelpers.GetCardTypeList(code);
+                    cardtype.Active = "N";
+                    repo.CardType.Update(cardtype);
+                    if (repo.SaveChanges() > 0)
+                        return cardtype;
 
                     return null;
                 }
