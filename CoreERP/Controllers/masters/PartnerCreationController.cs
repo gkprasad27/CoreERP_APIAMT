@@ -17,8 +17,8 @@ namespace CoreERP.Controllers
     public class PartnerCreationController : ControllerBase
     {
 
-        [HttpPost("RegisterPartnerType")]
-        public async Task<IActionResult> RegisterPartnerType([FromBody]PartnerCreation partnercreation)
+        [HttpPost("RegisterCreation")]
+        public async Task<IActionResult> RegisterCreation([FromBody]PartnerCreation partnercreation)
         {
             try
             {

@@ -10,7 +10,7 @@ namespace CoreERP.Models
         public string Address2 { get; set; }
         public string Address3 { get; set; }
         public string Address4 { get; set; }
-        public decimal AdvanceAmount { get; set; }
+        public decimal? AdvanceAmount { get; set; }
         public string BankAccountNumber { get; set; }
         public string BankBranch { get; set; }
         public string BankName { get; set; }
@@ -21,7 +21,7 @@ namespace CoreERP.Models
         public string Ext2 { get; set; }
         public string Gstno { get; set; }
         public string Ifsccode { get; set; }
-        public decimal LeaseAmount { get; set; }
+        public decimal? LeaseAmount { get; set; }
         public DateTime? LeaseExpiryDate { get; set; }
         public DateTime? LeaseStartDate { get; set; }
         public string Name { get; set; }

@@ -15,8 +15,6 @@ namespace CoreERP.Controllers
     [Route("api/sales/MaterialTransTypes")]
     public class MaterialTransactionTypesController : ControllerBase
     {
-       
-
         [HttpGet("GetMatTranTypesList")]
         public async Task<IActionResult> GetMatTranTypesList()
         {
