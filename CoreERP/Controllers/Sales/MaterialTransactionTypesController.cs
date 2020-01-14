@@ -1,24 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using CoreERP.BussinessLogic.SalesHelper;
 using System.Dynamic;
 using CoreERP.DataAccess;
 using CoreERP.Models;
+using System.Linq;
 
 namespace CoreERP.Controllers
 {
-    [Authorize]
+    [ApiController]
     [Route("api/sales/MaterialTransTypes")]
     public class MaterialTransactionTypesController : ControllerBase
     {
         [HttpGet("GetMatTranTypesList")]
         public async Task<IActionResult> GetMatTranTypesList()
         {
-
             try
             {
                 dynamic expando = new ExpandoObject();
@@ -35,9 +32,9 @@ namespace CoreERP.Controllers
         public async Task<IActionResult> GetBranchesList()
         {
             try
-            {
+            {   
                 dynamic expando = new ExpandoObject();
-                expando.branches = BillingHelpers.GetBranchesList();
+                expando.branchesList = BillingHelpers.GetBranchesList().Select(x => new { ID=x.BranchCode,TEXT=x.Name});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -46,6 +43,20 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetTransTypesList")]
+        public async Task<IActionResult> GetTransTypesList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.branchesList = BillingHelpers.GetTransTypesList().Select(x => new { ID = x, TEXT = x });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
         [HttpPost("RegisterMatTransType")]
         public async Task<IActionResult> RegisterMatTransType([FromBody]MatTranTypes mattrantypes)
@@ -70,8 +81,6 @@ namespace CoreERP.Controllers
             }
         }
 
-
-
         [HttpPut("UpdateMatTranTypes")]
         public async Task<IActionResult> UpdateMatTranTypes(string code, [FromBody] MatTranTypes mattrantype)
         {
@@ -92,18 +101,16 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message});
             }
         }
-
-
        
-        [HttpDelete("DeleteMatTranTypes/{code}")]
+        [HttpDelete("DeleteMatTranTypes/{seqid}")]
         [Produces(typeof(BillingNoSeries))]
-        public async Task<IActionResult> DeleteMatTranTypes(string code)
+        public async Task<IActionResult> DeleteMatTranTypes(string seqid)
         {
-            if (code == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
+            if (seqid == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(seqid)}can not be null" });
             try
             {
-                var result = BillingHelpers.DeleteMatTransType(code);
+                var result = BillingHelpers.DeleteMatTransType(Convert.ToInt32(seqid));
                 if (result != null)
                 {
                     return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=result});

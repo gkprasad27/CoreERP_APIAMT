@@ -284,7 +284,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             catch { throw; }
         }
 
-        public static List<CustomerReceipts> GetCustomerReceiptList(string Code)
+        public static CustomerReceipts GetCustomerReceiptList(int seqID)
         {
             try
             {
@@ -292,9 +292,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 {
                     return repo.CustomerReceipts.AsEnumerable()
                          .Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
-                                  && c.Code == Code
+                                  && c.SeqId == seqID
                          )
-                         .ToList();
+                         .FirstOrDefault();
                 }
             }
             catch { throw; }
@@ -310,9 +310,60 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 }
             }
             catch { throw; }
-            #endregion
         }
 
+        public static CustomerReceipts RegisterCustomerReceipt(CustomerReceipts customerReceipt)
+        {
+            try
+            {
+                using(Repository<CustomerReceipts> repo=new Repository<CustomerReceipts>())
+                {
+                    customerReceipt.AddDate = DateTime.Now;
+                    customerReceipt.EditDate = DateTime.Now;
+
+                    repo.CustomerReceipts.Add(customerReceipt);
+                    if (repo.SaveChanges() > 0)
+                        return customerReceipt;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+        public static CustomerReceipts UpdateCustomerReceipt(CustomerReceipts customerReceipt)
+        {
+            try
+            {
+                using (Repository<CustomerReceipts> repo = new Repository<CustomerReceipts>())
+                {
+                    customerReceipt.EditDate = DateTime.Now;
+                    repo.CustomerReceipts.Update(customerReceipt);
+                    if (repo.SaveChanges() > 0)
+                        return customerReceipt;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+        public static CustomerReceipts DeleteCustomerReceipt(int seqID)
+        {
+            try
+            {
+                using (Repository<CustomerReceipts> repo = new Repository<CustomerReceipts>())
+                {
+                    var custobj = GetCustomerReceiptList(seqID);
+                    custobj.Active = "N";
+                    repo.CustomerReceipts.Update(custobj);
+                    if (repo.SaveChanges() > 0)
+                        return custobj;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+        #endregion
         public static List<Glaccounts> GetAsigAcctobranchGlAcc()
         {
             /*  var asiglcodes = ((from asig in _unitOfWork.AsignmentCashAccBranch.GetAll()
@@ -381,7 +432,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-              return  BrancheHelper.GetBranches();
+              return  BrancheHelper.GetBranches().ToList();
             }
             catch { throw; }
         }
@@ -392,15 +443,15 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 using (Repository<MatTranTypes> repo = new Repository<MatTranTypes>())
                 {
-                    var lastreacord = repo.MatTranTypes.OrderByDescending(x => x.Code).FirstOrDefault();
-                    if (lastreacord != null)
-                    {
-                        matTranTypes.Code = (int.Parse(lastreacord.Code) + 1).ToString();
-                    }
-                    else
-                    {
-                        matTranTypes.Code = "1";
-                    }
+                    //var lastreacord = repo.MatTranTypes.OrderByDescending(x => x.SeqId).FirstOrDefault();
+                    //if (lastreacord != null)
+                    //{
+                    //    matTranTypes.Code = (int.Parse(lastreacord.Code) + 1).ToString();
+                    //}
+                    //else
+                    //{
+                    //    matTranTypes.Code = "1";
+                    //}
 
                     repo.MatTranTypes.Add(matTranTypes);
                     if (repo.SaveChanges() > 0)
@@ -418,7 +469,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 using (Repository<MatTranTypes> repo = new Repository<MatTranTypes>())
                 {
-                    repo.MatTranTypes.Add(matTranTypes);
+                    repo.MatTranTypes.Update(matTranTypes);
                     if (repo.SaveChanges() > 0)
                         return matTranTypes;
 
@@ -428,13 +479,13 @@ namespace CoreERP.BussinessLogic.SalesHelper
             catch { throw; }
         }
 
-        public static MatTranTypes DeleteMatTransType(string  code)
+        public static MatTranTypes DeleteMatTransType(int  seqID)
         {
             try
             {
                 using (Repository<MatTranTypes> repo = new Repository<MatTranTypes>())
                 {
-                    var mattransObj = repo.MatTranTypes.Where(m => m.Code == code).FirstOrDefault();
+                    var mattransObj = repo.MatTranTypes.Where(m => m.SeqId == seqID).FirstOrDefault();
                     mattransObj.Active = "N";
                     repo.MatTranTypes.Update(mattransObj);
                     if (repo.SaveChanges() > 0)
@@ -442,6 +493,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                     return null;
                 }
+            }
+            catch { throw; }
+        }
+        public static List<string> GetTransTypesList()
+        {
+            try
+            {
+                return ((MaterialTransationType[])Enum.GetValues(typeof(MaterialTransationType))).Select(m=> m.ToString()).ToList(); 
             }
             catch { throw; }
         }

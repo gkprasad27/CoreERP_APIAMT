@@ -907,7 +907,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
                     .IsUnicode(false)
-                    .IsFixedLength();
+                    .IsFixedLength()
+                    .HasDefaultValueSql("('Y')");
 
                 entity.Property(e => e.Address1).HasMaxLength(40);
 
@@ -927,9 +928,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Building).HasMaxLength(20);
 
-                entity.Property(e => e.CompanyCode)
-                    .IsRequired()
-                    .HasMaxLength(20);
+                entity.Property(e => e.CompanyCode).HasMaxLength(20);
 
                 entity.Property(e => e.Email).HasMaxLength(100);
 
@@ -974,7 +973,6 @@ namespace CoreERP.Models
                 entity.HasOne(d => d.CompanyCodeNavigation)
                     .WithMany(p => p.Branches)
                     .HasForeignKey(d => d.CompanyCode)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Branches_Companies");
             });
 
@@ -1248,9 +1246,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<CustomerReceipts>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.SeqId);
 
-                entity.Property(e => e.Code).HasMaxLength(20);
+                entity.Property(e => e.SeqId).HasColumnName("SeqID");
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
@@ -1264,6 +1262,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.Amount).HasMaxLength(50);
 
                 entity.Property(e => e.BranchCode).HasMaxLength(50);
+
+                entity.Property(e => e.CheckDate).HasDefaultValueSql("('0001-01-01T00:00:00.000')");
 
                 entity.Property(e => e.CheckNo).HasMaxLength(50);
 
@@ -2108,16 +2108,19 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<MatTranTypes>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.SeqId)
+                    .HasName("PK_Mat_Tran_Types_1");
 
                 entity.ToTable("Mat_Tran_Types");
 
-                entity.Property(e => e.Code).HasMaxLength(20);
+                entity.Property(e => e.SeqId).HasColumnName("SeqID");
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
                     .IsUnicode(false)
                     .IsFixedLength();
+
+                entity.Property(e => e.Code).HasMaxLength(20);
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 

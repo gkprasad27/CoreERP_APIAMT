@@ -3,24 +3,24 @@
     public  enum MaterialTransationType
      {
         PURCHASE,
-        PURCHASEDEFECTIVE,
-        PURCHASERETURN,
+        PURCHASE_DEFECTIVE,
+        PURCHASE_RETURN,
         SALE,
-        SALERETURN,
+        SALE_RETURN,
         TRANSFER,
-        PURCHASEREQUISITION
+        PURCHASE_REQUISITION
     }
 
 
-    public enum MaterialTransactionType
-    {
-        PURCHASE ,
-        PURCHASEDEFECTIVE,
-        PURCHASERETURN,
-        SALE,
-        SALERETURN,
-        TRANSFER,
-    }
+    //public enum MaterialTransactionType
+    //{
+    //    PURCHASE ,
+    //    PURCHASEDEFECTIVE,
+    //    PURCHASERETURN,
+    //    SALE,
+    //    SALERETURN,
+    //    TRANSFER,
+    //}
 
     public enum ReportType
     {
