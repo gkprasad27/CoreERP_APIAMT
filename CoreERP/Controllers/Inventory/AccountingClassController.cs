@@ -22,8 +22,8 @@ namespace CoreERP.Controllers
 
             try
             {
-                int result = AccountClassHelper.RegisterAccountingClass(accountingClass);
-                if (result > 0)
+                var result = AccountClassHelper.RegisterAccountingClass(accountingClass);
+                if (result!=null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
                 else
                     return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response =" Registration Operation Failed" }); 
@@ -63,8 +63,8 @@ namespace CoreERP.Controllers
 
             try
             {
-                int rs = AccountClassHelper.UpdateAccountingClass(accountingClasess);
-                if (rs > 0)
+                AccountingClass result = AccountClassHelper.UpdateAccountingClass(accountingClasess);
+                if (result !=null)
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = accountingClasess });
                 else
                     return BadRequest(new APIResponse { status=APIStatus.FAIL.ToString(),response= $"{nameof(accountingClasess)} Updation Failed"});
@@ -86,8 +86,8 @@ namespace CoreERP.Controllers
 
             try
             {
-                int result = AccountClassHelper.DeleteAccountingClass(code);
-                if (result > 0)
+                AccountingClass result = AccountClassHelper.DeleteAccountingClass(code);
+                if (result !=null)
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = code });
                 else
                     return BadRequest(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Delete Operation Failed" });

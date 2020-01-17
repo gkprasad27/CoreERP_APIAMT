@@ -22,11 +22,11 @@ namespace CoreERP.Controllers
         //public async Task<IActionResult> GetCugfgfgtomerRecieptList()
         //{
 
-          
+
 
         //    return Json(new
         //    {
-               
+
         //        noSeriesMaster = _unitOfWork.NoSeries.GetAll(),
         //        voucherTypeArray = _unitOfWork.VoucherTypes.GetAll()
 
@@ -38,12 +38,20 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var response = BillingHelpers.GetCustomerReceiptList();
-                return Ok(response);
+                var customerReceiptList = BillingHelpers.GetCustomerReceiptList();
+                if (customerReceiptList.Count > 0)
+                {
+                    dynamic expnado = new ExpandoObject();
+                    expnado.CustomerReceiptList = BillingHelpers.GetCustomerReceiptList();
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expnado });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch { }
-
-            return Ok("Record Not found");
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpGet("GetCompanyList")]
@@ -52,10 +60,10 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.companysList=CompaniesHelper.GetListOfCompanies().Select(x=> new { ID=x.CompanyCode,TEXT=x.Name});
-                return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= expando });
+                expando.companysList = CompaniesHelper.GetListOfCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.Name });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
@@ -82,10 +90,10 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.AsigCashAccBranchesList = BillingHelpers.GetAsigCashAccBranches(); 
-                return Ok(new APIResponse{ status=APIStatus.PASS.ToString(),response= expando });
+                expando.AsigCashAccBranchesList = BillingHelpers.GetAsigCashAccBranches();
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = ex.Message });
             }
@@ -98,9 +106,9 @@ namespace CoreERP.Controllers
             {
                 dynamic expando = new ExpandoObject();
                 expando.partnerTypeList = PartnerCreationHelper.GetList();
-                return Ok(new APIResponse{ status=APIStatus.PASS.ToString(),response= expando });
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
@@ -115,7 +123,7 @@ namespace CoreERP.Controllers
                 expando.AsigAcctobranchGlAccList = BillingHelpers.GetAsigAcctobranchGlAcc();
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = expando });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
@@ -130,7 +138,22 @@ namespace CoreERP.Controllers
                 expando.partnerTypeList = PartnerTypeHelper.GetPartnerTypeList();
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
             }
-            catch(Exception ex) 
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetVoucherTypeList")]
+        public async Task<IActionResult> GetVoucherTypeList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.VoucherTypesList = BillingHelpers.GetVoucherTypesList().Select(x => new { ID = x, TEXT = x });
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
@@ -146,7 +169,7 @@ namespace CoreERP.Controllers
             {
                 var result = BillingHelpers.RegisterCustomerReceipt(customerReceipts);
                 if (result != null)
-                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=result});
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
             }
@@ -155,6 +178,49 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpPut("UpdateCustomerReceipt")]
+        [Produces(typeof(CustomerReceipts))]
+        public async Task<IActionResult> UpdateCustomerReceipt([FromBody] CustomerReceipts customerReceipts)
+        {
+            if (customerReceipts == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(customerReceipts)} cannot be null" });
+
+            try
+            {
+                var result = BillingHelpers.UpdateCustomerReceipt(customerReceipts);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = " Updation Failed" });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpDelete("DeleteCustomerReceipt/{seqID}")]
+        [Produces(typeof(CustomerReceipts))]
+        public async Task<IActionResult> DeleteCustomerReceipt(string seqID)
+        {
+            if (seqID == null)
+                return BadRequest($"{nameof(seqID)}can not be null");
+
+            try
+            {
+                var cardtype = BillingHelpers.DeleteCustomerReceipt(Convert.ToInt32(seqID));
+                if (cardtype != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = cardtype });
+
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Deletion Failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = ex.Message });
+            }
+        }
+
 
 
         //[HttpGet("sales/custsrc/billRcbl/custlist")]
@@ -179,50 +245,6 @@ namespace CoreERP.Controllers
         //    }
         //}
 
-
-        [HttpPut("UpdateCustomerReceipt")]
-        [Produces(typeof(CustomerReceipts))]
-        public async Task<IActionResult> UpdateCustomerReceipt([FromBody] CustomerReceipts customerReceipts)
-        {
-            if (customerReceipts == null)
-                return Ok(new APIResponse() {status=APIStatus.FAIL.ToString(),response= $"{nameof(customerReceipts)} cannot be null" });
-
-            try
-            {
-                var result = BillingHelpers.UpdateCustomerReceipt(customerReceipts);
-                if (result != null)
-                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=result});
-
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = " Updation Failed" });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = ex.Message });
-            }
-        }
-
-
-
-        [HttpDelete("sales/custsrc/{seqID}")]
-        [Produces(typeof(CustomerReceipts))]
-        public async Task<IActionResult> Delete(string seqID)
-        {
-            if (seqID == null)
-                return BadRequest($"{nameof(seqID)}can not be null");
-
-            try
-            {
-                var cardtype = BillingHelpers.DeleteCustomerReceipt(Convert.ToInt32(seqID));
-                if (cardtype != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = cardtype });
-
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response ="Deletion Failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = ex.Message });
-            }
-        }
 
 
         //[HttpGet("sales/custsrc/ptc/customerlist")]

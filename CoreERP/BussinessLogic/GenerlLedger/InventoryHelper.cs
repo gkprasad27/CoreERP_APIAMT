@@ -21,7 +21,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             catch { throw; }
         }
 
-
         public static List<Brand> GetBrandList()
         {
             try

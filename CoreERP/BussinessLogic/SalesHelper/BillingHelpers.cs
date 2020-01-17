@@ -36,6 +36,31 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
+        public static List<BillingReturns> RegisterBillingReturns(BillingReturns[] billingReturns)
+        {
+            try
+            {
+                using (Repository<BillingReturns> repo = new Repository<BillingReturns>())
+                {
+                    /* var lastreacord = _unitOfWork.Billing.GetAll().OrderByDescending(x => x.Code).FirstOrDefault();
+                if (lastreacord != null)
+                    billing[0].Code = (int.Parse(lastreacord.Code) + 1).ToString();
+                else
+                    billing[0].Code = "1";
+
+                for (int i = 1; i < billing.Count(); i++)
+                    billing[i].Code = (int.Parse(billing[i - 1].Code) + 1).ToString();
+
+                _unitOfWork.Billing.AddRange(billing);*/
+                    repo.BillingReturns.AddRange(billingReturns);
+                    if (repo.SaveChanges() > 0)
+                        return billingReturns.ToList();
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
         #endregion
 
 
@@ -267,6 +292,24 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
+        public static Finance DeleteFinance(string code)
+        {
+            try
+            {
+                var financeEntity = GetFinances(code);
+                financeEntity.Active = "N";
+                using (Repository<Finance> repo = new Repository<Finance>())
+                {
+                    financeEntity.EditDate = DateTime.Now;
+                    repo.Finance.Update(financeEntity);
+                    if (repo.SaveChanges() > 0)
+                        return financeEntity;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
         #endregion
 
         #region Cutomer Receipt
@@ -359,6 +402,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         return custobj;
 
                     return null;
+                }
+            }
+            catch { throw; }
+        }
+        public static List<VoucherTypes> GetVoucherTypesList()
+        {
+            try
+            {
+                using (Repository<VoucherTypes> repo = new Repository<VoucherTypes>())
+                {
+                    return repo.VoucherTypes.Where(x => x.Active.Equals("Y")).ToList();
                 }
             }
             catch { throw; }

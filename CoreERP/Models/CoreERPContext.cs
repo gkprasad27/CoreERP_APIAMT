@@ -1126,9 +1126,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<CustomerReceipts>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.SeqId);
 
-                entity.Property(e => e.Code).HasMaxLength(4);
+                entity.Property(e => e.SeqId);
 
                 entity.Property(e => e.AddUser).HasMaxLength(50);
 

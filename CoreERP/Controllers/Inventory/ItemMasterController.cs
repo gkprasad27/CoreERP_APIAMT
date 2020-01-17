@@ -8,6 +8,7 @@ using CoreERP.BussinessLogic.InventoryHelpers;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.Models;
 using CoreERP.DataAccess;
+using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
@@ -38,21 +39,48 @@ namespace CoreERP.Controllers
         [Produces(typeof(List<ItemMaster>))]
         public async Task<IActionResult> GetAllItemMasterList()
         {
-            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = ItemMasterHelper.GetItemMasterList() });
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.itemMasterList = ItemMasterHelper.GetItemMasterList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpGet("GetAllMaterialGroup")]
         [Produces(typeof(List<Brand>))]
         public async Task<IActionResult> GetAllMaterialGroup()
         {
-            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = MaterialGroupHelper.GetMaterialGroupList() });
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.materialGroupList =MaterialGroupHelper.GetMaterialGroupList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpGet("GetAllBrand")]
         [Produces(typeof(List<Brand>))]
         public async Task<IActionResult> GetAllBrand()
         {
-            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = BrandHelpers.GetBrands() });
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.brandsList = BrandHelpers.GetBrands();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
@@ -60,24 +88,51 @@ namespace CoreERP.Controllers
         [Produces(typeof(List<BrandModel>))]
         public async Task<IActionResult> GetAllBrandModel()
         {
-            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = BrandModelHelper.GetBrandModelList() });
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.brandModelsList = BrandModelHelpers.GetBrandModelList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
-        [HttpGet("SizesList")]
+        [HttpGet("GetSizesList")]
         [Produces(typeof(List<Sizes>))]
-        public async Task<IActionResult> GetAllSize()
+        public async Task<IActionResult> GetSizesList()
         {
-            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = SizesHelper.GetSizesList() });
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.sizesList = SizesHelper.GetSizesList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
 
-        [HttpGet("AccoundingClasslist")]
+        [HttpGet("GetAccoundingClasslist")]
         [Produces(typeof(List<AccountingClass>))]
-        public async Task<IActionResult> GetAllAccountingClass()
+        public async Task<IActionResult> GetAccoundingClasslist()
         {
-            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = AccountClassHelper.GetAccountingClassList() });
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.accountingClassList = AccountClassHelper.GetAccountingClassList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
@@ -88,11 +143,7 @@ namespace CoreERP.Controllers
         public async Task<IActionResult> UpdateItemMaster(string code, [FromBody] ItemMaster itemMasters)
         {
             if (itemMasters == null)
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(itemMasters)} cannot be null" });
-
-            if (!string.IsNullOrWhiteSpace(itemMasters.Code) && code != itemMasters.Code)
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Conflicting role id in parameter and model data" });
-
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(itemMasters)} cannot be null" });
 
             try
             {

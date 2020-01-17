@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using CoreERP.BussinessLogic.InventoryHelpers;
 using CoreERP.Models;
 using CoreERP.DataAccess;
+using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
@@ -18,51 +19,62 @@ namespace CoreERP.Controllers
         public async Task<IActionResult> RegisterSizes([FromBody]Sizes size)
         {
             if (size == null)
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(size)} can not be null" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(size)} can not be null" });
 
             try
             {
-                int result = SizesHelper.RegisterSizes(size);
-                if (result > 0)
+                var result = SizesHelper.RegisterSizes(size);
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = size });
                 else
-                    return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Operation Failed" });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Failed" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Operation Failed" });
+                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
         }
 
         [HttpGet("GetAllSizes")]
         [Produces(typeof(List<Sizes>))]
         public async Task<IActionResult> GetAllSizes()
         {
-            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = SizesHelper.GetSizesList() });
-        }
-
-        [HttpPut("UpdateSize/{code}")]
-        [Produces(typeof(Sizes))]
-        public async Task<IActionResult> UpdateSize(string code, [FromBody] Sizes sizes)
-        {
-            if (sizes == null)
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(sizes)} cannot be null" });
-
-            if (!string.IsNullOrWhiteSpace(sizes.Code) && code != sizes.Code)
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Conflicting role id in parameter and model data" });
-
-
             try
             {
-                int rs = SizesHelper.UpdateSizes(sizes);
-                if (rs > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = sizes });
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(sizes)} Updation Failed" });
+                var sizesList = SizesHelper.GetSizesList();
+                if (sizesList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.sizesList = sizesList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = SizesHelper.GetSizesList() });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(sizes)} Updation Failed" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPut("UpdateSize")]
+        [Produces(typeof(Sizes))]
+        public async Task<IActionResult> UpdateSize([FromBody] Sizes sizes)
+        {
+            if (sizes == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(sizes)} cannot be null" });
+
+            try
+            {
+                var result = SizesHelper.UpdateSizes(sizes);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -73,22 +85,20 @@ namespace CoreERP.Controllers
         {
 
             if (string.IsNullOrWhiteSpace(code))
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try
             {
-                int result = SizesHelper.DeleteSizes(code);
-                if (result > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = code });
-                else
-                    return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Delete Operation Failed" });
+                var result = SizesHelper.DeleteSizes(code);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Delete Operation Failed" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
-
         }
     }
 }

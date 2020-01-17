@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,13 +22,13 @@ namespace CoreERP.Controllers
             {
                 Erpuser user = UserManagmentHelper.ValidateUser(erpuser);
                 if (user != null)
-                    return Ok(user);
-
-                return Ok("User Name/ Password not valid.");
+                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= user });
+                
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "User Name/ Password not valid." });
             }
             catch (Exception ex)
             {
-                return Ok("Login Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "User Name/ Password not valid." });
             }
         }
 
@@ -38,21 +39,21 @@ namespace CoreERP.Controllers
                 try 
                 { 
                     var result=UserManagmentHelper.GetScreensListByUserRole(roleName);
+                    if(result !=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-
-                    return Ok(result);
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found for user." });
                 }
-                catch(Exception e) {
-                    return Ok(e.Message);
+                catch(Exception ex) 
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
                 }
-                
             }
             catch(Exception ex)
             {
                 return NoContent();
             }
         }
-
     }
 }
        

@@ -22,92 +22,39 @@ namespace CoreERP.Controllers
             {
                 var isBillReturn = BillingHelpers.IsBillExistsInBillReturns(id);
                 if (isBillReturn)
-                    return Ok(new APIResponse() { status=APIStatus.FAIL.ToString(),response=$"Bill no {id} Already return."});
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Bill no {id} Already return." });
 
                 dynamic expando = new ExpandoObject();
                 expando.billings = BillingHelpers.GetBilling(id);
-                return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=expando });
-            }
-            catch (Exception ex)
-            { 
-            }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to Load Bill.Please Try Agian." });
-        }
-
-/*
-        [HttpPost("RegisterBilling")]
-        public async Task<IActionResult> RegisterBilling([FromBody]Billing[] billing)
-        {
-
-            if (billing == null)
-                return BadRequest($"{nameof(billing)} cannot be null");
-            try
-            {
-                var lastreacord = _unitOfWork.Billing.GetAll().OrderByDescending(x => x.Code).FirstOrDefault();
-                if (lastreacord != null)
-                    billing[0].Code = (int.Parse(lastreacord.Code) + 1).ToString();
-                else
-                    billing[0].Code = "1";
-
-                for (int i = 1; i < billing.Count(); i++)
-                    billing[i].Code = (int.Parse(billing[i - 1].Code) + 1).ToString();
-
-                _unitOfWork.Billing.AddRange(billing);
-
-                if (_unitOfWork.SaveChanges() > 0)
-                    return Ok(billing);
-                else
-                    return BadRequest($"{nameof(billing)} Registration Failed");
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest($"{nameof(billing)} Registration Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+
         }
 
-        [HttpPut("sales/billing/{code}")]
-        [Produces(typeof(Billing))]
-        public async Task<IActionResult> Update(string code, [FromBody] Billing billing)
+        [HttpPost("RegisterBillingReturn")]
+        public async Task<IActionResult> RegisterBillingReturn([FromBody]BillingReturns[] billing)
         {
-            if (billing == null)
-                return BadRequest($"{nameof(billing)} cannot be null");
-           
+
+            if (billing == null || billing?.Count() == 0)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(billing)}object can not be null." });
             try
             {
-                _unitOfWork.Billing.Update(billing);
-                if (_unitOfWork.SaveChanges() > 0)
-                    return Ok(billing);
+                var result = BillingHelpers.RegisterBillingReturns(billing);
+
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
                 else
-                    return BadRequest($"{nameof(billing)} Updation Failed");
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Bills returns Failed to return." });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest($"{nameof(billing)} Updation Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
- 
-        [HttpDelete("sales/billing/{code}")]
-        [Produces(typeof(Billing))]
-        public async Task<IActionResult> Delete(string code)
-        {
-            if (code == null)
-                return BadRequest($"{nameof(code)}can not be null");
 
-            try
-            {
-                var result = _unitOfWork.Billing.GetAll().SingleOrDefault(x=> x.Code == code);
-                
-                _unitOfWork.Billing.Remove(result);
-                _unitOfWork.SaveChanges();
-                return Ok(result);
-
-            }
-            catch(Exception ex)
-            {
-                return BadRequest($"Delete Operation Failed");
-            }
-            
-        }
-  */
     }
 }

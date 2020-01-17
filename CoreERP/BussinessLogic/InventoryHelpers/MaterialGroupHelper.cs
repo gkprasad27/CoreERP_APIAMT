@@ -9,31 +9,28 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
 {
     public class MaterialGroupHelper
     {
-        private static Repository<MaterialGroup> _repo = null;
-        private static Repository<MaterialGroup> repo
-        {
-            get
-            {
-                if (_repo == null)
-                    _repo = new Repository<MaterialGroup>();
-                return _repo;
-            }
-        }
-        public static int RegisterMaterialGroup(MaterialGroup materialGroup)
+        public static MaterialGroup RegisterMaterialGroup(MaterialGroup materialGroup)
         {
             try
             {
-                var record = ((from acc in repo.MaterialGroup select acc.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
-
-                if (record != 0)
+                using (Repository<MaterialGroup> repo = new Repository<MaterialGroup>())
                 {
-                    materialGroup.Code = (record + 1).ToString();
-                }
-                else
-                    materialGroup.Code = "1";
+                    var record = ((from acc in repo.MaterialGroup select acc.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
 
-                repo.MaterialGroup.Add(materialGroup);
-                return repo.SaveChanges();
+                    if (record != 0)
+                    {
+                        materialGroup.Code = (record + 1).ToString();
+                    }
+                    else
+                        materialGroup.Code = "1";
+
+                    materialGroup.Active = "Y";
+                    repo.MaterialGroup.Add(materialGroup);
+                    if (repo.SaveChanges() > 0)
+                        return materialGroup;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
@@ -44,34 +41,62 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                return repo.MaterialGroup.Select(x => x).ToList();
+                using (Repository<MaterialGroup> repo = new Repository<MaterialGroup>())
+                {
+                    return repo.MaterialGroup.Select(x => x).ToList();
+                }
             }
             catch { throw; }
         }
-        public static int UpdateMaterialGroup(MaterialGroup materialGroup)
+        public static MaterialGroup UpdateMaterialGroup(MaterialGroup materialGroup)
         {
             try
             {
-                repo.MaterialGroup.Update(materialGroup);
-                return repo.SaveChanges();
+                using (Repository<MaterialGroup> repo = new Repository<MaterialGroup>())
+                {
+                    repo.MaterialGroup.Update(materialGroup);
+                    if (repo.SaveChanges() > 0)
+                        return materialGroup;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public static int DeleteMaterialGroup(string code)
+        public static MaterialGroup DeleteMaterialGroup(string code)
         {
             try
             {
-                var materialGroup = repo.MaterialGroup.Where(x => x.Code == code).FirstOrDefault();
-                repo.MaterialGroup.Remove(materialGroup);
-                return repo.SaveChanges();
+                using (Repository<MaterialGroup> repo = new Repository<MaterialGroup>())
+                {
+                    var materialGroup = repo.MaterialGroup.Where(x => x.Code == code).FirstOrDefault();
+                    materialGroup.Active = "N";
+                    repo.MaterialGroup.Remove(materialGroup);
+                    if (repo.SaveChanges() > 0)
+                        return materialGroup;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+        }
+
+        public static List<AccountingClass> GetAccountingClassList()
+        {
+            try
+            {
+                using (Repository<AccountingClass> repo = new Repository<AccountingClass>())
+                {
+                    return repo.AccountingClass.AsEnumerable().Where(x => x.Active.Equals("Y")).ToList();
+                }
+            }
+            catch { throw; }
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CoreERP.BussinessLogic.InventoryHelpers;
 using CoreERP.DataAccess;
+using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
@@ -22,8 +23,8 @@ namespace CoreERP.Controllers
                 return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(brandModel)} can not be null" });
             try
             {
-                int result = BrandModelHelper.RegisterBrandModel(brandModel);
-                if (result > 0)
+                BrandModel result = BrandModelHelpers.RegisterBrandModel(brandModel);
+                if (result !=null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = brandModel });
                 else
                     return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Operation Failed" });
@@ -32,16 +33,22 @@ namespace CoreERP.Controllers
             {
                 return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Operation Failed" });
             }
-
         }
-
-
 
         [HttpGet("GetAllBrandModel")]
         [Produces(typeof(List<BrandModel>))]
         public async Task<IActionResult> GetAllBrandModel()
         {
-            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = BrandModelHelper.GetBrandModelList() });
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.brandModelList = BrandModelHelpers.GetBrandModelList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpPut("UpdateBrandModel/{code}")]
@@ -57,14 +64,14 @@ namespace CoreERP.Controllers
 
             try
             {
-                int rs = BrandModelHelper.UpdateBrandModelClass(brandModels);
-                if (rs > 0)
+                BrandModel result = BrandModelHelpers.UpdateBrandModelClass(brandModels);
+                if (result!=null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = brandModels });
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(brandModels)} Updation Failed" });
+                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(brandModels)} Updation Failed" });
+                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
             }
         }
 
@@ -79,15 +86,15 @@ namespace CoreERP.Controllers
 
             try
             {
-                int result = BrandModelHelper.DeleteBrandModelClass(code);
-                if (result > 0)
+                BrandModel result = BrandModelHelpers.DeleteBrandModelClass(code);
+                if (result !=null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = code });
                 else
-                    return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Delete Operation Failed" });
+                    return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Delete Operation Failed" });
+                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
     }
