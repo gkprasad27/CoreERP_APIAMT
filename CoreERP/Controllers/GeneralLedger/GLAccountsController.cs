@@ -10,7 +10,7 @@ namespace CoreERP.Controllers.GL
     [Route("api/GLAccounts")]
     public class GLAccountsController : ControllerBase
     {
-        [HttpPost("generalledger/glaccounts/register")]
+     /*   [HttpPost("generalledger/glaccounts/register")]
         public async Task<IActionResult> Register([FromBody]Glaccounts glaccounts)
         {
             if (glaccounts == null)
@@ -93,6 +93,6 @@ namespace CoreERP.Controllers.GL
                 return BadRequest("Failed to load Account Under Subgroup List.");
             }
 
-        }
+        }*/
     }
 }

@@ -21,7 +21,7 @@ namespace CoreERP.Controllers
                 if (user != null)
                     return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= user });
                 
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "User Name/ Password not valid." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "User Name/ Password not valid." });
             }
             catch (Exception ex)
             {

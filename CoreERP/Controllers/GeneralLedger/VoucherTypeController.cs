@@ -13,7 +13,7 @@ namespace CoreERP.Controllers.GL
     [Route("api/VoucherType")]
     public class VoucherTypeController : ControllerBase
     {
-        [HttpPost("gl/vt/register")]
+       /* [HttpPost("gl/vt/register")]
         public async Task<IActionResult> Register([FromBody]VoucherTypes vouhertype)
         {
             try
@@ -121,6 +121,6 @@ namespace CoreERP.Controllers.GL
 
             return BadRequest("Delete Operation Failed");
 
-        }
+        }*/
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.GenerlLedger;
@@ -9,30 +10,47 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers.GL
 {
     [ApiController]
-    [Route("api/AsignmentAcctoAccClass")]
+    [Route("api/generalledger/AsignmentAcctoAccClass")]
     public class AsignmentAcctoAccClassController : ControllerBase
     {
-        [HttpPost("generalledger/asigAccAccclass/register")]
-        public async Task<IActionResult> Register([FromBody]AsignmentAcctoAccClass asignmentAcctoAccClass)
+        [HttpPost("RegisterAsigAcctoAccClass")]
+        public async Task<IActionResult> RegisterAsigAcctoAccClass([FromBody]AsignmentAcctoAccClass asignmentAcctoAccClass)
         {
             try
             {
-                int result = GLHelper.RegisterAccToAccClass(asignmentAcctoAccClass);
-                if (result > 0)
-                    return Ok(asignmentAcctoAccClass);
+                AsignmentAcctoAccClass result = GLHelper.RegisterAccToAccClass(asignmentAcctoAccClass);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                return BadRequest(" Registration Operation Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
             }
             catch (Exception ex)
             {
-                return BadRequest(" Registration Operation Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
         }
 
-        [HttpGet("generalledger/asigAccAccclass")]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("GetAsigAcctoAccclassList")]
+        public async Task<IActionResult> GetAsigAcctoAccclassList()
         {
+            try
+            {
+                var asigAcctoAccclass = GLHelper.GetAsignAccToAccClas();
+                if (asigAcctoAccclass.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.AsigAcctoAccclassList = asigAcctoAccclass;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+
+
             //return Json(
             //    new
             //    {
@@ -45,132 +63,134 @@ namespace CoreERP.Controllers.GL
             //        accountingCLass = _unitOfWork.AccountingClass.GetAll(),
             //        maerialTransType =_unitOfWork.Mat_Tran_Types.GetAll(),
             //    });
-            return Ok(
-               new
-               {
-                   asigAcctoAccclass = GLHelper.GetAsignAccToAccClas(),
-                   //        glaccoutns=(from glacc  in   (from gacc in _unitOfWork.GLAccounts.GetAll() where gacc.Nactureofaccount !=null select gacc)
-                   //                    where glacc.Nactureofaccount == NatureOfAccounts.PURCHASES.ToString() ||
-                   //                          glacc.Nactureofaccount == NatureOfAccounts.SALES.ToString()  || 
-                   //                          glacc.Nactureofaccount == NatureOfAccounts.INVENTORY.ToString()
-                   //                    select glacc),      GetInvPurchaseSalesGLAcc()
-               });
+
+
+
         }
 
-        [HttpGet("generalledger/asigAccAccclass/getMatTranTypes")]
+        [HttpGet("GetMatTranTypes")]
         public async Task<IActionResult> GetMatTranTypes()
         {
             try
             {
-                return Ok(new { mattranstype = GLHelper.GetMatTranTypesList()});
+                dynamic expando = new ExpandoObject();
+                expando.mattranstype = GLHelper.GetMatTranTypesList();
+                return Ok(new APIResponse{ status=APIStatus.PASS.ToString(),response= expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load MatTranTypes.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
-        [HttpGet("generalledger/asigAccAccclass/getInvPurchaseSalesGLAcc")]
+        [HttpGet("GetInvPurchaseSalesGLAcc")]
         public async Task<IActionResult> GetInvPurchaseSalesGLAcc()
         {
             try
             {
-                return Ok(new { glaccounts = GLHelper.GetInvPurchaseSalesGLAcc() });
+                dynamic expando = new ExpandoObject();
+                expando.GlaccountsList = GLHelper.GetInvPurchaseSalesGLAcc();
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load GL Accounts.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
-        [HttpGet("generalledger/asigAccAccclass/getAccountingClass")]
+        [HttpGet("GetAccountingClass")]
         public async Task<IActionResult> GetAccountingClass()
         {
             try
             {
-                return Ok(new { accountingclass = GLHelper.GetAccountingClass() });
+                dynamic expando = new ExpandoObject();
+                expando.AccountingclassList = GLHelper.GetAccountingClass();
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Accounting Class.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
-        [HttpPut("generalledger/asigAccAccclass/{code}")]
-        public async Task<IActionResult> UpdateTaxIntegration(string code, [FromBody] AsignmentAcctoAccClass asignmentAcctoAccClass)
+        [HttpPut("UpdateAccToAccClass")]
+        public async Task<IActionResult> UpdateAccToAccClass([FromBody] AsignmentAcctoAccClass asignmentAcctoAccClass)
         {
             if (asignmentAcctoAccClass == null)
-                return BadRequest($"{nameof(asignmentAcctoAccClass)} cannot be null");
-
-            if (!string.IsNullOrWhiteSpace(asignmentAcctoAccClass.Code) && code != asignmentAcctoAccClass.Code)
-                return BadRequest("Conflicting role id in parameter and model data");
-
+                return Ok(new APIResponse() {status=APIStatus.FAIL.ToString(),response= $"{nameof(asignmentAcctoAccClass)} cannot be null" });
             try
             {
-                int result = GLHelper.UpdateAccToAccClass(asignmentAcctoAccClass);
-                if (result > 0)
-                    return Ok(asignmentAcctoAccClass);
-            }
-            catch { }
+                AsignmentAcctoAccClass result = GLHelper.UpdateAccToAccClass(asignmentAcctoAccClass);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-            return BadRequest("Updation Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Updation Failed." });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
-        [HttpDelete("generalledger/asigAccAccclass/{code}")]
-        public async Task<IActionResult> DeleteTaxIntegrationByID(string code)
+        [HttpDelete("DeleteAccToAccClass")]
+        public async Task<IActionResult> DeleteAccToAccClass(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
-                return BadRequest($"{nameof(code)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try
             {
-                int result = GLHelper.DeleteAccToAccClass(code);
-                if (result > 0)
-                    return Ok(code);
+                AsignmentAcctoAccClass result = GLHelper.DeleteAccToAccClass(code);
+                if (result !=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
             }
-            catch { }
-
-            return BadRequest("Delete Operation Failed");
-
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
-        [HttpGet("generalledger/asigAccAccclass/acclst")]
-        public async Task<IActionResult> GetAccounts()
+        [HttpGet("GetGLAccountsList")]
+        public async Task<IActionResult> GetGLAccountsList()
         {
             try
             {
                 //var result = (from acc in _unitOfWork.GLAccounts.GetAll()
                 //              where acc.Nactureofaccount == "Purchases" || acc.Nactureofaccount == "Sales" || acc.Nactureofaccount == " "
                 //              select acc).ToList();
-                var result = GLHelper.GetGLAccountsList()
-                                    .Where(acc => acc.Nactureofaccount.Equals("Purchases", StringComparison.OrdinalIgnoreCase)
-                                               || acc.Nactureofaccount.Equals("Sales", StringComparison.OrdinalIgnoreCase) || acc.Nactureofaccount == " ").ToList();
 
-                return Ok(result);
+                dynamic expdo = new ExpandoObject();
+                expdo.GLAccountsList = GLHelper.GetGLAccountsList()
+                                        .Where(acc => acc.Nactureofaccount.Equals("Purchases", StringComparison.OrdinalIgnoreCase)
+                                                   || acc.Nactureofaccount.Equals("Sales", StringComparison.OrdinalIgnoreCase) || acc.Nactureofaccount == " ").ToList();
+
+                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= expdo });
             }
-            catch
+            catch(Exception ex)
             {
-                return NoContent();
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
 
         }
 
 
-        [HttpGet("generalledger/asigAccAccclass/accinglst")]
-        public async Task<IActionResult> GetAccounting()
+        [HttpGet("GetGLAccountGroupList")]
+        public async Task<IActionResult> GetGLAccountGroupList()
         {
             try
             {
-                return Ok(new { GLAccgroup = GLHelper.GetGLAccountGroupList() });
+                dynamic expando = new ExpandoObject();
+                expando.GLAccgroup = GLHelper.GetGLAccountGroupList();
+                return Ok(new APIResponse(){status=APIStatus.PASS.ToString(),response=expando  });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Branches.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
         }
-
     }
 }

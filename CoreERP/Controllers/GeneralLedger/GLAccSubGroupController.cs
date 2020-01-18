@@ -12,7 +12,7 @@ namespace CoreERP.Controllers.GL
     [Route("api/GLAccSubGroup")]
     public class GLAccSubGroupController : ControllerBase
     {
-        [HttpPost("generalledger/accsubgroup/register")]
+     /*   [HttpPost("generalledger/accsubgroup/register")]
         public async Task<IActionResult> Register([FromBody]GlaccSubGroup accSubGroup)
         {
             if (accSubGroup == null)
@@ -131,6 +131,7 @@ namespace CoreERP.Controllers.GL
 
 
         //}
+        */
 
     }
 }
