@@ -9,31 +9,29 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
 {
     public class NoAssignmentHelper
     {
-        private static Repository<NoAssignment> _repo = null;
-        private static Repository<NoAssignment> repo
-        {
-            get
-            {
-                if (_repo == null)
-                    _repo = new Repository<NoAssignment>();
-                return _repo;
-            }
-        }
-        public static int RegisterNoAssignment(NoAssignment noAssignment)
+     
+        public static NoAssignment RegisterNoAssignment(NoAssignment noAssignment)
         {
             try
             {
-                var record = ((from acc in repo.NoAssignment select acc.Code).ToList()).FirstOrDefault();
-
-                if (record != null)
+                using (Repository<NoAssignment> repo = new Repository<NoAssignment>())
                 {
-                    noAssignment.Code = (int.Parse(record) + 1).ToString();
-                }
-                else
-                    noAssignment.Code = "0001";
+                    var record = repo.NoAssignment.OrderByDescending(x=> x.Code).FirstOrDefault();
 
-                repo.NoAssignment.Add(noAssignment);
-                return repo.SaveChanges();
+                    if (record != null)
+                    {
+                        noAssignment.Code = (int.Parse(record.Code) + 1).ToString();
+                    }
+                    else
+                        noAssignment.Code = "1";
+
+                    noAssignment.Active = "Y";
+                    repo.NoAssignment.Add(noAssignment);
+                    if (repo.SaveChanges() > 0)
+                        return noAssignment;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
@@ -44,29 +42,56 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                return repo.NoAssignment.Select(x => x).ToList();
+                using (Repository<NoAssignment> repo = new Repository<NoAssignment>())
+                {
+                    return repo.NoAssignment.Select(x => x).ToList();
+                }
             }
             catch { throw; }
         }
-        public static int UpdateNoAssignment(NoAssignment noAssignment)
+        public static List<NoAssignment> GetNoAssignmentList(string code)
         {
             try
             {
-                repo.NoAssignment.Update(noAssignment);
-                return repo.SaveChanges();
+                using (Repository<NoAssignment> repo = new Repository<NoAssignment>())
+                {
+                    return repo.NoAssignment.Where(x => x.Code ==code).ToList();
+                }
+            }
+            catch { throw; }
+        }
+        public static NoAssignment UpdateNoAssignment(NoAssignment noAssignment)
+        {
+            try
+            {
+                using (Repository<NoAssignment> repo = new Repository<NoAssignment>())
+                {
+                    repo.NoAssignment.Update(noAssignment);
+                    if (repo.SaveChanges() > 0)
+                        return noAssignment;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public static int DeleteNoAssignment(string code)
+        public static NoAssignment DeleteNoAssignment(string code)
         {
             try
             {
-                var accountClass = repo.NoAssignment.Where(x => x.Code == code).FirstOrDefault();
-                repo.NoAssignment.Remove(accountClass);
-                return repo.SaveChanges();
+                using (Repository<NoAssignment> repo = new Repository<NoAssignment>())
+                {
+                    var accountClass = repo.NoAssignment.Where(x => x.Code == code).FirstOrDefault();
+                    accountClass.Active = "N";
+                    repo.NoAssignment.Update(accountClass);
+                    if (repo.SaveChanges() > 0)
+                        return accountClass;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {

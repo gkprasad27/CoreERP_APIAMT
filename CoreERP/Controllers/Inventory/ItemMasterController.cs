@@ -12,7 +12,7 @@ using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
-    [Authorize]
+    [ApiController]
     [Route("api/Inventory/ItemMaster")]
     public class ItemMasterController : ControllerBase
     {
@@ -22,28 +22,36 @@ namespace CoreERP.Controllers
         {
             try
             {
-                int result = ItemMasterHelper.RegisterItemMaster(itemMaster);
-                if (result > 0)
+                if(ItemMasterHelper.GetItemMasterList(itemMaster.Code).Count > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Code ={itemMaster.Code} Already exists." });
+
+                ItemMaster result = ItemMasterHelper.RegisterItemMaster(itemMaster);
+                if (result !=null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = itemMaster });
-                else
-                    return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Operation Failed" });
+                
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Failed" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Operation Failed" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
             }
 
         }
 
-        [HttpGet("GetAllItemMasterList")]
-        [Produces(typeof(List<ItemMaster>))]
-        public async Task<IActionResult> GetAllItemMasterList()
+        [HttpGet("GetItemMasterList")]
+        public async Task<IActionResult> GetItemMasterList()
         {
             try
             {
-                dynamic expando = new ExpandoObject();
-                expando.itemMasterList = ItemMasterHelper.GetItemMasterList();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                var itemMasterList = ItemMasterHelper.GetItemMasterList();
+                if (itemMasterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.itemMasterList = itemMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -67,14 +75,13 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetAllBrand")]
-        [Produces(typeof(List<Brand>))]
-        public async Task<IActionResult> GetAllBrand()
+        [HttpGet("GetBrandsList")]
+        public async Task<IActionResult> GetBrandsList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.brandsList = BrandHelpers.GetBrands();
+                expando.BrandsList = BrandHelpers.GetBrands();
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -84,9 +91,8 @@ namespace CoreERP.Controllers
         }
 
 
-        [HttpGet("GetAllBrandModel")]
-        [Produces(typeof(List<BrandModel>))]
-        public async Task<IActionResult> GetAllBrandModel()
+        [HttpGet("GetBrandModelsList")]
+        public async Task<IActionResult> GetBrandModelsList()
         {
             try
             {
@@ -138,23 +144,24 @@ namespace CoreERP.Controllers
 
 
 
-        [HttpPut("UpdateItemMaster/{code}")]
+        [HttpPut("UpdateItemMaster")]
         [Produces(typeof(ItemMaster))]
-        public async Task<IActionResult> UpdateItemMaster(string code, [FromBody] ItemMaster itemMasters)
+        public async Task<IActionResult> UpdateItemMaster([FromBody] ItemMaster itemMasters)
         {
             if (itemMasters == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(itemMasters)} cannot be null" });
 
             try
             {
-                int rs =ItemMasterHelper.UpdateItemMaster(itemMasters);
-                if (rs > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = itemMasters });
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(itemMasters)} Updation Failed" });
+                ItemMaster result =ItemMasterHelper.UpdateItemMaster(itemMasters);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(itemMasters)} Updation Failed" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
             }
         }
 
@@ -169,27 +176,34 @@ namespace CoreERP.Controllers
 
             try
             {
-                int result = ItemMasterHelper.DeleteItemMaster(code);
-                if (result > 0)
+                ItemMaster result = ItemMasterHelper.DeleteItemMaster(code);
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = code });
-                else
-                    return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Delete Operation Failed" });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Delete Operation Failed" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
-
         }
 
 
 
-        [HttpGet("GetAllCompanys")]
+        [HttpGet("GetCompanysList")]
         [Produces(typeof(List<Companies>))]
-        public async Task<IActionResult> GetAllCompanys()
+        public async Task<IActionResult> GetCompanysList()
         {
-            return Ok(CompaniesHelper.GetListOfCompanies());
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.CompanysList = CompaniesHelper.GetListOfCompanies();
+                return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= expando });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new APIResponse() { status=APIStatus.FAIL.ToString(),response= ex .Message});
+            }
         }
     }
 }

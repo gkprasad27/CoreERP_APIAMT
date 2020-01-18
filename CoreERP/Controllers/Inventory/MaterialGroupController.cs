@@ -12,7 +12,7 @@ using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
-    [Authorize]
+    [ApiController]
     [Route("api/Inventory/MaterialGroup")]
     public class MaterialGroupController : ControllerBase
     {
@@ -75,7 +75,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -84,7 +84,7 @@ namespace CoreERP.Controllers
         public async Task<IActionResult> DeleteMaterialGroup(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try
             {
@@ -96,7 +96,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 

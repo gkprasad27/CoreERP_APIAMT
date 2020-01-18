@@ -9,31 +9,29 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
 {
     public class BrandHelpers
     {
-        private static Repository<Brand> _repo = null;
-        private static Repository<Brand> repo
-        {
-            get
-            {
-                if (_repo == null)
-                    _repo = new Repository<Brand>();
-                return _repo;
-            }
-        }
-        public static int RegisterBrand(Brand brand)
+     
+        public static Brand RegisterBrand(Brand brand)
         {
             try
             {
-                var record = ((from b in repo.Brand select b.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
-
-                if (record != 0)
+                using (Repository<Brand> repo = new Repository<Brand>())
                 {
-                    brand.Code = (record + 1).ToString();
-                }
-                else
-                    brand.Code = "1";
+                    var record = ((from b in repo.Brand select b.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
 
-                repo.Brand.Add(brand);
-                return repo.SaveChanges();
+                    if (record != 0)
+                    {
+                        brand.Code = (record + 1).ToString();
+                    }
+                    else
+                        brand.Code = "1";
+
+                    brand.Active = "Y";
+                    repo.Brand.Add(brand);
+                    if (repo.SaveChanges() > 0)
+                        return brand;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
@@ -44,32 +42,48 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                return repo.Brand.Select(x => x).ToList();
+                using (Repository<Brand> repo = new Repository<Brand>())
+                {
+                    return repo.Brand.AsEnumerable().Where(x => x.Active == "Y").ToList();
+                }
             }
             catch
             {
                 throw;
             }
         }
-        public static int UpdateBrand(Brand brand)
+        public static Brand UpdateBrand(Brand brand)
         {
             try
             {
-                repo.Brand.Update(brand);
-                return repo.SaveChanges();
+                using (Repository<Brand> repo = new Repository<Brand>())
+                {
+                    repo.Brand.Update(brand);
+                    if (repo.SaveChanges() > 0)
+                        return brand;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public static int DeleteBrand(string code)
+        public static Brand DeleteBrand(string code)
         {
             try
             {
-                var brand = repo.Brand.Where(x => x.Code == code).FirstOrDefault();
-                repo.Brand.Remove(brand);
-                return repo.SaveChanges();
+                using (Repository<Brand> repo = new Repository<Brand>())
+                {
+                    var brand = repo.Brand.Where(x => x.Code == code).FirstOrDefault();
+                    brand.Active = "N";
+                    repo.Brand.Remove(brand);
+                    if (repo.SaveChanges() > 0)
+                        return brand;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {

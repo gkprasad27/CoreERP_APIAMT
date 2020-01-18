@@ -11,7 +11,7 @@ using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
-    [Authorize]
+    [ApiController]
     [Route("api/Inventory/Sizes")]
     public class SizesController : ControllerBase
     {

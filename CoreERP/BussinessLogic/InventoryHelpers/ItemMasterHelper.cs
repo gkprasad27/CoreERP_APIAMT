@@ -9,31 +9,29 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
 {
     public class ItemMasterHelper
     {
-        private static Repository<ItemMaster> _repo = null;
-        private static Repository<ItemMaster> repo
-        {
-            get
-            {
-                if (_repo == null)
-                    _repo = new Repository<ItemMaster>();
-                return _repo;
-            }
-        }
-        public static int RegisterItemMaster(ItemMaster itemMaster)
+       
+        public static ItemMaster RegisterItemMaster(ItemMaster itemMaster)
         {
             try
             {
-                var record = ((from itm in repo.ItemMaster select itm.Code).ToList()).FirstOrDefault();
-
-                if (record != null)
+                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
                 {
-                    itemMaster.Code = (int.Parse(record) + 1).ToString();
-                }
-                else
-                    itemMaster.Code = "0001";
+                    var record = ((from itm in repo.ItemMaster select itm.Code).ToList()).FirstOrDefault();
 
-                repo.ItemMaster.Add(itemMaster);
-                return repo.SaveChanges();
+                    if (record != null)
+                    {
+                        itemMaster.Code = (int.Parse(record) + 1).ToString();
+                    }
+                    else
+                        itemMaster.Code = "1";
+
+                    itemMaster.Active = "Y";
+                    repo.ItemMaster.Add(itemMaster);
+                    if (repo.SaveChanges() > 0)
+                        return itemMaster;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
@@ -44,29 +42,56 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                return repo.ItemMaster.Select(x => x).ToList();
+                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
+                {
+                    return repo.ItemMaster.AsEnumerable().Where(x => x.Active=="Y").ToList();
+                }
             }
             catch { throw; }
         }
-        public static int UpdateItemMaster(ItemMaster itemMaster)
+        public static List<ItemMaster> GetItemMasterList(string code)
         {
             try
             {
-                repo.ItemMaster.Update(itemMaster);
-                return repo.SaveChanges();
+                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
+                {
+                    return repo.ItemMaster.AsEnumerable().Where(x => x.Code == code).ToList();
+                }
+            }
+            catch { throw; }
+        }
+        public static ItemMaster UpdateItemMaster(ItemMaster itemMaster)
+        {
+            try
+            {
+                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
+                {
+                    repo.ItemMaster.Update(itemMaster);
+                    if (repo.SaveChanges() > 0)
+                        return itemMaster;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public static int DeleteItemMaster(string code)
+        public static ItemMaster DeleteItemMaster(string code)
         {
             try
             {
-                var itemMaster = repo.ItemMaster.Where(x => x.Code == code).FirstOrDefault();
-                repo.ItemMaster.Remove(itemMaster);
-                return repo.SaveChanges();
+                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
+                {
+                    var itemMaster = repo.ItemMaster.Where(x => x.Code == code).FirstOrDefault();
+                    itemMaster.Active = "N";
+                    repo.ItemMaster.Remove(itemMaster);
+                    if (repo.SaveChanges() > 0)
+                        return itemMaster;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
