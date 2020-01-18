@@ -1554,11 +1554,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.BranchCode).HasMaxLength(80);
 
+                entity.Property(e => e.CanAdd).HasMaxLength(50);
+
                 entity.Property(e => e.CanDelete).HasMaxLength(50);
 
                 entity.Property(e => e.CanEdit).HasMaxLength(50);
-
-                entity.Property(e => e.CanUpdate).HasMaxLength(50);
 
                 entity.Property(e => e.CompanyCode).HasMaxLength(80);
 
