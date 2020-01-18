@@ -12,7 +12,7 @@ namespace CoreERP.Controllers.GL
     [Route("api/AsignmentAcctoAccClass")]
     public class AsignmentAcctoAccClassController : ControllerBase
     {
-        [HttpPost("generalledger/asigAccAccclass/register")]
+      /*  [HttpPost("generalledger/asigAccAccclass/register")]
         public async Task<IActionResult> Register([FromBody]AsignmentAcctoAccClass asignmentAcctoAccClass)
         {
             try
@@ -170,7 +170,7 @@ namespace CoreERP.Controllers.GL
                 return BadRequest("Failed to load Branches.");
             }
 
-        }
+        }*/
 
     }
 }

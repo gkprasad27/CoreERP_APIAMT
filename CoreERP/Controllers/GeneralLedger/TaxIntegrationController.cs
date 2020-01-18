@@ -12,7 +12,7 @@ namespace CoreERP.Controllers
     [Route("api/TaxIntegration")]
     public class TaxIntegrationController : ControllerBase
     {
-        [HttpPost("generalledger/taxintegration/register")]
+      /*  [HttpPost("generalledger/taxintegration/register")]
         public async Task<IActionResult> Register([FromBody]TaxIntegration taxintegration)
         {
             try
@@ -190,7 +190,7 @@ namespace CoreERP.Controllers
                                 where account.Nactureofaccount == "Tax"
                                 select account).ToList<Glaccounts>();
             return Ok(result);
-        }
+        }*/
     }
 }
        

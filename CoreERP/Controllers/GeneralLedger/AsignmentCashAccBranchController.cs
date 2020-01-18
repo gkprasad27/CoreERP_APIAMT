@@ -11,7 +11,7 @@ namespace CoreERP.Controllers.GL
     [ApiController]
     [Route("api/AsignmentCashAccBranch")]
     public class AsignmentCashAccBranchController : ControllerBase
-    {
+    {/*
         [HttpPost("generalledger/asignmentcashaccbranch/register")]
         public async Task<IActionResult> Register([FromBody]AsignmentCashAccBranch asignmentCashAccBranch)
         {
@@ -129,6 +129,6 @@ namespace CoreERP.Controllers.GL
                 return NoContent();
             }
            
-        }
+        }*/
     }
 }
