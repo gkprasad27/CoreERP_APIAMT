@@ -13,7 +13,7 @@ namespace CoreERP.Controllers.GL
     [Route("api/GLSubCode")]
     public class GLSubCodeController : Controller
     {
-     /*   [HttpPost("gl/glsubcode/register")]
+      /*  [HttpPost("gl/glsubcode/register")]
         public async Task<IActionResult> Register([FromBody]GlsubCode subcode)
         {
             try

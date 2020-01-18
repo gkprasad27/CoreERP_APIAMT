@@ -12,8 +12,8 @@ namespace CoreERP.Controllers.GL
     [ApiController]
     [Route("api/VoucherType")]
     public class VoucherTypeController : ControllerBase
-    {/*
-        [HttpPost("gl/vt/register")]
+    {
+       /* [HttpPost("gl/vt/register")]
         public async Task<IActionResult> Register([FromBody]VoucherTypes vouhertype)
         {
             try

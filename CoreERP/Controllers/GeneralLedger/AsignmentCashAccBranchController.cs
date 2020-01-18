@@ -9,25 +9,27 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers.GL
 {
     [ApiController]
-    [Route("api/AsignmentCashAccBranch")]
+    [Route("api/generalledger/AsignmentCashAccBranch")]
     public class AsignmentCashAccBranchController : ControllerBase
-    {/*
-        [HttpPost("generalledger/asignmentcashaccbranch/register")]
-        public async Task<IActionResult> Register([FromBody]AsignmentCashAccBranch asignmentCashAccBranch)
+    {
+        [HttpPost("RegisterAsigCashAccBranch")]
+        public async Task<IActionResult> RegisterAsigCashAccBranch([FromBody]AsignmentCashAccBranch asignmentCashAccBranch)
         {
             try
             {
-                int result = GLHelper.RegisterCashAccToBranches(asignmentCashAccBranch);
-                if (result > 0)
-                    return Ok(asignmentCashAccBranch);
-            }
-            catch
-            { }
-            return BadRequest("Registration Failed");
+                AsignmentCashAccBranch result = GLHelper.RegisterCashAccToBranches(asignmentCashAccBranch);
+                if (result != null)
+                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
 
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "" });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
-        [HttpGet("generalledger/asignmentcashaccbranch")]
+   /*     [HttpGet("generalledger/asignmentcashaccbranch")]
         public async Task<IActionResult> GetAll()
         {
             //return Json(

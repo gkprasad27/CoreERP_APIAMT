@@ -12,7 +12,7 @@ namespace CoreERP.Controllers
     [Route("api/TaxIntegration")]
     public class TaxIntegrationController : ControllerBase
     {
-      /*  [HttpPost("generalledger/taxintegration/register")]
+     /*   [HttpPost("generalledger/taxintegration/register")]
         public async Task<IActionResult> Register([FromBody]TaxIntegration taxintegration)
         {
             try

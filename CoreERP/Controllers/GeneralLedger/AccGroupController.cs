@@ -12,7 +12,7 @@ namespace CoreERP.Controllers.GL
     [Route("api/AccGroup")]
     public class AccGroupController : ControllerBase
     {
-     /*  [HttpPost("gl/accgroups/register")]
+      /*  [HttpPost("gl/accgroups/register")]
         public async Task<IActionResult> Register([FromBody]GlaccGroup accGroup)
         {
             //    if (accGroup == null)
