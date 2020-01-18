@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.GenerlLedger;
@@ -9,29 +10,51 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/TaxIntegration")]
+    [Route("api/gl/TaxIntegration")]
     public class TaxIntegrationController : ControllerBase
     {
-     /*   [HttpPost("generalledger/taxintegration/register")]
-        public async Task<IActionResult> Register([FromBody]TaxIntegration taxintegration)
+        [HttpPost("RegisterTaxIntegration")]
+        public async Task<IActionResult> RegisterTaxIntegration([FromBody]TaxIntegration taxintegration)
         {
+           if (taxintegration == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
             try
             {
-                int result = GLHelper.RegisterTaxIntegration(taxintegration);
-                if (result > 0)
-                    return Ok(taxintegration);
+                if (GLHelper.GetTaxIntegrationList(taxintegration.TaxCode).Count > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Tax Code ={taxintegration.TaxCode} alredy exists." });
+
+                TaxIntegration result = GLHelper.RegisterTaxIntegration(taxintegration);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }
-            catch
+            catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return BadRequest("Registration Failed");
         }
 
 
-        [HttpGet("generalledger/taxintegration")]
-       // [Produces(typeof(List<TaxIntegration>))]
-        public async Task<IActionResult> GetAllTaxIntegration()
+        [HttpGet("GetTaxintigrationList")]
+        public async Task<IActionResult> GetTaxintigrationList()
         {
+            try
+            {
+                var taxintigrationList = GLHelper.GetTaxIntegrationList();
+                if (taxintigrationList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.TaxintigrationList = taxintigrationList;
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
             //return Json(
             //    new
             //    {
@@ -45,152 +68,119 @@ namespace CoreERP.Controllers
             //                       where taxacc.Nactureofaccount.ToLower() == "tax"
             //                       select taxacc)
             //   });
-            return Ok(
-               new
-               {
-                  taxintigration = GLHelper.GetTaxIntegrationList(),
-                   //taxcodeDescr = (from taxmast in _unitOfWork.TaxMasters.GetAll() select new { taxmast.Code, taxmast.Description }),
-               });
-
         }
 
-
-        [HttpGet("generalledger/taxintegration/getTaxCodes")]
-        public async Task<IActionResult> GetTaxCodes()
+        [HttpGet("GetTaxCodesList")]
+        public async Task<IActionResult> GetTaxCodesList()
         {
             try
             {
-                return Ok(new { taxcodeDescr = GLHelper.GetTaxMastersList().Select(x => new { ID = x.Code, TEXT = x.Description }) });
+                dynamic expando = new ExpandoObject();
+                expando.TaxcodesList = GLHelper.GetTaxMastersList().Select(x => new { ID = x.Code, TEXT = x.Description });
+                return Ok(new APIResponse(){status=APIStatus.PASS.ToString(),response= expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load companys.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
-
-
-        [HttpGet("generalledger/taxintegration/getCompanys")]
-        public async Task<IActionResult> GetCompanys()
+        [HttpGet("GetCompanysList")]
+        public async Task<IActionResult> GetCompanysList()
         {
             try
             {
-                return Ok(new { companys = GLHelper.GetCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.Name }) });
+                dynamic expando = new ExpandoObject();
+                expando.CompanysList = GLHelper.GetCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.Name });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load companys.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
-        [HttpGet("generalledger/taxintegration/getBranches")]
-        public async Task<IActionResult> GetBranches()
+        [HttpGet("GetBranchesList")]
+        public async Task<IActionResult> GetBranchesList()
         {
             try
             {
-                return Ok(new { branches = GLHelper.GetBranches().Select(x => new { ID = x.CompanyCode, TEXT = x.Name }) });
+                dynamic expando = new ExpandoObject();
+                expando.BranchesList = GLHelper.GetBranches().Select(x => new { ID = x.CompanyCode, TEXT = x.Name });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Branches.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
-        [HttpGet("generalledger/taxintegration/getTaxAccounts")]
-        public async Task<IActionResult> GetTaxAccounts()
+        [HttpGet("GetGLTaxAccountList")]
+        public async Task<IActionResult> GetGLTaxAccountList()
         {
             try
             {
-                return Ok(new { taxacc = GLHelper.GetTaxAccounts() });
+                dynamic expando = new ExpandoObject();
+                expando.GLTaxAccountList = GLHelper.GetTaxAccounts().Select(x=> new { ID=x.Glcode,TEXT=x.Description});
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Tax Accounts.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
-        [HttpPut("generalledger/taxintegration/{code}")]
+        [HttpPut("UpdateTaxIntegration")]
         public async Task<IActionResult> UpdateTaxIntegration(string code, [FromBody] TaxIntegration taxintegration)
         {
-            if (taxintegration == null)
-                return BadRequest($"{nameof(taxintegration)} cannot be null");
+              if (taxintegration == null)
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(taxintegration)} cannot be null" });
 
             try
             {
-                int result = GLHelper.UpdateTaxIntegration(taxintegration);
-                if (result > 0)
-                    return Ok(taxintegration);
-            }
-            catch { }
+                TaxIntegration result = GLHelper.UpdateTaxIntegration(taxintegration);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-            return BadRequest("Updation Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
-
-        [HttpDelete("generalledger/taxintegration/{code}")]
-        public async Task<IActionResult> DeleteTaxIntegrationByID(string code)
+        [HttpDelete("DeleteTaxIntegration/{code}")]
+        public async Task<IActionResult> DeleteTaxIntegration(string code)
         {
-           // Division division = null;
             if (string.IsNullOrWhiteSpace(code))
-                return BadRequest($"{nameof(code)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try
             {
-                int result = GLHelper.DeleteTaxIntegration(code);
-                if (result > 0)
-                    return Ok(code);
-            }
-            catch { }
+                TaxIntegration result = GLHelper.DeleteTaxIntegration(code);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-            return BadRequest("Delete Operation Failed");
-
-
-        }
-
-
-        [HttpGet("generalledger/taxintegration/complist")]
-        public async Task<IActionResult> GetAllCompanysMasters()
-        {
-
-            try
-            {
-                return Ok(new { companys = GLHelper.GetCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.Name }) });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load companys.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
-
-
-        [HttpGet("generalledger/taxintegration/branchlist")]
-        public async Task<IActionResult> GetAllBranches()
-        {
-
-            try
-            {
-                return Ok(new { branches = GLHelper.GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.Name }) });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Failed to load Branches.");
-            }
-        }
-
-
-
-        [HttpGet("generalledger/taxintegration/glacclist")]
-        public async Task<IActionResult> GetAllGLAccounts()
-        {
-            //var result = (from account in _unitOfWork.GLAccounts.GetAll()
-            //              where account.Nactureofaccount == "Tax"
-            //              select account).ToList<GLAccounts>();
-            var result = (from account in GLHelper.GetGLAccountsList()
-                                where account.Nactureofaccount == "Tax"
-                                select account).ToList<Glaccounts>();
-            return Ok(result);
-        }*/
+        //[HttpGet("generalledger/taxintegration/glacclist")]
+        //public async Task<IActionResult> GetAllGLAccounts()
+        //{
+        //    //var result = (from account in _unitOfWork.GLAccounts.GetAll()
+        //    //              where account.Nactureofaccount == "Tax"
+        //    //              select account).ToList<GLAccounts>();
+        //    var result = (from account in GLHelper.GetGLAccountsList()
+        //                        where account.Nactureofaccount == "Tax"
+        //                        select account).ToList<Glaccounts>();
+        //    return Ok(result);
+        //}*/
     }
 }
        

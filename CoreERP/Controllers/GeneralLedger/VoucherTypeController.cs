@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.GenerlLedger;
@@ -10,40 +11,51 @@ using Microsoft.Extensions.Logging;
 namespace CoreERP.Controllers.GL
 {
     [ApiController]
-    [Route("api/VoucherType")]
+    [Route("api/gl/VoucherType")]
     public class VoucherTypeController : ControllerBase
     {
-       /* [HttpPost("gl/vt/register")]
-        public async Task<IActionResult> Register([FromBody]VoucherTypes vouhertype)
+        [HttpPost("RegisterVoucherTypes")]
+        public async Task<IActionResult> RegisterVoucherTypes([FromBody]VoucherTypes vouhertype)
         {
+           if (vouhertype == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
             try
             {
-                int result = GLHelper.RegisterVoucherType(vouhertype);
-                if (result > 0)
-                    return Ok(vouhertype);
+                if (GLHelper.GetVoucherTypeList(vouhertype.VoucherCode).Count > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Voucher Code ={vouhertype.VoucherCode} alredy exists." });
+
+                VoucherTypes result = GLHelper.RegisterVoucherType(vouhertype);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }
-            catch
-            { }
-            return BadRequest("Registration Failed");
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
 
         }
 
-
-
-        [HttpGet("gl/vt")]
-        public async Task<IActionResult> GetAllAccountSubGroup()
+        [HttpGet("GetVoucherTypeList")]
+        public async Task<IActionResult> GetVoucherTypeList()
         {
-            //return Json(new
-            //{
-            //    vouchertype = _unitOfWork.VoucherTypes.GetAll(),
-            //    company =CompanyHelper.GetDistinctCompanyNames(this._unitOfWork),
+            try
+            {
+                var vouchertypeList = GLHelper.GetVoucherTypeList();
+                if (vouchertypeList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.GLSubCodeList = vouchertypeList;
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                }
 
-            //});
-            return Ok(
-               new
-               {
-                   vouchertype = GLHelper.GetVoucherTypeList()
-               });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
@@ -60,46 +72,54 @@ namespace CoreERP.Controllers.GL
             }
         }
 
-        [HttpGet("gl/vt/getCompanies")]
-        public async Task<IActionResult> GetAllCompanies()
+        [HttpGet("GetCompaniesList")]
+        public async Task<IActionResult> GetCompaniesList()
         {
             try
             {
-                return Ok(new { companies = GLHelper.GetCompanies() });
+                dynamic expando = new ExpandoObject();
+                expando.CompaniesList = GLHelper.GetCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.Name });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Companies.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
-        [HttpGet("gl/vt/getVoucherClass")]
-        public async Task<IActionResult> GetVoucherClass()
+        [HttpGet("GetVoucherClassList")]
+        public async Task<IActionResult> GetVoucherClassList()
         {
             try
             {
-                return Ok(new { voucherClass = GLHelper.GetVoucherClassList() });
+                dynamic expando = new ExpandoObject();
+                expando.VoucherClassList = GLHelper.GetVoucherClassList().Select(x => new { ID = x.VoucherCode, TEXT = x.Ext2 });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Voucher Class.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
-        [HttpPut("gl/vt/{code}")]
+        [HttpPut("UpdateVoucherTypes")]
         public async Task<IActionResult> UpdateVoucherTypes(string code, [FromBody] VoucherTypes vouchertype)
         {
-            if (vouchertype == null)
-                return BadRequest($"{nameof(vouchertype)} cannot be null");
+             if (vouchertype == null)
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response ="Request cannot be null" });
+
             try
             {
-                int result = GLHelper.UpdateVoucherType(vouchertype);
-                if (result > 0)
-                    return Ok(vouchertype);
-            }
-            catch { }
+                VoucherTypes result = GLHelper.UpdateVoucherType(vouchertype);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-            return BadRequest("Updation Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
@@ -107,20 +127,21 @@ namespace CoreERP.Controllers.GL
         [Produces(typeof(VoucherTypes))]
         public async Task<IActionResult> DeleteVoucherTypesByID(string code)
         {
-
-            if (string.IsNullOrWhiteSpace(code))
-                return BadRequest($"{nameof(code)} cannot be null");
+             if (string.IsNullOrWhiteSpace(code))
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try
             {
-                int result = GLHelper.DeleteVoucherType(code);
-                if (result > 0)
-                    return Ok(code);
+                VoucherTypes result = GLHelper.DeleteVoucherType(code);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
             }
-            catch { }
-
-            return BadRequest("Delete Operation Failed");
-
-        }*/
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

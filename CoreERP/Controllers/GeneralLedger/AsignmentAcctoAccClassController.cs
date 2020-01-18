@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers.GL
 {
     [ApiController]
-    [Route("api/generalledger/AsignmentAcctoAccClass")]
+    [Route("api/gl/AsignmentAcctoAccClass")]
     public class AsignmentAcctoAccClassController : ControllerBase
     {
         [HttpPost("RegisterAsigAcctoAccClass")]
@@ -50,7 +50,6 @@ namespace CoreERP.Controllers.GL
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
 
-
             //return Json(
             //    new
             //    {
@@ -63,11 +62,8 @@ namespace CoreERP.Controllers.GL
             //        accountingCLass = _unitOfWork.AccountingClass.GetAll(),
             //        maerialTransType =_unitOfWork.Mat_Tran_Types.GetAll(),
             //    });
-
-
-
         }
-
+        
         [HttpGet("GetMatTranTypes")]
         public async Task<IActionResult> GetMatTranTypes()
         {

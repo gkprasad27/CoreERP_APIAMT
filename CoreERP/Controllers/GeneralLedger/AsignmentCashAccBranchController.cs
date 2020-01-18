@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.GenerlLedger;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers.GL
 {
     [ApiController]
-    [Route("api/generalledger/AsignmentCashAccBranch")]
+    [Route("api/gl/AsignmentCashAccBranch")]
     public class AsignmentCashAccBranchController : ControllerBase
     {
         [HttpPost("RegisterAsigCashAccBranch")]
@@ -29,9 +29,25 @@ namespace CoreERP.Controllers.GL
             }
         }
 
-   /*     [HttpGet("generalledger/asignmentcashaccbranch")]
-        public async Task<IActionResult> GetAll()
+       [HttpGet("GetAsignCashAccBranchList")]
+        public async Task<IActionResult> GetAsignCashAccBranchList()
         {
+            try
+            {
+                var asignCashAccBranchList = GLHelper.GetAsignCashAccBranch();
+                if (asignCashAccBranchList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.AsignCashAccBranchList = asignCashAccBranchList;
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
             //return Json(
             //    new
             //    {
@@ -43,94 +59,84 @@ namespace CoreERP.Controllers.GL
             //        glbankaccounts = (from bankacc in (from glacc in _unitOfWork.GLAccounts.GetAll() where glacc.Nactureofaccount != null select glacc)
             //                          where bankacc.Nactureofaccount.ToLower() == "bank"
             //                          select bankacc)
-            //    });
-            return Ok(
-               new
-               {
-                   asiCashAccBranch = GLHelper.GetAsignCashAccBranch(),
-                   glCashBankAcc = (from cashbankacc in GLHelper.GetGLAccountsList().Where(glacc=>glacc.Nactureofaccount != null)
-                                    where cashbankacc.Nactureofaccount.Equals("cash",StringComparison.OrdinalIgnoreCase)
-                                    select cashbankacc),
-                   glbankaccounts = (from bankacc in GLHelper.GetGLAccountsList().Where(glacc=>glacc.Nactureofaccount != null)
-                                     where bankacc.Nactureofaccount.Equals("bank",StringComparison.OrdinalIgnoreCase)
-                                     select bankacc)
-               });
+            //    });            
 
         }
 
-        [HttpPut("generalledger/asignmentcashaccbranch/{code}")]
-        public async Task<IActionResult> UpdateTaxIntegration(string code, [FromBody] AsignmentCashAccBranch asignmentCashAccBranch)
+        [HttpPut("UpdateaAignmentCashAccBranch")]
+        public async Task<IActionResult> UpdateaAignmentCashAccBranch([FromBody] AsignmentCashAccBranch asignmentCashAccBranch)
         {
             if (asignmentCashAccBranch == null)
-                return BadRequest($"{nameof(asignmentCashAccBranch)} cannot be null");
-
-            if (!string.IsNullOrWhiteSpace(asignmentCashAccBranch.Code) && code != asignmentCashAccBranch.Code)
-                return BadRequest("Conflicting role id in parameter and model data");
-
-
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(asignmentCashAccBranch)} cannot be null" });
+            
             try
             {
-                int result = GLHelper.UpdateCashAccToBranches(asignmentCashAccBranch);
-                if (result > 0)
-                    return Ok(asignmentCashAccBranch);
-            }
-            catch { }
+                AsignmentCashAccBranch result = GLHelper.UpdateCashAccToBranches(asignmentCashAccBranch);
+                if (result !=null)
+                    return Ok(new APIResponse() {status=APIStatus.PASS.ToString(), response=result});
 
-            return BadRequest("Updation Failed");
-        }
-
-
-        [HttpDelete("generalledger/asignmentcashaccbranch/{code}")]
-        public async Task<IActionResult> DeleteTaxIntegrationByID(string code)
-        {
-            if (string.IsNullOrWhiteSpace(code))
-                return BadRequest($"{nameof(code)} cannot be null");
-
-            try
-            {
-                int result = GLHelper.DeleteCashAccToBranches(code);
-                if (result > 0)
-                    return Ok(code);
-            }
-            catch { }
-
-            return BadRequest("Delete Operation Failed");
-
-
-        }
-
-
-        [HttpGet("generalledger/asignmentcashaccbranch/brchlst")]
-        public async Task<IActionResult> GetAllBranches()
-        {
-            try
-            {
-                return Ok(new { branches = GLHelper.GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.Name }) });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Updation Failed" });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Branches.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
 
-
-        [HttpGet("generalledger/asignmentcashaccbranch/bankacclst")]
-        public async Task<IActionResult> GetBankAccounts()
+        [HttpDelete("DeleteAignmentCashAccBranch/{code}")]
+        public async Task<IActionResult> DeleteAignmentCashAccBranch(string code)
         {
+            if (string.IsNullOrWhiteSpace(code))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try
             {
-                var result = GLHelper.GetGLAccountsList()
-                                     .Where(accounts => accounts.Nactureofaccount.Equals("Bank",StringComparison.OrdinalIgnoreCase)
-                                                    || accounts.Nactureofaccount.Equals("Cash",StringComparison.OrdinalIgnoreCase)).ToList();
-                return Ok(result);
+                AsignmentCashAccBranch result = GLHelper.DeleteCashAccToBranches(code);
+                if (result !=null)
+                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
             }
-            catch
+            catch (Exception ex)
             {
-                return NoContent();
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-           
-        }*/
+        }
+
+
+        [HttpGet("GetBranchesList")]
+        public async Task<IActionResult> GetBranchesList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.BranchesList = GLHelper.GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.Name });
+                return Ok(new APIResponse(){status=APIStatus.PASS.ToString(),response= expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        //[HttpGet("GetBankAccounts")]
+        //public async Task<IActionResult> GetBankAccounts()
+        //{
+
+        //    try
+        //    {
+        //       var GLCasnBankAccounts= GLHelper.GetGLAccountsList()
+        //                               .Where(accounts => accounts.Nactureofaccount == NatureOfAccounts.BANK.ToString()
+        //                                            || accounts.Nactureofaccount == NatureOfAccounts.CASH.ToString()).ToList();
+        //        dynamic expando = new ExpandoObject();
+        //        expando.GLCasnBankAccounts = GLCasnBankAccounts.Select(x => new { ID = x.Glcode, TEXT = x.Description });
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
     }
 }

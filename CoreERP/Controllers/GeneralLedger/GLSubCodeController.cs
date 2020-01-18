@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.GenerlLedger;
@@ -10,90 +11,106 @@ using Microsoft.Extensions.Logging;
 namespace CoreERP.Controllers.GL
 {
     [ApiController]
-    [Route("api/GLSubCode")]
+    [Route("api/gl/GLSubCode")]
     public class GLSubCodeController : Controller
     {
-      /*  [HttpPost("gl/glsubcode/register")]
-        public async Task<IActionResult> Register([FromBody]GlsubCode subcode)
+        [HttpPost("RegisterGlsubCode")]
+        public async Task<IActionResult> RegisterGlsubCode([FromBody]GlsubCode glsubcode)
         {
+            if (glsubcode == null)
+                return Ok(new APIResponse() { status=APIStatus.FAIL.ToString(),response="Requst can not be empty."});
             try
             {
-                int result = GLHelper.RegisterGLSubCode(subcode);
-                if (result > 0)
-                    return Ok(subcode);
+                if(GLHelper.GetGLSubCodeList(glsubcode.SubCode).Count > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Code ={glsubcode.SubCode} alredy exists." });
+
+                GlsubCode result = GLHelper.RegisterGLSubCode(glsubcode);
+                if (result !=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }
-            catch
+            catch(Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return BadRequest("Registration Failed");
-
         }
-
-
-
-        [HttpGet("gl/glsubcode")]
-        public async Task<IActionResult> GetAllGLSubCode()
-        {
-            return Ok(
-               new
-               {
-                   glsubCode = GLHelper.GetGLSubCodeList()
-
-               });
-        }
-
-        [HttpPut("gl/glsubcode/{code}")]
-         public async Task<IActionResult> UpdateGLSubCode(string code, [FromBody] GlsubCode subcode)
+     
+        [HttpPut("UpdateGLSubCode")]
+        public async Task<IActionResult> UpdateGLSubCode([FromBody] GlsubCode subcode)
         {
             if (subcode == null)
-                return BadRequest($"{nameof(subcode)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(subcode)} cannot be null"});
 
             try
             {
-                int result = GLHelper.UpdateGLSubCode(subcode);
-                if (result > 0)
-                    return Ok(subcode);
-            }
-            catch { }
+                GlsubCode result = GLHelper.UpdateGLSubCode(subcode);
+                if (result !=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response =result });
 
-            return BadRequest("Updation Failed");
-        }
-
-
-        [HttpDelete("gl/glsubcode/{code}")]
-        public async Task<IActionResult> DeleteGLSubCodeID(string code)
-        {
-
-            if (string.IsNullOrWhiteSpace(code))
-                return BadRequest($"{nameof(code)} cannot be null");
-
-            try
-            {
-                int result = GLHelper.DeleteGLSubCode(code);
-                if (result > 0)
-                    return Ok(code);
-            }
-            catch { }
-
-            return BadRequest("Delete Operation Failed");
-
-        }
-
-
-
-        [HttpGet("gl/glsubcode/glacclist")]
-        //[Produces(typeof(List<GLAccUnderSubGroup>))]
-        public async Task<IActionResult> GetAllGLAccounts()
-        {
-            //return Ok(_unitOfWork.GLAccounts.GetAll());
-            try
-            {
-                return Ok(new { glAccounts = GLHelper.GetGLUnderSubGroupList() });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Account Subgroup List.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-        }*/
+        }
+
+        [HttpDelete("DeleteGLSubCode/{code}")]
+        public async Task<IActionResult> DeleteGLSubCode(string code)
+        {
+
+            if (string.IsNullOrWhiteSpace(code))
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)} cannot be null"});
+
+            try
+            {
+                GlsubCode result = GLHelper.DeleteGLSubCode(code);
+                if (result !=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed."});
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetGLSubCodeList")]
+        public async Task<IActionResult> GetGLSubCodeList()
+        {
+            try
+            {
+                var subCodeList = GLHelper.GetGLSubCodeList();
+                if (subCodeList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.GLSubCodeList = subCodeList;
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+     
+        [HttpGet("GetGLUnderSubGroupList")]
+        public async Task<IActionResult> GetGLUnderSubGroupList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.GLUnderSubGroupList = GLHelper.GetGLUnderSubGroupList().Select(x=> new { ID=x.UnderSubGroupCode,TEXT=x.UnderSubGroupName});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

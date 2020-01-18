@@ -5,116 +5,101 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CoreERP.Models;
 using CoreERP.BussinessLogic.GenerlLedger;
+using System.Dynamic;
 
 namespace CoreERP.Controllers.GL
 {
     [ApiController]
-    [Route("api/AccGroup")]
+    [Route("api/gl/AccGroup")]
     public class AccGroupController : ControllerBase
     {
-      /*  [HttpPost("gl/accgroups/register")]
-        public async Task<IActionResult> Register([FromBody]GlaccGroup accGroup)
+        [HttpPost("RegisterGlaccGroup")]
+        public async Task<IActionResult> RegisterGlaccGroup([FromBody]GlaccGroup accGroup)
         {
-            //    if (accGroup == null)
-            //        return BadRequest($"{nameof(accGroup)} can not be null");
-
-            //    try
-            //    {
-            //        if (GLHelper.AccGroup.GetAll().Where(x => x.GroupCode == accGroup.GroupCode).Count() > 0)
-            //            return BadRequest($"Code {accGroup.GroupCode} is already exists,Please use different code");
-
-            //        _unitOfWork.AccGroup.Add(accGroup);
-            //        if (_unitOfWork.SaveChanges() > 0)
-            //            return Ok(accGroup);
-            //        else
-            //            return BadRequest(" Registration Operation Failed");
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        return BadRequest(" Registration Operation Failed");
-            //    }
-
-            //}
+          
             if (accGroup == null)
-                return BadRequest($"{nameof(accGroup)} cannot be null");
+                return Ok(new APIResponse() {status=APIStatus.FAIL.ToString(),response= $"{nameof(accGroup)} cannot be null" });
             try
             {
-                if(GLHelper.GetGLAccountGroupList().Where(x=>x.GroupCode==accGroup.GroupCode).Count()>0)
-                    return BadRequest($"Code {accGroup.GroupCode} is already exists,Please use different code");
-                int result = GLHelper.RegisterAccountsGroup(accGroup);
-                if (result > 0)
-                    return Ok(accGroup);
+                if (GLHelper.GetGLAccountGroupList().Where(x => x.GroupCode == accGroup.GroupCode).Count() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Code {accGroup.GroupCode} is already exists"});
+
+                GlaccGroup result = GLHelper.RegisterAccountsGroup(accGroup);
+                if (result !=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
 
             }
-            catch { }
-
-            return BadRequest("Registration Failed");
+            catch(Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
 
-        [HttpGet("gl/accgroups")]
-        public async Task<IActionResult> GetAllAccountGroup()
+        [HttpGet("GetAccountGroupList")]
+        public async Task<IActionResult> GetAccountGroupList()
         {
-
-            return Ok(
-                 new
-                 {
-                     glAccountGroup = GLHelper.GetGLAccountGroupList()
-
-                 });
-        }
-
-        [HttpPut("gl/accgroups/{code}")]
-        public async Task<IActionResult> UpdateAccountGroup(string code, [FromBody] GlaccGroup accGroup)
-        {
-            if (accGroup == null)
-                return BadRequest($"{nameof(accGroup)} cannot be null");
-
-            if (!string.IsNullOrWhiteSpace(accGroup.GroupCode) && code != accGroup.GroupCode)
-                return BadRequest("Conflicting role id in parameter and model data");
-
-
             try
             {
-                int result = GLHelper.UpdateAccountsGroup(accGroup);
-                if (result > 0)
-                    return Ok(accGroup);
-            }
-            catch { }
+                var glAccountGroupList = GLHelper.GetGLAccountGroupList();
+                if (glAccountGroupList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.GLAccountGroupList = glAccountGroupList;
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                }
 
-            return BadRequest("Updation Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+            }
+            catch(Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPut("UpdateAccountGroup")]
+        public async Task<IActionResult> UpdateAccountGroup([FromBody] GlaccGroup accGroup)
+        {
+            if (accGroup == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(accGroup)} cannot be null" });
+           
+            try
+            {
+                GlaccGroup result = GLHelper.UpdateAccountsGroup(accGroup);
+                if (result !=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Updation Failed." });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
-        [HttpDelete("gl/accgroups/{code}")]
-        public async Task<IActionResult> DeleteAccountGroupID(string code)
+        [HttpDelete("DeleteAccountGroup/{code}")]
+        public async Task<IActionResult> DeleteAccountGroup(string code)
         {
 
             if (string.IsNullOrWhiteSpace(code))
-                return BadRequest($"{nameof(code)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null"});
 
             try
             {
-                //var result = _unitOfWork.AccGroup.GetAll();
-                //var glaccounts = (from t in result
-                //                  where t.GroupCode == code
-                //                  select t).FirstOrDefault();
-                //_unitOfWork.AccGroup.Remove(glaccounts);
-                //if (_unitOfWork.SaveChanges() > 0)
-                //    return Ok(glaccounts);
-                //else
-                //    return BadRequest("Delete Operation Failed");
-               
-                int result = GLHelper.DeleteAccountsGroup(code);
-                if (result > 0)
-                    return Ok(code);
+                GlaccGroup result = GLHelper.DeleteAccountsGroup(code);
+                if (result !=null)
+                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "DeletionFailed." });
             }
-            catch { }
-
-            return BadRequest("Delete Operation Failed");
-
-
-        }*/
+            catch(Exception ex) 
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }
