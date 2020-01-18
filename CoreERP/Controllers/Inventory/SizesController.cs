@@ -78,7 +78,6 @@ namespace CoreERP.Controllers
             }
         }
 
-
         [HttpDelete("DeleteSize/{code}")]
         [Produces(typeof(Sizes))]
         public async Task<IActionResult> DeleteSize(string code)
