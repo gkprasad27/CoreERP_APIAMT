@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoreERP.Controllers
@@ -51,7 +48,7 @@ namespace CoreERP.Controllers
             }
             catch(Exception ex)
             {
-                return NoContent();
+                return Ok(new APIResponse() { status =APIStatus.FAIL.ToString(),response=ex.Message});
             }
         }
     }
