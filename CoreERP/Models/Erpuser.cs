@@ -11,7 +11,7 @@ namespace CoreERP.Models
         public string Role { get; set; }
         public string CanEdit { get; set; }
         public string CanDelete { get; set; }
-        public string CanUpdate { get; set; }
+        public string CanAdd { get; set; }
         public string BranchCode { get; set; }
         public string CompanyCode { get; set; }
     }
