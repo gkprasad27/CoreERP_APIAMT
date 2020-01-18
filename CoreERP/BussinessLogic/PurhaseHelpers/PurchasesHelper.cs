@@ -11,115 +11,147 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 {
     public class PurchasesHelper
     {
-        private static Repository<Purchase> _repo = null;
-        private static Repository<Purchase> repo
-        {
-            get
-            {
-                if (_repo == null)
-                    _repo = new Repository<Purchase>();
-                return _repo;
-            }
-        }
+
         public static List<Purchase> GetPurchaseList()
         {
             try
             {
-                return repo.Purchase.Select(x => x).ToList();
+                using (Repository<Purchase> repo = new Repository<Purchase>())
+                {
+                    return repo.Purchase.AsEnumerable().Where(x => x.Active.Equals("Y")).ToList();
+                }
             }
             catch { throw; }
         }
-        public static Purchase GetPurchase(string code)
+        public static List<Purchase> GetPurchase(string code)
         {
             try
             {
-                return repo.Purchase.Where(x => x.Code == code).FirstOrDefault();
+                using (Repository<Purchase> repo = new Repository<Purchase>())
+                {
+                    return repo.Purchase.AsEnumerable().Where(x => x.Active.Equals("Y")).ToList();
+                }
             }
             catch { throw; }
         }
-        public static int RegisterPurchase(Purchase[] purchasesarr)
+        public static List<Purchase> RegisterPurchase(Purchase[] purchasesarr)
         {
             try
             {
-
-                Purchase  purchase = repo.Purchase.OrderByDescending(x => x.AddDate).FirstOrDefault();
-
-                if (purchase !=null)
+                using (Repository<Purchase> repo = new Repository<Purchase>())
                 {
-                    purchasesarr[0].Code = (Convert.ToInt32(purchase.Code) + 1).ToString();
-                    purchasesarr[0].AddDate = DateTime.Now;
-                    purchasesarr[0].EditDate = DateTime.Now;
-                }
-                else
-                {
-                    purchasesarr[0].Code = "1";
-                    purchasesarr[0].AddDate = DateTime.Now;
-                    purchasesarr[0].EditDate = DateTime.Now;
-                }
+                    Purchase purchase = repo.Purchase.OrderByDescending(x => x.AddDate).FirstOrDefault();
+
+                    if (purchase != null)
+                    {
+                        purchasesarr[0].Code = (Convert.ToInt32(purchase.Code) + 1).ToString();
+                        purchasesarr[0].AddDate = DateTime.Now;
+                        purchasesarr[0].EditDate = DateTime.Now;
+                    }
+                    else
+                    {
+                        purchasesarr[0].Code = "1";
+                        purchasesarr[0].AddDate = DateTime.Now;
+                        purchasesarr[0].EditDate = DateTime.Now;
+                    }
+
+                    purchasesarr[0].Active = "Y";
+                    for (int i = 1; i < purchasesarr.Count(); i++)
+                    {
+                        purchasesarr[i].Code = (Convert.ToInt32(purchasesarr[i - 1].Code) + 1).ToString();
+                        purchasesarr[i].AddDate = DateTime.Now;
+                        purchasesarr[i].EditDate = DateTime.Now;
+                        purchasesarr[i].Active = "Y";
+                    }
 
 
-                purchasesarr[0].Active = "Y";
-                for (int i = 1; i < purchasesarr.Count(); i++)
-                {
-                    purchasesarr[i].Code = (Convert.ToInt32(purchasesarr[i - 1].Code) + 1).ToString();
-                    purchasesarr[i].AddDate = DateTime.Now;
-                    purchasesarr[i].EditDate = DateTime.Now;
-                    purchasesarr[i].Active = "Y";
-                }
+                    repo.Purchase.AddRange(purchasesarr);
+                    if (repo.SaveChanges() > 0)
+                        return purchasesarr.ToList();
 
-              
-                repo.Purchase.AddRange(purchasesarr);
-                return repo.SaveChanges();
+                    return null;
+                }
             }
             catch { throw; }
         }
-        public static int UpdatePurchase(Purchase purchase)
+        public static Purchase UpdatePurchase(Purchase purchase)
         {
             try
             {
-                repo.Purchase.Update(purchase);
-                return repo.SaveChanges();
+                using (Repository<Purchase> repo = new Repository<Purchase>())
+                {
+                    repo.Purchase.Update(purchase);
+                    if (repo.SaveChanges() > 0)
+                        return purchase;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
-        //public static int DeletePurchase(string  code)
-        //{
-        //    try
-        //    {
-        //        var purchase = repo.Purchase.Where(x => x.Code == code).FirstOrDefault();
-        //        repo.Purchase.Remove(purchase);
-        //        return repo.SaveChanges();
-        //    }
-        //    catch { throw; }
-        //}
+        public static Purchase DeletePurchase(string code)
+        {
+            try
+            {
+                using (Repository<Purchase> repo = new Repository<Purchase>())
+                {
+                    var purchase = repo.Purchase.Where(x => x.Code == code).FirstOrDefault();
+                    purchase.Active = "N";
+                    repo.Purchase.Update(purchase);
+                    if (repo.SaveChanges() > 0)
+                        return purchase;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
 
         public static List<MatTranTypes> GetPurchaseMaterialGroup()
         {
             try
             {
-              //  MaterialTransationType
-             return  repo.MatTranTypes
-                    .Where(x=> (string.Compare(x.TransactionType,"PURCHASE",true)==0))
+                using (Repository<Purchase> repo = new Repository<Purchase>())
+                {
+                    //  MaterialTransationType
+                    return repo.MatTranTypes.AsEnumerable()
+                    .Where(x => (string.Compare(x.TransactionType, "PURCHASE", true) == 0))
                     .ToList();
+                }
             }
             catch { throw; }
         }
         public static List<Companies> GetCompanies()
         {
-            try { return masterHlepers.CompaniesHelper.GetListOfCompanies(); }
+            try
+            {
+                using (Repository<Purchase> repo = new Repository<Purchase>())
+                {
+                    return CompaniesHelper.GetListOfCompanies();
+                }
+            }
             catch { throw; }
         }
         public static List<Branches> GetBranches()
         {
-            try { return masterHlepers.BrancheHelper.GetBranches(); }
+            try
+            {
+                using (Repository<Purchase> repo = new Repository<Purchase>())
+                {
+                    return BrancheHelper.GetBranches();
+                }
+            }
             catch { throw; }
         }
         public static List<Glaccounts> GetGLAccounts()
         {
-            try 
+            try
             {
-                return GLHelper.GetGLAccountsList();
+                using (Repository<Purchase> repo = new Repository<Purchase>())
+                {
+                    return GLHelper.GetGLAccountsList();
+                }
             }
             catch { throw; }
         }
@@ -130,9 +162,12 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 // materialTranstp = (from mattran in _unitOfWork.Mat_Tran_Types.GetAll().Where(x => x.TransactionType != null)
                 //                    where mattran.TransactionType.ToUpper() == MaterialTransationType.PURCHASE.ToString()
                 //                    select mattran),
-                return  GLHelper.GetMatTranTypesList()
-                                .Where(m=> m.TransactionType.Equals("PURCHASE",StringComparison.OrdinalIgnoreCase))
-                                .ToList();
+                using (Repository<Purchase> repo = new Repository<Purchase>())
+                {
+                    return GLHelper.GetMatTranTypesList().AsEnumerable()
+                                   .Where(m => m.TransactionType.Equals("PURCHASE", StringComparison.OrdinalIgnoreCase))
+                                   .ToList();
+                }
             }
             catch { throw; }
         }
@@ -153,9 +188,12 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 //                  //on taxm.Code equals taxi.TaxCode
                 //                  where taxm.TaxType == "INPUT"
                 //                  select taxm),
-                return GLHelper.GetTaxMasterList()
-                               .Where(t=> t.TaxType.Equals("INPUT",StringComparison.OrdinalIgnoreCase))
+                using (Repository<Purchase> repo = new Repository<Purchase>())
+                {
+                    return GLHelper.GetTaxMasterList()
+                               .Where(t => t.TaxType.Equals("INPUT", StringComparison.OrdinalIgnoreCase))
                                .ToList();
+                }
             }
             catch { throw; }
         }
@@ -164,9 +202,12 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             try
             {
                 // taxintegration = (from taxingr in _unitOfWork.TaxIntegration.GetAll() where taxingr.TaxCode != null select taxingr),
-                return GLHelper.GetTaxIntegrationList()
-                               .Where(t=> t.TaxCode !=null)
+                using (Repository<Purchase> repo = new Repository<Purchase>())
+                {
+                    return GLHelper.GetTaxIntegrationList()
+                               .Where(t => t.TaxCode != null)
                                .ToList();
+                }
             }
             catch { throw; }
         }
@@ -204,10 +245,10 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 var partnerTypeList = PartnerTypeHelper.GetPartnerTypeList();
 
                 return (from parttyp in partnerTypeList
-                 join partcr in partnerCreationList
-                 on parttyp.Code equals partcr.Partnertype
-                 where parttyp.AccountType.Equals("TRADEVENDORS", StringComparison.OrdinalIgnoreCase)
-                 select partcr).ToList();
+                        join partcr in partnerCreationList
+                        on parttyp.Code equals partcr.Partnertype
+                        where parttyp.AccountType.Equals("TRADEVENDORS", StringComparison.OrdinalIgnoreCase)
+                        select partcr).ToList();
             }
             catch { throw; }
         }
@@ -241,7 +282,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             {
                 using (Repository<PurchaseReturns> context = new Repository<PurchaseReturns>())
                 {
-                    return context.PurchaseReturns.Where(p => p.GoodsReceiptDate!=null).ToList();
+                    return context.PurchaseReturns.Where(p => p.GoodsReceiptDate != null).ToList();
                 }
             }
             catch { throw; }

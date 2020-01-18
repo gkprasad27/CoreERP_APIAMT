@@ -1382,16 +1382,23 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<EmployeeInBranches>(entity =>
             {
-                entity.HasKey(e => new { e.BranchCode, e.EmpCode });
+                entity.HasKey(e => e.SeqId)
+                    .HasName("PK_EmployeeInBranches_1");
 
-                entity.Property(e => e.BranchCode).HasMaxLength(20);
-
-                entity.Property(e => e.EmpCode).HasMaxLength(20);
+                entity.Property(e => e.SeqId).HasColumnName("SeqID");
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
                     .IsUnicode(false)
                     .IsFixedLength();
+
+                entity.Property(e => e.BranchCode)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.EmpCode)
+                    .IsRequired()
+                    .HasMaxLength(20);
 
                 entity.Property(e => e.EmpName).HasMaxLength(50);
 

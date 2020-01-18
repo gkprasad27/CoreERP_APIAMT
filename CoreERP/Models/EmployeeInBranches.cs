@@ -5,6 +5,7 @@ namespace CoreERP.Models
 {
     public partial class EmployeeInBranches
     {
+        public int SeqId { get; set; }
         public string BranchCode { get; set; }
         public string EmpCode { get; set; }
         public string EmpName { get; set; }

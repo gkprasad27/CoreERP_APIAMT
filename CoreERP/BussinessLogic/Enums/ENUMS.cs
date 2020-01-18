@@ -66,4 +66,24 @@
         DR,
         CR
     }
+
+    public enum ModeOfSale
+    {
+        CASH,
+        CARD,
+        BILLS_RECEIVABLE,
+        FINANCE,
+        MULTIPLE,
+        PHONEPAY ,
+        RTGS,
+        CHECK,
+        PAYTM,
+        // EXCHANGE='Exchange'
+    }
+
+    public enum BillingType
+    {
+        LOACAL,
+        INTER_STATE
+    }
 }

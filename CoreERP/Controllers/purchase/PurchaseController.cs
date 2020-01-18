@@ -7,6 +7,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using CoreERP.BussinessLogic.PurhaseHelpers;
 using CoreERP.Models;
+using CoreERP.DataAccess;
+using System.Dynamic;
+using CoreERP.BussinessLogic.SalesHelper;
 
 namespace CoreERP.Controllers
 {
@@ -19,13 +22,22 @@ namespace CoreERP.Controllers
         [HttpGet("getPurchaseList")]
         public async Task<IActionResult> GetPurchaseList()
         {
-            
-            return Ok(
-                new 
+            try
+            {
+                var purchaseList = PurchasesHelper.GetPurchaseList();
+                if (purchaseList.Count > 0)
                 {
-                   purchaseList = PurchasesHelper.GetPurchaseList(),
-                });
-
+                    dynamic expando = new ExpandoObject();
+                    expando.materialtratypes = BillingHelpers.GetMatTranTypesList();
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpGet("getCompanys")]
@@ -33,11 +45,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { companys = PurchasesHelper.GetCompanies().Select(x=> new { ID=x.CompanyCode,TEXT=x.Name}) });
+                dynamic expando = new ExpandoObject();
+                expando.companiesList = PurchasesHelper.GetCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.Name });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest("Failed to load companys.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -46,24 +60,28 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { branches = PurchasesHelper.GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.Name }) });
+                dynamic expando = new ExpandoObject();
+                expando.branchesList = PurchasesHelper.GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.Name });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Branches.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        
+
         [HttpGet("getGlAccounts")]
         public async Task<IActionResult> GetGlAccounts()
         {
             try
             {
-                return Ok(new { accounts = PurchasesHelper.GetGLAccounts().Select(x => new { ID = x.Glcode, TEXT = x.Description }) });
+                dynamic expando = new ExpandoObject();
+                expando.glAccountsList = PurchasesHelper.GetGLAccounts().Select(x => new { ID = x.Glcode, TEXT = x.Description });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load GlAccounts.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -72,11 +90,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { mattranstype = PurchasesHelper.GetMatTranTypes().Select(x => new { ID = x.Code, TEXT = x.Description }) });
+                dynamic expando = new ExpandoObject();
+                expando.matTransTypesList = PurchasesHelper.GetMatTranTypes().Select(x => new { ID = x.Code, TEXT = x.Description });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load MatTranTypes.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -85,11 +105,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { materialGroup = PurchasesHelper.GetMaterialGroup().Select(x => new { ID = x.Code, TEXT = x.GroupName }) });
+                dynamic expando = new ExpandoObject();
+                expando.materialGroupList = PurchasesHelper.GetMaterialGroup().Select(x => new { ID = x.Code, TEXT = x.GroupName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Material Group.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -98,11 +120,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { acctoaccClass = PurchasesHelper.GetAccountToAccountClassList()});
+                dynamic expando = new ExpandoObject();
+                expando.accountToAccountClassList = PurchasesHelper.GetAccountToAccountClassList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Material Group.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -111,11 +135,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { taxmaster = PurchasesHelper.GetTAxMasterList()});
+                dynamic expando = new ExpandoObject();
+                expando.tAxMasterList = PurchasesHelper.GetTAxMasterList().Select(t=> new { ID=t.Code,TEXT=t.Description});
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Tax Master.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -124,11 +150,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { taxIntegr = PurchasesHelper.GetTaxIntegrationList() });
+                dynamic expando = new ExpandoObject();
+                expando.taxIntegrationList = PurchasesHelper.GetTaxIntegrationList().Select(t=> new { ID=t,TEXT=t});
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Tax Master.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -137,11 +165,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { taxIntegr = PurchasesHelper.GetModelList() });
+                dynamic expando = new ExpandoObject();
+                expando.modelList = PurchasesHelper.GetModelList().Select(m=> new { ID=m.Code,TEXT=m.Description});
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Tax Master.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -150,11 +180,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { itemMastr = PurchasesHelper.GetItemMasterList() });
+                dynamic expando = new ExpandoObject();
+                expando.itemMasterList = PurchasesHelper.GetItemMasterList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Tax Master.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -163,11 +195,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { partnerCreation = PurchasesHelper.GetPartnerCreationList() });
+                dynamic expando = new ExpandoObject();
+                expando.partnerCreationList = PurchasesHelper.GetPartnerCreationList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Partner Creation List.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -176,11 +210,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { brandList = PurchasesHelper.GetBrandList() });
+                dynamic expando = new ExpandoObject();
+                expando.brandList = PurchasesHelper.GetBrandList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Brand List.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -189,11 +225,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { accIntegrationList = PurchasesHelper.GetInterpretationList() });
+                dynamic expando = new ExpandoObject();
+                expando.interpretationList = PurchasesHelper.GetInterpretationList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Brand List.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -202,11 +240,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                return Ok(new { accIntegrationList = PurchasesHelper.GetPurchaseReturnsList() });
+                dynamic expando = new ExpandoObject();
+                expando.purchaseReturnsList = PurchasesHelper.GetPurchaseReturnsList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Brand List.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -217,14 +257,16 @@ namespace CoreERP.Controllers
                 return BadRequest($"{nameof(purchase)} cannot be null");
             try
             {
-                int result = PurchasesHelper.RegisterPurchase(purchase);
-                if(result > 0)
-                return Ok(purchase);
+                var result = PurchasesHelper.RegisterPurchase(purchase);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
             }
-            catch{}
-
-            return BadRequest("Registration Failed");
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpPut("updatePurchase")]
@@ -235,13 +277,16 @@ namespace CoreERP.Controllers
 
             try
             {
-                int result = PurchasesHelper.UpdatePurchase(purchase);
-                if (result > 0)
-                    return Ok(purchase);
-            }
-            catch{}
+                var result = PurchasesHelper.UpdatePurchase(purchase);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-            return BadRequest("Updation Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpDelete("deletePurchase/{code}")]
@@ -252,15 +297,16 @@ namespace CoreERP.Controllers
 
             try
             {
-                var purchaseEntity = PurchasesHelper.GetPurchase(code);
-                purchaseEntity.Active = "N";
-                int response=PurchasesHelper.UpdatePurchase(purchaseEntity);
-                if (response> 0)
-                    return Ok(purchaseEntity);
-            }
-            catch { }
+                var response = PurchasesHelper.DeletePurchase(code);
+                if (response !=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
 
-            return BadRequest("Delete Operation Failed");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpGet("getPurchaseMaterialGrp")]

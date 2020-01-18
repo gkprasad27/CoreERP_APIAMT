@@ -21,5 +21,72 @@ namespace CoreERP.BussinessLogic.Common
                               ).First().Values;
             }
         }
+
+        public static int? AutonGenerateNo(string groupName,string branchCode, int rangeStart, int rangeEnds,out string errorMessage)
+        {
+            try
+            {
+                errorMessage = string.Empty;
+
+                var counters = GetCounter(branchCode);
+                if(counters == null)
+                {
+                    AddNewCounter(branchCode, rangeStart);
+                    return rangeStart;
+                }
+                
+                counters.NumberRange += 1;
+                if(counters.NumberRange > rangeEnds)
+                {
+                    errorMessage = "Range Exceedded.";
+                    return null;
+                }
+                UpdateCounter(counters);
+
+                return counters.NumberRange;
+            }
+            catch { throw; }
+        }
+
+        private static Counters GetCounter(string branchCode)
+        {
+            try
+            {
+                using (Repository<Counters> repo = new Repository<Counters>())
+                {
+                    return repo.Counters.AsEnumerable()
+                                         .Where(c => c.BranchCode == branchCode)
+                                         .FirstOrDefault();
+                }
+            }
+            catch { throw; }
+        }
+        private static int AddNewCounter(string branchCode,int rangestarts)
+        {
+            try
+            {
+                using (Repository<Counters> repo = new Repository<Counters>())
+                {
+                    var cntObj = new Counters() {Active="Y" ,BranchCode=branchCode,NumberRange= rangestarts };
+                    repo.Counters.Add(cntObj);
+                    return repo.SaveChanges();
+                }
+            }
+            catch { throw; }
+        }
+
+
+        private static int UpdateCounter(Counters counters)
+        {
+            try
+            {
+                using (Repository<Counters> repo = new Repository<Counters>())
+                {
+                    repo.Counters.Update(counters);
+                    return repo.SaveChanges();
+                }
+            }
+            catch { throw; }
+        }
     }
 }

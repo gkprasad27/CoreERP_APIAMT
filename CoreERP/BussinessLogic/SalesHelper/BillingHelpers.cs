@@ -1,4 +1,5 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
+﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
@@ -213,8 +214,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 {
                     return repo.Glaccounts
                           .AsEnumerable()
-                          .Where(f => f.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
-                                   && f.Nactureofaccount.Equals("FINANCECUSTOMER", StringComparison.OrdinalIgnoreCase)
+                          .Where(f => f.Active =="Y"
+                                   && f.Nactureofaccount   == NatureOfAccounts.FINANCECUSTOMER.ToString()
                                 )
                           .ToList();
 
@@ -558,6 +559,129 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
+        #endregion
+
+
+        #region Billing
+        public static List<Employees> GetEmployee(string branchCode)
+        {
+            try
+            {
+                return (from empbr in EmployeeHelper.GetEmployeeInBranches(null,branchCode)
+                        join emp in EmployeeHelper.GetEmployes()
+                        on empbr.EmpCode equals emp.Code
+                        where empbr.BranchCode == branchCode
+                        select emp).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public static int? GenerateBillNo(string branchCode,out string errorMessage)
+        {
+            try
+            {
+
+                var billingNoSeries = BillingNoSeriesHelper.GetBillingNoSeriesList().Where(b => b.BranchCode == branchCode).OrderByDescending(x=>x.Year).FirstOrDefault();
+                if (billingNoSeries != null)
+                {
+                    var noRange = billingNoSeries.NumberSeries.Split('-');
+                    int starRange = 0, maxRange = 0;
+                    if (noRange.Length == 1)
+                    {
+                        starRange = Convert.ToInt32(noRange[0]);
+                        maxRange = Convert.ToInt32(noRange[0]);
+                    }
+                    else
+                    {
+                        starRange = Convert.ToInt32(noRange[0]);
+                        maxRange = Convert.ToInt32(noRange[1]);
+                    }
+
+                    return CommonHelper.AutonGenerateNo(null, branchCode, starRange, maxRange, out errorMessage);
+                }
+                else
+                {
+                    errorMessage = "No number series is present for billing.";
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+        public static List<Billing> GetBillings(string branchCode)
+        {
+            try
+            {
+                using(Repository<Billing> repo=new Repository<Billing>())
+                {
+                   return repo.Billing.AsEnumerable().Where(b => b.Active == "Y"  && b.BranchCode== branchCode).ToList();
+                }
+            }
+            catch { throw; }
+        }
+        public static List<Billing> RegisterBilling(Billing[] billings)
+        {
+            try
+            {
+                using(Repository<Billing> repo=new Repository<Billing>())
+                {
+                    for(int i=0;i< billings.Length;i++)
+                    {
+                        billings[i].AddDate = DateTime.Now;
+                        billings[i].Active = "Y";
+                    }
+                    repo.Billing.AddRange(billings);
+                    if (repo.SaveChanges() > 0)
+                        return billings.ToList();
+
+                    return new List<Billing>();
+                }
+            }
+            catch { throw; }
+        }
+
+        public static List<Glaccounts> GetGlaccounts()
+        {
+            try
+            {
+                using(Repository<Glaccounts> repo=new Repository<Glaccounts>())
+                {
+                    return repo.Glaccounts.AsEnumerable().Where(gl => gl.Active == "Y").ToList();
+                }
+            }
+            catch { throw; }
+        }
+        public static List<Glaccounts> GetAsignmentCashAccBranchList(string branchcode)
+        {
+            try
+            {
+                //cashAcctobranchAccounts = (from asiacc in _unitOfWork.AsignmentCashAccBranch.GetAll() select new { key = asiacc.CashGLAcc, value = asiacc.CashGLAcc }),
+                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
+                {
+                    return (from gl in repo.Glaccounts.AsEnumerable()
+                            join asigacc in repo.AsignmentCashAccBranch.AsEnumerable().Where(x => x.Active == "Y")
+                             on gl.Glcode equals asigacc.CashGlacc
+                            where asigacc.BranchCode == branchcode
+                            select gl).ToList();
+                }
+            }
+            catch { throw; }
+        }
+        public static List<BrandModel> GetModelList(string modelName)
+        {
+            try {
+                using (Repository<BrandModel> repo = new Repository<BrandModel>()) 
+                {
+                   return repo.BrandModel.AsEnumerable()
+                              .Where(bd => bd.Description.Contains(modelName)
+                                        && bd.Active == "Y"
+                                    )
+                              .ToList();
+                }
+            } catch { throw; }
+        }
+
         #endregion
     }
 }

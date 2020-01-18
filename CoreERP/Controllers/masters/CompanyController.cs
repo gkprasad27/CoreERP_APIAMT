@@ -37,7 +37,7 @@ namespace CoreERP.Controllers
                 // return NotFound("No Data Found.");
 
                 // return Ok(new { companies = ex.Message });
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load Companies" });
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response =ex.Message });
             }
         }
 
@@ -71,7 +71,7 @@ namespace CoreERP.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
 
             }
@@ -100,10 +100,8 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
-            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Updation Failed" });
-
         }
 
 
@@ -129,10 +127,8 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
-            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Deletion Failed" });
         }
-
     }
 }

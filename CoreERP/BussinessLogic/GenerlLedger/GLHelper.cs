@@ -9,71 +9,69 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 {
     public class GLHelper
     {
-        private static Repository<Glaccounts> _repo = null;
-        private static Repository<Glaccounts> repo
-        {
-            get
-            {
-                if (_repo == null)
-                    _repo = new Repository<Glaccounts>();
-                return _repo;
-            }
-        }
-
-
-        public static List<Glaccounts> GetGLAccountsList()
+         public static List<Glaccounts> GetGLAccountsList()
         {
             try
             {
-                return repo.Glaccounts.Select(gl => gl).ToList();
+                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
+                {
+                    return repo.Glaccounts.AsEnumerable().Where(gl => gl.Active == "Y").ToList();
+                }
             }
             catch { throw; }
         }
-
         public static List<GlaccGroup> GetGLAccountGroupList()
         {
             try
             {
-                return repo.GlaccGroup.Select(glacc => glacc).ToList();
+                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
+                {
+                    return repo.GlaccGroup.AsEnumerable().Where(glacc => glacc.Active == "Y").ToList();
+                }
             }
             catch { throw; }
         }
-
-
         public static List<MatTranTypes> GetMatTranTypesList()
         {
             try
             {
-
-                return repo.MatTranTypes.Select(m => m).ToList();
+                using (Repository<MatTranTypes> repo = new Repository<MatTranTypes>())
+                {
+                    return repo.MatTranTypes.AsEnumerable().Where(m => m.Active=="Y").ToList();
+                }
             }
             catch (Exception ex) { throw ex; }
         }
-
-
         public static List<MaterialGroup> GetMaterialGroupsList()
         {
             try
             {
-                return repo.MaterialGroup.Select(m => m).ToList();
+                using (Repository<MaterialGroup> repo = new Repository<MaterialGroup>())
+                {
+                    return repo.MaterialGroup.AsEnumerable().Where(m => m.Active=="Y").ToList();
+                }
             }
             catch (Exception ex) { throw ex; }
         }
-
         public static List<AsignmentAcctoAccClass> GetAccountToAccountClassList()
         {
             try
             {
-                return repo.AsignmentAcctoAccClass.Select(m => m).ToList();
+                using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
+                {
+                    return repo.AsignmentAcctoAccClass.AsEnumerable().Where(m => m.Active =="Y").ToList();
+                }
             }
             catch (Exception ex) { throw ex; }
         }
-
         public static List<TaxMasters> GetTaxMasterList()
         {
             try
             {
-                return repo.TaxMasters.Select(m => m).ToList();
+                using (Repository<TaxMasters> repo = new Repository<TaxMasters>())
+                {
+                    return repo.TaxMasters.AsEnumerable().Where(m => m.Active =="Y").ToList();
+                }
             }
             catch (Exception ex) { throw ex; }
         }
@@ -81,47 +79,70 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                return repo.TaxIntegration.Select(m => m).ToList();
+                using (Repository<TaxIntegration> repo = new Repository<TaxIntegration>())
+                {
+                    return repo.TaxIntegration.AsEnumerable().Where(m => m.Active =="Y").ToList();
+                }
             }
             catch (Exception ex) { throw ex; }
         }
-
         public static List<BrandModel> GetModelList()
         {
             try
             {
-                return repo.BrandModel.Select(m => m).ToList();
+                using (Repository<BrandModel> repo = new Repository<BrandModel>())
+                {
+                    return repo.BrandModel.AsEnumerable().Where(m => m.Active=="Y").ToList();
+                }
             }
             catch (Exception ex) { throw ex; }
         }
 
-        public static int RegisterAccountsGroup(GlaccGroup glAccGroup)
+        public static GlaccGroup RegisterAccountsGroup(GlaccGroup glAccGroup)
         {
             try
             {
-                repo.GlaccGroup.Add(glAccGroup);
-                return repo.SaveChanges();
+                using (Repository<GlaccGroup> repo = new Repository<GlaccGroup>())
+                {
+                    glAccGroup.Active = "Y";
+                    repo.GlaccGroup.Add(glAccGroup);
+                    if (repo.SaveChanges() > 0)
+                        return glAccGroup;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
-
-        public static int UpdateAccountsGroup(GlaccGroup glAccGroup)
+        public static GlaccGroup UpdateAccountsGroup(GlaccGroup glAccGroup)
         {
             try
             {
-                repo.GlaccGroup.Update(glAccGroup);
-                return repo.SaveChanges();
+                using (Repository<GlaccGroup> repo = new Repository<GlaccGroup>()) 
+                {
+                    repo.GlaccGroup.Update(glAccGroup);
+                    if (repo.SaveChanges() > 0)
+                        return glAccGroup;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
-
-        public static int DeleteAccountsGroup(string glAccGroupCode)
+        public static GlaccGroup DeleteAccountsGroup(string glAccGroupCode)
         {
             try
             {
-                var glAccGroup = repo.GlaccGroup.Where(a => a.GroupCode == glAccGroupCode).FirstOrDefault();
-                repo.GlaccGroup.Remove(glAccGroup);
-                return repo.SaveChanges();
+                using (Repository<GlaccGroup> repo = new Repository<GlaccGroup>())
+                {
+                    var glAccGroup = repo.GlaccGroup.Where(a => a.GroupCode == glAccGroupCode).FirstOrDefault();
+                    glAccGroup.Active = "N";
+                    repo.GlaccGroup.Update(glAccGroup);
+                    if (repo.SaveChanges() > 0)
+                        return glAccGroup;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
@@ -130,107 +151,165 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                return repo.GlaccSubGroup.Select(glaccsub => glaccsub).ToList();
+                using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
+                {
+                    return repo.GlaccSubGroup.AsEnumerable().Where(glaccsub => glaccsub.Active =="Y").ToList();
+                }
             }
             catch { throw; }
         }
-        public static int RegisterAccSubGroup(GlaccSubGroup glAccSubGroup)
+        public static GlaccSubGroup RegisterAccSubGroup(GlaccSubGroup glAccSubGroup)
         {
             try
             {
-                repo.GlaccSubGroup.Add(glAccSubGroup);
-                return repo.SaveChanges();
+                using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
+                {
+                    glAccSubGroup.Active = "Y";
+                    repo.GlaccSubGroup.Add(glAccSubGroup);
+                    if (repo.SaveChanges() > 0)
+                        return glAccSubGroup;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
-
-        public static int UpdateAccSubGroup(GlaccSubGroup glAccSubGroup)
+        public static GlaccSubGroup UpdateAccSubGroup(GlaccSubGroup glAccSubGroup)
         {
             try
             {
-                repo.GlaccSubGroup.Update(glAccSubGroup);
-                return repo.SaveChanges();
+                using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
+                {
+                    repo.GlaccSubGroup.Update(glAccSubGroup);
+                    if (repo.SaveChanges() > 0)
+                        return glAccSubGroup;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
-
-        public static int DeleteAccSubGroup(string glAccSubGroupCode)
+        public static GlaccSubGroup DeleteAccSubGroup(string glAccSubGroupCode)
         {
             try
             {
-                var glAccountSubGroup = repo.GlaccSubGroup.Where(a => a.SubGroupCode == glAccSubGroupCode).FirstOrDefault();
-                repo.GlaccSubGroup.Remove(glAccountSubGroup);
-                return repo.SaveChanges();
+                using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
+                {
+                    var glAccountSubGroup = repo.GlaccSubGroup.Where(a => a.SubGroupCode == glAccSubGroupCode).FirstOrDefault();
+                    repo.GlaccSubGroup.Update(glAccountSubGroup);
+                    if (repo.SaveChanges() > 0)
+                        return glAccountSubGroup;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
-
         public static List<GlaccUnderSubGroup> GetGLUnderSubGroupList()
         {
             try
             {
-                return repo.GlaccUnderSubGroup.Select(glundersub => glundersub).ToList();
+                using (Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>())
+                {
+                    return repo.GlaccUnderSubGroup.AsEnumerable().Where(glundersub => glundersub.Active == "Y").ToList();
+                }
             }
             catch { throw; }
         }
-        public static int RegisterUnderSubGroup(GlaccUnderSubGroup glUnderSubGroup)
+        public static GlaccUnderSubGroup RegisterUnderSubGroup(GlaccUnderSubGroup glUnderSubGroup)
         {
             try
             {
-                repo.GlaccUnderSubGroup.Add(glUnderSubGroup);
-                return repo.SaveChanges();
+                using (Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>())
+                {
+                    glUnderSubGroup.Active = "Y";
+                    repo.GlaccUnderSubGroup.Add(glUnderSubGroup);
+                    if (repo.SaveChanges() > 0)
+                        return glUnderSubGroup;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+        public static GlaccUnderSubGroup UpdateUnderSubGroup(GlaccUnderSubGroup glUnderSubGroup)
+        {
+            try
+            {
+                using (Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>())
+                {
+                    repo.GlaccUnderSubGroup.Update(glUnderSubGroup);
+                    if (repo.SaveChanges() > 0)
+                        return glUnderSubGroup;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+        public static GlaccUnderSubGroup DeleteUnderSubGroup(string glUnderSubGroupCode)
+        {
+            try
+            {
+                using (Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>())
+                {
+                    var glUnderSubGroup = repo.GlaccUnderSubGroup.Where(a => a.UnderSubGroupCode == glUnderSubGroupCode).FirstOrDefault();
+                    glUnderSubGroup.Active = "Y";
+                    repo.GlaccUnderSubGroup.Update(glUnderSubGroup);
+                    if (repo.SaveChanges() > 0)
+                        return glUnderSubGroup;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+        public static Glaccounts RegisterGLAccounts(Glaccounts glAccounts)
+        {
+            try
+            {
+                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
+                {
+                    glAccounts.Active = "Y";
+                    repo.Glaccounts.Add(glAccounts);
+                    if (repo.SaveChanges() > 0)
+                        return glAccounts;
+                  
+                    return null;
+                }
             }
             catch { throw; }
         }
 
-        public static int UpdateUnderSubGroup(GlaccUnderSubGroup glUnderSubGroup)
+        public static Glaccounts UpdateGLAccounts(Glaccounts glAccounts)
         {
             try
             {
-                repo.GlaccUnderSubGroup.Update(glUnderSubGroup);
-                return repo.SaveChanges();
+                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
+                {
+                    repo.Glaccounts.Update(glAccounts);
+                    if (repo.SaveChanges() > 0)
+                        return glAccounts;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
-
-        public static int DeleteUnderSubGroup(string glUnderSubGroupCode)
+        public static Glaccounts DeleteGLAccounts(string glAccountsCode)
         {
             try
             {
-                var glUnderSubGroup = repo.GlaccUnderSubGroup.Where(a => a.UnderSubGroupCode == glUnderSubGroupCode).FirstOrDefault();
-                repo.GlaccUnderSubGroup.Remove(glUnderSubGroup);
-                return repo.SaveChanges();
-            }
-            catch { throw; }
-        }
+                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
+                {
+                    var glAcc = repo.Glaccounts.Where(a => a.Glcode == glAccountsCode).FirstOrDefault();
+                    glAcc.Active = "Y";
+                    repo.Glaccounts.Update(glAcc);
+                    if (repo.SaveChanges() > 0)
+                        return glAcc;
 
-        public static int RegisterGLAccounts(Glaccounts glAccounts)
-        {
-            try
-            {
-                repo.Glaccounts.Add(glAccounts);
-                return repo.SaveChanges();
-            }
-            catch { throw; }
-        }
-
-        public static int UpdateGLAccounts(Glaccounts glAccounts)
-        {
-            try
-            {
-                repo.Glaccounts.Update(glAccounts);
-                return repo.SaveChanges();
-            }
-            catch { throw; }
-        }
-
-        public static int DeleteGLAccounts(string glAccountsCode)
-        {
-            try
-            {
-                var glAcc = repo.Glaccounts.Where(a => a.Glcode == glAccountsCode).FirstOrDefault();
-                repo.Glaccounts.Remove(glAcc);
-                return repo.SaveChanges();
+                    return null;
+                }
             }
             catch { throw; }
         }
@@ -239,68 +318,107 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                return repo.GlsubCode.Select(s => s).ToList();
+                using (Repository<GlsubCode> repo = new Repository<GlsubCode>())
+                {
+                    return repo.GlsubCode.AsEnumerable().Where(s => s.Active == "Y").ToList();
+                }
             }
             catch { throw; }
         }
-        public static int RegisterGLSubCode(GlsubCode glSubCode)
+        public static GlsubCode RegisterGLSubCode(GlsubCode glSubCode)
         {
             try
             {
-                repo.GlsubCode.Add(glSubCode);
-                return repo.SaveChanges();
+                using (Repository<GlsubCode> repo = new Repository<GlsubCode>())
+                {
+                    glSubCode.Active = "Y";
+                    repo.GlsubCode.Add(glSubCode);
+                    if (repo.SaveChanges() > 0)
+                        return glSubCode;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+        public static GlsubCode UpdateGLSubCode(GlsubCode glSubCode)
+        {
+            try
+            {
+                using (Repository<GlsubCode> repo = new Repository<GlsubCode>())
+                {
+                    repo.GlsubCode.Update(glSubCode);
+                    if (repo.SaveChanges() > 0)
+                        return glSubCode;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+        public static GlsubCode DeleteGLSubCode(string glSubCode)
+        {
+            try
+            {
+                using (Repository<GlsubCode> repo = new Repository<GlsubCode>())
+                {
+                    var glsubCode = repo.GlsubCode.Where(a => a.Glcode == glSubCode).FirstOrDefault();
+                    glsubCode.Active = "N";
+                    repo.GlsubCode.Update(glsubCode);
+                    if (repo.SaveChanges() > 0)
+                        return glsubCode;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
-        public static int UpdateGLSubCode(GlsubCode glSubCode)
+        public static TaxIntegration RegisterTaxIntegration(TaxIntegration taxintegration)
         {
             try
             {
-                repo.GlsubCode.Update(glSubCode);
-                return repo.SaveChanges();
+                using (Repository<TaxIntegration> repo = new Repository<TaxIntegration>())
+                {
+                    taxintegration.Active = "Y";
+                    repo.TaxIntegration.Add(taxintegration);
+                    if (repo.SaveChanges() > 0)
+                        return taxintegration;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
-
-        public static int DeleteGLSubCode(string glSubCode)
+        public static TaxIntegration UpdateTaxIntegration(TaxIntegration taxintegration)
         {
             try
             {
-                var glsubCode = repo.GlsubCode.Where(a => a.Glcode == glSubCode).FirstOrDefault();
-                repo.GlsubCode.Remove(glsubCode);
-                return repo.SaveChanges();
+                using (Repository<TaxIntegration> repo = new Repository<TaxIntegration>())
+                {
+                    repo.TaxIntegration.Update(taxintegration);
+                    if (repo.SaveChanges() > 0)
+                        return taxintegration;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
-
-        public static int RegisterTaxIntegration(TaxIntegration taxintegration)
+        public static TaxIntegration DeleteTaxIntegration(string taxCode)
         {
             try
             {
-                repo.TaxIntegration.Add(taxintegration);
-                return repo.SaveChanges();
-            }
-            catch { throw; }
-        }
+                using (Repository<TaxIntegration> repo = new Repository<TaxIntegration>())
+                {
+                    var taxInteCode = repo.TaxIntegration.Where(a => a.TaxCode == taxCode).FirstOrDefault();
+                    taxInteCode.Active = "N";
+                    repo.TaxIntegration.Update(taxInteCode);
+                    if (repo.SaveChanges() > 0)
+                        return taxInteCode;
 
-        public static int UpdateTaxIntegration(TaxIntegration taxintegration)
-        {
-            try
-            {
-                repo.TaxIntegration.Update(taxintegration);
-                return repo.SaveChanges();
-            }
-            catch { throw; }
-        }
-
-        public static int DeleteTaxIntegration(string taxCode)
-        {
-            try
-            {
-                var taxInteCode = repo.TaxIntegration.Where(a => a.TaxCode == taxCode).FirstOrDefault();
-                repo.TaxIntegration.Remove(taxInteCode);
-                return repo.SaveChanges();
+                    return null;
+                }
             }
             catch { throw; }
         }
@@ -334,33 +452,53 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             catch { throw; }
         }
 
-        public static int RegisterCashAccToBranches(AsignmentCashAccBranch assignCashToBranch)
+        public static AsignmentCashAccBranch RegisterCashAccToBranches(AsignmentCashAccBranch assignCashToBranch)
         {
             try
             {
-                repo.AsignmentCashAccBranch.Add(assignCashToBranch);
-                return repo.SaveChanges();
+                using (Repository<AsignmentCashAccBranch> repo = new Repository<AsignmentCashAccBranch>())
+                {
+                    assignCashToBranch.Active = "Y";
+                    repo.AsignmentCashAccBranch.Add(assignCashToBranch);
+                    if (repo.SaveChanges() > 0)
+                        return assignCashToBranch;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
-        public static int UpdateCashAccToBranches(AsignmentCashAccBranch assignCashToBranch)
+        public static AsignmentCashAccBranch UpdateCashAccToBranches(AsignmentCashAccBranch assignCashToBranch)
         {
             try
             {
-                repo.AsignmentCashAccBranch.Update(assignCashToBranch);
-                return repo.SaveChanges();
+                using (Repository<AsignmentCashAccBranch> repo = new Repository<AsignmentCashAccBranch>())
+                {
+                    repo.AsignmentCashAccBranch.Update(assignCashToBranch);
+                    if (repo.SaveChanges() > 0)
+                        return assignCashToBranch;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
-        public static int DeleteCashAccToBranches(string assignCashToBranchCode)
+        public static AsignmentCashAccBranch DeleteCashAccToBranches(string assignCashToBranchCode)
         {
             try
             {
-                var asignCashToBranch = repo.AsignmentCashAccBranch.Where(a => a.Code == assignCashToBranchCode).FirstOrDefault();
-                repo.AsignmentCashAccBranch.Remove(asignCashToBranch);
-                return repo.SaveChanges();
+                using (Repository<AsignmentCashAccBranch> repo = new Repository<AsignmentCashAccBranch>())
+                {
+                    var asignCashToBranch = repo.AsignmentCashAccBranch.Where(a => a.Code == assignCashToBranchCode).FirstOrDefault();
+                    asignCashToBranch.Active = "N";
+                    repo.AsignmentCashAccBranch.Update(asignCashToBranch);
+                    if (repo.SaveChanges() > 0)
+                        return asignCashToBranch;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
@@ -372,7 +510,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 using(Repository<TaxMasters> repo=new Repository<TaxMasters>())
                 {
-                    return repo.TaxMasters.Select(x => x).ToList();
+                    return repo.TaxMasters.AsEnumerable().Where(x => x.Active =="Y").ToList();
                 }
                  
             }
@@ -382,7 +520,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                return repo.AsignmentCashAccBranch.Select(a => a).ToList();
+                using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
+                {
+                    return repo.AsignmentCashAccBranch.AsEnumerable().Where(a => a.Active=="Y").ToList();
+                }
             }
             catch { throw; }
         }
@@ -391,46 +532,66 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                return repo.AsignmentAcctoAccClass.Select(a => a).ToList();
-            }
-            catch { throw; }
-        }
-
-        public static int RegisterAccToAccClass(AsignmentAcctoAccClass assignAcctoAcc)
-        {
-            try
-            {
-                var record = ((from asiacc in GLHelper.GetAsignAccToAccClas() select asiacc.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
-                if (record != 0)
+                using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
                 {
-                    assignAcctoAcc.Code = (record + 1).ToString();
+                    return repo.AsignmentAcctoAccClass.AsEnumerable().Where(a => a.Active =="Y").ToList();
                 }
-                else
-                    assignAcctoAcc.Code = "1";
-
-                repo.AsignmentAcctoAccClass.Add(assignAcctoAcc);
-                return repo.SaveChanges();
             }
             catch { throw; }
         }
-
-        public static int UpdateAccToAccClass(AsignmentAcctoAccClass assignAcctoAcc)
+        public static AsignmentAcctoAccClass RegisterAccToAccClass(AsignmentAcctoAccClass assignAcctoAcc)
         {
             try
             {
-                repo.AsignmentAcctoAccClass.Update(assignAcctoAcc);
-                return repo.SaveChanges();
+                using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
+                {
+                    var record = ((from asiacc in GLHelper.GetAsignAccToAccClas() select asiacc.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
+                    if (record != 0)
+                    {
+                        assignAcctoAcc.Code = (record + 1).ToString();
+                    }
+                    else
+                        assignAcctoAcc.Code = "1";
+
+                    assignAcctoAcc.Active = "Y";
+                    repo.AsignmentAcctoAccClass.Add(assignAcctoAcc);
+                    if (repo.SaveChanges() > 0)
+                        return assignAcctoAcc;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
-
-        public static int DeleteAccToAccClass(string assignAcctoAccCode)
+        public static AsignmentAcctoAccClass UpdateAccToAccClass(AsignmentAcctoAccClass assignAcctoAcc)
         {
             try
             {
-                var asignAccToAccClass = repo.AsignmentAcctoAccClass.Where(a => a.Code == assignAcctoAccCode).FirstOrDefault();
-                repo.AsignmentAcctoAccClass.Remove(asignAccToAccClass);
-                return repo.SaveChanges();
+                using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
+                {
+                    repo.AsignmentAcctoAccClass.Update(assignAcctoAcc);
+                    if (repo.SaveChanges() > 0)
+                        return assignAcctoAcc;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+        public static AsignmentAcctoAccClass DeleteAccToAccClass(string assignAcctoAccCode)
+        {
+            try
+            {
+                using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
+                {
+                    var asignAccToAccClass = repo.AsignmentAcctoAccClass.Where(a => a.Code == assignAcctoAccCode).FirstOrDefault();
+                    asignAccToAccClass.Active = "N";
+                    repo.AsignmentAcctoAccClass.Update(asignAccToAccClass);
+                    if (repo.SaveChanges() > 0)
+                        return asignAccToAccClass;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
@@ -439,7 +600,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                return repo.AccountingClass.Select(a => a).ToList();
+                using (Repository<AccountingClass> repo = new Repository<AccountingClass>())
+                {
+                    return repo.AccountingClass.AsEnumerable().Where(a => a.Active =="Y").ToList();
+                }
             }
             catch { throw; }
         }
@@ -457,21 +621,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
                 {
                     return repo.Glaccounts.Where(gacc => gacc.Nactureofaccount != null)
-                                       .Where(acc => acc.Nactureofaccount.Equals("PURCHASES", StringComparison.OrdinalIgnoreCase)
-                                                || acc.Nactureofaccount.Equals("SALES", StringComparison.OrdinalIgnoreCase)
-                                                || acc.Nactureofaccount.Equals("INVENTORY", StringComparison.OrdinalIgnoreCase))
+                                       .Where(acc => acc.Nactureofaccount == NatureOfAccounts.PURCHASES.ToString()
+                                                || acc.Nactureofaccount == NatureOfAccounts.SALES.ToString()
+                                                || acc.Nactureofaccount == NatureOfAccounts.INVENTORY.ToString())
                                        .ToList();
 
                 }
             }
             catch { throw; }
         }
-
         public static List<VoucherClass> GetVoucherClassList()
         {
             try
             {
-                return repo.VoucherClass.Select(vc => vc).ToList();
+                using (Repository<VoucherClass> repo = new Repository<VoucherClass>())
+                {
+                    return repo.VoucherClass.AsEnumerable().Where(vc => vc.Active=="Y").ToList();
+                }
             }
             catch { throw; }
         }
@@ -480,46 +646,67 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                return repo.VoucherTypes.Select(v => v).ToList();
-            }
-            catch { throw; }
-        }
-
-        public static int RegisterVoucherType(VoucherTypes voucherTypes)
-        {
-            try
-            {
-                var lastrecord = repo.VoucherTypes.OrderByDescending(v => v.VoucherCode).FirstOrDefault();
-                if(lastrecord!=null)
+                using (Repository<VoucherTypes> repo = new Repository<VoucherTypes>())
                 {
-                    voucherTypes.VoucherCode = (int.Parse(lastrecord.VoucherCode) + 1).ToString();
+                    return repo.VoucherTypes.AsEnumerable().Where(v => v.Active=="Y").ToList();
                 }
-                else
-                    voucherTypes.VoucherCode = "01";
+            }
+            catch { throw; }
+        }
+        public static VoucherTypes RegisterVoucherType(VoucherTypes voucherTypes)
+        {
+            try
+            {
+                using (Repository<VoucherTypes> repo = new Repository<VoucherTypes>())
+                {
+                    var lastrecord = repo.VoucherTypes.OrderByDescending(v => v.VoucherCode).FirstOrDefault();
+                    if (lastrecord != null)
+                    {
+                        voucherTypes.VoucherCode = (int.Parse(lastrecord.VoucherCode) + 1).ToString();
+                    }
+                    else
+                        voucherTypes.VoucherCode = "1";
 
-                repo.VoucherTypes.Add(voucherTypes);
-                return repo.SaveChanges();
+                    voucherTypes.Active = "Y";
+                    repo.VoucherTypes.Add(voucherTypes);
+                    if (repo.SaveChanges() > 0)
+                        return voucherTypes;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+        public static VoucherTypes UpdateVoucherType(VoucherTypes voucherTypes)
+        {
+            try
+            {
+                using (Repository<VoucherTypes> repo = new Repository<VoucherTypes>())
+                {
+                    repo.VoucherTypes.Update(voucherTypes);
+                    if (repo.SaveChanges() > 0)
+                        return voucherTypes;
+
+                    return null;
+                }
             }
             catch { throw; }
         }
 
-        public static int UpdateVoucherType(VoucherTypes voucherTypes)
+        public static VoucherTypes DeleteVoucherType(string voucherTypeCode)
         {
             try
             {
-                repo.VoucherTypes.Update(voucherTypes);
-                return repo.SaveChanges();
-            }
-            catch { throw; }
-        }
+                using (Repository<VoucherTypes> repo = new Repository<VoucherTypes>())
+                {
+                    var voucherType = repo.VoucherTypes.Where(v => v.VoucherCode == voucherTypeCode).FirstOrDefault();
+                    voucherType.Active = "N";
+                    repo.VoucherTypes.Remove(voucherType);
+                    if (repo.SaveChanges() > 0)
+                        return voucherType;
 
-        public static int DeleteVoucherType(string voucherTypeCode)
-        {
-            try
-            {
-                var voucherType = repo.VoucherTypes.Where(v=>v.VoucherCode == voucherTypeCode).FirstOrDefault();
-                repo.VoucherTypes.Remove(voucherType);
-                return repo.SaveChanges();
+                    return null;
+                }
             }
             catch { throw; }
         }
