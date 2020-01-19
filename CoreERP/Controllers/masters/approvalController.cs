@@ -40,7 +40,7 @@ namespace CoreERP.Controllers
                 if (approvalTypeList.Count > 0)
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.approvalTypeList= approvalTypeList
+                    expando.approvalTypeList = approvalTypeList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
