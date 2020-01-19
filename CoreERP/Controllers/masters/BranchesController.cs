@@ -15,8 +15,7 @@ namespace CoreERP.Controllers
     [Route("api/masters/Branches")]
     public class BranchesController : ControllerBase
     {
-       
-
+     
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
         {
@@ -32,17 +31,14 @@ namespace CoreERP.Controllers
                 else
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response ="Failed to load Data." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-           
-            
         }
 
 
         [HttpGet("GetAllCompanys")]
-
         public async Task<IActionResult> GetAllCompanys()
         {
             try
@@ -54,9 +50,8 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
         }
 
         [HttpPost("RegisterBranch")]
@@ -64,11 +59,11 @@ namespace CoreERP.Controllers
         {
             APIResponse apiResponse = null;
             if (branch == null)
-                return BadRequest($"{nameof(branch)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(branch)} cannot be null"});
             else
             {
                 if (BrancheHelper.SearchBranch(branch.BranchCode).Count() > 0)
-                    return BadRequest($"Branch Code {nameof(branch.BranchCode)} is already Present ,Please Use Different Code ");
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Branch Code {nameof(branch.BranchCode)} is already Present ,Please Use Different Code"});
                 try
                 {
                     var result = BrancheHelper.Register(branch);
@@ -85,20 +80,18 @@ namespace CoreERP.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return BadRequest(ex);
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
 
             }
-        } 
-
-
+        }
 
         [HttpPut("UpdateBranch")]
         public async Task<IActionResult> UpdateBranch([FromBody] Branches branch)
         {
             APIResponse apiResponse = null;
             if (branch == null)
-                return BadRequest($"{nameof(branch)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(branch)} cannot be null"});
 
             try
             {
@@ -115,18 +108,16 @@ namespace CoreERP.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest(ex);
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
             }
         }
 
-
-        // Delete Branch
         [HttpDelete("DeleteBranches/{code}")]
         public async Task<IActionResult> DeleteBranch(string code)
         {
             APIResponse apiResponse = null;
             if (code == null)
-                return BadRequest($"{nameof(code)}can not be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null"});
 
             try
             {
@@ -143,7 +134,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
     }

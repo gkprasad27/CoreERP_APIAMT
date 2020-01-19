@@ -7,56 +7,69 @@ using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
-  public class ApprovalHelper
-  {
-    private static Repository<ApprovalType> _repo = null;
-    private static Repository<ApprovalType> repo
+    public class ApprovalHelper
     {
-      get
-      {
-        if (_repo == null)
-          _repo = new Repository<ApprovalType>();
-        return _repo;
-      }
-    }
-    public static List<ApprovalType> GetListOfApprovals()
-    {
-      try
-      {
-        return repo.GetAll().ToList();
-      }
-      catch { throw; }
-    }
+        public static List<ApprovalType> GetListOfApprovals()
+        {
+            try
+            {
+                using (Repository<ApprovalType> repo = new Repository<ApprovalType>())
+                {
+                    return repo.ApprovalType.AsEnumerable().Where(a => a.Active == "Y").ToList();
+                }
+            }
+            catch { throw; }
+        }
 
-    public static int RegisterApprovalType(ApprovalType approvalType)
-    {
-      try
-      {
-        repo.ApprovalType.Add(approvalType);
-        return repo.SaveChanges();
-      }
-      catch { throw; }
-    }
+        public static ApprovalType RegisterApprovalType(ApprovalType approvalType)
+        {
+            try
+            {
+                using (Repository<ApprovalType> repo = new Repository<ApprovalType>())
+                {
+                    approvalType.Active = "Y";
+                    repo.ApprovalType.Add(approvalType);
+                    if (repo.SaveChanges() > 0)
+                        return approvalType;
 
-    public static int UpdateApprovalType(ApprovalType approvalType)
-    {
-      try
-      {
-        repo.ApprovalType.Update(approvalType);
-        return repo.SaveChanges();
-      }
-      catch { throw; }
-    }
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
 
-    public static int DeleteApprovalType(int approvalTypeCode)
-    {
-      try
-      {
-        var apprtype = repo.ApprovalType.Where(a => a.ApprovalId == approvalTypeCode).FirstOrDefault();
-        repo.ApprovalType.Remove(apprtype);
-        return repo.SaveChanges();
-      }
-      catch { throw; }
+        public static ApprovalType UpdateApprovalType(ApprovalType approvalType)
+        {
+            try
+            {
+                using (Repository<ApprovalType> repo = new Repository<ApprovalType>())
+                {
+                    repo.ApprovalType.Update(approvalType);
+                    if (repo.SaveChanges() > 0)
+                        return approvalType;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+
+        public static ApprovalType DeleteApprovalType(int approvalTypeCode)
+        {
+            try
+            {
+                using (Repository<ApprovalType> repo = new Repository<ApprovalType>())
+                {
+                    var approvalType = repo.ApprovalType.Where(a => a.ApprovalId == approvalTypeCode).FirstOrDefault();
+                    approvalType.Active = "N";
+                    repo.ApprovalType.Remove(approvalType);
+                    if (repo.SaveChanges() > 0)
+                        return approvalType;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
     }
-  }
 }

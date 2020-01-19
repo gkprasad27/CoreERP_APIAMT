@@ -58,9 +58,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch { throw; }
         }
-
-
-
         public static PartnerType DeletePartnerType(string partnerTypeCode)
         {
             try
@@ -75,6 +72,20 @@ namespace CoreERP.BussinessLogic.masterHlepers
 
                     return null;
                 }
+            }
+            catch { throw; }
+        }
+
+        public static List<object> GetAccountTypesList()
+        {
+            try
+            {
+                List<object> accountTypeList=new List<object>();
+                accountTypeList.Add(new { ID = AccountType.BILLSRECEIVABLE.ToString(), TEXT = "BILLS RECEIVABLE" });
+                accountTypeList.Add(new { ID = AccountType.FIXEDASSETS.ToString(), TEXT = "FIXED ASSETS" });
+                accountTypeList.Add(new { ID = AccountType.TRADECUSTOMER.ToString(), TEXT = "TRADE CUSTOMER" });
+                accountTypeList.Add(new { ID = AccountType.TRADEVENDORS.ToString(), TEXT = "TRADE VENDORS" });
+                return accountTypeList;
             }
             catch { throw; }
         }

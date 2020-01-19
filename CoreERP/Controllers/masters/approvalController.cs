@@ -1,3 +1,5 @@
+using System;
+using System.Dynamic;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.Models;
@@ -6,71 +8,87 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/approval")]
-    public class approvalController : ControllerBase
+    [Route("api/master/Approval")]
+    public class ApprovalController : ControllerBase
     {
 
-        [HttpPost("approval/register")]
-        public async Task<IActionResult> Register([FromBody]ApprovalType approvalType)
+        [HttpPost("RegisterApprovalType")]
+        public async Task<IActionResult> RegisterApprovalType([FromBody]ApprovalType approvalType)
         {
             if (approvalType == null)
-                return BadRequest("cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
             try
             {
-                int result = ApprovalHelper.RegisterApprovalType(approvalType);
-                if (result > 0)
-                    return Ok(approvalType);
+                ApprovalType result = ApprovalHelper.RegisterApprovalType(approvalType);
+                if (result !=null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Registration Failed." });
             }
-            catch
+            catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return BadRequest("Registration Failed");
         }
 
-        [HttpGet("approval")]
-        public async Task<IActionResult> GetAllApprovalTypes()
+        [HttpGet("GeApprovalTypeList")]
+        public async Task<IActionResult> GeApprovalTypeList()
         {
-            return Ok(
-                new
+            try
+            {
+                var approvalTypeList = ApprovalHelper.GetListOfApprovals();
+                if (approvalTypeList.Count > 0)
                 {
-                    approvalType = ApprovalHelper.GetListOfApprovals()
-
-                });
+                    dynamic expando = new ExpandoObject();
+                    expando.approvalTypeList= approvalTypeList
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
-        [HttpPut("approval/{approvalID}")]
-        public async Task<IActionResult> UpdateApprovalType(string code, [FromBody] ApprovalType approvalType)
+        [HttpPut("UpdateApprovalType")]
+        public async Task<IActionResult> UpdateApprovalType([FromBody] ApprovalType approvalType)
         {
             try
             {
                 if (approvalType == null)
-                    return BadRequest($"{nameof(approvalType)} cannot be null");
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(approvalType)} cannot be null"});
 
-                int rs = ApprovalHelper.UpdateApprovalType(approvalType);
-                if (rs > 0)
-                    return Ok(approvalType);
+                ApprovalType result = ApprovalHelper.UpdateApprovalType(approvalType);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
 
             }
-            catch { throw; }
-            return BadRequest($"{nameof(approvalType)} Updation Failed");
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
-        [HttpDelete("approval/{approvalID}")]
-        public async Task<IActionResult> DeleteApprovalTypeByID(int approvalId)
+        [HttpDelete("DeleteApprovalType/{approvalID}")]
+        public async Task<IActionResult> DeleteApprovalType(int approvalId)
         {
             try
             {
-                //if (string.IsNullOrWhiteSpace(approvalId))
-                //  return BadRequest($"{nameof(approvalId)} cannot be null");
 
-                int result = ApprovalHelper.DeleteApprovalType(approvalId);
-                if (result > 0)
-                    return Ok(approvalId);
+                ApprovalType result = ApprovalHelper.DeleteApprovalType(approvalId);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
             }
-            catch { }
-            return BadRequest("Deletion Failed");
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
     }
 }

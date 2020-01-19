@@ -24,38 +24,15 @@ namespace CoreERP.Controllers
                 var result = PartnerTypeHelper.RegistePartnerType(partnerType);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = partnerType });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
             }
-            catch
-            {             
-            }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
-        }
-
-
-
-        [HttpGet("GetPartnerTypesList")]
-        public async Task<IActionResult> GetAllPartnerTypes()
-        {
-            try
+            catch (Exception ex)
             {
-                var partnerTypeList = PartnerTypeHelper.GetPartnerTypeList();
-                if(partnerTypeList.Count > 0)
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.partnerTypeList = partnerTypeList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-                else
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            catch(Exception ex)
-            {
-
-            }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
         }
-
+               
         [HttpPut("UpdatePartnerType")]
         public async Task<IActionResult> UpdatePartnerType([FromBody] PartnerType partnerType)
         {
@@ -68,11 +45,13 @@ namespace CoreERP.Controllers
                 if (rs != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = rs });
 
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
             }
-            catch { throw; }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
-
 
         [HttpDelete("DeletePartnerType/{code}")]
         public async Task<IActionResult> DeletePartnerTypeByID(string code)
@@ -86,9 +65,28 @@ namespace CoreERP.Controllers
                 var result =PartnerTypeHelper.DeletePartnerType(code);
                 if(result!=null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
             }
-            catch { }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetAccountTypesList")]
+        public async Task<IActionResult> GetAccountTypesList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.partnerTypeList = PartnerTypeHelper.GetAccountTypesList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
     }
 }
