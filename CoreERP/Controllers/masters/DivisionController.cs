@@ -40,10 +40,10 @@ namespace CoreERP.Controllers
                 return Ok(apiResponse);
 
             }
-            catch
+            catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
         }
 
 
@@ -65,8 +65,10 @@ namespace CoreERP.Controllers
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 }
             }
-            catch
-            { return BadRequest(); }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpPut("UpdateDivision")]
@@ -91,8 +93,8 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = " Updation Failed" });
         }
 
 
@@ -118,9 +120,8 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
         }
     }
 }

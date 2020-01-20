@@ -19,9 +19,11 @@ namespace CoreERP.Controllers
         [HttpPost("RegisterAssetMaster")]
         public async Task<IActionResult> RegisterAssetMaster([FromBody]  AssetMaster assetMaster)
         {
-            APIResponse apiResponse = null;
+           
             try
             {
+                APIResponse apiResponse = null;
+
                 if (AssetHelper.GetList(assetMaster.AssetNo) != null)
                     return Ok(new APIResponse() { status=APIStatus.FAIL.ToString(),response=$"AssetNo ={assetMaster.AssetNo} Aready Exists."});
 
@@ -40,7 +42,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message});
             }
 
         }
@@ -60,9 +62,9 @@ namespace CoreERP.Controllers
                 else
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "No Data  Found" });
             }
-            catch
+            catch(Exception ex)
             {
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "Failed to load data." });
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = ex.Message });
             }
             //return Ok( new {
 
@@ -100,7 +102,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed"});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message});
             }  
         }
 
@@ -108,13 +110,14 @@ namespace CoreERP.Controllers
         [HttpDelete("DeleteAssetMaster/{code}")]
         public async Task<IActionResult> DeleteAssetMaster(string code)
         {
-            APIResponse apiResponse = null;
-            // Division division = null;
+      
             if (string.IsNullOrWhiteSpace(code))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Request cannot be null" });
 
             try
             {
+                APIResponse apiResponse = null;
+
                 var result = AssetHelper.DeleteAssetMaster(code);
                 if (result !=null)
                 {
@@ -129,7 +132,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
+                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
             }
        }
 
@@ -164,11 +167,10 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=expando});
             }
             catch(Exception ex)
-            { 
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =null });
         }
-
     }
 }
        

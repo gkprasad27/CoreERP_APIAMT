@@ -30,13 +30,13 @@ namespace CoreERP.Controllers
 
                     return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= expando });
                 }
-                else
+                
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to loat Data ." });
         }
 
 
@@ -44,22 +44,23 @@ namespace CoreERP.Controllers
         public async Task<IActionResult> RegisterTaxMasters([FromBody]TaxMasters taxmaster)
         {
             if (taxmaster == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(taxmaster)} cannot be null" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Request cannot be null" });
            try
             {
                 if (TaxmasterHelper.GetListOfTaxMasters().Where(x => x.Code == taxmaster.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Tax Master Code {nameof(taxmaster.Code)} is already exists ,Please Use Different Code " });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Tax Master Code {nameof(taxmaster.Code)} is already exists" });
 
 
                 var result = TaxmasterHelper.RegisterTaxMaster(taxmaster);
                 if (result !=null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
             }
-            catch
+            catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return BadRequest("Registration Failed");
         }
 
 
@@ -75,16 +76,16 @@ namespace CoreERP.Controllers
                 var result = TaxmasterHelper.UpdateTaxMaster(taxmaster);
                 if (result !=null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+           
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
         }
 
 
-        // Delete Branch
         [HttpDelete("DeleteTaxMaster/{code}")]
         public async Task<IActionResult> DeleteTaxMaster(string code)
         {
@@ -95,12 +96,14 @@ namespace CoreERP.Controllers
             {
                 var result = TaxmasterHelper.DeleteTaxMaster(code);
                 if (result !=null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = result });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
         }
     }
 }

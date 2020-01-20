@@ -31,8 +31,10 @@ namespace CoreERP.Controllers
                 else
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "No Data Found." });
             }
-            catch { }
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
@@ -52,8 +54,10 @@ namespace CoreERP.Controllers
                 else
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch {  }
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
@@ -72,8 +76,10 @@ namespace CoreERP.Controllers
                 else
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch { }
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
@@ -99,15 +105,14 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
         }
 
 
 
         [HttpPut("UpdateEmployeeInBranch")]
-        public async Task<IActionResult> UpdateEmployeeInBranch(string code, [FromBody] EmployeeInBranches employeeInBranch)
+        public async Task<IActionResult> UpdateEmployeeInBranch([FromBody] EmployeeInBranches employeeInBranch)
         {
             APIResponse apiResponse = null;
             if (employeeInBranch == null)
@@ -128,8 +133,8 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = " Updation Failed" });
         }
 
 
@@ -157,8 +162,8 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
         }
     }
 }

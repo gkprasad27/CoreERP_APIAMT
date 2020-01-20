@@ -16,8 +16,6 @@ namespace CoreERP.Controllers
     public class CompanyController : ControllerBase
     {
 
-
-
         [HttpGet("GetCompanysList")]
         public async Task<IActionResult> GetCompanysList()
         {
@@ -34,9 +32,6 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                // return NotFound("No Data Found.");
-
-                // return Ok(new { companies = ex.Message });
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response =ex.Message });
             }
         }
@@ -45,18 +40,17 @@ namespace CoreERP.Controllers
         [HttpPost("RegisterCompany")]
         public async Task<IActionResult> RegisterCompany([FromBody]Companies company)
         {
-            // listobh.Add(company);
-            APIResponse apiResponse = null;
+            
             if (company == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(company)} cannot be null" });
             else
             {
                 if (CompaniesHelper.GetCompanies(company.CompanyCode) != null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + company.CompanyCode + " is already Exists,Please Use Another Code" });
-                //BadRequest("Code =" + company.CompanyCode + " is already Exists,Please Use Another Code");
 
                 try
                 {
+                    APIResponse apiResponse = null;
                     var result = CompaniesHelper.Register(company);
                     if (result != null)
                     {
@@ -73,20 +67,19 @@ namespace CoreERP.Controllers
                 {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-
             }
         }
-
-
 
         [HttpPut("UpdateCompany")]
         public async Task<IActionResult> UpdateCompany([FromBody] Companies company)
         {
-            APIResponse apiResponse = null;
+           
             if (company == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(company)} cannot be null" });
             try
             {
+                APIResponse apiResponse = null;
+
                 Companies result = CompaniesHelper.Update(company);
                 if (result != null)
                 {

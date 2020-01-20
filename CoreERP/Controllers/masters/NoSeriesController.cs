@@ -24,11 +24,13 @@ namespace CoreERP.Controllers
                 {
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
                 }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
             }
             catch (Exception ex)
             {
-            }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }           
         }
 
 
@@ -48,10 +50,10 @@ namespace CoreERP.Controllers
                 else
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch
+            catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
         }
 
         [HttpPut("UpdateNoSeries")]
@@ -76,7 +78,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Updation Failed" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -104,9 +106,8 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
         }
 
         [HttpGet("GetCompanyList")]
@@ -125,10 +126,10 @@ namespace CoreERP.Controllers
                 else
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch
+            catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
         }
 
         [HttpGet("GetBranchesList")]
@@ -146,17 +147,16 @@ namespace CoreERP.Controllers
                 else
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data  Found" });
             }
-            catch
+            catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
         }
 
         [HttpGet("GetPartnerTypeList")]
         [Produces(typeof(List<PartnerType>))]
         public async Task<IActionResult> GetPartnerTypeList()
         {
-
             try
             {
                 var partnerTypeList = PartnerTypeHelper.GetPartnerTypeList();
@@ -169,10 +169,10 @@ namespace CoreERP.Controllers
                 else
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data  Found" });
             }
-            catch
+            catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
         }
     }
 }

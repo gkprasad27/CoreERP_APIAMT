@@ -34,8 +34,8 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Failed to load dat." });
         }
 
 
@@ -63,16 +63,16 @@ namespace CoreERP.Controllers
 
                 return Ok(apiResponse);
             }
-            catch
+            catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
         }
 
 
 
         [HttpPut("UpdateEmployee")]
-        public async Task<IActionResult> UpdateEmployee(string code, [FromBody] Employees employee)
+        public async Task<IActionResult> UpdateEmployee([FromBody] Employees employee)
         {
             APIResponse apiResponse = null;
             try
@@ -91,11 +91,10 @@ namespace CoreERP.Controllers
                 }
                 return Ok(apiResponse);
             }
-            catch
+            catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
         }
 
 
@@ -119,8 +118,10 @@ namespace CoreERP.Controllers
                 }
                 return Ok(apiResponse);
             }
-            catch{}
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Deletion Failed." });
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
     }
 }

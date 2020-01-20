@@ -55,12 +55,13 @@ namespace CoreERP.Controllers
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
+          
         }
 
 
@@ -75,12 +76,14 @@ namespace CoreERP.Controllers
                 var result = ProfitCenterHelper.UpdateProfitCenter(profitCenter);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = profitCenter });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Updation Failed" });
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Updation Failed" });
+           
         }
 
         [HttpDelete("DeleteProfitCenters/{code}")]
@@ -97,12 +100,12 @@ namespace CoreERP.Controllers
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
         }
     }
 }

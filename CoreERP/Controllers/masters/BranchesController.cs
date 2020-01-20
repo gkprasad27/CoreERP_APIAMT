@@ -37,7 +37,6 @@ namespace CoreERP.Controllers
             }
         }
 
-
         [HttpGet("GetAllCompanys")]
         public async Task<IActionResult> GetAllCompanys()
         {
@@ -91,7 +90,7 @@ namespace CoreERP.Controllers
         {
             APIResponse apiResponse = null;
             if (branch == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(branch)} cannot be null"});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Request cannot be null"});
 
             try
             {

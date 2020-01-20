@@ -25,14 +25,14 @@ namespace CoreERP.Controllers
                 var result = PartnerCreationHelper.RegisterPartnerCreation(partnercreation);
                 if (result !=null)
                     return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
         }
-
-
 
         [HttpGet("GetPartnerCreationList")]
         public async Task<IActionResult> GetPartnerCreationList()
@@ -50,11 +50,10 @@ namespace CoreERP.Controllers
                 else
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch(Exception ex)
-            { 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." }); 
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-           
         }
 
         [HttpPut("UpdatePartnerCreation")]
@@ -70,11 +69,13 @@ namespace CoreERP.Controllers
                 var rs = PartnerCreationHelper.UpdatePartnerCreation(partnercreation);
                 if (rs != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = rs });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
             }
             catch (Exception ex)
             {
-            }
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }            
         }
 
 
@@ -90,12 +91,13 @@ namespace CoreERP.Controllers
                 var result = PartnerCreationHelper.DeletePartnerCreation(code);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
             }
             catch (Exception ex)
             {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
-            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
         }
 
         [HttpGet("GetBalanceTypes")]
@@ -115,7 +117,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -136,7 +138,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
        
@@ -157,7 +159,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -178,7 +180,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -199,7 +201,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -220,7 +222,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to load data." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
     }

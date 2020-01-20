@@ -5,6 +5,7 @@ using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.Models;
 using System.Dynamic;
 using CoreERP.DataAccess;
+using System;
 
 namespace CoreERP.Controllers
 {
@@ -20,13 +21,18 @@ namespace CoreERP.Controllers
             try
             {
                 var leavetypeList = LeaveTypeHelper.GetLeaveTypeList();
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.leavetypeList = leavetypeList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                if (leavetypeList.Count > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.leavetypeList = leavetypeList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest("No Data  Found");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -51,8 +57,10 @@ namespace CoreERP.Controllers
 
                 return Ok(apiResponse);
             }
-         catch { }
-         return BadRequest("Registration Failed");
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
@@ -79,9 +87,11 @@ namespace CoreERP.Controllers
                 }
                 return Ok(apiResponse);
             }
-           catch { throw; }
-           return BadRequest($"{nameof(leaveType)} Updation Failed");
-    }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
 
         // Delete Leave Type
@@ -109,8 +119,10 @@ namespace CoreERP.Controllers
                 }
                 return Ok(apiResponse);
             }
-            catch { }
-            return BadRequest("Deletion Failed");
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
     }
 }
