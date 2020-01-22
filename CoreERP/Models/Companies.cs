@@ -19,8 +19,8 @@ namespace CoreERP.Models
         public string Email { get; set; }
         public string Ext1 { get; set; }
         public string Ext2 { get; set; }
-        public int FinacialYear { get; set; }
-        public int FromMonth { get; set; }
+        public string FinacialYear { get; set; }
+        public int? FromMonth { get; set; }
         public string Gstno { get; set; }
         public string Name { get; set; }
         public string NatureOfBusiness { get; set; }
@@ -32,10 +32,14 @@ namespace CoreERP.Models
         public string Place { get; set; }
         public string State { get; set; }
         public string TanNo { get; set; }
-        public int ToMonth { get; set; }
+        public int? ToMonth { get; set; }
         public string Ext3 { get; set; }
         public string Ext4 { get; set; }
         public string Active { get; set; }
+        public string Country { get; set; }
+        public int? Currency { get; set; }
+        public DateTime? BooksBeginFrom { get; set; }
+        public string City { get; set; }
 
         public virtual ICollection<Branches> Branches { get; set; }
         public virtual ICollection<CostCenters> CostCenters { get; set; }

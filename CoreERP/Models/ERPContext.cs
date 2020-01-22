@@ -33,6 +33,7 @@ namespace CoreERP.Models
         public virtual DbSet<Companies> Companies { get; set; }
         public virtual DbSet<CostCenters> CostCenters { get; set; }
         public virtual DbSet<Counters> Counters { get; set; }
+        public virtual DbSet<Countries> Countries { get; set; }
         public virtual DbSet<CustomerReceipts> CustomerReceipts { get; set; }
         public virtual DbSet<Department> Department { get; set; }
         public virtual DbSet<Designation> Designation { get; set; }
@@ -73,8 +74,10 @@ namespace CoreERP.Models
         public virtual DbSet<Segment> Segment { get; set; }
         public virtual DbSet<ShiftTimeConfig> ShiftTimeConfig { get; set; }
         public virtual DbSet<Sizes> Sizes { get; set; }
+        public virtual DbSet<States> States { get; set; }
         public virtual DbSet<TaxIntegration> TaxIntegration { get; set; }
         public virtual DbSet<TaxMasters> TaxMasters { get; set; }
+        public virtual DbSet<TblCurrency> TblCurrency { get; set; }
         public virtual DbSet<VendorPayments> VendorPayments { get; set; }
         public virtual DbSet<VoucherClass> VoucherClass { get; set; }
         public virtual DbSet<VoucherProcessing> VoucherProcessing { get; set; }
@@ -910,7 +913,7 @@ namespace CoreERP.Models
                     .IsFixedLength()
                     .HasDefaultValueSql("('Y')");
 
-                entity.Property(e => e.Address1).HasMaxLength(40);
+                entity.Property(e => e.Address1).HasMaxLength(400);
 
                 entity.Property(e => e.Address2).HasMaxLength(40);
 
@@ -918,17 +921,17 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Address4).HasMaxLength(40);
 
-                entity.Property(e => e.AdvanceAmount).HasColumnType("decimal(18, 2)");
-
                 entity.Property(e => e.BankAccountNumber).HasMaxLength(30);
 
                 entity.Property(e => e.BankBranch).HasMaxLength(30);
 
                 entity.Property(e => e.BankName).HasMaxLength(30);
 
-                entity.Property(e => e.Building).HasMaxLength(20);
+                entity.Property(e => e.City).HasMaxLength(50);
 
                 entity.Property(e => e.CompanyCode).HasMaxLength(20);
+
+                entity.Property(e => e.Country).HasMaxLength(50);
 
                 entity.Property(e => e.Email).HasMaxLength(100);
 
@@ -938,17 +941,13 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Gstno)
                     .HasColumnName("GSTNo")
-                    .HasMaxLength(20);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Ifsccode)
                     .HasColumnName("IFSCCode")
                     .HasMaxLength(30);
 
-                entity.Property(e => e.LeaseAmount).HasColumnType("decimal(18, 2)");
-
-                entity.Property(e => e.Name).HasMaxLength(50);
-
-                entity.Property(e => e.OwnerName).HasMaxLength(50);
+                entity.Property(e => e.Name).HasMaxLength(100);
 
                 entity.Property(e => e.Phone1)
                     .HasColumnName("Phone_1")
@@ -967,8 +966,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.PinCode).HasMaxLength(6);
 
                 entity.Property(e => e.Place).HasMaxLength(30);
-
-                entity.Property(e => e.State).HasMaxLength(20);
 
                 entity.HasOne(d => d.CompanyCodeNavigation)
                     .WithMany(p => p.Branches)
@@ -1098,6 +1095,12 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Address4).HasMaxLength(40);
 
+                entity.Property(e => e.BooksBeginFrom).HasColumnType("date");
+
+                entity.Property(e => e.City).HasMaxLength(50);
+
+                entity.Property(e => e.Country).HasMaxLength(50);
+
                 entity.Property(e => e.Email).HasMaxLength(100);
 
                 entity.Property(e => e.Ext1).HasMaxLength(20);
@@ -1107,6 +1110,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.Ext3).HasMaxLength(50);
 
                 entity.Property(e => e.Ext4).HasMaxLength(50);
+
+                entity.Property(e => e.FinacialYear).HasMaxLength(50);
 
                 entity.Property(e => e.Gstno)
                     .HasColumnName("GSTNo")
@@ -1242,6 +1247,24 @@ namespace CoreERP.Models
                 entity.Property(e => e.Ext4).HasMaxLength(200);
 
                 entity.Property(e => e.Prefix).HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<Countries>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.CountryCode)
+                    .IsRequired()
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.CountryName)
+                    .IsRequired()
+                    .HasMaxLength(250);
             });
 
             modelBuilder.Entity<CustomerReceipts>(entity =>
@@ -3349,6 +3372,29 @@ namespace CoreERP.Models
                 entity.Property(e => e.Ext2).HasMaxLength(20);
             });
 
+            modelBuilder.Entity<States>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsFixedLength();
+
+                entity.Property(e => e.CountryCode)
+                    .IsRequired()
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.CountryId).HasColumnName("CountryID");
+
+                entity.Property(e => e.CountryName)
+                    .IsRequired()
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.StateName)
+                    .IsRequired()
+                    .HasMaxLength(250);
+            });
+
             modelBuilder.Entity<TaxIntegration>(entity =>
             {
                 entity.HasKey(e => e.TaxCode);
@@ -3423,6 +3469,55 @@ namespace CoreERP.Models
                 entity.Property(e => e.Ugst)
                     .HasColumnName("UGST")
                     .HasColumnType("decimal(18, 2)");
+            });
+
+            modelBuilder.Entity<TblCurrency>(entity =>
+            {
+                entity.HasKey(e => e.CurrencyId)
+                    .HasName("PK__tbl_Curr__DAF0B20A592635D8");
+
+                entity.ToTable("tbl_Currency");
+
+                entity.Property(e => e.CurrencyId)
+                    .HasColumnName("currencyId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsFixedLength();
+
+                entity.Property(e => e.CurrencyName)
+                    .HasColumnName("currencyName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CurrencySymbol)
+                    .HasColumnName("currencySymbol")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Extra1)
+                    .HasColumnName("extra1")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Extra2)
+                    .HasColumnName("extra2")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ExtraDate)
+                    .HasColumnName("extraDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IsDefault).HasColumnName("isDefault");
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NoOfDecimalPlaces).HasColumnName("noOfDecimalPlaces");
+
+                entity.Property(e => e.SubunitName)
+                    .HasColumnName("subunitName")
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<VendorPayments>(entity =>

@@ -16,7 +16,6 @@
     <Compile Remove="Controllers\purchase\InventoryController.cs" />
     <Compile Remove="Controllers\purchase\OpeningBalanceController.cs" />
     <Compile Remove="Controllers\purchase\purchaseRequisitionsController.cs" />
-    <Compile Remove="Controllers\purchase\VendorPaymentsController.cs" />
   </ItemGroup>
 
   <ItemGroup>
