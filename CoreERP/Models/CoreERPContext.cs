@@ -838,7 +838,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Address4).HasMaxLength(40);
 
-                entity.Property(e => e.AdvanceAmount).HasColumnType("decimal(18, 2)");
+                //entity.Property(e => e.).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.BankAccountNumber).HasMaxLength(30);
 
@@ -846,7 +846,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.BankName).HasMaxLength(30);
 
-                entity.Property(e => e.Building).HasMaxLength(20);
+              //  entity.Property(e => e.Building).HasMaxLength(20);
 
                 entity.Property(e => e.CompanyCode).HasMaxLength(14);
 
@@ -864,11 +864,7 @@ namespace CoreERP.Models
                     .HasColumnName("IFSCCode")
                     .HasMaxLength(30);
 
-                entity.Property(e => e.LeaseAmount).HasColumnType("decimal(18, 2)");
-
                 entity.Property(e => e.Name).HasMaxLength(50);
-
-                entity.Property(e => e.OwnerName).HasMaxLength(50);
 
                 entity.Property(e => e.Phone1)
                     .HasColumnName("Phone_1")

@@ -14,7 +14,7 @@ using CoreERP.BussinessLogic.SalesHelper;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/Purchase")]
+    [Route("api/Purchase/purchases")]
     public class PurchaseController : ControllerBase
     {
         #region Purchase 
@@ -254,7 +254,7 @@ namespace CoreERP.Controllers
         public async Task<IActionResult> RegisterPurchase([FromBody]Models.Purchase[] purchase)
         {
             if (purchase == null)
-                return BadRequest($"{nameof(purchase)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
             try
             {
                 var result = PurchasesHelper.RegisterPurchase(purchase);
@@ -273,7 +273,7 @@ namespace CoreERP.Controllers
         public async Task<IActionResult> UpdatePurchase(string code, [FromBody] Models.Purchase purchase)
         {
             if (purchase == null)
-                return BadRequest($"{nameof(purchase)} cannot be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
 
             try
             {
@@ -293,7 +293,7 @@ namespace CoreERP.Controllers
         public async Task<IActionResult> DeletePurchase(string code)
         {
             if (code == null)
-                return BadRequest($"{nameof(code)}can not be null");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
 
             try
             {

@@ -86,4 +86,16 @@
         LOACAL,
         INTER_STATE
     }
+
+    public enum TAXTYPE
+    {
+        INPUT,
+        OUTPUT
+    }
+
+    public enum STATMENTTYPE
+    {
+        PI,
+        BS
+    }
 }

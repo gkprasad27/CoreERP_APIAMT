@@ -9,7 +9,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 {
     public class GLHelper
     {
-       
+
         public static List<GlaccGroup> GetGLAccountGroupList()
         {
             try
@@ -27,7 +27,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 using (Repository<MatTranTypes> repo = new Repository<MatTranTypes>())
                 {
-                    return repo.MatTranTypes.AsEnumerable().Where(m => m.Active=="Y").ToList();
+                    return repo.MatTranTypes.AsEnumerable().Where(m => m.Active == "Y").ToList();
                 }
             }
             catch (Exception ex) { throw ex; }
@@ -38,7 +38,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 using (Repository<MaterialGroup> repo = new Repository<MaterialGroup>())
                 {
-                    return repo.MaterialGroup.AsEnumerable().Where(m => m.Active=="Y").ToList();
+                    return repo.MaterialGroup.AsEnumerable().Where(m => m.Active == "Y").ToList();
                 }
             }
             catch (Exception ex) { throw ex; }
@@ -49,7 +49,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
                 {
-                    return repo.AsignmentAcctoAccClass.AsEnumerable().Where(m => m.Active =="Y").ToList();
+                    return repo.AsignmentAcctoAccClass.AsEnumerable().Where(m => m.Active == "Y").ToList();
                 }
             }
             catch (Exception ex) { throw ex; }
@@ -60,19 +60,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 using (Repository<TaxMasters> repo = new Repository<TaxMasters>())
                 {
-                    return repo.TaxMasters.AsEnumerable().Where(m => m.Active =="Y").ToList();
+                    return repo.TaxMasters.AsEnumerable().Where(m => m.Active == "Y").ToList();
                 }
             }
             catch (Exception ex) { throw ex; }
         }
-      
+
         public static List<BrandModel> GetModelList()
         {
             try
             {
                 using (Repository<BrandModel> repo = new Repository<BrandModel>())
                 {
-                    return repo.BrandModel.AsEnumerable().Where(m => m.Active=="Y").ToList();
+                    return repo.BrandModel.AsEnumerable().Where(m => m.Active == "Y").ToList();
                 }
             }
             catch (Exception ex) { throw ex; }
@@ -98,7 +98,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccGroup> repo = new Repository<GlaccGroup>()) 
+                using (Repository<GlaccGroup> repo = new Repository<GlaccGroup>())
                 {
                     repo.GlaccGroup.Update(glAccGroup);
                     if (repo.SaveChanges() > 0)
@@ -134,7 +134,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
                 {
-                    return repo.GlaccSubGroup.AsEnumerable().Where(glaccsub => glaccsub.Active =="Y").ToList();
+                    return repo.GlaccSubGroup.AsEnumerable().Where(glaccsub => glaccsub.Active == "Y").ToList();
                 }
             }
             catch { throw; }
@@ -145,7 +145,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
                 {
-                    return repo.GlaccSubGroup.AsEnumerable().Where(glaccsub => glaccsub.SubGroupCode== subGroupCode).ToList();
+                    return repo.GlaccSubGroup.AsEnumerable().Where(glaccsub => glaccsub.SubGroupCode == subGroupCode).ToList();
                 }
             }
             catch { throw; }
@@ -272,8 +272,38 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             catch { throw; }
         }
         #endregion
-    
+
         #region  GLAccounts
+        public static List<string> GetAccountsTypes()
+        {
+            try
+            {
+                return Enum.GetNames(typeof(NatureOfAccounts)).ToList();
+            }
+            catch { throw; }
+        }
+        public static List<string> GetStatementTypes()
+        {
+            try
+            {
+                // string name = Enum.GetName(typeof(STATMENTTYPE));
+                return Enum.GetNames(typeof(STATMENTTYPE)).ToList();
+            }
+            catch { throw; }
+        }
+        public static List<string> GetBalanceTypes()
+        {
+            try
+            {
+                List<object> balanceTypes = new List<object>()
+                {
+                    NatureOfAccounts .DR.ToString(),
+                    NatureOfAccounts .CR.ToString()
+                };
+                return Enum.GetNames(typeof(NatureOfAccounts)).ToList();
+            }
+            catch { throw; }
+        }
         public static List<Glaccounts> GetGLAccountsList()
         {
             try

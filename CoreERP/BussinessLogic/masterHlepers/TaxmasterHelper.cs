@@ -71,5 +71,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch { throw; }
         }
+
+        public static List<string> GetTaxTypes()
+        {
+            try
+            {
+                return Enum.GetNames(typeof(TAXTYPE)).ToList();
+            }
+            catch { throw; }
+        }
     }
 }

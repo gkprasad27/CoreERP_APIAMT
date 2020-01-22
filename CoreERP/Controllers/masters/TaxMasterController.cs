@@ -105,5 +105,22 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+
+        [HttpGet("GetTaxTypes")]
+        public async Task<IActionResult> GetTaxTypes()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.TaxType = TaxmasterHelper.GetTaxTypes().Select(x=>new { ID=x,TEXT=x});
+
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

@@ -112,5 +112,50 @@ namespace CoreERP.Controllers.GL
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpGet("GetNaturesOfAcountsList")]
+        public async Task<IActionResult> GetNaturesOfAcountsList()
+        {
+            try
+            {
+                dynamic expnado = new ExpandoObject();
+                expnado.BalanceTypesList = GLHelper.GetAccountsTypes().Select(t => new { ID = t, TEXT = t });
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expnado });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetStatementTypes")]
+        public async Task<IActionResult> GetStatementTypes()
+        {
+            try
+            {
+                dynamic expnado = new ExpandoObject();
+                expnado.StatementTypesList = GLHelper.GetStatementTypes().Select(t => new { ID = t, TEXT = t });
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expnado });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetBalanceTypes")]
+        public async Task<IActionResult> GetBalanceTypes()
+        {
+            try
+            {
+                dynamic expnado = new ExpandoObject();
+                expnado.BalanceTypesList = GLHelper.GetBalanceTypes().Select(t => new { ID = t, TEXT = t });
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expnado });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }
