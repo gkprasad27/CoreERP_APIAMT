@@ -87,7 +87,7 @@ namespace CoreERP.Controllers.GL
                 {
                     dynamic expando = new ExpandoObject();
                     expando.GLSubCodeList = subCodeList;
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -105,7 +105,7 @@ namespace CoreERP.Controllers.GL
             {
                 dynamic expando = new ExpandoObject();
                 expando.GLUnderSubGroupList = GLHelper.GetGLUnderSubGroupList().Select(x=> new { ID=x.UnderSubGroupCode,TEXT=x.UnderSubGroupName});
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {

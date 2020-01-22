@@ -44,7 +44,7 @@ namespace CoreERP.Controllers.GL
                 {
                     dynamic expando = new ExpandoObject();
                     expando.GLAccountsList = glAccountsList;
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });

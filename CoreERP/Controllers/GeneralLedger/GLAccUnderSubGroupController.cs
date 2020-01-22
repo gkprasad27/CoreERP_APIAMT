@@ -65,7 +65,7 @@ namespace CoreERP.Controllers.GL
             {
                 GlaccUnderSubGroup result = GLHelper.DeleteUnderSubGroup(code);
                 if (result !=null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = result });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
             }
@@ -85,7 +85,7 @@ namespace CoreERP.Controllers.GL
                 {
                     dynamic expando = new ExpandoObject();
                     expando.GLUnderSubGroupList = glUnderSubGroupList;
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -103,7 +103,7 @@ namespace CoreERP.Controllers.GL
             {
                 dynamic expando = new ExpandoObject();
                 expando.GLAccGroupList = GLHelper.GetGLAccountGroupList().Select(a=> new { ID=a.GroupCode,TEXT=a.GroupName});
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
@@ -111,14 +111,16 @@ namespace CoreERP.Controllers.GL
             }
         }
 
-        [HttpGet("GetAccountSubGrouplist")]
-        public async Task<IActionResult> GetAccountSubGrouplist()
+        [HttpGet("GetAccountSubGrouplist/{glaccGroupCode}")]
+        public async Task<IActionResult> GetAccountSubGrouplist(string glaccGroupCode)
         {
+            if(string.IsNullOrEmpty(glaccGroupCode))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Account group Can not be null/empty." });
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GLAccSubGroupList = GLHelper.GetGLAccountSubGroupList().Select(a => new { ID = a.SubGroupCode, TEXT = a.SubGroupName });
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                expando.GLAccSubGroupList = GLHelper.GetGLAccountSubGroup(glaccGroupCode).Select(a => new { ID = a.SubGroupCode, TEXT = a.SubGroupName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {

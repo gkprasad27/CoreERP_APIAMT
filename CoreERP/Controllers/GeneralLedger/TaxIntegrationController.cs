@@ -35,7 +35,6 @@ namespace CoreERP.Controllers
             }
         }
 
-
         [HttpGet("GetTaxintigrationList")]
         public async Task<IActionResult> GetTaxintigrationList()
         {
@@ -46,7 +45,7 @@ namespace CoreERP.Controllers
                 {
                     dynamic expando = new ExpandoObject();
                     expando.TaxintigrationList = taxintigrationList;
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });

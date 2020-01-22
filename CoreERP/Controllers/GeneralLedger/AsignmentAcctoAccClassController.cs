@@ -128,7 +128,6 @@ namespace CoreERP.Controllers.GL
             }
         }
 
-
         [HttpDelete("DeleteAccToAccClass")]
         public async Task<IActionResult> DeleteAccToAccClass(string code)
         {
@@ -148,7 +147,6 @@ namespace CoreERP.Controllers.GL
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpGet("GetGLAccountsList")]
         public async Task<IActionResult> GetGLAccountsList()
@@ -172,7 +170,6 @@ namespace CoreERP.Controllers.GL
             }
 
         }
-
 
         [HttpGet("GetGLAccountGroupList")]
         public async Task<IActionResult> GetGLAccountGroupList()

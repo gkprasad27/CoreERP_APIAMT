@@ -37,8 +37,6 @@ namespace CoreERP.Controllers.GL
             }
         }
 
-
-
         [HttpGet("GetAccountGroupList")]
         public async Task<IActionResult> GetAccountGroupList()
         {

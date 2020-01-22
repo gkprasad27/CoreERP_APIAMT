@@ -10,13 +10,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
     public class GLHelper
     {
 
-        public static List<GlaccGroup> GetGLAccountGroupList()
+        public static List<GlaccGroup> GetGLAccountGroupList(string accountGroupCode=null)
         {
             try
             {
                 using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
                 {
-                    return repo.GlaccGroup.AsEnumerable().Where(glacc => glacc.Active == "Y").ToList();
+                    if (string.IsNullOrEmpty(accountGroupCode))
+                        return repo.GlaccGroup.AsEnumerable().Where(glacc => glacc.Active == "Y").ToList();
+                    else
+                    {
+                        return repo.GlaccGroup
+                                   .AsEnumerable()
+                                  .Where(glacc => glacc.Active == "Y"
+                                              &&  glacc.GroupCode == accountGroupCode
+                                        )
+                                  .ToList();
+                    }
                 }
             }
             catch { throw; }
@@ -128,17 +138,45 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
 
         #region GLAccount SubGroup
+        public static List<GlaccSubGroup> GetGLAccountSubGroup(string accGroupCode = null)
+        {
+            try
+            {
+                using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
+                {
+                    if (string.IsNullOrEmpty(accGroupCode))
+                    {
+                        return repo.GlaccSubGroup.AsEnumerable()
+                                   .Where(glaccsub => glaccsub.Active == "Y")
+                                   .ToList();
+                    }
+                    else
+                    {
+                        return repo.GlaccSubGroup.AsEnumerable()
+                               .Where(glaccsub => glaccsub.Active == "Y"
+                                               && glaccsub.AccGroup == accGroupCode
+                               )
+                               .ToList();
+                    }
+                }
+            }
+            catch { throw; }
+        }
         public static List<GlaccSubGroup> GetGLAccountSubGroupList()
         {
             try
             {
                 using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
                 {
-                    return repo.GlaccSubGroup.AsEnumerable().Where(glaccsub => glaccsub.Active == "Y").ToList();
+                   
+                        return repo.GlaccSubGroup.AsEnumerable()
+                               .Where(glaccsub => glaccsub.Active == "Y")
+                               .ToList();
                 }
             }
             catch { throw; }
         }
+
         public static List<GlaccSubGroup> GetGLAccountSubGroupList(string subGroupCode)
         {
             try

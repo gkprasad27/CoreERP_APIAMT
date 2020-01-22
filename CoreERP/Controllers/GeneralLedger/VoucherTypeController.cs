@@ -59,16 +59,18 @@ namespace CoreERP.Controllers.GL
         }
 
 
-        [HttpGet("gl/vt/brchlst")]
-        public async Task<IActionResult> GetAllBranches()
+        [HttpGet("GetBranchesList")]
+        public async Task<IActionResult> GetBranchesList()
         {
             try
             {
-                return Ok(new { branches = GLHelper.GetBranches()});
+                dynamic expando = new ExpandoObject();
+                expando.BranchesList = GLHelper.GetBranches().Select(b=> new { ID=b.BranchCode,TEXT=b.Name});
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to load Branches.");
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
@@ -79,7 +81,7 @@ namespace CoreERP.Controllers.GL
             {
                 dynamic expando = new ExpandoObject();
                 expando.CompaniesList = GLHelper.GetCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.Name });
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
@@ -94,7 +96,7 @@ namespace CoreERP.Controllers.GL
             {
                 dynamic expando = new ExpandoObject();
                 expando.VoucherClassList = GLHelper.GetVoucherClassList().Select(x => new { ID = x.VoucherCode, TEXT = x.Ext2 });
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
@@ -123,9 +125,9 @@ namespace CoreERP.Controllers.GL
         }
 
 
-        [HttpDelete("gl/vt/{code}")]
+        [HttpDelete("DeleteVoucherTypes/{code}")]
         [Produces(typeof(VoucherTypes))]
-        public async Task<IActionResult> DeleteVoucherTypesByID(string code)
+        public async Task<IActionResult> DeleteVoucherTypes(string code)
         {
              if (string.IsNullOrWhiteSpace(code))
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)} cannot be null" });
