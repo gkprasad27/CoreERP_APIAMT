@@ -98,5 +98,14 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
                 throw ex;
             }
         }
+
+        public static List<string> GetNumberTypes()
+        {
+            try
+            {
+                return Enum.GetNames(typeof(NUMBERTYPE)).ToList();
+            }
+            catch { throw; }
+        }
     }
 }

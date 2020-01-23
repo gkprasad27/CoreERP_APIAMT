@@ -163,8 +163,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 return GLHelper.GetGLAccountsList()
-                               .Where(glacc => glacc.Nactureofaccount.ToUpper() == NatureOfAccounts.TRADECUSTOMER.ToString().ToUpper()
-                                            || glacc.Nactureofaccount.ToUpper() == NatureOfAccounts.TRADEVENDORS.ToString().ToUpper()
+                               .Where(glacc => glacc.Nactureofaccount.ToUpper() == NATURESOFACCOUNTS.TRADECUSTOMER.ToString().ToUpper()
+                                            || glacc.Nactureofaccount.ToUpper() == NATURESOFACCOUNTS.TRADEVENDORS.ToString().ToUpper()
                                ).ToList();
             }
             catch

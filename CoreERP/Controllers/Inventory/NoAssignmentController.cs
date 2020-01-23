@@ -38,33 +38,6 @@ namespace CoreERP.Controllers
 
         }
 
-        [HttpGet("GetNoAssignmentList")]
-        public async Task<IActionResult> GetNoAssignmentList()
-        {
-            try
-            {
-                var noAssignmentList = NoAssignmentHelper.GetNoAssignmentList();
-                if (noAssignmentList.Count > 0)
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.NoAssignmentList = noAssignmentList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpGet("GetAllCompanies")]
-        [Produces(typeof(List<NoAssignment>))]
-        public async Task<IActionResult> GetAllCompanies()
-        {
-            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = CompaniesHelper.GetListOfCompanies() });
-        }
-
         [HttpPut("UpdateNoAssignment")]
         [Produces(typeof(NoAssignment))]
         public async Task<IActionResult> UpdateNoAssignment([FromBody] NoAssignment noAssignments)
@@ -86,7 +59,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteNoAssignment/{code}")]
         [Produces(typeof(NoAssignment))]
@@ -110,6 +82,25 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetNoAssignmentList")]
+        public async Task<IActionResult> GetNoAssignmentList()
+        {
+            try
+            {
+                var noAssignmentList = NoAssignmentHelper.GetNoAssignmentList();
+                if (noAssignmentList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.NoAssignmentList = noAssignmentList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
         [HttpGet("GetCompanysList")]
         public async Task<IActionResult> GetCompanysList()
@@ -117,7 +108,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CompanysList = CompaniesHelper.GetListOfCompanies();
+                expando.CompanysList = CompaniesHelper.GetListOfCompanies().Select(comp=> new { ID=comp.CompanyCode,TEXT=comp.Name});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response =expando });
             } catch (Exception ex)
             {
@@ -131,7 +122,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.MaterialGroupList = MaterialGroupHelper.GetMaterialGroupList();
+                expando.MaterialGroupList = MaterialGroupHelper.GetMaterialGroupList().Select(matgrp=>new { ID=matgrp.Code ,TEXT=matgrp.GroupName});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -140,21 +131,19 @@ namespace CoreERP.Controllers
             }
         }
 
-        //[HttpGet("GetAllMaterialGroups")]
-        //[Produces(typeof(List<NoAssignment>))]
-        //public async Task<IActionResult> GetAllMaterialGroups()
-        //{
-        //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = MaterialGroupHelper.GetMaterialGroupList() });
-        //    try
-        //    {
-        //        dynamic expando = new ExpandoObject();
-        //        expando.MaterialGroupList = MaterialGroupHelper.GetMaterialGroupList();
-        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
+        [HttpGet("GetNumberTypes")]
+        public async Task<IActionResult> GetNumberTypes()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.NumberTypesList = NoAssignmentHelper.GetNumberTypes().Select(notype => new { ID = notype.ToString(), TEXT = notype.ToString() });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

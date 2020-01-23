@@ -111,7 +111,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                return new List<string>() { NatureOfAccounts.DR.ToString(), NatureOfAccounts.DR.ToString() };
+                return new List<string>() { NATURESOFACCOUNTS.DR.ToString(), NATURESOFACCOUNTS.DR.ToString() };
             }
             catch { throw; }
         }
@@ -215,7 +215,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     return repo.Glaccounts
                           .AsEnumerable()
                           .Where(f => f.Active =="Y"
-                                   && f.Nactureofaccount   == NatureOfAccounts.FINANCECUSTOMER.ToString()
+                                   && f.Nactureofaccount   == NATURESOFACCOUNTS.FINANCECUSTOMER.ToString()
                                 )
                           .ToList();
 

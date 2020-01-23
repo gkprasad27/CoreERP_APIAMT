@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess;
+﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -85,6 +86,25 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             {
                 throw ex;
             }
+        }
+
+
+        public static List<Companies> GetCompanies()
+        {
+            try
+            {
+                return CompaniesHelper.GetListOfCompanies();
+            }
+            catch { throw; }
+        }
+
+        public static List<Sizes> GetSizes()
+        {
+            try
+            {
+                return SizesHelper.GetSizesList();
+            }
+            catch { throw; }
         }
     }
 }

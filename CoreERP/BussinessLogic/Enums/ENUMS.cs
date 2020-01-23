@@ -11,7 +11,6 @@
         PURCHASE_REQUISITION
     }
 
-
     //public enum MaterialTransactionType
     //{
     //    PURCHASE ,
@@ -21,21 +20,7 @@
     //    SALERETURN,
     //    TRANSFER,
     //}
-
-    public enum ReportType
-    {
-        STATE,
-        COMPANY,
-        BRANCH,
-        SALESPERSON,
-        MATERIALGROUP,
-        BRAND,
-        ITEMNAME,
-        SALEREPORT,
-        FINANCE
-    }
-
-
+  
    public enum TRANSACTIONREPORTTYPE
     {
         JOURNALVOUCHER,
@@ -44,7 +29,7 @@
         PURCHASE,
         PURCHASERETURN
     }
-    public enum NatureOfAccounts
+    public enum  NATURESOFACCOUNTS
     {
         CASH,
         BANK,
@@ -66,7 +51,6 @@
         DR,
         CR
     }
-
     public enum ModeOfSale
     {
         CASH,
@@ -80,22 +64,25 @@
         PAYTM,
         // EXCHANGE='Exchange'
     }
-
     public enum BillingType
     {
         LOACAL,
         INTER_STATE
     }
-
     public enum TAXTYPE
     {
         INPUT,
         OUTPUT
     }
-
     public enum STATMENTTYPE
     {
         PI,
         BS
+    }
+
+    public enum NUMBERTYPE
+    {
+        AUTO,
+        MANUAL
     }
 }

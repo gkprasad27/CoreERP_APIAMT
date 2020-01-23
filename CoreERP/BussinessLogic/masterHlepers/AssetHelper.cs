@@ -120,7 +120,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 return GLHelper.GetGLAccountsList()
-                               .Where(gl=> gl.Nactureofaccount.Equals(NatureOfAccounts.FIXEDASSETS.ToString(),StringComparison.OrdinalIgnoreCase))
+                               .Where(gl=> gl.Nactureofaccount.Equals(NATURESOFACCOUNTS.FIXEDASSETS.ToString(),StringComparison.OrdinalIgnoreCase))
                                .ToList();
             }
             catch { throw; }

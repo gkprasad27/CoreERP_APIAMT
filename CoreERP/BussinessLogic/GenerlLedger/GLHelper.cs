@@ -316,7 +316,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                return Enum.GetNames(typeof(NatureOfAccounts)).ToList();
+                return Enum.GetNames(typeof(NATURESOFACCOUNTS)).ToList();
             }
             catch { throw; }
         }
@@ -333,12 +333,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                List<object> balanceTypes = new List<object>()
+                List<string> balanceTypes = new List<string>()
                 {
-                    NatureOfAccounts .DR.ToString(),
-                    NatureOfAccounts .CR.ToString()
+                    NATURESOFACCOUNTS .DR.ToString(),
+                    NATURESOFACCOUNTS .CR.ToString()
                 };
-                return Enum.GetNames(typeof(NatureOfAccounts)).ToList();
+                return balanceTypes;
             }
             catch { throw; }
         }
@@ -364,7 +364,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
-        public static List<Glaccounts> GetGLAccountsList(NatureOfAccounts natureOfAccounts)
+        public static List<Glaccounts> GetGLAccountsList(NATURESOFACCOUNTS natureOfAccounts)
         {
             try
             {
@@ -769,9 +769,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
                 {
                     return repo.Glaccounts.Where(gacc => gacc.Nactureofaccount != null)
-                                       .Where(acc => acc.Nactureofaccount == NatureOfAccounts.PURCHASES.ToString()
-                                                || acc.Nactureofaccount == NatureOfAccounts.SALES.ToString()
-                                                || acc.Nactureofaccount == NatureOfAccounts.INVENTORY.ToString())
+                                       .Where(acc => acc.Nactureofaccount == NATURESOFACCOUNTS.PURCHASES.ToString()
+                                                || acc.Nactureofaccount == NATURESOFACCOUNTS.SALES.ToString()
+                                                || acc.Nactureofaccount == NATURESOFACCOUNTS.INVENTORY.ToString())
                                        .ToList();
 
                 }

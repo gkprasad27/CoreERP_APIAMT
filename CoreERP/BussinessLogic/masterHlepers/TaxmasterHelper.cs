@@ -21,6 +21,21 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch { throw; }
         }
 
+        public static List<TaxMasters> GetListOfTaxMasters(TAXTYPE taxtype)
+        {
+            try
+            {
+                using (Repository<TaxMasters> repo = new Repository<TaxMasters>())
+                {
+                    return repo.TaxMasters
+                               .AsEnumerable()
+                               .Where(t => t.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+                                        &&  t.TaxType == taxtype.ToString()).ToList();
+                }
+            }
+            catch { throw; }
+        }
+
         public static TaxMasters RegisterTaxMaster(TaxMasters taxMaster)
         {
             try

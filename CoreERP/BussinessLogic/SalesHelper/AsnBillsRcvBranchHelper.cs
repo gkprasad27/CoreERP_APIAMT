@@ -48,7 +48,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
                 {
                     return repo.Glaccounts.AsEnumerable()
-                               .Where(gl => NatureOfAccounts.BILLSRECEIVABLES.ToString().Equals(gl.Nactureofaccount, StringComparison.OrdinalIgnoreCase)
+                               .Where(gl => NATURESOFACCOUNTS.BILLSRECEIVABLES.ToString().Equals(gl.Nactureofaccount, StringComparison.OrdinalIgnoreCase)
                                           && gl.Active.Equals("Y"))
                                .ToList();
                 }

@@ -83,7 +83,6 @@ namespace CoreERP.Controllers.GL
             }
         }
 
-
         [HttpDelete("DeleteAignmentCashAccBranch/{code}")]
         public async Task<IActionResult> DeleteAignmentCashAccBranch(string code)
         {
@@ -104,7 +103,6 @@ namespace CoreERP.Controllers.GL
             }
         }
 
-
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
         {
@@ -120,23 +118,36 @@ namespace CoreERP.Controllers.GL
             }
         }
 
-        //[HttpGet("GetBankAccounts")]
-        //public async Task<IActionResult> GetBankAccounts()
-        //{
+        [HttpGet("GetBankAccounts")]
+        public async Task<IActionResult> GetBankAccounts()
+        {
 
-        //    try
-        //    {
-        //       var GLCasnBankAccounts= GLHelper.GetGLAccountsList()
-        //                               .Where(accounts => accounts.Nactureofaccount == NatureOfAccounts.BANK.ToString()
-        //                                            || accounts.Nactureofaccount == NatureOfAccounts.CASH.ToString()).ToList();
-        //        dynamic expando = new ExpandoObject();
-        //        expando.GLCasnBankAccounts = GLCasnBankAccounts.Select(x => new { ID = x.Glcode, TEXT = x.Description });
-        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.GLCasnBankAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.BANK).Select(x => new { ID = x.Glcode, TEXT = x.Description });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetCashAccounts")]
+        public async Task<IActionResult> GetCashAccounts()
+        {
+
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.GLCashAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.CASH).Select(x => new { ID = x.Glcode, TEXT = x.Description });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

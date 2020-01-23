@@ -14,29 +14,7 @@ namespace CoreERP.Controllers.GL
     [Route("api/gl/VoucherType")]
     public class VoucherTypeController : ControllerBase
     {
-        [HttpPost("RegisterVoucherTypes")]
-        public async Task<IActionResult> RegisterVoucherTypes([FromBody]VoucherTypes vouhertype)
-        {
-           if (vouhertype == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
-            try
-            {
-                if (GLHelper.GetVoucherTypeList(vouhertype.VoucherCode).Count > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Voucher Code ={vouhertype.VoucherCode} alredy exists." });
-
-                VoucherTypes result = GLHelper.RegisterVoucherType(vouhertype);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-
-        }
-
+       
         [HttpGet("GetVoucherTypeList")]
         public async Task<IActionResult> GetVoucherTypeList()
         {
@@ -47,7 +25,7 @@ namespace CoreERP.Controllers.GL
                 {
                     dynamic expando = new ExpandoObject();
                     expando.GLSubCodeList = vouchertypeList;
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = expando });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -57,7 +35,6 @@ namespace CoreERP.Controllers.GL
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
@@ -104,6 +81,29 @@ namespace CoreERP.Controllers.GL
             }
         }
 
+        [HttpPost("RegisterVoucherTypes")]
+        public async Task<IActionResult> RegisterVoucherTypes([FromBody]VoucherTypes vouhertype)
+        {
+            if (vouhertype == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
+            try
+            {
+                if (GLHelper.GetVoucherTypeList(vouhertype.VoucherCode).Count > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Voucher Code ={vouhertype.VoucherCode} alredy exists." });
+
+                VoucherTypes result = GLHelper.RegisterVoucherType(vouhertype);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+
+        }
+
         [HttpPut("UpdateVoucherTypes")]
         public async Task<IActionResult> UpdateVoucherTypes(string code, [FromBody] VoucherTypes vouchertype)
         {
@@ -123,7 +123,6 @@ namespace CoreERP.Controllers.GL
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteVoucherTypes/{code}")]
         [Produces(typeof(VoucherTypes))]
