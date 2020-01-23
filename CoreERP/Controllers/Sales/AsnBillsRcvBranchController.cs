@@ -35,7 +35,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expanddo = new ExpandoObject();
-                expanddo.accountsList = AsnBillsRcvBranchHelper.GetGLBillReceivableAccountsList().Select(x=> new { ID=x.Glcode,Text=x.Description});
+                expanddo.accountsList = AsnBillsRcvBranchHelper.GetGLBillReceivableAccountsList().Select(x=> new { ID=x.Glcode,Text=x.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expanddo });
             }
             catch (Exception ex) 

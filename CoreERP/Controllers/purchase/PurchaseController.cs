@@ -76,7 +76,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.glAccountsList = PurchasesHelper.GetGLAccounts().Select(x => new { ID = x.Glcode, TEXT = x.Description });
+                expando.glAccountsList = PurchasesHelper.GetGLAccounts().Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

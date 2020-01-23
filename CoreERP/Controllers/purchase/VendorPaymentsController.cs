@@ -148,7 +148,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.AsigCasNBankAcc = PurchasesHelper.GetAsigCasNBankAcc().Select(gl => new { ID = gl.Glcode, TEXT = gl.Description });
+                expando.AsigCasNBankAcc = PurchasesHelper.GetAsigCasNBankAcc().Select(gl => new { ID = gl.Glcode, TEXT = gl.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

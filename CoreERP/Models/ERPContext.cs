@@ -1799,20 +1799,27 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccGroup).HasMaxLength(4);
 
+                entity.Property(e => e.AccountNumber).HasMaxLength(60);
+
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
                     .IsUnicode(false)
-                    .IsFixedLength();
+                    .IsFixedLength()
+                    .HasDefaultValueSql("('Y')");
 
-                entity.Property(e => e.Description).HasMaxLength(30);
-
-                entity.Property(e => e.Description1).HasMaxLength(60);
+                entity.Property(e => e.BalanceType).HasMaxLength(50);
 
                 entity.Property(e => e.Ext1).HasMaxLength(20);
 
                 entity.Property(e => e.Ext2).HasMaxLength(20);
 
+                entity.Property(e => e.GlaccountName)
+                    .HasColumnName("GLAccountName")
+                    .HasMaxLength(50);
+
                 entity.Property(e => e.Nactureofaccount).HasMaxLength(40);
+
+                entity.Property(e => e.OpeningBalance).HasMaxLength(50);
 
                 entity.Property(e => e.StatementType).HasMaxLength(4);
             });
