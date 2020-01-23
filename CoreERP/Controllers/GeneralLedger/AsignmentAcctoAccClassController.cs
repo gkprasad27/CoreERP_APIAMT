@@ -194,7 +194,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GLSalesAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.SALES).Select(x => new { ID = x.Glcode, TEXT = x.Description });
+                expando.GLSalesAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.SALES).Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -210,7 +210,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GLPurchaseAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.PURCHASES).Select(x => new { ID = x.Glcode, TEXT = x.Description });
+                expando.GLPurchaseAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.PURCHASES).Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -226,7 +226,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GLInventoryAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.INVENTORY).Select(x => new { ID = x.Glcode, TEXT = x.Description });
+                expando.GLInventoryAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.INVENTORY).Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

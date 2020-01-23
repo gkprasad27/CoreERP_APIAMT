@@ -125,7 +125,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GLCasnBankAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.BANK).Select(x => new { ID = x.Glcode, TEXT = x.Description });
+                expando.GLCasnBankAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.BANK).Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -141,7 +141,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GLCashAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.CASH).Select(x => new { ID = x.Glcode, TEXT = x.Description });
+                expando.GLCashAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.CASH).Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
