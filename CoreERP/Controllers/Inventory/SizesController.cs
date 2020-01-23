@@ -68,7 +68,7 @@ namespace CoreERP.Controllers
             {
                 var result = SizesHelper.UpdateSizes(sizes);
                 if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = result });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
             }

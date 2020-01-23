@@ -110,7 +110,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GlaccountsList = BillingHelpers.GetGlaccounts().Select(gl => new { ID = gl.Glcode, TEXT = gl.Description });
+                expando.GlaccountsList = BillingHelpers.GetGlaccounts().Select(gl => new { ID = gl.Glcode, TEXT = gl.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -125,7 +125,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GlaccountsList = BillingHelpers.GetAsignmentCashAccBranchList(branchCode).Select(gl => new { ID = gl.Glcode, TEXT = gl.Description });
+                expando.GlaccountsList = BillingHelpers.GetAsignmentCashAccBranchList(branchCode).Select(gl => new { ID = gl.Glcode, TEXT = gl.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -155,7 +155,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.FinanceGlAccList = BillingHelpers.GetFinancesCutomerGLAccounts().Select(gl=> new { ID=gl.Glcode,TEXT=gl.Description});
+                expando.FinanceGlAccList = BillingHelpers.GetFinancesCutomerGLAccounts().Select(gl=> new { ID=gl.Glcode,TEXT=gl.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

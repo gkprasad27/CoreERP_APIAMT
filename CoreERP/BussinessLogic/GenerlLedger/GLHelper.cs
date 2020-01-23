@@ -333,12 +333,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                List<object> balanceTypes = new List<object>()
+                List<string> balanceTypes = new List<string>()
                 {
                     NatureOfAccounts .DR.ToString(),
                     NatureOfAccounts .CR.ToString()
                 };
-                return Enum.GetNames(typeof(NatureOfAccounts)).ToList();
+                return balanceTypes;
             }
             catch { throw; }
         }

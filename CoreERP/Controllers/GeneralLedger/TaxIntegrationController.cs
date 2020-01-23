@@ -120,7 +120,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GLTaxAccountList = GLHelper.GetTaxAccounts().Select(x=> new { ID=x.Glcode,TEXT=x.Description});
+                expando.GLTaxAccountList = GLHelper.GetTaxAccounts().Select(x=> new { ID=x.Glcode,TEXT=x.GlaccountName});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

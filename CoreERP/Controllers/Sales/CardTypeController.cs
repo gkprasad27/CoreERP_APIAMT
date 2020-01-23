@@ -42,7 +42,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.accounts = BillingHelpers.GetGlAccountsDRCR(accountType).Select(gl => new { ID = gl.Glcode, Text = gl.Description });
+                expando.accounts = BillingHelpers.GetGlAccountsDRCR(accountType).Select(gl => new { ID = gl.Glcode, Text = gl.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

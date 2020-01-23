@@ -151,7 +151,7 @@ namespace CoreERP.Controllers
                 if (glAccountList.Count > 0)
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.glAccountList = glAccountList.Select(n => new { ID = n.Glcode, Text = n.Description });
+                    expando.glAccountList = glAccountList.Select(n => new { ID = n.Glcode, Text = n.GlaccountName });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 else
