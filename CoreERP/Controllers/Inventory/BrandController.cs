@@ -43,7 +43,7 @@ namespace CoreERP.Controllers
                 {
                     dynamic expando = new ExpandoObject();
                     expando.BrandList = brandList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = BrandHelpers.GetBrands() });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }

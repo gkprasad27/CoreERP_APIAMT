@@ -46,7 +46,7 @@ namespace CoreERP.Controllers
                 {
                     dynamic expando = new ExpandoObject();
                     expando.sizesList = sizesList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = SizesHelper.GetSizesList() });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 else
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
