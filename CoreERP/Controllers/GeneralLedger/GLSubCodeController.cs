@@ -98,13 +98,13 @@ namespace CoreERP.Controllers.GL
             }
         }
      
-        [HttpGet("GetGLUnderSubGroupList")]
-        public async Task<IActionResult> GetGLUnderSubGroupList()
+        [HttpGet("GetGLAccountsList")]
+        public async Task<IActionResult> GetGLAccountsList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GLUnderSubGroupList = GLHelper.GetGLUnderSubGroupList().Select(x=> new { ID=x.UnderSubGroupCode,TEXT=x.UnderSubGroupName});
+                expando.GLUnderSubGroupList = GLHelper.GetGLAccountsList().Select(x=> new { ID=x.Glcode,TEXT=x.GlaccountName});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
