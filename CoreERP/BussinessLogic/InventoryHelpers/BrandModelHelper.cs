@@ -1,4 +1,5 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
+﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
@@ -17,10 +18,10 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             {
                 using (Repository<BrandModel> repo = new Repository<BrandModel>())
                 {
-                    var record = ((from acc in repo.BrandModel select acc.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
-                    if (record != 0)
+                    var record = repo.BrandModel.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                    if (record != null)
                     {
-                        brandModel.Code = (record + 1).ToString();
+                        brandModel.Code = CommonHelper.IncreaseCode(record.Code);
                     }
                     else
                         brandModel.Code = "1";
@@ -87,8 +88,6 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
                 throw ex;
             }
         }
-
-
         public static List<Companies> GetCompanies()
         {
             try
@@ -97,7 +96,6 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             }
             catch { throw; }
         }
-
         public static List<Sizes> GetSizes()
         {
             try

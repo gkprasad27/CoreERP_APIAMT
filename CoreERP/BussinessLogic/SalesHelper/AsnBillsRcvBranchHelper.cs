@@ -1,4 +1,5 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
+﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
@@ -21,7 +22,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static AsnBillsRcvBranch GetAsnBillsRcvBranchList(string code)
         {
             try
@@ -35,7 +35,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static List<Glaccounts> GetGLBillReceivableAccountsList()
         {
             try
@@ -55,7 +54,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static List<Branches> GetBranchesList()
         {
             try
@@ -64,7 +62,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static AsnBillsRcvBranch RegisterAsnBillsRcvBranch(AsnBillsRcvBranch asnBillsRcvBranch)
         {
             try
@@ -72,14 +69,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using(Repository<AsnBillsRcvBranch> repo=new Repository<AsnBillsRcvBranch>())
                 {
 
-                    int lastreacord = 0;
-                    if (repo.AsnBillsRcvBranch.Count() > 0)
-                        lastreacord = repo.AsnBillsRcvBranch.Where(x => x.Code != null).Max(x => Convert.ToInt32(x.Code));
 
-                    if (lastreacord > 0)
-                        asnBillsRcvBranch.Code = (lastreacord + 1).ToString();
-                    else
+                     var lastreacord = repo.AsnBillsRcvBranch.OrderByDescending(x=> x.AddDate).FirstOrDefault();
+                    if (lastreacord == null)
                         asnBillsRcvBranch.Code = "1";
+                    else
+                        asnBillsRcvBranch.Code = CommonHelper.IncreaseCode(asnBillsRcvBranch.Code);
 
                     asnBillsRcvBranch.Active = "Y";
                     repo.AsnBillsRcvBranch.Add(asnBillsRcvBranch);
@@ -91,8 +86,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
-
         public static AsnBillsRcvBranch UpdateAsnBillsRcvBranch(AsnBillsRcvBranch asnBillsRcvBranch)
         {
             try
@@ -108,7 +101,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static AsnBillsRcvBranch DelteAsnBillsRcvBranch(string code)
         {
             try

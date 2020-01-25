@@ -93,22 +93,22 @@ namespace CoreERP.BussinessLogic.Common
         {
             try
             {
-                int startindex = code.Length;
+                string strnum = string.Empty;
                 string prefix = string.Empty;
-                for(int i= code.Length; i >= 0; i--)
+                for(int i= 0; i < code.Length; i++)
                 {
-                    if (char.IsLetter(code[i]) || code[i] == '0')
+                    if (char.IsDigit(code[i]))
                     {
-                        startindex = i;
-                        break;
+                        if(string.IsNullOrEmpty(strnum) && code[i] == '0')
+                         strnum += code[i];
+
+                        strnum += code[i];
                     }
+                    else if (char.IsLetter(code[i]) || code[i] == '0')
+                        prefix += code[i];
                 }
-
-                prefix = code.Substring(0, startindex);
-                long num = Convert.ToInt64(code.Substring(startindex));
-                num += 1;
-
-                return prefix + (num.ToString());
+               
+                return prefix + (Convert.ToInt64(strnum) + 1).ToString();
             }
             catch { throw; }
         }

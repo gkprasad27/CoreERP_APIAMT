@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess;
+﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -15,16 +16,17 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             {
                 using (Repository<Sizes> repo = new Repository<Sizes>())
                 {
-                    var record = ((from acc in repo.Sizes select acc.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
+                    var record = repo.Sizes.OrderByDescending(x => x.AddDate).FirstOrDefault();
 
-                    if (record != 0)
+                    if (record !=null)
                     {
-                        sizes.Code = (record + 1).ToString();
+                        sizes.Code = CommonHelper.IncreaseCode(record.Code);
                     }
                     else
                         sizes.Code = "1";
 
                     sizes.Active = "Y";
+                    sizes.AddDate = DateTime.Now;
                     repo.Sizes.Add(sizes);
                     if (repo.SaveChanges() > 0)
                         return sizes;

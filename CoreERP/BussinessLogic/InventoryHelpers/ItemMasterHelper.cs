@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess;
+﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -16,16 +17,17 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             {
                 using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
                 {
-                    var record = ((from itm in repo.ItemMaster select itm.Code).ToList()).FirstOrDefault();
+                    var record =repo.ItemMaster.OrderByDescending(x=> x.AddDate).FirstOrDefault();
 
                     if (record != null)
                     {
-                        itemMaster.Code = (int.Parse(record) + 1).ToString();
+                        itemMaster.Code = CommonHelper.IncreaseCode(record.Code);
                     }
                     else
                         itemMaster.Code = "1";
 
                     itemMaster.Active = "Y";
+                    itemMaster.AddDate = DateTime.Now;
                     repo.ItemMaster.Add(itemMaster);
                     if (repo.SaveChanges() > 0)
                         return itemMaster;

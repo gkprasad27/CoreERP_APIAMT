@@ -1,4 +1,5 @@
-﻿using CoreERP.BussinessLogic.GenerlLedger;
+﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.GenerlLedger;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Models;
@@ -11,7 +12,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 {
     public class PurchasesHelper
     {
-
+        #region Purchase
+     
         public static List<Purchase> GetPurchaseList()
         {
             try
@@ -44,7 +46,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                     if (purchase != null)
                     {
-                        purchasesarr[0].Code = (Convert.ToInt32(purchase.Code) + 1).ToString();
+                        purchasesarr[0].Code = CommonHelper.IncreaseCode(purchase.Code);
                         purchasesarr[0].AddDate = DateTime.Now;
                         purchasesarr[0].EditDate = DateTime.Now;
                     }
@@ -58,7 +60,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                     purchasesarr[0].Active = "Y";
                     for (int i = 1; i < purchasesarr.Count(); i++)
                     {
-                        purchasesarr[i].Code = (Convert.ToInt32(purchasesarr[i - 1].Code) + 1).ToString();
+                        purchasesarr[i].Code = CommonHelper.IncreaseCode(purchase.Code);
                         purchasesarr[i].AddDate = DateTime.Now;
                         purchasesarr[i].EditDate = DateTime.Now;
                         purchasesarr[i].Active = "Y";
@@ -89,7 +91,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
-
         public static Purchase DeletePurchase(string code)
         {
             try
@@ -107,7 +108,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
-
+       
+        #endregion
         public static List<MatTranTypes> GetPurchaseMaterialGroup()
         {
             try
@@ -296,13 +298,13 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             {
                 using(Repository<VendorPayments> repo=new Repository<VendorPayments>())
                 {
-                    var lastrecord = repo.VendorPayments.Where(v => v.Code != null).LastOrDefault();
-                    if (lastrecord != null)
-                        vendorPayments.Code = (Convert.ToInt32(lastrecord.Code) + 1).ToString();
+                    var record = repo.VendorPayments.Where(v => v.Code != null).LastOrDefault();
+                    if (record != null)
+                        vendorPayments.Code = CommonHelper.IncreaseCode(record.Code);
                     else
                         vendorPayments.Code = "1";
 
-                    lastrecord = null;
+                    record = null;
                     vendorPayments.Active = "Y";
                     vendorPayments.AddDate = System.DateTime.Now;
                     vendorPayments.EditDate = System.DateTime.Now;
@@ -353,7 +355,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
-
         public static List<VendorPayments> GetVendorPaymentsList()
         {
             try
@@ -365,7 +366,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
-
         public static List<AsignmentCashAccBranch> GetAsignmentCashAccBranchesList()
         {
             try
@@ -412,7 +412,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
-
         public static List<Glaccounts> GetAsigCasNBankAcc()
         {
             try

@@ -64,7 +64,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
         }
         #endregion
 
-
         #region Card Type
         public static List<CardType> GetCardTypeList()
         {
@@ -77,7 +76,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static CardType GetCardTypeList(string code)
         {
             try
@@ -90,7 +88,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static List<Glaccounts> GetGlAccountsDRCR(string natureofAccount)
         {
             try
@@ -106,7 +103,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static List<string> GetTypesList()
         {
             try
@@ -115,7 +111,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static CardType RegisterCardType(CardType cardType)
         {
             try
@@ -123,12 +118,11 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using (Repository<CardType> repo = new Repository<CardType>())
                 {
 
-                    int lastreacord = repo.CardType.Where(x => x.Code != null).Max(x => Convert.ToInt32(x.Code));
-
-                    if (lastreacord > 0)
-                        cardType.Code = (lastreacord + 1).ToString();
-                    else
+                    var reacord = repo.CardType.OrderByDescending(x=> x.AddDate).FirstOrDefault();
+                    if (reacord == null)
                         cardType.Code = "1";
+                    else
+                        cardType.Code = CommonHelper.IncreaseCode(cardType.Code);
 
                     cardType.Active = "Y";
                     repo.CardType.Add(cardType);
@@ -156,7 +150,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static CardType DeleteCardType(string code)
         {
             try
@@ -189,7 +182,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static Finance GetFinances(string code)
         {
             try
@@ -201,7 +193,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static List<Glaccounts> GetFinancesCutomerGLAccounts()
         {
             try
@@ -223,7 +214,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static List<Brand> GetBrandList()
         {
             try
@@ -237,7 +227,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static List<BrandModel> GetBrandModelList()
         {
             try
@@ -261,9 +250,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     finance.EditDate = DateTime.Now;
                     finance.Active = "Y";
 
-                    var lastreacord = repo.Finance.OrderByDescending(x => Convert.ToInt32(x.Code ?? "0")).FirstOrDefault();
-                    if (lastreacord != null)
-                        finance.Code = (int.Parse(lastreacord.Code) + 1).ToString();
+                    var reacord = repo.Finance.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                    if (reacord != null)
+                        finance.Code = CommonHelper.IncreaseCode(reacord.Code); 
                     else
                         finance.Code = "1";
 
@@ -276,7 +265,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static Finance UpdateFinance(Finance finance)
         {
             try
@@ -327,7 +315,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static CustomerReceipts GetCustomerReceiptList(int seqID)
         {
             try
@@ -343,7 +330,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static List<AsignmentCashAccBranch> GetAsigCashAccBranches()
         {
             try
@@ -355,7 +341,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static CustomerReceipts RegisterCustomerReceipt(CustomerReceipts customerReceipt)
         {
             try
@@ -466,7 +451,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static MatTranTypes GetMatTranTypes(string code)
         {
             try
@@ -482,7 +466,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static List<Branches> GetBranchesList()
         {
             try
@@ -491,23 +474,23 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static MatTranTypes RegisterMatTransType(MatTranTypes matTranTypes)
         {
             try
             {
                 using (Repository<MatTranTypes> repo = new Repository<MatTranTypes>())
                 {
-                    //var lastreacord = repo.MatTranTypes.OrderByDescending(x => x.SeqId).FirstOrDefault();
-                    //if (lastreacord != null)
-                    //{
-                    //    matTranTypes.Code = (int.Parse(lastreacord.Code) + 1).ToString();
-                    //}
-                    //else
-                    //{
-                    //    matTranTypes.Code = "1";
-                    //}
+                    matTranTypes.AddDate = DateTime.Now;
 
+                    var record = repo.MatTranTypes.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                    if (record != null)
+                    {
+                        matTranTypes.Code = CommonHelper.IncreaseCode(record.Code);
+                    }
+                    else
+                    {
+                        matTranTypes.Code = "1";
+                    }
                     repo.MatTranTypes.Add(matTranTypes);
                     if (repo.SaveChanges() > 0)
                         return matTranTypes;
@@ -517,7 +500,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static MatTranTypes UpdateMatTransType(MatTranTypes matTranTypes)
         {
             try
@@ -533,7 +515,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static MatTranTypes DeleteMatTransType(int  seqID)
         {
             try
