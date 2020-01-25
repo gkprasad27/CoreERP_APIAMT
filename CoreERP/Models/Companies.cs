@@ -40,6 +40,7 @@ namespace CoreERP.Models
         public int? Currency { get; set; }
         public DateTime? BooksBeginFrom { get; set; }
         public string City { get; set; }
+        public DateTime? AddDate { get; set; }
 
         public virtual ICollection<Branches> Branches { get; set; }
         public virtual ICollection<CostCenters> CostCenters { get; set; }

@@ -88,5 +88,29 @@ namespace CoreERP.BussinessLogic.Common
             }
             catch { throw; }
         }
+
+        public static string IncreaseCode(string code)
+        {
+            try
+            {
+                int startindex = code.Length;
+                string prefix = string.Empty;
+                for(int i= code.Length; i >= 0; i--)
+                {
+                    if (char.IsLetter(code[i]) || code[i] == '0')
+                    {
+                        startindex = i;
+                        break;
+                    }
+                }
+
+                prefix = code.Substring(0, startindex);
+                long num = Convert.ToInt64(code.Substring(startindex));
+                num += 1;
+
+                return prefix + (num.ToString());
+            }
+            catch { throw; }
+        }
     }
 }

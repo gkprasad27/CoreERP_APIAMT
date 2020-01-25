@@ -14,5 +14,6 @@ namespace CoreERP.Models
         public string HsnCode { get; set; }
         public string CustomerCare { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

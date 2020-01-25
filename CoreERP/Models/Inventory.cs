@@ -35,5 +35,6 @@ namespace CoreERP.Models
         public string Value { get; set; }
         public string MaterialTranType { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

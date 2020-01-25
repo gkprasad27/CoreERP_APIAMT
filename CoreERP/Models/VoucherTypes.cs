@@ -16,5 +16,6 @@ namespace CoreERP.Models
         public string Transaction { get; set; }
         public string VoucherType { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

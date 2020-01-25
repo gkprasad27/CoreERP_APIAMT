@@ -16,5 +16,6 @@ namespace CoreERP.Models
         public string Ext3 { get; set; }
         public string Ext4 { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

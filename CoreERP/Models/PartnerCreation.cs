@@ -24,7 +24,7 @@ namespace CoreERP.Models
         public string Phone1 { get; set; }
         public string Phone2 { get; set; }
         public string PinCode { get; set; }
-        public string Place { get; set; }
+        public string Country { get; set; }
         public string State { get; set; }
         public DateTime? AddDate { get; set; }
         public DateTime? EditDate { get; set; }
@@ -36,5 +36,7 @@ namespace CoreERP.Models
         public string Ext4 { get; set; }
         public string Ext5 { get; set; }
         public string Active { get; set; }
+        public string City { get; set; }
+        public DateTime? JoinDate { get; set; }
     }
 }

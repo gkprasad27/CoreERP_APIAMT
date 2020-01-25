@@ -26,5 +26,6 @@ namespace CoreERP.Models
         public string OutputTaxCode { get; set; }
         public string Size { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

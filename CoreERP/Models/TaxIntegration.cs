@@ -16,5 +16,6 @@ namespace CoreERP.Models
         public string Sgst { get; set; }
         public string Ugst { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace CoreERP.Models
      
         public virtual DbSet<AssetMaster> AssetMaster { get; set; }
         public virtual DbSet<Balances> Balances { get; set; }
-        public virtual DbSet<Billing> Billing { get; set; }
+        public virtual DbSet<Invoice> Billing { get; set; }
         public virtual DbSet<BillingNoSeries> BillingNoSeries { get; set; }
         public virtual DbSet<BillingReturns> BillingReturns { get; set; }
         public virtual DbSet<BranchTransfer> BranchTransfer { get; set; }
@@ -278,7 +278,7 @@ namespace CoreERP.Models
                 entity.Property(e => e.TransactionType).HasMaxLength(50);
             });
 
-            modelBuilder.Entity<Billing>(entity =>
+            modelBuilder.Entity<Invoice>(entity =>
             {
                 entity.HasKey(e => e.Code);
 
@@ -298,7 +298,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Baseamount).HasMaxLength(50);
 
-                entity.Property(e => e.BillNo).HasMaxLength(50);
+                entity.Property(e => e.InvoiceNo).HasMaxLength(50);
 
                 entity.Property(e => e.BillsReceivableAccount).HasMaxLength(50);
 
@@ -1967,7 +1967,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.PinCode).HasMaxLength(6);
 
-                entity.Property(e => e.Place).HasMaxLength(30);
+                entity.Property(e => e.Country).HasMaxLength(30);
 
                 entity.Property(e => e.State).HasMaxLength(20);
             });

@@ -17,5 +17,6 @@ namespace CoreERP.Models
         public string TaxType { get; set; }
         public decimal? Ugst { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

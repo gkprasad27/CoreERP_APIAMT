@@ -11,14 +11,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
 {
     public class BillingHelpers
     {
-        #region Billing Returns
-        public static List<Billing> GetBilling(string billNo)
+        #region Invoice Returns
+        public static List<Invoice> GetBilling(string billNo)
         {
             try
             {
-                using (Repository<Billing> repo = new Repository<Billing>())
+                using (Repository<Invoice> repo = new Repository<Invoice>())
                 {
-                    return repo.Billing.Where(x => x.BillNo == billNo).ToList();
+                    return repo.Invoice.Where(x => x.InvoiceNo == billNo).ToList();
                 }
             }
             catch { throw; }
@@ -609,33 +609,33 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-        public static List<Billing> GetBillings(string branchCode)
+        public static List<Invoice> GetBillings(string branchCode)
         {
             try
             {
-                using(Repository<Billing> repo=new Repository<Billing>())
+                using(Repository<Invoice> repo=new Repository<Invoice>())
                 {
-                   return repo.Billing.AsEnumerable().Where(b => b.Active == "Y"  && b.BranchCode== branchCode).ToList();
+                   return repo.Invoice.AsEnumerable().Where(b => b.Active == "Y"  && b.BranchCode== branchCode).ToList();
                 }
             }
             catch { throw; }
         }
-        public static List<Billing> RegisterBilling(Billing[] billings)
+        public static List<Invoice> RegisterBilling(Invoice[] billings)
         {
             try
             {
-                using(Repository<Billing> repo=new Repository<Billing>())
+                using(Repository<Invoice> repo=new Repository<Invoice>())
                 {
                     for(int i=0;i< billings.Length;i++)
                     {
                         billings[i].AddDate = DateTime.Now;
                         billings[i].Active = "Y";
                     }
-                    repo.Billing.AddRange(billings);
+                    repo.Invoice.AddRange(billings);
                     if (repo.SaveChanges() > 0)
                         return billings.ToList();
 
-                    return new List<Billing>();
+                    return new List<Invoice>();
                 }
             }
             catch { throw; }

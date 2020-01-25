@@ -17,7 +17,7 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
                 using (Repository<Brand> repo = new Repository<Brand>())
                 {
                     var record = ((from b in repo.Brand select b.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
-
+                   // var record
                     if (record != 0)
                     {
                         brand.Code = (record + 1).ToString();

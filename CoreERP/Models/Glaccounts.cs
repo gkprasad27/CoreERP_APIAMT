@@ -16,5 +16,6 @@ namespace CoreERP.Models
         public string Nactureofaccount { get; set; }
         public string StatementType { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

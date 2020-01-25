@@ -14,5 +14,6 @@ namespace CoreERP.Models
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

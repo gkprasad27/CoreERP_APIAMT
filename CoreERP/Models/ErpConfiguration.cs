@@ -11,5 +11,6 @@ namespace CoreERP.Models
         public string Values { get; set; }
         public int SequenceId { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

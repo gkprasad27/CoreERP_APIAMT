@@ -3,19 +3,19 @@ using System.Collections.Generic;
 
 namespace CoreERP.Models
 {
-    public partial class Billing
+    public partial class InvoiceDetails
     {
-        public string Code { get; set; }
+        public int Code { get; set; }
         public string Account { get; set; }
-        public DateTime AddDate { get; set; }
+        public DateTime? AddDate { get; set; }
         public string AddUser { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string Address3 { get; set; }
         public string Amount { get; set; }
         public string Baseamount { get; set; }
-        public DateTime BillDate { get; set; }
-        public string BillNo { get; set; }
+        public DateTime InvoiceDate { get; set; }
+        public string InvoiceNo { get; set; }
         public string BillsReceivableAccount { get; set; }
         public string BranchCode { get; set; }
         public string BrandCode { get; set; }

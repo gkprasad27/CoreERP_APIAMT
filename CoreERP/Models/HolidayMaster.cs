@@ -18,5 +18,6 @@ namespace CoreERP.Models
         public string Userid { get; set; }
         public string Year { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }
