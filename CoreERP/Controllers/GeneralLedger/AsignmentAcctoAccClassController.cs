@@ -70,7 +70,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.mattranstype = GLHelper.GetMatTranTypesList();
+                expando.mattranstype = GLHelper.GetMatTranTypesList().Select(mat=> new { ID= mat.Code,TEXT=mat.Description});
                 return Ok(new APIResponse{ status=APIStatus.PASS.ToString(),response= expando });
             }
             catch (Exception ex)
@@ -79,20 +79,7 @@ namespace CoreERP.Controllers.GL
             }
         }
 
-        [HttpGet("GetInvPurchaseSalesGLAcc")]
-        public async Task<IActionResult> GetInvPurchaseSalesGLAcc()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.GlaccountsList = GLHelper.GetInvPurchaseSalesGLAcc();
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+      
 
         [HttpGet("GetAccountingClass")]
         public async Task<IActionResult> GetAccountingClass()
@@ -100,7 +87,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.AccountingclassList = GLHelper.GetAccountingClass();
+                expando.AccountingclassList = GLHelper.GetAccountingClass().Select(acc=> new { ID=acc.Code,TEXT=acc.Description});
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -148,36 +135,13 @@ namespace CoreERP.Controllers.GL
             }
         }
 
-        [HttpGet("GetGLAccountsList")]
-        public async Task<IActionResult> GetGLAccountsList()
-        {
-            try
-            {
-                //var result = (from acc in _unitOfWork.GLAccounts.GetAll()
-                //              where acc.Nactureofaccount == "Purchases" || acc.Nactureofaccount == "Sales" || acc.Nactureofaccount == " "
-                //              select acc).ToList();
-
-                dynamic expdo = new ExpandoObject();
-                expdo.GLAccountsList = GLHelper.GetGLAccountsList()
-                                        .Where(acc => acc.Nactureofaccount.Equals("Purchases", StringComparison.OrdinalIgnoreCase)
-                                                   || acc.Nactureofaccount.Equals("Sales", StringComparison.OrdinalIgnoreCase) || acc.Nactureofaccount == " ").ToList();
-
-                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= expdo });
-            }
-            catch(Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-
-        }
-
         [HttpGet("GetGLAccountGroupList")]
         public async Task<IActionResult> GetGLAccountGroupList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GLAccgroup = GLHelper.GetGLAccountGroupList();
+                expando.GLAccgroup = GLHelper.GetGLAccountGroupList().Select(glgrp=>new { ID=glgrp.GroupCode,TEXT=glgrp.GroupName});
                 return Ok(new APIResponse(){status=APIStatus.PASS.ToString(),response=expando  });
             }
             catch (Exception ex)
@@ -185,7 +149,6 @@ namespace CoreERP.Controllers.GL
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpGet("GetSalesGlAccounts")]
         public async Task<IActionResult> GetSalesGlAccounts()
@@ -234,5 +197,28 @@ namespace CoreERP.Controllers.GL
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        //[HttpGet("GetGLAccountsList")]
+        //public async Task<IActionResult> GetGLAccountsList()
+        //{
+        //    try
+        //    {
+        //        //var result = (from acc in _unitOfWork.GLAccounts.GetAll()
+        //        //              where acc.Nactureofaccount == "Purchases" || acc.Nactureofaccount == "Sales" || acc.Nactureofaccount == " "
+        //        //              select acc).ToList();
+
+        //        dynamic expdo = new ExpandoObject();
+        //        expdo.GLAccountsList = GLHelper.GetGLAccountsList()
+        //                                .Where(acc => acc.Nactureofaccount.Equals("Purchases", StringComparison.OrdinalIgnoreCase)
+        //                                           || acc.Nactureofaccount.Equals("Sales", StringComparison.OrdinalIgnoreCase) || acc.Nactureofaccount == " ").ToList();
+
+        //            return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= expdo });
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+
+        //}
     }
 }

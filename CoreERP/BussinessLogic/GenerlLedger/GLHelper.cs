@@ -490,7 +490,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 using (Repository<GlsubCode> repo = new Repository<GlsubCode>())
                 {
-                    var glsubCode = repo.GlsubCode.Where(a => a.Glcode == glSubCode).FirstOrDefault();
+                    var glsubCode = repo.GlsubCode.Where(a => a.SubCode == glSubCode).FirstOrDefault();
                     glsubCode.Active = "N";
                     repo.GlsubCode.Update(glsubCode);
                     if (repo.SaveChanges() > 0)
@@ -676,6 +676,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
+
+        #region Asignment Acc to Acc Class
         public static List<AsignmentAcctoAccClass> GetAsignAccToAccClas()
         {
             try
@@ -744,6 +746,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             catch { throw; }
         }
 
+        #endregion
         public static List<AccountingClass> GetAccountingClass()
         {
             try
@@ -755,7 +758,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
-
         public static List<Glaccounts> GetInvPurchaseSalesGLAcc()
         {
             try
