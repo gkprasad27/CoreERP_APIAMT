@@ -16,5 +16,6 @@ namespace CoreERP.Models
         public string Extra1 { get; set; }
         public string Extra2 { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

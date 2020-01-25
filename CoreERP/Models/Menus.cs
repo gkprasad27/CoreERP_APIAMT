@@ -15,5 +15,6 @@ namespace CoreERP.Models
         public string Route { get; set; }
         public string IconName { get; set; }
         public string Ext1 { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

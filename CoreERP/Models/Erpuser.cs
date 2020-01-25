@@ -14,5 +14,6 @@ namespace CoreERP.Models
         public string CanAdd { get; set; }
         public string BranchCode { get; set; }
         public string CompanyCode { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

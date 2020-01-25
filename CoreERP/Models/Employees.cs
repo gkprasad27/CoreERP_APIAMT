@@ -39,5 +39,6 @@ namespace CoreERP.Models
         public string ReportingTo { get; set; }
         public string Uannumber { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

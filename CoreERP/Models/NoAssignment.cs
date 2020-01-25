@@ -14,5 +14,6 @@ namespace CoreERP.Models
         public string NoType { get; set; }
         public string NumberInterval { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

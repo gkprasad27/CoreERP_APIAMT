@@ -1,4 +1,5 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
+﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
@@ -21,7 +22,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static BillingNoSeries GetBillingNoSeries(string code)
         {
             try
@@ -52,20 +52,21 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static BillingNoSeries RegisterBillingNoSeries(BillingNoSeries billingNoSeries)
         {
             try
             {
                 using(Repository<BillingNoSeries> repo=new Repository<BillingNoSeries>())
                 {
-                    var lastreacord = repo.BillingNoSeries.OrderByDescending(x => Convert.ToInt32(x.Code??"0")).FirstOrDefault();
-                    if (lastreacord != null)
-                        billingNoSeries.Code = (int.Parse(lastreacord.Code) + 1).ToString();
+                    billingNoSeries.Active = "Y";
+                    billingNoSeries.AddDate = DateTime.Now;
+                    var record = repo.BillingNoSeries.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                    if (record != null)
+                        billingNoSeries.Code = CommonHelper.IncreaseCode(record.Code);
                     else
                         billingNoSeries.Code = "1";
 
-                    billingNoSeries.Active = "Y";
+                   
                     repo.Add(billingNoSeries);
 
                     if (repo.SaveChanges() > 0)
@@ -76,7 +77,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-
         public static BillingNoSeries UpdateBillingNoSeries(BillingNoSeries billingNoSeries)
         {
             try

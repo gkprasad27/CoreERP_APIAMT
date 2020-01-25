@@ -12,8 +12,8 @@ namespace CoreERP.Controllers.GL
     [Route("api/gl/GLAccUnderSubGroup")]
     public class GLAccUnderSubGroupController : ControllerBase
     {
-        [HttpPost("gl/accundSubgp/register")]
-        public async Task<IActionResult> Register([FromBody]GlaccUnderSubGroup glaccUnderSubGroup)
+        [HttpPost("RegisterGlaccUnderSubGroup")]
+        public async Task<IActionResult> RegisterGlaccUnderSubGroup([FromBody]GlaccUnderSubGroup glaccUnderSubGroup)
         {
             if (glaccUnderSubGroup == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(glaccUnderSubGroup)}cannot be null" });

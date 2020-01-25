@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess;
+﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -15,16 +16,17 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             {
                 using (Repository<MaterialGroup> repo = new Repository<MaterialGroup>())
                 {
-                    var record = ((from acc in repo.MaterialGroup select acc.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
+                    var record =repo.MaterialGroup.OrderByDescending(x => x.AddDate).FirstOrDefault();
 
-                    if (record != 0)
+                    if (record != null)
                     {
-                        materialGroup.Code = (record + 1).ToString();
+                        materialGroup.Code = CommonHelper.IncreaseCode(record.Code);
                     }
                     else
                         materialGroup.Code = "1";
 
                     materialGroup.Active = "Y";
+                    materialGroup.AddDate = DateTime.Now;
                     repo.MaterialGroup.Add(materialGroup);
                     if (repo.SaveChanges() > 0)
                         return materialGroup;
@@ -86,7 +88,6 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
                 throw ex;
             }
         }
-
         public static List<AccountingClass> GetAccountingClassList()
         {
             try

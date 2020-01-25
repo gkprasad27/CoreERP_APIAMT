@@ -16,5 +16,6 @@ namespace CoreERP.Models
         public string ResponsiblePersonCode { get; set; }
         public string ResponsiblePersonDesc { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

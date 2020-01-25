@@ -11,5 +11,6 @@ namespace CoreERP.Models
         public string CountryCode { get; set; }
         public string CountryName { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

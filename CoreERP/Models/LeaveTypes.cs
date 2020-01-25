@@ -12,5 +12,6 @@ namespace CoreERP.Models
         public string LeaveMaxLimit { get; set; }
         public string LeaveName { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

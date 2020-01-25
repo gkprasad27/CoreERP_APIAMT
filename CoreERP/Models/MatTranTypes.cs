@@ -17,5 +17,6 @@ namespace CoreERP.Models
         public string TransactionType { get; set; }
         public string Type { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

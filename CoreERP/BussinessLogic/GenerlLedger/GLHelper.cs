@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess;
+﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -75,7 +76,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch (Exception ex) { throw ex; }
         }
-
         public static List<BrandModel> GetModelList()
         {
             try
@@ -88,6 +88,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             catch (Exception ex) { throw ex; }
         }
 
+        #region Account Group
         public static GlaccGroup RegisterAccountsGroup(GlaccGroup glAccGroup)
         {
             try
@@ -95,6 +96,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using (Repository<GlaccGroup> repo = new Repository<GlaccGroup>())
                 {
                     glAccGroup.Active = "Y";
+                    glAccGroup.AddDate = DateTime.Now;
                     repo.GlaccGroup.Add(glAccGroup);
                     if (repo.SaveChanges() > 0)
                         return glAccGroup;
@@ -137,6 +139,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             catch { throw; }
         }
 
+        #endregion
+
         #region GLAccount SubGroup
         public static List<GlaccSubGroup> GetGLAccountSubGroup(string accGroupCode = null)
         {
@@ -176,7 +180,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
-
         public static List<GlaccSubGroup> GetGLAccountSubGroupList(string subGroupCode)
         {
             try
@@ -195,6 +198,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
                 {
                     glAccSubGroup.Active = "Y";
+                    glAccSubGroup.AddDate = DateTime.Now;
                     repo.GlaccSubGroup.Add(glAccSubGroup);
                     if (repo.SaveChanges() > 0)
                         return glAccSubGroup;
@@ -268,6 +272,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using (Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>())
                 {
                     glUnderSubGroup.Active = "Y";
+                    glUnderSubGroup.AddDate = DateTime.Now;
                     repo.GlaccUnderSubGroup.Add(glUnderSubGroup);
                     if (repo.SaveChanges() > 0)
                         return glUnderSubGroup;
@@ -377,8 +382,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
             }
             catch { throw; }
-        }
-      
+        }   
         public static Glaccounts RegisterGLAccounts(Glaccounts glAccounts)
         {
             try
@@ -386,6 +390,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
                 {
                     glAccounts.Active = "Y";
+                    glAccounts.AddDate = DateTime.Now;
                     repo.Glaccounts.Add(glAccounts);
                     if (repo.SaveChanges() > 0)
                         return glAccounts;
@@ -460,6 +465,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using (Repository<GlsubCode> repo = new Repository<GlsubCode>())
                 {
                     glSubCode.Active = "Y";
+                    glSubCode.AddDate =DateTime.Now;
                     repo.GlsubCode.Add(glSubCode);
                     if (repo.SaveChanges() > 0)
                         return glSubCode;
@@ -534,6 +540,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using (Repository<TaxIntegration> repo = new Repository<TaxIntegration>())
                 {
                     taxintegration.Active = "Y";
+                    taxintegration.AddDate = DateTime.Now;
                     repo.TaxIntegration.Add(taxintegration);
                     if (repo.SaveChanges() > 0)
                         return taxintegration;
@@ -603,6 +610,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             catch { throw; }
         }
 
+        #region Cash Account to branches
         public static AsignmentCashAccBranch RegisterCashAccToBranches(AsignmentCashAccBranch assignCashToBranch)
         {
             try
@@ -610,6 +618,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using (Repository<AsignmentCashAccBranch> repo = new Repository<AsignmentCashAccBranch>())
                 {
                     assignCashToBranch.Active = "Y";
+                    assignCashToBranch.AddDate = DateTime.Now;
                     repo.AsignmentCashAccBranch.Add(assignCashToBranch);
                     if (repo.SaveChanges() > 0)
                         return assignCashToBranch;
@@ -652,7 +661,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             catch { throw; }
         }
 
-
+        #endregion
         public static List<TaxMasters> GetTaxMastersList()
         {
             try
@@ -695,15 +704,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
                 {
-                    var record = ((from asiacc in GLHelper.GetAsignAccToAccClas() select asiacc.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
-                    if (record != 0)
+                    var record = repo.AsignmentAcctoAccClass.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                    if (record != null)
                     {
-                        assignAcctoAcc.Code = (record + 1).ToString();
+                        assignAcctoAcc.Code = CommonHelper.IncreaseCode(record.Code);
                     }
                     else
                         assignAcctoAcc.Code = "1";
 
                     assignAcctoAcc.Active = "Y";
+                    assignAcctoAcc.AddDate = DateTime.Now;
                     repo.AsignmentAcctoAccClass.Add(assignAcctoAcc);
                     if (repo.SaveChanges() > 0)
                         return assignAcctoAcc;
@@ -821,15 +831,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 using (Repository<VoucherTypes> repo = new Repository<VoucherTypes>())
                 {
-                    var lastrecord = repo.VoucherTypes.OrderByDescending(v => v.VoucherCode).FirstOrDefault();
-                    if (lastrecord != null)
+                    var record = repo.VoucherTypes.OrderByDescending(v => v.AddDate).FirstOrDefault();
+                    if (record != null)
                     {
-                        voucherTypes.VoucherCode = (int.Parse(lastrecord.VoucherCode) + 1).ToString();
+                        voucherTypes.VoucherCode = CommonHelper.IncreaseCode(record.Code);
                     }
                     else
                         voucherTypes.VoucherCode = "1";
 
                     voucherTypes.Active = "Y";
+                    voucherTypes.AddDate = DateTime.Now;
                     repo.VoucherTypes.Add(voucherTypes);
                     if (repo.SaveChanges() > 0)
                         return voucherTypes;

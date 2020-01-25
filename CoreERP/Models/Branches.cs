@@ -30,6 +30,7 @@ namespace CoreERP.Models
         public string Active { get; set; }
         public string Country { get; set; }
         public string City { get; set; }
+        public DateTime? AddDate { get; set; }
 
         public virtual Companies CompanyCodeNavigation { get; set; }
     }

@@ -165,7 +165,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("RegisterBilling")]
-        public async Task<IActionResult> RegisterBilling([FromBody]Billing[] billings)
+        public async Task<IActionResult> RegisterBilling([FromBody]Invoice[] billings)
         {
 
             if (billings == null  || billings?.Length ==0)

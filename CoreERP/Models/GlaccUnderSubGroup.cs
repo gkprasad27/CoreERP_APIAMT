@@ -12,5 +12,6 @@ namespace CoreERP.Models
         public string SubGroupName { get; set; }
         public string UnderSubGroupName { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

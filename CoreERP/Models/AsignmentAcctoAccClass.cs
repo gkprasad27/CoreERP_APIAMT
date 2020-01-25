@@ -14,5 +14,6 @@ namespace CoreERP.Models
         public string SaleAcc { get; set; }
         public string TransactionType { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

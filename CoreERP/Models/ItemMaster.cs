@@ -37,5 +37,6 @@ namespace CoreERP.Models
         public long Size { get; set; }
         public long WholePrice { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

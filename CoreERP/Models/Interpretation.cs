@@ -21,5 +21,6 @@ namespace CoreERP.Models
         public string OtherExpensesAc { get; set; }
         public bool OtherExpensesboolAc { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }

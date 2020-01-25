@@ -32,5 +32,6 @@ namespace CoreERP.Models
         public string UsefulHike { get; set; }
         public string UsefulHikemonth { get; set; }
         public string Active { get; set; }
+        public DateTime? AddDate { get; set; }
     }
 }
