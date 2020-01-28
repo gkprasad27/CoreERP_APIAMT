@@ -88,5 +88,26 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpGet("GetPartnerTypeList")]
+        public async Task<IActionResult> GetPartnerTypeList()
+        {
+            try
+            {
+                var partnerTypeList = PartnerTypeHelper.GetPartnerTypeList();
+                if (partnerTypeList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.partnerTypeList = partnerTypeList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

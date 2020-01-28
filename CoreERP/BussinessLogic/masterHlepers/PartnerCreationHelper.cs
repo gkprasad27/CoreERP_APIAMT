@@ -94,7 +94,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                return Common.CommonHelper.GetConfigurationValue("MASTER", "NUMBERSERIES", "BALANCETYPE").Split(',').ToList();
+                return new List<string>() { NATURESOFACCOUNTS.DR.ToString(), NATURESOFACCOUNTS.CR.ToString() };
+                //return Common.CommonHelper.GetConfigurationValue("MASTER", "NUMBERSERIES", "BALANCETYPE").Split(',').ToList();
             }
             catch (Exception ex)
             {

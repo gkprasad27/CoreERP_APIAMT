@@ -30,6 +30,7 @@ namespace CoreERP.Controllers.GL
             }
         }
 
+
         [HttpGet("GetAsigAcctoAccclassList")]
         public async Task<IActionResult> GetAsigAcctoAccclassList()
         {
@@ -78,8 +79,6 @@ namespace CoreERP.Controllers.GL
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
-      
 
         [HttpGet("GetAccountingClass")]
         public async Task<IActionResult> GetAccountingClass()

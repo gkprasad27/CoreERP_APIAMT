@@ -603,7 +603,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 //               where taxacc.Nactureofaccount.ToLower() == "tax"
                 //               select taxacc)
                 return (from taxacc in GLHelper.GetGLAccountsList().Where(x=> x.Nactureofaccount != null)
-                        where taxacc.Nactureofaccount.Equals("tax",StringComparison.OrdinalIgnoreCase)
+                        where taxacc.Nactureofaccount.Equals(NATURESOFACCOUNTS.TAX.ToString(),StringComparison.OrdinalIgnoreCase)
                         select taxacc).ToList();
             }
 
