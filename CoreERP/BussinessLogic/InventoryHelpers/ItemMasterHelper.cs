@@ -80,6 +80,25 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
                 throw ex;
             }
         }
+
+        public static List<ItemMaster> UpdateItemMaster(List<ItemMaster> itemMasters)
+        {
+            try
+            {
+                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
+                {
+                    repo.ItemMaster.UpdateRange(itemMasters);
+                    if (repo.SaveChanges() > 0)
+                        return itemMasters;
+
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public static ItemMaster DeleteItemMaster(string code)
         {
             try
@@ -99,6 +118,18 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             {
                 throw ex;
             }
+        }
+
+        public static ItemMaster GetItemMaster(string modelcode)
+        {
+            try
+            {
+                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
+                {
+                    return repo.ItemMaster.Where(x => x.Model == modelcode).OrderByDescending(x=> x.AddDate).FirstOrDefault();
+                }
+            }
+            catch { throw; }
         }
     }
 }

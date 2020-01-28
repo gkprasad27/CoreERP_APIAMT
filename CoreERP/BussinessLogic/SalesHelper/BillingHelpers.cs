@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.InventoryHelpers;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Models;
@@ -605,22 +606,45 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
+                List<ItemMaster> itemMasters = new List<ItemMaster>();
+
+
                 using(Repository<Invoice> repo=new Repository<Invoice>())
                 {
-                    for(int i=0;i< billings.Length;i++)
-                    {
-                        billings[i].AddDate = DateTime.Now;
-                        billings[i].Active = "Y";
-                    }
-                    repo.Invoice.AddRange(billings);
-                    if (repo.SaveChanges() > 0)
-                        return billings.ToList();
 
+                    using (var dbtransaction = repo.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            for (int i = 0; i < billings.Length; i++)
+                            {
+                                var itm = ItemMasterHelper.GetItemMaster(billings[i].Model);
+                                itm.ClosingStock -= (string.IsNullOrEmpty(billings[i].Quantity) ? 0 : Convert.ToInt64(billings[i].Quantity));
+                                itemMasters.Add(itm);
+
+                                billings[i].AddDate = DateTime.Now;
+                                billings[i].Active = "Y";
+                            }
+
+                            ItemMasterHelper.UpdateItemMaster(itemMasters);
+
+                            repo.Invoice.AddRange(billings);
+                            if (repo.SaveChanges() > 0)
+                                return billings.ToList();
+                        }
+                        catch(Exception ex)
+                        {
+                            dbtransaction.Rollback();
+                            throw ex;
+                        }
+                    }
                     return new List<Invoice>();
                 }
             }
             catch { throw; }
         }
+
+       
 
         public static List<Glaccounts> GetGlaccounts()
         {
@@ -661,6 +685,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
                               .ToList();
                 }
             } catch { throw; }
+        }
+        public static BrandModel GetModelDetails(string modelCode)
+        {
+            try
+            {
+               return BrandModelHelpers.GetBrandModelList(modelCode);
+            }
+            catch { throw; }
         }
 
         #endregion

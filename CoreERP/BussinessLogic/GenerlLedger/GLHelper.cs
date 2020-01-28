@@ -96,7 +96,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using (Repository<GlaccGroup> repo = new Repository<GlaccGroup>())
                 {
                     glAccGroup.Active = "Y";
-                    glAccGroup.AddDate = DateTime.Now;
+                  //  glAccGroup.AddDate = DateTime.Now;
                     repo.GlaccGroup.Add(glAccGroup);
                     if (repo.SaveChanges() > 0)
                         return glAccGroup;
@@ -834,7 +834,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     var record = repo.VoucherTypes.OrderByDescending(v => v.AddDate).FirstOrDefault();
                     if (record != null)
                     {
-                        voucherTypes.VoucherCode = CommonHelper.IncreaseCode(record.Code);
+                        voucherTypes.VoucherCode = CommonHelper.IncreaseCode(record.VoucherCode);
                     }
                     else
                         voucherTypes.VoucherCode = "1";

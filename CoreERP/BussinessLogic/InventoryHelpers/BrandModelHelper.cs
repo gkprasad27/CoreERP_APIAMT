@@ -50,6 +50,18 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             }
             catch { throw; }
         }
+
+        public static BrandModel GetBrandModelList(string modelCode)
+        {
+            try
+            {
+                using (Repository<BrandModel> repo = new Repository<BrandModel>())
+                {
+                    return repo.BrandModel.Where(x => x.Code == modelCode).FirstOrDefault();
+                }
+            }
+            catch { throw; }
+        }
         public static BrandModel UpdateBrandModelClass(BrandModel brandModel)
         {
             try
