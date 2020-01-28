@@ -15,5 +15,6 @@ namespace CoreERP.Models
         public string CustomerCare { get; set; }
         public string Active { get; set; }
         public DateTime? AddDate { get; set; }
+        public string AccClass { get; set; }
     }
 }

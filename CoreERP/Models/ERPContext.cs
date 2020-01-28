@@ -92,6 +92,8 @@ namespace CoreERP.Models
         public virtual DbSet<TblOperatorStockReceipt> TblOperatorStockReceipt { get; set; }
         public virtual DbSet<TblOperatorStockReceiptDetail> TblOperatorStockReceiptDetail { get; set; }
         public virtual DbSet<TblPackageConversion> TblPackageConversion { get; set; }
+        public virtual DbSet<TblProductPacking> TblProductPacking { get; set; }
+        public virtual DbSet<TblUnit> TblUnit { get; set; }
         public virtual DbSet<TblVehicle> TblVehicle { get; set; }
         public virtual DbSet<TblVehicleType> TblVehicleType { get; set; }
         public virtual DbSet<VendorPayments> VendorPayments { get; set; }
@@ -798,7 +800,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AddDate).HasColumnType("datetime");
 
-                entity.Property(e => e.BrandName).HasMaxLength(50);
+                entity.Property(e => e.BrandName).HasMaxLength(100);
 
                 entity.Property(e => e.CompCode).HasMaxLength(50);
 
@@ -2327,9 +2329,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<ItemMaster>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.ItemNumber);
 
-                entity.Property(e => e.Code).HasMaxLength(20);
+                entity.Property(e => e.ItemNumber).HasMaxLength(20);
 
                 entity.Property(e => e.AccClass).HasMaxLength(20);
 
@@ -2344,8 +2346,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(50);
 
-                entity.Property(e => e.Description).HasMaxLength(100);
-
                 entity.Property(e => e.Ext1).HasMaxLength(200);
 
                 entity.Property(e => e.Ext2).HasMaxLength(200);
@@ -2355,10 +2355,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Ext4).HasMaxLength(200);
 
                 entity.Property(e => e.Ext5).HasMaxLength(50);
-
-                entity.Property(e => e.Ext6).HasMaxLength(50);
-
-                entity.Property(e => e.Ext7).HasMaxLength(50);
 
                 entity.Property(e => e.Hsncode)
                     .HasColumnName("HSNCode")
@@ -2370,6 +2366,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.ItemGroup).HasMaxLength(100);
 
+                entity.Property(e => e.ItemName).HasMaxLength(100);
+
                 entity.Property(e => e.MaxQty)
                     .HasColumnName("MaxQTY")
                     .HasDefaultValueSql("((0))");
@@ -2380,17 +2378,33 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Model).HasMaxLength(100);
 
-                entity.Property(e => e.Mrpprice).HasColumnName("MRPPrice");
+                entity.Property(e => e.Mrpprice)
+                    .HasColumnName("MRPPrice")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.Narration).HasMaxLength(50);
 
                 entity.Property(e => e.OutputTaxCode).HasMaxLength(50);
 
+                entity.Property(e => e.PackingCode).HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.PurchaseAccount).HasMaxLength(50);
 
-                entity.Property(e => e.ReOrdQty).HasColumnName("ReOrdQTY");
+                entity.Property(e => e.ReOrdQty)
+                    .HasColumnName("ReOrdQTY")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.RetailPrice).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.SalePrice).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.SalesAccount).HasMaxLength(50);
+
+                entity.Property(e => e.Size).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.UnitId).HasColumnName("UnitID");
+
+                entity.Property(e => e.WholePrice).HasDefaultValueSql("((0))");
             });
 
             modelBuilder.Entity<LeaveTypes>(entity =>
@@ -2509,6 +2523,8 @@ namespace CoreERP.Models
                 entity.HasKey(e => e.Code);
 
                 entity.Property(e => e.Code).HasMaxLength(20);
+
+                entity.Property(e => e.AccClass).HasMaxLength(50);
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
@@ -4916,6 +4932,72 @@ namespace CoreERP.Models
                 entity.Property(e => e.OutputproductName)
                     .IsRequired()
                     .HasColumnName("outputproductName")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblProductPacking>(entity =>
+            {
+                entity.HasKey(e => e.PackingId)
+                    .HasName("PK__tbl_Prod__8084521F217CC17C");
+
+                entity.ToTable("tbl_ProductPacking");
+
+                entity.Property(e => e.PackingId)
+                    .HasColumnName("packingID")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.BarrelVerify).HasColumnName("barrelVerify");
+
+                entity.Property(e => e.BatchVerify).HasColumnName("batchVerify");
+
+                entity.Property(e => e.PackingCode)
+                    .IsRequired()
+                    .HasColumnName("packingCode")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.PackingName)
+                    .IsRequired()
+                    .HasColumnName("packingName")
+                    .HasMaxLength(250);
+            });
+
+            modelBuilder.Entity<TblUnit>(entity =>
+            {
+                entity.HasKey(e => e.UnitId)
+                    .HasName("PK__tbl_Unit__55D792354242D080");
+
+                entity.ToTable("tbl_Unit");
+
+                entity.Property(e => e.UnitId)
+                    .HasColumnName("unitId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Extra1)
+                    .HasColumnName("extra1")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Extra2)
+                    .HasColumnName("extra2")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ExtraDate)
+                    .HasColumnName("extraDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.FormalName)
+                    .HasColumnName("formalName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NoOfDecimalplaces).HasColumnName("noOfDecimalplaces");
+
+                entity.Property(e => e.UnitName)
+                    .HasColumnName("unitName")
                     .IsUnicode(false);
             });
 

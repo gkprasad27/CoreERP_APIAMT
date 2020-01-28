@@ -22,8 +22,8 @@ namespace CoreERP.Controllers
         {
             try
             {
-                if(ItemMasterHelper.GetItemMasterList(itemMaster.Code).Count > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Code ={itemMaster.Code} Already exists." });
+                if(ItemMasterHelper.GetItemMasterList(itemMaster.ItemNumber).Count > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Code ={itemMaster.ItemNumber} Already exists." });
 
                 ItemMaster result = ItemMasterHelper.RegisterItemMaster(itemMaster);
                 if (result !=null)

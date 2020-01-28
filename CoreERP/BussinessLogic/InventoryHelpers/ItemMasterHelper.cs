@@ -21,10 +21,10 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
 
                     if (record != null)
                     {
-                        itemMaster.Code = CommonHelper.IncreaseCode(record.Code);
+                        itemMaster.ItemNumber = CommonHelper.IncreaseCode(record.ItemNumber);
                     }
                     else
-                        itemMaster.Code = "1";
+                        itemMaster.ItemNumber = "1";
 
                     itemMaster.Active = "Y";
                     itemMaster.AddDate = DateTime.Now;
@@ -57,7 +57,7 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             {
                 using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
                 {
-                    return repo.ItemMaster.AsEnumerable().Where(x => x.Code == code).ToList();
+                    return repo.ItemMaster.AsEnumerable().Where(x => x.ItemNumber == code).ToList();
                 }
             }
             catch { throw; }
@@ -105,7 +105,7 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             {
                 using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
                 {
-                    var itemMaster = repo.ItemMaster.Where(x => x.Code == code).FirstOrDefault();
+                    var itemMaster = repo.ItemMaster.Where(x => x.ItemNumber == code).FirstOrDefault();
                     itemMaster.Active = "N";
                     repo.ItemMaster.Remove(itemMaster);
                     if (repo.SaveChanges() > 0)

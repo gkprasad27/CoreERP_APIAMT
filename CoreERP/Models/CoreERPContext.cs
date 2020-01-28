@@ -1682,9 +1682,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<ItemMaster>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.ItemNumber);
 
-                entity.Property(e => e.Code).HasMaxLength(10);
+                entity.Property(e => e.ItemNumber).HasMaxLength(10);
 
                 entity.Property(e => e.AccClass).HasMaxLength(20);
 
@@ -1692,7 +1692,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(50);
 
-                entity.Property(e => e.Description).HasMaxLength(100);
+                entity.Property(e => e.ItemName).HasMaxLength(100);
 
                 entity.Property(e => e.Ext1).HasMaxLength(200);
 
@@ -1704,9 +1704,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ext5).HasMaxLength(50);
 
-                entity.Property(e => e.Ext6).HasMaxLength(50);
+                entity.Property(e => e.UnitId).HasMaxLength(50);
 
-                entity.Property(e => e.Ext7).HasMaxLength(50);
+                entity.Property(e => e.PackingSize).HasMaxLength(50);
 
                 entity.Property(e => e.Hsncode)
                     .HasColumnName("HSNCode")
