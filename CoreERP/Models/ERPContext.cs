@@ -96,6 +96,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblUnit> TblUnit { get; set; }
         public virtual DbSet<TblVehicle> TblVehicle { get; set; }
         public virtual DbSet<TblVehicleType> TblVehicleType { get; set; }
+        public virtual DbSet<TourAdvance> TourAdvance { get; set; }
         public virtual DbSet<VendorPayments> VendorPayments { get; set; }
         public virtual DbSet<VoucherClass> VoucherClass { get; set; }
         public virtual DbSet<VoucherProcessing> VoucherProcessing { get; set; }
@@ -4058,10 +4059,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Code).HasMaxLength(30);
 
-                entity.Property(e => e.Active)
-                    .HasMaxLength(1)
-                    .IsUnicode(false)
-                    .IsFixedLength();
+                entity.Property(e => e.Active).HasMaxLength(50);
 
                 entity.Property(e => e.AddDate).HasColumnType("datetime");
 
@@ -5070,6 +5068,110 @@ namespace CoreERP.Models
                     .IsRequired()
                     .HasColumnName("vehicleTypeName")
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TourAdvance>(entity =>
+            {
+                entity.HasKey(e => new { e.EmpCode, e.JourneyDate })
+                    .HasName("PK_Tour_Advance_1");
+
+                entity.Property(e => e.EmpCode)
+                    .HasColumnName("Emp_Code")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.JourneyDate)
+                    .HasColumnName("Journey_Date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.AcceptedAmount).HasColumnName("Accepted_Amount");
+
+                entity.Property(e => e.AcceptedBy)
+                    .HasColumnName("Accepted_By")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AcceptedDate)
+                    .HasColumnName("Accepted_Date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.AcceptedRemarks)
+                    .HasColumnName("Accepted_Remarks")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AcceptedStatus)
+                    .HasColumnName("Accepted_Status")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.ApplyDate)
+                    .HasColumnName("Apply_Date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ApprovedBy)
+                    .HasColumnName("Approved_By")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.ApprovedDate)
+                    .HasColumnName("Approved_Date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ApprovedRemarks)
+                    .HasColumnName("Approved_Remarks")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApprovedStatus)
+                    .HasColumnName("Approved_Status")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AuthorisedBy)
+                    .HasColumnName("Authorised_By")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AuthorisedDate)
+                    .HasColumnName("Authorised_Date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.AuthorisedRemarks)
+                    .HasColumnName("Authorised_Remarks")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AuthorisedStatus)
+                    .HasColumnName("Authorised_Status")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Jtime)
+                    .HasColumnName("JTime")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ModeOfTransport)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.PlaceOfVisiting)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Purpose)
+                    .HasMaxLength(150)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Remarks)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReturnDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Skip)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
             });
 
             modelBuilder.Entity<VendorPayments>(entity =>
