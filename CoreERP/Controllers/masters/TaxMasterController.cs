@@ -9,6 +9,7 @@ using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.Models;
 using System.Dynamic;
 using CoreERP.DataAccess;
+using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers
 {
@@ -52,7 +53,7 @@ namespace CoreERP.Controllers
 
 
                 var result = TaxmasterHelper.RegisterTaxMaster(taxmaster);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
@@ -62,8 +63,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
-
 
         [HttpPut("UpdateTaxMaster")]
         public async Task<IActionResult> UpdateTaxMaster([FromBody] TaxMasters taxmaster)
@@ -85,7 +84,6 @@ namespace CoreERP.Controllers
             }
         }
 
-
         [HttpDelete("DeleteTaxMaster/{code}")]
         public async Task<IActionResult> DeleteTaxMaster(string code)
         {
@@ -105,7 +103,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpGet("GetTaxTypes")]
         public async Task<IActionResult> GetTaxTypes()
