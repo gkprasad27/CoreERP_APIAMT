@@ -6,7 +6,7 @@ namespace CoreERP.Models
     public partial class TaxMasters
     {
         public string Code { get; set; }
-        public string BaseAmountInPerCentage { get; set; }
+        public decimal? BaseAmountInPerCentage { get; set; }
         public string BaseAmountIncludingTax { get; set; }
         public string Cgst { get; set; }
         public string Description { get; set; }

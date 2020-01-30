@@ -18,5 +18,7 @@ namespace CoreERP.Models
         public string EmpGrpId { get; set; }
         public string ProfitCenterCode { get; set; }
         public string Active { get; set; }
+        public string Ext1 { get; set; }
+        public string Ext2 { get; set; }
     }
 }

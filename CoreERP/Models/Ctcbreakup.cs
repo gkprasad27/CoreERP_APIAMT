@@ -23,5 +23,7 @@ namespace CoreERP.Models
         public string Duration { get; set; }
         public string SpecificMonth { get; set; }
         public string Active { get; set; }
+        public string Ext1 { get; set; }
+        public string Ext2 { get; set; }
     }
 }
