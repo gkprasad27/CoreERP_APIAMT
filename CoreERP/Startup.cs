@@ -24,19 +24,28 @@ namespace CoreERP
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers().AddJsonOptions(options =>
+            {
+               options.JsonSerializerOptions.Converters.Add(new BussinessLogic.Common.JsonValueConvertor<int>());
+               options.JsonSerializerOptions.Converters.Add(new BussinessLogic.Common.JsonValueConvertor<decimal>());
+               options.JsonSerializerOptions.Converters.Add(new BussinessLogic.Common.JsonValueConvertor<DateTime>());
+               options.JsonSerializerOptions.Converters.Add(new BussinessLogic.Common.JsonValueConvertor<string>());
+            });
+         
             services.AddCors(options =>
             {
                 options.AddPolicy("CoreERPCoresPloicy",
-                    builder => {
+                    builder =>
+                    {
                         builder.AllowAnyOrigin();
-                        builder.AllowAnyHeader();
-                        builder.AllowAnyMethod();
+                        //builder.AllowAnyHeader();
+                        //builder.AllowAnyMethod();
                     }
                     );
             });
 
             services.AddControllers();
-           
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -13,10 +13,11 @@ namespace CoreERP.Controllers
     {
 
         [HttpPost("login")]
-        public async Task<IActionResult> Register([FromBody]Erpuser erpuser)//
+        public async Task<IActionResult> Register([FromBody]Erpuser erpuser)
         {
             try
             {
+                Response.Headers.Add("Access-Control-Allow-Origin", "*");
                 Erpuser user = UserManagmentHelper.ValidateUser(erpuser);
                 if (user != null)
                     return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= user });

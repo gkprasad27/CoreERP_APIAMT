@@ -16,7 +16,7 @@ namespace CoreERP.Controllers
     [Route("api/masters/PartnerCreation")]
     public class PartnerCreationController : ControllerBase
     {
-
+        //
         [HttpPost("RegisterCreation")]
         public async Task<IActionResult> RegisterCreation([FromBody]PartnerCreation partnercreation)
         {
