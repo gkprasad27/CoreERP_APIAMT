@@ -38,8 +38,8 @@ namespace CoreERP
                     builder =>
                     {
                         builder.AllowAnyOrigin();
-                        //builder.AllowAnyHeader();
-                        //builder.AllowAnyMethod();
+                        builder.AllowAnyHeader();
+                        builder.AllowAnyMethod();
                     }
                     );
             });
