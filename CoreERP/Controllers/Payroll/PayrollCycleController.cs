@@ -11,19 +11,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers.Payroll
 {
     [ApiController]
-    [Route("api/payroll/ComponentMaster")]
-    public class ComponentMasterController : ControllerBase
+    [Route("api/payroll/PayrollCycle")]
+    public class PayrollCycleController : ControllerBase
     {
-        [HttpGet("GetComponentsList")]
-        public async Task<IActionResult> GetComponentsList()
+        [HttpGet("GetPayrollCycleList")]
+        public async Task<IActionResult> GetPayrollCycleList()
         {
             try
             {
-                var componentsList = ComponentMasterHelper.GetListOfComponents();
-                if (componentsList.Count > 0)
+                var payCycle = PayrollCycleHelper.GetListOfPayrollCycles();
+                if (payCycle.Count > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.componentsList = componentsList;
+                    expdoObj.payCycle = payCycle;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -34,13 +34,13 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpGet("GetConfigurationList")]
-        public async Task<IActionResult> GetConfigurationList()
+        [HttpGet("GetDepartmentsList")]
+        public async Task<IActionResult> GetDepartmentsList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ConfigurationList = ComponentMasterHelper.GetConfigurationList().Select(x => new { ID = x.Value, TEXT = x.ConfigurationType });
+                expando.DepartmentList = PayrollCycleHelper.GetDepartmentsList().Select(x => new { ID = x.DepartmentId, TEXT = x.DepartmentName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -49,21 +49,21 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpPost("RegisterComponent")]
-        public async Task<IActionResult> RegisterComponent([FromBody]ComponentMaster componentMaster)
+        [HttpPost("RegisterPayrollCycle")]
+        public async Task<IActionResult> RegisterPayrollCycle([FromBody]PayrollCycle payCycle)
         {
 
-            if (componentMaster == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(componentMaster)} cannot be null" });
+            if (payCycle == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(payCycle)} cannot be null" });
             else
             {
-                if (ComponentMasterHelper.GetComponents(componentMaster.ComponentCode) != null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + componentMaster.ComponentCode + " is already Exists,Please Use Another Code" });
+                if (PayrollCycleHelper.GetPayrollCycle(payCycle.CycleName) != null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + payCycle.CycleName + " is already Exists,Please Use Another Code" });
 
                 try
                 {
                     APIResponse apiResponse = null;
-                    var result = ComponentMasterHelper.Register(componentMaster);
+                    var result = PayrollCycleHelper.Register(payCycle);
                     if (result != null)
                     {
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -82,17 +82,17 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpPut("UpdateComponent")]
-        public async Task<IActionResult> UpdateComponent([FromBody] ComponentMaster componentMaster)
+        [HttpPut("UpdatePayrollCycle")]
+        public async Task<IActionResult> UpdatePayrollCycle([FromBody] PayrollCycle payCycle)
         {
 
-            if (componentMaster == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(componentMaster)} cannot be null" });
+            if (payCycle == null)
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(payCycle)} cannot be null" });
             try
             {
                 APIResponse apiResponse = null;
 
-                ComponentMaster result = ComponentMasterHelper.Update(componentMaster);
+                PayrollCycle result = PayrollCycleHelper.Update(payCycle);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -109,8 +109,8 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpDelete("DeleteComponent/{code}")]
-        public async Task<IActionResult> DeleteComponent(string code)
+        [HttpDelete("DeletePayrollCycle/{code}")]
+        public async Task<IActionResult> DeletevPF(string code)
         {
             APIResponse apiResponse = null;
             if (code == null)
@@ -118,7 +118,7 @@ namespace CoreERP.Controllers.Payroll
 
             try
             {
-                var result = ComponentMasterHelper.DeleteComponents(code);
+                var result = PayrollCycleHelper.Delete(code);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

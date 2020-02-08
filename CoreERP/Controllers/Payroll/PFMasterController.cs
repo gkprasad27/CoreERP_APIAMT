@@ -11,19 +11,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers.Payroll
 {
     [ApiController]
-    [Route("api/payroll/ComponentMaster")]
-    public class ComponentMasterController : ControllerBase
+    [Route("api/payroll/PFMaster")]
+    public class PFMasterController : ControllerBase
     {
-        [HttpGet("GetComponentsList")]
-        public async Task<IActionResult> GetComponentsList()
+        [HttpGet("GetPFList")]
+        public async Task<IActionResult> GetPFList()
         {
             try
             {
-                var componentsList = ComponentMasterHelper.GetListOfComponents();
-                if (componentsList.Count > 0)
+                var pfList = PFMasterHelper.GetListOfPFTMaster();
+                if (pfList.Count > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.componentsList = componentsList;
+                    expdoObj.pfList = pfList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -34,13 +34,13 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpGet("GetConfigurationList")]
-        public async Task<IActionResult> GetConfigurationList()
+        [HttpGet("GetComponentsList")]
+        public async Task<IActionResult> GetComponentsList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ConfigurationList = ComponentMasterHelper.GetConfigurationList().Select(x => new { ID = x.Value, TEXT = x.ConfigurationType });
+                expando.ComponentList = PFMasterHelper.GetComponentsList().Select(x => new { ID = x.ComponentCode, TEXT = x.ComponentName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -49,21 +49,21 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpPost("RegisterComponent")]
-        public async Task<IActionResult> RegisterComponent([FromBody]ComponentMaster componentMaster)
+        [HttpPost("RegisterPF")]
+        public async Task<IActionResult> RegisterPF([FromBody]Pfmaster pf)
         {
 
-            if (componentMaster == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(componentMaster)} cannot be null" });
+            if (pf == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(pf)} cannot be null" });
             else
             {
-                if (ComponentMasterHelper.GetComponents(componentMaster.ComponentCode) != null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + componentMaster.ComponentCode + " is already Exists,Please Use Another Code" });
+                if (PFMasterHelper.GetPF(pf.PftypeName) != null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + pf.PftypeName+ " is already Exists,Please Use Another Code" });
 
                 try
                 {
                     APIResponse apiResponse = null;
-                    var result = ComponentMasterHelper.Register(componentMaster);
+                    var result = PFMasterHelper.Register(pf);
                     if (result != null)
                     {
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -82,17 +82,17 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpPut("UpdateComponent")]
-        public async Task<IActionResult> UpdateComponent([FromBody] ComponentMaster componentMaster)
+        [HttpPut("UpdatePF")]
+        public async Task<IActionResult> UpdatePF([FromBody] Pfmaster pf)
         {
 
-            if (componentMaster == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(componentMaster)} cannot be null" });
+            if (pf == null)
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(pf)} cannot be null" });
             try
             {
                 APIResponse apiResponse = null;
 
-                ComponentMaster result = ComponentMasterHelper.Update(componentMaster);
+                Pfmaster result = PFMasterHelper.Update(pf);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -109,8 +109,8 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpDelete("DeleteComponent/{code}")]
-        public async Task<IActionResult> DeleteComponent(string code)
+        [HttpDelete("DeletePF/{code}")]
+        public async Task<IActionResult> DeletePF(string code)
         {
             APIResponse apiResponse = null;
             if (code == null)
@@ -118,7 +118,7 @@ namespace CoreERP.Controllers.Payroll
 
             try
             {
-                var result = ComponentMasterHelper.DeleteComponents(code);
+                var result = PFMasterHelper.DeletePF(code);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
