@@ -10,20 +10,27 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
 {
     public class SizesHelper
     {
-        public static Sizes RegisterSizes(Sizes sizes)
+        public static Sizes RegisterSizes(Sizes sizes,out string errMsg)
         {
             try
             {
+                errMsg = string.Empty;
+
                 using (Repository<Sizes> repo = new Repository<Sizes>())
                 {
-                    var record = repo.Sizes.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                    //var record = repo.Sizes.OrderByDescending(x => x.AddDate).FirstOrDefault();
 
-                    if (record !=null)
+                    //if (record !=null)
+                    //{
+                    //    sizes.Code = CommonHelper.IncreaseCode(record.Code);
+                    //}
+                    //else
+                    //    sizes.Code = "1";
+                    if(GetSizesList(sizes.Code).Count > 0)
                     {
-                        sizes.Code = CommonHelper.IncreaseCode(record.Code);
+                        errMsg = "Code Already Exists.";
+                        return null;
                     }
-                    else
-                        sizes.Code = "1";
 
                     sizes.Active = "Y";
                     sizes.AddDate = DateTime.Now;
@@ -45,7 +52,19 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             {
                 using (Repository<Sizes> repo = new Repository<Sizes>())
                 {
-                    return repo.Sizes.Select(x => x).ToList();
+                    return repo.Sizes.Where(x => x.Active =="Y").ToList();
+                }
+            }
+            catch { throw; }
+        }
+
+        public static List<Sizes> GetSizesList(string code)
+        {
+            try
+            {
+                using (Repository<Sizes> repo = new Repository<Sizes>())
+                {
+                    return repo.Sizes.Where(x => x.Code == code).ToList();
                 }
             }
             catch { throw; }
@@ -56,6 +75,9 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             {
                 using (Repository<Sizes> repo = new Repository<Sizes>())
                 {
+                    if (sizes.AddDate == null)
+                        sizes.AddDate = DateTime.Now;
+
                     repo.Sizes.Update(sizes);
                     if (repo.SaveChanges() > 0)
                         return sizes;

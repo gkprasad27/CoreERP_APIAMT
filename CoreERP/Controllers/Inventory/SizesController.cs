@@ -23,15 +23,22 @@ namespace CoreERP.Controllers
 
             try
             {
-                var result = SizesHelper.RegisterSizes(size);
+                string errorMasg = string.Empty;
+
+                var result = SizesHelper.RegisterSizes(size,out errorMasg);
                 if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = size });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
                 else
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Failed" });
+                {
+                    if (string.IsNullOrEmpty(errorMasg))
+                        errorMasg = " Registration Failed";
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMasg });
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
