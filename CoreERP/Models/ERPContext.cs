@@ -32,7 +32,7 @@ namespace CoreERP.Models
         public virtual DbSet<CardType> CardType { get; set; }
         public virtual DbSet<Companies> Companies { get; set; }
         public virtual DbSet<ComponentMaster> ComponentMaster { get; set; }
-        public virtual DbSet<ComponentType> ComponentType { get; set; }
+        public virtual DbSet<CongifurationTable> CongifurationTable { get; set; }
         public virtual DbSet<CostCenters> CostCenters { get; set; }
         public virtual DbSet<Counters> Counters { get; set; }
         public virtual DbSet<Countries> Countries { get; set; }
@@ -60,6 +60,7 @@ namespace CoreERP.Models
         public virtual DbSet<InvoiceDetails> InvoiceDetails { get; set; }
         public virtual DbSet<ItemMaster> ItemMaster { get; set; }
         public virtual DbSet<LeaveApplDetails> LeaveApplDetails { get; set; }
+        public virtual DbSet<LeaveBalanceMaster> LeaveBalanceMaster { get; set; }
         public virtual DbSet<LeaveTypes> LeaveTypes { get; set; }
         public virtual DbSet<Leaveopeningbalances> Leaveopeningbalances { get; set; }
         public virtual DbSet<MatTranTypes> MatTranTypes { get; set; }
@@ -1168,11 +1169,12 @@ namespace CoreERP.Models
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<ComponentType>(entity =>
+            modelBuilder.Entity<CongifurationTable>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.Value)
+                    .HasName("PK_ComponentType");
 
-                entity.Property(e => e.Code)
+                entity.Property(e => e.Value)
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
@@ -1181,8 +1183,7 @@ namespace CoreERP.Models
                     .IsUnicode(false)
                     .IsFixedLength();
 
-                entity.Property(e => e.ComponentType1)
-                    .HasColumnName("ComponentType")
+                entity.Property(e => e.ConfigurationType)
                     .HasMaxLength(50)
                     .IsUnicode(false);
             });
@@ -2789,6 +2790,30 @@ namespace CoreERP.Models
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<LeaveBalanceMaster>(entity =>
+            {
+                entity.HasKey(e => new { e.EmpCode, e.Year, e.LeaveCode });
+
+                entity.Property(e => e.EmpCode).HasMaxLength(50);
+
+                entity.Property(e => e.Year)
+                    .HasMaxLength(4)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LeaveCode).HasMaxLength(50);
+
+                entity.Property(e => e.CompCode).HasMaxLength(50);
+
+                entity.Property(e => e.Opbal).HasColumnName("OPBAL");
+
+                entity.Property(e => e.TimeStamp).HasColumnType("datetime");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("UserID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<LeaveTypes>(entity =>
             {
                 entity.HasKey(e => e.LeaveCode);
@@ -2802,15 +2827,13 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AddDate).HasColumnType("datetime");
 
+                entity.Property(e => e.BranchCode).HasMaxLength(50);
+
                 entity.Property(e => e.CompanyCode).HasMaxLength(20);
 
-                entity.Property(e => e.CompanyName).HasMaxLength(40);
+                entity.Property(e => e.Ext1).HasMaxLength(50);
 
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.LeaveMaxLimit).HasMaxLength(40);
-
-                entity.Property(e => e.LeaveName).HasMaxLength(40);
+                entity.Property(e => e.LeaveName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Leaveopeningbalances>(entity =>

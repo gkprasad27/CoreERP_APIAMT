@@ -1749,11 +1749,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.CompanyCode).HasMaxLength(40);
 
-                entity.Property(e => e.CompanyName).HasMaxLength(40);
+               
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .HasMaxLength(14);
+                //entity.Property(e => e.Id)
+                //    .HasColumnName("ID")
+                //    .HasMaxLength(14);
 
                 entity.Property(e => e.LeaveMaxLimit).HasMaxLength(40);
 
