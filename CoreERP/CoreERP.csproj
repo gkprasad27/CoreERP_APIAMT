@@ -10,6 +10,7 @@
     <Compile Remove="Controllers\masters\AuthorizationController.cs" />
     <Compile Remove="Controllers\masters\ConversionsController.cs" />
     <Compile Remove="Controllers\masters\HomeController.cs" />
+    <Compile Remove="Controllers\masters\LeaveTypeMasterController.cs" />
     <Compile Remove="Controllers\masters\menuAccessController.cs" />
     <Compile Remove="Controllers\masters\MenusController.cs" />
     <Compile Remove="Controllers\masters\VoucherClassController.cs" />
@@ -27,7 +28,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
   </ItemGroup>
 
   <ItemGroup>
