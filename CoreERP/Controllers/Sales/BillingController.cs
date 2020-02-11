@@ -10,11 +10,11 @@ using CoreERP.Models;
 
 namespace CoreERP.Controllers
 {
-    [Authorize]
+    [ApiController]
     [Route("api/sales/Billing")]
-    public class BillingController : Controller
+    public class BillingController : ControllerBase
     {
-
+       
         [HttpGet("GenerateBillNo/{branchCode}")]
         public async Task<IActionResult> GenerateBillNo(string branchCode)
         {
@@ -140,7 +140,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ModelListList = BillingHelpers.GetModelList(modelName).Select(m=>new { ID=m.Code,TEXT=m.Description}); 
+                expando.ModelListList = BillingHelpers.GetModelList(modelName);//.Select(m=>new { ID=m.Code,TEXT=m.Description}); 
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -199,7 +199,7 @@ namespace CoreERP.Controllers
             }
         }
 
-
+       
     }
 }
 
