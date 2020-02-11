@@ -29,6 +29,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using (Repository<ProfitCenters> repo = new Repository<ProfitCenters>())
                 {
                     profitCenter.Active = "Y";
+                    profitCenter.AddDate =DateTime.Now;
                     repo.ProfitCenters.Add(profitCenter);
                     if (repo.SaveChanges() > 0)
                         return profitCenter;

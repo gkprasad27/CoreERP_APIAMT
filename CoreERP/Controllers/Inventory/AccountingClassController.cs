@@ -24,11 +24,17 @@ namespace CoreERP.Controllers
 
             try
             {
-                var result = AccountClassHelper.RegisterAccountingClass(accountingClass);
-                if (result!=null)
+                string errorMsg = string.Empty;
+                var result = AccountClassHelper.RegisterAccountingClass(accountingClass,out errorMsg);
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
                 else
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =" Registration Failed" }); 
+                {
+                    if (string.IsNullOrEmpty(errorMsg))
+                        errorMsg = " Registration Failed";
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMsg  });
+                }
             }
             catch (Exception ex)
             {
@@ -99,6 +105,23 @@ namespace CoreERP.Controllers
             catch (Exception ex)
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response =ex.Message });
+            }
+        }
+
+        [HttpGet("GetCompanies")]
+        public async Task<IActionResult> GetCompanies()
+        {
+            try
+            {
+              
+                    dynamic expando = new ExpandoObject();
+                    expando.AccountingClassList = AccountClassHelper.GetCompanies().Select(x=> new { ID=x.CompanyCode,TEXT=x.Name});
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
+                
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
     }
