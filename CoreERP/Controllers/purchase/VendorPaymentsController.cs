@@ -14,8 +14,6 @@ namespace CoreERP.Controllers
     [Route("api/Purchase/VendorPayments")]
     public class VendorPaymentsController : ControllerBase
     {
-       
-
         [HttpPost("RegisterVendorPayments")]
         public async Task<IActionResult> RegisterVendorPayments([FromBody]VendorPayments vendorpayment)
         {
