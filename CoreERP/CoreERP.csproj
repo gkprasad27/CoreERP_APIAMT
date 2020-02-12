@@ -11,6 +11,7 @@
     <Compile Remove="Controllers\masters\AuthorizationController.cs" />
     <Compile Remove="Controllers\masters\ConversionsController.cs" />
     <Compile Remove="Controllers\masters\HomeController.cs" />
+    <Compile Remove="Controllers\masters\LeaveTypeMasterController.cs" />
     <Compile Remove="Controllers\masters\menuAccessController.cs" />
     <Compile Remove="Controllers\masters\MenusController.cs" />
     <Compile Remove="Controllers\masters\VoucherClassController.cs" />
