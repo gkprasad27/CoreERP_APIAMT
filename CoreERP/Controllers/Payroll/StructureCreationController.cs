@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers.Payroll
 {
     [ApiController]
-    [Route("api/payroll/ComponentMaster")]
+    [Route("api/payroll/StructureCreation")]
     public class StructureCreationController : ControllerBase
     {
         [HttpGet("GetStructuresList")]
@@ -69,7 +69,7 @@ namespace CoreERP.Controllers.Payroll
         {
 
             if (structureCreation == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(structureCreation)} cannot be null" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Request can not be null" });
             else
             {
                 if (StructureHelper.GetStrucutures(structureCreation.ComponentCode) != null)
@@ -102,7 +102,7 @@ namespace CoreERP.Controllers.Payroll
         {
 
             if (structureCreation == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(structureCreation)} cannot be null" });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Request cannot be null" });
             try
             {
                 APIResponse apiResponse = null;
@@ -129,7 +129,7 @@ namespace CoreERP.Controllers.Payroll
         {
             APIResponse apiResponse = null;
             if (code == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Request can not be null" });
 
             try
             {

@@ -14,7 +14,7 @@ namespace CoreERP.BussinessLogic.Payroll
             {
                 using (Repository<StructureCreation> repo = new Repository<StructureCreation>())
                 {
-                    return repo.StructureCreation.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+                    return repo.StructureCreation.Where(c => c.Active == "Y").ToList();
                 }
             }
             catch { throw; }
@@ -26,8 +26,8 @@ namespace CoreERP.BussinessLogic.Payroll
             {
                 using (Repository<StructureCreation> repo = new Repository<StructureCreation>())
                 {
-                    return repo.StructureCreation.AsEnumerable()
-                               .Where(x => x.CompanyCode.Equals(compCode))
+                    return repo.StructureCreation
+                               .Where(x => x.CompanyCode == compCode)
                                          .FirstOrDefault();
                 }
             }
@@ -91,7 +91,7 @@ namespace CoreERP.BussinessLogic.Payroll
             {
                 using (Repository<ComponentMaster> repo = new Repository<ComponentMaster>())
                 {
-                    return repo.ComponentMaster.AsEnumerable().Where(m => m.Active == "Y").ToList();
+                    return repo.ComponentMaster.Where(m => m.Active == "Y").ToList();
                 }
             }
             catch (Exception ex) { throw ex; }
@@ -103,7 +103,7 @@ namespace CoreERP.BussinessLogic.Payroll
             {
                 using (Repository<Pfmaster> repo = new Repository<Pfmaster>())
                 {
-                    return repo.Pfmaster.AsEnumerable().Where(m => m.Active == "Y").ToList();
+                    return repo.Pfmaster.Where(m => m.Active == "Y").ToList();
                 }
             }
             catch (Exception ex) { throw ex; }
