@@ -9,61 +9,129 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
   public class LeaveTypeHelper
   {
-    private static Repository<LeaveTypes> _repo = null;
-    private static Repository<LeaveTypes> repo
-    {
-      get
-      {
-        if (_repo == null)
-          _repo = new Repository<LeaveTypes>();
-        return _repo;
-      }
-    }
 
-    public static List<LeaveTypes> GetLeaveTypeList()
+    public static List<LeaveTypes> GetListOfLeaveTypes()
     {
       try
       {
-        return repo.LeaveTypes.Select(p => p).ToList();
+        using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
+        {
+          return repo.LeaveTypes.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+        }
       }
       catch { throw; }
     }
 
 
-
-    public static int RegisterLeaveType(LeaveTypes leaveType)
+    public static LeaveTypes GetLeaveTypes(string compCode)
     {
       try
       {
-        repo.LeaveTypes.Add(leaveType);
-        return repo.SaveChanges();
+        using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
+        {
+          return repo.LeaveTypes.AsEnumerable()
+                     .Where(x => x.CompanyCode.Equals(compCode))
+                               .FirstOrDefault();
+        }
       }
       catch { throw; }
     }
 
-
-
-    public static int UpdateLeaveType(LeaveTypes leaveType)
+    //public static List<LeaveTypes> SearchLeaveTypes(string leavetype)
+    //{
+    //  try
+    //  {
+    //    using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
+    //    {
+    //      return repo.LeaveTypes.AsEnumerable()
+    //        .Where(b => b.LeaveCode == leavetype
+    //                 && b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+    //              )
+    //        .ToList();
+    //    }
+    //  }
+    //  catch { throw; }
+    //}
+    public static List<LeaveTypes> GetList(string name)
     {
       try
       {
-        repo.LeaveTypes.Update(leaveType);
-        return repo.SaveChanges();
+        using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
+        {
+          return repo.LeaveTypes
+                     .Where(x => x.LeaveName == name)
+                     .ToList();
+        }
       }
       catch { throw; }
     }
 
-
-
-    public static int DeleteLeaveType(string leaveTypeCode)
+    public static List<LeaveTypes> GetList()
     {
       try
       {
-        var leavetyp = repo.LeaveTypes.Where(l => l.LeaveCode == leaveTypeCode).FirstOrDefault();
-        repo.LeaveTypes.Remove(leavetyp);
-        return repo.SaveChanges();
+        using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
+        {
+          return repo.LeaveTypes.AsEnumerable().Where(x => x.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+        }
       }
       catch { throw; }
     }
+
+    public static LeaveTypes Register(LeaveTypes leavetype)
+    {
+      try
+      {
+        using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
+        {
+          leavetype.Active = "Y";
+          repo.LeaveTypes.Add(leavetype);
+          if (repo.SaveChanges() > 0)
+            return leavetype;
+
+          return null;
+        }
+      }
+      catch { throw; }
+    }
+
+    public static LeaveTypes Update(LeaveTypes leavetype)
+    {
+      try
+      {
+        using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
+        {
+          repo.LeaveTypes.Update(leavetype);
+          if (repo.SaveChanges() > 0)
+            return leavetype;
+
+          return null;
+        }
+      }
+      catch { throw; }
+    }
+
+    public static LeaveTypes DeleteLeaveTypes(string code)
+    {
+      try
+      {
+        using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
+        {
+          var ltype = repo.LeaveTypes.Where(x => x.LeaveCode == code).FirstOrDefault();
+          ltype.Active = "N";
+          repo.LeaveTypes.Update(ltype);
+          if (repo.SaveChanges() > 0)
+            return ltype;
+
+          return null;
+        }
+      }
+      catch { throw; }
+    }
+
+    //internal static int DeleteLeaveType(string code)
+    //{
+    //  throw new NotImplementedException();
+    //}
   }
 }

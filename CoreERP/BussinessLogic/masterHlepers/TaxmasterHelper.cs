@@ -1,4 +1,4 @@
-﻿using CoreERP.DataAccess;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -21,22 +21,53 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch { throw; }
         }
 
-        public static List<TaxMasters> GetListOfTaxMasters(TAXTYPE taxtype)
+    public static List<TaxMasters> GetListOfTaxMasters(TAXTYPE taxtype)
+    {
+      try
+      {
+        using (Repository<TaxMasters> repo = new Repository<TaxMasters>())
         {
-            try
-            {
-                using (Repository<TaxMasters> repo = new Repository<TaxMasters>())
-                {
-                    return repo.TaxMasters
-                               .AsEnumerable()
-                               .Where(t => t.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
-                                        &&  t.TaxType == taxtype.ToString()).ToList();
-                }
-            }
-            catch { throw; }
+          return repo.TaxMasters
+                     .AsEnumerable()
+                     .Where(t => t.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+                              && t.TaxType == taxtype.ToString()).ToList();
         }
+      }
+      catch { throw; }
+    }
 
-        public static TaxMasters RegisterTaxMaster(TaxMasters taxMaster)
+    //public static List<TaxMasters> GetListOfInputTaxs()
+    //{
+    //  try
+    //  {
+    //    using (Repository<TaxMasters> repo = new Repository<TaxMasters>())
+    //    {
+    //      return repo.TaxMasters
+    //                 .AsEnumerable()
+    //                 .Where(t => t.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+    //                          && t.TaxType == "INPUT").ToList();
+    //    }
+    //  }
+    //  catch { throw; }
+    //}
+
+    //public static List<TaxMasters> GetListOfOutputTaxs()
+    //{
+    //  try
+    //  {
+    //    using (Repository<TaxMasters> repo = new Repository<TaxMasters>())
+    //    {
+    //      return repo.TaxMasters
+    //                 .AsEnumerable()
+    //                 .Where(t => t.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+    //                          && t.TaxType == "OUTPUT").ToList();
+    //    }
+    //  }
+    //  catch { throw; }
+    //}
+
+
+    public static TaxMasters RegisterTaxMaster(TaxMasters taxMaster)
         {
             try
             {
