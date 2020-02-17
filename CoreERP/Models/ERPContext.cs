@@ -3646,6 +3646,10 @@ namespace CoreERP.Models
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Limit)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.PftypeName)
                     .HasColumnName("PFTypeName")
                     .HasMaxLength(50);
