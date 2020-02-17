@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using CoreERP.DataAccess;
 using System;
 using System.Dynamic;
 using CoreERP.BussinessLogic.SalesHelper;
@@ -179,6 +177,21 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetMemberNamesList")]
+        public async Task<IActionResult> GetMemberNamesList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.PartnerCreationList = BillingHelpers.GetPartnerCreationList().Select(p => new { ID = p.Code, TEXT =p.Name   });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPost("RegisterBilling")]
         public async Task<IActionResult> RegisterBilling([FromBody]Invoice[] billings)
         {
@@ -199,7 +212,7 @@ namespace CoreERP.Controllers
             }
         }
 
-       
+        
     }
 }
 
