@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers.Payroll
 {
     [ApiController]
-    [Route("api/payroll/ComponentMaster")]
+    [Route("api/payroll/CTCBreakup")]
     public class CTCBreakupController : ControllerBase
     {
         [HttpGet("GetCTCList")]
