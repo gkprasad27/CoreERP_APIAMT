@@ -51,7 +51,7 @@ namespace CoreERP.Controllers
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="No Data Found." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="No billing records Found." });
             }
             catch (Exception ex)
             {

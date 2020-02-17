@@ -67,6 +67,7 @@ namespace CoreERP.Models
         public virtual DbSet<MaterialGroup> MaterialGroup { get; set; }
         public virtual DbSet<MenuAccesses> MenuAccesses { get; set; }
         public virtual DbSet<Menus> Menus { get; set; }
+        public virtual DbSet<MissingPunch> MissingPunch { get; set; }
         public virtual DbSet<MonthlyLeavesAvailed> MonthlyLeavesAvailed { get; set; }
         public virtual DbSet<NoAssignment> NoAssignment { get; set; }
         public virtual DbSet<NoSeries> NoSeries { get; set; }
@@ -90,11 +91,28 @@ namespace CoreERP.Models
         public virtual DbSet<Segment> Segment { get; set; }
         public virtual DbSet<ShiftTimeConfig> ShiftTimeConfig { get; set; }
         public virtual DbSet<Sizes> Sizes { get; set; }
+        public virtual DbSet<Smsstatus> Smsstatus { get; set; }
         public virtual DbSet<States> States { get; set; }
         public virtual DbSet<StructureCreation> StructureCreation { get; set; }
         public virtual DbSet<TaxIntegration> TaxIntegration { get; set; }
         public virtual DbSet<TaxMasters> TaxMasters { get; set; }
+        public virtual DbSet<TblBankPaymentDetails> TblBankPaymentDetails { get; set; }
+        public virtual DbSet<TblBankPaymentMaster> TblBankPaymentMaster { get; set; }
+        public virtual DbSet<TblBankReceiptDetails> TblBankReceiptDetails { get; set; }
+        public virtual DbSet<TblBankReceiptMaster> TblBankReceiptMaster { get; set; }
+        public virtual DbSet<TblBankReconciliation> TblBankReconciliation { get; set; }
+        public virtual DbSet<TblCashPaymentDetails> TblCashPaymentDetails { get; set; }
+        public virtual DbSet<TblCashPaymentMaster> TblCashPaymentMaster { get; set; }
+        public virtual DbSet<TblCashReceiptDetails> TblCashReceiptDetails { get; set; }
+        public virtual DbSet<TblCashReceiptMaster> TblCashReceiptMaster { get; set; }
         public virtual DbSet<TblCurrency> TblCurrency { get; set; }
+        public virtual DbSet<TblInvoiceDetail> TblInvoiceDetail { get; set; }
+        public virtual DbSet<TblInvoiceMaster> TblInvoiceMaster { get; set; }
+        public virtual DbSet<TblInvoiceMasterReturn> TblInvoiceMasterReturn { get; set; }
+        public virtual DbSet<TblInvoiceReturnDetail> TblInvoiceReturnDetail { get; set; }
+        public virtual DbSet<TblJournalVoucherDetails> TblJournalVoucherDetails { get; set; }
+        public virtual DbSet<TblJournalVoucherMaster> TblJournalVoucherMaster { get; set; }
+        public virtual DbSet<TblLedgerPosting> TblLedgerPosting { get; set; }
         public virtual DbSet<TblMeterReading> TblMeterReading { get; set; }
         public virtual DbSet<TblMshsdrates> TblMshsdrates { get; set; }
         public virtual DbSet<TblOilConversionDetails> TblOilConversionDetails { get; set; }
@@ -106,9 +124,28 @@ namespace CoreERP.Models
         public virtual DbSet<TblOperatorStockReceiptDetail> TblOperatorStockReceiptDetail { get; set; }
         public virtual DbSet<TblPackageConversion> TblPackageConversion { get; set; }
         public virtual DbSet<TblProductPacking> TblProductPacking { get; set; }
+        public virtual DbSet<TblPumps> TblPumps { get; set; }
+        public virtual DbSet<TblPurchaseInvoice> TblPurchaseInvoice { get; set; }
+        public virtual DbSet<TblPurchaseInvoiceDetail> TblPurchaseInvoiceDetail { get; set; }
+        public virtual DbSet<TblPurchaseReturn> TblPurchaseReturn { get; set; }
+        public virtual DbSet<TblPurchaseReturnDetails> TblPurchaseReturnDetails { get; set; }
+        public virtual DbSet<TblShareTransfer> TblShareTransfer { get; set; }
+        public virtual DbSet<TblStateWiseGst> TblStateWiseGst { get; set; }
+        public virtual DbSet<TblStockExcessDetails> TblStockExcessDetails { get; set; }
+        public virtual DbSet<TblStockExcessMaster> TblStockExcessMaster { get; set; }
+        public virtual DbSet<TblStockTransferDetail> TblStockTransferDetail { get; set; }
+        public virtual DbSet<TblStockTransferMaster> TblStockTransferMaster { get; set; }
+        public virtual DbSet<TblStockshortDetails> TblStockshortDetails { get; set; }
+        public virtual DbSet<TblStockshortMaster> TblStockshortMaster { get; set; }
+        public virtual DbSet<TblSuffixPrefix> TblSuffixPrefix { get; set; }
+        public virtual DbSet<TblTanks> TblTanks { get; set; }
+        public virtual DbSet<TblTaxGroup> TblTaxGroup { get; set; }
         public virtual DbSet<TblUnit> TblUnit { get; set; }
         public virtual DbSet<TblVehicle> TblVehicle { get; set; }
         public virtual DbSet<TblVehicleType> TblVehicleType { get; set; }
+        public virtual DbSet<TblVoucherDetail> TblVoucherDetail { get; set; }
+        public virtual DbSet<TblVoucherMaster> TblVoucherMaster { get; set; }
+        public virtual DbSet<TblVoucherType> TblVoucherType { get; set; }
         public virtual DbSet<TourAdvance> TourAdvance { get; set; }
         public virtual DbSet<VehicleRequisition> VehicleRequisition { get; set; }
         public virtual DbSet<VendorPayments> VendorPayments { get; set; }
@@ -3026,6 +3063,108 @@ namespace CoreERP.Models
                     .HasMaxLength(500);
             });
 
+            modelBuilder.Entity<MissingPunch>(entity =>
+            {
+                entity.HasKey(e => e.Sno)
+                    .HasName("PK_MissingPunchs_1");
+
+                entity.Property(e => e.AccDate)
+                    .HasColumnName("Acc_Date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.AcceptedRemarks)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AccptedId)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApplDate)
+                    .HasColumnName("Appl_Date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ApprDate)
+                    .HasColumnName("appr_date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ApproveName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApprovedId)
+                    .HasColumnName("ApprovedID")
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AuthDate)
+                    .HasColumnName("auth_date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.AuthorizedId)
+                    .HasColumnName("AuthorizedID")
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AuthorizedStatus)
+                    .HasColumnName("Authorized_status")
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CompanyCode)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CompanyGroupCode)
+                    .HasMaxLength(8)
+                    .IsFixedLength();
+
+                entity.Property(e => e.CompanyGroupName)
+                    .HasMaxLength(100)
+                    .IsFixedLength();
+
+                entity.Property(e => e.CompanyName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EmpCode)
+                    .IsRequired()
+                    .HasColumnName("Emp_Code")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.EmpName)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.MissingDate).HasColumnType("date");
+
+                entity.Property(e => e.Reason)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RejectedId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RejectedName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportId)
+                    .HasColumnName("ReportID")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<MonthlyLeavesAvailed>(entity =>
             {
                 entity.ToTable("Monthly_Leaves_Availed");
@@ -4777,6 +4916,58 @@ namespace CoreERP.Models
                 entity.Property(e => e.Ext2).HasMaxLength(20);
             });
 
+            modelBuilder.Entity<Smsstatus>(entity =>
+            {
+                entity.ToTable("SMSStatus");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Amount)
+                    .HasColumnName("amount")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Branch)
+                    .IsRequired()
+                    .HasColumnName("branch")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.InvoiceDate)
+                    .HasColumnName("invoiceDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.InvoiceNo)
+                    .HasColumnName("invoiceNo")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Mobile)
+                    .IsRequired()
+                    .HasColumnName("mobile")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.Price)
+                    .HasColumnName("price")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Qty)
+                    .HasColumnName("qty")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.SmsReturnId)
+                    .HasColumnName("smsReturnID")
+                    .HasMaxLength(50)
+                    .HasDefaultValueSql("((-1))");
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.VehicleRegNo)
+                    .HasColumnName("vehicleRegNo")
+                    .HasMaxLength(20);
+            });
+
             modelBuilder.Entity<States>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
@@ -4934,6 +5125,534 @@ namespace CoreERP.Models
                     .HasMaxLength(50);
             });
 
+            modelBuilder.Entity<TblBankPaymentDetails>(entity =>
+            {
+                entity.HasKey(e => e.BankPaymentDetailsId)
+                    .HasName("PK__tbl_BankPaymentDetails");
+
+                entity.ToTable("tbl_BankPaymentDetails");
+
+                entity.Property(e => e.BankPaymentDetailsId)
+                    .HasColumnName("bankPaymentDetailsId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Amount)
+                    .HasColumnName("amount")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.BankPaymentDetailsDate)
+                    .HasColumnName("bankPaymentDetailsDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.BankPaymentMasterId)
+                    .HasColumnName("bankPaymentMasterId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToLedgerCode)
+                    .HasColumnName("toLedgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.ToLedgerId)
+                    .HasColumnName("toLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToLedgerName)
+                    .HasColumnName("toLedgerName")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblBankPaymentMaster>(entity =>
+            {
+                entity.HasKey(e => e.BankPaymentMasterId);
+
+                entity.ToTable("tbl_BankPaymentMaster");
+
+                entity.Property(e => e.BankPaymentMasterId)
+                    .HasColumnName("bankPaymentMasterId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.BankLedgerCode)
+                    .HasColumnName("bankLedgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.BankLedgerId)
+                    .HasColumnName("bankLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.BankLedgerName)
+                    .HasColumnName("bankLedgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.BankPaymentDate)
+                    .HasColumnName("bankPaymentDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.BankPaymentVchNo)
+                    .HasColumnName("bankPaymentVchNo")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.BranchCode)
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchId)
+                    .HasColumnName("branchID")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.BranchName)
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ChequeNo)
+                    .HasColumnName("chequeNo")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.PostingDate)
+                    .HasColumnName("postingDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Realized)
+                    .HasColumnName("realized")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ServerDate)
+                    .HasColumnName("serverDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblBankReceiptDetails>(entity =>
+            {
+                entity.HasKey(e => e.BankReceiptDetailsId)
+                    .HasName("PK__tbl_BankReceiptDetails");
+
+                entity.ToTable("tbl_BankReceiptDetails");
+
+                entity.Property(e => e.BankReceiptDetailsId)
+                    .HasColumnName("bankReceiptDetailsId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Amount)
+                    .HasColumnName("amount")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.BankReceiptDetailsDate)
+                    .HasColumnName("bankReceiptDetailsDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.BankReceiptMasterId)
+                    .HasColumnName("bankReceiptMasterId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToLedgerCode)
+                    .HasColumnName("toLedgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.ToLedgerId)
+                    .HasColumnName("toLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToLedgerName)
+                    .HasColumnName("toLedgerName")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblBankReceiptMaster>(entity =>
+            {
+                entity.HasKey(e => e.BankReceiptMasterId);
+
+                entity.ToTable("tbl_BankReceiptMaster");
+
+                entity.Property(e => e.BankReceiptMasterId)
+                    .HasColumnName("bankReceiptMasterId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.BankLedgerCode)
+                    .HasColumnName("bankLedgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.BankLedgerId)
+                    .HasColumnName("bankLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.BankLedgerName)
+                    .HasColumnName("bankLedgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.BankReceiptDate)
+                    .HasColumnName("bankReceiptDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.BankReceiptVchNo)
+                    .HasColumnName("bankReceiptVchNo")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.BranchCode)
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchId)
+                    .HasColumnName("branchID")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.BranchName)
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ChequeNo)
+                    .HasColumnName("chequeNo")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.PostingDate)
+                    .HasColumnName("postingDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Realized)
+                    .HasColumnName("realized")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ServerDate)
+                    .HasColumnName("serverDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblBankReconciliation>(entity =>
+            {
+                entity.HasKey(e => e.ReconcileId)
+                    .HasName("PK__tbl_Bank__66CCE65D1F897A20");
+
+                entity.ToTable("tbl_BankReconciliation");
+
+                entity.Property(e => e.ReconcileId)
+                    .HasColumnName("reconcileId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Extra1)
+                    .HasColumnName("extra1")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Extra2)
+                    .HasColumnName("extra2")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ExtraDate)
+                    .HasColumnName("extraDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.LedgerPostingId)
+                    .HasColumnName("ledgerPostingId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.StatementDate)
+                    .HasColumnName("statementDate")
+                    .HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<TblCashPaymentDetails>(entity =>
+            {
+                entity.HasKey(e => e.CashPaymentDetailsId)
+                    .HasName("PK__tbl_CashPaymentDetails");
+
+                entity.ToTable("tbl_CashPaymentDetails");
+
+                entity.Property(e => e.CashPaymentDetailsId)
+                    .HasColumnName("cashPaymentDetailsId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Amount)
+                    .HasColumnName("amount")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.CashPaymentDetailsDate)
+                    .HasColumnName("cashPaymentDetailsDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.CashPaymentMasterId)
+                    .HasColumnName("cashPaymentMasterId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToLedgerCode)
+                    .HasColumnName("toLedgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.ToLedgerId)
+                    .HasColumnName("toLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToLedgerName)
+                    .HasColumnName("toLedgerName")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblCashPaymentMaster>(entity =>
+            {
+                entity.HasKey(e => e.CashPaymentMasterId);
+
+                entity.ToTable("tbl_CashPaymentMaster");
+
+                entity.Property(e => e.CashPaymentMasterId)
+                    .HasColumnName("cashPaymentMasterId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.BranchCode)
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchId)
+                    .HasColumnName("branchID")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.BranchName)
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.CashPaymentDate)
+                    .HasColumnName("cashPaymentDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.CashPaymentVchNo)
+                    .HasColumnName("cashPaymentVchNo")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FromLedgerCode)
+                    .HasColumnName("fromLedgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.FromLedgerId)
+                    .HasColumnName("fromLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FromLedgerName)
+                    .HasColumnName("fromLedgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ServerDate)
+                    .HasColumnName("serverDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblCashReceiptDetails>(entity =>
+            {
+                entity.HasKey(e => e.CashReceiptDetailsId)
+                    .HasName("PK__tbl_CashReceiptDetails");
+
+                entity.ToTable("tbl_CashReceiptDetails");
+
+                entity.Property(e => e.CashReceiptDetailsId)
+                    .HasColumnName("cashReceiptDetailsId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Amount)
+                    .HasColumnName("amount")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.CashReceiptDetailsDate)
+                    .HasColumnName("cashReceiptDetailsDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.CashReceiptMasterId)
+                    .HasColumnName("cashReceiptMasterId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToLedgerCode)
+                    .HasColumnName("toLedgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.ToLedgerId)
+                    .HasColumnName("toLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToLedgerName)
+                    .HasColumnName("toLedgerName")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblCashReceiptMaster>(entity =>
+            {
+                entity.HasKey(e => e.CashReceiptMasterId);
+
+                entity.ToTable("tbl_CashReceiptMaster");
+
+                entity.Property(e => e.CashReceiptMasterId)
+                    .HasColumnName("cashReceiptMasterId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.BranchCode)
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchId)
+                    .HasColumnName("branchID")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.BranchName)
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.CashReceiptDate)
+                    .HasColumnName("cashReceiptDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.CashReceiptVchNo)
+                    .HasColumnName("cashReceiptVchNo")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FromLedgerCode)
+                    .HasColumnName("fromLedgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.FromLedgerId)
+                    .HasColumnName("fromLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FromLedgerName)
+                    .HasColumnName("fromLedgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ServerDate)
+                    .HasColumnName("serverDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<TblCurrency>(entity =>
             {
                 entity.HasKey(e => e.CurrencyId)
@@ -4983,6 +5702,877 @@ namespace CoreERP.Models
                 entity.Property(e => e.SubunitName)
                     .HasColumnName("subunitName")
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblInvoiceDetail>(entity =>
+            {
+                entity.HasKey(e => e.InvoiceDetailId)
+                    .HasName("PK__tbl_InvoiceDetail");
+
+                entity.ToTable("tbl_InvoiceDetail");
+
+                entity.Property(e => e.InvoiceDetailId)
+                    .HasColumnName("invoiceDetailId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.AvailStock)
+                    .HasColumnName("availStock")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.Cgst)
+                    .HasColumnName("cgst")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.Discount)
+                    .HasColumnName("discount")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FQty)
+                    .HasColumnName("fQty")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.GrossAmount)
+                    .HasColumnName("grossAmount")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.HsnNo)
+                    .HasColumnName("hsnNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Igst)
+                    .HasColumnName("igst")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.InvoiceDate)
+                    .HasColumnName("invoiceDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.InvoiceMasterId)
+                    .HasColumnName("invoiceMasterId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.InvoiceNo)
+                    .HasColumnName("invoiceNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProductCode)
+                    .IsRequired()
+                    .HasColumnName("productCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProductGroupCode)
+                    .HasColumnName("productGroupCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductGroupId)
+                    .HasColumnName("productGroupId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductId)
+                    .HasColumnName("productId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductName)
+                    .IsRequired()
+                    .HasColumnName("productName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PumpId).HasColumnName("pumpID");
+
+                entity.Property(e => e.PumpNo)
+                    .HasColumnName("pumpNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Qty)
+                    .HasColumnName("qty")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.Rate)
+                    .HasColumnName("rate")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ServerDateTime)
+                    .HasColumnName("serverDateTime")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Sgst)
+                    .HasColumnName("sgst")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.SlipNo)
+                    .HasColumnName("slipNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.StateCode)
+                    .HasMaxLength(20)
+                    .HasDefaultValueSql("((37))");
+
+                entity.Property(e => e.TaxGroupCode)
+                    .IsRequired()
+                    .HasColumnName("taxGroupCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TaxGroupId)
+                    .HasColumnName("taxGroupId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TaxGroupName)
+                    .IsRequired()
+                    .HasColumnName("taxGroupName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TaxStructureCode)
+                    .HasColumnName("taxStructureCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TaxStructureId)
+                    .HasColumnName("taxStructureId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TotalGst)
+                    .HasColumnName("totalGST")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.UnitId)
+                    .HasColumnName("unitId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UnitName)
+                    .IsRequired()
+                    .HasColumnName("unitName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblInvoiceMaster>(entity =>
+            {
+                entity.HasKey(e => e.InvoiceMasterId)
+                    .HasName("PK__tbl_InvoiceMaster");
+
+                entity.ToTable("tbl_InvoiceMaster");
+
+                entity.Property(e => e.InvoiceMasterId)
+                    .HasColumnName("invoiceMasterId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.AccountBalance)
+                    .HasColumnName("accountBalance")
+                    .HasColumnType("decimal(18, 5)");
+
+                entity.Property(e => e.AmountInWords).HasMaxLength(250);
+
+                entity.Property(e => e.BranchCode)
+                    .IsRequired()
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchName)
+                    .IsRequired()
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.CustomerGstin)
+                    .HasColumnName("customerGSTIN")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CustomerName)
+                    .HasColumnName("customerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Discount).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.GeneralNo).HasMaxLength(250);
+
+                entity.Property(e => e.GrandTotal)
+                    .HasColumnName("grandTotal")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.InvoiceDate)
+                    .HasColumnName("invoiceDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.InvoiceNo)
+                    .HasColumnName("invoiceNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IsManualEntry).HasColumnName("isManualEntry");
+
+                entity.Property(e => e.IsSalesReturned).HasColumnName("isSalesReturned");
+
+                entity.Property(e => e.LedgerCode)
+                    .HasColumnName("ledgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.LedgerId)
+                    .HasColumnName("ledgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.LedgerName)
+                    .HasColumnName("ledgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ManualInvoiceNo).IsUnicode(false);
+
+                entity.Property(e => e.MemberCode)
+                    .HasColumnName("memberCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.MemberName)
+                    .HasColumnName("memberName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Mobile)
+                    .HasColumnName("mobile")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.OtherAmount1).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.OtherAmount2).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.PaymentMode)
+                    .HasColumnName("paymentMode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.RoundOffMinus)
+                    .HasColumnName("roundOffMinus")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.RoundOffPlus)
+                    .HasColumnName("roundOffPlus")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.ServerDateTime)
+                    .HasColumnName("serverDateTime")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.StateCode).HasMaxLength(20);
+
+                entity.Property(e => e.SuppliedTo).HasMaxLength(250);
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalCgst)
+                    .HasColumnName("totalCGST")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalIgst)
+                    .HasColumnName("totalIGST")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalSgst)
+                    .HasColumnName("totalSGST")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotaltaxAmount)
+                    .HasColumnName("totaltaxAmount")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VehicleId)
+                    .HasColumnName("vehicleId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.VehicleRegNo)
+                    .HasColumnName("vehicleRegNo")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherTypeId)
+                    .HasColumnName("voucherTypeId")
+                    .HasColumnType("numeric(18, 0)");
+            });
+
+            modelBuilder.Entity<TblInvoiceMasterReturn>(entity =>
+            {
+                entity.HasKey(e => e.InvoiceMasterReturnId)
+                    .HasName("PK__tbl_InvoiceMasterReturn");
+
+                entity.ToTable("tbl_InvoiceMasterReturn");
+
+                entity.Property(e => e.InvoiceMasterReturnId)
+                    .HasColumnName("invoiceMasterReturnId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.AccountBalance)
+                    .HasColumnName("accountBalance")
+                    .HasColumnType("decimal(18, 5)");
+
+                entity.Property(e => e.AmountInWords).HasMaxLength(250);
+
+                entity.Property(e => e.BranchCode)
+                    .IsRequired()
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchName)
+                    .IsRequired()
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.CustomerGstin)
+                    .HasColumnName("customerGSTIN")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CustomerName)
+                    .HasColumnName("customerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Discount).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.GeneralNo).HasMaxLength(250);
+
+                entity.Property(e => e.GrandTotal)
+                    .HasColumnName("grandTotal")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.InvoiceDate)
+                    .HasColumnName("invoiceDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.InvoiceMasterId)
+                    .HasColumnName("invoiceMasterId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.InvoiceNo)
+                    .HasColumnName("invoiceNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.InvoiceReturnDate)
+                    .HasColumnName("invoiceReturnDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.InvoiceReturnNo)
+                    .HasColumnName("invoiceReturnNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IsManualEntry).HasColumnName("isManualEntry");
+
+                entity.Property(e => e.LedgerCode)
+                    .HasColumnName("ledgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.LedgerId)
+                    .HasColumnName("ledgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.LedgerName)
+                    .HasColumnName("ledgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ManualInvoiceNo).IsUnicode(false);
+
+                entity.Property(e => e.MemberCode)
+                    .HasColumnName("memberCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.MemberName)
+                    .HasColumnName("memberName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Mobile)
+                    .HasColumnName("mobile")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.OtherAmount1).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.OtherAmount2).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.PaymentMode)
+                    .HasColumnName("paymentMode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.RoundOffMinus)
+                    .HasColumnName("roundOffMinus")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.RoundOffPlus)
+                    .HasColumnName("roundOffPlus")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ServerDateTime)
+                    .HasColumnName("serverDateTime")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.StateCode).HasMaxLength(20);
+
+                entity.Property(e => e.SuppliedTo).HasMaxLength(250);
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalCgst)
+                    .HasColumnName("totalCGST")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.TotalIgst)
+                    .HasColumnName("totalIGST")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.TotalSgst)
+                    .HasColumnName("totalSGST")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.TotaltaxAmount)
+                    .HasColumnName("totaltaxAmount")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VehicleId)
+                    .HasColumnName("vehicleId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.VehicleRegNo)
+                    .HasColumnName("vehicleRegNo")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherTypeId)
+                    .HasColumnName("voucherTypeId")
+                    .HasColumnType("numeric(18, 0)");
+            });
+
+            modelBuilder.Entity<TblInvoiceReturnDetail>(entity =>
+            {
+                entity.HasKey(e => e.InvoiceReturnDetailId)
+                    .HasName("PK__tbl_InvoiceReturnDetail");
+
+                entity.ToTable("tbl_InvoiceReturnDetail");
+
+                entity.Property(e => e.InvoiceReturnDetailId)
+                    .HasColumnName("invoiceReturnDetailId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.AvailStock)
+                    .HasColumnName("availStock")
+                    .HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Cgst)
+                    .HasColumnName("cgst")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.Discount)
+                    .HasColumnName("discount")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FQty)
+                    .HasColumnName("fQty")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.GrossAmount)
+                    .HasColumnName("grossAmount")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.HsnNo)
+                    .HasColumnName("hsnNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Igst)
+                    .HasColumnName("igst")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.InvoiceMasterReturnId)
+                    .HasColumnName("invoiceMasterReturnId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.InvoiceReturnDate)
+                    .HasColumnName("invoiceReturnDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.InvoiceReturnNo)
+                    .HasColumnName("invoiceReturnNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProductCode)
+                    .IsRequired()
+                    .HasColumnName("productCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProductGroupCode)
+                    .HasColumnName("productGroupCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductGroupId)
+                    .HasColumnName("productGroupId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductId)
+                    .HasColumnName("productId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductName)
+                    .IsRequired()
+                    .HasColumnName("productName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PumpId).HasColumnName("pumpID");
+
+                entity.Property(e => e.PumpNo)
+                    .HasColumnName("pumpNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Qty)
+                    .HasColumnName("qty")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.Rate)
+                    .HasColumnName("rate")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ServerDateTime)
+                    .HasColumnName("serverDateTime")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Sgst)
+                    .HasColumnName("sgst")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.SlipNo)
+                    .HasColumnName("slipNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.StateCode)
+                    .HasMaxLength(20)
+                    .HasDefaultValueSql("((37))");
+
+                entity.Property(e => e.TaxGroupCode)
+                    .IsRequired()
+                    .HasColumnName("taxGroupCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TaxGroupId)
+                    .HasColumnName("taxGroupId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TaxGroupName)
+                    .IsRequired()
+                    .HasColumnName("taxGroupName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TaxStructureCode)
+                    .HasColumnName("taxStructureCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TaxStructureId)
+                    .HasColumnName("taxStructureId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TotalGst)
+                    .HasColumnName("totalGST")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.UnitId)
+                    .HasColumnName("unitId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UnitName)
+                    .IsRequired()
+                    .HasColumnName("unitName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblJournalVoucherDetails>(entity =>
+            {
+                entity.HasKey(e => e.JournalVoucherDetailsId)
+                    .HasName("PK__tbl_JournalVoucherDetails");
+
+                entity.ToTable("tbl_JournalVoucherDetails");
+
+                entity.Property(e => e.JournalVoucherDetailsId)
+                    .HasColumnName("journalVoucherDetailsId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Amount)
+                    .HasColumnName("amount")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.JournalVoucherDetailsDate)
+                    .HasColumnName("journalVoucherDetailsDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.JournalVoucherMasterId)
+                    .HasColumnName("journalVoucherMasterId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToLedgerCode)
+                    .HasColumnName("toLedgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.ToLedgerId)
+                    .HasColumnName("toLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToLedgerName)
+                    .HasColumnName("toLedgerName")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblJournalVoucherMaster>(entity =>
+            {
+                entity.HasKey(e => e.JournalVoucherMasterId);
+
+                entity.ToTable("tbl_JournalVoucherMaster");
+
+                entity.Property(e => e.JournalVoucherMasterId)
+                    .HasColumnName("journalVoucherMasterId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.BranchCode)
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchId)
+                    .HasColumnName("branchID")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.BranchName)
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FromLedgerCode)
+                    .HasColumnName("fromLedgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.FromLedgerId)
+                    .HasColumnName("fromLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FromLedgerName)
+                    .HasColumnName("fromLedgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.JournalVchNo)
+                    .HasColumnName("journalVchNo")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.JournalVoucherDate)
+                    .HasColumnName("journalVoucherDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ReferenceDate)
+                    .HasColumnName("referenceDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ReferenceNo)
+                    .HasColumnName("referenceNo")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.ServerDate)
+                    .HasColumnName("serverDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblLedgerPosting>(entity =>
+            {
+                entity.HasKey(e => e.LedgerPostingId)
+                    .HasName("PK__tbl_Ledg__730FE2D769FBBC1F");
+
+                entity.ToTable("tbl_LedgerPosting");
+
+                entity.Property(e => e.LedgerPostingId)
+                    .HasColumnName("ledgerPostingId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.ChequeDate)
+                    .HasColumnName("chequeDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ChequeNo)
+                    .HasColumnName("chequeNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Credit)
+                    .HasColumnName("credit")
+                    .HasColumnType("decimal(18, 5)");
+
+                entity.Property(e => e.Date)
+                    .HasColumnName("date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Debit)
+                    .HasColumnName("debit")
+                    .HasColumnType("decimal(18, 5)");
+
+                entity.Property(e => e.DetailsId)
+                    .HasColumnName("detailsId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Extra1)
+                    .HasColumnName("extra1")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Extra2)
+                    .HasColumnName("extra2")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ExtraDate)
+                    .HasColumnName("extraDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.InvoiceNo)
+                    .HasColumnName("invoiceNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LedgerId)
+                    .HasColumnName("ledgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherTypeId)
+                    .HasColumnName("voucherTypeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.YearId)
+                    .HasColumnName("yearId")
+                    .HasColumnType("numeric(18, 0)");
             });
 
             modelBuilder.Entity<TblMeterReading>(entity =>
@@ -5804,6 +7394,1349 @@ namespace CoreERP.Models
                     .HasMaxLength(250);
             });
 
+            modelBuilder.Entity<TblPumps>(entity =>
+            {
+                entity.HasKey(e => e.PumpId)
+                    .HasName("PK__tbl__Pumps");
+
+                entity.ToTable("tbl_Pumps");
+
+                entity.Property(e => e.PumpId)
+                    .HasColumnName("pumpID")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.BranchCode)
+                    .HasColumnName("branchCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.BranchId)
+                    .HasColumnName("branchID")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.BranchName)
+                    .HasColumnName("branchName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IsWorking).HasColumnName("isWorking");
+
+                entity.Property(e => e.MeterReading)
+                    .HasColumnName("meterReading")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductCode)
+                    .HasColumnName("productCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProductId)
+                    .HasColumnName("productId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductName)
+                    .HasColumnName("productName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PumpCapacityinLtrs)
+                    .HasColumnName("pumpCapacityinLtrs")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.PumpNo)
+                    .HasColumnName("pumpNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TankId)
+                    .HasColumnName("tankID")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TankNo)
+                    .HasColumnName("tankNo")
+                    .HasColumnType("numeric(18, 0)");
+            });
+
+            modelBuilder.Entity<TblPurchaseInvoice>(entity =>
+            {
+                entity.HasKey(e => e.PurchaseInvId)
+                    .HasName("PK__tbl_purchaseInvoice");
+
+                entity.ToTable("tbl_PurchaseInvoice");
+
+                entity.Property(e => e.PurchaseInvId)
+                    .HasColumnName("purchaseInvId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.AmountInWords).HasMaxLength(250);
+
+                entity.Property(e => e.BranchCode)
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchName)
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Discount).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.GrandTotal)
+                    .HasColumnName("grandTotal")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Gstin)
+                    .HasColumnName("GSTIN")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IsPurchaseReturned)
+                    .HasColumnName("isPurchaseReturned")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.LedgerCode)
+                    .HasColumnName("ledgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.LedgerId)
+                    .HasColumnName("ledgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.LedgerName)
+                    .HasColumnName("ledgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.OtherAmount1).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.OtherAmount2).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.PaymentMode)
+                    .HasColumnName("paymentMode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.PurchaseInvDate)
+                    .HasColumnName("purchaseInvDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.PurchaseInvNo)
+                    .HasColumnName("purchaseInvNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RoundOffMinus)
+                    .HasColumnName("roundOffMinus")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.RoundOffPlus)
+                    .HasColumnName("roundOffPlus")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ServerDateTime)
+                    .HasColumnName("serverDateTime")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.StateCode).HasMaxLength(20);
+
+                entity.Property(e => e.SupplierInvNo)
+                    .HasColumnName("supplierInvNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalCgst)
+                    .HasColumnName("totalCGST")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.TotalIgst)
+                    .HasColumnName("totalIGST")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.TotalSgst)
+                    .HasColumnName("totalSGST")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.TotaltaxAmount)
+                    .HasColumnName("totaltaxAmount")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherTypeId)
+                    .HasColumnName("voucherTypeId")
+                    .HasColumnType("numeric(18, 0)");
+            });
+
+            modelBuilder.Entity<TblPurchaseInvoiceDetail>(entity =>
+            {
+                entity.HasKey(e => e.PurchaseInvDetailId)
+                    .HasName("PK__tbl_purchaseInvoiceDetail");
+
+                entity.ToTable("tbl_PurchaseInvoiceDetail");
+
+                entity.Property(e => e.PurchaseInvDetailId)
+                    .HasColumnName("purchaseInvDetailId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Barrel)
+                    .HasColumnName("barrel")
+                    .HasColumnType("numeric(18, 0)")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.BatchNo).HasColumnName("batchNo");
+
+                entity.Property(e => e.Cgst)
+                    .HasColumnName("cgst")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.Discount)
+                    .HasColumnName("discount")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FQty)
+                    .HasColumnName("fQty")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.GrossAmount)
+                    .HasColumnName("grossAmount")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.HsnNo)
+                    .HasColumnName("hsnNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Igst)
+                    .HasColumnName("igst")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ProductCode)
+                    .HasColumnName("productCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProductId)
+                    .HasColumnName("productId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductName)
+                    .HasColumnName("productName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PurchaseDate)
+                    .HasColumnName("purchaseDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.PurchaseInvId)
+                    .HasColumnName("purchaseInvId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.PurchaseNo)
+                    .HasColumnName("purchaseNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Qty)
+                    .HasColumnName("qty")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.Rate)
+                    .HasColumnName("rate")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ServerDateTime)
+                    .HasColumnName("serverDateTime")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Sgst)
+                    .HasColumnName("sgst")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.StateCode)
+                    .HasMaxLength(20)
+                    .HasDefaultValueSql("((37))");
+
+                entity.Property(e => e.TankId)
+                    .HasColumnName("tankID")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.TankNo)
+                    .HasColumnName("tankNo")
+                    .HasColumnType("numeric(18, 0)")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.TaxGroupCode)
+                    .HasColumnName("taxGroupCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TaxGroupId)
+                    .HasColumnName("taxGroupId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TaxStructureCode)
+                    .HasColumnName("taxStructureCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TaxStructureId)
+                    .HasColumnName("taxStructureId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalGst)
+                    .HasColumnName("totalGST")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.TotalLiters)
+                    .HasColumnName("totalLiters")
+                    .HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.UnitId)
+                    .HasColumnName("unitId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UnitName)
+                    .HasColumnName("unitName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblPurchaseReturn>(entity =>
+            {
+                entity.HasKey(e => e.PurchaseReturnId)
+                    .HasName("PK__tbl_PurchaseReturn");
+
+                entity.ToTable("tbl_PurchaseReturn");
+
+                entity.Property(e => e.PurchaseReturnId)
+                    .HasColumnName("purchaseReturnId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.AmountInWords).HasMaxLength(250);
+
+                entity.Property(e => e.BranchCode)
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchName)
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Discount).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.GrandTotal)
+                    .HasColumnName("grandTotal")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Gstin)
+                    .HasColumnName("GSTIN")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LedgerCode)
+                    .HasColumnName("ledgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.LedgerId)
+                    .HasColumnName("ledgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.LedgerName)
+                    .HasColumnName("ledgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.OtherAmount1).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.OtherAmount2).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.PaymentMode)
+                    .HasColumnName("paymentMode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.PurchaseInvDate)
+                    .HasColumnName("purchaseInvDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.PurchaseInvNo)
+                    .HasColumnName("purchaseInvNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PurchaseMasterInvId)
+                    .HasColumnName("purchaseMasterInvId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.PurchaseReturnInvDate)
+                    .HasColumnName("purchaseReturnInvDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.PurchaseReturnInvNo)
+                    .HasColumnName("purchaseReturnInvNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RoundOffMinus)
+                    .HasColumnName("roundOffMinus")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.RoundOffPlus)
+                    .HasColumnName("roundOffPlus")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ServerDateTime)
+                    .HasColumnName("serverDateTime")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.StateCode).HasMaxLength(20);
+
+                entity.Property(e => e.SupplierInvNo)
+                    .HasColumnName("supplierInvNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalCgst)
+                    .HasColumnName("totalCGST")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.TotalIgst)
+                    .HasColumnName("totalIGST")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.TotalSgst)
+                    .HasColumnName("totalSGST")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.TotaltaxAmount)
+                    .HasColumnName("totaltaxAmount")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherTypeId)
+                    .HasColumnName("voucherTypeId")
+                    .HasColumnType("numeric(18, 0)");
+            });
+
+            modelBuilder.Entity<TblPurchaseReturnDetails>(entity =>
+            {
+                entity.HasKey(e => e.PurchaseReturnDetailsId)
+                    .HasName("PK__tbl_PurchaseReturnDetails");
+
+                entity.ToTable("tbl_PurchaseReturnDetails");
+
+                entity.Property(e => e.PurchaseReturnDetailsId)
+                    .HasColumnName("purchaseReturnDetailsId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Barrel)
+                    .HasColumnName("barrel")
+                    .HasColumnType("numeric(18, 0)")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.BatchNo)
+                    .HasColumnName("batchNo")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Cgst)
+                    .HasColumnName("cgst")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.Discount)
+                    .HasColumnName("discount")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FQty)
+                    .HasColumnName("fQty")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.GrossAmount)
+                    .HasColumnName("grossAmount")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.HsnNo)
+                    .HasColumnName("hsnNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Igst)
+                    .HasColumnName("igst")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ProductCode)
+                    .HasColumnName("productCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProductId)
+                    .HasColumnName("productId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductName)
+                    .HasColumnName("productName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PurchaseReturnDate)
+                    .HasColumnName("purchaseReturnDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.PurchaseReturnId)
+                    .HasColumnName("purchaseReturnId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.PurchaseReturnNo)
+                    .HasColumnName("purchaseReturnNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Qty)
+                    .HasColumnName("qty")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.Rate)
+                    .HasColumnName("rate")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ServerDateTime)
+                    .HasColumnName("serverDateTime")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Sgst)
+                    .HasColumnName("sgst")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.StateCode)
+                    .HasMaxLength(20)
+                    .HasDefaultValueSql("((37))");
+
+                entity.Property(e => e.TankId)
+                    .HasColumnName("tankID")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.TankNo)
+                    .HasColumnName("tankNo")
+                    .HasColumnType("numeric(18, 0)")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.TaxGroupCode)
+                    .HasColumnName("taxGroupCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TaxGroupId)
+                    .HasColumnName("taxGroupId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TaxStructureCode)
+                    .HasColumnName("taxStructureCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TaxStructureId)
+                    .HasColumnName("taxStructureId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalGst)
+                    .HasColumnName("totalGST")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.TotalLiters)
+                    .HasColumnName("totalLiters")
+                    .HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.UnitId)
+                    .HasColumnName("unitId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UnitName)
+                    .HasColumnName("unitName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblShareTransfer>(entity =>
+            {
+                entity.HasKey(e => e.ShareId)
+                    .HasName("PK__tbl_ShareTransfer");
+
+                entity.ToTable("tbl_ShareTransfer");
+
+                entity.Property(e => e.ShareId)
+                    .HasColumnName("shareId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.FromMemberCode)
+                    .HasColumnName("fromMemberCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FromMemberId)
+                    .HasColumnName("fromMemberId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FromMemberName)
+                    .IsRequired()
+                    .HasColumnName("fromMemberName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.FromMemberSharesAfter).HasColumnName("fromMemberSharesAfter");
+
+                entity.Property(e => e.FromMemberSharesBefore).HasColumnName("fromMemberSharesBefore");
+
+                entity.Property(e => e.IsSharesTransfered).HasColumnName("isSharesTransfered");
+
+                entity.Property(e => e.ShareCode)
+                    .HasColumnName("shareCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ShareTransferCode)
+                    .IsRequired()
+                    .HasColumnName("shareTransferCode")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ToMemberCode)
+                    .HasColumnName("toMemberCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToMemberId)
+                    .HasColumnName("toMemberId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToMemberName)
+                    .IsRequired()
+                    .HasColumnName("toMemberName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ToMemberSharesAfter).HasColumnName("toMemberSharesAfter");
+
+                entity.Property(e => e.ToMemberSharesBefore).HasColumnName("toMemberSharesBefore");
+
+                entity.Property(e => e.TransferDate)
+                    .HasColumnName("transferDate")
+                    .HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<TblStateWiseGst>(entity =>
+            {
+                entity.ToTable("tbl_StateWiseGst");
+
+                entity.HasIndex(e => e.StateId)
+                    .HasName("UQ__tbl_Stat__C3BA3B5B5FB121F0")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.StateName)
+                    .HasName("UQ__tbl_Stat__554763154A77844F")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Cgst).HasColumnName("CGST");
+
+                entity.Property(e => e.Igst).HasColumnName("IGST");
+
+                entity.Property(e => e.Sgst).HasColumnName("SGST");
+
+                entity.Property(e => e.StateCode).HasMaxLength(20);
+
+                entity.Property(e => e.StateId).HasColumnName("StateID");
+
+                entity.Property(e => e.StateName)
+                    .IsRequired()
+                    .HasMaxLength(250);
+
+                entity.HasOne(d => d.State)
+                    .WithOne(p => p.TblStateWiseGst)
+                    .HasForeignKey<TblStateWiseGst>(d => d.StateId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("StateWiseGst_StateID_fk");
+            });
+
+            modelBuilder.Entity<TblStockExcessDetails>(entity =>
+            {
+                entity.HasKey(e => e.StockExcessDetailId)
+                    .HasName("PK__tbl_StockExcessDetails");
+
+                entity.ToTable("tbl_StockExcessDetails");
+
+                entity.Property(e => e.StockExcessDetailId)
+                    .HasColumnName("stockExcessDetailId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.BatchNo)
+                    .HasColumnName("batchNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.HsnNo)
+                    .HasColumnName("hsnNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductCode)
+                    .IsRequired()
+                    .HasColumnName("productCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProductId)
+                    .HasColumnName("productId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductName)
+                    .IsRequired()
+                    .HasColumnName("productName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Qty)
+                    .HasColumnName("qty")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.Rate)
+                    .HasColumnName("rate")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.StockExcessDetailsDate)
+                    .HasColumnName("stockExcessDetailsDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.StockExcessMasterId)
+                    .HasColumnName("stockExcessMasterId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.UnitId)
+                    .HasColumnName("unitId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UnitName)
+                    .IsRequired()
+                    .HasColumnName("unitName")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblStockExcessMaster>(entity =>
+            {
+                entity.HasKey(e => e.StockExcessMasterId);
+
+                entity.ToTable("tbl_StockExcessMaster");
+
+                entity.Property(e => e.StockExcessMasterId)
+                    .HasColumnName("stockExcessMasterId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.BranchCode)
+                    .IsRequired()
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchName)
+                    .IsRequired()
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.CostCenter)
+                    .HasColumnName("costCenter")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ServerDate)
+                    .HasColumnName("serverDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.StockExcessDate)
+                    .HasColumnName("stockExcessDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.StockExcessNo)
+                    .HasColumnName("stockExcessNo")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblStockTransferDetail>(entity =>
+            {
+                entity.HasKey(e => e.StockTransferDetailId)
+                    .HasName("PK__tbl_StockTransferDetail");
+
+                entity.ToTable("tbl_StockTransferDetail");
+
+                entity.Property(e => e.StockTransferDetailId)
+                    .HasColumnName("stockTransferDetailId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.AvailStock)
+                    .HasColumnName("availStock")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.BatchNo)
+                    .HasColumnName("batchNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FQty)
+                    .HasColumnName("fQty")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.HsnNo)
+                    .HasColumnName("hsnNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductCode)
+                    .IsRequired()
+                    .HasColumnName("productCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProductGroupCode)
+                    .HasColumnName("productGroupCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductGroupId)
+                    .HasColumnName("productGroupId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductId)
+                    .HasColumnName("productId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductName)
+                    .IsRequired()
+                    .HasColumnName("productName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Qty)
+                    .HasColumnName("qty")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.Rate)
+                    .HasColumnName("rate")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.StockTransferDetailsDate)
+                    .HasColumnName("stockTransferDetailsDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.StockTransferMasterId)
+                    .HasColumnName("stockTransferMasterId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.UnitId)
+                    .HasColumnName("unitId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UnitName)
+                    .IsRequired()
+                    .HasColumnName("unitName")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblStockTransferMaster>(entity =>
+            {
+                entity.HasKey(e => e.StockTransferMasterId)
+                    .HasName("PK__tbl_StockTransferMaster");
+
+                entity.ToTable("tbl_StockTransferMaster");
+
+                entity.Property(e => e.StockTransferMasterId)
+                    .HasColumnName("stockTransferMasterId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FromBranchCode)
+                    .IsRequired()
+                    .HasColumnName("fromBranchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.FromBranchName)
+                    .IsRequired()
+                    .HasColumnName("fromBranchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ServerDateTime)
+                    .HasColumnName("serverDateTime")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.StockTransferDate)
+                    .HasColumnName("stockTransferDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.StockTransferNo)
+                    .HasColumnName("stockTransferNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ToBranchCode)
+                    .IsRequired()
+                    .HasColumnName("toBranchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.ToBranchName)
+                    .IsRequired()
+                    .HasColumnName("toBranchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblStockshortDetails>(entity =>
+            {
+                entity.HasKey(e => e.StockshortDetailId)
+                    .HasName("PK__tbl_StockshortDetails");
+
+                entity.ToTable("tbl_StockshortDetails");
+
+                entity.Property(e => e.StockshortDetailId)
+                    .HasColumnName("stockshortDetailId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.BatchNo)
+                    .HasColumnName("batchNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.HsnNo)
+                    .HasColumnName("hsnNo")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductCode)
+                    .IsRequired()
+                    .HasColumnName("productCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProductId)
+                    .HasColumnName("productId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductName)
+                    .IsRequired()
+                    .HasColumnName("productName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Qty)
+                    .HasColumnName("qty")
+                    .HasColumnType("numeric(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.Rate)
+                    .HasColumnName("rate")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.StockshortDetailsDate)
+                    .HasColumnName("stockshortDetailsDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.StockshortMasterId)
+                    .HasColumnName("stockshortMasterId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnName("totalAmount")
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValueSql("((0.00))");
+
+                entity.Property(e => e.UnitId)
+                    .HasColumnName("unitId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UnitName)
+                    .IsRequired()
+                    .HasColumnName("unitName")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblStockshortMaster>(entity =>
+            {
+                entity.HasKey(e => e.StockshortMasterId);
+
+                entity.ToTable("tbl_StockshortMaster");
+
+                entity.Property(e => e.StockshortMasterId)
+                    .HasColumnName("stockshortMasterId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.BranchCode)
+                    .IsRequired()
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchName)
+                    .IsRequired()
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.CostCenter)
+                    .HasColumnName("costCenter")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ServerDate)
+                    .HasColumnName("serverDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.StockshortDate)
+                    .HasColumnName("stockshortDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.StockshortNo)
+                    .HasColumnName("stockshortNo")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblSuffixPrefix>(entity =>
+            {
+                entity.HasKey(e => e.SuffixprefixId)
+                    .HasName("PK__tbl_Suff__5876721373DA2C14");
+
+                entity.ToTable("tbl_SuffixPrefix");
+
+                entity.Property(e => e.SuffixprefixId)
+                    .HasColumnName("suffixprefixId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.BranchCode)
+                    .IsRequired()
+                    .HasColumnName("branchCode");
+
+                entity.Property(e => e.BranchId)
+                    .HasColumnName("branchID")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.BranchName)
+                    .IsRequired()
+                    .HasColumnName("branchName");
+
+                entity.Property(e => e.Extra1)
+                    .HasColumnName("extra1")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Extra2)
+                    .HasColumnName("extra2")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ExtraDate)
+                    .HasColumnName("extraDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.FromDate)
+                    .HasColumnName("fromDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PrefillWithZero).HasColumnName("prefillWithZero");
+
+                entity.Property(e => e.Prefix)
+                    .HasColumnName("prefix")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.StartIndex)
+                    .HasColumnName("startIndex")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Suffix)
+                    .HasColumnName("suffix")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ToDate)
+                    .HasColumnName("toDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.VoucherTypeId)
+                    .HasColumnName("voucherTypeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.WidthOfNumericalPart).HasColumnName("widthOfNumericalPart");
+            });
+
+            modelBuilder.Entity<TblTanks>(entity =>
+            {
+                entity.HasKey(e => e.TankId)
+                    .HasName("PK__tbl__Tanks");
+
+                entity.ToTable("tbl_Tanks");
+
+                entity.Property(e => e.TankId).HasColumnName("tankID");
+
+                entity.Property(e => e.BranchCode)
+                    .IsRequired()
+                    .HasColumnName("branchCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.BranchId)
+                    .HasColumnName("branchID")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.BranchName)
+                    .IsRequired()
+                    .HasColumnName("branchName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IsWorking).HasColumnName("isWorking");
+
+                entity.Property(e => e.ItemCode)
+                    .HasColumnName("itemCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NoofPumps)
+                    .HasColumnName("noofPumps")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductCode)
+                    .HasColumnName("productCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TankCapacityinLtrs)
+                    .HasColumnName("tankCapacityinLtrs")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.TankNo)
+                    .IsRequired()
+                    .HasColumnName("tankNo")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblTaxGroup>(entity =>
+            {
+                entity.HasKey(e => e.TaxGroupId)
+                    .HasName("PK__tbl_TaxGroup");
+
+                entity.ToTable("tbl_TaxGroup");
+
+                entity.Property(e => e.TaxGroupId)
+                    .HasColumnName("taxGroupId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProductGroupCode)
+                    .HasColumnName("productGroupCode")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductGroupId)
+                    .HasColumnName("productGroupID")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductGroupName)
+                    .HasColumnName("productGroupName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ProductLedgerId)
+                    .HasColumnName("productLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductLedgerName)
+                    .HasColumnName("productLedgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TaxGroupCode)
+                    .IsRequired()
+                    .HasColumnName("taxGroupCode")
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TaxGroupName)
+                    .IsRequired()
+                    .HasColumnName("taxGroupName")
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<TblUnit>(entity =>
             {
                 entity.HasKey(e => e.UnitId)
@@ -5911,6 +8844,228 @@ namespace CoreERP.Models
                 entity.Property(e => e.VehicleTypeName)
                     .IsRequired()
                     .HasColumnName("vehicleTypeName")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblVoucherDetail>(entity =>
+            {
+                entity.HasKey(e => e.VoucherDetailId);
+
+                entity.ToTable("tbl_VoucherDetail");
+
+                entity.Property(e => e.VoucherDetailId)
+                    .HasColumnName("voucherDetailId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Amount)
+                    .HasColumnName("amount")
+                    .HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.BranchCode)
+                    .HasColumnName("branchCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.BranchId)
+                    .HasColumnName("branchID")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.BranchName)
+                    .HasColumnName("branchName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CostCenter)
+                    .HasColumnName("costCenter")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FromLedgerCode)
+                    .HasColumnName("fromLedgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.FromLedgerId)
+                    .HasColumnName("fromLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.FromLedgerName)
+                    .HasColumnName("fromLedgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ServerDate)
+                    .HasColumnName("serverDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ToLedgerCode)
+                    .HasColumnName("toLedgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.ToLedgerId)
+                    .HasColumnName("toLedgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToLedgerName)
+                    .HasColumnName("toLedgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TransactionType)
+                    .HasColumnName("transactionType")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherDetailDate)
+                    .HasColumnName("voucherDetailDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.VoucherMasterId)
+                    .HasColumnName("voucherMasterId")
+                    .HasColumnType("numeric(18, 0)");
+            });
+
+            modelBuilder.Entity<TblVoucherMaster>(entity =>
+            {
+                entity.HasKey(e => e.VoucherMasterId);
+
+                entity.ToTable("tbl_VoucherMaster");
+
+                entity.Property(e => e.VoucherMasterId)
+                    .HasColumnName("voucherMasterId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Amount)
+                    .HasColumnName("amount")
+                    .HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.BranchCode)
+                    .HasColumnName("branchCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.BranchName)
+                    .HasColumnName("branchName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ChequeNo)
+                    .HasColumnName("chequeNo")
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PaymentType)
+                    .HasColumnName("paymentType")
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ServerDate)
+                    .HasColumnName("serverDate")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherDate)
+                    .HasColumnName("voucherDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherTypeIdMain)
+                    .HasColumnName("voucherTypeIdMain")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.VoucherTypeIdSub)
+                    .HasColumnName("voucherTypeIdSub")
+                    .HasColumnType("numeric(18, 0)");
+            });
+
+            modelBuilder.Entity<TblVoucherType>(entity =>
+            {
+                entity.HasKey(e => e.VoucherTypeId)
+                    .HasName("PK__tbl_Vouc__96246DEA68687968");
+
+                entity.ToTable("tbl_VoucherType");
+
+                entity.Property(e => e.VoucherTypeId)
+                    .HasColumnName("voucherTypeId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Declaration)
+                    .HasColumnName("declaration")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Extra1)
+                    .HasColumnName("extra1")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Extra2)
+                    .HasColumnName("extra2")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ExtraDate)
+                    .HasColumnName("extraDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Heading1)
+                    .HasColumnName("heading1")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Heading2)
+                    .HasColumnName("heading2")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Heading3)
+                    .HasColumnName("heading3")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Heading4)
+                    .HasColumnName("heading4")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.IsDefault).HasColumnName("isDefault");
+
+                entity.Property(e => e.IsTaxApplicable).HasColumnName("isTaxApplicable");
+
+                entity.Property(e => e.MasterId).HasColumnName("masterId");
+
+                entity.Property(e => e.MethodOfVoucherNumbering)
+                    .HasColumnName("methodOfVoucherNumbering")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TypeOfVoucher)
+                    .HasColumnName("typeOfVoucher")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherTypeName)
+                    .HasColumnName("voucherTypeName")
                     .IsUnicode(false);
             });
 
