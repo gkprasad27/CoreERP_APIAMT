@@ -9,7 +9,7 @@ namespace CoreERP.Models
         public string CompanyCode { get; set; }
         public string BranchCode { get; set; }
         public string PftypeName { get; set; }
-        public double? Limit { get; set; }
+        public string Limit { get; set; }
         public string ComponentCode { get; set; }
         public string ComponentName { get; set; }
         public double? EmployeeContribution { get; set; }

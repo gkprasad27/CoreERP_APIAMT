@@ -652,7 +652,10 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 using(Repository<Glaccounts> repo=new Repository<Glaccounts>())
                 {
-                    return repo.Glaccounts.AsEnumerable().Where(gl => gl.Active == "Y").ToList();
+                    return repo.Glaccounts
+                                 .Where(gl => gl.Active == "Y" 
+                                           && gl.Nactureofaccount == NATURESOFACCOUNTS.CASH.ToString())
+                                 .ToList();
                 }
             }
             catch { throw; }
@@ -695,6 +698,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
             catch { throw; }
         }
 
+        public static List<PartnerCreation> GetPartnerCreationList()
+        {
+            try
+            {
+                return PartnerCreationHelper.GetList();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
     }
 }

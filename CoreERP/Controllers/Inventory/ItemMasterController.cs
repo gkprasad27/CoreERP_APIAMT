@@ -27,7 +27,7 @@ namespace CoreERP.Controllers
 
                 ItemMaster result = ItemMasterHelper.RegisterItemMaster(itemMaster);
                 if (result !=null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = itemMaster });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
                 
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Failed" });
             }

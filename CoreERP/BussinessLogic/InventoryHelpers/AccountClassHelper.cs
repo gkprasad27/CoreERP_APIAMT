@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
@@ -11,21 +12,28 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
     public class AccountClassHelper
     {
 
-        public static AccountingClass RegisterAccountingClass(AccountingClass accountingClass)
+        public static AccountingClass RegisterAccountingClass(AccountingClass accountingClass,out string errorMsg)
         {
             try
             {
+                errorMsg = string.Empty;
                 using (Repository<AccountingClass> repo = new Repository<AccountingClass>())
                 {
-                    var record = repo.AccountingClass.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                    //var record = repo.AccountingClass.OrderByDescending(x => x.AddDate).FirstOrDefault();
 
-                    if (record != null)
+                    //if (record != null)
+                    //{
+                    //    accountingClass.Code = CommonHelper.IncreaseCode(record.Code);
+                    //}
+                    //else
+                    //    accountingClass.Code = "1";
+
+
+                    if (GetAccountingClassList(accountingClass.Code).Count > 0)
                     {
-                        accountingClass.Code = CommonHelper.IncreaseCode(record.Code);
+                        errorMsg = "Code already exists";
+                        return null;
                     }
-                    else
-                        accountingClass.Code = "1";
-
                     accountingClass.Active = "Y";
                     accountingClass.AddDate = DateTime.Now;
                     repo.AccountingClass.Add(accountingClass);
@@ -46,11 +54,24 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             {
                 using (Repository<AccountingClass> repo = new Repository<AccountingClass>())
                 {
-                    return repo.AccountingClass.Select(x => x).ToList();
+                    return repo.AccountingClass.Where(x => x.Active =="Y").ToList();
                 }
             }
             catch { throw; }
         }
+
+        public static List<AccountingClass> GetAccountingClassList(string code)
+        {
+            try
+            {
+                using (Repository<AccountingClass> repo = new Repository<AccountingClass>())
+                {
+                    return repo.AccountingClass.Where(x => x.Code == code).ToList();
+                }
+            }
+            catch { throw; }
+        }
+
         public static AccountingClass UpdateAccountingClass(AccountingClass accountingClass)
         {
             try
@@ -89,5 +110,15 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
                 throw ex;
             }
         }
+
+        public static List<Companies> GetCompanies()
+        {
+            try
+            {
+               return CompaniesHelper.GetListOfCompanies();
+            }
+            catch { throw; }
+        }
+
     }
 }

@@ -26,13 +26,13 @@ namespace CoreERP.Controllers
             {
                 BrandModel result = BrandModelHelpers.RegisterBrandModel(brandModel);
                 if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = brandModel });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Failed" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
                 

@@ -23,7 +23,7 @@ namespace CoreERP.Controllers
             {
                 Brand result = BrandHelpers.RegisterBrand(brand);
                 if (result !=null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = brand });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
               
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
             }

@@ -17,7 +17,10 @@ namespace CoreERP.Controllers
         {
             try
             {
-                Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                //Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                //Response.Headers.Add("Access-Control-Allow-Headers", "Accept");
+                //Response.Headers.Add("Access-Control-Request-Headers", "origin,x-requested-with");
+                //Response.Headers.Add("Access-Control-Allow-MethodsPOST, GET, OPTIONS, DELET", "Accept");
                 Erpuser user = UserManagmentHelper.ValidateUser(erpuser);
                 if (user != null)
                     return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= user });
