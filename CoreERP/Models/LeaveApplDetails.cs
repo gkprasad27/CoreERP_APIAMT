@@ -7,7 +7,7 @@ namespace CoreERP.Models
     {
         public string EmpCode { get; set; }
         public string EmpName { get; set; }
-        public int Sno { get; set; }
+        public int? Sno { get; set; }
         public DateTime? ApplDate { get; set; }
         public string LeaveCode { get; set; }
         public DateTime? LeaveFrom { get; set; }
