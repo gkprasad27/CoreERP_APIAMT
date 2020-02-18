@@ -16,7 +16,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<Employees> repo = new Repository<Employees>())
                 {
-                    return repo.Employees.AsEnumerable().Where(x => x.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)).ToList();
+                    return repo.Employees.Where(x => x.Active== "Y").ToList();
                 }
             }
             catch { throw; }

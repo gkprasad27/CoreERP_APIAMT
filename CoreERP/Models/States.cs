@@ -13,5 +13,7 @@ namespace CoreERP.Models
         public string Active { get; set; }
         public DateTime? AddDate { get; set; }
         public int? StateCode { get; set; }
+
+        public virtual TblStateWiseGst TblStateWiseGst { get; set; }
     }
 }

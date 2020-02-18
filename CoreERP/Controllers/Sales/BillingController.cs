@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using CoreERP.DataAccess;
 using System;
 using System.Dynamic;
 using CoreERP.BussinessLogic.SalesHelper;
@@ -10,11 +8,11 @@ using CoreERP.Models;
 
 namespace CoreERP.Controllers
 {
-    [Authorize]
+    [ApiController]
     [Route("api/sales/Billing")]
-    public class BillingController : Controller
+    public class BillingController : ControllerBase
     {
-
+       
         [HttpGet("GenerateBillNo/{branchCode}")]
         public async Task<IActionResult> GenerateBillNo(string branchCode)
         {
@@ -51,7 +49,7 @@ namespace CoreERP.Controllers
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="No Data Found." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="No billing records Found." });
             }
             catch (Exception ex)
             {
@@ -140,7 +138,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ModelListList = BillingHelpers.GetModelList(modelName).Select(m=>new { ID=m.Code,TEXT=m.Description}); 
+                expando.ModelListList = BillingHelpers.GetModelList(modelName);//.Select(m=>new { ID=m.Code,TEXT=m.Description}); 
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -179,6 +177,21 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetMemberNamesList")]
+        public async Task<IActionResult> GetMemberNamesList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.PartnerCreationList = BillingHelpers.GetPartnerCreationList().Select(p => new { ID = p.Code, TEXT =p.Name   });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPost("RegisterBilling")]
         public async Task<IActionResult> RegisterBilling([FromBody]Invoice[] billings)
         {
@@ -199,7 +212,7 @@ namespace CoreERP.Controllers
             }
         }
 
-
+        
     }
 }
 

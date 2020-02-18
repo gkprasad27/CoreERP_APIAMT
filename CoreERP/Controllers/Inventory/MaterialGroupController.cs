@@ -26,7 +26,7 @@ namespace CoreERP.Controllers
             {
                 MaterialGroup result = MaterialGroupHelper.RegisterMaterialGroup(materialGroup);
                 if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = materialGroup });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Operation Failed" });
             }

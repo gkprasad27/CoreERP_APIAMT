@@ -30,6 +30,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 {
                     partnerCreation.Active = "Y";
                     partnerCreation.AddDate = DateTime.Now;
+                    partnerCreation.EditDate = DateTime.Now;
 
                     var record = ((from prtnrcrt in repo.PartnerCreation select prtnrcrt.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
                     if (record != 0)
