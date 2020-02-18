@@ -98,7 +98,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPut("UpdateStructure")]
-        public async Task<IActionResult> UpdateStructure([FromBody] StructureCreation structureCreation)
+        public async Task<IActionResult> UpdateStructure([FromBody] List<StructureCreation> structureCreation)
         {
 
             if (structureCreation == null)
@@ -107,7 +107,7 @@ namespace CoreERP.Controllers.Payroll
             {
                 APIResponse apiResponse = null;
 
-                StructureCreation result = StructureHelper.Update(structureCreation);
+                List<StructureCreation> result = StructureHelper.Update(structureCreation);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
