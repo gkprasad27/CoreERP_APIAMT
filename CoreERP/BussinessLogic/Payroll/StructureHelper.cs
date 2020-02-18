@@ -51,13 +51,13 @@ namespace CoreERP.BussinessLogic.Payroll
             catch { throw; }
         }
 
-        public static StructureCreation Update(StructureCreation structureCreation)
+        public static List<StructureCreation> Update(List<StructureCreation> structureCreation)
         {
             try
             {
                 using (Repository<StructureCreation> repo = new Repository<StructureCreation>())
                 {
-                    repo.StructureCreation.Update(structureCreation);
+                    repo.StructureCreation.UpdateRange(structureCreation);
                     if (repo.SaveChanges() > 0)
                         return structureCreation;
 
