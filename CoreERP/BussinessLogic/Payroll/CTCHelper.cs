@@ -34,6 +34,18 @@ namespace CoreERP.BussinessLogic.Payroll
             catch { throw; }
         }
 
+        public static List<Employees> GetEmployeesList()
+        {
+            try
+            {
+                using (Repository<Employees> repo = new Repository<Employees>())
+                {
+                    return repo.Employees.AsEnumerable().Where(m => m.Active == "Y").ToList();
+                }
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
         public static Ctcbreakup Register(Ctcbreakup ctcBreakup)
         {
             try

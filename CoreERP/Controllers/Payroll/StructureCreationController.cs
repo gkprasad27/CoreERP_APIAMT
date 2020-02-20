@@ -65,20 +65,16 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPost("RegisterStructure")]
-        public async Task<IActionResult> RegisterStructure([FromBody]StructureCreation structureCreation)
+        public async Task<IActionResult> RegisterStructure([FromBody]List<StructureCreation> structureCreation)
         {
 
             if (structureCreation == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Request can not be null" });
-            else
-            {
-                if (StructureHelper.GetStrucutures(structureCreation.ComponentCode) != null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + structureCreation.ComponentCode + " is already Exists,Please Use Another Code" });
 
                 try
                 {
                     APIResponse apiResponse = null;
-                    var result = StructureHelper.Register(structureCreation);
+                   List<StructureCreation> result = StructureHelper.Register(structureCreation);
                     if (result != null)
                     {
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -94,7 +90,7 @@ namespace CoreERP.Controllers.Payroll
                 {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-            }
+            
         }
 
         [HttpPut("UpdateStructure")]

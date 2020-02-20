@@ -40,7 +40,7 @@ namespace CoreERP.Controllers.Payroll
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ComponentsList = StructureHelper.GetComponentList().Select(x => new { ID = x.ComponentCode, TEXT = x.ComponentName });
+                expando.ComponentsList = CTCHelper.GetComponentList().Select(x => new { ID = x.ComponentCode, TEXT = x.ComponentName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -71,6 +71,21 @@ namespace CoreERP.Controllers.Payroll
             {
                 dynamic expando = new ExpandoObject();
                 expando.PayrollCycleList = CTCHelper.GetPayrollCycleList().Select(x => new { ID = x.CycleName, TEXT = x.CycleName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetEmployeeList")]
+        public async Task<IActionResult> GetEmployeeList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.EmployeeList = CTCHelper.GetEmployeesList().Select(x => new { ID = x.Code, TEXT = x.Name });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
