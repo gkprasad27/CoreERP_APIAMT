@@ -21,5 +21,6 @@ namespace CoreERP.Models
         public DateTime? ExtraDate { get; set; }
         public string Extra1 { get; set; }
         public string Extra2 { get; set; }
+        public string BillNumber { get; set; }
     }
 }
