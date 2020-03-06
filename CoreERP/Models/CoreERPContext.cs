@@ -1827,7 +1827,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ext2).HasMaxLength(20);
 
-                entity.Property(e => e.Ext3).HasMaxLength(200);
+                entity.Property(e => e.UserId).HasMaxLength(200);
             });
 
             modelBuilder.Entity<Menus>(entity =>

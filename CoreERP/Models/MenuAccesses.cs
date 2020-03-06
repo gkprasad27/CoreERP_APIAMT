@@ -11,7 +11,7 @@ namespace CoreERP.Models
         public string RoleId { get; set; }
         public string Ext1 { get; set; }
         public string Ext2 { get; set; }
-        public string Ext3 { get; set; }
+        public string UserId { get; set; }
         public string Ext4 { get; set; }
         public int? Access { get; set; }
         public string Active { get; set; }

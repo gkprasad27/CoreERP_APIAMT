@@ -49,20 +49,20 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpGet("GetStructureList")]
-        public async Task<IActionResult> GetStructureList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.StructureList = CTCHelper.GetStructureList().Select(x => new { ID = x.ComponentCode, TEXT = x.ComponentName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetStructureList")]
+        //public async Task<IActionResult> GetStructureList()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.StructureList = CTCHelper.GetStructureList().Select(x => new { ID = x.ComponentCode, TEXT = x.ComponentName });
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         [HttpGet("GetPayrollCycleList")]
         public async Task<IActionResult> GetPayrollCycleList()

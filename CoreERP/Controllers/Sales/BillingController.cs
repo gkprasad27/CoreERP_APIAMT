@@ -5,6 +5,7 @@ using CoreERP.BussinessLogic.SalesHelper;
 using System.Threading.Tasks;
 using System.Linq;
 using CoreERP.Models;
+using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers
 {
@@ -72,13 +73,13 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetEmployesList/{branchCode}")]
-        public async Task<IActionResult> GetEmployesList(string branchCode)
+        [HttpGet("GetCashPartyAccountList")]
+        public async Task<IActionResult> GetCashPartyAccountList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.EmployeeList = BillingHelpers.GetEmployee(branchCode).Select(e=>new { ID=e.Code,TEXT=e.Name});
+                expando.CashPartyAccountList = new InvoiceHelper().GetAccountLedgers(null).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -87,13 +88,17 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetCardTypeList")]
-        public async Task<IActionResult> GetCardTypeList()
+        [HttpGet("GetCashPartyAccount/{ledgercode}")]
+        public async Task<IActionResult> GetCashPartyAccount(string ledgercode)
         {
+            if (string.IsNullOrEmpty(ledgercode))
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CardTypeList = BillingHelpers.GetCardTypeList().Select(e => new { ID = e.Code, TEXT = e.CardName });
+                expando.CashPartyAccount = new InvoiceHelper().GetAccountLedgers(ledgercode).FirstOrDefault();
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -102,13 +107,17 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetGlaccountsList")]
-        public async Task<IActionResult> GetGlaccountsList()
+        [HttpGet("GetAccountBalance/{ledgercode}/{branchCode}")]
+        public async Task<IActionResult> GetAccountBalance(string ledgercode,string branchCode)
         {
+            if (string.IsNullOrEmpty(ledgercode))
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GlaccountsList = BillingHelpers.GetGlaccounts().Select(gl => new { ID = gl.Glcode, TEXT = gl.GlaccountName });
+                expando.AccountBalance = new InvoiceHelper().GetAccountBalance(ledgercode, branchCode);
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -117,13 +126,17 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetcashAcctobranchAccountsList/{branchCode}")]
-        public async Task<IActionResult> GetcashAcctobranchAccountsList(string branchCode)
+        [HttpGet("GetProductByProductCode/{productCode}")]
+        public async Task<IActionResult> GetProductByProductCode(string productCode)
         {
+            if (string.IsNullOrEmpty(productCode))
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GlaccountsList = BillingHelpers.GetAsignmentCashAccBranchList(branchCode).Select(gl => new { ID = gl.Glcode, TEXT = gl.GlaccountName });
+                expando.Products = new InvoiceHelper().GetProducts(productCode,null).Select(p=>new { ID=p.ProductCode,TEXT=p.ProductCode,Name=p.ProductName});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -132,13 +145,17 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetModelList/{modelName}")]
-        public async Task<IActionResult> GetModelList(string modelName)
+        [HttpGet("GetProductByProductName/{productName}")]
+        public async Task<IActionResult> GetProductByProductName(string productName)
         {
+            if (string.IsNullOrEmpty(productName))
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ModelListList = BillingHelpers.GetModelList(modelName);//.Select(m=>new { ID=m.Code,TEXT=m.Description}); 
+                expando.Products = new InvoiceHelper().GetProducts(null, productName).Select(p => new { ID = p.ProductCode, TEXT =p.ProductName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -147,13 +164,17 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetModelDetails/{modelCode}")]
-        public async Task<IActionResult> GetModelDetails(string modelCode)
+        [HttpGet("GetmemberNames/{memberName}")]
+        public async Task<IActionResult> GetmemberNames(string memberName)
         {
+            if (string.IsNullOrEmpty(memberName))
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ModelListList = BillingHelpers.GetModelDetails(modelCode);
+                expando.Members = new InvoiceHelper().GetMembers(null, memberName).Select(x=>new { ID=x.MemberCode,Text=x.MemberName,PhoneNo=x.Phone });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -162,13 +183,18 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetFinanceGlAccList")]
-        public async Task<IActionResult> GetFinanceGlAccList()
+
+        [HttpGet("GetBillingDetailsRcd/{productCode}/branchCode")]
+        public async Task<IActionResult> GetBillingDetailsRcd(string productCode,string branchCode)
         {
+            if (string.IsNullOrEmpty(productCode) || string.IsNullOrEmpty(branchCode))
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.FinanceGlAccList = BillingHelpers.GetFinancesCutomerGLAccounts().Select(gl=> new { ID=gl.Glcode,TEXT=gl.GlaccountName });
+                expando.BillingDetailsSection = new InvoiceHelper().GetBillingDetailsSection(branchCode,productCode);
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -177,32 +203,21 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetMemberNamesList")]
-        public async Task<IActionResult> GetMemberNamesList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.PartnerCreationList = BillingHelpers.GetPartnerCreationList().Select(p => new { ID = p.Code, TEXT =p.Name   });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
 
-        [HttpPost("RegisterBilling")]
-        public async Task<IActionResult> RegisterBilling([FromBody]Invoice[] billings)
+
+        [HttpPost("RegisterInvoice")]
+        public async Task<IActionResult> RegisterBilling([FromBody]JObject objData)
         {
 
-            if (billings == null  || billings?.Length ==0)
-                return Ok(new APIResponse() { status=APIStatus.FAIL.ToString(),response= $"{nameof(billings)} cannot be null" });
+            if (objData == null)
+                return Ok(new APIResponse() { status=APIStatus.FAIL.ToString(),response="Request is empty" });
             try
             {
-                var result = BillingHelpers.RegisterBilling(billings);
-                if (result.Count > 0)
-                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
+                var _invoiceHdr =   (objData["Invoice"] as  JObject).ToObject<TblInvoiceMaster>();
+                var _invoiceDtl =   (objData["InvoiceDetail"] as  JObject).ToObject<TblInvoiceDetail>();
+
+               
+                 //   return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }

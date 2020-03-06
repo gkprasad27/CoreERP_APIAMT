@@ -72,11 +72,11 @@ namespace CoreERP.BussinessLogic.Payroll
             {
                 using (Repository<StructureCreation> repo = new Repository<StructureCreation>())
                 {
-                    var structure = repo.StructureCreation.Where(x => x.ComponentCode == code).FirstOrDefault();
-                    structure.Active = "N";
-                    repo.StructureCreation.Update(structure);
-                    if (repo.SaveChanges() > 0)
-                        return structure;
+                    //var structure = repo.StructureCreation.Where(x => x.ComponentCode == code).FirstOrDefault();
+                    //structure.Active = "N";
+                    //repo.StructureCreation.Update(structure);
+                    //if (repo.SaveChanges() > 0)
+                    //    return structure;
 
                     return null;
                 }
