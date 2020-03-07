@@ -11,19 +11,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers.Payroll
 {
     [ApiController]
-    [Route("api/payroll/CTCBreakup")]
-    public class CTCBreakupController : ControllerBase
+    [Route("api/payroll/StructureComponents")]
+    public class StructureComponentsController : ControllerBase
     {
-        [HttpGet("GetCTCList")]
-        public async Task<IActionResult> GetCTCList()
+        [HttpGet("GetStructuresList")]
+        public async Task<IActionResult> GetStructuresList()
         {
             try
             {
-                var ctcList = CTCHelper.GetListOfCTCs();
-                if (ctcList.Count > 0)
+                var structuresList = StructureComponentsHelper.GetListOfStructures();
+                if (structuresList.Count > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.ctcList = ctcList;
+                    expdoObj.structuresList = structuresList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -40,7 +40,7 @@ namespace CoreERP.Controllers.Payroll
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ComponentsList = CTCHelper.GetComponentList().Select(x => new { ID = x.ComponentCode, TEXT = x.ComponentName });
+                expando.ComponentsList = StructureComponentsHelper.GetComponentList().Select(x => new { ID = x.ComponentCode, TEXT = x.ComponentName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -49,13 +49,13 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpGet("GetStructureList")]
-        public async Task<IActionResult> GetStructureList()
+        [HttpGet("GetStructureCreationList")]
+        public async Task<IActionResult> GetStructureCreationList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.StructureList = CTCHelper.GetStructureList().Select(x => new { ID = x.StructureName, TEXT = x.StructureName });
+                expando.ComponentsList = StructureComponentsHelper.GetStructureCreationList().Select(x => new { ID = x.StructureCode, TEXT = x.StructureName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -64,13 +64,13 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpGet("GetPayrollCycleList")]
-        public async Task<IActionResult> GetPayrollCycleList()
+        [HttpGet("GetPFList")]
+        public async Task<IActionResult> GetPFList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.PayrollCycleList = CTCHelper.GetPayrollCycleList().Select(x => new { ID = x.CycleName, TEXT = x.CycleName });
+                expando.PFList = StructureComponentsHelper.GetPFList().Select(x => new { ID = x.PftypeName, TEXT = x.PftypeName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -79,37 +79,17 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpGet("GetEmployeeList")]
-        public async Task<IActionResult> GetEmployeeList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.EmployeeList = CTCHelper.GetEmployeesList().Select(x => new { ID = x.Code, TEXT = x.Name });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-
-        [HttpPost("RegisterCTC")]
-        public async Task<IActionResult> RegisterCTC([FromBody]Ctcbreakup ctcBreakup)
+        [HttpPost("RegisterStructure")]
+        public async Task<IActionResult> RegisterStructure([FromBody]List<StructureComponents> structureComponents)
         {
 
-            if (ctcBreakup == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(ctcBreakup)} cannot be null" });
-            else
-            {
-                if (CTCHelper.GetCTCs(ctcBreakup.EarnDednCode) != null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + ctcBreakup.EarnDednCode + " is already Exists,Please Use Another Code" });
+            if (structureComponents == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Request can not be null" });
 
                 try
                 {
                     APIResponse apiResponse = null;
-                    var result = CTCHelper.Register(ctcBreakup);
+                   List<StructureComponents> result = StructureComponentsHelper.Register(structureComponents);
                     if (result != null)
                     {
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -125,20 +105,20 @@ namespace CoreERP.Controllers.Payroll
                 {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-            }
+            
         }
 
-        [HttpPut("UpdateCTC")]
-        public async Task<IActionResult> UpdateCTC([FromBody] Ctcbreakup ctcBreakup)
+        [HttpPut("UpdateStructure")]
+        public async Task<IActionResult> UpdateStructure([FromBody] List<StructureComponents> structureComponents)
         {
 
-            if (ctcBreakup == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(ctcBreakup)} cannot be null" });
+            if (structureComponents == null)
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Request cannot be null" });
             try
             {
                 APIResponse apiResponse = null;
 
-                Ctcbreakup result = CTCHelper.Update(ctcBreakup);
+                List<StructureComponents> result = StructureComponentsHelper.Update(structureComponents);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -146,6 +126,32 @@ namespace CoreERP.Controllers.Payroll
                 else
                 {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                }
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpDelete("DeleteStructure/{code}")]
+        public async Task<IActionResult> DeleteStructure(string code)
+        {
+            APIResponse apiResponse = null;
+            if (code == null)
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Request can not be null" });
+
+            try
+            {
+                var result = StructureComponentsHelper.DeleteStructures(code);
+                if (result != null)
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
                 }
                 return Ok(apiResponse);
             }
