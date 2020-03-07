@@ -27,7 +27,7 @@ namespace CoreERP.BussinessLogic.Payroll
                 using (Repository<ComponentMaster> repo = new Repository<ComponentMaster>())
                 {
                     return repo.ComponentMaster.AsEnumerable()
-                               .Where(x => x.CompanyCode.Equals(compCode))
+                               .Where(x => x.ComponentCode.Equals(compCode))
                                          .FirstOrDefault();
                 }
             }
