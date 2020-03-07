@@ -22,6 +22,21 @@ namespace CoreERP.BussinessLogic.masterHlepers
         }
 
 
+        public static List<Erpuser> GetErpusers()
+        {
+            try
+            {
+                using(Repository<Erpuser> repo=new Repository<Erpuser>())
+                {
+                    return repo.Erpuser.ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public static List<ExpandoObject> GetScreensListByUserRole(string userRole)
         {
             try
@@ -53,7 +68,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                             List<ExpandoObject> childList = new List<ExpandoObject>();
                             Menus mobj = menuList.Where(m => m.Code.ToString() == pid).FirstOrDefault();
 
-                            // this is for to Add hilders of Parent
+                            // this is for to Add headers of Parent
                             foreach (Menus m in menulst)
                             {
                                 dynamic expandoChild = new ExpandoObject();

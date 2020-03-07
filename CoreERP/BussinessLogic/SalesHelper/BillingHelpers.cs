@@ -560,10 +560,11 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-        public static int? GenerateBillNo(string branchCode,out string errorMessage)
+        public static string GenerateBillNo(string branchCode,out string errorMessage)
         {
             try
             {
+                string sufix = string.Empty, prefix = string.Empty;
 
                 var billingNoSeries = BillingNoSeriesHelper.GetBillingNoSeriesList().Where(b => b.BranchCode == branchCode).OrderByDescending(x=>x.Year).FirstOrDefault();
                 if (billingNoSeries != null)
@@ -581,7 +582,15 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         maxRange = Convert.ToInt32(noRange[1]);
                     }
 
-                    return CommonHelper.AutonGenerateNo(null, branchCode, starRange, maxRange, out errorMessage);
+                    var _billno = CommonHelper.AutonGenerateNo(null, branchCode, starRange, maxRange, out errorMessage);
+
+                        if (_billno == null)
+                        return null;
+
+
+                    GetSufixNPrifix(branchCode, out prefix, out sufix);
+
+                    return prefix + _billno + sufix;
                 }
                 else
                 {
@@ -591,6 +600,31 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
+
+
+        public static void GetSufixNPrifix(string branchCOde,out string prefix, out string sufix)
+        {
+            try
+            {
+                prefix = string.Empty;
+                sufix = string.Empty;
+                using (Repository<TblSuffixPrefix>  repo=new Repository<TblSuffixPrefix>())
+                {
+                  var  _sufixObj=  repo.TblSuffixPrefix
+                                    .Where(x=> x.BranchCode == branchCOde)
+                                    .FirstOrDefault();
+
+
+                    prefix = _sufixObj.Prefix;
+                    sufix = _sufixObj.Suffix;
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public static List<Invoice> GetBillings(string branchCode)
         {
             try
@@ -602,49 +636,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-        public static List<Invoice> RegisterBilling(Invoice[] billings)
-        {
-            try
-            {
-                List<ItemMaster> itemMasters = new List<ItemMaster>();
-
-
-                using(Repository<Invoice> repo=new Repository<Invoice>())
-                {
-
-                    using (var dbtransaction = repo.Database.BeginTransaction())
-                    {
-                        try
-                        {
-                            for (int i = 0; i < billings.Length; i++)
-                            {
-                                var itm = ItemMasterHelper.GetItemMaster(billings[i].Model);
-                                itm.ClosingStock -= (string.IsNullOrEmpty(billings[i].Quantity) ? 0 : Convert.ToInt64(billings[i].Quantity));
-                                itemMasters.Add(itm);
-
-                                billings[i].AddDate = DateTime.Now;
-                                billings[i].Active = "Y";
-                            }
-
-                            ItemMasterHelper.UpdateItemMaster(itemMasters);
-
-                            repo.Invoice.AddRange(billings);
-                            if (repo.SaveChanges() > 0)
-                                return billings.ToList();
-                        }
-                        catch(Exception ex)
-                        {
-                            dbtransaction.Rollback();
-                            throw ex;
-                        }
-                    }
-                    return new List<Invoice>();
-                }
-            }
-            catch { throw; }
-        }
-
-       
+     
 
         public static List<Glaccounts> GetGlaccounts()
         {

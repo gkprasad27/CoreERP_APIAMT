@@ -339,3 +339,4 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /CoreERP/BussinessLogic/Common
+/Request response/Billing
