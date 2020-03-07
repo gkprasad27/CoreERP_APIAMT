@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblInvoiceDetail
     {
-        public decimal InvoiceDetailId { get; set; }
+        public decimal? InvoiceDetailId { get; set; }
         public decimal? InvoiceMasterId { get; set; }
         public string VoucherNo { get; set; }
         public string InvoiceNo { get; set; }
@@ -24,7 +24,7 @@ namespace CoreERP.Models
         public decimal ProductGroupCode { get; set; }
         public int PumpId { get; set; }
         public decimal PumpNo { get; set; }
-        public decimal Qty { get; set; }
+        public decimal? Qty { get; set; }
         public decimal FQty { get; set; }
         public decimal SlipNo { get; set; }
         public decimal UnitId { get; set; }
