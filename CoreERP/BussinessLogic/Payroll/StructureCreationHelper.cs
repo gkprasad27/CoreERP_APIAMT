@@ -4,9 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 namespace CoreERP.BussinessLogic.Payroll
 {
-    public class StructureHelper
+    public class StructureCreationHelper
     {
         public static List<StructureCreation> GetListOfStructures()
         {
@@ -14,33 +15,34 @@ namespace CoreERP.BussinessLogic.Payroll
             {
                 using (Repository<StructureCreation> repo = new Repository<StructureCreation>())
                 {
-                    return repo.StructureCreation.Where(c => c.Active == "Y").ToList();
+                    return repo.StructureCreation.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
                 }
             }
             catch { throw; }
         }
 
-        public static StructureCreation GetStrucutures(string compCode)
+        public static StructureCreation GetStructures(string compCode)
         {
             try
             {
                 using (Repository<StructureCreation> repo = new Repository<StructureCreation>())
                 {
-                    return repo.StructureCreation
-                               .Where(x => x.CompanyCode == compCode)
+                    return repo.StructureCreation.AsEnumerable()
+                               .Where(x => x.StructureCode.Equals(compCode))
                                          .FirstOrDefault();
                 }
             }
             catch { throw; }
         }
 
-        public static List<StructureCreation> Register(List<StructureCreation> structureCreation)
+        public static StructureCreation Register(StructureCreation structureCreation)
         {
             try
             {
                 using (Repository<StructureCreation> repo = new Repository<StructureCreation>())
                 {
-                    repo.StructureCreation.AddRange(structureCreation);
+                    structureCreation.Active = "Y";
+                    repo.StructureCreation.Add(structureCreation);
                     if (repo.SaveChanges() > 0)
                         return structureCreation;
 
@@ -50,13 +52,13 @@ namespace CoreERP.BussinessLogic.Payroll
             catch { throw; }
         }
 
-        public static List<StructureCreation> Update(List<StructureCreation> structureCreation)
+        public static StructureCreation Update(StructureCreation structureCreation)
         {
             try
             {
                 using (Repository<StructureCreation> repo = new Repository<StructureCreation>())
                 {
-                    repo.StructureCreation.UpdateRange(structureCreation);
+                    repo.StructureCreation.Update(structureCreation);
                     if (repo.SaveChanges() > 0)
                         return structureCreation;
 
@@ -66,47 +68,22 @@ namespace CoreERP.BussinessLogic.Payroll
             catch { throw; }
         }
 
-        public static StructureCreation DeleteStructures(string code)
+        public static StructureCreation Delete(string code)
         {
             try
             {
                 using (Repository<StructureCreation> repo = new Repository<StructureCreation>())
                 {
-                    var structure = repo.StructureCreation.Where(x => x.ComponentCode == code).FirstOrDefault();
-                    structure.Active = "N";
-                    repo.StructureCreation.Update(structure);
+                    var comp = repo.StructureCreation.Where(x => x.StructureCode == code).FirstOrDefault();
+                    comp.Active = "N";
+                    repo.StructureCreation.Update(comp);
                     if (repo.SaveChanges() > 0)
-                        return structure;
+                        return comp;
 
                     return null;
                 }
             }
             catch { throw; }
         }
-
-        public static List<ComponentMaster> GetComponentList()
-        {
-            try
-            {
-                using (Repository<ComponentMaster> repo = new Repository<ComponentMaster>())
-                {
-                    return repo.ComponentMaster.Where(m => m.Active == "Y").ToList();
-                }
-            }
-            catch (Exception ex) { throw ex; }
-        }
-
-        public static List<Pfmaster> GetPFList()
-        {
-            try
-            {
-                using (Repository<Pfmaster> repo = new Repository<Pfmaster>())
-                {
-                    return repo.Pfmaster.Where(m => m.Active == "Y").ToList();
-                }
-            }
-            catch (Exception ex) { throw ex; }
-        }
-
     }
 }

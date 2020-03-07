@@ -19,7 +19,7 @@ namespace CoreERP.Controllers.Payroll
         {
             try
             {
-                var structuresList = StructureHelper.GetListOfStructures();
+                var structuresList = StructureCreationHelper.GetListOfStructures();
                 if (structuresList.Count > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -34,47 +34,21 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpGet("GetComponentsList")]
-        public async Task<IActionResult> GetComponentsList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.ComponentsList = StructureHelper.GetComponentList().Select(x => new { ID = x.ComponentCode, TEXT = x.ComponentName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpGet("GetPFList")]
-        public async Task<IActionResult> GetPFList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.PFList = StructureHelper.GetPFList().Select(x => new { ID = x.PftypeName, TEXT = x.PftypeName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpPost("RegisterStructure")]
-        public async Task<IActionResult> RegisterStructure([FromBody]List<StructureCreation> structureCreation)
+        [HttpPost("RegisterStructureCreation")]
+        public async Task<IActionResult> RegisterStructureCreation([FromBody]StructureCreation structureCreation)
         {
 
             if (structureCreation == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Request can not be null" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(structureCreation)} cannot be null" });
+            else
+            {
+                if (StructureCreationHelper.GetStructures(structureCreation.StructureCode) != null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + structureCreation.StructureCode + " is already Exists,Please Use Another Code" });
 
                 try
                 {
                     APIResponse apiResponse = null;
-                   List<StructureCreation> result = StructureHelper.Register(structureCreation);
+                    var result = StructureCreationHelper.Register(structureCreation);
                     if (result != null)
                     {
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -90,20 +64,20 @@ namespace CoreERP.Controllers.Payroll
                 {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-            
+            }
         }
 
-        [HttpPut("UpdateStructure")]
-        public async Task<IActionResult> UpdateStructure([FromBody] List<StructureCreation> structureCreation)
+        [HttpPut("UpdateStructureCreation")]
+        public async Task<IActionResult> UpdateStructureCreation([FromBody] StructureCreation structureCreation)
         {
 
             if (structureCreation == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Request cannot be null" });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(structureCreation)} cannot be null" });
             try
             {
                 APIResponse apiResponse = null;
 
-                List<StructureCreation> result = StructureHelper.Update(structureCreation);
+                StructureCreation result = StructureCreationHelper.Update(structureCreation);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -120,16 +94,16 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpDelete("DeleteStructure/{code}")]
-        public async Task<IActionResult> DeleteStructure(string code)
+        [HttpDelete("DeleteStructureCreation/{code}")]
+        public async Task<IActionResult> DeleteStructureCreation(string code)
         {
             APIResponse apiResponse = null;
             if (code == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Request can not be null" });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
             {
-                var result = StructureHelper.DeleteStructures(code);
+                var result = StructureCreationHelper.Delete(code);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
