@@ -37,29 +37,15 @@ namespace CoreERP.BussinessLogic.masterHlepers
       catch { throw; }
     }
 
-    //public static List<LeaveTypes> SearchLeaveTypes(string leavetype)
-    //{
-    //  try
-    //  {
-    //    using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
-    //    {
-    //      return repo.LeaveTypes.AsEnumerable()
-    //        .Where(b => b.LeaveCode == leavetype
-    //                 && b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
-    //              )
-    //        .ToList();
-    //    }
-    //  }
-    //  catch { throw; }
-    //}
-    public static List<LeaveTypes> GetList(string name)
+    
+    public static List<LeaveTypes> GetList(string code)
     {
       try
       {
         using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
         {
           return repo.LeaveTypes
-                     .Where(x => x.LeaveName == name)
+                     .Where(x => x.LeaveCode == code)
                      .ToList();
         }
       }
@@ -128,10 +114,5 @@ namespace CoreERP.BussinessLogic.masterHlepers
       }
       catch { throw; }
     }
-
-    //internal static int DeleteLeaveType(string code)
-    //{
-    //  throw new NotImplementedException();
-    //}
   }
 }
