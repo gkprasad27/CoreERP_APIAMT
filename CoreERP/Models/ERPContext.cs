@@ -105,6 +105,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblBankReceiptDetails> TblBankReceiptDetails { get; set; }
         public virtual DbSet<TblBankReceiptMaster> TblBankReceiptMaster { get; set; }
         public virtual DbSet<TblBankReconciliation> TblBankReconciliation { get; set; }
+        public virtual DbSet<TblBranch> TblBranch { get; set; }
         public virtual DbSet<TblCashPaymentDetails> TblCashPaymentDetails { get; set; }
         public virtual DbSet<TblCashPaymentMaster> TblCashPaymentMaster { get; set; }
         public virtual DbSet<TblCashReceiptDetails> TblCashReceiptDetails { get; set; }
@@ -135,6 +136,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblPurchaseInvoiceDetail> TblPurchaseInvoiceDetail { get; set; }
         public virtual DbSet<TblPurchaseReturn> TblPurchaseReturn { get; set; }
         public virtual DbSet<TblPurchaseReturnDetails> TblPurchaseReturnDetails { get; set; }
+        public virtual DbSet<TblRole> TblRole { get; set; }
         public virtual DbSet<TblShareTransfer> TblShareTransfer { get; set; }
         public virtual DbSet<TblShift> TblShift { get; set; }
         public virtual DbSet<TblStateWiseGst> TblStateWiseGst { get; set; }
@@ -5767,6 +5769,90 @@ namespace CoreERP.Models
                     .HasColumnType("datetime");
             });
 
+            modelBuilder.Entity<TblBranch>(entity =>
+            {
+                entity.HasKey(e => e.BranchId)
+                    .HasName("PK__tbl_Bran__751EBD3FDE5CD34C");
+
+                entity.ToTable("tbl_Branch");
+
+                entity.Property(e => e.BranchId)
+                    .HasColumnName("branchID")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Address)
+                    .HasColumnName("address")
+                    .HasMaxLength(400);
+
+                entity.Property(e => e.BranchCode)
+                    .IsRequired()
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchImage)
+                    .HasColumnName("branchImage")
+                    .HasColumnType("image");
+
+                entity.Property(e => e.BranchName)
+                    .IsRequired()
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.City)
+                    .HasColumnName("city")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.CompanyId)
+                    .HasColumnName("companyId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Country)
+                    .HasColumnName("country")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Email)
+                    .HasColumnName("email")
+                    .HasMaxLength(300);
+
+                entity.Property(e => e.Fax)
+                    .HasColumnName("fax")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Gstin)
+                    .IsRequired()
+                    .HasColumnName("gstin")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.IsMainBranch)
+                    .HasColumnName("isMainBranch")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Phone)
+                    .IsRequired()
+                    .HasColumnName("phone")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.PinCode)
+                    .HasColumnName("pinCode")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.SapCode).HasColumnName("sapCode");
+
+                entity.Property(e => e.State)
+                    .HasColumnName("state")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.SubBranchof)
+                    .HasColumnName("subBranchof")
+                    .HasColumnType("numeric(18, 0)")
+                    .HasDefaultValueSql("((0))");
+            });
+
             modelBuilder.Entity<TblCashPaymentDetails>(entity =>
             {
                 entity.HasKey(e => e.CashPaymentDetailsId)
@@ -8667,6 +8753,38 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.VoucherNo)
                     .HasColumnName("voucherNo")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblRole>(entity =>
+            {
+                entity.HasKey(e => e.RoleId)
+                    .HasName("tPK_tbl_Role");
+
+                entity.ToTable("tbl_Role");
+
+                entity.Property(e => e.RoleId)
+                    .HasColumnName("roleId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Extra1)
+                    .HasColumnName("extra1")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Extra2)
+                    .HasColumnName("extra2")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ExtraDate)
+                    .HasColumnName("extraDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Role)
+                    .HasColumnName("role")
                     .IsUnicode(false);
             });
 
