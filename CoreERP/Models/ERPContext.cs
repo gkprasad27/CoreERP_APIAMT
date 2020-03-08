@@ -172,7 +172,6 @@ namespace CoreERP.Models
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=192.168.2.26;Database=ERP;User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
-                //optionsBuilder.UseSqlServer("Server=183.82.48.82;Database=ERP;User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
             }
         }
 
@@ -9463,6 +9462,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.FromDate)
                     .HasColumnName("fromDate")
                     .HasColumnType("datetime");
+
+                entity.Property(e => e.LaestNumber).IsUnicode(false);
 
                 entity.Property(e => e.Narration)
                     .HasColumnName("narration")
