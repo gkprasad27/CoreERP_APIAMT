@@ -383,7 +383,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         
        
 
-         /*************************  voucher Helper methods *******************************************/
+         /*************************   Helper methods For invoice*******************************************/
 
         public List<TblVoucherType> GetVoucherType(decimal voucherTypeId)
         {

@@ -25,7 +25,7 @@ namespace CoreERP.Models
         public int PumpId { get; set; }
         public decimal PumpNo { get; set; }
         public decimal? Qty { get; set; }
-        public decimal FQty { get; set; }
+        public decimal? FQty { get; set; }
         public decimal SlipNo { get; set; }
         public decimal UnitId { get; set; }
         public string UnitName { get; set; }
