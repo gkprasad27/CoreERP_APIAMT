@@ -11,6 +11,20 @@ namespace CoreERP.BussinessLogic.SalesHelper
 {
     public class InvoiceHelper
     {
+        public List<TblPumps> GetPumps(string branchCode)
+        {
+            try
+            {
+                using(Repository<TblPumps> repo=new Repository<TblPumps>())
+                {
+                    return repo.TblPumps.Where(p=> p.BranchCode == branchCode).ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         public string GenerateInvoiceNo(string branchCode)
         {
@@ -29,7 +43,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     return prefix + "-1-" + sufix;
                 }
 
-                return prefix + Convert.ToInt64(invoiceNo.Split("-")[2]) + sufix;
+                return prefix +"-"+ (Convert.ToInt64(invoiceNo.Split("-")[1])+1) +"-"+ sufix;
             }
             catch (Exception ex)
             {
@@ -218,7 +232,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 invoceDetails.TaxGroupName = _product.TaxGroupName;
                
                 invoceDetails.Rate = GetProductRate(branchCode,productCode);
-                invoceDetails.Qty =Convert.ToDecimal(GetProductQty(branchCode,productCode) ?? 0);
+                invoceDetails.AvailStock =Convert.ToDecimal(GetProductQty(branchCode,productCode) ?? 0);
                 invoceDetails.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
                 
                 invoceDetails.ProductCode = _product.ProductCode;
