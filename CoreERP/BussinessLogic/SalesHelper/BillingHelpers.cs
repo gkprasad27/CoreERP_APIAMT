@@ -560,71 +560,11 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-        public static string GenerateBillNo(string branchCode,out string errorMessage)
-        {
-            try
-            {
-                string sufix = string.Empty, prefix = string.Empty;
 
-                var billingNoSeries = BillingNoSeriesHelper.GetBillingNoSeriesList().Where(b => b.BranchCode == branchCode).OrderByDescending(x=>x.Year).FirstOrDefault();
-                if (billingNoSeries != null)
-                {
-                    var noRange = billingNoSeries.NumberSeries.Split('-');
-                    int starRange = 0, maxRange = 0;
-                    if (noRange.Length == 1)
-                    {
-                        starRange = Convert.ToInt32(noRange[0]);
-                        maxRange = Convert.ToInt32(noRange[0]);
-                    }
-                    else
-                    {
-                        starRange = Convert.ToInt32(noRange[0]);
-                        maxRange = Convert.ToInt32(noRange[1]);
-                    }
-
-                    var _billno = CommonHelper.AutonGenerateNo(null, branchCode, starRange, maxRange, out errorMessage);
-
-                        if (_billno == null)
-                        return null;
-
-
-                    GetSufixNPrifix(branchCode, out prefix, out sufix);
-
-                    return prefix + _billno + sufix;
-                }
-                else
-                {
-                    errorMessage = "No number series is present for billing.";
-                    return null;
-                }
-            }
-            catch { throw; }
-        }
-
-
-        public static void GetSufixNPrifix(string branchCOde,out string prefix, out string sufix)
-        {
-            try
-            {
-                prefix = string.Empty;
-                sufix = string.Empty;
-                using (Repository<TblSuffixPrefix>  repo=new Repository<TblSuffixPrefix>())
-                {
-                  var  _sufixObj=  repo.TblSuffixPrefix
-                                    .Where(x=> x.BranchCode == branchCOde)
-                                    .FirstOrDefault();
-
-
-                    prefix = _sufixObj.Prefix;
-                    sufix = _sufixObj.Suffix;
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
+         
+       
+       
+       
         public static List<Invoice> GetBillings(string branchCode)
         {
             try

@@ -9,6 +9,24 @@ namespace CoreERP.BussinessLogic.Common
 {
     public class CommonHelper
     {
+        //select * from tbl_SuffixPrefix s where s.voucherTypeId='33' and s.branchCode='11'
+
+        public void GetSuffixPrefix(decimal? voucherTypeid,string branchCode,out string preFix,out string suffix)
+        {
+            preFix = string.Empty;
+            suffix = string.Empty;
+
+            using(Repository<TblSuffixPrefix> repo=new Repository<TblSuffixPrefix>())
+            {
+              var _suffixPrefix=  repo.TblSuffixPrefix
+                                      .Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode)
+                                      .FirstOrDefault();
+
+                preFix = _suffixPrefix?.Prefix;
+                suffix = _suffixPrefix?.Suffix;
+            }
+        }
+
         public static string GetConfigurationValue(string module,string screenName,string keyName)
         {
             using(Repository<ErpConfiguration> context=new Repository<ErpConfiguration>())

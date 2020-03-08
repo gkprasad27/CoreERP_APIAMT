@@ -10,7 +10,7 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
 {
     public class ProductMasterHelper
     {
-        public static List<TblProduct> GetProductMasterList()
+        public  List<TblProduct> GetProductMasterList()
         {
             try
             {
