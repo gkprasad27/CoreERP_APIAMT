@@ -184,18 +184,17 @@ namespace CoreERP.Controllers
             }
         }
 
-
-        [HttpGet("GetBillingDetailsRcd/{productCode}/branchCode")]
-        public async Task<IActionResult> GetBillingDetailsRcd(string productCode,string branchCode)
+        [HttpGet("GetPumps/{branchCode}")]
+        public async Task<IActionResult> GetBillingDetailsRcd(string branchCode)
         {
-            if (string.IsNullOrEmpty(productCode) || string.IsNullOrEmpty(branchCode))
+            if (string.IsNullOrEmpty(branchCode))
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
             }
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BillingDetailsSection = new InvoiceHelper().GetBillingDetailsSection(branchCode,productCode);
+                expando.BillingDetailsSection = new InvoiceHelper().GetPupms(branchCode).Select(x => new {ID = x.PumpNo, TEXT = x.PumpNo});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -204,6 +203,44 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetAvilableStock/{branchCode}/{productCode}")]
+        public async Task<IActionResult> GetAvilableStock(string branchCode,string productCode)
+        {
+            if (string.IsNullOrEmpty(branchCode) || string.IsNullOrEmpty(productCode))
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.AvilableStock = new InvoiceHelper().GetProductQty(branchCode, productCode);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetBillingDetailsRcd/{productCode}/branchCode")]
+        public async Task<IActionResult> GetBillingDetailsRcd(string productCode, string branchCode)
+        {
+            if (string.IsNullOrEmpty(productCode) || string.IsNullOrEmpty(branchCode))
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.BillingDetailsSection = new InvoiceHelper().GetBillingDetailsSection(branchCode, productCode);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        
         [HttpPost("GetInvoiceList")]
         public async Task<IActionResult> GetInvoiceList([FromBody]SearchCriteria searchCriteria)
         {
@@ -240,8 +277,11 @@ namespace CoreERP.Controllers
                 var _invoiceDtl = objData["InvoiceDetail"].ToObject<TblInvoiceDetail[]>();
                 
                 var result = new InvoiceHelper().RegisterBill(_invoiceHdr, _invoiceDtl.ToList());
-               
-                 //   return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
+               if(result == true)
+                {
+                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= $"RInvoice no {_invoiceHdr.InvoiceNo}  created successfully." });
+                }
+
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }
@@ -250,8 +290,7 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
-        
+                
     }
 }
 

@@ -341,3 +341,5 @@ healthchecksdb
 /CoreERP/BussinessLogic/Common
 /Request response/Billing
 /Request response
+/CoreERP/BussinessLogic/masterHlepers
+/CoreERP/BussinessLogic/PurhaseHelpers/PurchasesModelHelper.cs
