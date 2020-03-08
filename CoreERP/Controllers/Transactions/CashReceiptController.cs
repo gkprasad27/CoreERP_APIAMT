@@ -29,6 +29,27 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
+        [HttpGet("GetCashReceiptList")]
+        public async Task<IActionResult> GetCashReceiptList()
+        {
+            try
+            {
+                var cashReceiptList = CashReceiptHelper.GetCashReceipts();
+                if (cashReceiptList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.CashReceiptList = cashReceiptList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetVoucherNo/{branchCode}")]
         public async Task<IActionResult> GetVoucherNo(string branchCode)
         {
@@ -38,7 +59,7 @@ namespace CoreERP.Controllers.Transactions
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = CashReceiptHelper.GetVoucherNo(branchCode);
+                expando.BranchesList = new CashReceiptHelper().GetVoucherNo(branchCode);
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
