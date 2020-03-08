@@ -11,20 +11,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 {
     public class InvoiceHelper
     {
-        public List<TblPumps> GetPupms(string branchCode)
-        {
-            try
-            {
-                using(ERPContext context=new ERPContext())
-                {
-                    return context.TblPumps.Where(x => x.BranchCode == branchCode).ToList();
-                }
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
+
         public string GenerateInvoiceNo(string branchCode)
         {
             try
@@ -393,7 +380,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-              
+        
+       
 
          /*************************  voucher Helper methods *******************************************/
 
