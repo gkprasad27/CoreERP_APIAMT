@@ -11,23 +11,24 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/masters/Taxgroup")]
-    public class TaxgroupController : ControllerBase
+    [Route("api/masters/Tank")]
+    public class TankController : ControllerBase
     {
-        [HttpPost("RegisterTaxgroup")]
-        public async Task<IActionResult> RegisterTaxgroup([FromBody]TblTaxGroup taxgroup)
+        [HttpPost("RegisterTank")]
+        public async Task<IActionResult> RegisterTank([FromBody]TblTanks tanks)
         {
             APIResponse apiResponse = null;
-            if (taxgroup == null)
+            if (tanks == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-                var taxgrouplist = new TaxgroupHelpers().GetList(taxgroup.TaxGroupCode);
-                if (taxgrouplist.Count() > 0)
-                  return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"productpacking Code {nameof(taxgrouplist)} is already exists ,Please Use Different Code " });
-
-                var result =new  TaxgroupHelpers().Register(taxgroup);
+                var tanklist = new TankHelpers().GetList(tanks.TankNo);
+                if (tanklist.Count() > 0)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"tank Code {nameof(tanklist)} is already exists ,Please Use Different Code " });
+                }
+                var result = new TankHelpers().Register(tanks);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -47,34 +48,35 @@ namespace CoreERP.Controllers.masters
         }
 
 
-        [HttpGet("GetTaxgroupList")]
-        public async Task<IActionResult> GetTaxgroupList()
+        [HttpGet("GetTankList")]
+        public async Task<IActionResult> GetTankList()
         {
-            try
+            var tankList = new TankHelpers().GetList();
+            if (tankList.Count() > 0)
             {
-                dynamic expando = new ExpandoObject();
-                var TaxgroupList = new TaxgroupHelpers().GetList();
-                expando.TaxgroupList = TaxgroupList;
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.tankList = tankList;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
             }
-            catch (Exception ex)
+            else
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
+            
         }
 
-        
 
-        [HttpPut("UpdateTaxgroup")]
-        public async Task<IActionResult> UpdateTaxgroup([FromBody] TblTaxGroup taxgroup)
+
+        [HttpPut("UpdateTank")]
+        public async Task<IActionResult> UpdateTank([FromBody] TblTanks tanks)
         {
             APIResponse apiResponse = null;
-            if (taxgroup == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(taxgroup)} cannot be null" });
+            if (tanks == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(tanks)} cannot be null" });
 
             try
             {
-                var rs = new TaxgroupHelpers().Update(taxgroup);
+                var rs = new TankHelpers().Update(tanks);
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -92,8 +94,8 @@ namespace CoreERP.Controllers.masters
         }
 
 
-        [HttpDelete("DeleteTaxgroup/{code}")]
-        public async Task<IActionResult> DeleteTaxgroup(string code)
+        [HttpDelete("DeleteTank/{code}")]
+        public async Task<IActionResult> DeleteTank(string code)
         {
             APIResponse apiResponse = null;
             try
@@ -101,7 +103,7 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = new  TaxgroupHelpers().Delete(code);
+                var rs = new TankHelpers().Delete(code);
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -118,14 +120,29 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetProductGroups")]
-        [Produces(typeof(List<MaterialGroup>))]
-        public async Task<IActionResult> GetProductGroups()
+        [HttpGet("GetBranches")]
+        [Produces(typeof(List<Branches>))]
+        public async Task<IActionResult> GetBranches()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ProductGroupsList =new TaxgroupHelpers().GetProductGroups().Select(pro => new { ID = pro.Code, TEXT = pro.GroupName });
+                expando.BranchesList = new TankHelpers().GetBranches().Select(pro => new { ID = pro.BranchCode, TEXT = pro.Address1 });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("Getbranchcode/{branchname}")]
+        public async Task<IActionResult> Getbranchcode(string branchname)
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.branchcode = new TankHelpers().Getbranchcodes(branchname).Select(bc => new { Name = bc.Address1, Id = bc.BranchCode });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

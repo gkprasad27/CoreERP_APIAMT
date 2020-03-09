@@ -17,6 +17,7 @@ namespace CoreERP.DataAccess
         public Repository()
         {
             _context =new ERPContext();
+            _context.Database.SetCommandTimeout(240);
             _entities = _context.Set<TEntity>();
 
 

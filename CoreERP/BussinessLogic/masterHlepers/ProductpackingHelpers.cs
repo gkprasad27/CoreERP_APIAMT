@@ -41,6 +41,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<TblProductPacking> repo = new Repository<TblProductPacking>())
                 {
+                    if(productpak!=null)
+                    {
+                        //if(productpak.BarrelVerify==true)
+                        //{
+
+                        //}
+                    }
                     repo.TblProductPacking.Add(productpak);
                     if (repo.SaveChanges() > 0)
                         return productpak;
@@ -79,7 +86,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<TblProductPacking> repo = new Repository<TblProductPacking>())
                 {
-                    var productpack = repo.TblProductPacking.Where(x => x.PackingCode == Code).FirstOrDefault();
+                    var productpack = repo.TblProductPacking.Where(x => x.PackingId ==Convert.ToUInt32(Code)).FirstOrDefault();
                     repo.TblProductPacking.Remove(productpack);
                     if (repo.SaveChanges() > 0)
                         return productpack;

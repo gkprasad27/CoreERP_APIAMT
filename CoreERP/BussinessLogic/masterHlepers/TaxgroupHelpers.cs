@@ -15,6 +15,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>())
                 {
+
                     return repo.TblTaxGroup
                                .Where(x => x.TaxGroupCode == code)
                                .ToList();
@@ -41,6 +42,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>())
                 {
+                    string name = Convert.ToString(repo.MaterialGroup.SingleOrDefault(obj => obj.GroupName == Convert.ToString(taxgroup.ProductGroupName))?.Code);
+                    taxgroup.ProductGroupId = int.Parse(name);
+                    taxgroup.ProductGroupCode = int.Parse(name);
                     repo.TblTaxGroup.Add(taxgroup);
                     if (repo.SaveChanges() > 0)
                         return taxgroup;
@@ -60,6 +64,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>())
                 {
+                    string name = Convert.ToString(repo.MaterialGroup.SingleOrDefault(obj => obj.GroupName == Convert.ToString(taxgroup.ProductGroupName))?.Code);
+                    taxgroup.ProductGroupId = int.Parse(name);
+                    taxgroup.ProductGroupCode = int.Parse(name);
                     repo.TblTaxGroup.Update(taxgroup);
                     if (repo.SaveChanges() > 0)
                         return taxgroup;
@@ -79,7 +86,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>())
                 {
-                    var taxcode = repo.TblTaxGroup.Where(x => x.TaxGroupCode == Code).FirstOrDefault();
+                    var taxcode = repo.TblTaxGroup.Where(x => x.TaxGroupId ==Convert.ToInt32(Code)).FirstOrDefault();
                     repo.TblTaxGroup.Remove(taxcode);
                     if (repo.SaveChanges() > 0)
                         return taxcode;
@@ -91,6 +98,18 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 throw ex;
             }
+        }
+
+        public  List<MaterialGroup> GetProductGroups()
+        {
+            try
+            {
+                using (Repository<MaterialGroup> repo = new Repository<MaterialGroup>())
+                {
+                    return repo.MaterialGroup.ToList();
+                }
+            }
+            catch { throw; }
         }
     }
 }
