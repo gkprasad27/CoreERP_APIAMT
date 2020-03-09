@@ -21,7 +21,7 @@ namespace CoreERP.Controllers.Inventory
         {
             try
             {
-                var productMasterList = ProductMasterHelper.GetProductMasterList();
+                var productMasterList = new ProductMasterHelper().GetProductMasterList();
                 if (productMasterList.Count > 0)
                 {
                     dynamic expando = new ExpandoObject();
@@ -35,7 +35,6 @@ namespace CoreERP.Controllers.Inventory
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-
         }
     }
 }

@@ -21,7 +21,7 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
             try
             {
-                var result = PurchasesHelper.RegisterVendorPayments(vendorpayment);
+                var result = PurchasesModelHelper.RegisterVendorPayments(vendorpayment);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
@@ -40,7 +40,7 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
             try
             {
-                var result = PurchasesHelper.UpdateVendorPayments(vendorpayments);
+                var result = PurchasesModelHelper.UpdateVendorPayments(vendorpayments);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
@@ -59,7 +59,7 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
             try
             {
-                var result = PurchasesHelper.DeleteVendorPayments(code);
+                var result = PurchasesModelHelper.DeleteVendorPayments(code);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
@@ -76,15 +76,15 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var vendorPayMentList = PurchasesHelper.GetVendorPaymentsList();
+                var vendorPayMentList = PurchasesModelHelper.GetVendorPaymentsList();
                 if (vendorPayMentList.Count > 0)
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.VendorNamesList = PurchasesHelper.GetVendorNames().Select(pc => new { ID = pc.Code, TEXT = pc.Name });
+                    expando.VendorNamesList = PurchasesModelHelper.GetVendorNames().Select(pc => new { ID = pc.Code, TEXT = pc.Name });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "No Data Found." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -146,7 +146,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.AsigCasNBankAcc = PurchasesHelper.GetAsigCasNBankAcc().Select(gl => new { ID = gl.Glcode, TEXT = gl.GlaccountName });
+                expando.AsigCasNBankAcc = PurchasesModelHelper.GetAsigCasNBankAcc().Select(gl => new { ID = gl.Glcode, TEXT = gl.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -161,7 +161,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.VendorNamesList = PurchasesHelper.GetAsignmentCashAccBranchesList().Select(pc => new { ID = pc.Code, TEXT = pc });
+                expando.VendorNamesList = PurchasesModelHelper.GetAsignmentCashAccBranchesList().Select(pc => new { ID = pc.Code, TEXT = pc });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -176,7 +176,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.VendorNamesList = PurchasesHelper.GetVendorNames().Select(pc => new { ID = pc.Code, TEXT = pc.Name });
+                expando.VendorNamesList = PurchasesModelHelper.GetVendorNames().Select(pc => new { ID = pc.Code, TEXT = pc.Name });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -191,7 +191,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.VendorNamesList = PurchasesHelper.GetCutomerNamesList().Select(pc => new { ID = pc.Code, TEXT = pc.Name });
+                expando.VendorNamesList = PurchasesModelHelper.GetCutomerNamesList().Select(pc => new { ID = pc.Code, TEXT = pc.Name });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -206,7 +206,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CompaniesList = PurchasesHelper.GetCompanies().Select(pc => new { ID = pc.CompanyCode, TEXT = pc.Name });
+                expando.CompaniesList = PurchasesModelHelper.GetCompanies().Select(pc => new { ID = pc.CompanyCode, TEXT = pc.Name });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -221,7 +221,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = PurchasesHelper.GetBranches().Select(pc => new { ID = pc.BranchCode, TEXT = pc.Name });
+                expando.BranchesList = PurchasesModelHelper.GetBranches().Select(pc => new { ID = pc.BranchCode, TEXT = pc.Name });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

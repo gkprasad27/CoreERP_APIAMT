@@ -61,8 +61,6 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-       
-
         public static List<TblVoucherType> GetVoucherType()
         {
             try
@@ -76,24 +74,31 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public static string GetVoucherNo(string branchCode)
+        public string GetVoucherNo(string branchCode)
         {
             try
             {
-                var voucherNo = CashPaymentHelper.GetCashPayments().Where(b => b.BranchCode == branchCode).OrderByDescending(x => x.CashPaymentMasterId).FirstOrDefault();
+                string sufix = string.Empty, prefix = string.Empty;
+                var voucherNo = new CommonHelper().GetSuffixPrefix(33, branchCode, out prefix, out sufix);
+
                 if (voucherNo != null)
                 {
-                    string[] splitString = voucherNo.VoucherNo.Split('-');
-                    var noRange = splitString[1];
-                    if (noRange.Length > 0)
-                    {
-                        noRange =(Convert.ToInt32(noRange) + 1).ToString();
-                    }
+                    string[] splitString = voucherNo.Split('-');
+                    voucherNo = splitString[1];
 
-                    return splitString[0]+"-"+noRange+"-" + splitString[2];
+                    voucherNo = (Convert.ToInt32(voucherNo) + 1).ToString();
+
+                    voucherNo = prefix + "-" + (Convert.ToInt64(voucherNo) + 1) + "-" + sufix;
+                }
+                else
+                {
+                    voucherNo = prefix + "-1-" + sufix;
                 }
 
-                return "CP-1-"+ branchCode;
+
+                new CommonHelper().UpdateInvoiceNumber(33, branchCode, voucherNo);
+
+                return voucherNo;
             }
             catch { throw; }
         }
@@ -108,6 +113,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     {
                         var voucherType = CashPaymentHelper.GetVoucherType().Where(vt => vt.VoucherTypeName == "Cash Payment").FirstOrDefault();
                         var voucherTypeSub = CashPaymentHelper.GetVoucherType().Where(vt => vt.VoucherTypeName == "Cash").FirstOrDefault();
+                        var accountledger = CashPaymentHelper.GetAccountLedgers().Where(al => al.LedgerCode == "100").FirstOrDefault();
                         TblVoucherMaster voucherMaster = new TblVoucherMaster();
                         voucherMaster.BranchCode = cashPaymentMaster.BranchCode;
                         voucherMaster.BranchName = cashPaymentMaster.BranchName;
@@ -122,16 +128,23 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
                         repo.TblVoucherMaster.Add(voucherMaster);
 
+                        cashPaymentMaster.CashPaymentVchNo= Convert.ToString(voucherMaster.VoucherMasterId);
+                        cashPaymentMaster.FromLedgerId = accountledger.LedgerId;
+                        cashPaymentMaster.FromLedgerCode = accountledger.LedgerCode;
+                        cashPaymentMaster.FromLedgerName = accountledger.LedgerName;
+                        cashPaymentMaster.ServerDate= DateTime.Now;
                         repo.TblCashPaymentMaster.Add(cashPaymentMaster);
-                        repo.SaveChanges();
+                       
 
-                        foreach( var item in cashPaymentMaster.CashPaymentDetails)
+                        foreach (var item in cashPaymentMaster.CashPaymentDetails)
                         {
-                            TblCashPaymentDetails cashPaymentDetails = new TblCashPaymentDetails();
-                            cashPaymentDetails.CashPaymentMasterId = cashPaymentMaster.CashPaymentMasterId;
-                            cashPaymentDetails.CashPaymentDetailsDate = DateTime.Now;
-                            repo.TblCashPaymentDetails.Add(cashPaymentDetails);
+                            var toLedger = CashPaymentHelper.GetAccountLedgers().Where(al => al.LedgerCode == item.ToLedgerCode).FirstOrDefault();
+                            item.CashPaymentMasterId = cashPaymentMaster.CashPaymentMasterId;
+                            item.CashPaymentDetailsDate = DateTime.Now;
+                            item.ToLedgerId = toLedger.LedgerId;
+                            repo.TblCashPaymentDetails.Add(item);
                         }
+                        
                         TblCashPaymentDetails cashPaymentDetails1 = new TblCashPaymentDetails();
                         TblVoucherDetail voucherDetail = new TblVoucherDetail();
                         List<TblCashPaymentDetails> cashDetails = new List<TblCashPaymentDetails>();
@@ -163,9 +176,9 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                             }
                             repo.TblVoucherDetail.Add(voucherDetail);
                         }
-                        
 
 
+                        repo.SaveChanges();
 
                         transaction.Commit();
 

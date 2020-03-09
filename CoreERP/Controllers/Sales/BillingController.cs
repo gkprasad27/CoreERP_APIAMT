@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using CoreERP.Models;
 using Newtonsoft.Json.Linq;
+using CoreERP.Helpers.SharedModels;
 
 namespace CoreERP.Controllers
 {
@@ -21,7 +22,7 @@ namespace CoreERP.Controllers
             {
                 string errorMessage = string.Empty;
 
-                var billno = BillingHelpers.GenerateBillNo(branchCode, out errorMessage);
+                var billno = new InvoiceHelper().GenerateInvoiceNo(branchCode);
                 if (billno != null)
                 {
                     dynamic expando = new ExpandoObject();
@@ -36,6 +37,44 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpGet("GeStateList")]
+        public async Task<IActionResult> GeStateList()
+        {
+            try
+            {
+                string errorMessage = string.Empty;
+
+
+                dynamic expando = new ExpandoObject();
+                expando.StateList = new InvoiceHelper().GetStateWiseGsts().Select(x => new { ID = x.StateCode, TEXT = x.StateName,IsDefualtSelected =(x.IsDefault ==1)  });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GeSelectedState/{stateCode}")]
+        public async Task<IActionResult> GeStateList(string stateCode)
+        {
+            if(string.IsNullOrEmpty(stateCode))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            try
+            {
+                string errorMessage = string.Empty;
+
+                dynamic expando = new ExpandoObject();
+                expando.StateList = new InvoiceHelper().GetStateWiseGsts(stateCode);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
 
         [HttpGet("GetBillingList/{branchCode}")]
         public async Task<IActionResult> GetBillingList(string branchCode)
@@ -64,7 +103,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = BillingHelpers.GetBranchesList().Select(x=> new { ID=x.BranchCode ,TEXT=x.Name});
+                expando.BranchesList = new InvoiceHelper().GetBranches().Select(x=> new { ID=x.BranchCode ,TEXT=x.BranchName});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -184,7 +223,7 @@ namespace CoreERP.Controllers
         }
 
 
-        [HttpGet("GetBillingDetailsRcd/{productCode}/branchCode")]
+        [HttpGet("GetBillingDetailsRcd/{productCode}/{branchCode}")]
         public async Task<IActionResult> GetBillingDetailsRcd(string productCode,string branchCode)
         {
             if (string.IsNullOrEmpty(productCode) || string.IsNullOrEmpty(branchCode))
@@ -203,6 +242,54 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpPost("GetInvoiceList")]
+        public async Task<IActionResult> GetInvoiceList([FromBody]SearchCriteria searchCriteria)
+        {
+
+            if (searchCriteria == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var invoiceMasterList = new InvoiceHelper().GetInvoiceMasters(searchCriteria);
+                if (invoiceMasterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.InvoiceList = invoiceMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+
+        [HttpGet("GetInvoiceDeatilList/{invoiceNo}")]
+        public async Task<IActionResult> GetInvoiceDeatilList(string invoiceNo)
+        {
+
+            if (string.IsNullOrEmpty(invoiceNo))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var invoiceMasterList = new InvoiceHelper().GetInvoiceDetails(invoiceNo);
+                if (invoiceMasterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.InvoiceDetailList = invoiceMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
 
         [HttpPost("RegisterInvoice")]
@@ -213,9 +300,10 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status=APIStatus.FAIL.ToString(),response="Request is empty" });
             try
             {
-                var _invoiceHdr =   (objData["Invoice"] as  JObject).ToObject<TblInvoiceMaster>();
-                var _invoiceDtl =   (objData["InvoiceDetail"] as  JObject).ToObject<TblInvoiceDetail>();
-
+                var _invoiceHdr = objData["InvoiceHdr"].ToObject<TblInvoiceMaster>();
+                var _invoiceDtl = objData["InvoiceDetail"].ToObject<TblInvoiceDetail[]>();
+                
+                var result = new InvoiceHelper().RegisterBill(_invoiceHdr, _invoiceDtl.ToList());
                
                  //   return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
 

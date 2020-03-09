@@ -9,6 +9,35 @@ namespace CoreERP.BussinessLogic.Common
 {
     public class CommonHelper
     {
+        public string GetSuffixPrefix(decimal? voucherTypeid,string branchCode,out string preFix,out string suffix)
+        {
+            preFix = string.Empty;
+            suffix = string.Empty;
+            
+            using (Repository<TblSuffixPrefix> repo=new Repository<TblSuffixPrefix>())
+            {
+              var _suffixPrefix=  repo.TblSuffixPrefix
+                                      .Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode)
+                                      .FirstOrDefault();
+
+                preFix = _suffixPrefix?.Prefix;
+                suffix = _suffixPrefix?.Suffix;
+
+               return _suffixPrefix.LaestNumber;
+            }
+        }
+
+        public void UpdateInvoiceNumber(decimal? voucherTypeid, string branchCode,string invoieNumber)
+        {
+            using (Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>())
+            {
+                var _suffixPrefix = repo.TblSuffixPrefix .Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode).FirstOrDefault();
+
+                _suffixPrefix.LaestNumber = invoieNumber;
+                repo.TblSuffixPrefix.Update(_suffixPrefix);
+                repo.SaveChanges();
+            }
+        }
         public static string GetConfigurationValue(string module,string screenName,string keyName)
         {
             using(Repository<ErpConfiguration> context=new Repository<ErpConfiguration>())
@@ -21,7 +50,6 @@ namespace CoreERP.BussinessLogic.Common
                               ).First().Values;
             }
         }
-
         public static int? AutonGenerateNo(string groupName,string branchCode, int rangeStart, int rangeEnds,out string errorMessage)
         {
             try
@@ -47,6 +75,7 @@ namespace CoreERP.BussinessLogic.Common
             }
             catch { throw; }
         }
+
 
         private static Counters GetCounter(string branchCode)
         {
@@ -74,8 +103,6 @@ namespace CoreERP.BussinessLogic.Common
             }
             catch { throw; }
         }
-
-
         private static int UpdateCounter(Counters counters)
         {
             try
@@ -88,7 +115,6 @@ namespace CoreERP.BussinessLogic.Common
             }
             catch { throw; }
         }
-
         public static string IncreaseCode(string code)
         {
             try
