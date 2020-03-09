@@ -27,6 +27,31 @@ namespace CoreERP.BussinessLogic.Common
             }
         }
 
+        public string GenerateNumber(decimal? voucherTypeid, string branchCode)
+        {
+            try
+            {
+                string _number = string.Empty, prefix = string.Empty, sufix = string.Empty;
+                _number = GetSuffixPrefix(19, branchCode, out prefix, out sufix);
+
+                if (string.IsNullOrEmpty(_number))
+                {
+                    _number = prefix + "-1-" + sufix;
+                }
+                else
+                {
+                    _number = prefix + "-" + Convert.ToInt64(_number) + "-" + sufix;
+                }
+
+                UpdateInvoiceNumber(voucherTypeid, branchCode, _number);
+                return _number;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public void UpdateInvoiceNumber(decimal? voucherTypeid, string branchCode,string invoieNumber)
         {
             using (Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>())

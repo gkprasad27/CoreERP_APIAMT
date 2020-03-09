@@ -45,20 +45,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                string invoiceNo = string.Empty, prefix = string.Empty, sufix = string.Empty;
-                new Common.CommonHelper().GetSuffixPrefix(19, branchCode, out prefix, out sufix);
-
-                using (Repository<TblInvoiceMaster> repo = new Repository<TblInvoiceMaster>())
-                {
-                    invoiceNo = repo.TblInvoiceMaster.Where(inv => inv.BranchCode == branchCode).OrderByDescending(i => i.ServerDateTime).FirstOrDefault()?.InvoiceNo;
-                }
-
-                if (string.IsNullOrEmpty(invoiceNo))
-                {
-                    return prefix + "-1-" + sufix;
-                }
-
-                return prefix +"-"+ (Convert.ToInt64(invoiceNo.Split("-")[1])+1) +"-"+ sufix;
+                return new Common.CommonHelper().GenerateNumber(19, branchCode);
             }
             catch (Exception ex)
             {
@@ -110,12 +97,30 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 {
                     return repo.TblAccountLedger
                         .Where(al => al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower())
-                         && al.LedgerCode == (ledgercode ?? al.LedgerCode))
+                         && al.LedgerCode == (ledgercode ?? al.LedgerCode)
+                         )
                         .ToList();
                     //
                 }
             }
             catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<TblAccountLedger> GetAccountLedgersByLedgerId(decimal LedgerId)
+        {
+            try
+            {
+                using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
+                {
+                    return repo.TblAccountLedger
+                        .Where(al => al.LedgerId == LedgerId)
+                        .ToList();
+                    //
+                }
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -315,97 +320,96 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 invoice.IsSalesReturned = false;
                 invoice.IsManualEntry = false;
-
-                using (Repository<TblInvoiceDetail> repo = new Repository<TblInvoiceDetail>())
+                TblTaxStructure _taxStructure = null;
+                TblProduct _product = null;
+                using (ERPContext repo = new ERPContext())
                 {
-                    //  using (var dbTransaction = repo.Database.BeginTransaction())
-                    // {
-                    //add voucher typedetails
-                    var _branch = GetBranches(invoice.BranchCode).ToArray().FirstOrDefault();
-                    var _accountLedger = GetAccountLedgers(invoice.LedgerCode).ToArray().FirstOrDefault();
-                    var _vouchertType = GetVoucherType(19).ToArray().FirstOrDefault();
-
-                    #region Add voucher master record
-                    var _voucherMaster = AddVoucherMaster(invoice, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
-                    #endregion
-
-
-                    invoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
-                    invoice.VoucherTypeId = 19;
-
-                    invoice.ServerDateTime = DateTime.Now;
-                    repo.TblInvoiceMaster.Add(invoice);
-                    repo.SaveChanges();
-
-                    foreach (var invdtl in invoiceDetails)
+                    using (var dbTransaction = repo.Database.BeginTransaction())
                     {
-                        var _product = GetProducts(invdtl.ProductCode).FirstOrDefault();
-                        //_accountLedger = GetAccountLedgers(_product.SalesAccount.ToString()).FirstOrDefault();
-
-
-                        #region Add voucher Details
-                        var _voucherDetail = AddVoucherDetails(invoice, _branch, _voucherMaster, _accountLedger, invdtl.Rate);
-
-                        #endregion
-
-                        #region InvioceDetail
-                        invdtl.InvoiceMasterId = invoice.InvoiceMasterId;
-                        invdtl.VoucherNo = invoice.VoucherNo;
-                        invdtl.InvoiceNo = invoice.InvoiceNo;
-                        invdtl.StateCode = invoice.StateCode;
-                        invdtl.ShiftId = invoice.ShiftId;
-                        invdtl.UserId = invoice.UserId;
-                        invdtl.EmployeeId = -1;
-
-                        invdtl.ServerDateTime = DateTime.Now;
-
-                        repo.TblInvoiceDetail.Add(invdtl);
-                        repo.SaveChanges();
-
-                        #endregion
-
-                        #region Add stock transaction in Stock Information
-                        var _stockInformation = AddStockInformatio(invoice, _branch, _product, invdtl.Qty > 0 ? invdtl.Qty : invdtl.FQty, invdtl.Rate);
-
-                        #endregion
-
-                        #region Account Ledger Transaction
-                        var _accountLedgerTransactions = AddAccountLedgerTransactions(_voucherDetail, invoice.InvoiceDate);
-
-                        #endregion
-
-                        // repo.TblInvoiceDetail.Add(invdtl);
-                        // if (repo.SaveChanges() > 0)
+                        try
                         {
-                            //_stockInformation = new TblStockInformation();
-                            //_stockInformation.BranchCode = invoice.BranchCode;
-                            //// stockInformation.BranchId = ;
-                            //_stockInformation.UserId = invoice.UserId;
-                            //_stockInformation.ShiftId = invoice.ShiftId;
-                            //_stockInformation.TransactionDate = DateTime.Now;
-                            //_stockInformation.ShiftId = invoice.ShiftId;
-                            //_stockInformation.VoucherTypeId = invoice.VoucherTypeId;
-                            //_stockInformation.VoucherNo = invdtl.VoucherNo;
-                            //_stockInformation.InvoiceNo = invoice.InvoiceNo;
-                            //_stockInformation.ProductId = invdtl.ProductId;
-                            //_stockInformation.ProductCode = invdtl.ProductCode;
-                            //_stockInformation.Rate = invdtl.Rate;
+                            //add voucher typedetails
+                            var _branch = GetBranches(invoice.BranchCode).ToArray().FirstOrDefault();
 
-                            //_stockInformation.OutwardQty = invdtl.Qty ?? invdtl.FQty;
+                            var _accountLedger = GetAccountLedgers(invoice.LedgerCode).ToArray().FirstOrDefault();
+                            var _vouchertType = GetVoucherType(19).ToArray().FirstOrDefault();
 
-                            //repo.TblStockInformation.Add(_stockInformation);
+                            #region Add voucher master record
+                            var _voucherMaster = AddVoucherMaster(repo, invoice, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
+                            #endregion
 
-                            //repo.SaveChanges();
+
+                            invoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
+                            invoice.VoucherTypeId = 19;
+
+                            invoice.ServerDateTime = DateTime.Now;
+                            repo.TblInvoiceMaster.Add(invoice);
+                            repo.SaveChanges();
+
+                            foreach (var invdtl in invoiceDetails)
+                            {
+                                 _product = GetProducts(invdtl.ProductCode).FirstOrDefault();
+                                _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureId));
+                                _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure.SalesAccount).FirstOrDefault();
+
+                                #region Add voucher Details
+                                var _voucherDetail = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, invdtl.Rate);
+                                #endregion
+
+                                #region InvioceDetail
+                                invdtl.InvoiceMasterId = invoice.InvoiceMasterId;
+                                invdtl.VoucherNo = invoice.VoucherNo;
+                                invdtl.InvoiceNo = invoice.InvoiceNo;
+                                invdtl.StateCode = invoice.StateCode;
+                                invdtl.ShiftId = invoice.ShiftId;
+                                invdtl.UserId = invoice.UserId;
+                                invdtl.EmployeeId = -1;
+                                invdtl.ServerDateTime = DateTime.Now;
+                              
+                                repo.TblInvoiceDetail.Add(invdtl);
+                                repo.SaveChanges();
+
+                                #endregion
+
+                                #region Add stock transaction  and Account Ledger Transaction
+                                AddStockInformation(repo, invoice, _branch, _product, invdtl.Qty > 0 ? invdtl.Qty : invdtl.FQty, invdtl.Rate);
+                                
+                                AddAccountLedgerTransactions(repo, _voucherDetail, invoice.InvoiceDate);
+                                #endregion
+                            }
+
+                            _accountLedger = GetAccountLedgers(invoice.LedgerCode).ToArray().FirstOrDefault();
+                            AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, invoice.GrandTotal,false);
+
+                            //CHech weather igs or sg ,cg st
+                            var _stateWiseGsts = GetStateWiseGsts(invoice.StateCode).FirstOrDefault();
+                            if(_stateWiseGsts.Igst == 1)
+                            {
+                                //Add IGST record
+                                var _accAL = GetAccountLedgers("243").ToArray().FirstOrDefault();
+                                AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalIgst,false);
+                                
+                            }
+                            else
+                            {
+                                // sgst
+                                var _accAL = GetAccountLedgers("240").ToArray().FirstOrDefault();
+                                AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalIgst,false);
+                                // sgst
+                                 _accAL = GetAccountLedgers("241").ToArray().FirstOrDefault();
+                                AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalIgst,false);
+                            }
+
+                            dbTransaction.Commit();
+                            return true;
                         }
-                        //else
-                        //{
-                        //    dbTransaction.Rollback();
-                        //}
+                        catch(Exception ex)
+                        {
+                            dbTransaction.Rollback();
+                            throw ex;
+                        }
                     }
-                    // }
                 }
-
-                return true;
             }
             catch (Exception ex)
             {
@@ -445,12 +449,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
-        public TblVoucherMaster AddVoucherMaster(TblInvoiceMaster invoice,TblBranch branch,decimal? voucherTypeId,string paymentType)
+        public TblVoucherMaster AddVoucherMaster(ERPContext context,TblInvoiceMaster invoice,TblBranch branch,decimal? voucherTypeId,string paymentType)
         {
             try
             {
-                using (ERPContext context = new ERPContext())
-                {
+                //using (ERPContext context = new ERPContext())
+                //{
                     var _voucherMaster = new TblVoucherMaster();
                     _voucherMaster.BranchCode = invoice.BranchCode;
                     _voucherMaster.BranchName = branch.BranchName;
@@ -496,7 +500,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     #endregion
 
                     return null;
-                }
+               // }
 
             }
             catch (Exception ex)
@@ -505,64 +509,64 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
-        public TblVoucherDetail AddVoucherDetails(TblInvoiceMaster invoice,TblBranch _branch,TblVoucherMaster _voucherMaster,TblAccountLedger _accountLedger,decimal? productRate)
+        public TblVoucherDetail AddVoucherDetails(ERPContext context, TblInvoiceMaster invoice, TblBranch _branch, TblVoucherMaster _voucherMaster, TblAccountLedger _accountLedger, decimal? productRate, bool isFromInvoiceDetials = true)
         {
             try
             {
-                using(ERPContext context=new ERPContext())
+                //using(ERPContext context=new ERPContext())
+                //{
+                var _voucherDetail = new TblVoucherDetail();
+                _voucherDetail.VoucherMasterId = _voucherMaster.VoucherMasterId;
+                _voucherDetail.VoucherDetailDate = _voucherMaster.VoucherDate;
+                _voucherDetail.BranchId = _branch.BranchId;
+                _voucherDetail.BranchCode = invoice.BranchCode;
+                _voucherDetail.BranchName = invoice.BranchName;
+                if (isFromInvoiceDetials)
                 {
-                    var _voucherDetail = new TblVoucherDetail();
-                    _voucherDetail.VoucherMasterId = _voucherMaster.VoucherMasterId;
-                    _voucherDetail.VoucherDetailDate = _voucherMaster.VoucherDate;
-                    _voucherDetail.BranchId = _branch.BranchId;
-                    _voucherDetail.BranchCode = invoice.BranchCode;
-                    _voucherDetail.BranchName = invoice.BranchName;
                     _voucherDetail.FromLedgerId = invoice.LedgerId;
                     _voucherDetail.FromLedgerCode = invoice.LedgerCode;
                     _voucherDetail.FromLedgerName = invoice.LedgerName;
-                    //To ledger  clarifiaction on selecion of product
-
-                //     var _taxSturcture= GetTaxStructure(invoice.p)
-
-
-                    _voucherDetail.ToLedgerId = _accountLedger.LedgerId;
-                    _voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
-                    _voucherDetail.ToLedgerName = _accountLedger.LedgerName;
-                    _voucherDetail.Amount = productRate;
-                    _voucherDetail.TransactionType = _accountLedger.CrOrDr;
-                    _voucherDetail.CostCenter = _accountLedger.BranchCode;
-                    _voucherDetail.ServerDate = DateTime.Now;
-                    _voucherDetail.Narration = "Sales Invoice Product group A/c:" + _voucherDetail.TransactionType;
-
-                    context.TblVoucherDetail.Add(_voucherDetail);
-                    if (context.SaveChanges() > 0)
-                        return _voucherDetail;
-
-                    #region comment
-                    //var _voucherDetail = new TblVoucherDetail();
-                    //_voucherDetail.VoucherMasterId = _voucherMaster.VoucherMasterId;
-                    //_voucherDetail.VoucherDetailDate = _voucherMaster.VoucherDate;
-                    //_voucherDetail.BranchId = _branch.BranchId;
-                    //_voucherDetail.BranchCode = invoice.BranchCode;
-                    //_voucherDetail.BranchName = invoice.BranchName;
-                    //_voucherDetail.FromLedgerId = invoice.LedgerId;
-                    //_voucherDetail.FromLedgerCode = invoice.LedgerCode;
-                    //_voucherDetail.FromLedgerName = invoice.LedgerName;
-                    ////To ledger  clarifiaction on selecion of product
-                    //_voucherDetail.ToLedgerId = _accountLedger.LedgerId;
-                    //_voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
-                    //_voucherDetail.ToLedgerName = _accountLedger.LedgerName;
-                    //_voucherDetail.Amount = invdtl.Rate;
-                    //_voucherDetail.TransactionType = _accountLedger.CrOrDr;
-                    //_voucherDetail.CostCenter = _accountLedger.BranchCode;
-                    //_voucherDetail.ServerDate = DateTime.Now;
-                    //_voucherDetail.Narration = "Sales Invoice Product group A/c:" + _voucherDetail.TransactionType;
-
-                    //repo.TblVoucherDetail.Add(_voucherDetail);
-                    //repo.SaveChanges();
-                    #endregion
-                    return null;
                 }
+                //To ledger  clarifiaction on selecion of product
+
+                _voucherDetail.ToLedgerId = _accountLedger.LedgerId;
+                _voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
+                _voucherDetail.ToLedgerName = _accountLedger.LedgerName;
+                _voucherDetail.Amount = productRate;
+                _voucherDetail.TransactionType = _accountLedger.CrOrDr;
+                _voucherDetail.CostCenter = _accountLedger.BranchCode;
+                _voucherDetail.ServerDate = DateTime.Now;
+                _voucherDetail.Narration = $"Sales Invoice {_accountLedger.LedgerName} A /c: {_voucherDetail.TransactionType}";
+
+                context.TblVoucherDetail.Add(_voucherDetail);
+                if (context.SaveChanges() > 0)
+                    return _voucherDetail;
+
+                #region comment
+                //var _voucherDetail = new TblVoucherDetail();
+                //_voucherDetail.VoucherMasterId = _voucherMaster.VoucherMasterId;
+                //_voucherDetail.VoucherDetailDate = _voucherMaster.VoucherDate;
+                //_voucherDetail.BranchId = _branch.BranchId;
+                //_voucherDetail.BranchCode = invoice.BranchCode;
+                //_voucherDetail.BranchName = invoice.BranchName;
+                //_voucherDetail.FromLedgerId = invoice.LedgerId;
+                //_voucherDetail.FromLedgerCode = invoice.LedgerCode;
+                //_voucherDetail.FromLedgerName = invoice.LedgerName;
+                ////To ledger  clarifiaction on selecion of product
+                //_voucherDetail.ToLedgerId = _accountLedger.LedgerId;
+                //_voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
+                //_voucherDetail.ToLedgerName = _accountLedger.LedgerName;
+                //_voucherDetail.Amount = invdtl.Rate;
+                //_voucherDetail.TransactionType = _accountLedger.CrOrDr;
+                //_voucherDetail.CostCenter = _accountLedger.BranchCode;
+                //_voucherDetail.ServerDate = DateTime.Now;
+                //_voucherDetail.Narration = "Sales Invoice Product group A/c:" + _voucherDetail.TransactionType;
+
+                //repo.TblVoucherDetail.Add(_voucherDetail);
+                //repo.SaveChanges();
+                #endregion
+                return null;
+                // }
             }
             catch (Exception ex)
             {
@@ -570,12 +574,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
-        public TblStockInformation AddStockInformatio(TblInvoiceMaster invoice,TblBranch _branch,TblProduct _product,decimal? qty,decimal? rate)
+        public TblStockInformation AddStockInformation(ERPContext context,TblInvoiceMaster invoice,TblBranch _branch,TblProduct _product,decimal? qty,decimal? rate)
         {
             try
             {
-                using(ERPContext context=new ERPContext())
-                {
+                //using(ERPContext context=new ERPContext())
+                //{
                     var _stockInformation = new TblStockInformation();
 
                     _stockInformation.BranchId = _branch.BranchId;
@@ -612,7 +616,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     #endregion
 
                     return null;
-                }
+              //  }
             }
             catch(Exception ex)
             {
@@ -620,17 +624,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
-        public TblAccountLedgerTransactions AddAccountLedgerTransactions(TblVoucherDetail _voucherDetail,DateTime? invoiceDate)
+        public TblAccountLedgerTransactions AddAccountLedgerTransactions(ERPContext context,TblVoucherDetail _voucherDetail,DateTime? invoiceDate)
         {
             try 
             {
-                using(ERPContext context=new ERPContext())
-                {
+                //using(ERPContext context=new ERPContext())
+                //{
                     var _accountLedgerTransactions = new TblAccountLedgerTransactions();
                     _accountLedgerTransactions.VoucherDetailId = _voucherDetail.VoucherDetailId;
                     _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
                     _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
-                    _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerName;
+                    _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
                     _accountLedgerTransactions.BranchId = _voucherDetail.BranchId;
                     _accountLedgerTransactions.BranchCode = _voucherDetail.BranchCode;
                     _accountLedgerTransactions.BranchName = _voucherDetail.BranchName;
@@ -638,12 +642,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
                     _accountLedgerTransactions.VoucherAmount = _voucherDetail.Amount;
 
-                    if (_accountLedgerTransactions.TransactionType.Equals("debit", StringComparison.OrdinalIgnoreCase))
+                    if (_accountLedgerTransactions.TransactionType.Equals("dedit", StringComparison.OrdinalIgnoreCase))
                     {
                         _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
                         _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
                     }
-                    else if (_accountLedgerTransactions.TransactionType.Equals("crebit", StringComparison.OrdinalIgnoreCase))
+                    else if (_accountLedgerTransactions.TransactionType.Equals("credit", StringComparison.OrdinalIgnoreCase))
                     {
                         _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
                         _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
@@ -655,7 +659,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
 
                     return null;
-                }
+              //  }
             }
             catch(Exception ex)
             {

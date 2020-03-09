@@ -69,20 +69,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 purchaseDetail.TaxStructureId = Convert.ToDecimal(_product.TaxStructureId ?? 0);
                 purchaseDetail.TaxGroupCode = _product.TaxGroupCode;
                 purchaseDetail.TaxGroupId = Convert.ToDecimal(_product.TaxGroupId ?? 0);
-
                 //purchaseDetail.TaxGroupName = _product.TaxGroupName;
-
-                purchaseDetail.Rate = _invoiceHelper.GetProductRate(branchCode, productCode);
-
-                // purchaseDetail.AvailStock = Convert.ToDecimal(_invoiceHelper.GetProductQty(branchCode, productCode) ?? 0);
-
-                purchaseDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
-
-               // purchaseDetail.ProductCode = _product.ProductCode;
-               // purchaseDetail.ProductGroupCode = Convert.ToDecimal(_product.ProductGroupCode ?? 0);
-               // purchaseDetail.ProductGroupId = Convert.ToDecimal(_product.ProductGroupId ?? 0);
-                purchaseDetail.ProductId = _product.ProductId;
-                purchaseDetail.ProductName = _product.ProductName;
                 if (_product.TaxStructureCode != null)
                 {
                     var taxStructure = _invoiceHelper.GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
@@ -93,6 +80,16 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                     purchaseDetail.ServerDateTime = DateTime.Now;
                 }
+              
+                purchaseDetail.Rate = _invoiceHelper.GetProductRate(branchCode, productCode);
+               
+                purchaseDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
+                // purchaseDetail.AvailStock = Convert.ToDecimal(_invoiceHelper.GetProductQty(branchCode, productCode) ?? 0);
+                // purchaseDetail.ProductCode = _product.ProductCode;
+                // purchaseDetail.ProductGroupCode = Convert.ToDecimal(_product.ProductGroupCode ?? 0);
+                // purchaseDetail.ProductGroupId = Convert.ToDecimal(_product.ProductGroupId ?? 0);
+                purchaseDetail.ProductId = _product.ProductId;
+                purchaseDetail.ProductName = _product.ProductName;
 
                 return purchaseDetail;
             }
