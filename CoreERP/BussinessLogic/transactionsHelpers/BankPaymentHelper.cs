@@ -35,6 +35,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
+      
         public static List<TblAccountLedger> GetAccountLedgers()
         {
             try
@@ -73,24 +74,31 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public static string GetVoucherNo(string branchCode)
+        public string GetVoucherNo(string branchCode)
         {
             try
             {
-                var voucherNo = BankPaymentHelper.GetBankPayments().Where(b => b.BranchCode == branchCode).OrderByDescending(x => x.BankPaymentMasterId).FirstOrDefault();
+                string sufix = string.Empty, prefix = string.Empty;
+                var voucherNo = new CommonHelper().GetSuffixPrefix(31, branchCode, out prefix, out sufix);
+
                 if (voucherNo != null)
                 {
-                    string[] splitString = voucherNo.VoucherNo.Split('-');
-                    var noRange = splitString[1];
-                    if (noRange.Length > 0)
-                    {
-                        noRange = (Convert.ToInt32(noRange) + 1).ToString();
-                    }
+                    string[] splitString = voucherNo.Split('-');
+                    voucherNo = splitString[1];
 
-                    return splitString[0] + "-" + noRange + "-" + splitString[2];
+                    voucherNo = (Convert.ToInt32(voucherNo) + 1).ToString();
+
+                    voucherNo = prefix + "-" + (Convert.ToInt64(voucherNo) + 1) + "-" + sufix;
+                }
+                else
+                {
+                    voucherNo = prefix + "-1-" + sufix;
                 }
 
-                return "BP-1-" + branchCode;
+
+                new CommonHelper().UpdateInvoiceNumber(31, branchCode, voucherNo);
+               
+                return voucherNo;
             }
             catch { throw; }
         }
