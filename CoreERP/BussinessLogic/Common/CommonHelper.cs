@@ -32,7 +32,7 @@ namespace CoreERP.BussinessLogic.Common
             try
             {
                 string _number = string.Empty, prefix = string.Empty, sufix = string.Empty;
-                _number = GetSuffixPrefix(19, branchCode, out prefix, out sufix);
+                _number = GetSuffixPrefix(voucherTypeid, branchCode, out prefix, out sufix);
 
                 if (string.IsNullOrEmpty(_number))
                 {
@@ -40,7 +40,7 @@ namespace CoreERP.BussinessLogic.Common
                 }
                 else
                 {
-                    _number = prefix + "-" + Convert.ToInt64(_number) + "-" + sufix;
+                    _number = prefix + "-" + (Convert.ToInt64(_number.Split("-")[1])+1) + "-" + sufix;
                 }
 
                 UpdateInvoiceNumber(voucherTypeid, branchCode, _number);
