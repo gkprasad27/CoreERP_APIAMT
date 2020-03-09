@@ -26,6 +26,21 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
+        public List<TblStateWiseGst> GetStateWiseGsts(string stateId=null)
+        {
+            try
+            {
+                using (Repository<TblStateWiseGst> repo=new Repository<TblStateWiseGst>())
+                {
+                    return repo.TblStateWiseGst.Where(s => s.StateCode == (stateId ?? s.StateCode)).ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public string GenerateInvoiceNo(string branchCode)
         {
             try
@@ -54,12 +69,15 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                using(Repository<TblInvoiceMaster> repo=new Repository<TblInvoiceMaster>())
+                searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
+                searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+
+                using (Repository<TblInvoiceMaster> repo=new Repository<TblInvoiceMaster>())
                 {
                    return  repo.TblInvoiceMaster.AsEnumerable()
-                              .Where(inv=> Convert.ToDateTime(inv.ServerDateTime.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                                        && Convert.ToDateTime(inv.ServerDateTime.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                                        && inv.InvoiceNo == (searchCriteria.InvoiceNo ?? inv.InvoiceNo)
+                              .Where(inv=> Convert.ToDateTime(inv.InvoiceDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                                       && Convert.ToDateTime(inv.InvoiceDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                                       && inv.InvoiceNo == (searchCriteria.InvoiceNo ?? inv.InvoiceNo)
                                  )
                                .ToList();
                 }
@@ -395,7 +413,20 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
         
-       
+       public List<TblInvoiceDetail>  GetInvoiceDetails(string invoiceNo)
+        {
+            try
+            {
+                using(Repository<TblInvoiceDetail> repo=new Repository<TblInvoiceDetail>())
+                {
+                    return repo.TblInvoiceDetail.Where(x => x.InvoiceNo == invoiceNo).ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
 
          /*************************   Helper methods For invoice*******************************************/
 
@@ -490,6 +521,10 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     _voucherDetail.FromLedgerCode = invoice.LedgerCode;
                     _voucherDetail.FromLedgerName = invoice.LedgerName;
                     //To ledger  clarifiaction on selecion of product
+
+                //     var _taxSturcture= GetTaxStructure(invoice.p)
+
+
                     _voucherDetail.ToLedgerId = _accountLedger.LedgerId;
                     _voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
                     _voucherDetail.ToLedgerName = _accountLedger.LedgerName;

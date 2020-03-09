@@ -38,7 +38,5 @@ namespace CoreERP.Models
         public string Narration { get; set; }
         public bool? IsActive { get; set; }
         public decimal? TaxapplicableOnId { get; set; }
-        public int? PurchaseAccount { get; set; }
-        public int? SalesAccount { get; set; }
     }
 }

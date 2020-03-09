@@ -38,6 +38,44 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GeStateList")]
+        public async Task<IActionResult> GeStateList()
+        {
+            try
+            {
+                string errorMessage = string.Empty;
+
+
+                dynamic expando = new ExpandoObject();
+                expando.StateList = new InvoiceHelper().GetStateWiseGsts().Select(x => new { ID = x.StateCode, TEXT = x.StateName,IsDefualtSelected =(x.IsDefault ==1)  });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GeSelectedState/{stateCode}")]
+        public async Task<IActionResult> GeStateList(string stateCode)
+        {
+            if(string.IsNullOrEmpty(stateCode))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            try
+            {
+                string errorMessage = string.Empty;
+
+                dynamic expando = new ExpandoObject();
+                expando.StateList = new InvoiceHelper().GetStateWiseGsts(stateCode);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+
         [HttpGet("GetBillingList/{branchCode}")]
         public async Task<IActionResult> GetBillingList(string branchCode)
         {
@@ -185,7 +223,7 @@ namespace CoreERP.Controllers
         }
 
 
-        [HttpGet("GetBillingDetailsRcd/{productCode}/branchCode")]
+        [HttpGet("GetBillingDetailsRcd/{productCode}/{branchCode}")]
         public async Task<IActionResult> GetBillingDetailsRcd(string productCode,string branchCode)
         {
             if (string.IsNullOrEmpty(productCode) || string.IsNullOrEmpty(branchCode))
@@ -227,6 +265,32 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+
+        [HttpGet("GetInvoiceDeatilList/{invoiceNo}")]
+        public async Task<IActionResult> GetInvoiceDeatilList(string invoiceNo)
+        {
+
+            if (string.IsNullOrEmpty(invoiceNo))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var invoiceMasterList = new InvoiceHelper().GetInvoiceDetails(invoiceNo);
+                if (invoiceMasterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.InvoiceDetailList = invoiceMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
 
         [HttpPost("RegisterInvoice")]
         public async Task<IActionResult> RegisterBilling([FromBody]JObject objData)

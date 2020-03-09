@@ -29,11 +29,11 @@ namespace CoreERP.Controllers
                 expando.PurchaseInvoiceNo = new PurchasesHelper().GeneratePurchaseInvoiceNo(branchCode);
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 string message = string.Empty;
 
-                if(ex.InnerException != null)
+                if (ex.InnerException != null)
                 {
                     message = ex.InnerException.Message;
                 }
@@ -41,7 +41,59 @@ namespace CoreERP.Controllers
                 {
                     message = ex.Message;
                 }
-               
+
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = message });
+            }
+        }
+
+        [HttpGet("GetSateteList")]
+        public async Task<IActionResult> GetSateteList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.SateteList = new PurchasesHelper().GetStateWiseGsts().Select(s=>new { ID=s.StateCode,TEXT=s.StateName ,IsDefualtSelected = s.IsDefault == 1});
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                string message = string.Empty;
+
+                if (ex.InnerException != null)
+                {
+                    message = ex.InnerException.Message;
+                }
+                else
+                {
+                    message = ex.Message;
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = message });
+            }
+        }
+
+        [HttpGet("GetProductDeatilsSectionRcd/{branchCode}/{productCode}")]
+        public async Task<IActionResult> GetProductDeatilsSectionRcd(string branchCode,string productCode)
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.ProductDeatilsSectionRcd = new PurchasesHelper().GetProductDeatilsSectionRcd(branchCode,productCode);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                string message = string.Empty;
+
+                if (ex.InnerException != null)
+                {
+                    message = ex.InnerException.Message;
+                }
+                else
+                {
+                    message = ex.Message;
+                }
+
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = message });
             }
         }
