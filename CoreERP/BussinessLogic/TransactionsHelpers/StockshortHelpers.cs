@@ -65,7 +65,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                var voucherNo = StockshortHelpers.Getstockshortlist().Where(b => b.BranchCode == branchCode).OrderByDescending(x => x.StockshortNo).FirstOrDefault();
+                var voucherNo = Getstockshortlist().Where(b => b.BranchCode == branchCode).OrderByDescending(x => x.StockshortNo).FirstOrDefault();
                 if (voucherNo != null)
                 {
                     string[] splitString = voucherNo.StockshortNo.Split('/','-');

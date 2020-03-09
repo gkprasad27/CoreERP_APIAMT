@@ -237,6 +237,21 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
+
+        public TblTaxStructure GetTaxStructureByTaxStuctId(decimal taxStructureId)
+        {
+            try
+            {
+                using (Repository<TblTaxStructure> repo = new Repository<TblTaxStructure>())
+                {
+                    return repo.TblTaxStructure.Where(st => st.TaxStructureId == taxStructureId).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public TblInvoiceDetail GetBillingDetailsSection(string branchCode,string productCode)
         {
             try

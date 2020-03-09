@@ -75,6 +75,24 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GeTaxstructureByTaxStructId/{taxStructure}")]
+        public async Task<IActionResult> GeTaxstructureByTaxStructId(decimal taxStructure)
+        {
+            
+            try
+            {
+                string errorMessage = string.Empty;
+
+                dynamic expando = new ExpandoObject();
+                expando.TaxStructure = new InvoiceHelper().GetTaxStructureByTaxStuctId(taxStructure);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
 
         [HttpGet("GetBillingList/{branchCode}")]
         public async Task<IActionResult> GetBillingList(string branchCode)
