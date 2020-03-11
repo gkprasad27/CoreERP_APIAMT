@@ -11,13 +11,15 @@ namespace CoreERP.BussinessLogic.SalesHelper
 {
     public class InvoiceHelper
     {
-        public List<TblPumps> GetPumps(string branchCode)
+        public List<TblPumps> GetPumps(string pumpNo,string branchCode)
         {
             try
             {
                 using(Repository<TblPumps> repo=new Repository<TblPumps>())
                 {
-                    return repo.TblPumps.Where(p=> p.BranchCode == branchCode).ToList();
+                    return repo.TblPumps
+                                .Where(p=> p.BranchCode == branchCode && p.PumpNo.ToString().Contains(pumpNo))
+                                .ToList();
                 }
             }
             catch(Exception ex)

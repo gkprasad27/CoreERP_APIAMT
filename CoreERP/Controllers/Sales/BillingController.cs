@@ -14,6 +14,24 @@ namespace CoreERP.Controllers
     [Route("api/sales/Billing")]
     public class BillingController : ControllerBase
     {
+        [HttpGet("GetPupms/{pumpNo}/{branchCode}")]
+        public async Task<IActionResult> GetPupms(string pumpNo ,string branchCode)
+        {
+            try
+            {
+                string errorMessage = string.Empty;
+
+                var pumpsList = new InvoiceHelper().GetPumps(pumpNo, branchCode);
+
+                dynamic expando = new ExpandoObject();
+                expando.PumpsList = pumpsList.Select(x => new { ID = x.PumpId, TEXT = x.PumpNo });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
         [HttpGet("GenerateBillNo/{branchCode}")]
         public async Task<IActionResult> GenerateBillNo(string branchCode)
