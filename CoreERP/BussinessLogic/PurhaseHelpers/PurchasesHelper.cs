@@ -36,7 +36,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-
         public List<TblStateWiseGst> GetStateWiseGsts(string stateId = null)
         {
             try
@@ -51,15 +50,12 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-
         public TblPurchaseInvoiceDetail GetProductDeatilsSectionRcd(string branchCode, string productCode)
         {
             try
             {
                 var _invoiceHelper = new InvoiceHelper();
                 var _product =_invoiceHelper.GetProducts(productCode).FirstOrDefault();
-
-               // var invoceDetails = new TblInvoiceDetail();
                 var purchaseDetail = new TblPurchaseInvoiceDetail();
 
                 purchaseDetail.UnitId = Convert.ToDecimal(_product.UnitId ?? 0);
@@ -69,7 +65,18 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 purchaseDetail.TaxStructureId = Convert.ToDecimal(_product.TaxStructureId ?? 0);
                 purchaseDetail.TaxGroupCode = _product.TaxGroupCode;
                 purchaseDetail.TaxGroupId = Convert.ToDecimal(_product.TaxGroupId ?? 0);
+              
+                purchaseDetail.Rate = _invoiceHelper.GetProductRate(branchCode, productCode);
+                purchaseDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
+                purchaseDetail.ProductId = _product.ProductId;
+                purchaseDetail.ProductName = _product.ProductName;
+
+                // purchaseDetail.AvailStock = Convert.ToDecimal(_invoiceHelper.GetProductQty(branchCode, productCode) ?? 0);
+                // purchaseDetail.ProductCode = _product.ProductCode;
+                // purchaseDetail.ProductGroupCode = Convert.ToDecimal(_product.ProductGroupCode ?? 0);
+                // purchaseDetail.ProductGroupId = Convert.ToDecimal(_product.ProductGroupId ?? 0);
                 //purchaseDetail.TaxGroupName = _product.TaxGroupName;
+
                 if (_product.TaxStructureCode != null)
                 {
                     var taxStructure = _invoiceHelper.GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
@@ -80,16 +87,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                     purchaseDetail.ServerDateTime = DateTime.Now;
                 }
-              
-                purchaseDetail.Rate = _invoiceHelper.GetProductRate(branchCode, productCode);
-               
-                purchaseDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
-                // purchaseDetail.AvailStock = Convert.ToDecimal(_invoiceHelper.GetProductQty(branchCode, productCode) ?? 0);
-                // purchaseDetail.ProductCode = _product.ProductCode;
-                // purchaseDetail.ProductGroupCode = Convert.ToDecimal(_product.ProductGroupCode ?? 0);
-                // purchaseDetail.ProductGroupId = Convert.ToDecimal(_product.ProductGroupId ?? 0);
-                purchaseDetail.ProductId = _product.ProductId;
-                purchaseDetail.ProductName = _product.ProductName;
 
                 return purchaseDetail;
             }
@@ -114,7 +111,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-
         public TblVoucherMaster AddVoucherMaster(TblInvoiceMaster invoice, TblBranch branch, decimal? voucherTypeId, string paymentType)
         {
             try
@@ -174,7 +170,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-
         public TblVoucherDetail AddVoucherDetails(TblInvoiceMaster invoice, TblBranch _branch, TblVoucherMaster _voucherMaster, TblAccountLedger _accountLedger, decimal? productRate)
         {
             try
@@ -235,7 +230,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-
         public TblStockInformation AddStockInformatio(TblInvoiceMaster invoice, TblBranch _branch, TblProduct _product, decimal? qty, decimal? rate)
         {
             try
@@ -252,7 +246,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                     _stockInformation.InvoiceNo = invoice.InvoiceNo;
                     _stockInformation.ProductId = _product.ProductId;
                     _stockInformation.ProductCode = _product.ProductCode;
-                    _stockInformation.OutwardQty = qty;
+                    _stockInformation.InwardQty = qty;
                     _stockInformation.Rate = rate;
 
                     context.TblStockInformation.Add(_stockInformation);
@@ -269,7 +263,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-
         public TblAccountLedgerTransactions AddAccountLedgerTransactions(TblVoucherDetail _voucherDetail, DateTime? invoiceDate)
         {
             try
