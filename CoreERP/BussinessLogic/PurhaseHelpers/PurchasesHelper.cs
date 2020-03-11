@@ -115,25 +115,55 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
         }
 
-        public TblVoucherMaster AddVoucherMaster(TblInvoiceMaster invoice, TblBranch branch, decimal? voucherTypeId, string paymentType)
+        public bool AddPurchaseRecords(TblPurchaseInvoice purchaseInvoice,List<TblPurchaseInvoiceDetail> purchaseInvoiceDetails)
+        {
+            try
+            {
+                using(ERPContext context=new ERPContext())
+                {
+                    using(var dbTransaction = context.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                           
+
+                            dbTransaction.Commit();
+                            return true;
+                        }
+                        catch(Exception e)
+                        {
+                            dbTransaction.Rollback();
+                            throw e;
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        public TblVoucherMaster AddVoucherMaster(TblPurchaseInvoice purchaseinvoice, TblBranch branch, decimal? voucherTypeId, string paymentType)
         {
             try
             {
                 using (ERPContext context = new ERPContext())
                 {
                     var _voucherMaster = new TblVoucherMaster();
-                    _voucherMaster.BranchCode = invoice.BranchCode;
+                    _voucherMaster.BranchCode = purchaseinvoice.BranchCode;
                     _voucherMaster.BranchName = branch.BranchName;
-                    _voucherMaster.VoucherDate = invoice.InvoiceDate;
+                    _voucherMaster.VoucherDate = purchaseinvoice.PurchaseInvDate;
                     _voucherMaster.VoucherTypeIdMain = voucherTypeId;
                     _voucherMaster.VoucherTypeIdSub = 35;
-                    _voucherMaster.VoucherNo = invoice.InvoiceNo;
-                    _voucherMaster.Amount = invoice.GrandTotal;
+                    _voucherMaster.VoucherNo = purchaseinvoice.PurchaseInvNo;
+                    _voucherMaster.Amount = purchaseinvoice.GrandTotal;
                     _voucherMaster.PaymentType = paymentType;//accountLedger.CrOrD
-                    _voucherMaster.Narration = "Sales Invoice";
+                    _voucherMaster.Narration = "Purchase Invoice";
                     _voucherMaster.ServerDate = DateTime.Now;
-                    _voucherMaster.UserId = invoice.UserId;
-                    _voucherMaster.UserName = invoice.UserName;
+                    _voucherMaster.UserId = purchaseinvoice.UserId;
+                    _voucherMaster.UserName = purchaseinvoice.UserName;
                     _voucherMaster.EmployeeId = -1;
 
                     context.TblVoucherMaster.Add(_voucherMaster);
@@ -175,7 +205,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
         }
 
-        public TblVoucherDetail AddVoucherDetails(TblInvoiceMaster invoice, TblBranch _branch, TblVoucherMaster _voucherMaster, TblAccountLedger _accountLedger, decimal? productRate)
+        public TblVoucherDetail AddVoucherDetails(TblPurchaseInvoice purchaseinvoice, TblBranch _branch, TblVoucherMaster _voucherMaster, TblAccountLedger _accountLedger, decimal? productRate)
         {
             try
             {
@@ -185,11 +215,11 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                     _voucherDetail.VoucherMasterId = _voucherMaster.VoucherMasterId;
                     _voucherDetail.VoucherDetailDate = _voucherMaster.VoucherDate;
                     _voucherDetail.BranchId = _branch.BranchId;
-                    _voucherDetail.BranchCode = invoice.BranchCode;
-                    _voucherDetail.BranchName = invoice.BranchName;
-                    _voucherDetail.FromLedgerId = invoice.LedgerId;
-                    _voucherDetail.FromLedgerCode = invoice.LedgerCode;
-                    _voucherDetail.FromLedgerName = invoice.LedgerName;
+                    _voucherDetail.BranchCode = purchaseinvoice.BranchCode;
+                    _voucherDetail.BranchName = purchaseinvoice.BranchName;
+                    _voucherDetail.FromLedgerId = purchaseinvoice.LedgerId;
+                    _voucherDetail.FromLedgerCode = purchaseinvoice.LedgerCode;
+                    _voucherDetail.FromLedgerName = purchaseinvoice.LedgerName;
                     //To ledger  clarifiaction on selecion of product
                     _voucherDetail.ToLedgerId = _accountLedger.LedgerId;
                     _voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
@@ -198,7 +228,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                     _voucherDetail.TransactionType = _accountLedger.CrOrDr;
                     _voucherDetail.CostCenter = _accountLedger.BranchCode;
                     _voucherDetail.ServerDate = DateTime.Now;
-                    _voucherDetail.Narration = "Sales Invoice Product group A/c:" + _voucherDetail.TransactionType;
+                    _voucherDetail.Narration = $"Purchase Invoice { _voucherDetail.ToLedgerName} A/c:{_voucherDetail.TransactionType}";
 
                     context.TblVoucherDetail.Add(_voucherDetail);
                     if (context.SaveChanges() > 0)
@@ -236,7 +266,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
         }
 
-        public TblStockInformation AddStockInformatio(TblInvoiceMaster invoice, TblBranch _branch, TblProduct _product, decimal? qty, decimal? rate)
+        public TblStockInformation AddStockInformatio(TblPurchaseInvoice purchaseinvoice, TblBranch _branch, TblProduct _product, decimal? qty, decimal? rate)
         {
             try
             {
@@ -246,10 +276,10 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                     _stockInformation.BranchId = _branch.BranchId;
                     _stockInformation.BranchCode = _branch.BranchCode;
-                    _stockInformation.ShiftId = invoice.ShiftId;
-                    _stockInformation.VoucherNo = invoice.VoucherNo;
-                    _stockInformation.VoucherTypeId = invoice.VoucherTypeId;
-                    _stockInformation.InvoiceNo = invoice.InvoiceNo;
+                    _stockInformation.ShiftId = purchaseinvoice.ShiftId;
+                    _stockInformation.VoucherNo = purchaseinvoice.VoucherNo;
+                    _stockInformation.VoucherTypeId = purchaseinvoice.VoucherTypeId;
+                    _stockInformation.InvoiceNo = purchaseinvoice.PurchaseInvNo;
                     _stockInformation.ProductId = _product.ProductId;
                     _stockInformation.ProductCode = _product.ProductCode;
                     _stockInformation.OutwardQty = qty;
