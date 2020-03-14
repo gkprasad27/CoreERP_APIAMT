@@ -34,30 +34,6 @@ namespace CoreERP.Controllers
             }
         }
        
-        [HttpGet("MemberMasterCSVReport")]
-        public async Task<ActionResult> MemberMasterCSVReport(string isMobileNumberRequired, string UserID)
-        {
-            try
-            {
-                var memberMaster =await Task.FromResult(ReportsHelperClass.GetMemberMasterReportDataTable(isMobileNumberRequired, UserID));
-                System.Text.StringBuilder fileContent = new System.Text.StringBuilder();
-                IEnumerable<string> columnNames = memberMaster.Columns.Cast<DataColumn>().
-                                                  Select(column => column.ColumnName);
-                fileContent.AppendLine(string.Join(",", columnNames));
-
-                foreach (DataRow row in memberMaster.Rows)
-                {
-                    IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
-                    fileContent.AppendLine(string.Join(",", fields));
-                }
-
-                byte[] bytes =System.Text.Encoding.ASCII.GetBytes(fileContent.ToString());
-                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "MemberMasterReport.csv");
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        
     }
 }

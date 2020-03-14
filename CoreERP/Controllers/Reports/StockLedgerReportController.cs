@@ -16,44 +16,35 @@ namespace CoreERP.Controllers.Reports
     {
 
         [HttpGet("GetStockLedgerReportData")]
-        public async Task<IActionResult> GetStockLedgerReportData(string branchID, string productCode)
+        public async Task<IActionResult> GetStockLedgerReportData(string branchCode, string productCode, DateTime fromDate, DateTime toDate, string UserID)
         {
             try
             {
-                var StockLedgerList = await Task.FromResult(ReportsHelperClass.GetStockLedgerReportDataList(branchID, productCode));
-                if (StockLedgerList != null && StockLedgerList.Count > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.StockLedgerList = StockLedgerList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                var serviceResult = await Task.FromResult(ReportsHelperClass.GetStockLedgerReportDataList(branchCode, productCode,fromDate,toDate,UserID));
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.StockLedgerList = serviceResult.Item1;
+                expdoObj.headerList = serviceResult.Item2;
+                expdoObj.footerList = serviceResult.Item3;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-       
-        [HttpGet("StockLedgerCSVReport")]
-        public async Task<ActionResult> StockLedgerCSVReport(string branchID, string productCode)
+        [HttpGet("GetProductList")]
+        public async Task<IActionResult> GetProductList()
         {
             try
             {
-                var StockLedger = await Task.FromResult(ReportsHelperClass.GetStockLedgerReportDataTable(branchID, productCode));
-                System.Text.StringBuilder fileContent = new System.Text.StringBuilder();
-                IEnumerable<string> columnNames = StockLedger.Columns.Cast<DataColumn>().
-                                                  Select(column => column.ColumnName);
-                fileContent.AppendLine(string.Join(",", columnNames));
-
-                foreach (DataRow row in StockLedger.Rows)
+                var productList = await Task.FromResult(ReportsHelperClass.GetProducts());
+                if (productList != null && productList.Count > 0)
                 {
-                    IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
-                    fileContent.AppendLine(string.Join(",", fields));
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.productList = productList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-
-                byte[] bytes = System.Text.Encoding.ASCII.GetBytes(fileContent.ToString());
-                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "StockLedgerReport.csv");
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
