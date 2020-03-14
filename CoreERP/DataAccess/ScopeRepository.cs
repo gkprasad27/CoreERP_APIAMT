@@ -21,9 +21,9 @@ namespace CoreERP.DataAccess
         {
             return _dbContext.Database.GetDbConnection().CreateCommand();
         }
-        public DataTable ExecuteParamerizedCommand(DbCommand command)
+        public DataSet ExecuteParamerizedCommand(DbCommand command)
         {
-            DataTable table = new DataTable();
+            DataSet ds = new DataSet();
             using (command)
             {
                 if (command.Connection.State == System.Data.ConnectionState.Closed)
@@ -33,14 +33,14 @@ namespace CoreERP.DataAccess
                     using (DbDataAdapter da = DbProviderFactories.GetFactory(command.Connection).CreateDataAdapter())
                     {
                         da.SelectCommand = command;
-                        da.Fill(table);
+                        da.Fill(ds);
                     }
                 }
                 finally
                 {
                     command.Connection.Close();
                 }
-                return table;
+                return ds;
             }
         }
     }

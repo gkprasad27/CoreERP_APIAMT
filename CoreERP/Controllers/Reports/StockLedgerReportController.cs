@@ -10,20 +10,21 @@ using System.Data;
 
 namespace CoreERP.Controllers.Reports
 {
-    [Route("api/Reports/EmployeeRegisterReport")]
+    [Route("api/Reports/[controller]")]
     [ApiController]
-    public class EmployeeRegisterReportController : ControllerBase
+    public class StockLedgerReportController : ControllerBase
     {
-        [HttpGet("GetEmployeeRegisterReportData")]
-        public async Task<IActionResult> GetEmployeeRegisterReportData(string UserID)
+
+        [HttpGet("GetStockLedgerReportData")]
+        public async Task<IActionResult> GetStockLedgerReportData(string branchID, string productCode)
         {
             try
             {
-                var employeeRegisterList = await Task.FromResult(ReportsHelperClass.GetEmployeeRegisterReportList(UserID));
-                if (employeeRegisterList != null && employeeRegisterList.Count > 0)
+                var StockLedgerList = await Task.FromResult(ReportsHelperClass.GetStockLedgerReportDataList(branchID, productCode));
+                if (StockLedgerList != null && StockLedgerList.Count > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.employeeRegisterList = employeeRegisterList;
+                    expdoObj.StockLedgerList = StockLedgerList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -33,39 +34,39 @@ namespace CoreERP.Controllers.Reports
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpGet("EmployeeRegisterExcelReport")]
-        public async Task<IActionResult> EmployeeRegisterExcelReport(string UserID)
+        [HttpGet("StockLedgerExcelReport")]
+        public async Task<ActionResult> StockLedgerExcelReport(string branchID, string productCode)
         {
             try
             {
-                var excelReport = await Task.FromResult(ReportsHelperClass.GetEmployeeRegisterReportDataTable(UserID));
-                var fileContent = ReportsHelperClass.getExcelFromDatatable(excelReport,"Employee Register Report");
-                return File(fileContents: fileContent, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: "EmployeeRegisterReport.xlsx");
+                var StockLedger = await Task.FromResult(ReportsHelperClass.GetStockLedgerReportDataTable(branchID, productCode));
+                var fileContent = ReportsHelperClass.getExcelFromDatatable(StockLedger, "Sales GST Report");
+                return File(fileContents: fileContent, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: "StockLedgerReport.xlsx");
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpGet("EmployeeRegisterCSVReport")]
-        public async Task<ActionResult> EmployeeRegisterCSVReport(string UserID)
+        [HttpGet("StockLedgerCSVReport")]
+        public async Task<ActionResult> StockLedgerCSVReport(string branchID, string productCode)
         {
             try
             {
-                var EmployeeRegister = await Task.FromResult(ReportsHelperClass.GetEmployeeRegisterReportDataTable(UserID));
+                var StockLedger = await Task.FromResult(ReportsHelperClass.GetStockLedgerReportDataTable(branchID, productCode));
                 System.Text.StringBuilder fileContent = new System.Text.StringBuilder();
-                IEnumerable<string> columnNames = EmployeeRegister.Columns.Cast<DataColumn>().
+                IEnumerable<string> columnNames = StockLedger.Columns.Cast<DataColumn>().
                                                   Select(column => column.ColumnName);
                 fileContent.AppendLine(string.Join(",", columnNames));
 
-                foreach (DataRow row in EmployeeRegister.Rows)
+                foreach (DataRow row in StockLedger.Rows)
                 {
                     IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
                     fileContent.AppendLine(string.Join(",", fields));
                 }
 
                 byte[] bytes = System.Text.Encoding.ASCII.GetBytes(fileContent.ToString());
-                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "EmployeeRegisterReport.csv");
+                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "StockLedgerReport.csv");
             }
             catch (Exception ex)
             {
