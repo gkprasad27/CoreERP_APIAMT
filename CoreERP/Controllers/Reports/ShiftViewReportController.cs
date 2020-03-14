@@ -7,22 +7,24 @@ using Microsoft.AspNetCore.Mvc;
 using CoreERP.BussinessLogic.ReportsHelpers;
 using System.Dynamic;
 using System.Data;
+
+
 namespace CoreERP.Controllers.Reports
 {
-    [Route("api/Reports/AccountLedgerReport")]
+    [Route("api/Reports/[controller]")]
     [ApiController]
-    public class AccountLedgerReportController : ControllerBase
+    public class ShiftViewReportController : ControllerBase
     {
-        [HttpGet("GetAccountLedgerReportData")]
-        public async Task<IActionResult> GetAccountLedgerReportData(string UserID,string ledgerCode, DateTime fromDate, DateTime toDate)
+        [HttpGet("GetShiftViewReportList")]
+        public async Task<IActionResult> GetShiftViewReportList(string userName, string userID, string branchCode, string shiftId, DateTime fromDate, DateTime toDate,int reportID)
         {
             try
             {
-                var serviceResult =await Task.FromResult(ReportsHelperClass.GetAccountLedgerReportDataList(UserID,ledgerCode, fromDate,toDate));
-                if (serviceResult.Item1 != null && serviceResult.Item1.Count>0)
+                var serviceResult = await Task.FromResult(ReportsHelperClass.GetShiftViewReportDataList(userName, userID,branchCode,shiftId,fromDate,toDate, reportID));
+                if (serviceResult.Item1 != null && serviceResult.Item1.Count > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.accountLedgerList = serviceResult.Item1;
+                    expdoObj.shiftViewList = serviceResult.Item1;
                     expdoObj.headerList = serviceResult.Item2;
                     expdoObj.footerList = serviceResult.Item3;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
@@ -33,17 +35,20 @@ namespace CoreERP.Controllers.Reports
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-        }       
-        [HttpGet("GetAccountLedgersList")]
-        public async Task<IActionResult> GetAccountLedgersList()
+        }
+        
+        [HttpGet("GetDefaultShiftReportDataTableList")]
+        public async Task<IActionResult> GetDefaultShiftReportDataTableList()
         {
             try
             {
-                var accountLedgerList = await Task.FromResult(ReportsHelperClass.GetAccountLedgers());
-                if (accountLedgerList != null && accountLedgerList.Count > 0)
+                var serviceResult = await Task.FromResult(ReportsHelperClass.GetDefaultShiftReportDataTableList());
+                if (serviceResult.Item1 != null && serviceResult.Item1.Count > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.accountLedgerList = accountLedgerList;
+                    expdoObj.shiftViewList = serviceResult.Item1;
+                    expdoObj.headerList = serviceResult.Item2;
+                    expdoObj.footerList = serviceResult.Item3;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });

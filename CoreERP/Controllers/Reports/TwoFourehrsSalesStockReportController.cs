@@ -6,24 +6,23 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CoreERP.BussinessLogic.ReportsHelpers;
 using System.Dynamic;
-using System.Data;
 
 namespace CoreERP.Controllers.Reports
 {
-    [Route("api/Reports/EmployeeRegisterReport")]
+    [Route("api/Reports/[controller]")]
     [ApiController]
-    public class EmployeeRegisterReportController : ControllerBase
+    public class TwoFourehrsSalesStockReportController : ControllerBase
     {
-        [HttpGet("GetEmployeeRegisterReportData")]
-        public async Task<IActionResult> GetEmployeeRegisterReportData(string UserID)
+        [HttpGet("Get24hrsSalesStockReportData")]
+        public async Task<IActionResult> Get24hrsSalesStockReportData(string compnayID,string branchID)
         {
             try
             {
-                var employeeRegisterList = await Task.FromResult(ReportsHelperClass.GetEmployeeRegisterReportList(UserID));
-                if (employeeRegisterList != null && employeeRegisterList.Count > 0)
+                var hrsSalesStockList = await Task.FromResult(ReportsHelperClass.Get24hrsSalesStockReportDataList(compnayID,branchID));
+                if (hrsSalesStockList != null && hrsSalesStockList.Count > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.employeeRegisterList = employeeRegisterList;
+                    expdoObj.hrsSalesStockList = hrsSalesStockList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -33,6 +32,5 @@ namespace CoreERP.Controllers.Reports
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-       
     }
 }

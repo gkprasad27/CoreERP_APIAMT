@@ -8,22 +8,23 @@ using CoreERP.BussinessLogic.ReportsHelpers;
 using System.Dynamic;
 using System.Data;
 
-namespace CoreERP.Controllers
+namespace CoreERP.Controllers.Reports
 {
-    [Route("api/Reports/MemberMasterReport")]
+    [Route("api/Reports/[controller]")]
     [ApiController]
-    public class MemberMasterReportController : ControllerBase
+    public class VehicalReportController : ControllerBase
     {
-        [HttpGet("GetMemberMasterReportData")]
-        public async Task<IActionResult> GetMemberMasterReportData(string isMobileNumberRequired,string UserID)
+
+        [HttpGet("GetVehicalReportData")]
+        public async Task<IActionResult> GetVehicalReportData(string vehicleRegNo, DateTime fromDate, DateTime toDate)
         {
             try
             {
-                var memberMasterList =await Task.FromResult(ReportsHelperClass.GetMemberMasterReportDataList(isMobileNumberRequired, UserID));
-                if (memberMasterList.Count>0)
+                var VehicalList =await Task.FromResult(ReportsHelperClass.GetVehicalReportDataList(vehicleRegNo,fromDate,toDate));
+                if (VehicalList != null && VehicalList.Count > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.memberMasterList = memberMasterList;
+                    expdoObj.VehicalList = VehicalList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -34,25 +35,25 @@ namespace CoreERP.Controllers
             }
         }
        
-        [HttpGet("MemberMasterCSVReport")]
-        public async Task<ActionResult> MemberMasterCSVReport(string isMobileNumberRequired, string UserID)
+        [HttpGet("VehicalCSVReport")]
+        public async Task<ActionResult> VehicalCSVReport(string vehicleRegNo, DateTime fromDate, DateTime toDate)
         {
             try
             {
-                var memberMaster =await Task.FromResult(ReportsHelperClass.GetMemberMasterReportDataTable(isMobileNumberRequired, UserID));
+                var Vehical =await Task.FromResult(ReportsHelperClass.GetVehicalReportDataTable(vehicleRegNo,fromDate,toDate));
                 System.Text.StringBuilder fileContent = new System.Text.StringBuilder();
-                IEnumerable<string> columnNames = memberMaster.Columns.Cast<DataColumn>().
+                IEnumerable<string> columnNames = Vehical.Columns.Cast<DataColumn>().
                                                   Select(column => column.ColumnName);
                 fileContent.AppendLine(string.Join(",", columnNames));
 
-                foreach (DataRow row in memberMaster.Rows)
+                foreach (DataRow row in Vehical.Rows)
                 {
                     IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
                     fileContent.AppendLine(string.Join(",", fields));
                 }
 
-                byte[] bytes =System.Text.Encoding.ASCII.GetBytes(fileContent.ToString());
-                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "MemberMasterReport.csv");
+                byte[] bytes = System.Text.Encoding.ASCII.GetBytes(fileContent.ToString());
+                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "VehicalReport.csv");
             }
             catch (Exception ex)
             {

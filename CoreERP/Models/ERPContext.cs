@@ -9431,10 +9431,6 @@ namespace CoreERP.Models
                     .HasColumnType("numeric(18, 0)")
                     .ValueGeneratedOnAdd();
 
-                entity.Property(e => e.BillNumber)
-                    .HasColumnName("billNumber")
-                    .IsUnicode(false);
-
                 entity.Property(e => e.BranchCode)
                     .IsRequired()
                     .HasColumnName("branchCode");
@@ -9462,8 +9458,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.FromDate)
                     .HasColumnName("fromDate")
                     .HasColumnType("datetime");
-
-                entity.Property(e => e.LaestNumber).IsUnicode(false);
 
                 entity.Property(e => e.Narration)
                     .HasColumnName("narration")

@@ -11,23 +11,23 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/masters/Taxgroup")]
-    public class TaxgroupController : ControllerBase
+    [Route("api/masters/TaxStructure")]
+    public class TaxStructureController : ControllerBase
     {
-        [HttpPost("RegisterTaxgroup")]
-        public async Task<IActionResult> RegisterTaxgroup([FromBody]TblTaxGroup taxgroup)
+        [HttpPost("RegisterTaxStructure")]
+        public async Task<IActionResult> RegisterTaxStructure([FromBody]TblTaxStructure taxstructure)
         {
             APIResponse apiResponse = null;
-            if (taxgroup == null)
+            if (taxstructure == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-                var taxgrouplist = new TaxgroupHelpers().GetList(taxgroup.TaxGroupCode);
-                if (taxgrouplist.Count() > 0)
-                  return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"productpacking Code {nameof(taxgrouplist)} is already exists ,Please Use Different Code " });
+                //var taxstructurelist = new TaxgroupHelpers().GetList(taxstructure.TaxGroupCode);
+                //if (taxstructurelist.Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"productpacking Code {nameof(taxstructurelist)} is already exists ,Please Use Different Code " });
 
-                var result =new  TaxgroupHelpers().Register(taxgroup);
+                var result = new TaxstructureHelpers().Register(taxstructure);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -47,14 +47,14 @@ namespace CoreERP.Controllers.masters
         }
 
 
-        [HttpGet("GetTaxgroupList")]
-        public async Task<IActionResult> GetTaxgroupList()
+        [HttpGet("GetTaxStructureList")]
+        public async Task<IActionResult> GetTaxStructureList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                var TaxgroupList = new TaxgroupHelpers().GetList();
-                expando.TaxgroupList = TaxgroupList;
+                var TaxStructureList = new TaxstructureHelpers().GetList();
+                expando.TaxStructureList = TaxStructureList;
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -63,18 +63,18 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        
 
-        [HttpPut("UpdateTaxgroup")]
-        public async Task<IActionResult> UpdateTaxgroup([FromBody] TblTaxGroup taxgroup)
+
+        [HttpPut("UpdateTaxStructure")]
+        public async Task<IActionResult> UpdateTaxStructure([FromBody] TblTaxStructure taxstructure)
         {
             APIResponse apiResponse = null;
-            if (taxgroup == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(taxgroup)} cannot be null" });
+            if (taxstructure == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(taxstructure)} cannot be null" });
 
             try
             {
-                var rs = new TaxgroupHelpers().Update(taxgroup);
+                var rs = new TaxstructureHelpers().Update(taxstructure);
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -92,8 +92,8 @@ namespace CoreERP.Controllers.masters
         }
 
 
-        [HttpDelete("DeleteTaxgroup/{code}")]
-        public async Task<IActionResult> DeleteTaxgroup(string code)
+        [HttpDelete("DeleteTaxStructure/{code}")]
+        public async Task<IActionResult> DeleteTaxStructure(string code)
         {
             APIResponse apiResponse = null;
             try
@@ -101,7 +101,7 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = new  TaxgroupHelpers().Delete(code);
+                var rs = new TaxstructureHelpers().Delete(code);
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -118,16 +118,33 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetProductGroups")]
-        [Produces(typeof(List<MaterialGroup>))]
-        public async Task<IActionResult> GetProductGroups()
+        [HttpGet("GetTaxGroups")]
+        [Produces(typeof(List<TblTaxGroup>))]
+        public async Task<IActionResult> GetTaxGroups()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ProductGroupsList =new TaxgroupHelpers().GetProductGroups().Select(pro => new { ID = pro.Code, TEXT = pro.GroupName });
+                expando.TaxGroupsList = new TaxstructureHelpers().GetTaxGroups().Select(taxgrp => new { ID = taxgrp.TaxGroupCode, TEXT = taxgrp.TaxGroupName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetPurchaseAccountss")]
+        [Produces(typeof(List<TblAccountLedger>))]
+        public async Task<IActionResult> GetPurchaseAccountss()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.PSGroupsList =new  TaxstructureHelpers().GetPurchaseAccountss().Select(taxgrp => new { ID = taxgrp.LedgerCode, TEXT = taxgrp.LedgerName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });

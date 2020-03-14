@@ -10,20 +10,20 @@ using System.Data;
 
 namespace CoreERP.Controllers.Reports
 {
-    [Route("api/Reports/EmployeeRegisterReport")]
+    [Route("api/Reports/[controller]")]
     [ApiController]
-    public class EmployeeRegisterReportController : ControllerBase
+    public class DailySalesReportController : ControllerBase
     {
-        [HttpGet("GetEmployeeRegisterReportData")]
-        public async Task<IActionResult> GetEmployeeRegisterReportData(string UserID)
+        [HttpGet("GetDailySalesReportData")]
+        public async Task<IActionResult> GetDailySalesReportData(string companyId, string branchID, string userName)
         {
             try
             {
-                var employeeRegisterList = await Task.FromResult(ReportsHelperClass.GetEmployeeRegisterReportList(UserID));
-                if (employeeRegisterList != null && employeeRegisterList.Count > 0)
+                var DailySalesList = await Task.FromResult(ReportsHelperClass.GetDailySalesReportDataList(companyId, branchID, userName));
+                if (DailySalesList != null && DailySalesList.Count > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.employeeRegisterList = employeeRegisterList;
+                    expdoObj.DailySalesList = DailySalesList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -33,6 +33,5 @@ namespace CoreERP.Controllers.Reports
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-       
     }
 }

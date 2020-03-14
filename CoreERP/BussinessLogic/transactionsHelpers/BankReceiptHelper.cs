@@ -10,19 +10,16 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 {
     public class BankReceiptHelper
     {
-        public List<TblBranch> GetBranches(string branchCode = null)
+        public static List<Branches> GetBranchesList()
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
+                using (Repository<Branches> repo = new Repository<Branches>())
                 {
-                    return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
+                    return repo.Branches.Where(m => m.Active == "Y").ToList();
                 }
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            catch (Exception ex) { throw ex; }
         }
 
         public static List<TblBankReceiptMaster> GetBankReceipts()
@@ -38,13 +35,13 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public static List<TblAccountLedger> GetAccountLedgers(string ledegerCode)
+        public static List<TblAccountLedger> GetAccountLedgers()
         {
             try
             {
                 using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
                 {
-                    return repo.TblAccountLedger.Where(acl => acl.LedgerCode.Contains(ledegerCode)).ToList();
+                    return repo.TblAccountLedger.ToList();
                 }
 
             }
@@ -80,29 +77,11 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
+                
+                string sufix = string.Empty, prefix = string.Empty;
+                var voucherNo = new CommonHelper().GenerateNumber(30, branchCode);
 
-                return new CommonHelper().GenerateNumber(30, branchCode);
-                //string sufix = string.Empty, prefix = string.Empty;
-                //var voucherNo = new CommonHelper().GetSuffixPrefix(33, branchCode, out prefix, out sufix);
-
-                //if (voucherNo != null)
-                //{
-                //    string[] splitString = voucherNo.Split('-');
-                //    voucherNo = splitString[1];
-
-                //    voucherNo = (Convert.ToInt32(voucherNo) + 1).ToString();
-
-                //    voucherNo = prefix + "-" + (Convert.ToInt64(voucherNo) + 1) + "-" + sufix;
-                //}
-                //else
-                //{
-                //    voucherNo = prefix + "-1-" + sufix;
-                //}
-
-
-                //new CommonHelper().UpdateInvoiceNumber(33, branchCode, voucherNo);
-
-                //return voucherNo;
+                return voucherNo;
             }
             catch { throw; }
         }

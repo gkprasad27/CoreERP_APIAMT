@@ -8,22 +8,23 @@ using CoreERP.BussinessLogic.ReportsHelpers;
 using System.Dynamic;
 using System.Data;
 
-namespace CoreERP.Controllers
+namespace CoreERP.Controllers.Reports
 {
-    [Route("api/Reports/MemberMasterReport")]
+    [Route("api/Reports/[controller]")]
     [ApiController]
-    public class MemberMasterReportController : ControllerBase
+    public class IntimateSaleReportController : ControllerBase
     {
-        [HttpGet("GetMemberMasterReportData")]
-        public async Task<IActionResult> GetMemberMasterReportData(string isMobileNumberRequired,string UserID)
+
+        [HttpGet("GetIntimateSaleReportData")]
+        public async Task<IActionResult> GetIntimateSaleReportData(string companyId, string branchID, string ledgerCode, string ledgerName, DateTime fDate, DateTime tDate, string userName)
         {
             try
             {
-                var memberMasterList =await Task.FromResult(ReportsHelperClass.GetMemberMasterReportDataList(isMobileNumberRequired, UserID));
-                if (memberMasterList.Count>0)
+                var IntimateSaleList = await Task.FromResult(ReportsHelperClass.GetIntimateSaleReportDataList(companyId, branchID, ledgerCode,ledgerName,fDate,tDate,userName));
+                if (IntimateSaleList != null && IntimateSaleList.Count > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.memberMasterList = memberMasterList;
+                    expdoObj.l = IntimateSaleList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -34,25 +35,25 @@ namespace CoreERP.Controllers
             }
         }
        
-        [HttpGet("MemberMasterCSVReport")]
-        public async Task<ActionResult> MemberMasterCSVReport(string isMobileNumberRequired, string UserID)
+        [HttpGet("IntimateSaleCSVReport")]
+        public async Task<ActionResult> IntimateSaleCSVReport(string companyId, string branchID, string ledgerCode, string ledgerName, DateTime fDate, DateTime tDate, string userName)
         {
             try
             {
-                var memberMaster =await Task.FromResult(ReportsHelperClass.GetMemberMasterReportDataTable(isMobileNumberRequired, UserID));
+                var IntimateSale = await Task.FromResult(ReportsHelperClass.GetIntimateSaleReportDataTable(companyId, branchID, ledgerCode,ledgerName,fDate,tDate,userName));
                 System.Text.StringBuilder fileContent = new System.Text.StringBuilder();
-                IEnumerable<string> columnNames = memberMaster.Columns.Cast<DataColumn>().
+                IEnumerable<string> columnNames = IntimateSale.Columns.Cast<DataColumn>().
                                                   Select(column => column.ColumnName);
                 fileContent.AppendLine(string.Join(",", columnNames));
 
-                foreach (DataRow row in memberMaster.Rows)
+                foreach (DataRow row in IntimateSale.Rows)
                 {
                     IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
                     fileContent.AppendLine(string.Join(",", fields));
                 }
 
-                byte[] bytes =System.Text.Encoding.ASCII.GetBytes(fileContent.ToString());
-                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "MemberMasterReport.csv");
+                byte[] bytes = System.Text.Encoding.ASCII.GetBytes(fileContent.ToString());
+                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "IntimateSaleReport.csv");
             }
             catch (Exception ex)
             {

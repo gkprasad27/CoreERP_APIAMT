@@ -6,24 +6,24 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CoreERP.BussinessLogic.ReportsHelpers;
 using System.Dynamic;
-using System.Data;
 
 namespace CoreERP.Controllers.Reports
 {
-    [Route("api/Reports/EmployeeRegisterReport")]
+    [Route("api/Reports/[controller]")]
     [ApiController]
-    public class EmployeeRegisterReportController : ControllerBase
+    public class ProductWiseMonthlyPurchaseReportController : ControllerBase
     {
-        [HttpGet("GetEmployeeRegisterReportData")]
-        public async Task<IActionResult> GetEmployeeRegisterReportData(string UserID)
+
+        [HttpGet("GetProductWiseMonthlyPurchaseReportData")]
+        public async Task<IActionResult> GetProductWiseMonthlyPurchaseReportData(string CompanyID,string branchID)
         {
             try
             {
-                var employeeRegisterList = await Task.FromResult(ReportsHelperClass.GetEmployeeRegisterReportList(UserID));
-                if (employeeRegisterList != null && employeeRegisterList.Count > 0)
+                var ProductWiseMonthlyPurchaseList = await Task.FromResult(ReportsHelperClass.GetProductWiseMonthlyPurchaseReportDataList(CompanyID,branchID));
+                if (ProductWiseMonthlyPurchaseList != null && ProductWiseMonthlyPurchaseList.Count > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.employeeRegisterList = employeeRegisterList;
+                    expdoObj.ProductWiseMonthlyPurchaseList = ProductWiseMonthlyPurchaseList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -33,6 +33,5 @@ namespace CoreERP.Controllers.Reports
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-       
     }
 }

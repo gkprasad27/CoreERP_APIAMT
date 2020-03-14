@@ -9,7 +9,7 @@ namespace CoreERP.BussinessLogic.Common
 {
     public class CommonHelper
     {
-        public string GetSuffixPrefix(decimal? voucherTypeid,string branchCode,out string preFix,out string suffix)
+        public decimal? GetSuffixPrefix(decimal? voucherTypeid,string branchCode,out string preFix,out string suffix)
         {
             preFix = string.Empty;
             suffix = string.Empty;
@@ -23,7 +23,7 @@ namespace CoreERP.BussinessLogic.Common
                 preFix = _suffixPrefix?.Prefix;
                 suffix = _suffixPrefix?.Suffix;
 
-               return _suffixPrefix.LaestNumber;
+               return _suffixPrefix.StartIndex;
             }
         }
 
@@ -31,20 +31,20 @@ namespace CoreERP.BussinessLogic.Common
         {
             try
             {
-                string _number = string.Empty, prefix = string.Empty, sufix = string.Empty;
-                _number = GetSuffixPrefix(voucherTypeid, branchCode, out prefix, out sufix);
+                string  prefix = string.Empty, sufix = string.Empty;
+                var _number = GetSuffixPrefix(voucherTypeid, branchCode, out prefix, out sufix);
 
-                if (string.IsNullOrEmpty(_number))
+                if (_number == null)
                 {
-                    _number = prefix + "-1-" + sufix;
+                    _number = 1;
                 }
                 else
                 {
-                    _number = prefix + "-" + (Convert.ToInt64(_number.Split("-")[1])+1) + "-" + sufix;
+                    _number += 1;// prefix + "-" + (_number + 1) + "-" + sufix;
                 }
 
                 UpdateInvoiceNumber(voucherTypeid, branchCode, _number);
-                return _number;
+                return $"{prefix}-{_number}-{sufix}";
             }
             catch (Exception ex)
             {
@@ -52,13 +52,13 @@ namespace CoreERP.BussinessLogic.Common
             }
         }
 
-        public void UpdateInvoiceNumber(decimal? voucherTypeid, string branchCode,string invoieNumber)
+        public void UpdateInvoiceNumber(decimal? voucherTypeid, string branchCode,decimal? invoieNumber)
         {
             using (Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>())
             {
                 var _suffixPrefix = repo.TblSuffixPrefix .Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode).FirstOrDefault();
 
-                _suffixPrefix.LaestNumber = invoieNumber;
+                _suffixPrefix.StartIndex = invoieNumber;
                 repo.TblSuffixPrefix.Update(_suffixPrefix);
                 repo.SaveChanges();
             }
