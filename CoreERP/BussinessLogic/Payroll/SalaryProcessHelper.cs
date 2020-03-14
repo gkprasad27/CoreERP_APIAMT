@@ -47,7 +47,7 @@ namespace CoreERP.BussinessLogic.Payroll
                 command.Parameters.Add(companycode);
                 command.Parameters.Add(empCode);
                 command.Parameters.Add(status);
-                DataTable dt = scopeRepository.ExecuteParamerizedCommand(command);
+                DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
                  return null;
 
             }
