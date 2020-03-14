@@ -10,7 +10,17 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
 {
     public class BrandHelpers
     {
-     
+        public static List<Companies> GetCompaniesList()
+        {
+            try
+            {
+                using (Repository<Companies> repo = new Repository<Companies>())
+                {
+                    return repo.Companies.Where(m => m.Active == "Y").ToList();
+                }
+            }
+            catch (Exception ex) { throw ex; }
+        }
         public static Brand RegisterBrand(Brand brand)
         {
             try

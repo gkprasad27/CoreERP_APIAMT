@@ -5,21 +5,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreERP.Helpers.SharedModels;
 
 namespace CoreERP.BussinessLogic.transactionsHelpers
 {
     public class CashPaymentHelper
     {
-        public static List<Branches> GetBranchesList()
+        public List<TblBranch> GetBranches(string branchCode = null)
         {
             try
             {
-                using (Repository<Branches> repo = new Repository<Branches>())
+                using (Repository<TblBranch> repo = new Repository<TblBranch>())
                 {
-                    return repo.Branches.Where(m => m.Active == "Y").ToList();
+                    return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
                 }
             }
-            catch (Exception ex) { throw ex; }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public static List<TblCashPaymentMaster> GetCashPayments()
@@ -35,13 +39,13 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public static List<TblAccountLedger> GetAccountLedgers()
+        public static List<TblAccountLedger> GetAccountLedgers(string ledegerCode)
         {
             try
             {
                 using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
                 {
-                    return repo.TblAccountLedger.ToList();
+                    return repo.TblAccountLedger.Where(acl=> acl.LedgerCode.Contains(ledegerCode)).ToList();
                 }
 
             }
@@ -78,27 +82,29 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                string sufix = string.Empty, prefix = string.Empty;
-                var voucherNo = new CommonHelper().GetSuffixPrefix(33, branchCode, out prefix, out sufix);
 
-                if (voucherNo != null)
-                {
-                    string[] splitString = voucherNo.Split('-');
-                    voucherNo = splitString[1];
+                return new CommonHelper().GenerateNumber(33, branchCode);
+                //string sufix = string.Empty, prefix = string.Empty;
+                //var voucherNo = new CommonHelper().GetSuffixPrefix(33, branchCode, out prefix, out sufix);
 
-                    voucherNo = (Convert.ToInt32(voucherNo) + 1).ToString();
+                //if (voucherNo != null)
+                //{
+                //    string[] splitString = voucherNo.Split('-');
+                //    voucherNo = splitString[1];
 
-                    voucherNo = prefix + "-" + (Convert.ToInt64(voucherNo) + 1) + "-" + sufix;
-                }
-                else
-                {
-                    voucherNo = prefix + "-1-" + sufix;
-                }
+                //    voucherNo = (Convert.ToInt32(voucherNo) + 1).ToString();
+
+                //    voucherNo = prefix + "-" + (Convert.ToInt64(voucherNo) + 1) + "-" + sufix;
+                //}
+                //else
+                //{
+                //    voucherNo = prefix + "-1-" + sufix;
+                //}
 
 
-                new CommonHelper().UpdateInvoiceNumber(33, branchCode, voucherNo);
+                //new CommonHelper().UpdateInvoiceNumber(33, branchCode, voucherNo);
 
-                return voucherNo;
+                //return voucherNo;
             }
             catch { throw; }
         }
@@ -113,7 +119,6 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     {
                         var voucherType = CashPaymentHelper.GetVoucherType().Where(vt => vt.VoucherTypeName == "Cash Payment").FirstOrDefault();
                         var voucherTypeSub = CashPaymentHelper.GetVoucherType().Where(vt => vt.VoucherTypeName == "Cash").FirstOrDefault();
-                        var accountledger = CashPaymentHelper.GetAccountLedgers().Where(al => al.LedgerCode == "100").FirstOrDefault();
                         TblVoucherMaster voucherMaster = new TblVoucherMaster();
                         voucherMaster.BranchCode = cashPaymentMaster.BranchCode;
                         voucherMaster.BranchName = cashPaymentMaster.BranchName;
@@ -129,19 +134,14 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                         repo.TblVoucherMaster.Add(voucherMaster);
 
                         cashPaymentMaster.CashPaymentVchNo= Convert.ToString(voucherMaster.VoucherMasterId);
-                        cashPaymentMaster.FromLedgerId = accountledger.LedgerId;
-                        cashPaymentMaster.FromLedgerCode = accountledger.LedgerCode;
-                        cashPaymentMaster.FromLedgerName = accountledger.LedgerName;
                         cashPaymentMaster.ServerDate= DateTime.Now;
                         repo.TblCashPaymentMaster.Add(cashPaymentMaster);
                        
 
                         foreach (var item in cashPaymentMaster.CashPaymentDetails)
                         {
-                            var toLedger = CashPaymentHelper.GetAccountLedgers().Where(al => al.LedgerCode == item.ToLedgerCode).FirstOrDefault();
                             item.CashPaymentMasterId = cashPaymentMaster.CashPaymentMasterId;
                             item.CashPaymentDetailsDate = DateTime.Now;
-                            item.ToLedgerId = toLedger.LedgerId;
                             repo.TblCashPaymentDetails.Add(item);
                         }
                         

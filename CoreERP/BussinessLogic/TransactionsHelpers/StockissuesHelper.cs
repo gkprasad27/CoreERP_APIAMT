@@ -53,7 +53,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                var voucherNo = StockissuesHelper.GetStockissuesList().Where(b => b.FromBranchCode == branchCode).OrderByDescending(x => x.IssueNo).FirstOrDefault();
+                var voucherNo = GetStockissuesList().Where(b => b.FromBranchCode == branchCode).OrderByDescending(x => x.IssueNo).FirstOrDefault();
                 if (voucherNo != null)
                 {
                     string[] splitString = voucherNo.IssueNo.Split('/', '-');

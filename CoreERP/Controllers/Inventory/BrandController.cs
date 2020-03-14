@@ -53,6 +53,21 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetBrandCompaniesList")]
+        public async Task<IActionResult> GetBrandCompaniesList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.GetBrandCompaniesList = BrandHelpers.GetCompaniesList().Select(x => new { ID = x.CompanyCode, TEXT = x.Name });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPut("UpdateBrand")]
         [Produces(typeof(Brand))]
         public async Task<IActionResult> UpdateBrand([FromBody] Brand brands)
