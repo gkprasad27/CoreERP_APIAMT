@@ -58,17 +58,29 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
-                searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                //searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
+                //searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
 
                 using (Repository<TblInvoiceMaster> repo=new Repository<TblInvoiceMaster>())
                 {
-                   return  repo.TblInvoiceMaster.AsEnumerable()
-                              .Where(inv=> Convert.ToDateTime(inv.InvoiceDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                                       && Convert.ToDateTime(inv.InvoiceDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-                                       && inv.InvoiceNo == (searchCriteria.InvoiceNo ?? inv.InvoiceNo)
+                    List<TblInvoiceMaster> _invoiceMasterList = null;
+
+
+                    _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
+                              .Where(inv=>
+                                         DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                       && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                      
+                                       &&  !inv.IsSalesReturned.Value
                                  )
                                .ToList();
+
+                    if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
+                        _invoiceMasterList = _invoiceMasterList.Where(x=> x.InvoiceNo == searchCriteria.InvoiceNo).ToList();
+
+                    // && inv.InvoiceNo == (searchCriteria.InvoiceNo ?? inv.InvoiceNo)
+
+                    return _invoiceMasterList;
                 }
             }
             catch(Exception ex)
@@ -404,17 +416,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             {
                                 //Add IGST record
                                 var _accAL = GetAccountLedgers("243").ToArray().FirstOrDefault();
-                                AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalIgst,false);
+                                AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalAmount, false);
                                 
                             }
                             else
                             {
                                 // sgst
                                 var _accAL = GetAccountLedgers("240").ToArray().FirstOrDefault();
-                                AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalIgst,false);
+                                AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalAmount, false);
                                 // sgst
                                  _accAL = GetAccountLedgers("241").ToArray().FirstOrDefault();
-                                AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalIgst,false);
+                                AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalAmount,false);
                             }
 
                             dbTransaction.Commit();

@@ -10,6 +10,7 @@ using CoreERP.Models;
 using CoreERP.DataAccess;
 using System.Dynamic;
 using CoreERP.BussinessLogic.SalesHelper;
+using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers
 {
@@ -95,6 +96,31 @@ namespace CoreERP.Controllers
                 }
 
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = message });
+            }
+        }
+
+        [HttpPost("RegisterPurchase")]
+        public async Task<IActionResult> RegisterPurchase([FromBody]JObject objData)
+        {
+
+            if (objData == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var _purchaseInvoiceHdr = objData["purchaseHdr"].ToObject<TblPurchaseInvoice>();
+                var _purchaseInvoiceDetail = objData["purchaseDetail"].ToObject<TblPurchaseInvoiceDetail[]>();
+
+                var result = new PurchasesHelper().AddPurchaseRecords(_purchaseInvoiceHdr, _purchaseInvoiceDetail.ToList());
+                if (result)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _purchaseInvoiceHdr });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
     }

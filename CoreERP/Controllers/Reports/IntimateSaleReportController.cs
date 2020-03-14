@@ -34,20 +34,7 @@ namespace CoreERP.Controllers.Reports
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpGet("IntimateSaleExcelReport")]
-        public async Task<ActionResult> IntimateSaleExcelReport(string companyId, string branchID, string ledgerCode, string ledgerName, DateTime fDate, DateTime tDate, string userName)
-        {
-            try
-            {
-                var IntimateSale = await Task.FromResult(ReportsHelperClass.GetIntimateSaleReportDataTable(companyId, branchID, ledgerCode,ledgerName,fDate,tDate,userName));
-                var fileContent = ReportsHelperClass.getExcelFromDatatable(IntimateSale,"Intimate Sale Report");
-                return File(fileContents:fileContent, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: "IntimateSaleReport.xlsx");
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+       
         [HttpGet("IntimateSaleCSVReport")]
         public async Task<ActionResult> IntimateSaleCSVReport(string companyId, string branchID, string ledgerCode, string ledgerName, DateTime fDate, DateTime tDate, string userName)
         {

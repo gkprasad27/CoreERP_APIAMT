@@ -7,7 +7,7 @@ using System.Data.Common;
 using CoreERP.DataAccess;
 using System.Text;
 using System.IO;
-using OfficeOpenXml;
+//using OfficeOpenXml;
 using CoreERP.Models;
 
 namespace CoreERP.BussinessLogic.ReportsHelpers
@@ -856,65 +856,6 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         #endregion
 
         #region CommonMethods
-        public static byte[] getExcelFromDatatable(DataTable excelReport,string ReportName)
-        {
-            using (var ms = new MemoryStream())
-            {
-                // create an empty spreadsheet
-                using (var p = new ExcelPackage())
-                {
-                    // add a worksheet to the spreadsheet
-                    ExcelWorksheet ws = p.Workbook.Worksheets.Add("Report");
-
-                    var row = 1;
-                    var col = 1;
-
-                    var rngHeader = ws.Cells[2,1,2, excelReport.Columns.Count];
-                    rngHeader.Merge = true;
-                    rngHeader.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                    rngHeader.Value = ReportName;
-                    rngHeader.Style.Font.Bold = true;
-
-                    row = 4;
-                    col = 0;
-                    foreach (DataColumn dc in excelReport.Columns)
-                    {
-                        col++;
-                        ws.SetValue(row, col, dc.ColumnName);
-                        var rngCol = ws.Cells[row, col];
-                        rngCol.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                        rngCol.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                        rngCol.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                        rngCol.Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                        rngCol.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                        rngCol.Style.Font.Bold = true;
-                    }
-
-                    // Insert the DataTable rows to the XLS file
-                    foreach (DataRow r in excelReport.Rows)
-                    {
-                        row++;
-                        col = 0;
-                        foreach (DataColumn dc in excelReport.Columns)
-                        {
-                            col++;
-                            ws.SetValue(row, col, r[dc].ToString());
-                            var rngCol = ws.Cells[row, col];
-                            rngCol.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                            rngCol.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                            rngCol.Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                            rngCol.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
-                        }
-                    }
-                    ws.Cells.AutoFitColumns();
-
-                    p.SaveAs(ms);
-                    ms.Seek(0, SeekOrigin.Begin);
-                }
-
-                return ms.ToArray();
-            }
-        }
         public static DataSet getDataFromDataBase(List<parametersClass> dbParametersList, string procedureName)
         {
             DataSet ds = null;

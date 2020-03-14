@@ -34,20 +34,7 @@ namespace CoreERP.Controllers.Reports
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpGet("StockLedgerExcelReport")]
-        public async Task<ActionResult> StockLedgerExcelReport(string branchID, string productCode)
-        {
-            try
-            {
-                var StockLedger = await Task.FromResult(ReportsHelperClass.GetStockLedgerReportDataTable(branchID, productCode));
-                var fileContent = ReportsHelperClass.getExcelFromDatatable(StockLedger, "Sales GST Report");
-                return File(fileContents: fileContent, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: "StockLedgerReport.xlsx");
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+       
         [HttpGet("StockLedgerCSVReport")]
         public async Task<ActionResult> StockLedgerCSVReport(string branchID, string productCode)
         {

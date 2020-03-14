@@ -74,7 +74,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GeSelectedState/{stateCode}")]
+        [HttpGet(" /{stateCode}")]
         public async Task<IActionResult> GeStateList(string stateCode)
         {
             if (string.IsNullOrEmpty(stateCode))
@@ -93,23 +93,23 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GeTaxstructureByTaxStructId/{taxStructure}")]
-        public async Task<IActionResult> GeTaxstructureByTaxStructId(decimal taxStructure)
-        {
+        //[HttpGet("GeTaxstructureByTaxStructId/{taxStructure}")]
+        //public async Task<IActionResult> GeTaxstructureByTaxStructId(decimal taxStructure)
+        //{
             
-            try
-            {
-                string errorMessage = string.Empty;
+        //    try
+        //    {
+        //        string errorMessage = string.Empty;
 
-                dynamic expando = new ExpandoObject();
-                expando.TaxStructure = new InvoiceHelper().GetTaxStructureByTaxStuctId(taxStructure);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //        dynamic expando = new ExpandoObject();
+        //        expando.TaxStructure = new InvoiceHelper().GetTaxStructureByTaxStuctId(taxStructure);
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
 
         [HttpGet("GetBillingList/{branchCode}")]
@@ -278,8 +278,8 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpPost("GetInvoiceList")]
-        public async Task<IActionResult> GetInvoiceList([FromBody]SearchCriteria searchCriteria)
+        [HttpPost("GetInvoiceList/{branchCode}")]
+        public async Task<IActionResult> GetInvoiceList(string branchCode,[FromBody]SearchCriteria searchCriteria)
         {
 
             if (searchCriteria == null)

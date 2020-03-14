@@ -33,44 +33,6 @@ namespace CoreERP.Controllers.Reports
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpGet("EmployeeRegisterExcelReport")]
-        public async Task<IActionResult> EmployeeRegisterExcelReport(string UserID)
-        {
-            try
-            {
-                var excelReport = await Task.FromResult(ReportsHelperClass.GetEmployeeRegisterReportDataTable(UserID));
-                var fileContent = ReportsHelperClass.getExcelFromDatatable(excelReport,"Employee Register Report");
-                return File(fileContents: fileContent, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: "EmployeeRegisterReport.xlsx");
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-        [HttpGet("EmployeeRegisterCSVReport")]
-        public async Task<ActionResult> EmployeeRegisterCSVReport(string UserID)
-        {
-            try
-            {
-                var EmployeeRegister = await Task.FromResult(ReportsHelperClass.GetEmployeeRegisterReportDataTable(UserID));
-                System.Text.StringBuilder fileContent = new System.Text.StringBuilder();
-                IEnumerable<string> columnNames = EmployeeRegister.Columns.Cast<DataColumn>().
-                                                  Select(column => column.ColumnName);
-                fileContent.AppendLine(string.Join(",", columnNames));
-
-                foreach (DataRow row in EmployeeRegister.Rows)
-                {
-                    IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
-                    fileContent.AppendLine(string.Join(",", fields));
-                }
-
-                byte[] bytes = System.Text.Encoding.ASCII.GetBytes(fileContent.ToString());
-                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "EmployeeRegisterReport.csv");
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+       
     }
 }

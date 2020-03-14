@@ -33,20 +33,7 @@ namespace CoreERP.Controllers.Reports
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpGet("StockVerificationExcelReport")]
-        public async Task<ActionResult> StockVerificationExcelReport(string companyId, string branchID, string userName)
-        {
-            try
-            {
-                var StockVerification = await Task.FromResult(ReportsHelperClass.GetStockVerificationReportDataTable(companyId, branchID, userName));
-                var fileContent = ReportsHelperClass.getExcelFromDatatable(StockVerification, "Sales GST Report");
-                return File(fileContents: fileContent, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: "StockVerificationReport.xlsx");
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+       
         [HttpGet("StockVerificationCSVReport")]
         public async Task<ActionResult> StockVerificationCSVReport(string companyId, string branchID, string userName)
         {

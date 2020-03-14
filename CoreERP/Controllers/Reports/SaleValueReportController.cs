@@ -35,20 +35,7 @@ namespace CoreERP.Controllers.Reports
             }
         }
 
-        [HttpGet("SaleValueExcelReport")]
-        public async Task<ActionResult> SaleValueExcelReport(string UserID)
-        {
-            try
-            {
-                var SaleValue =await Task.FromResult(ReportsHelperClass.GetSaleValueReportDataTable(UserID));
-                var fileContent = ReportsHelperClass.getExcelFromDatatable(SaleValue,"Sale Value Report");
-                return File(fileContents: fileContent, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: "SaleValueReport.xlsx");
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        
         [HttpGet("SaleValueCSVReport")]
         public async Task<ActionResult> SaleValueCSVReport(string UserID)
         {

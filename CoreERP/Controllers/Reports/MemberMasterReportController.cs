@@ -33,20 +33,7 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpGet("MemberMasterExcelReport")]
-        public async Task<ActionResult> MemberMasterExcelReport(string isMobileNumberRequired, string UserID)
-        {
-            try
-            {
-                var memberMaster =await Task.FromResult(ReportsHelperClass.GetMemberMasterReportDataTable(isMobileNumberRequired, UserID));
-                var fileContent = ReportsHelperClass.getExcelFromDatatable(memberMaster,"Member Master Report");
-                return File(fileContents: fileContent, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: "MemberMasterReport.xlsx");
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+       
         [HttpGet("MemberMasterCSVReport")]
         public async Task<ActionResult> MemberMasterCSVReport(string isMobileNumberRequired, string UserID)
         {

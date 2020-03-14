@@ -34,20 +34,7 @@ namespace CoreERP.Controllers.Reports
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpGet("VehicalExcelReport")]
-        public async Task<ActionResult> VehicalExcelReport(string vehicleRegNo, DateTime fromDate, DateTime toDate)
-        {
-            try
-            {
-                var Vehical =await Task.FromResult(ReportsHelperClass.GetVehicalReportDataTable(vehicleRegNo,fromDate,toDate));
-                var fileContent = ReportsHelperClass.getExcelFromDatatable(Vehical,"Vehical Report");
-                return File(fileContents: fileContent, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: "VehicalReport.xlsx");
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+       
         [HttpGet("VehicalCSVReport")]
         public async Task<ActionResult> VehicalCSVReport(string vehicleRegNo, DateTime fromDate, DateTime toDate)
         {

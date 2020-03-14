@@ -33,20 +33,7 @@ namespace CoreERP.Controllers.Reports
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpGet("SalesGSTExcelReport")]
-        public async Task<ActionResult> SalesGSTExcelReport(string companyId, string branchID, string userName)
-        {
-            try
-            {
-                var SalesGST = await Task.FromResult(ReportsHelperClass.GetSalesGSTReportDataTable(companyId,branchID,userName));
-                var fileContent = ReportsHelperClass.getExcelFromDatatable(SalesGST,"Sales GST Report");
-                return File(fileContents: fileContent, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: "SalesGSTReport.xlsx");
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+       
         [HttpGet("SalesGSTCSVReport")]
         public async Task<ActionResult> SalesGSTCSVReport(string companyId, string branchID, string userName)
         {

@@ -77,26 +77,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                string sufix = string.Empty, prefix = string.Empty;
-                var voucherNo = new CommonHelper().GetSuffixPrefix(34, branchCode, out prefix, out sufix);
-
-                if (voucherNo != null)
-                {
-                    string[] splitString = voucherNo.Split('-');
-                    voucherNo = splitString[1];
-
-                    voucherNo = (Convert.ToInt32(voucherNo) + 1).ToString();
-
-                    voucherNo = prefix + "-" + (Convert.ToInt64(voucherNo) + 1) + "-" + sufix;
-                }
-                else
-                {
-                    voucherNo = prefix + "-1-" + sufix;
-                }
-
-
-                new CommonHelper().UpdateInvoiceNumber(34, branchCode, voucherNo);
-
+                var voucherNo = new CommonHelper().GenerateNumber(34, branchCode);
                 return voucherNo;
             }
             catch { throw; }
