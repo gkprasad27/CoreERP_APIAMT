@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CoreERP.Controllers.Sales
 {
-    [Route("api/[controller]")]
+    [Route("api/transaction/SalesReturn")]
     [ApiController]
     public class SalesReturnController : ControllerBase
     {

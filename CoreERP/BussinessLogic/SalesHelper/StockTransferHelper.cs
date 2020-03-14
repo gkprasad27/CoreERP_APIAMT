@@ -142,14 +142,18 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-
+        public TblBranch GetBranch(string branchCode)
+        {
+            return new InvoiceHelper().GetBranches(branchCode).FirstOrDefault();
+        }
 
         #region Register StockTransfer
         public bool AddStockTransfer(TblStockTransferMaster stockTransferMaster,List<TblStockTransferDetail> stockTransferDetails)
         {
             try
             {
-                using(ERPContext context=new ERPContext())
+               
+                using (ERPContext context=new ERPContext())
                 {
                     using(var dbTransaction = context.Database.BeginTransaction())
                     {
@@ -183,9 +187,11 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
+                stockTransferMaster.FromBranchName = GetBranch(stockTransferMaster.FromBranchCode)?.BranchName;
+                stockTransferMaster.ToBranchName = GetBranch(stockTransferMaster.ToBranchCode)?.BranchName;
                 context.TblStockTransferMaster.Add(stockTransferMaster);
-                if (context.SaveChanges() > 0) 
-                return stockTransferMaster;
+                if (context.SaveChanges() > 0)
+                    return stockTransferMaster;
 
                 return null;
             }
@@ -198,9 +204,10 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-
+                stockTransferDetail.StockTransferDetailId = null;
                 stockTransferDetail.StockTransferMasterId = stockTransferMaster.StockTransferMasterId;
                 stockTransferDetail.StockTransferDetailsDate = stockTransferMaster.StockTransferDate;
+                context.TblStockTransferDetail.Add(stockTransferDetail);
                 if (context.SaveChanges() > 0)
                     return stockTransferDetail;
 
@@ -211,8 +218,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-     
-        //  public TblStockInformation AddStockInformation(ERPContext context,TblStockTransferDetail stockTransferDetail,TblStockshortMaster stockTransfertMaster,string branchCode, bool isFromBranch, decimal? voucherTypeID=29)
         private TblStockInformation AddStockInformation(ERPContext context, TblStockTransferDetail stockTransferDetail, TblStockTransferMaster stockTransfertMaster, string branchCode, bool isFromBranch, decimal? voucherTypeID = 29)
         {
             try
@@ -234,6 +239,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 else
                     stockInformation.InwardQty = stockTransferDetail.FQty > 0 ? stockTransferDetail.FQty : stockTransferDetail.Qty;
 
+                stockInformation.OutwardQty = stockInformation.OutwardQty ?? 0;
+                stockInformation.InwardQty = stockInformation.InwardQty ?? 0;
+
                 context.TblStockInformation.Add(stockInformation);
                 if (context.SaveChanges() > 0)
                     return stockInformation;
@@ -245,7 +253,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-
         #endregion
 
     }

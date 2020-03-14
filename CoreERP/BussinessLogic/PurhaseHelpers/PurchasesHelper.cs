@@ -3,6 +3,7 @@ using CoreERP.BussinessLogic.GenerlLedger;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.BussinessLogic.SalesHelper;
 using CoreERP.DataAccess;
+using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -25,14 +26,13 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-
-        public List<TblStateWiseGst> GetStateWiseGsts(string stateId = null)
+        public List<TblStateWiseGst> GetStateWiseGsts(string stateCode = null)
         {
             try
             {
                 using (Repository<TblStateWiseGst> repo = new Repository<TblStateWiseGst>())
                 {
-                    return repo.TblStateWiseGst.Where(s => s.StateCode == (stateId ?? s.StateCode)).ToList();
+                    return repo.TblStateWiseGst.Where(s => s.StateCode == (stateCode ?? s.StateCode)).ToList();
                 }
             }
             catch (Exception ex)
@@ -40,7 +40,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-
         public TblPurchaseInvoiceDetail GetProductDeatilsSectionRcd(string branchCode, string productCode)
         {
             try
@@ -87,7 +86,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-
         public List<TblBranch> GetBranches(string branchCode = null)
         {
             try
@@ -110,7 +108,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-
         public List<TblProduct> GetProducts(string productCode)
         {
             try
@@ -159,7 +156,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-      
         public bool AddPurchaseRecords(TblPurchaseInvoice purchaseInvoice,List<TblPurchaseInvoiceDetail> purchaseInvoiceDetails)
         {
             try
@@ -260,7 +256,6 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-     
         private TblVoucherMaster AddVoucherMaster(ERPContext context, TblPurchaseInvoice purchaseinvoice, TblBranch branch, decimal? voucherTypeId, string paymentType)
         {
             try
@@ -467,6 +462,47 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 //  }
             }
             catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
+
+        #region  Search Purchase Records in Master Table
+        public List<TblPurchaseInvoice> GetPurchaseInvoices(SearchCriteria searchCriteria)
+        {
+            try
+            {
+                using(Repository<TblPurchaseInvoice> repo=new Repository<TblPurchaseInvoice>())
+                {
+                    List<TblPurchaseInvoice> _purchaseList = null;
+                    _purchaseList= repo.TblPurchaseInvoice.AsEnumerable()
+                                       .Where(inv => DateTime.Parse(inv.PurchaseInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.PurchaseInvDate).Value.ToShortDateString())
+                                                 && DateTime.Parse(inv.PurchaseInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.PurchaseInvDate).Value.ToShortDateString())
+                                                 && !inv.IsPurchaseReturned.Value)
+                        .ToList();
+
+                    if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
+                        _purchaseList = _purchaseList.Where(x=> x.PurchaseInvNo == searchCriteria.InvoiceNo).ToList();
+
+                    return _purchaseList;
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public  List<TblPurchaseInvoiceDetail> GetPurchaseInvoiceDetails(string purchaseNo)
+        {
+            try
+            {
+                using (Repository<TblPurchaseInvoice> repo = new Repository<TblPurchaseInvoice>())
+                {
+                   return repo.TblPurchaseInvoiceDetail.Where(x=> x.PurchaseNo == purchaseNo).ToList();
+                }
+            }
+            catch(Exception ex)
             {
                 throw ex;
             }
