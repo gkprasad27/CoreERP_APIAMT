@@ -15,18 +15,16 @@ namespace CoreERP.Controllers.Reports
     public class SalesAnalysisByBranchController : ControllerBase
     {
         [HttpGet("GetSalesAnalysisByBranchrReportData")]
-        public async Task<IActionResult> GetSalesAnalysisByBranchrReportData(string branchID, string productCode)
+        public async Task<IActionResult> GetSalesAnalysisByBranchrReportData(string branchCode, DateTime fromDate, DateTime toDate,string userID)
         {
             try
             {
-                var SalesAnalysisByBranchrList = await Task.FromResult(ReportsHelperClass.GetSalesAnalysisByBranchReportDataList(branchID));
-                if (SalesAnalysisByBranchrList != null && SalesAnalysisByBranchrList.Count > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.SalesAnalysisByBranchrList = SalesAnalysisByBranchrList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                var serviceResult = await Task.FromResult(ReportsHelperClass.GetSalesAnalysisByBranchReportDataList(branchCode,fromDate,toDate,userID));
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.SalesAnalysisByBranchrList = serviceResult.Item1;
+                expdoObj.headerList = serviceResult.Item2;
+                expdoObj.footerList = serviceResult.Item3;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
             }
             catch (Exception ex)
             {

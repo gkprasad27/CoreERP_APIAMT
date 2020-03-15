@@ -15,18 +15,16 @@ namespace CoreERP.Controllers.Reports
     {
 
         [HttpGet("GetProductWiseMonthlyPurchaseReportData")]
-        public async Task<IActionResult> GetProductWiseMonthlyPurchaseReportData(string CompanyID,string branchID)
+        public async Task<IActionResult> GetProductWiseMonthlyPurchaseReportData(string userID, DateTime fromDate, DateTime toDate)
         {
             try
             {
-                var ProductWiseMonthlyPurchaseList = await Task.FromResult(ReportsHelperClass.GetProductWiseMonthlyPurchaseReportDataList(CompanyID,branchID));
-                if (ProductWiseMonthlyPurchaseList != null && ProductWiseMonthlyPurchaseList.Count > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.ProductWiseMonthlyPurchaseList = ProductWiseMonthlyPurchaseList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                var serviceResult = await Task.FromResult(ReportsHelperClass.GetProductWiseMonthlyPurchaseReportDataList(userID,fromDate,toDate));
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.ProductWiseMonthlyPurchaseList = serviceResult.Item1;
+                expdoObj.headerList = serviceResult.Item2;
+                expdoObj.footerList = serviceResult.Item3;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
             }
             catch (Exception ex)
             {
