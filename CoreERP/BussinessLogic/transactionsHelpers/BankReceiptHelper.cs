@@ -10,13 +10,13 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 {
     public class BankReceiptHelper
     {
-        public static List<Branches> GetBranchesList()
+        public List<TblBranch> GetBranchesList()
         {
             try
             {
-                using (Repository<Branches> repo = new Repository<Branches>())
+                using (Repository<TblBranch> repo = new Repository<TblBranch>())
                 {
-                    return repo.Branches.Where(m => m.Active == "Y").ToList();
+                    return repo.TblBranch.ToList();
                 }
             }
             catch (Exception ex) { throw ex; }
@@ -35,7 +35,20 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public static List<TblAccountLedger> GetAccountLedgers()
+        public static List<TblAccountLedger> GetAccountLedgers(string ledegerCode)
+        {
+            try
+            {
+                using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
+                {
+                    return repo.TblAccountLedger.Where(acl=> acl.LedgerCode.Contains(ledegerCode)).ToList();
+                }
+
+            }
+            catch { throw; }
+        }
+
+        public List<TblAccountLedger> GetAccountLedgerList()
         {
             try
             {
@@ -43,7 +56,6 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 {
                     return repo.TblAccountLedger.ToList();
                 }
-
             }
             catch { throw; }
         }

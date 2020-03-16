@@ -20,7 +20,7 @@ namespace CoreERP.Controllers.Transactions
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = new CashPaymentHelper().GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                expando.BranchesList = new CashPaymentHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -55,6 +55,21 @@ namespace CoreERP.Controllers.Transactions
             {
                 dynamic expando = new ExpandoObject();
                 expando.AccountLedgerList = CashPaymentHelper.GetAccountLedgers(ledegerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetAccountLedger")]
+        public async Task<IActionResult> GetAccountLedgerList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.AccountLedgerList = new CashPaymentHelper().GetAccountLedgerList().Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

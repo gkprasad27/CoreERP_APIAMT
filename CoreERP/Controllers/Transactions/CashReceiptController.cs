@@ -20,7 +20,7 @@ namespace CoreERP.Controllers.Transactions
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = new CashReceiptHelper().GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                expando.BranchesList = new CashReceiptHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
