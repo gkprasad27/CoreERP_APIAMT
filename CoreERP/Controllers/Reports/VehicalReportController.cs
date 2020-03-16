@@ -16,44 +16,16 @@ namespace CoreERP.Controllers.Reports
     {
 
         [HttpGet("GetVehicalReportData")]
-        public async Task<IActionResult> GetVehicalReportData(string vehicleRegNo, DateTime fromDate, DateTime toDate)
+        public async Task<IActionResult> GetVehicalReportData(string userID,string vehicleRegNo, DateTime fromDate, DateTime toDate)
         {
             try
             {
-                var VehicalList =await Task.FromResult(ReportsHelperClass.GetVehicalReportDataList(vehicleRegNo,fromDate,toDate));
-                if (VehicalList != null && VehicalList.Count > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.VehicalList = VehicalList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-       
-        [HttpGet("VehicalCSVReport")]
-        public async Task<ActionResult> VehicalCSVReport(string vehicleRegNo, DateTime fromDate, DateTime toDate)
-        {
-            try
-            {
-                var Vehical =await Task.FromResult(ReportsHelperClass.GetVehicalReportDataTable(vehicleRegNo,fromDate,toDate));
-                System.Text.StringBuilder fileContent = new System.Text.StringBuilder();
-                IEnumerable<string> columnNames = Vehical.Columns.Cast<DataColumn>().
-                                                  Select(column => column.ColumnName);
-                fileContent.AppendLine(string.Join(",", columnNames));
-
-                foreach (DataRow row in Vehical.Rows)
-                {
-                    IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
-                    fileContent.AppendLine(string.Join(",", fields));
-                }
-
-                byte[] bytes = System.Text.Encoding.ASCII.GetBytes(fileContent.ToString());
-                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "VehicalReport.csv");
+                var serviceResult = await Task.FromResult(ReportsHelperClass.GetVehicalReportDataList(userID,vehicleRegNo, fromDate,toDate));
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.VehicalList = serviceResult.Item1;
+                expdoObj.headerList = serviceResult.Item2;
+                expdoObj.footerList = serviceResult.Item3;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
             }
             catch (Exception ex)
             {
