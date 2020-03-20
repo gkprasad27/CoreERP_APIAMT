@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using CoreERP.BussinessLogic.transactionsHelpers;
 using Microsoft.AspNetCore.Mvc;
 using CoreERP.Models;
+using CoreERP.Helpers.SharedModels;
 using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers.Transactions
 {
     [ApiController]
-    [Route("api/transactions/CashReceipt")]
-    public class CashReceiptController : Controller
+    [Route("api/transactions/JournalVoucher")]
+    public class JournalVoucherController : Controller
     {
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
@@ -20,7 +21,7 @@ namespace CoreERP.Controllers.Transactions
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = new CashReceiptHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                expando.BranchesList = new JournalVoucherHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -29,20 +30,14 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
-        [HttpGet("GetCashReceiptList")]
-        public async Task<IActionResult> GetCashReceiptList()
+        [HttpGet("GetAccountLedger")]
+        public async Task<IActionResult> GetAccountLedgerList()
         {
             try
             {
-                var cashReceiptList = CashReceiptHelper.GetCashReceipts();
-                if (cashReceiptList.Count > 0)
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.CashReceiptList = cashReceiptList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expando = new ExpandoObject();
+                expando.AccountLedgerList = new JournalVoucherHelper().GetAccountLedgerList().Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
@@ -59,7 +54,7 @@ namespace CoreERP.Controllers.Transactions
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = new CashReceiptHelper().GetVoucherNo(branchCode);
+                expando.BranchesList = new JournalVoucherHelper().GetVoucherNo(branchCode);
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -74,32 +69,8 @@ namespace CoreERP.Controllers.Transactions
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.AccountLedgerList = CashReceiptHelper.GetAccountLedgers(ledegerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                expando.AccountLedgerList = JournalVoucherHelper.GetAccountLedgers(ledegerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-        [HttpPost("RegisterCashReceipt")]
-        public async Task<IActionResult> RegisterCashReceipt([FromBody]JObject objData)
-        {
-
-            if (objData == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
-            {
-                var _cashreceiptHdr = objData["CashreceiptHdr"].ToObject<TblCashReceiptMaster>();
-                var _cashreceiptDtl = objData["CashreceiptDetail"].ToObject<TblCashReceiptDetails[]>();
-
-                var result = new CashReceiptHelper().RegisterCashReceipt(_cashreceiptHdr, _cashreceiptDtl.ToList());
-                if (result)
-                {
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _cashreceiptHdr });
-                }
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }
             catch (Exception ex)
             {

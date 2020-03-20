@@ -7,6 +7,7 @@ using CoreERP.BussinessLogic.transactionsHelpers;
 using Microsoft.AspNetCore.Mvc;
 using CoreERP.Models;
 using CoreERP.Helpers.SharedModels;
+using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers.Transactions
 {
@@ -79,19 +80,23 @@ namespace CoreERP.Controllers.Transactions
         }
 
         [HttpPost("RegisterCashPayment")]
-        public async Task<IActionResult> RegisterCashPayment([FromBody]TblCashPaymentMaster cashPayment)
+        public async Task<IActionResult> RegisterCashPayment([FromBody]JObject objData)
         {
 
-            if (cashPayment == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(cashPayment)} cannot be null" });
+            if (objData == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
             try
             {
-                TblCashPaymentMaster result = CashPaymentHelper.RegisterCashPayment(cashPayment);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                var _cashpaymentHdr = objData["CashpaymentHdr"].ToObject<TblCashPaymentMaster>();
+                var _cashpaymentDtl = objData["CashpaymentDetail"].ToObject<TblCashPaymentDetails[]>();
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
+                var result = new CashPaymentHelper().RegisterCashPayment(_cashpaymentHdr, _cashpaymentDtl.ToList());
+                if (result)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _cashpaymentHdr });
+                }
 
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }
             catch (Exception ex)
             {

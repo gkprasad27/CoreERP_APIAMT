@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CoreERP.BussinessLogic.transactionsHelpers;
 using Microsoft.AspNetCore.Mvc;
 using CoreERP.Models;
-
+using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers.Transactions
 {
@@ -91,6 +91,30 @@ namespace CoreERP.Controllers.Transactions
                 dynamic expando = new ExpandoObject();
                 expando.AccountLedgerList = new BankReceiptHelper().GetAccountLedgerList().Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        [HttpPost("RegisterBankReceipt")]
+        public async Task<IActionResult> RegisterBankReceipt([FromBody]JObject objData)
+        {
+
+            if (objData == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var _bankreceiptHdr = objData["BankreceiptHdr"].ToObject<TblBankReceiptMaster>();
+                var _bankreceiptDtl = objData["BankreceiptDetail"].ToObject<TblBankReceiptDetails[]>();
+
+                var result = new BankReceiptHelper().RegisterBankReceipt(_bankreceiptHdr, _bankreceiptDtl.ToList());
+                if (result)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _bankreceiptHdr });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }
             catch (Exception ex)
             {
