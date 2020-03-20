@@ -15,44 +15,16 @@ namespace CoreERP.Controllers.Reports
     public class StockVerificationReportController : ControllerBase
     {
         [HttpGet("GetStockVerificationReportData")]
-        public async Task<IActionResult> GetStockVerificationReportData(string companyId, string branchID, string userName)
+        public async Task<IActionResult> GetStockVerificationReportData(string branchCode, string UserID, DateTime fromDate, DateTime toDate)
         {
             try
             {
-                var StockVerificationList = await Task.FromResult(ReportsHelperClass.GetStockVerificationReportDataList(companyId, branchID, userName));
-                if (StockVerificationList != null && StockVerificationList.Count > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.StockVerificationList = StockVerificationList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-       
-        [HttpGet("StockVerificationCSVReport")]
-        public async Task<ActionResult> StockVerificationCSVReport(string companyId, string branchID, string userName)
-        {
-            try
-            {
-                var StockVerification = await Task.FromResult(ReportsHelperClass.GetStockVerificationReportDataTable(companyId, branchID, userName));
-                System.Text.StringBuilder fileContent = new System.Text.StringBuilder();
-                IEnumerable<string> columnNames = StockVerification.Columns.Cast<DataColumn>().
-                                                  Select(column => column.ColumnName);
-                fileContent.AppendLine(string.Join(",", columnNames));
-
-                foreach (DataRow row in StockVerification.Rows)
-                {
-                    IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
-                    fileContent.AppendLine(string.Join(",", fields));
-                }
-
-                byte[] bytes = System.Text.Encoding.ASCII.GetBytes(fileContent.ToString());
-                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "StockVerificationReport.csv");
+                var serviceResult = await Task.FromResult(ReportsHelperClass.GetStockVerificationReportDataList(branchCode,UserID,fromDate,toDate));
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.StockVerificationList = serviceResult.Item1;
+                expdoObj.headerList = serviceResult.Item2;
+                expdoObj.footerList = serviceResult.Item3;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
             }
             catch (Exception ex)
             {

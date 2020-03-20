@@ -16,45 +16,35 @@ namespace CoreERP.Controllers.Reports
     {
 
         [HttpGet("GetSaleValueReportData")]
-        public async Task<IActionResult> GetSaleValueReportData(string UserID)
+        public async Task<IActionResult> GetSaleValueReportData(string userID, string branchCode, DateTime fromDate, DateTime toDate)
         {
             try
             {
-                var savleValueList =await Task.FromResult(ReportsHelperClass.GetSaleValueReportDataList(UserID));
-                if (savleValueList != null && savleValueList.Count > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.savleValueList = savleValueList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                var serviceResult = await Task.FromResult(ReportsHelperClass.GetSaleValueReportDataList(userID, branchCode,fromDate,toDate));
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.savleValueList = serviceResult.Item1;
+                expdoObj.headerList = serviceResult.Item2;
+                expdoObj.footerList = serviceResult.Item3;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
-        
-        [HttpGet("SaleValueCSVReport")]
-        public async Task<ActionResult> SaleValueCSVReport(string UserID)
+        [HttpGet("GetReportBranchList")]
+        public async Task<IActionResult> GetReportBranchList()
         {
             try
             {
-                var SaleValue =await Task.FromResult(ReportsHelperClass.GetSaleValueReportDataTable(UserID));
-                System.Text.StringBuilder fileContent = new System.Text.StringBuilder();
-                IEnumerable<string> columnNames = SaleValue.Columns.Cast<DataColumn>().
-                                                  Select(column => column.ColumnName);
-                fileContent.AppendLine(string.Join(",", columnNames));
-
-                foreach (DataRow row in SaleValue.Rows)
+                var reportBranchesList = await Task.FromResult(ReportsHelperClass.GetReportBranches());
+                if (reportBranchesList != null && reportBranchesList.Count > 0)
                 {
-                    IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
-                    fileContent.AppendLine(string.Join(",", fields));
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.reportBranchesList = reportBranchesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-
-                byte[] bytes = System.Text.Encoding.ASCII.GetBytes(fileContent.ToString());
-                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "SaleValueReport.csv");
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {

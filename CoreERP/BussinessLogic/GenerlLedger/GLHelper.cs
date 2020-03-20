@@ -254,6 +254,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
+
+        public  List<TblAccountGroup> GetTblAccountGroupList()
+        {
+            try
+            {
+                using (Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>())
+                {
+                    return repo.TblAccountGroup.AsEnumerable().ToList();
+                }
+            }
+            catch { throw; }
+        }
         public static List<GlaccUnderSubGroup> GetGLUnderSubGroupList(string underSubGroupCode)
         {
             try
@@ -265,6 +277,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
+
         public static GlaccUnderSubGroup RegisterUnderSubGroup(GlaccUnderSubGroup glUnderSubGroup)
         {
             try
@@ -276,6 +289,51 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     repo.GlaccUnderSubGroup.Add(glUnderSubGroup);
                     if (repo.SaveChanges() > 0)
                         return glUnderSubGroup;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+
+        public TblAccountGroup RegisterTblAccGroup(TblAccountGroup tblAccGroup)
+        {
+            try
+            {
+                using (Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>())
+                {
+                    var record = repo.TblAccountGroup.OrderByDescending(x => x.ExtraDate).FirstOrDefault();
+
+                    if (record != null)
+                    {
+                        tblAccGroup.AccountGroupId =Convert.ToDecimal(CommonHelper.IncreaseCode(record.AccountGroupId.ToString()));
+                    }
+                    else
+                        tblAccGroup.AccountGroupId = 1;
+
+                    tblAccGroup.ExtraDate = DateTime.Now;
+                    tblAccGroup.IsDefault = false;
+                    repo.TblAccountGroup.Add(tblAccGroup);
+                    if (repo.SaveChanges() > 0)
+                        return tblAccGroup;
+
+                    return null;
+                }
+            }
+            catch { throw; }
+        }
+
+        public TblAccountGroup UpdateTblAccountGroup(TblAccountGroup tblAccGrp)
+        {
+            try
+            {
+                using (Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>())
+                {
+                    tblAccGrp.ExtraDate = DateTime.Now;
+                    tblAccGrp.IsDefault = false;
+                    repo.TblAccountGroup.Update(tblAccGrp);
+                    if (repo.SaveChanges() > 0)
+                        return tblAccGrp;
 
                     return null;
                 }
@@ -313,6 +371,26 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
             }
             catch { throw; }
+        }
+
+        public  TblAccountGroup DeleteTblAccountGroup(int code)
+        {
+            try
+            {
+                using (Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>())
+                {
+                    var tblAccGrp = repo.TblAccountGroup.Where(x => x.AccountGroupId == code).FirstOrDefault();
+                    repo.TblAccountGroup.Remove(tblAccGrp);
+                    if (repo.SaveChanges() > 0)
+                        return tblAccGrp;
+
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         #endregion
 

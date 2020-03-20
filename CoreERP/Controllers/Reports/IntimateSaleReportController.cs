@@ -16,44 +16,16 @@ namespace CoreERP.Controllers.Reports
     {
 
         [HttpGet("GetIntimateSaleReportData")]
-        public async Task<IActionResult> GetIntimateSaleReportData(string companyId, string branchID, string ledgerCode, string ledgerName, DateTime fDate, DateTime tDate, string userName)
+        public async Task<IActionResult> GetIntimateSaleReportData(string ledgerCode, DateTime fromDate, DateTime toDate, string UserID)
         {
             try
             {
-                var IntimateSaleList = await Task.FromResult(ReportsHelperClass.GetIntimateSaleReportDataList(companyId, branchID, ledgerCode,ledgerName,fDate,tDate,userName));
-                if (IntimateSaleList != null && IntimateSaleList.Count > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.l = IntimateSaleList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-       
-        [HttpGet("IntimateSaleCSVReport")]
-        public async Task<ActionResult> IntimateSaleCSVReport(string companyId, string branchID, string ledgerCode, string ledgerName, DateTime fDate, DateTime tDate, string userName)
-        {
-            try
-            {
-                var IntimateSale = await Task.FromResult(ReportsHelperClass.GetIntimateSaleReportDataTable(companyId, branchID, ledgerCode,ledgerName,fDate,tDate,userName));
-                System.Text.StringBuilder fileContent = new System.Text.StringBuilder();
-                IEnumerable<string> columnNames = IntimateSale.Columns.Cast<DataColumn>().
-                                                  Select(column => column.ColumnName);
-                fileContent.AppendLine(string.Join(",", columnNames));
-
-                foreach (DataRow row in IntimateSale.Rows)
-                {
-                    IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
-                    fileContent.AppendLine(string.Join(",", fields));
-                }
-
-                byte[] bytes = System.Text.Encoding.ASCII.GetBytes(fileContent.ToString());
-                return File(fileContents: bytes, contentType: "text/csv", fileDownloadName: "IntimateSaleReport.csv");
+                var serviceResult = await Task.FromResult(ReportsHelperClass.GetIntimateSaleReportDataList(ledgerCode,fromDate,toDate,UserID));
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.IntimateSaleList = serviceResult.Item1;
+                expdoObj.headerList = serviceResult.Item2;
+                expdoObj.footerList = serviceResult.Item3;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
             }
             catch (Exception ex)
             {
