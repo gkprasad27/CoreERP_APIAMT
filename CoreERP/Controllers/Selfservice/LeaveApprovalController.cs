@@ -18,20 +18,20 @@ namespace CoreERP.Controllers.Selfservice
   public class LeaveApprovalController : ControllerBase
   {
 
-        [HttpGet("GetLeaveApplDetailsList")]
-        public async Task<IActionResult> GetLeaveApplDetailsList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.LeaveApplDetailsList = LeaveApprovalHelper.GetLeaveApplDetailsList().ToList();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetLeaveApplDetailsList")]
+        //public async Task<IActionResult> GetLeaveApplDetailsList()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.LeaveApplDetailsList = LeaveApprovalHelper.GetLeaveApplDetailsList().ToList();
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         //[HttpPost("RegisterLeaveApprovalDetails")]
         //public async Task<IActionResult> RegisterLeaveApprovalDetails([FromBody]LeaveApplDetails[] leaveapp)

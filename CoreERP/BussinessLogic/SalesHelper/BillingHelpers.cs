@@ -228,19 +228,19 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-        public static List<BrandModel> GetBrandModelList()
-        {
-            try
-            {
-                using (Repository<BrandModel> repo = new Repository<BrandModel>())
-                {
-                    return repo.BrandModel.AsEnumerable()
-                               .Where(b => b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase))
-                               .ToList();
-                }
-            }
-            catch { throw; }
-        }
+        //public static List<BrandModel> GetBrandModelList()
+        //{
+        //    try
+        //    {
+        //        using (Repository<BrandModel> repo = new Repository<BrandModel>())
+        //        {
+        //            return repo.BrandModel.AsEnumerable()
+        //                       .Where(b => b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase))
+        //                       .ToList();
+        //        }
+        //    }
+        //    catch { throw; }
+        //}
         public static Finance RegisterFiances(Finance finance)
         {
             try
@@ -467,7 +467,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-        public static List<Branches> GetBranchesList()
+        public static List<TblBranch> GetBranchesList()
         {
             try
             {
@@ -608,27 +608,27 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-        public static List<BrandModel> GetModelList(string modelName)
-        {
-            try {
-                using (Repository<BrandModel> repo = new Repository<BrandModel>()) 
-                {
-                   return repo.BrandModel.AsEnumerable()
-                              .Where(bd => bd.Description.Contains(modelName)
-                                        && bd.Active == "Y"
-                                    )
-                              .ToList();
-                }
-            } catch { throw; }
-        }
-        public static BrandModel GetModelDetails(string modelCode)
-        {
-            try
-            {
-               return BrandModelHelpers.GetBrandModelList(modelCode);
-            }
-            catch { throw; }
-        }
+        //public static List<BrandModel> GetModelList(string modelName)
+        //{
+        //    try {
+        //        using (Repository<BrandModel> repo = new Repository<BrandModel>()) 
+        //        {
+        //           return repo.BrandModel.AsEnumerable()
+        //                      .Where(bd => bd.Description.Contains(modelName)
+        //                                && bd.Active == "Y"
+        //                            )
+        //                      .ToList();
+        //        }
+        //    } catch { throw; }
+        //}
+        //public static BrandModel GetModelDetails(string modelCode)
+        //{
+        //    try
+        //    {
+        //       return BrandModelHelpers.GetBrandModelList(modelCode);
+        //    }
+        //    catch { throw; }
+        //}
 
         public static List<PartnerCreation> GetPartnerCreationList()
         {

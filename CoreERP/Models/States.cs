@@ -10,10 +10,8 @@ namespace CoreERP.Models
         public int CountryId { get; set; }
         public string CountryCode { get; set; }
         public string CountryName { get; set; }
-        public string Active { get; set; }
-        public DateTime? AddDate { get; set; }
-        public int? StateCode { get; set; }
 
+        public virtual Countries Country { get; set; }
         public virtual TblStateWiseGst TblStateWiseGst { get; set; }
     }
 }

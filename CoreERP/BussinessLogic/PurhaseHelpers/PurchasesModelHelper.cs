@@ -38,17 +38,17 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
-        public static List<Branches> GetBranches()
-        {
-            try
-            {
-                using (Repository<Purchase> repo = new Repository<Purchase>())
-                {
-                    return BrancheHelper.GetBranches();
-                }
-            }
-            catch { throw; }
-        }
+        //public static List<Branches> GetBranches()
+        //{
+        //    try
+        //    {
+        //        using (Repository<Purchase> repo = new Repository<Purchase>())
+        //        {
+        //            return BrancheHelper.GetBranches();
+        //        }
+        //    }
+        //    catch { throw; }
+        //}
         public static List<Glaccounts> GetGLAccounts()
         {
             try
@@ -116,19 +116,19 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
-        public static List<BrandModel> GetModelList()
-        {
-            try
-            {
-                // models = (from md in _unitOfWork.BrandModel.GetAll()
-                //          // join itmmst in _unitOfWork.ItemMaster.GetAll()
-                //         //  on md.Code equals itmmst.Model
-                //           select md),
+        //public static List<BrandModel> GetModelList()
+        //{
+        //    try
+        //    {
+        //        // models = (from md in _unitOfWork.BrandModel.GetAll()
+        //        //          // join itmmst in _unitOfWork.ItemMaster.GetAll()
+        //        //         //  on md.Code equals itmmst.Model
+        //        //           select md),
 
-                return GLHelper.GetModelList();
-            }
-            catch { throw; }
-        }
+        //        return GLHelper.GetModelList();
+        //    }
+        //    catch { throw; }
+        //}
         public static List<ItemMaster> GetItemMasterList()
         {
             try
@@ -137,26 +137,26 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
-        public static List<PartnerCreation> GetPartnerCreationList()
-        {
-            try
-            {
-                // partnercreation = (from parttyp in _unitOfWork.PartnerType.GetAll()
-                //                    join partcr in _unitOfWork.PartnerCreation.GetAll()
-                //                    on parttyp.Code equals partcr.Partnertype
-                //                    where parttyp.AccountType == NatureOfAccounts.TRADEVENDORS.ToString()
-                //                    select partcr),
-                var partnerCreationList = PartnerCreationHelper.GetList();
-                var partnerTypeList = PartnerTypeHelper.GetPartnerTypeList();
+        //public static List<PartnerCreation> GetPartnerCreationList()
+        //{
+        //    try
+        //    {
+        //        // partnercreation = (from parttyp in _unitOfWork.PartnerType.GetAll()
+        //        //                    join partcr in _unitOfWork.PartnerCreation.GetAll()
+        //        //                    on parttyp.Code equals partcr.Partnertype
+        //        //                    where parttyp.AccountType == NatureOfAccounts.TRADEVENDORS.ToString()
+        //        //                    select partcr),
+        //        var partnerCreationList = PartnerCreationHelper.GetList();
+        //        var partnerTypeList = PartnerTypeHelper.GetPartnerTypeList();
 
-                return (from parttyp in partnerTypeList
-                        join partcr in partnerCreationList
-                        on parttyp.Code equals partcr.Partnertype
-                        where parttyp.AccountType.Equals("TRADEVENDORS", StringComparison.OrdinalIgnoreCase)
-                        select partcr).ToList();
-            }
-            catch { throw; }
-        }
+        //        return (from parttyp in partnerTypeList
+        //                join partcr in partnerCreationList
+        //                on parttyp.Code equals partcr.Partnertype
+        //                where parttyp.AccountType.Equals("TRADEVENDORS", StringComparison.OrdinalIgnoreCase)
+        //                select partcr).ToList();
+        //    }
+        //    catch { throw; }
+        //}
         public static List<Brand> GetBrandList()
         {
             try
@@ -195,126 +195,126 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
 
         #region Vendor Payments
-        public static VendorPayments RegisterVendorPayments(VendorPayments vendorPayments)
-        {
-            try
-            {
-                using(Repository<VendorPayments> repo=new Repository<VendorPayments>())
-                {
-                    var record = repo.VendorPayments.Where(v => v.Code != null).LastOrDefault();
-                    if (record != null)
-                        vendorPayments.Code = CommonHelper.IncreaseCode(record.Code);
-                    else
-                        vendorPayments.Code = "1";
+        //public static VendorPayments RegisterVendorPayments(VendorPayments vendorPayments)
+        //{
+        //    try
+        //    {
+        //        using(Repository<VendorPayments> repo=new Repository<VendorPayments>())
+        //        {
+        //            var record = repo.VendorPayments.Where(v => v.Code != null).LastOrDefault();
+        //            if (record != null)
+        //                vendorPayments.Code = CommonHelper.IncreaseCode(record.Code);
+        //            else
+        //                vendorPayments.Code = "1";
 
-                    record = null;
-                    vendorPayments.Active = "Y";
-                    vendorPayments.AddDate = System.DateTime.Now;
-                    vendorPayments.EditDate = System.DateTime.Now;
+        //            record = null;
+        //            vendorPayments.Active = "Y";
+        //            vendorPayments.AddDate = System.DateTime.Now;
+        //            vendorPayments.EditDate = System.DateTime.Now;
 
-                    repo.VendorPayments.Add(vendorPayments);
+        //            repo.VendorPayments.Add(vendorPayments);
 
-                    if (repo.SaveChanges() > 0)
-                        return vendorPayments;
+        //            if (repo.SaveChanges() > 0)
+        //                return vendorPayments;
 
-                    return null;
-                }
-            }
-            catch { throw; }
-        }
-        public static VendorPayments UpdateVendorPayments(VendorPayments vendorPayments)
-        {
-            try
-            {
-                using (Repository<VendorPayments> repo = new Repository<VendorPayments>())
-                {
-                    vendorPayments.EditDate = DateTime.Now;
-                    repo.VendorPayments.Update(vendorPayments);
+        //            return null;
+        //        }
+        //    }
+        //    catch { throw; }
+        //}
+        //public static VendorPayments UpdateVendorPayments(VendorPayments vendorPayments)
+        //{
+        //    try
+        //    {
+        //        using (Repository<VendorPayments> repo = new Repository<VendorPayments>())
+        //        {
+        //            vendorPayments.EditDate = DateTime.Now;
+        //            repo.VendorPayments.Update(vendorPayments);
 
-                    if (repo.SaveChanges() > 0)
-                        return vendorPayments;
+        //            if (repo.SaveChanges() > 0)
+        //                return vendorPayments;
 
-                    return null;
-                }
-            }
-            catch { throw; }
-        }
-        public static VendorPayments DeleteVendorPayments(string  code)
-        {
-            try
-            {
-                using (Repository<VendorPayments> repo = new Repository<VendorPayments>())
-                {
-                    var vendorPayments = repo.VendorPayments.Where(v => v.Code == code).FirstOrDefault();
-                    vendorPayments.Active = "N";
-                    vendorPayments.EditDate = DateTime.Now;
-                    repo.VendorPayments.Update(vendorPayments);
+        //            return null;
+        //        }
+        //    }
+        //    catch { throw; }
+        //}
+        //public static VendorPayments DeleteVendorPayments(string  code)
+        //{
+        //    try
+        //    {
+        //        using (Repository<VendorPayments> repo = new Repository<VendorPayments>())
+        //        {
+        //            var vendorPayments = repo.VendorPayments.Where(v => v.Code == code).FirstOrDefault();
+        //            vendorPayments.Active = "N";
+        //            vendorPayments.EditDate = DateTime.Now;
+        //            repo.VendorPayments.Update(vendorPayments);
 
-                    if (repo.SaveChanges() > 0)
-                        return vendorPayments;
+        //            if (repo.SaveChanges() > 0)
+        //                return vendorPayments;
 
-                    return null;
-                }
-            }
-            catch { throw; }
-        }
-        public static List<VendorPayments> GetVendorPaymentsList()
-        {
-            try
-            {
-                using (Repository<VendorPayments> repo = new Repository<VendorPayments>())
-                {
-                    return repo.VendorPayments.Where(vp => vp.Active == "Y").ToList();
-                }
-            }
-            catch { throw; }
-        }
-        public static List<AsignmentCashAccBranch> GetAsignmentCashAccBranchesList()
-        {
-            try
-            {
-                return GLHelper.GetAsignCashAccBranch();
-            }
-            catch { throw; }
-        }
-        public static List<PartnerCreation> GetVendorNames()
-        {
-            //return (from pc in _unitOfWork.PartnerCreation.GetAll()
-            //        join ptype in _unitOfWork.PartnerType.GetAll()
-            //        on pc.Partnertype equals ptype.Code
-            //        where ptype.AccountType == AccountType.TRADEVENDORS.ToString()
-            //        select new { key = pc.Code, value = pc.Name }).ToArray();
+        //            return null;
+        //        }
+        //    }
+        //    catch { throw; }
+        //}
+        //public static List<VendorPayments> GetVendorPaymentsList()
+        //{
+        //    try
+        //    {
+        //        using (Repository<VendorPayments> repo = new Repository<VendorPayments>())
+        //        {
+        //            return repo.VendorPayments.Where(vp => vp.Active == "Y").ToList();
+        //        }
+        //    }
+        //    catch { throw; }
+        //}
+        //public static List<AsignmentCashAccBranch> GetAsignmentCashAccBranchesList()
+        //{
+        //    try
+        //    {
+        //        return GLHelper.GetAsignCashAccBranch();
+        //    }
+        //    catch { throw; }
+        //}
+        //public static List<PartnerCreation> GetVendorNames()
+        //{
+        //    //return (from pc in _unitOfWork.PartnerCreation.GetAll()
+        //    //        join ptype in _unitOfWork.PartnerType.GetAll()
+        //    //        on pc.Partnertype equals ptype.Code
+        //    //        where ptype.AccountType == AccountType.TRADEVENDORS.ToString()
+        //    //        select new { key = pc.Code, value = pc.Name }).ToArray();
 
-            try
-            {
-                return (from pc in PartnerCreationHelper.GetList()
-                        join pt in PartnerTypeHelper.GetPartnerTypeList()
-                          on pc.Partnertype equals pt.Code
-                       where pt.AccountType == AccountType.TRADEVENDORS.ToString()
-                      select pc
-                        ).ToList();
-            }
-            catch { throw; }
-        }
-        public static List<PartnerCreation> GetCutomerNamesList()
-        {
-            //return (from pc in _unitOfWork.PartnerCreation.GetAll()
-            //        join ptype in _unitOfWork.PartnerType.GetAll()
-            //        on pc.Partnertype equals ptype.Code
-            //        where ptype.AccountType == AccountType.TRADECUSTOMER.ToString()
-            //        select new { key = pc.Code, value = pc.Name }).ToArray();
+        //    try
+        //    {
+        //        return (from pc in PartnerCreationHelper.GetList()
+        //                join pt in PartnerTypeHelper.GetPartnerTypeList()
+        //                  on pc.Partnertype equals pt.Code
+        //               where pt.AccountType == AccountType.TRADEVENDORS.ToString()
+        //              select pc
+        //                ).ToList();
+        //    }
+        //    catch { throw; }
+        //}
+        //public static List<PartnerCreation> GetCutomerNamesList()
+        //{
+        //    //return (from pc in _unitOfWork.PartnerCreation.GetAll()
+        //    //        join ptype in _unitOfWork.PartnerType.GetAll()
+        //    //        on pc.Partnertype equals ptype.Code
+        //    //        where ptype.AccountType == AccountType.TRADECUSTOMER.ToString()
+        //    //        select new { key = pc.Code, value = pc.Name }).ToArray();
 
-            try
-            {
-                return (from pc in PartnerCreationHelper.GetList()
-                        join pt in PartnerTypeHelper.GetPartnerTypeList()
-                          on pc.Partnertype equals pt.Code
-                        where pt.AccountType == AccountType.TRADECUSTOMER.ToString()
-                        select pc
-                        ).ToList();
-            }
-            catch { throw; }
-        }
+        //    try
+        //    {
+        //        return (from pc in PartnerCreationHelper.GetList()
+        //                join pt in PartnerTypeHelper.GetPartnerTypeList()
+        //                  on pc.Partnertype equals pt.Code
+        //                where pt.AccountType == AccountType.TRADECUSTOMER.ToString()
+        //                select pc
+        //                ).ToList();
+        //    }
+        //    catch { throw; }
+        //}
         public static List<Glaccounts> GetAsigCasNBankAcc()
         {
             try

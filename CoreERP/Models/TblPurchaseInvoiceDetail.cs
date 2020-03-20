@@ -5,8 +5,8 @@ namespace CoreERP.Models
 {
     public partial class TblPurchaseInvoiceDetail
     {
-        public decimal PurchaseInvDetailId { get; set; }
-        public decimal PurchaseInvId { get; set; }
+        public decimal? PurchaseInvDetailId { get; set; }
+        public decimal? PurchaseInvId { get; set; }
         public string VoucherNo { get; set; }
         public string PurchaseNo { get; set; }
         public DateTime? PurchaseDate { get; set; }
@@ -18,7 +18,7 @@ namespace CoreERP.Models
         public decimal? ProductId { get; set; }
         public string ProductCode { get; set; }
         public string ProductName { get; set; }
-        public decimal HsnNo { get; set; }
+        public decimal? HsnNo { get; set; }
         public decimal? UnitId { get; set; }
         public string UnitName { get; set; }
         public decimal? Qty { get; set; }

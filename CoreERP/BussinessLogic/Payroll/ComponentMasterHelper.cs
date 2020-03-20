@@ -85,16 +85,16 @@ namespace CoreERP.BussinessLogic.Payroll
             catch { throw; }
         }
 
-        public static List<CongifurationTable> GetConfigurationList()
-        {
-            try
-            {
-                using (Repository<CongifurationTable> repo = new Repository<CongifurationTable>())
-                {
-                    return repo.CongifurationTable.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                }
-            }
-            catch (Exception ex) { throw ex; }
-        }
+        //public static List<CongifurationTable> GetConfigurationList()
+        //{
+        //    try
+        //    {
+        //        using (Repository<CongifurationTable> repo = new Repository<CongifurationTable>())
+        //        {
+        //            return repo.CongifurationTable.AsEnumerable().Where(m => m.Active == "Y").ToList();
+        //        }
+        //    }
+        //    catch (Exception ex) { throw ex; }
+        //}
     }
 }

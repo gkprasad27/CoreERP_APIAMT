@@ -99,14 +99,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch { throw; }
         }
-        public List<Branches> GetBranches()
+        public List<TblBranch> GetBranches()
         {
             try
             {
-                using (Repository<Branches> repo = new Repository<Branches>())
-                {
-                    return repo.Branches.ToList();
-                }
+               return BrancheHelper.GetBranches();
             }
             catch { throw; }
         }

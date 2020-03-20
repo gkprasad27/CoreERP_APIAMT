@@ -51,7 +51,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expanddo = new ExpandoObject();
-                expanddo.branchesList = AsnBillsRcvBranchHelper.GetBranchesList().Select(x=>new { ID=x.BranchCode,Text=x.Name});
+                expanddo.branchesList = AsnBillsRcvBranchHelper.GetBranchesList().Select(x=>new { ID=x.BranchCode,Text=x.BranchName});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expanddo });
             }
             catch (Exception ex) 

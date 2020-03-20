@@ -20,17 +20,17 @@ namespace CoreERP.BussinessLogic.Payroll
             catch { throw; }
         }
 
-        public static List<Department> GetDepartmentsList()
-        {
-            try
-            {
-                using (Repository<Department> repo = new Repository<Department>())
-                {
-                    return repo.Department.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                }
-            }
-            catch (Exception ex) { throw ex; }
-        }
+        //public static List<Department> GetDepartmentsList()
+        //{
+        //    try
+        //    {
+        //        using (Repository<Department> repo = new Repository<Department>())
+        //        {
+        //            return repo.Department.AsEnumerable().Where(m => m.Active == "Y").ToList();
+        //        }
+        //    }
+        //    catch (Exception ex) { throw ex; }
+        //}
 
         public static PayrollCycle GetPayrollCycle(string Payrollcycle)
         {

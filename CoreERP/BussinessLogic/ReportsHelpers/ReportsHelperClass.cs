@@ -272,12 +272,12 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 DbParameter pmfromDate = command.CreateParameter();
                 pmfromDate.Direction = ParameterDirection.Input;
                 pmfromDate.Value = (object)fromDate ?? DBNull.Value;
-                pmfromDate.ParameterName = "fDate";
+                pmfromDate.ParameterName = "FromDate";
 
                 DbParameter pmtoDate = command.CreateParameter();
                 pmtoDate.Direction = ParameterDirection.Input;
                 pmtoDate.Value = (object)toDate ?? DBNull.Value;
-                pmtoDate.ParameterName = "tDate";
+                pmtoDate.ParameterName = "ToDate";
 
                 DbParameter pmUserID = command.CreateParameter();
                 pmUserID.Direction = ParameterDirection.Input;

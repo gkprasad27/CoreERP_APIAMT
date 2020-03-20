@@ -76,17 +76,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch (Exception ex) { throw ex; }
         }
-        public static List<BrandModel> GetModelList()
-        {
-            try
-            {
-                using (Repository<BrandModel> repo = new Repository<BrandModel>())
-                {
-                    return repo.BrandModel.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                }
-            }
-            catch (Exception ex) { throw ex; }
-        }
+        //public static List<BrandModel> GetModelList()
+        //{
+        //    try
+        //    {
+        //        using (Repository<BrandModel> repo = new Repository<BrandModel>())
+        //        {
+        //            return repo.BrandModel.AsEnumerable().Where(m => m.Active == "Y").ToList();
+        //        }
+        //    }
+        //    catch (Exception ex) { throw ex; }
+        //}
 
         #region Account Group
         public static GlaccGroup RegisterAccountsGroup(GlaccGroup glAccGroup)
@@ -666,7 +666,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             try { return masterHlepers.CompaniesHelper.GetListOfCompanies(); }
             catch { throw; }
         }
-        public static List<Branches> GetBranches()
+        public static List<TblBranch> GetBranches()
         {
             try { return masterHlepers.BrancheHelper.GetBranches(); }
             catch { throw; }
@@ -868,17 +868,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
-        public static List<VoucherClass> GetVoucherClassList()
-        {
-            try
-            {
-                using (Repository<VoucherClass> repo = new Repository<VoucherClass>())
-                {
-                    return repo.VoucherClass.AsEnumerable().Where(vc => vc.Active=="Y").ToList();
-                }
-            }
-            catch { throw; }
-        }
+        //public static List<VoucherClass> GetVoucherClassList()
+        //{
+        //    try
+        //    {
+        //        using (Repository<VoucherClass> repo = new Repository<VoucherClass>())
+        //        {
+        //            return repo.VoucherClass.AsEnumerable().Where(vc => vc.Active=="Y").ToList();
+        //        }
+        //    }
+        //    catch { throw; }
+        //}
 
         #region Voucher Type
         public static List<VoucherTypes> GetVoucherTypeList()

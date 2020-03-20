@@ -40,7 +40,7 @@ namespace CoreERP.Controllers.Payroll
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ConfigurationList = ComponentMasterHelper.GetConfigurationList().Select(x => new { ID = x.Value, TEXT = x.ConfigurationType });
+                expando.ConfigurationList = "check code in  api side"; //ComponentMasterHelper.GetConfigurationList().Select(x => new { ID = x.Value, TEXT = x.ConfigurationType });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

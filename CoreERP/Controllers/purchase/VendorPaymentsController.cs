@@ -14,101 +14,101 @@ namespace CoreERP.Controllers
     [Route("api/Purchase/VendorPayments")]
     public class VendorPaymentsController : ControllerBase
     {
-        [HttpPost("RegisterVendorPayments")]
-        public async Task<IActionResult> RegisterVendorPayments([FromBody]VendorPayments vendorpayment)
-        {
-            if (vendorpayment == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
-            try
-            {
-                var result = PurchasesModelHelper.RegisterVendorPayments(vendorpayment);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+        //[HttpPost("RegisterVendorPayments")]
+        //public async Task<IActionResult> RegisterVendorPayments([FromBody]VendorPayments vendorpayment)
+        //{
+        //    if (vendorpayment == null)
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
+        //    try
+        //    {
+        //        var result = PurchasesModelHelper.RegisterVendorPayments(vendorpayment);
+        //        if (result != null)
+        //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
-        [HttpPut("UpdateVendorPayments")]
-        public async Task<IActionResult> UpdateVendorPayments(string code, [FromBody] VendorPayments vendorpayments)
-        {
-            if (vendorpayments == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
-            try
-            {
-                var result = PurchasesModelHelper.UpdateVendorPayments(vendorpayments);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+        //[HttpPut("UpdateVendorPayments")]
+        //public async Task<IActionResult> UpdateVendorPayments(string code, [FromBody] VendorPayments vendorpayments)
+        //{
+        //    if (vendorpayments == null)
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
+        //    try
+        //    {
+        //        var result = PurchasesModelHelper.UpdateVendorPayments(vendorpayments);
+        //        if (result != null)
+        //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
-        [HttpDelete("DeleteVendorPayments/{code}")]
-        public async Task<IActionResult> DeleteVendorPayments(string code)
-        {
-            if (code == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
-            try
-            {
-                var result = PurchasesModelHelper.DeleteVendorPayments(code);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+        //[HttpDelete("DeleteVendorPayments/{code}")]
+        //public async Task<IActionResult> DeleteVendorPayments(string code)
+        //{
+        //    if (code == null)
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
+        //    try
+        //    {
+        //        var result = PurchasesModelHelper.DeleteVendorPayments(code);
+        //        if (result != null)
+        //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
-        [HttpGet("GetVendorPaymentsList")]
-        public async Task<IActionResult> GetVendorPaymentsList()
-        {
-            try
-            {
-                var vendorPayMentList = PurchasesModelHelper.GetVendorPaymentsList();
-                if (vendorPayMentList.Count > 0)
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.VendorNamesList = PurchasesModelHelper.GetVendorNames().Select(pc => new { ID = pc.Code, TEXT = pc.Name });
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+        //[HttpGet("GetVendorPaymentsList")]
+        //public async Task<IActionResult> GetVendorPaymentsList()
+        //{
+        //    try
+        //    {
+        //        var vendorPayMentList = PurchasesModelHelper.GetVendorPaymentsList();
+        //        if (vendorPayMentList.Count > 0)
+        //        {
+        //            dynamic expando = new ExpandoObject();
+        //            expando.VendorNamesList = PurchasesModelHelper.GetVendorNames().Select(pc => new { ID = pc.Code, TEXT = pc.Name });
+        //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //        }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
 
-            //var rs = (from glacc in _unitOfWork.GLAccounts.GetAll()
-            //          join pc in _unitOfWork.PartnerCreation.GetAll()
-            //          on glacc.GLCode equals pc.GLControlAcc
-            //          select glacc).Distinct();
-
-
-            //return Json(new
-            //{
-            //    partnerCreationList = (from pc in _unitOfWork.PartnerCreation.GetAll()
-            //                           where pc.Partnertype != null
-            //                           select pc),
-            //    noSeriesList = (from ns in _unitOfWork.NoSeries.GetAll()
-            //                    select ns)
-            //});
+        //    //var rs = (from glacc in _unitOfWork.GLAccounts.GetAll()
+        //    //          join pc in _unitOfWork.PartnerCreation.GetAll()
+        //    //          on glacc.GLCode equals pc.GLControlAcc
+        //    //          select glacc).Distinct();
 
 
-        }
-        //no series APi pending
+        //    //return Json(new
+        //    //{
+        //    //    partnerCreationList = (from pc in _unitOfWork.PartnerCreation.GetAll()
+        //    //                           where pc.Partnertype != null
+        //    //                           select pc),
+        //    //    noSeriesList = (from ns in _unitOfWork.NoSeries.GetAll()
+        //    //                    select ns)
+        //    //});
+
+
+        //}
+        ////no series APi pending
 
         [HttpGet("GetPartnerCreationList")]
         public async Task<IActionResult> GetPartnerCreationList()
@@ -125,20 +125,20 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetPartnertypeList")]
-        public async Task<IActionResult> GetPartnertypeList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.PartnertypeList = PartnerTypeHelper.GetPartnerTypeList().Select(gl => new { ID = gl.Code, TEXT = gl.Description });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetPartnertypeList")]
+        //public async Task<IActionResult> GetPartnertypeList()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.PartnertypeList = PartnerTypeHelper.GetPartnerTypeList().Select(gl => new { ID = gl.Code, TEXT = gl.Description });
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         [HttpGet("GetAsigCasNBankAcc")]
         public async Task<IActionResult> GetAsigCasNBankAcc()
@@ -155,50 +155,50 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetAsigCashAccBranchesList")]
-        public async Task<IActionResult> GetAsigCashAccBranchesList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.VendorNamesList = PurchasesModelHelper.GetAsignmentCashAccBranchesList().Select(pc => new { ID = pc.Code, TEXT = pc });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetAsigCashAccBranchesList")]
+        //public async Task<IActionResult> GetAsigCashAccBranchesList()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.VendorNamesList = PurchasesModelHelper.GetAsignmentCashAccBranchesList().Select(pc => new { ID = pc.Code, TEXT = pc });
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
       
-        [HttpGet("GetVendorNamesList")]
-        public async Task<IActionResult> GetVendorNamesList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.VendorNamesList = PurchasesModelHelper.GetVendorNames().Select(pc => new { ID = pc.Code, TEXT = pc.Name });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetVendorNamesList")]
+        //public async Task<IActionResult> GetVendorNamesList()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.VendorNamesList = PurchasesModelHelper.GetVendorNames().Select(pc => new { ID = pc.Code, TEXT = pc.Name });
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
-        [HttpGet("GetCutomerNamesList")]
-        public async Task<IActionResult> GetCutomerNamesList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.VendorNamesList = PurchasesModelHelper.GetCutomerNamesList().Select(pc => new { ID = pc.Code, TEXT = pc.Name });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetCutomerNamesList")]
+        //public async Task<IActionResult> GetCutomerNamesList()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.VendorNamesList = PurchasesModelHelper.GetCutomerNamesList().Select(pc => new { ID = pc.Code, TEXT = pc.Name });
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         [HttpGet("GetCompanysList")]
         public async Task<IActionResult> GetCompanysList()
@@ -215,20 +215,20 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetBranchesList")]
-        public async Task<IActionResult> GetBranchesList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.BranchesList = PurchasesModelHelper.GetBranches().Select(pc => new { ID = pc.BranchCode, TEXT = pc.Name });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetBranchesList")]
+        //public async Task<IActionResult> GetBranchesList()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.BranchesList = PurchasesModelHelper.GetBranches().Select(pc => new { ID = pc.BranchCode, TEXT = pc.Name });
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         //[HttpGet("vpayments/billsrcvl")]
         //public async Task<IActionResult> GetCustomerNamesFromPurchase()

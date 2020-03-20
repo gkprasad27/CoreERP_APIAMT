@@ -22,6 +22,5 @@ namespace CoreERP.Models
         public decimal UserId { get; set; }
         public string UserName { get; set; }
         public decimal EmployeeId { get; set; }
-        public DateTime? AddDate { get; set; }
     }
 }

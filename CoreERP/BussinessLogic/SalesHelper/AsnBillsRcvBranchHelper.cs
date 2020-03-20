@@ -54,7 +54,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
             catch { throw; }
         }
-        public static List<Branches> GetBranchesList()
+        public static List<TblBranch> GetBranchesList()
         {
             try
             {

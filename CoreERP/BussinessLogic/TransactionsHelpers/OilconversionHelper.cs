@@ -19,18 +19,11 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
             catch { throw; }
         }
-        public  List<Branches> Getbranchcodes(string natureofAccount)
+        public  List<TblBranch> Getbranchcodes(string natureofAccount)
         {
             try
             {
-                using (Repository<Branches> repo = new Repository<Branches>())
-                {
-                    return repo.Branches
-                          .Where(x => x.Active.Equals("Y")
-                                  && (x.BranchCode.Equals(natureofAccount))
-                                )
-                          .ToList();
-                }
+                return masterHlepers.BrancheHelper.GetBranches();
             }
             catch { throw; }
         }

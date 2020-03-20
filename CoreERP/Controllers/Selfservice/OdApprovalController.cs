@@ -17,19 +17,19 @@ namespace CoreERP.Controllers.Selfservice
   [Route("api/Selfservice/OdApproval")]
   public class OdApprovalController : ControllerBase
   {
-    [HttpGet("GetOdApprovalApplDetailsList")]
-    public async Task<IActionResult> GetOdApprovalApplDetailsList()
-    {
-      try
-      {
-        dynamic expando = new ExpandoObject();
-        expando.OdApprovalApplDetailsList = OdApprovalHelper.GetApplyOddataDetailsList().ToList();
-        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-      }
-      catch (Exception ex)
-      {
-        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-      }
-    }
+    //[HttpGet("GetOdApprovalApplDetailsList")]
+    //public async Task<IActionResult> GetOdApprovalApplDetailsList()
+    //{
+    //  try
+    //  {
+    //    dynamic expando = new ExpandoObject();
+    //    expando.OdApprovalApplDetailsList = OdApprovalHelper.GetApplyOddataDetailsList().ToList();
+    //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+    //  }
+    //}
   }
 }

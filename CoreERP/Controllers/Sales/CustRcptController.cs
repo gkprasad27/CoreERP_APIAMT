@@ -129,20 +129,20 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetPartnerTypeList")]
-        public async Task<IActionResult> GetPartnerTypeList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.partnerTypeList = PartnerTypeHelper.GetPartnerTypeList();
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetPartnerTypeList")]
+        //public async Task<IActionResult> GetPartnerTypeList()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.partnerTypeList = PartnerTypeHelper.GetPartnerTypeList();
+        //        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         [HttpGet("GetVoucherTypeList")]
         public async Task<IActionResult> GetVoucherTypeList()

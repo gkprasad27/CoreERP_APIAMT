@@ -13,6 +13,5 @@ namespace CoreERP.Models
         public string ProductCode { get; set; }
         public string ProductName { get; set; }
         public decimal? Rate { get; set; }
-        public DateTime? AddDate { get; set; }
     }
 }

@@ -34,20 +34,20 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpGet("GetDepartmentsList")]
-        public async Task<IActionResult> GetDepartmentsList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.DepartmentList = PayrollCycleHelper.GetDepartmentsList().Select(x => new { ID = x.DepartmentId, TEXT = x.DepartmentName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetDepartmentsList")]
+        //public async Task<IActionResult> GetDepartmentsList()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.DepartmentList = PayrollCycleHelper.GetDepartmentsList().Select(x => new { ID = x.DepartmentId, TEXT = x.DepartmentName });
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         [HttpPost("RegisterPayrollCycle")]
         public async Task<IActionResult> RegisterPayrollCycle([FromBody]PayrollCycle payCycle)

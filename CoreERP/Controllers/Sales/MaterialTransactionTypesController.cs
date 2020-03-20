@@ -34,7 +34,7 @@ namespace CoreERP.Controllers
             try
             {   
                 dynamic expando = new ExpandoObject();
-                expando.branchesList = BillingHelpers.GetBranchesList().Select(x => new { ID=x.BranchCode,TEXT=x.Name});
+                expando.branchesList = BillingHelpers.GetBranchesList().Select(x => new { ID=x.BranchCode,TEXT=x.BranchName});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

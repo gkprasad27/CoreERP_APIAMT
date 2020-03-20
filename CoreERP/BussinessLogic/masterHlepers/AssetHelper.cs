@@ -125,64 +125,64 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch { throw; }
         }
-        public static NoSeries GetNoSeries()
-        {
-            try
-            {
-                return (from nos in NoSeriesHelper.GetAllNoSeriesLists()
-                        join pt in PartnerTypeHelper.GetPartnerTypeList()
-                        on nos.PartnerType equals pt.Code
-                        where pt.AccountType.Equals("FIXEDASSETS")
-                        select nos).OrderByDescending(x => x.Code).FirstOrDefault();
-            }
-            catch { throw; }
-        }
+        //public static NoSeries GetNoSeries()
+        //{
+        //    try
+        //    {
+        //        return (from nos in NoSeriesHelper.GetAllNoSeriesLists()
+        //                join pt in PartnerTypeHelper.GetPartnerTypeList()
+        //                on nos.PartnerType equals pt.Code
+        //                where pt.AccountType.Equals("FIXEDASSETS")
+        //                select nos).OrderByDescending(x => x.Code).FirstOrDefault();
+        //    }
+        //    catch { throw; }
+        //}
         
-        public static string AutoIncrementAssetNo()
-        {
-            try
-            {
-                var noSeries = GetNoSeries();
+        //public static string AutoIncrementAssetNo()
+        //{
+        //    try
+        //    {
+        //        var noSeries = GetNoSeries();
 
-                int startno = 0, endno = 0, max = 0;
-                if (noSeries != null)
-                {
-                    if (noSeries.NoType == "AUTO")
-                    {
+        //        int startno = 0, endno = 0, max = 0;
+        //        if (noSeries != null)
+        //        {
+        //            if (noSeries.NoType == "AUTO")
+        //            {
 
-                        var noRange = noSeries.NumberSeries.Split("-");
-                        if (noRange.Count() == 1)
-                        {
-                            startno = Convert.ToInt32(noRange[0]);
-                            endno = Convert.ToInt32(noRange[0]);
-                        }
-                        else
-                        {
-                            startno = Convert.ToInt32(noRange[0]);
-                            endno = Convert.ToInt32(noRange[1]);
-                        }
+        //                var noRange = noSeries.NumberSeries.Split("-");
+        //                if (noRange.Count() == 1)
+        //                {
+        //                    startno = Convert.ToInt32(noRange[0]);
+        //                    endno = Convert.ToInt32(noRange[0]);
+        //                }
+        //                else
+        //                {
+        //                    startno = Convert.ToInt32(noRange[0]);
+        //                    endno = Convert.ToInt32(noRange[1]);
+        //                }
 
-                        var aseetMasterObj = AssetHelper.GetList().Where(x => x.Ext2 == noSeries.Code).OrderByDescending(x => x.AssetNo).FirstOrDefault();
+        //                var aseetMasterObj = AssetHelper.GetList().Where(x => x.Ext2 == noSeries.Code).OrderByDescending(x => x.AssetNo).FirstOrDefault();
 
-                        if (aseetMasterObj != null)
-                        {
-                            max = Convert.ToInt32(aseetMasterObj.AssetNo);
-                            if ((max + 1) > endno)
-                            {
-                                return ("No Series Rage Exceeded");
-                            }
-                            else
-                                max = max + 1;
-                        }
-                        else
-                            max = startno;
-                    }
-                    else
-                        return string.Empty;
-                }
-                return max.ToString();
-            }
-            catch { throw; }
-        }
+        //                if (aseetMasterObj != null)
+        //                {
+        //                    max = Convert.ToInt32(aseetMasterObj.AssetNo);
+        //                    if ((max + 1) > endno)
+        //                    {
+        //                        return ("No Series Rage Exceeded");
+        //                    }
+        //                    else
+        //                        max = max + 1;
+        //                }
+        //                else
+        //                    max = startno;
+        //            }
+        //            else
+        //                return string.Empty;
+        //        }
+        //        return max.ToString();
+        //    }
+        //    catch { throw; }
+        //}
     }
 }

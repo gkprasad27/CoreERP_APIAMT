@@ -21,6 +21,5 @@ namespace CoreERP.Models
         public decimal NewQty { get; set; }
         public string BatchNo { get; set; }
         public decimal GrossAmount { get; set; }
-        public DateTime? AddDate { get; set; }
     }
 }

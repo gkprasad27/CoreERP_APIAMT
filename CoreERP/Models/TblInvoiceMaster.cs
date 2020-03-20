@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblInvoiceMaster
     {
-        public decimal InvoiceMasterId { get; set; }
+        public decimal? InvoiceMasterId { get; set; }
         public string VoucherNo { get; set; }
         public string InvoiceNo { get; set; }
         public decimal? VoucherTypeId { get; set; }

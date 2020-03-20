@@ -21,18 +21,11 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         }
 
 
-        public  List<Branches> Getbranchcodes(string natureofAccount)
+        public  List<TblBranch> Getbranchcodes(string natureofAccount)
         {
             try
             {
-                using (Repository<Branches> repo = new Repository<Branches>())
-                {
-                    return repo.Branches
-                          .Where(x => x.Active.Equals("Y")
-                                  && (x.BranchCode.Equals(natureofAccount))
-                                )
-                          .ToList();
-                }
+                return masterHlepers.BrancheHelper.GetBranches();
             }
             catch { throw; }
         }
@@ -65,7 +58,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                var voucherNo = Getstockshortlist().Where(b => b.BranchCode == branchCode).OrderByDescending(x => x.StockshortNo).FirstOrDefault();
+                var voucherNo = new StockshortHelpers().Getstockshortlist().Where(b => b.BranchCode == branchCode).OrderByDescending(x => x.StockshortNo).FirstOrDefault();
                 if (voucherNo != null)
                 {
                     string[] splitString = voucherNo.StockshortNo.Split('/','-');

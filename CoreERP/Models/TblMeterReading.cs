@@ -21,6 +21,5 @@ namespace CoreERP.Models
         public decimal? InvoiceSales { get; set; }
         public decimal? Variation { get; set; }
         public DateTime? EntryDate { get; set; }
-        public DateTime? AddDate { get; set; }
     }
 }

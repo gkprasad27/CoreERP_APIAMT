@@ -38,7 +38,7 @@ namespace CoreERP.Controllers.Sales
                     message = ex.Message;
                 }
 
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = message });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
             }
         }
 
