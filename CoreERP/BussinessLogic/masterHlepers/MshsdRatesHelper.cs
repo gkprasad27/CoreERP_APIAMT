@@ -21,14 +21,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch { throw; }
         }
 
-        public  List<Branches> GetBranchesList()
+        public  List<TblBranch> GetBranchesList()
         {
             try
             {
-                using (Repository<Branches> repo = new Repository<Branches>())
-                {
-                    return repo.Branches.Where(m => m.Active == "Y").ToList();
-                }
+               return BrancheHelper.GetBranches();
             }
             catch (Exception ex) { throw ex; }
         }

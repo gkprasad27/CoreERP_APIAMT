@@ -136,41 +136,41 @@ namespace CoreERP.Controllers
             }
        }
 
-        [HttpGet("isNoSeriesIsAuto")]
-        public async Task<IActionResult> IsNoSeriesIsAuto()
-        {
-            try
-            {
-                var noSrs = AssetHelper.GetNoSeries();
-                dynamic expando = new ExpandoObject();
-                if (noSrs != null)
-                    expando.isNoTypeAuto = noSrs.NoType.Equals("AUTO");
-                else
-                    expando.isNoTypeAuto = false;
+        //[HttpGet("isNoSeriesIsAuto")]
+        //public async Task<IActionResult> IsNoSeriesIsAuto()
+        //{
+        //    try
+        //    {
+        //        var noSrs = AssetHelper.GetNoSeries();
+        //        dynamic expando = new ExpandoObject();
+        //        if (noSrs != null)
+        //            expando.isNoTypeAuto = noSrs.NoType.Equals("AUTO");
+        //        else
+        //            expando.isNoTypeAuto = false;
 
-                return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=expando});
-            }
-            catch(Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //        return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=expando});
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
-        [HttpGet("AutoGenerateAssetNo")]
-        public async Task<IActionResult> AutoGenerateAssetNo()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.AssetNo = AssetHelper.AutoIncrementAssetNo();
+        //[HttpGet("AutoGenerateAssetNo")]
+        //public async Task<IActionResult> AutoGenerateAssetNo()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.AssetNo = AssetHelper.AutoIncrementAssetNo();
 
-                return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=expando});
-            }
-            catch(Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //        return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=expando});
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
     }
 }
        

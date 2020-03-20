@@ -109,7 +109,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = GLHelper.GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.Name });
+                expando.BranchesList = GLHelper.GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
                 return Ok(new APIResponse(){status=APIStatus.PASS.ToString(),response= expando });
             }
             catch (Exception ex)

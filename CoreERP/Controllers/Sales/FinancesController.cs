@@ -67,20 +67,20 @@ namespace CoreERP.Controllers
 
         }
 
-        [HttpGet("GetBrandModelList")]
-        public async Task<IActionResult> GetBrandModelList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.brandModelList = BillingHelpers.GetBrandModelList();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetBrandModelList")]
+        //public async Task<IActionResult> GetBrandModelList()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.brandModelList = BillingHelpers.GetBrandModelList();
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         [HttpPost("RegisterFiances")]
         public async Task<IActionResult> RegisterFiances([FromBody]Finance finances)

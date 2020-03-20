@@ -77,6 +77,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 // purchaseDetail.ProductGroupCode = Convert.ToDecimal(_product.ProductGroupCode ?? 0);
                 // purchaseDetail.ProductGroupId = Convert.ToDecimal(_product.ProductGroupId ?? 0);
                 purchaseDetail.ProductId = _product.ProductId;
+                purchaseDetail.ProductCode = _product.ProductCode;
                 purchaseDetail.ProductName = _product.ProductName;
 
                 return purchaseDetail;

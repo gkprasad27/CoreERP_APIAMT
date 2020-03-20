@@ -145,7 +145,7 @@ namespace CoreERP.Controllers.masters
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = new PumpHelpers().GetBranches().Select(pro => new { ID = pro.BranchCode, TEXT = pro.Address1 });
+                expando.BranchesList = new PumpHelpers().GetBranches().Select(pro => new { ID = pro.BranchCode, TEXT = pro.BranchName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

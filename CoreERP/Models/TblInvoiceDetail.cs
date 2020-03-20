@@ -30,7 +30,7 @@ namespace CoreERP.Models
         public decimal? UnitId { get; set; }
         public string UnitName { get; set; }
         public decimal? Discount { get; set; }
-        public decimal TaxGroupId { get; set; }
+        public decimal? TaxGroupId { get; set; }
         public string TaxGroupCode { get; set; }
         public string TaxGroupName { get; set; }
         public decimal? TaxStructureId { get; set; }

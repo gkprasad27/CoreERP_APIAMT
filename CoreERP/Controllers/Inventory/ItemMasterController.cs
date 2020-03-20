@@ -91,20 +91,20 @@ namespace CoreERP.Controllers
         }
 
 
-        [HttpGet("GetBrandModelsList")]
-        public async Task<IActionResult> GetBrandModelsList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.brandModelsList = BrandModelHelpers.GetBrandModelList();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetBrandModelsList")]
+        //public async Task<IActionResult> GetBrandModelsList()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.brandModelsList = BrandModelHelpers.GetBrandModelList();
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
 
         [HttpGet("GetSizesList")]

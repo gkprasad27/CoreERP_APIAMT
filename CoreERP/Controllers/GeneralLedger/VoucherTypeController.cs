@@ -42,7 +42,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = GLHelper.GetBranches().Select(b=> new { ID=b.BranchCode,TEXT=b.Name});
+                expando.BranchesList = GLHelper.GetBranches().Select(b=> new { ID=b.BranchCode,TEXT=b.BranchName});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -66,20 +66,20 @@ namespace CoreERP.Controllers.GL
             }
         }
 
-        [HttpGet("GetVoucherClassList")]
-        public async Task<IActionResult> GetVoucherClassList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.VoucherClassList = GLHelper.GetVoucherClassList().Select(x => new { ID = x.VoucherCode, TEXT = x.Ext2 });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetVoucherClassList")]
+        //public async Task<IActionResult> GetVoucherClassList()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.VoucherClassList = GLHelper.GetVoucherClassList().Select(x => new { ID = x.VoucherCode, TEXT = x.Ext2 });
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         [HttpPost("RegisterVoucherTypes")]
         public async Task<IActionResult> RegisterVoucherTypes([FromBody]VoucherTypes vouhertype)

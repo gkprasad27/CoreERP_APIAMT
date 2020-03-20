@@ -14,6 +14,5 @@ namespace CoreERP.Models
         public string OutputproductName { get; set; }
         public decimal InputQty { get; set; }
         public decimal OutputQty { get; set; }
-        public DateTime? AddDate { get; set; }
     }
 }

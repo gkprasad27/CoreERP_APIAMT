@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblCashPaymentMaster
     {
-        public decimal? CashPaymentMasterId { get; set; }
+        public decimal CashPaymentMasterId { get; set; }
         public decimal? BranchId { get; set; }
         public string BranchCode { get; set; }
         public string BranchName { get; set; }
@@ -22,6 +22,7 @@ namespace CoreERP.Models
         public decimal? EmployeeId { get; set; }
         public decimal? ShiftId { get; set; }
         public DateTime? ServerDate { get; set; }
+
         public List<TblCashPaymentDetails> CashPaymentDetails { get; set; }
     }
 }

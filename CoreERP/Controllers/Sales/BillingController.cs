@@ -129,13 +129,13 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetCashPartyAccountList")]
-        public async Task<IActionResult> GetCashPartyAccountList()
+        [HttpGet("GetCashPartyAccountList/{ledgerCode?}")]
+        public async Task<IActionResult> GetCashPartyAccountList(string ledgerCode=null)
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CashPartyAccountList = new InvoiceHelper().GetAccountLedgers(null).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                expando.CashPartyAccountList = new InvoiceHelper().GetAccountLedgers(ledgerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -192,7 +192,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.Products = new InvoiceHelper().GetProducts(productCode, null).Select(p => new { ID = p.ProductCode, TEXT = p.ProductCode, Name = p.ProductName });
+                expando.Products = new InvoiceHelper().GetProducts(productCode, null).OrderBy(x=> x.ProductCode?.Length).Select(p => new { ID = p.ProductCode, TEXT = p.ProductCode, Name = p.ProductName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -238,7 +238,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpGet("GetBillingDetailsRcd/{productCode}/{branchCode}")]
         public async Task<IActionResult> GetBillingDetailsRcd(string productCode, string branchCode)

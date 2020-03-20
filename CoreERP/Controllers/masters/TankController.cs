@@ -127,7 +127,7 @@ namespace CoreERP.Controllers.masters
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = new TankHelpers().GetBranches().Select(pro => new { ID = pro.BranchCode, TEXT = pro.Address1 });
+                expando.BranchesList = new TankHelpers().GetBranches().Select(pro => new { ID = pro.BranchCode, TEXT = pro.BranchName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -142,7 +142,8 @@ namespace CoreERP.Controllers.masters
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.branchcode = new TankHelpers().Getbranchcodes(branchname).Select(bc => new { Name = bc.Address1, Id = bc.BranchCode });
+               // expando.branchcode = new TankHelpers().Getbranchcodes(branchname).Select(bc => new { Name = bc.Address1, Id = bc.BranchCode });
+                expando.branchcode = BrancheHelper.GetBranches().Select(bc => new { Name = bc.BranchName, Id = bc.BranchCode });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

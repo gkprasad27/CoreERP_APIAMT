@@ -7,7 +7,6 @@ namespace CoreERP.Models
     {
         public Companies()
         {
-            Branches = new HashSet<Branches>();
             CostCenters = new HashSet<CostCenters>();
         }
 
@@ -42,7 +41,6 @@ namespace CoreERP.Models
         public string City { get; set; }
         public DateTime? AddDate { get; set; }
 
-        public virtual ICollection<Branches> Branches { get; set; }
         public virtual ICollection<CostCenters> CostCenters { get; set; }
     }
 }

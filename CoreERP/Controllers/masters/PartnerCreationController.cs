@@ -163,26 +163,26 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetPartnerTypes")]
-        public async Task<IActionResult> GetPartnerTypes()
-        {
-            try
-            {
-                var partnerTypeList = PartnerCreationHelper.GetPartnerTypes();
-                if (partnerTypeList.Count > 0)
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.partnerTypeList = partnerTypeList.Select(n => new { ID = n.Code, Text = n.Description });
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-                else
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetPartnerTypes")]
+        //public async Task<IActionResult> GetPartnerTypes()
+        //{
+        //    try
+        //    {
+        //        var partnerTypeList = PartnerCreationHelper.GetPartnerTypes();
+        //        if (partnerTypeList.Count > 0)
+        //        {
+        //            dynamic expando = new ExpandoObject();
+        //            expando.partnerTypeList = partnerTypeList.Select(n => new { ID = n.Code, Text = n.Description });
+        //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //        }
+        //        else
+        //            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
@@ -193,7 +193,7 @@ namespace CoreERP.Controllers
                 if (branchesList.Count > 0)
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.branchesList = branchesList.Select(n => new { ID = n.BranchCode, Text = n.Name });
+                    expando.branchesList = branchesList.Select(n => new { ID = n.BranchCode, Text = n.BranchName });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 else

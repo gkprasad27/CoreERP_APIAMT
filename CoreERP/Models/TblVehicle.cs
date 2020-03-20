@@ -16,6 +16,7 @@ namespace CoreERP.Models
         public DateTime? ToDate { get; set; }
         public decimal? VehicleTypeId { get; set; }
         public string VehicleTypeName { get; set; }
-        public DateTime? AddDate { get; set; }
+
+        public virtual TblVehicleType VehicleType { get; set; }
     }
 }

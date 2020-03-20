@@ -83,30 +83,27 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
-        public List<Branches> GetBranches()
+        public List<TblBranch> GetBranches()
         {
             try
             {
-                using (Repository<Branches> repo = new Repository<Branches>())
-                {
-                    return repo.Branches.ToList();
-                }
+               return BrancheHelper.GetBranches();
             }
             catch { throw; }
         }
 
-        public List<Branches> Getbranchcodes(string name)
-        {
-            try
-            {
-                using (Repository<Branches> repo = new Repository<Branches>())
-                {
-                    return repo.Branches
-                          .Where(x => x.Address1.Equals(name))
-                          .ToList();
-                }
-            }
-            catch { throw; }
-        }
+        //public List<Branches> Getbranchcodes(string name)
+        //{
+        //    try
+        //    {
+        //        using (Repository<Branches> repo = new Repository<Branches>())
+        //        {
+        //            return repo.Branches
+        //                  .Where(x => x.Address1.Equals(name))
+        //                  .ToList();
+        //        }
+        //    }
+        //    catch { throw; }
+        //}
     }
 }

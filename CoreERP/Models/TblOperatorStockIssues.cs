@@ -18,6 +18,5 @@ namespace CoreERP.Models
         public string UserName { get; set; }
         public decimal? EmployeeId { get; set; }
         public string Remarks { get; set; }
-        public DateTime? AddDate { get; set; }
     }
 }

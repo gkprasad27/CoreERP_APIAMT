@@ -109,7 +109,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                return Common.CommonHelper.GetConfigurationValue("MASTER", "NUMBERSERIES", "NATURE").Split(',').ToList();
+                return new List<string>() { "AUTO","MANUAL"};
             }
             catch (Exception ex)
             {
@@ -143,7 +143,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }catch
             { throw; }
         }
-        public static List<Branches> GetBranches()
+        public static List<TblBranch> GetBranches()
         {
             try
             {
@@ -152,15 +152,15 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch
             { throw; }
         }
-        public static List<PartnerType> GetPartnerTypes()
-        {
-            try
-            {
-                return PartnerTypeHelper.GetPartnerTypeList();
-            }
-            catch
-            { throw; }
-        }
+        //public static List<PartnerType> GetPartnerTypes()
+        //{
+        //    try
+        //    {
+        //        return PartnerTypeHelper.GetPartnerTypeList();
+        //    }
+        //    catch
+        //    { throw; }
+        //}
         public static List<Glaccounts> GetGlaccounts()
         {
             try
