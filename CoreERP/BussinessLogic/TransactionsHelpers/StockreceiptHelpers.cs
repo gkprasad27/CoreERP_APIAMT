@@ -54,7 +54,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                var voucherNo = GetStockReceiptlist().Where(b => b.FromBranchCode == branchCode).OrderByDescending(x => x.ReceiptNo).FirstOrDefault();
+                var voucherNo = StockreceiptHelpers.GetStockReceiptlist().Where(b => b.FromBranchCode == branchCode).OrderByDescending(x => x.ReceiptNo).FirstOrDefault();
                 if (voucherNo != null)
                 {
                     string[] splitString = voucherNo.ReceiptNo.Split('/', '-');
