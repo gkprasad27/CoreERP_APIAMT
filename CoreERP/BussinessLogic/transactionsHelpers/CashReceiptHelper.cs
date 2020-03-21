@@ -10,11 +10,11 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 {
     public class CashReceiptHelper
     {
-        public List<TblBranch> GetBranchesList()
+        public static List<TblBranch> GetBranchesList()
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
+                using (Repository<Branches> repo = new Repository<Branches>())
                 {
                     return repo.TblBranch.ToList();
                 }
@@ -35,20 +35,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public static List<TblAccountLedger> GetAccountLedgers(string ledegerCode)
-        {
-            try
-            {
-                using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
-                {
-                    return repo.TblAccountLedger.Where(acl => acl.LedgerCode.Contains(ledegerCode)).ToList();
-                }
-
-            }
-            catch { throw; }
-        }
-
-        public List<TblAccountLedger> GetAccountLedgerList()
+        public static List<TblAccountLedger> GetAccountLedgers()
         {
             try
             {
@@ -56,6 +43,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 {
                     return repo.TblAccountLedger.ToList();
                 }
+
             }
             catch { throw; }
         }
@@ -95,6 +83,6 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-      
+
     }
 }

@@ -68,28 +68,13 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
-        [HttpGet("GetAccountLedgerList/{ledegerCode}")]
-        public async Task<IActionResult> GetAccountLedgerList(string ledegerCode)
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.AccountLedgerList = BankReceiptHelper.GetAccountLedgers(ledegerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpGet("GetAccountLedger")]
+        [HttpGet("GetAccountLedgerList")]
         public async Task<IActionResult> GetAccountLedgerList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.AccountLedgerList = new BankReceiptHelper().GetAccountLedgerList().Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                expando.TaxcodesList = BankReceiptHelper.GetAccountLedgers().Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
