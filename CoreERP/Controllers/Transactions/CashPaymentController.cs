@@ -79,6 +79,54 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
+        [HttpPost("GetCashpaymentList/{branchCode}")]
+        public async Task<IActionResult> GetCashpaymentList(string branchCode, [FromBody]SearchCriteria searchCriteria)
+        {
+
+            if (searchCriteria == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var cashPaymentMasterList = new CashPaymentHelper().GetCashPaymentMasters(searchCriteria);
+                if (cashPaymentMasterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.CashPaymentList = cashPaymentMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetCashPaymentDetailsList/{invoiceNo}")]
+        public async Task<IActionResult> GetCashPaymentDetailsList(string invoiceNo)
+        {
+
+            if (string.IsNullOrEmpty(invoiceNo))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var cashpaymentDetailsList = new CashPaymentHelper().GetCashpaymentDetails(invoiceNo);
+                if (cashpaymentDetailsList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.CashpaymentDetails = cashpaymentDetailsList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPost("RegisterCashPayment")]
         public async Task<IActionResult> RegisterCashPayment([FromBody]JObject objData)
         {

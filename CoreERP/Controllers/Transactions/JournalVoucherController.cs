@@ -77,5 +77,29 @@ namespace CoreERP.Controllers.Transactions
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpPost("GetJournalvoucherList/{branchCode}")]
+        public async Task<IActionResult> GetJournalvoucherList(string branchCode, [FromBody]SearchCriteria searchCriteria)
+        {
+
+            if (searchCriteria == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var journalVoucherMasterList = new JournalVoucherHelper().GetJournalVoucherMasters(searchCriteria);
+                if (journalVoucherMasterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.JournalVoucherList = journalVoucherMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

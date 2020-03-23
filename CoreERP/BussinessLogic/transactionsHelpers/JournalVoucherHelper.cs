@@ -1,5 +1,6 @@
 ﻿using CoreERP.BussinessLogic.Common;
 using CoreERP.DataAccess;
+using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,37 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 return voucherNo;
             }
             catch { throw; }
+        }
+
+        public List<TblJournalVoucherMaster> GetJournalVoucherMasters(SearchCriteria searchCriteria)
+        {
+            try
+            {
+
+                using (Repository<TblJournalVoucherMaster> repo = new Repository<TblJournalVoucherMaster>())
+                {
+                    List<TblJournalVoucherMaster> _journalVoucherMasterList = null;
+
+
+                    _journalVoucherMasterList = repo.TblJournalVoucherMaster.AsEnumerable()
+                              .Where(cp =>
+                                         DateTime.Parse(cp.JournalVoucherDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.JournalVoucherDate).Value.ToShortDateString())
+                                       && DateTime.Parse(cp.JournalVoucherDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.JournalVoucherDate).Value.ToShortDateString())
+                                 )
+                               .ToList();
+
+                    if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
+                        _journalVoucherMasterList = _journalVoucherMasterList.Where(x => x.VoucherNo == searchCriteria.InvoiceNo).ToList();
+
+
+                    return _journalVoucherMasterList;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
     }
 }

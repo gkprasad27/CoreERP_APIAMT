@@ -1,5 +1,6 @@
 ﻿using CoreERP.BussinessLogic.Common;
 using CoreERP.DataAccess;
+using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -85,6 +86,36 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
+        public List<TblBankReceiptMaster> GetBankReceiptMasters(SearchCriteria searchCriteria)
+        {
+            try
+            {
+
+                using (Repository<TblBankReceiptMaster> repo = new Repository<TblBankReceiptMaster>())
+                {
+                    List<TblBankReceiptMaster> _bankreceiptMasterList = null;
+
+
+                    _bankreceiptMasterList = repo.TblBankReceiptMaster.AsEnumerable()
+                              .Where(cp =>
+                                         DateTime.Parse(cp.BankReceiptDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.BankReceiptDate).Value.ToShortDateString())
+                                       && DateTime.Parse(cp.BankReceiptDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.BankReceiptDate).Value.ToShortDateString())
+                                 )
+                               .ToList();
+
+                    if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
+                        _bankreceiptMasterList = _bankreceiptMasterList.Where(x => x.VoucherNo == searchCriteria.InvoiceNo).ToList();
+
+
+                    return _bankreceiptMasterList;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
         public string GetVoucherNo(string branchCode)
         {
             try

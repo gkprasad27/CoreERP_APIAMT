@@ -7,6 +7,7 @@ using CoreERP.BussinessLogic.transactionsHelpers;
 using Microsoft.AspNetCore.Mvc;
 using CoreERP.Models;
 using Newtonsoft.Json.Linq;
+using CoreERP.Helpers.SharedModels;
 
 namespace CoreERP.Controllers.Transactions
 {
@@ -116,6 +117,29 @@ namespace CoreERP.Controllers.Transactions
                 }
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        [HttpPost("GetBankpaymentList/{branchCode}")]
+        public async Task<IActionResult> GetBankpaymentList(string branchCode, [FromBody]SearchCriteria searchCriteria)
+        {
+
+            if (searchCriteria == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var bankPaymentMasterList = new BankPaymentHelper().GetBankPaymentMasters(searchCriteria);
+                if (bankPaymentMasterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BankPaymentList = bankPaymentMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
             }
             catch (Exception ex)
             {
