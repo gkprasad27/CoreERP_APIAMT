@@ -229,7 +229,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _voucherDetail.FromLedgerId = bankPaymentMaster.BankLedgerId;
                     _voucherDetail.FromLedgerCode = bankPaymentMaster.BankLedgerCode;
                     _voucherDetail.FromLedgerName = bankPaymentMaster.BankLedgerName;
-                    _voucherDetail.ToLedgerId = ledgerId;
+                    _voucherDetail.ToLedgerId = ledgerName.LedgerId;
                     _voucherDetail.ToLedgerCode = ledgerCode;
                     _voucherDetail.ToLedgerName = ledgerName.LedgerName;
                     _voucherDetail.Amount = productRate;
@@ -242,12 +242,12 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 else
                 {
 
-                    _voucherDetail.FromLedgerId = bankPaymentMaster.BankLedgerId;
-                    _voucherDetail.FromLedgerCode = bankPaymentMaster.BankLedgerCode;
-                    _voucherDetail.FromLedgerName = bankPaymentMaster.BankLedgerName;
-                    _voucherDetail.ToLedgerId = _accountLedger.LedgerId;
-                    _voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
-                    _voucherDetail.ToLedgerName = _accountLedger.LedgerName;
+                    _voucherDetail.FromLedgerId = ledgerName.LedgerId;
+                    _voucherDetail.FromLedgerCode = ledgerCode;
+                    _voucherDetail.FromLedgerName = ledgerName.LedgerName;
+                    _voucherDetail.ToLedgerId = bankPaymentMaster.BankLedgerId;
+                    _voucherDetail.ToLedgerCode = bankPaymentMaster.BankLedgerCode;
+                    _voucherDetail.ToLedgerName = bankPaymentMaster.BankLedgerName;
                     _voucherDetail.Amount = productRate;
                     _voucherDetail.TransactionType = "Credit";
                     _voucherDetail.CostCenter = _accountLedger.BranchCode;
@@ -303,9 +303,9 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 _accountLedgerTransactions.BranchCode = _voucherDetail.BranchCode;
                 _accountLedgerTransactions.BranchName = _voucherDetail.BranchName;
                 _accountLedgerTransactions.TransactionDate = invoiceDate;
-                _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
+               // _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
                 _accountLedgerTransactions.VoucherAmount = _voucherDetail.Amount;
-                if (isdebit == false)
+                if (isdebit == true)
                 {
                     _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
                     _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
@@ -322,6 +322,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _accountLedgerTransactions.TransactionType = "Credit";
                     _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
                     _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
+                   
                 }
               
 
@@ -353,7 +354,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                             var _branch = GetBranches(bankPaymentMaster.BranchCode).ToArray().FirstOrDefault();
 
                             var _accountLedger = GetAccountLedgersCode(bankPaymentMaster.BankLedgerCode).ToArray().FirstOrDefault();
-                            var _cashpayAccountLedger = GetAccountLedgerList().Where(x => x.LedgerId == 175).FirstOrDefault();
+                            var _cashpayAccountLedger = GetAccountLedgerList().Where(x => x.LedgerCode == bankPaymentMaster.BankLedgerCode).FirstOrDefault();
                             var _vouchertType = GetVoucherTypeList(31).ToArray().FirstOrDefault();
 
                             #region Add voucher master record
@@ -367,7 +368,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                             bankPaymentMaster.BranchName = _branch.BranchName;
                             bankPaymentMaster.BankLedgerId = _cashpayAccountLedger.LedgerId;
                             bankPaymentMaster.BankLedgerName = _cashpayAccountLedger.LedgerName;
-                            bankPaymentMaster.BankLedgerCode = _cashpayAccountLedger.LedgerCode;
+                           // bankPaymentMaster.BankLedgerCode = _cashpayAccountLedger.LedgerCode;
                             bankPaymentMaster.EmployeeId = _voucherMaster.EmployeeId;
                             repo.TblBankPaymentMaster.Add(bankPaymentMaster);
                             repo.SaveChanges();

@@ -101,5 +101,30 @@ namespace CoreERP.Controllers.Transactions
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpPost("RegisterJournalVoucher")]
+        public async Task<IActionResult> RegisterJournalVoucher([FromBody]JObject objData)
+        {
+
+            if (objData == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var _journalVoucherHdr = objData["JournalVoucherHdr"].ToObject<TblJournalVoucherMaster>();
+                var _journalVoucherDtl = objData["JournalVoucherDetail"].ToObject<TblJournalVoucherDetails[]>();
+
+                var result = new JournalVoucherHelper().RegisterJournalVoucher(_journalVoucherHdr, _journalVoucherDtl.ToList());
+                if (result)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _journalVoucherHdr });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }
