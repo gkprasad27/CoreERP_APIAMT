@@ -12,8 +12,8 @@ using Newtonsoft.Json.Linq;
 namespace CoreERP.Controllers.Transactions
 {
     [ApiController]
-    [Route("api/transactions/CashPayment")]
-    public class CashPaymentController : Controller
+    [Route("api/transactions/JournalVoucher")]
+    public class JournalVoucherController : Controller
     {
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
@@ -21,41 +21,7 @@ namespace CoreERP.Controllers.Transactions
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = new CashPaymentHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-
-        [HttpGet("GetVoucherNo/{branchCode}")]
-        public async Task<IActionResult> GetVoucherNo(string branchCode)
-        {
-            if(string.IsNullOrEmpty(branchCode))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
-
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.BranchesList = new CashPaymentHelper().GetVoucherNo(branchCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpGet("GetAccountLedgerList/{ledegerCode}")]
-        public async Task<IActionResult> GetAccountLedgerList(string ledegerCode)
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.AccountLedgerList = CashPaymentHelper.GetAccountLedgers(ledegerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                expando.BranchesList = new JournalVoucherHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -70,7 +36,7 @@ namespace CoreERP.Controllers.Transactions
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.AccountLedgerList = new CashPaymentHelper().GetAccountLedgerList().Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                expando.AccountLedgerList = new JournalVoucherHelper().GetAccountLedgerList().Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -79,19 +45,52 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
-        [HttpPost("GetCashpaymentList/{branchCode}")]
-        public async Task<IActionResult> GetCashpaymentList(string branchCode, [FromBody]SearchCriteria searchCriteria)
+        [HttpGet("GetVoucherNo/{branchCode}")]
+        public async Task<IActionResult> GetVoucherNo(string branchCode)
+        {
+            if (string.IsNullOrEmpty(branchCode))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.BranchesList = new JournalVoucherHelper().GetVoucherNo(branchCode);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetAccountLedgerList/{ledegerCode}")]
+        public async Task<IActionResult> GetAccountLedgerList(string ledegerCode)
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.AccountLedgerList = JournalVoucherHelper.GetAccountLedgers(ledegerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("GetJournalvoucherList/{branchCode}")]
+        public async Task<IActionResult> GetJournalvoucherList(string branchCode, [FromBody]SearchCriteria searchCriteria)
         {
 
             if (searchCriteria == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
             try
             {
-                var cashPaymentMasterList = new CashPaymentHelper().GetCashPaymentMasters(searchCriteria);
-                if (cashPaymentMasterList.Count > 0)
+                var journalVoucherMasterList = new JournalVoucherHelper().GetJournalVoucherMasters(searchCriteria);
+                if (journalVoucherMasterList.Count > 0)
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.CashPaymentList = cashPaymentMasterList;
+                    expando.JournalVoucherList = journalVoucherMasterList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
@@ -103,45 +102,21 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
-        [HttpGet("GetCashPaymentDetailsList/{invoiceNo}")]
-        public async Task<IActionResult> GetCashPaymentDetailsList(string invoiceNo)
-        {
-
-            if (string.IsNullOrEmpty(invoiceNo))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
-            {
-                var cashpaymentDetailsList = new CashPaymentHelper().GetCashpaymentDetails(invoiceNo);
-                if (cashpaymentDetailsList.Count > 0)
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.CashpaymentDetails = cashpaymentDetailsList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpPost("RegisterCashPayment")]
-        public async Task<IActionResult> RegisterCashPayment([FromBody]JObject objData)
+        [HttpPost("RegisterJournalVoucher")]
+        public async Task<IActionResult> RegisterJournalVoucher([FromBody]JObject objData)
         {
 
             if (objData == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
             try
             {
-                var _cashpaymentHdr = objData["CashpaymentHdr"].ToObject<TblCashPaymentMaster>();
-                var _cashpaymentDtl = objData["CashpaymentDetail"].ToObject<TblCashPaymentDetails[]>();
+                var _journalVoucherHdr = objData["JournalVoucherHdr"].ToObject<TblJournalVoucherMaster>();
+                var _journalVoucherDtl = objData["JournalVoucherDetail"].ToObject<TblJournalVoucherDetails[]>();
 
-                var result = new CashPaymentHelper().RegisterCashPayment(_cashpaymentHdr, _cashpaymentDtl.ToList());
+                var result = new JournalVoucherHelper().RegisterJournalVoucher(_journalVoucherHdr, _journalVoucherDtl.ToList());
                 if (result)
                 {
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _cashpaymentHdr });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _journalVoucherHdr });
                 }
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
