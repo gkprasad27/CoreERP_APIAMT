@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Dynamic;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
@@ -13,7 +14,7 @@ namespace CoreERP.Controllers
     {
 
         [HttpPost("login")]
-        public async Task<IActionResult> Register([FromBody]Erpuser erpuser)
+        public async Task<IActionResult> ValidateUser([FromBody]Erpuser erpuser)
         {
             try
             {
@@ -29,30 +30,46 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "User Name/ Password not valid." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
             }
         }
 
         [HttpGet("getMenu/{roleName}")]
         public async Task<IActionResult> GetMenus(string roleName)
         {
-            try {
-                try 
-                { 
-                    var result=UserManagmentHelper.GetScreensListByUserRole(roleName);
-                    if(result !=null)
+            try
+            {
+                var result = UserManagmentHelper.GetScreensListByUserRole(roleName);
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found for user." });
-                }
-                catch(Exception ex) 
-                {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
-                }
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found for user." });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Ok(new APIResponse() { status =APIStatus.FAIL.ToString(),response=ex.Message});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message: ex.InnerException.Message });
+            }
+
+        }
+
+        [HttpGet("GetMenuList")]
+        public async Task<IActionResult> GetMenuList()
+        {
+            try
+            {
+                var result = new UserManagmentHelper().GetMenus();
+                if (result != null)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.MenusList = result;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
             }
         }
     }

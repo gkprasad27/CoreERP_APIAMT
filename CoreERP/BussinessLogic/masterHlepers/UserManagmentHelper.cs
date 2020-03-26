@@ -37,6 +37,22 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
+        public List<Menus> GetMenus()
+        {
+            try
+            {
+                using (Repository<Menus> repo=new Repository<Menus>())
+                {
+                    return repo.Menus.ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
         public static List<ExpandoObject> GetScreensListByUserRole(string userRole)
         {
             try

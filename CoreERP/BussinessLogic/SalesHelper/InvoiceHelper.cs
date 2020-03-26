@@ -1,7 +1,9 @@
-﻿using CoreERP.DataAccess;
+﻿using CoreERP.Controllers.masters;
+using CoreERP.DataAccess;
 using CoreERP.Helpers;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,11 +109,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
+                ledgercode = ledgercode?.ToLower();
                 using (Repository<TblAccountLedger> repo=new Repository<TblAccountLedger>())
                 {
                     return repo.TblAccountLedger
                         .Where(al => al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower())
-                         && al.LedgerCode.Contains((ledgercode ?? al.LedgerCode))
+                         && al.LedgerCode.ToLower().Contains((ledgercode ?? al.LedgerCode.ToLower()))
                          )
                         .OrderBy(o=> o.LedgerCode)
                         .ToList();
@@ -140,26 +143,31 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-        public decimal GetAccountBalance(string ldgerCode,string branchCode)
+        public decimal GetAccountBalance(string ldgerCode)
         {
             try
             {
-                //TblAccountLedger accountLdger = null;
-                //using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
-                //{
-                //    accountLdger= repo.TblAccountLedger.Where(a => a.LedgerCode == (ldgerCode ?? a.LedgerCode)).FirstOrDefault();
-                //}
+               
+                TblOpeningBalance _OpeningBalance = null;
+                using (Repository<TblOpeningBalance> repo = new Repository<TblOpeningBalance>())
+                {
+                    _OpeningBalance = repo.TblOpeningBalance.Where(a => a.LedgerCode == ldgerCode ).FirstOrDefault();
+                }
+                //select * from tbl_OpeningBalance where ledgercode=2030 -- 230270
 
                 using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
                 {
-                    var accountTransactions = repo.TblAccountLedgerTransactions
-                                                      .Where(x=> x.LedgerCode == ldgerCode).ToList();
-                   
-
+                    var accountTransactions = (from atl in repo.TblAccountLedgerTransactions
+                                               join vd in repo.TblVoucherDetail on atl.VoucherDetailId equals vd.VoucherDetailId
+                                               join vm in repo.TblVoucherMaster  on vd.VoucherMasterId equals vm.VoucherMasterId
+                                               where !(EF.Functions.Like(vm.VoucherNo, "OP%TKL"))
+                                                  && atl.LedgerCode == ldgerCode
+                                               select atl).ToList();
+                 
                     decimal totalCrditAmount = accountTransactions.Sum(x => Convert.ToDecimal(x.CreditAmount ?? 0));
                     decimal totalDebittAmount = accountTransactions.Sum(x => Convert.ToDecimal(x.DebitAmount ?? 0));
 
-                    return  (totalCrditAmount - totalDebittAmount);
+                    return  _OpeningBalance.Amount +(totalCrditAmount - totalDebittAmount);
                 }
             }
             catch (Exception ex)
@@ -167,7 +175,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-        public List<TblProduct> GetProducts(string productCode,string ProductName=null)
+        public List<TblProduct> GetProducts(string productCode,string ProductName)
         {
             try
             {
@@ -191,6 +199,27 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 }
             }
             catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<TblProduct> GetProducts(string productCode)
+        {
+            try
+            {
+                using (Repository<TblProduct> repo = new Repository<TblProduct>())
+                {
+                   
+                        productCode = productCode.ToLower();
+
+                        return repo.TblProduct
+                                   .Where(p => p.ProductCode.ToLower() == productCode.ToLower())
+                                   .ToList();
+                   
+                }
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -271,6 +300,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
+     
+         
+        
         public TblInvoiceDetail GetBillingDetailsSection(string branchCode,string productCode)
         {
             try
@@ -329,19 +361,22 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-        public List<TblMemberMaster> GetMembers(decimal? memberCode=null,string memberName=null)
+        public List<TblMemberMaster> GetMembers(string memberName=null)
         {
             try
             {
-                using (Repository<TblMemberMaster> repo = new Repository<TblMemberMaster>())
-                {
-
-                    return repo.TblMemberMaster
-                         .Where(m => m.MemberName.Contains(memberName) 
-                                  && m.MemberCode == (memberCode ?? m.MemberCode)
-                                  && m.IsActive == 1)
-                         .ToList();
-                }
+              return  new MemberHelper().GetMembersByName(memberName);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<TblVehicle> GetVehicles(string vechileRegno,string memberCode)
+        {
+            try
+            {
+                return new VechileMasterHelper().GetVehicles(vechileRegno,Convert.ToDecimal(memberCode));
             }
             catch(Exception ex)
             {
