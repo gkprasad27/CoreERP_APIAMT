@@ -111,7 +111,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             }
         }
 
-        public List<TblCashReceiptMaster> GetCashReceiptMasters(SearchCriteria searchCriteria)
+        public List<TblCashReceiptMaster> GetCashReceiptMasters(VoucherNoSearchCriteria searchCriteria)
         {
             try
             {
@@ -128,8 +128,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                                  )
                                .ToList();
 
-                    if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
-                        _cashreceiptMasterList = _cashreceiptMasterList.Where(x => x.VoucherNo == searchCriteria.InvoiceNo).ToList();
+                    if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
+                        _cashreceiptMasterList = _cashreceiptMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
                     return _cashreceiptMasterList;
@@ -422,6 +422,24 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                             throw ex;
                         }
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        
+        public List<TblCashReceiptDetails> GetCashReceiptDetails(decimal id)
+        {
+            try
+            {
+                using (Repository<TblCashPaymentDetails> repo = new Repository<TblCashPaymentDetails>())
+                {
+                    
+                    //var cashPaymentDetails = GetCashReceipts().Where(c => c.VoucherNo == invoiceNo).FirstOrDefault();
+                    return repo.TblCashReceiptDetails.Where(x => x.CashReceiptMasterId == id).ToList();
                 }
             }
             catch (Exception ex)

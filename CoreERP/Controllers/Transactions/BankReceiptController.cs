@@ -124,7 +124,7 @@ namespace CoreERP.Controllers.Transactions
         }
 
         [HttpPost("GetBankreceiptList/{branchCode}")]
-        public async Task<IActionResult> GetBankreceiptList(string branchCode, [FromBody]SearchCriteria searchCriteria)
+        public async Task<IActionResult> GetBankreceiptList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
         {
 
             if (searchCriteria == null)
@@ -136,6 +136,30 @@ namespace CoreERP.Controllers.Transactions
                 {
                     dynamic expando = new ExpandoObject();
                     expando.BankReceiptList = bankReceiptMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetBankReceiptDetailsList/{id}")]
+        public async Task<IActionResult> GetBankReceiptDetailsList(decimal id)
+        {
+
+            if (id==0)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var bankReceiptDetailsList = new BankReceiptHelper().GetBankReceiptDetails(id);
+                if (bankReceiptDetailsList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BankReceiptDetails = bankReceiptDetailsList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 

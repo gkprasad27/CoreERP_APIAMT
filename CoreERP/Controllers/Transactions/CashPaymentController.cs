@@ -80,7 +80,7 @@ namespace CoreERP.Controllers.Transactions
         }
 
         [HttpPost("GetCashpaymentList/{branchCode}")]
-        public async Task<IActionResult> GetCashpaymentList(string branchCode, [FromBody]SearchCriteria searchCriteria)
+        public async Task<IActionResult> GetCashpaymentList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
         {
 
             if (searchCriteria == null)
@@ -103,15 +103,15 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
-        [HttpGet("GetCashPaymentDetailsList/{invoiceNo}")]
-        public async Task<IActionResult> GetCashPaymentDetailsList(string invoiceNo)
+        [HttpGet("GetCashPaymentDetailsList/{id}")]
+        public async Task<IActionResult> GetCashPaymentDetailsList(decimal id)
         {
 
-            if (string.IsNullOrEmpty(invoiceNo))
+            if (id==0)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
             try
             {
-                var cashpaymentDetailsList = new CashPaymentHelper().GetCashpaymentDetails(invoiceNo);
+                var cashpaymentDetailsList = new CashPaymentHelper().GetCashpaymentDetails(id);
                 if (cashpaymentDetailsList.Count > 0)
                 {
                     dynamic expando = new ExpandoObject();
