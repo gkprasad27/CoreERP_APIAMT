@@ -49,6 +49,7 @@ namespace CoreERP.Models
         public virtual DbSet<Invoice> Invoice { get; set; }
         public virtual DbSet<ItemMaster> ItemMaster { get; set; }
         public virtual DbSet<LeaveBalanceMaster> LeaveBalanceMaster { get; set; }
+        public virtual DbSet<LeaveTypes> LeaveTypes { get; set; }
         public virtual DbSet<MatTranTypes> MatTranTypes { get; set; }
         public virtual DbSet<MaterialGroup> MaterialGroup { get; set; }
         public virtual DbSet<MenuAccesses> MenuAccesses { get; set; }
@@ -1944,6 +1945,25 @@ namespace CoreERP.Models
                     .HasColumnName("UserID")
                     .HasMaxLength(10)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<LeaveTypes>(entity =>
+            {
+                entity.HasKey(e => e.LeaveCode);
+
+                entity.Property(e => e.LeaveCode).HasMaxLength(40);
+
+                entity.Property(e => e.CompanyCode).HasMaxLength(40);
+
+                //entity.Property(e => e.CompanyName).HasMaxLength(40);
+
+                //entity.Property(e => e.Id)
+                //    .HasColumnName("ID")
+                //    .HasMaxLength(14);
+
+                entity.Property(e => e.LeaveMaxLimit).HasMaxLength(40);
+
+                entity.Property(e => e.LeaveName).HasMaxLength(40);
             });
 
             modelBuilder.Entity<MatTranTypes>(entity =>
@@ -4501,7 +4521,7 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Branch");
 
-                entity.HasIndex(e => new { e.SapCode, e.BranchName, e.BranchCode })
+                entity.HasIndex(e => new { e.BranchName, e.SapCode, e.BranchCode })
                     .HasName("NonClusteredIndex-20181226-173932");
 
                 entity.Property(e => e.BranchId)
