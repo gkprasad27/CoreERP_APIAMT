@@ -86,7 +86,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public List<TblBankReceiptMaster> GetBankReceiptMasters(SearchCriteria searchCriteria)
+        public List<TblBankReceiptMaster> GetBankReceiptMasters(VoucherNoSearchCriteria searchCriteria)
         {
             try
             {
@@ -103,8 +103,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                                  )
                                .ToList();
 
-                    if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
-                        _bankreceiptMasterList = _bankreceiptMasterList.Where(x => x.VoucherNo == searchCriteria.InvoiceNo).ToList();
+                    if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
+                        _bankreceiptMasterList = _bankreceiptMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
                     return _bankreceiptMasterList;
@@ -413,6 +413,33 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                             throw ex;
                         }
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<TblBankReceiptMaster> GetBankReceiptMasters()
+        {
+            try
+            {
+                using (Repository<TblBankReceiptMaster> repo = new Repository<TblBankReceiptMaster>())
+                {
+                    return repo.TblBankReceiptMaster.ToList();
+                }
+
+            }
+            catch { throw; }
+        }
+        public List<TblBankReceiptDetails> GetBankReceiptDetails(decimal id)
+        {
+            try
+            {
+                using (Repository<TblBankReceiptDetails> repo = new Repository<TblBankReceiptDetails>())
+                {
+                    return repo.TblBankReceiptDetails.Where(x => x.BankReceiptMasterId == id).ToList();
                 }
             }
             catch (Exception ex)

@@ -23,6 +23,19 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch (Exception ex) { throw ex; }
         }
 
+        public  List<TblJournalVoucherMaster> GetJournalVouchers()
+        {
+            try
+            {
+                using (Repository<TblJournalVoucherMaster> repo = new Repository<TblJournalVoucherMaster>())
+                {
+                    return repo.TblJournalVoucherMaster.ToList();
+                }
+
+            }
+            catch { throw; }
+        }
+
         public List<TblAccountLedger> GetAccountLedgerList()
         {
             try
@@ -58,7 +71,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public List<TblJournalVoucherMaster> GetJournalVoucherMasters(SearchCriteria searchCriteria)
+        public List<TblJournalVoucherMaster> GetJournalVoucherMasters(VoucherNoSearchCriteria searchCriteria)
         {
             try
             {
@@ -75,8 +88,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                                  )
                                .ToList();
 
-                    if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
-                        _journalVoucherMasterList = _journalVoucherMasterList.Where(x => x.VoucherNo == searchCriteria.InvoiceNo).ToList();
+                    if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
+                        _journalVoucherMasterList = _journalVoucherMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
                     return _journalVoucherMasterList;
@@ -352,6 +365,21 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                             throw ex;
                         }
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<TblJournalVoucherDetails> GetJournalVoucherDetails(decimal id)
+        {
+            try
+            {
+                using (Repository<TblJournalVoucherDetails> repo = new Repository<TblJournalVoucherDetails>())
+                {
+                    return repo.TblJournalVoucherDetails.Where(x => x.JournalVoucherMasterId == id).ToList();
                 }
             }
             catch (Exception ex)
