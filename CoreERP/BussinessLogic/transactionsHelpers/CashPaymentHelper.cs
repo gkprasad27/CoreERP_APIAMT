@@ -269,7 +269,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _voucherDetail.ToLedgerCode = ledgerCode;
                     _voucherDetail.ToLedgerName = ledgerName.LedgerName;
                     _voucherDetail.Amount = productRate;
-                    _voucherDetail.TransactionType = "Credit";
+                    _voucherDetail.TransactionType = "Debit";
                     _voucherDetail.CostCenter = _branch.BranchCode;
                     _voucherDetail.ServerDate = DateTime.Now;
                     _voucherDetail.Narration = "Cash Payment";
@@ -283,7 +283,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _voucherDetail.ToLedgerCode = cashPaymentMaster.FromLedgerCode;
                     _voucherDetail.ToLedgerName = cashPaymentMaster.FromLedgerName;
                     _voucherDetail.Amount = productRate;
-                    _voucherDetail.TransactionType = "Debit";
+                    _voucherDetail.TransactionType = "Credit";
                     _voucherDetail.CostCenter = _branch.BranchCode;
                     _voucherDetail.ServerDate = DateTime.Now;
                     _voucherDetail.Narration = "Cash Payment";
@@ -322,7 +322,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _accountLedgerTransactions.LedgerId = cashPaymentMaster.FromLedgerId;
                     _accountLedgerTransactions.LedgerCode = cashPaymentMaster.FromLedgerCode;
                     _accountLedgerTransactions.LedgerName = cashPaymentMaster.FromLedgerName;
-                    _accountLedgerTransactions.TransactionType = "Debit";
+                    _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
                     _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
                     _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
 
@@ -332,7 +332,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
                     _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
                     _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
-                    _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
+                    _accountLedgerTransactions.TransactionType = "Credit";
                     _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
                     _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
                 }
