@@ -167,7 +167,13 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     decimal totalCrditAmount = accountTransactions.Sum(x => Convert.ToDecimal(x.CreditAmount ?? 0));
                     decimal totalDebittAmount = accountTransactions.Sum(x => Convert.ToDecimal(x.DebitAmount ?? 0));
 
-                    return  _OpeningBalance.Amount +(totalCrditAmount - totalDebittAmount);
+                   var  _value =  _OpeningBalance.Amount +(totalCrditAmount - totalDebittAmount);
+                    if(_value > 0)
+                    {
+                        return _value;
+                    }
+
+                    return 0;
                 }
             }
             catch (Exception ex)
@@ -372,11 +378,25 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
+        public TblMemberMaster GetMembersByCode(string memberCode)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(memberCode))
+                    return new MemberHelper().GetMembersByCode(Convert.ToDecimal(memberCode));
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public List<TblVehicle> GetVehicles(string vechileRegno,string memberCode)
         {
             try
             {
-                return new VechileMasterHelper().GetVehicles(vechileRegno,Convert.ToDecimal(memberCode));
+                return new VechileMasterHelper().GetVehicles(vechileRegno,Convert.ToDecimal(memberCode)).Where(x=>x.IsValid == 1).ToList();
             }
             catch(Exception ex)
             {
@@ -435,8 +455,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             foreach (var invdtl in invoiceDetails)
                             {
                                 _product = GetProducts(invdtl.ProductCode).FirstOrDefault();
-                                _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureId));
-                                _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure.SalesAccount).FirstOrDefault();
+                                _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
+                                _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure?.SalesAccount).FirstOrDefault();
                                
                                 #region Add voucher Details
                                 var _voucherDetail = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, invdtl.Rate);

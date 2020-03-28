@@ -49,20 +49,20 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
-        [HttpGet("GetIssueNo/{branchcode}")]
-        public async Task<IActionResult> GetIssueNo(string branchcode)
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                var vocherno =new StockissuesHelper().GetIssueNo(branchcode);
-                expando.vochernos = vocherno;
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetIssueNo/{branchcode}")]
+        //public async Task<IActionResult> GetIssueNo(string branchcode)
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        var vocherno =new StockissuesHelper().GetIssueNo(branchcode);
+        //        expando.vochernos = vocherno;
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
     }
 }

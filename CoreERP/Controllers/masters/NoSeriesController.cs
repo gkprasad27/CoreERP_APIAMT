@@ -110,27 +110,27 @@ namespace CoreERP.Controllers
         //    }
         //}
 
-        //[HttpGet("GetCompanyList")]
-        //public async Task<IActionResult> GetCompanyList()
-        //{
+        [HttpGet("GetCompanyList")]
+        public async Task<IActionResult> GetCompanyList()
+        {
 
-        //    try
-        //    {
-        //        var companiesList = CompaniesHelper.GetListOfCompanies();
-        //        if (companiesList.Count > 0)
-        //        {
-        //            dynamic expdoObj = new ExpandoObject();
-        //            expdoObj.companiesList = companiesList;
-        //            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-        //        }
-        //        else
-        //            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
+            try
+            {
+                var companiesList = CompaniesHelper.GetListOfCompanies();
+                if (companiesList.Count > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.companiesList = companiesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
         //[HttpGet("GetBranchesList")]
         //public async Task<IActionResult> GetBranchesList()

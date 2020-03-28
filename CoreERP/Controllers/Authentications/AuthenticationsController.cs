@@ -33,6 +33,29 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
             }
         }
+        //get branches
+        [HttpGet("GetBranchesForUser/{seqid}")]
+        public async Task<IActionResult> GetBranchesForUser(string seqid)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(seqid))
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+                }
+
+                dynamic expando = new ExpandoObject();
+                expando.Branches = UserManagmentHelper.GetBranchesByUser(Convert.ToDecimal(seqid));
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+            }
+
+        }
+
+
 
         [HttpGet("getMenu/{roleName}")]
         public async Task<IActionResult> GetMenus(string roleName)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace CoreERP.Models
 {
@@ -15,5 +16,6 @@ namespace CoreERP.Models
         public string BranchCode { get; set; }
         public string CompanyCode { get; set; }
         public DateTime? AddDate { get; set; }
+       
     }
 }

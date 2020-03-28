@@ -230,8 +230,33 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.Members = new InvoiceHelper().GetMembers( memberName).Select(x => new { ID = x.MemberCode, Text = x.MemberName, PhoneNo = x.Phone });
+                expando.Members = new InvoiceHelper().GetMembers( memberName).Select(x => new { ID = x.MemberCode, Text = x.MemberName, PhoneNo = x.Phone,GeneralNo=x.MemberCode });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetmemberNamesByCode/{memberCode}")]
+        public async Task<IActionResult> GetmemberNamesByCode(string memberCode)
+        {
+            if (string.IsNullOrEmpty(memberCode))
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
+            try
+            {
+                var result = new InvoiceHelper().GetMembersByCode(memberCode);
+                if (result != null)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.Members = new { MemberCode = result.MemberCode, MemberName = result.MemberName, PhoneNo = result.Phone, GeneralNo = result.MemberCode };
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No member found for member code: " + memberCode });
             }
             catch (Exception ex)
             {
@@ -249,7 +274,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.Members = new InvoiceHelper().GetVehicles(vechileNo, memberCode).Select(x => new { ID = x.VehicleId, Text = x.VehicleRegNo , MemberCode =x.MemberCode });
+                expando.Members = new InvoiceHelper().GetVehicles(vechileNo, memberCode).Take(100).Select(x => new { ID = x.VehicleId, Text = x.VehicleRegNo , MemberCode =x.MemberCode });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

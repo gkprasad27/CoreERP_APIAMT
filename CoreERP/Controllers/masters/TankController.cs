@@ -120,36 +120,35 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetBranches")]
-        [Produces(typeof(List<Branches>))]
-        public async Task<IActionResult> GetBranches()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.BranchesList = new TankHelpers().GetBranches().Select(pro => new { ID = pro.BranchCode, TEXT = pro.BranchName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetBranches")]
+        //[Produces(typeof(List<Branches>))]
+        //public async Task<IActionResult> GetBranches()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.BranchesList = new TankHelpers().GetBranches().Select(pro => new { ID = pro.BranchCode, TEXT = pro.Address1 });
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
-        [HttpGet("Getbranchcode/{branchname}")]
-        public async Task<IActionResult> Getbranchcode(string branchname)
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-               // expando.branchcode = new TankHelpers().Getbranchcodes(branchname).Select(bc => new { Name = bc.Address1, Id = bc.BranchCode });
-                expando.branchcode = BrancheHelper.GetBranches().Select(bc => new { Name = bc.BranchName, Id = bc.BranchCode });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("Getbranchcode/{branchname}")]
+        //public async Task<IActionResult> Getbranchcode(string branchname)
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.branchcode = new TankHelpers().Getbranchcodes(branchname).Select(bc => new { Name = bc.Address1, Id = bc.BranchCode });
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
     }
 }

@@ -4,28 +4,93 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.BussinessLogic.TransactionsHelpers;
+using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+
 namespace CoreERP.Controllers.Transactions
 {
     [Route("api/Transactions/Oilconversion")]
     [ApiController]
     public class OilconversionController : ControllerBase
     {
-        [HttpGet("GetOilconversionList")]
-        public async Task<IActionResult> GetOilconversionList()
+
+
+        [HttpGet("GetProductLists/{productCode}/{branchCode}")]
+        public async Task<IActionResult> GetOpStockShortDetailsection1(string productcode, string branchCode)
         {
             try
             {
-                var oilconvrsionList =new OilconversionHelper().GetOilconversionList();
-                if (oilconvrsionList.Count > 0)
+                dynamic expando = new ExpandoObject();
+                expando.productsList = new OilconversionHelper().GetoilconversionDetailsection(productcode, branchCode);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+
+        //oilconversionVoucherNo
+        [HttpGet("GetoilconversionVoucherNo/{branchCode}")]
+        public async Task<IActionResult> GetoilconversionVoucherNo(string branchCode)
+        {
+            if (string.IsNullOrEmpty(branchCode))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.oilconversionVoucherNo = new OilconversionHelper().GetoilconversionVoucherNo(branchCode);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("RegisterOilconversion")]
+        public async Task<IActionResult> RegisterOilconversion([FromBody]JObject objData)
+        {
+            APIResponse apiResponse = null;
+            if (objData == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var _oilcovrsnHdr = objData["OilcnvsHdr"].ToObject<TblOilConversionMaster>();
+                var _oilcovrsnDtl = objData["OilcnvsDtl"].ToObject<TblOilConversionDetails[]>();
+
+                var result = new OilconversionHelper().RegisterBill(_oilcovrsnHdr, _oilcovrsnDtl.ToList());
+
+                apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("GetOilconversionList")]
+        public async Task<IActionResult> GetOilconversionList([FromBody]SearchCriteria searchCriteria)
+        {
+
+            if (searchCriteria == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var oilconversionList = new OilconversionHelper().GetOilConversionMasters(searchCriteria);
+                if (oilconversionList.Count > 0)
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.oilconvrsionList = oilconvrsionList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    dynamic expando = new ExpandoObject();
+                    expando.oilconversionsList = oilconversionList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
             }
             catch (Exception ex)
             {
@@ -33,30 +98,23 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
-        [HttpGet("GetbranchcodeList/{branchcode}")]
-        public async Task<IActionResult> GetbranchcodeList(string branchcode)
+        [HttpGet("GetOilconversionsDeatilList/{issueNo}")]
+        public async Task<IActionResult> GetOilconversionsDeatilList(string issueNo)
         {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.branch =new OilconversionHelper().Getbranchcodes(branchcode).Select(bc => new { ID = bc.BranchCode });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
 
-        [HttpGet("GetGetVoucherNo/{branchcode}")]
-        public async Task<IActionResult> GetGetVoucherNo(string branchcode)
-        {
+            if (string.IsNullOrEmpty(issueNo))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
             try
             {
-                dynamic expando = new ExpandoObject();
-                var vocherno =new OilconversionHelper().GetVoucherNo(branchcode);
-                expando.vochernos = vocherno;
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                var OilconversionsDeatilList = new OilconversionHelper().OilconversionsDeatilList(issueNo);
+                if (OilconversionsDeatilList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.OilconversionsDeatilList = OilconversionsDeatilList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockshortsDeatilList record found." });
             }
             catch (Exception ex)
             {

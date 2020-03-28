@@ -40,7 +40,7 @@ namespace CoreERP.Controllers.Transactions
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.branch =new StockreceiptHelpers().Getbranchcodes(branchcode).ToList();
+                expando.branch =new StockreceiptHelpers().GetBranches(branchcode).ToList();
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

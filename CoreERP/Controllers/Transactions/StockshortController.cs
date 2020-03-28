@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.BussinessLogic.TransactionsHelpers;
+using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers.Transactions
 {
@@ -13,20 +15,96 @@ namespace CoreERP.Controllers.Transactions
     [ApiController]
     public class StockshortController : ControllerBase
     {
-        [HttpGet("GetStockshortsList")]
-        public async Task<IActionResult> GetStockshortsList()
+        
+        [HttpGet("GetBranchesList")]
+        public async Task<IActionResult> GetBranchesList()
         {
             try
             {
-                var stockList =new StockshortHelpers().GetStockshortsList();
-                if (stockList.Count > 0)
+                dynamic expando = new ExpandoObject();
+                expando.BranchesList = new StockshortHelpers().GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetProductLists/{productCode}/{branchCode}")]
+        public async Task<IActionResult> GetOpStockShortDetailsection1(string productcode, string branchCode)
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.productsList = new StockshortHelpers().GetOpStockShortDetailsection(productcode, branchCode);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        //stackshort vocherno
+
+        [HttpGet("GetstockshortVoucherNo/{branchCode}")]
+        public async Task<IActionResult> GetstockshortVoucherNo(string branchCode)
+        {
+            if (string.IsNullOrEmpty(branchCode))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.stockshortVoucherNo = new StockshortHelpers().GetstockshortVoucherNo(branchCode);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("RegisterStockshort")]
+        public async Task<IActionResult> RegisterStockshort([FromBody]JObject objData)
+        {
+            APIResponse apiResponse = null;
+            if (objData == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var _stockrshortHdr = objData["StockshortHdr"].ToObject<TblStockshortMaster>();
+                var _stockshortDtl = objData["StockshortDtl"].ToObject<TblStockshortDetails[]>();
+
+                var result = new StockshortHelpers().RegisterStockshort(_stockrshortHdr, _stockshortDtl.ToList());
+                apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+
+        [HttpPost("GetStockshortsList")]
+        public async Task<IActionResult> GetStockshortsList([FromBody]SearchCriteria searchCriteria)
+        {
+
+            if (searchCriteria == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var stockshortsListMasterList = new StockshortHelpers().GetStockshortsList(searchCriteria);
+                if (stockshortsListMasterList.Count > 0)
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.stockshortList = stockList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    dynamic expando = new ExpandoObject();
+                    expando.StockshortsList = stockshortsListMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
             }
             catch (Exception ex)
             {
@@ -34,36 +112,7 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
-        [HttpGet("GetbranchcodeList/{branchcode}")]
-        public async Task<IActionResult> GetbranchcodeList(string branchcode)
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.branch =new StockshortHelpers().Getbranchcodes(branchcode).Select(bc => new { ID = bc.BranchCode });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
 
-        [HttpGet("GetGetVoucherNo/{branchcode}")]
-        public async Task<IActionResult> GetGetVoucherNo(string branchcode)
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                var vocherno =new StockshortHelpers().GetVoucherNo(branchcode);
-                expando.vochernos = vocherno;
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
 
         [HttpGet("GetCostCentersList")]
         public async Task<IActionResult> GetCostCentersList()
@@ -71,7 +120,7 @@ namespace CoreERP.Controllers.Transactions
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CostCentersList =new StockshortHelpers().GetCostCenters().Select(x => new { ID = x.Code, TEXT = x.Name });
+                 expando.CostCentersList =new StockshortHelpers().GetCostCenters().Select(x => new { ID = x.Code, TEXT = x.Name });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -80,6 +129,28 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
+        [HttpGet("GetStockshortsDeatilList/{issueNo}")]
+        public async Task<IActionResult> GetStockshortsDeatilList(string issueNo)
+        {
 
+            if (string.IsNullOrEmpty(issueNo))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var StockshortsDeatilList = new StockshortHelpers().StockshortsDeatilList(issueNo);
+                if (StockshortsDeatilList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.StockshortsDeatilList = StockshortsDeatilList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockshortsDeatilList record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

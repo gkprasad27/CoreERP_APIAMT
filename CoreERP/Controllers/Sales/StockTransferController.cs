@@ -51,9 +51,14 @@ namespace CoreERP.Controllers.Sales
             }
             try
             {
-                dynamic expando = new ExpandoObject();
-                expando.SateteList = new StockTransferHelper().GetStockTransferDetailsSection(branchCode, productCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                var result = new StockTransferHelper().GetStockTransferDetailsSection(branchCode, productCode);
+                if (result != null)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.SateteList = new StockTransferHelper().GetStockTransferDetailsSection(branchCode, productCode);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No product found for product code. +"+ productCode });
             }
             catch (Exception ex)
             {

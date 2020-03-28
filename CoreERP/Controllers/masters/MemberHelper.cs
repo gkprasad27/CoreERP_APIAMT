@@ -23,5 +23,19 @@ namespace CoreERP.Controllers.masters
                 throw ex;
             }
         }
+        public TblMemberMaster GetMembersByCode(decimal memberCode)
+        {
+            try
+            {
+                using (Repository<TblMemberMaster> repo = new Repository<TblMemberMaster>())
+                {
+                    return repo.TblMemberMaster.Where(m => m.MemberCode == memberCode).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

@@ -12,12 +12,33 @@ namespace CoreERP.BussinessLogic.masterHlepers
     {
         public  static Erpuser ValidateUser(Erpuser erpuser)
         {
+            Erpuser user = null;
             using (Repository<Erpuser> _repo = new Repository<Erpuser>())
             {
-              return  _repo.Erpuser
-                     .Where(u => u.UserName.Equals(erpuser.UserName)
+               user = _repo.Erpuser
+                             .Where(u => u.UserName.Equals(erpuser.UserName)
                              && u.Password.Equals(erpuser.Password)
                           ).FirstOrDefault();
+
+              
+
+
+                return user;
+            }
+        }
+
+        public static List<string> GetBranchesByUser(decimal SeqId)
+        {
+            try
+            {
+                using(ERPContext context=new ERPContext())
+                {
+                    return context.TblUserBranch.Where(x => x.UserId == SeqId).FirstOrDefault().BranchName.Split(";")?.ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
             }
         }
 

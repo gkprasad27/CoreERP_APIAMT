@@ -105,17 +105,17 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
-        public static List<string> GetNatureList()
-        {
-            try
-            {
-                return new List<string>() { "AUTO","MANUAL"};
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //public static List<string> GetNatureList()
+        //{
+        //    try
+        //    {
+        //        return Common.CommonHelper.GetConfigurationValue("MASTER", "NUMBERSERIES", "NATURE").Split(',').ToList();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
 
         #region old code
@@ -143,15 +143,15 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }catch
             { throw; }
         }
-        public static List<TblBranch> GetBranches()
-        {
-            try
-            {
-                return BrancheHelper.GetBranches();
-            }
-            catch
-            { throw; }
-        }
+        //public static List<Branches> GetBranches()
+        //{
+        //    try
+        //    {
+        //        return BrancheHelper.GetBranches();
+        //    }
+        //    catch
+        //    { throw; }
+        //}
         //public static List<PartnerType> GetPartnerTypes()
         //{
         //    try

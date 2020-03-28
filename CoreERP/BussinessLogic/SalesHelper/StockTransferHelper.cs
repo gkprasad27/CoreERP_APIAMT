@@ -79,7 +79,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
             try
             {
                 var _product =GetProducts(productCode);
-
+                if (_product == null)
+                    return null;
                 var _stockTransferDetail = new TblStockTransferDetail();
                 _stockTransferDetail.ProductId = _product.ProductId;
                 _stockTransferDetail.ProductCode = _product.ProductCode;

@@ -138,21 +138,21 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetBranches")]
-        [Produces(typeof(List<Branches>))]
-        public async Task<IActionResult> GetBranches()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.BranchesList = new PumpHelpers().GetBranches().Select(pro => new { ID = pro.BranchCode, TEXT = pro.BranchName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetBranches")]
+        //[Produces(typeof(List<Branches>))]
+        //public async Task<IActionResult> GetBranches()
+        //{
+        //    try
+        //    {
+        //        dynamic expando = new ExpandoObject();
+        //        expando.BranchesList = new PumpHelpers().GetBranches().Select(pro => new { ID = pro.BranchCode, TEXT = pro.Address1 });
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         [HttpGet("GetBranchcodes/{branchname}")]
         public async Task<IActionResult> GetBranchcodes(string branchname)
