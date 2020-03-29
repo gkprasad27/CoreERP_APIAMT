@@ -204,6 +204,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
                                         && x.UserId == userId
                                         && x.BranchCode == branchCode)
                                  .FirstOrDefault();
+
+                        _shift.OutTime = DateTime.Now;
+                        _shift.Status = 0;
+                        _shift.Narration = "Shift in Progress.";
+
+                        _repo.TblShift.Update(_shift);
+                        _repo.SaveChanges();
                     }
                 }
 
@@ -233,6 +240,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                                 .FirstOrDefault();
 
                         _shift.OutTime = DateTime.Now;
+                        _shift.Status = 1;
                         _shift.Narration = "Shift Logged Out";
 
                         _repo.TblShift.Update(_shift);
