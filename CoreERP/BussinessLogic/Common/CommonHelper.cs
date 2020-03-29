@@ -13,17 +13,23 @@ namespace CoreERP.BussinessLogic.Common
         {
             preFix = string.Empty;
             suffix = string.Empty;
-            
-            using (Repository<TblSuffixPrefix> repo=new Repository<TblSuffixPrefix>())
+            try
             {
-              var _suffixPrefix=  repo.TblSuffixPrefix
-                                      .Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode)
-                                      .FirstOrDefault();
+                using (Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>())
+                {
+                    var _suffixPrefix = repo.TblSuffixPrefix
+                                            .Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode)
+                                            .FirstOrDefault();
 
-                preFix = _suffixPrefix?.Prefix;
-                suffix = _suffixPrefix?.Suffix;
+                    preFix = _suffixPrefix?.Prefix;
+                    suffix = _suffixPrefix?.Suffix;
 
-               return _suffixPrefix.StartIndex;
+                    return _suffixPrefix?.StartIndex;
+                }
+            }
+            catch(Exception ex)
+            {
+                return null;
             }
         }
 
@@ -33,6 +39,11 @@ namespace CoreERP.BussinessLogic.Common
             {
                 string  prefix = string.Empty, sufix = string.Empty;
                 var _number = GetSuffixPrefix(voucherTypeid, branchCode, out prefix, out sufix);
+
+                if (string.IsNullOrEmpty(prefix))
+                {
+                    return null;
+                }
 
                 if (_number == null)
                 {

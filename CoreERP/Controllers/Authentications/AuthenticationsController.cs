@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Dynamic;
+using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
@@ -23,8 +24,13 @@ namespace CoreERP.Controllers
                 //Response.Headers.Add("Access-Control-Request-Headers", "origin,x-requested-with");
                 //Response.Headers.Add("Access-Control-Allow-MethodsPOST, GET, OPTIONS, DELET", "Accept");
                 Erpuser user = UserManagmentHelper.ValidateUser(erpuser);
+
                 if (user != null)
-                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= user });
+                {
+                    var _branch= UserManagmentHelper.GetBranchesByUser(user.SeqId);
+                    var shiftId = new UserManagmentHelper().GetShiftId(user.SeqId, _branch.FirstOrDefault());
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = user });
+                }
                 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "User Name/ Password not valid." });
             }

@@ -45,11 +45,18 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
-        public string GenerateInvoiceNo(string branchCode)
+        public string GenerateInvoiceNo(string branchCode,out string  errorMessage)
         {
             try
             {
-                return new Common.CommonHelper().GenerateNumber(19, branchCode);
+                errorMessage = string.Empty;
+                var billno =new Common.CommonHelper().GenerateNumber(19, branchCode);
+                if (string.IsNullOrEmpty(billno))
+                {
+                    errorMessage = "Invoice no not gererated please enter manully.";
+                }
+
+                return billno;
             }
             catch (Exception ex)
             {

@@ -40,14 +40,14 @@ namespace CoreERP.Controllers
             {
                 string errorMessage = string.Empty;
 
-                var billno = new InvoiceHelper().GenerateInvoiceNo(branchCode);
+                var billno = new InvoiceHelper().GenerateInvoiceNo(branchCode,out errorMessage);
                 if (billno != null)
                 {
                     dynamic expando = new ExpandoObject();
                     expando.BillNo = billno;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
-
+               
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
             }
             catch (Exception ex)

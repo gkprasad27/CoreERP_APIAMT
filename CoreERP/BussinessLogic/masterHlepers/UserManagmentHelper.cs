@@ -41,8 +41,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
-
-
         public static List<Erpuser> GetErpusers()
         {
             try
@@ -57,7 +55,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
-
         public List<Menus> GetMenus()
         {
             try
@@ -72,8 +69,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
-
-
         public static List<ExpandoObject> GetScreensListByUserRole(string userRole)
         {
             try
@@ -133,6 +128,112 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 }
             }
             catch (Exception ex) { throw ex; }
+        }
+
+        private bool isShiftIdExists(decimal userID,string branchCode)
+        {
+            try
+            {
+                using (Repository<TblShift> _repo=new Repository<TblShift>())
+                {
+                    var _shift= _repo.TblShift
+                                .Where(x => x.UserId == userID 
+                                        && x.BranchCode == branchCode)
+                                .ToList();
+                    // DateTime.Parse(x.InTime.Value.ToShortDateString()) == DateTime.Parse((DateTime.Today).ToShortDateString())
+                    var result = _shift.Where(x=> DateTime.Parse(x.InTime.Value.ToShortDateString()) == DateTime.Parse((DateTime.Today).ToShortDateString())).Count() > 0;
+
+                    return result;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public string GetShiftId(decimal userId,string branchCode)
+        {
+            try
+            {
+                TblShift _shift = null;
+
+                if (!isShiftIdExists(userId, branchCode)) 
+                {
+                    var _branch = BrancheHelper.GetBranches().Where(b => b.BranchCode == branchCode).FirstOrDefault();
+                  
+                    _shift = new TblShift();
+                    _shift.UserId = userId;
+                    _shift.Narration = "Shift in Progress.";
+                    _shift.Status = 0;
+                    _shift.EmployeeId = -1;
+                    _shift.BranchId = _branch?.BranchId;
+                    _shift.BranchCode = _branch?.BranchCode;
+                    _shift.BranchName = _branch?.BranchName;
+                    _shift.InTime = DateTime.Now;
+                    _shift.OutTime = DateTime.Now;
+
+                    using (Repository<TblShift> _repo = new Repository<TblShift>())
+                    {
+                        _repo.TblShift.Add(_shift);
+                        _repo.SaveChanges();
+                    } 
+                }
+                else
+                {
+                    //if user entry exists for today
+                    using (Repository<TblShift> _repo = new Repository<TblShift>())
+                    {
+                        _shift = _repo.TblShift
+                                  .AsEnumerable()
+                                .Where(x => DateTime.Parse(x.InTime.Value.ToShortDateString()) == DateTime.Parse((DateTime.Today).ToShortDateString())
+                                        && x.UserId == userId
+                                        && x.BranchCode == branchCode)
+                                 .FirstOrDefault();
+                    }
+                }
+
+                return _shift.ShiftId.ToString();
+            }
+            catch (Exception ex)
+            {
+                //throw Exception;
+                return "-1";
+            }
+        }
+
+        public void LogoutShiftId(decimal userId, string branchCode,out string errorMessage)
+        {
+            try
+            {
+                errorMessage = string.Empty;
+
+                if (isShiftIdExists(userId, branchCode))
+                {
+                    using (Repository<TblShift> _repo = new Repository<TblShift>())
+                    {
+                     var  _shift = _repo.TblShift
+                                  .Where(x => x.UserId == userId
+                                         && x.BranchCode == branchCode)
+                                .OrderByDescending(s=> s.InTime)
+                                .FirstOrDefault();
+
+                        _shift.OutTime = DateTime.Now;
+                        _shift.Narration = "Shift Logged Out";
+
+                        _repo.TblShift.Update(_shift);
+                        _repo.SaveChanges();
+                    }
+                }
+                else
+                {
+                    errorMessage = $"No Shift created for user  {userId} and branch Code {branchCode}";
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }
