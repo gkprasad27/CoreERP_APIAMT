@@ -40,9 +40,9 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             {
                 using (Repository<TblBranch> repo = new Repository<TblBranch>())
                 {
-                    var code = repo.TblBranch.Where(x => x.SubBranchof ==Convert.ToDecimal(codes)).FirstOrDefault();
+                    var code = repo.TblBranch.Where(x => x.BranchCode ==(codes)).FirstOrDefault();
                     return repo.TblBranch
-                          .Where(x => (x.BranchCode==Convert.ToString(code.BranchCode)))
+                          .Where(x => (x.BranchCode==Convert.ToString(code.SubBranchof)))
                           .ToList();
                 }
             }
@@ -77,6 +77,21 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
 
+        public List<TblBranch> GettoBranches()
+        {
+            try
+            {
+                using (Repository<TblBranch> repo = new Repository<TblBranch>())
+                {
+                    return repo.TblBranch.AsEnumerable().Where(b => b.SubBranchof == -1).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public List<TblOperatorStockIssues> GetStockIssueslist( string code)
         {
             try
@@ -101,10 +116,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 {
                     var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
                     //var date = DateTime.Now.ToString();
-                    var issueno = new CommonHelper().GenerateNumber(43, branchCode);
-
+                    var issueno = repo.TblSuffixPrefix.Where(x => x.BranchCode == branchCode && x.VoucherTypeId == 43).FirstOrDefault();
+                    //var issueno = new CommonHelper().GenerateNumber(43, branchCode);
                     var operatorStockIssuesDetail = new TblOperatorStockIssuesDetail();
-                    operatorStockIssuesDetail.BatchNo = date + "-" + issueno + "-" + _product.ProductCode;
+                    operatorStockIssuesDetail.BatchNo = date + "-" + issueno.Prefix + "-" + issueno.StartIndex + "-" + issueno.Suffix + "-" + "-" + _product.ProductCode;
                     operatorStockIssuesDetail.Qty = 0;
                     operatorStockIssuesDetail.GrossAmount = 0;
                     operatorStockIssuesDetail.Rate = GetProductRate(branchCode, productCode);
@@ -280,6 +295,36 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         }
 
         //Searchcode
+        //public List<TblOperatorStockIssues> GetStockissuesMasters(SearchCriteria searchCriteria)
+        //{
+        //    try
+        //    {
+
+        //        using (Repository<TblOperatorStockIssues> repo = new Repository<TblOperatorStockIssues>())
+        //        {
+        //            List<TblOperatorStockIssues> _cashpaymentMasterList = null;
+
+
+        //            _cashpaymentMasterList = repo.TblOperatorStockIssues.AsEnumerable()
+        //                      .Where(cp =>
+        //                                 DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.IssueDate).Value.ToShortDateString())
+        //                               && DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.IssueDate).Value.ToShortDateString())
+        //                         )
+        //                       .ToList();
+
+        //            if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
+        //                _cashpaymentMasterList = GetStockissuesList().Where(x => x.IssueNo == searchCriteria.InvoiceNo).ToList();
+
+
+        //            return _cashpaymentMasterList;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+
+        //}
         public List<TblOperatorStockIssues> GetStockissuesMasters(SearchCriteria searchCriteria)
         {
             try

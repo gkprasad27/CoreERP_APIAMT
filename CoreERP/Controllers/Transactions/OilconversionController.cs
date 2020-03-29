@@ -121,5 +121,6 @@ namespace CoreERP.Controllers.Transactions
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
     }
 }

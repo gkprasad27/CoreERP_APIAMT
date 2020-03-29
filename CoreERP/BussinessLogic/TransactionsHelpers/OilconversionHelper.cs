@@ -45,20 +45,23 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 {
                     var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
                     //var date = DateTime.Now.ToString();
-                    var oilcnvsnno = new CommonHelper().GenerateNumber(52, branchCode);
-                    var operatorStockIssuesDetail = new TblOilConversionDetails();
-                    operatorStockIssuesDetail.BatchNo = date + "-" + oilcnvsnno + "-" + _product.ProductCode;
-                    //date + "-" + issueno + "-" + _product.ProductCode;
-                    operatorStockIssuesDetail.Qty = 0;
-                    //operatorStockIssuesDetail.TotalAmount = 0;
-                    operatorStockIssuesDetail.Rate = GetProductRate(branchCode, productCode);
-                    //operatorStockIssuesDetail.AvailStock = GetProductQty(branchCode, productCode);
-                    operatorStockIssuesDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
-                    operatorStockIssuesDetail.ProductCode = _product.ProductCode;
-                    operatorStockIssuesDetail.ProductName = _product.ProductName;
-                    operatorStockIssuesDetail.UnitName = _product.UnitName;
+                    var operatoroilcnvsnsDetail = new TblOilConversionDetails();
+                    var oilcnvsnno = repo.TblSuffixPrefix.Where(x => x.BranchCode == branchCode && x.VoucherTypeId == 52).FirstOrDefault();
+                    operatoroilcnvsnsDetail.BatchNo = date + "-" + oilcnvsnno.Prefix + "-" + oilcnvsnno.StartIndex + "-" + oilcnvsnno.Suffix + "-" + "-" + _product.ProductCode;
 
-                    return operatorStockIssuesDetail;
+                    //var oilcnvsnno = new CommonHelper().GenerateNumber(52, branchCode);
+                    //operatorStockIssuesDetail.BatchNo = date + "-" + oilcnvsnno + "-" + _product.ProductCode;
+                    //date + "-" + issueno + "-" + _product.ProductCode;
+                    operatoroilcnvsnsDetail.Qty = 0;
+                    //operatorStockIssuesDetail.TotalAmount = 0;
+                    operatoroilcnvsnsDetail.Rate = GetProductRate(branchCode, productCode);
+                    //operatorStockIssuesDetail.AvailStock = GetProductQty(branchCode, productCode);
+                    operatoroilcnvsnsDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
+                    operatoroilcnvsnsDetail.ProductCode = _product.ProductCode;
+                    operatoroilcnvsnsDetail.ProductName = _product.ProductName;
+                    operatoroilcnvsnsDetail.UnitName = _product.UnitName;
+
+                    return operatoroilcnvsnsDetail;
 
                 }
             }

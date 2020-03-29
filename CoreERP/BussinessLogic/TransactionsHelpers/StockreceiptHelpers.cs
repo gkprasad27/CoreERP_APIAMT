@@ -127,9 +127,11 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 {
                     var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
                     //var date = DateTime.Now.ToString();
-                    var receiptno = new CommonHelper().GenerateNumber(42, branchCode);
+                    var receiptno = repo.TblSuffixPrefix.Where(x => x.BranchCode == branchCode && x.VoucherTypeId == 42).FirstOrDefault();
                     var operatorStockreceiptDetail = new TblOperatorStockReceiptDetail();
-                    operatorStockreceiptDetail.BatchNo = date + "-" + receiptno + "-" + _product.ProductCode;
+                    operatorStockreceiptDetail.BatchNo = date + "-" + receiptno.Prefix + "-" + receiptno.StartIndex + "-" + receiptno.Suffix + "-" + "-" + _product.ProductCode;
+                    //var receiptno = new CommonHelper().GenerateNumber(42, branchCode);
+                    //operatorStockreceiptDetail.BatchNo = date + "-" + receiptno + "-" + _product.ProductCode;
                     operatorStockreceiptDetail.Qty = 0;
                     operatorStockreceiptDetail.GrossAmount = 0;
                     operatorStockreceiptDetail.Rate = GetProductRate(branchCode, productCode);
@@ -160,7 +162,6 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 throw ex;
             }
         }
-
 
         public List<TblOperatorStockReceipt> GetStockreceiptslist(string code)
         {
@@ -194,7 +195,15 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     stockreceipt.ServerDateTime = DateTime.Now;
                     stockreceipt.ReceiptDate = stockreceipt.ReceiptDate;
                     stockreceipt.ReceiptNo = stockreceipt.ReceiptNo;
-                    stockreceipt.ShiftId = shiftid.ShiftId;
+                    if(shiftid==null)
+                    {
+                        stockreceipt.ShiftId =2;
+                    }
+                    else
+                    {
+                        stockreceipt.ShiftId = shiftid.ShiftId;
+                    }
+                    
                     stockreceipt.UserId = stockreceipt.UserId;
                     stockreceipt.UserName = stockreceipt.UserName;
                     stockreceipt.EmployeeId = -1;
