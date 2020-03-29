@@ -27,6 +27,20 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
+        public Erpuser GetErpuser(decimal seqiId)
+        {
+            try
+            {
+                using (Repository<Erpuser> _repo = new Repository<Erpuser>())
+                {
+                   return  _repo.Erpuser.Where(u =>u.SeqId == seqiId).FirstOrDefault();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
         public static List<string> GetBranchesByUser(decimal SeqId)
         {
             try

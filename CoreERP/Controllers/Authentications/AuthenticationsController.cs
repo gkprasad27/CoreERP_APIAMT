@@ -61,8 +61,6 @@ namespace CoreERP.Controllers
 
         }
 
-
-
         [HttpGet("getMenu/{roleName}")]
         public async Task<IActionResult> GetMenus(string roleName)
         {
@@ -101,6 +99,32 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
             }
         }
+
+        [HttpGet("logout/{userId}")]
+        public async Task<IActionResult> GetMenuList(string userId)
+        {
+            try
+            {
+                string errorMessage = string.Empty;
+                var result = new UserManagmentHelper().GetErpuser(Convert.ToDecimal(userId));
+                if (result != null)
+                {
+                    var _branch = UserManagmentHelper.GetBranchesByUser(Convert.ToDecimal(userId));
+                    foreach(var br in _branch)
+                    new UserManagmentHelper().LogoutShiftId(Convert.ToDecimal(userId), br, out errorMessage);
+
+                  
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Log out successfully." });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+            }
+        }
+
     }
 }
        
