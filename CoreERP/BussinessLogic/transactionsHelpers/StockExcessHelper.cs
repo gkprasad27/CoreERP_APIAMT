@@ -16,10 +16,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    return repo.TblBranch.ToList();
-                }
+                using Repository<TblBranch> repo = new Repository<TblBranch>();
+                return repo.TblBranch.ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -28,10 +26,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (Repository<CostCenters> repo = new Repository<CostCenters>())
-                {
-                    return repo.CostCenters.ToList();
-                }
+                using Repository<CostCenters> repo = new Repository<CostCenters>();
+                return repo.CostCenters.ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -41,17 +37,15 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             preFix = string.Empty;
             suffix = string.Empty;
 
-            using (Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>())
-            {
-                var _suffixPrefix = repo.TblSuffixPrefix
-                                        .Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode)
-                                        .FirstOrDefault();
+            using Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>();
+            var _suffixPrefix = repo.TblSuffixPrefix
+.Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode)
+.FirstOrDefault();
 
-                preFix = _suffixPrefix?.Prefix;
-                suffix = _suffixPrefix?.Suffix;
+            preFix = _suffixPrefix?.Prefix;
+            suffix = _suffixPrefix?.Suffix;
 
-                return _suffixPrefix.StartIndex;
-            }
+            return _suffixPrefix.StartIndex;
         }
         public string GenerateStockENumber(decimal? voucherTypeid, string branchCode)
         {
@@ -79,14 +73,12 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         }
         public void UpdateStockENumber(decimal? voucherTypeid, string branchCode, decimal? invoieNumber)
         {
-            using (Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>())
-            {
-                var _suffixPrefix = repo.TblSuffixPrefix.Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode).FirstOrDefault();
+            using Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>();
+            var _suffixPrefix = repo.TblSuffixPrefix.Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode).FirstOrDefault();
 
-                _suffixPrefix.StartIndex = invoieNumber;
-                repo.TblSuffixPrefix.Update(_suffixPrefix);
-                repo.SaveChanges();
-            }
+            _suffixPrefix.StartIndex = invoieNumber;
+            repo.TblSuffixPrefix.Update(_suffixPrefix);
+            repo.SaveChanges();
         }
 
         public string GetVoucherNo(string branchCode)

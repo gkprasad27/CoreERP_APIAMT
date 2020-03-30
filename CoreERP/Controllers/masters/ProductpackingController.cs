@@ -17,37 +17,42 @@ namespace CoreERP.Controllers.masters
         [HttpPost("RegisterProductpacking")]
         public async Task<IActionResult> RegisterProductpacking([FromBody]TblProductPacking productpacking)
         {
-            APIResponse apiResponse = null;
-            if (productpacking == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
-
-            try
+            var result = await Task.Run(() =>
             {
-                if (new ProductpackingHelpers().GetList(productpacking.PackingCode).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"productpacking Code {nameof(productpacking.PackingCode)} is already exists ,Please Use Different Code " });
+                APIResponse apiResponse = null;
+                if (productpacking == null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
-                var result =new  ProductpackingHelpers().Register(productpacking);
-                if (result != null)
+                try
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    if (new ProductpackingHelpers().GetList(productpacking.PackingCode).Count() > 0)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"productpacking Code {nameof(productpacking.PackingCode)} is already exists ,Please Use Different Code " });
+
+                    var result = new ProductpackingHelpers().Register(productpacking);
+                    if (result != null)
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                    }
+
+                    return Ok(apiResponse);
+
                 }
-                else
+                catch (Exception ex)
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
+            });
+            return result;
 
-                return Ok(apiResponse);
-
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
         }
 
 
         [HttpGet("GetProductpackingList")]
-        public async Task<IActionResult> GetProductpackingList()
+        public IActionResult GetProductpackingList()
         {
             try
             {
@@ -70,15 +75,15 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPut("UpdateProductpacking")]
-        public async Task<IActionResult> UpdateProductpacking([FromBody] TblProductPacking productpack)
+        public IActionResult UpdateProductpacking([FromBody] TblProductPacking productpack)
         {
-            APIResponse apiResponse = null;
             if (productpack == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(productpack)} cannot be null" });
 
             try
             {
-                var rs =new ProductpackingHelpers().Update(productpack);
+                var rs = new ProductpackingHelpers().Update(productpack);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -97,15 +102,15 @@ namespace CoreERP.Controllers.masters
 
 
         [HttpDelete("DeleteProductpacking/{code}")]
-        public async Task<IActionResult> DeleteProductpacking(string code)
+        public IActionResult DeleteProductpacking(string code)
         {
-            APIResponse apiResponse = null;
             try
             {
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs =new ProductpackingHelpers().Delete(code);
+                var rs = new ProductpackingHelpers().Delete(code);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };

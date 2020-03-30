@@ -15,25 +15,23 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
+                using Repository<ItemMaster> repo = new Repository<ItemMaster>();
+                var record = repo.ItemMaster.OrderByDescending(x => x.AddDate).FirstOrDefault();
+
+                if (record != null)
                 {
-                    var record =repo.ItemMaster.OrderByDescending(x=> x.AddDate).FirstOrDefault();
-
-                    if (record != null)
-                    {
-                        itemMaster.ItemNumber = CommonHelper.IncreaseCode(record.ItemNumber);
-                    }
-                    else
-                        itemMaster.ItemNumber = "1";
-
-                    itemMaster.Active = "Y";
-                    itemMaster.AddDate = DateTime.Now;
-                    repo.ItemMaster.Add(itemMaster);
-                    if (repo.SaveChanges() > 0)
-                        return itemMaster;
-
-                    return null;
+                    itemMaster.ItemNumber = CommonHelper.IncreaseCode(record.ItemNumber);
                 }
+                else
+                    itemMaster.ItemNumber = "1";
+
+                itemMaster.Active = "Y";
+                itemMaster.AddDate = DateTime.Now;
+                repo.ItemMaster.Add(itemMaster);
+                if (repo.SaveChanges() > 0)
+                    return itemMaster;
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -44,10 +42,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
-                {
-                    return repo.ItemMaster.AsEnumerable().Where(x => x.Active=="Y").ToList();
-                }
+                using Repository<ItemMaster> repo = new Repository<ItemMaster>();
+                return repo.ItemMaster.AsEnumerable().Where(x => x.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -55,10 +51,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
-                {
-                    return repo.ItemMaster.AsEnumerable().Where(x => x.ItemNumber == code).ToList();
-                }
+                using Repository<ItemMaster> repo = new Repository<ItemMaster>();
+                return repo.ItemMaster.AsEnumerable().Where(x => x.ItemNumber == code).ToList();
             }
             catch { throw; }
         }
@@ -66,14 +60,12 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
-                {
-                    repo.ItemMaster.Update(itemMaster);
-                    if (repo.SaveChanges() > 0)
-                        return itemMaster;
+                using Repository<ItemMaster> repo = new Repository<ItemMaster>();
+                repo.ItemMaster.Update(itemMaster);
+                if (repo.SaveChanges() > 0)
+                    return itemMaster;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -85,14 +77,12 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
-                {
-                    repo.ItemMaster.UpdateRange(itemMasters);
-                    if (repo.SaveChanges() > 0)
-                        return itemMasters;
+                using Repository<ItemMaster> repo = new Repository<ItemMaster>();
+                repo.ItemMaster.UpdateRange(itemMasters);
+                if (repo.SaveChanges() > 0)
+                    return itemMasters;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -103,16 +93,14 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
-                {
-                    var itemMaster = repo.ItemMaster.Where(x => x.ItemNumber == code).FirstOrDefault();
-                    itemMaster.Active = "N";
-                    repo.ItemMaster.Remove(itemMaster);
-                    if (repo.SaveChanges() > 0)
-                        return itemMaster;
+                using Repository<ItemMaster> repo = new Repository<ItemMaster>();
+                var itemMaster = repo.ItemMaster.Where(x => x.ItemNumber == code).FirstOrDefault();
+                itemMaster.Active = "N";
+                repo.ItemMaster.Remove(itemMaster);
+                if (repo.SaveChanges() > 0)
+                    return itemMaster;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -124,10 +112,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
-                {
-                    return repo.ItemMaster.Where(x => x.Model == modelcode).OrderByDescending(x=> x.AddDate).FirstOrDefault();
-                }
+                using Repository<ItemMaster> repo = new Repository<ItemMaster>();
+                return repo.ItemMaster.Where(x => x.Model == modelcode).OrderByDescending(x => x.AddDate).FirstOrDefault();
             }
             catch { throw; }
         }

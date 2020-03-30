@@ -15,7 +15,7 @@ namespace CoreERP.Controllers.Payroll
     public class PayrollCycleController : ControllerBase
     {
         [HttpGet("GetPayrollCycleList")]
-        public async Task<IActionResult> GetPayrollCycleList()
+        public IActionResult GetPayrollCycleList()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.Payroll
         //}
 
         [HttpPost("RegisterPayrollCycle")]
-        public async Task<IActionResult> RegisterPayrollCycle([FromBody]PayrollCycle payCycle)
+        public IActionResult RegisterPayrollCycle([FromBody]PayrollCycle payCycle)
         {
 
             if (payCycle == null)
@@ -83,7 +83,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPut("UpdatePayrollCycle")]
-        public async Task<IActionResult> UpdatePayrollCycle([FromBody] PayrollCycle payCycle)
+        public IActionResult UpdatePayrollCycle([FromBody] PayrollCycle payCycle)
         {
 
             if (payCycle == null)
@@ -110,15 +110,15 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpDelete("DeletePayrollCycle/{code}")]
-        public async Task<IActionResult> DeletevPF(string code)
+        public IActionResult DeletevPF(string code)
         {
-            APIResponse apiResponse = null;
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
             {
                 var result = PayrollCycleHelper.Delete(code);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

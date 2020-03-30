@@ -13,10 +13,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<ItemMaster> repo = new Repository<ItemMaster>())
-                {
-                    return repo.ItemMaster.Select(i => i).ToList();
-                }
+                using Repository<ItemMaster> repo = new Repository<ItemMaster>();
+                return repo.ItemMaster.Select(i => i).ToList();
             }
             catch { throw; }
         }
@@ -25,10 +23,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<Brand> repo = new Repository<Brand>())
-                {
-                    return repo.Brand.Select(i => i).ToList();
-                }
+                using Repository<Brand> repo = new Repository<Brand>();
+                return repo.Brand.Select(i => i).ToList();
             }
             catch { throw; }
         }

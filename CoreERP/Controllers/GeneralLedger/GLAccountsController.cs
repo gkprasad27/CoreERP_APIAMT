@@ -13,29 +13,29 @@ namespace CoreERP.Controllers.GL
     public class GLAccountsController : ControllerBase
     {
         [HttpPost("RegisterGlaccounts")]
-        public async Task<IActionResult> RegisterGlaccounts([FromBody]Glaccounts glaccounts)
+        public IActionResult RegisterGlaccounts([FromBody]Glaccounts glaccounts)
         {
             if (glaccounts == null)
-                return  Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(glaccounts)} can not be null"});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(glaccounts)} can not be null" });
             try
             {
-                if(GLHelper.GetGLAccountsList(glaccounts.Glcode).Count > 0)
-                    return Ok(new APIResponse() { status=APIStatus.FAIL.ToString(),response=$"Gl Code{glaccounts.Glcode} ALready Exists."});
+                if (GLHelper.GetGLAccountsList(glaccounts.Glcode).Count > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Gl Code{glaccounts.Glcode} ALready Exists." });
 
                 Glaccounts result = GLHelper.RegisterGLAccounts(glaccounts);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Rgistration Failed." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Rgistration Failed." });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpGet("GetGLAccountsList")]
-        public async Task<IActionResult> GetGLAccountsList()
+        public IActionResult GetGLAccountsList()
         {
             try
             {
@@ -56,7 +56,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpPut("UpdateGLAccounts")]
-        public async Task<IActionResult> UpdateGLAccounts( [FromBody] Glaccounts glaccounts)
+        public IActionResult UpdateGLAccounts([FromBody] Glaccounts glaccounts)
         {
             if (glaccounts == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(glaccounts)} can not be null" });
@@ -64,7 +64,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 Glaccounts result = GLHelper.UpdateGLAccounts(glaccounts);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
@@ -77,7 +77,7 @@ namespace CoreERP.Controllers.GL
 
 
         [HttpDelete("DeleteGlAccount/{code}")]
-        public async Task<IActionResult> DeleteGlAccount(string code)
+        public IActionResult DeleteGlAccount(string code)
         {
 
             if (string.IsNullOrWhiteSpace(code))
@@ -86,7 +86,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 Glaccounts result = GLHelper.DeleteGLAccounts(code);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
@@ -99,13 +99,13 @@ namespace CoreERP.Controllers.GL
 
 
         [HttpGet("GetAccountGroupList")]
-        public async Task<IActionResult> GetAccountGroupList()
+        public IActionResult GetAccountGroupList()
         {
             try
             {
                 dynamic expnado = new ExpandoObject();
-                expnado.GLUnderSubGroupList = GLHelper.GetGLUnderSubGroupList().Select(x=> new { ID=x.UnderSubGroupCode,TEXT=x.UnderSubGroupName});
-                return Ok(new APIResponse{ status=APIStatus.PASS.ToString(),response= expnado });
+                expnado.GLUnderSubGroupList = GLHelper.GetGLUnderSubGroupList().Select(x => new { ID = x.UnderSubGroupCode, TEXT = x.UnderSubGroupName });
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expnado });
             }
             catch (Exception ex)
             {
@@ -114,7 +114,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetNaturesOfAcountsList")]
-        public async Task<IActionResult> GetNaturesOfAcountsList()
+        public IActionResult GetNaturesOfAcountsList()
         {
             try
             {
@@ -129,7 +129,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetStatementTypes")]
-        public async Task<IActionResult> GetStatementTypes()
+        public IActionResult GetStatementTypes()
         {
             try
             {
@@ -144,7 +144,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetBalanceTypes")]
-        public async Task<IActionResult> GetBalanceTypes()
+        public IActionResult GetBalanceTypes()
         {
             try
             {

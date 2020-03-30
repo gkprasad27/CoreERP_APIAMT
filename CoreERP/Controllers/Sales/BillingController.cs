@@ -15,7 +15,7 @@ namespace CoreERP.Controllers
     public class BillingController : ControllerBase
     {
         [HttpGet("GetPupms/{pumpNo}/{branchCode}")]
-        public async Task<IActionResult> GetPupms(string pumpNo ,string branchCode)
+        public IActionResult GetPupms(string pumpNo, string branchCode)
         {
             try
             {
@@ -34,20 +34,20 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GenerateBillNo/{branchCode}")]
-        public async Task<IActionResult> GenerateBillNo(string branchCode)
+        public IActionResult GenerateBillNo(string branchCode)
         {
             try
             {
                 string errorMessage = string.Empty;
 
-                var billno = new InvoiceHelper().GenerateInvoiceNo(branchCode,out errorMessage);
+                var billno = new InvoiceHelper().GenerateInvoiceNo(branchCode, out errorMessage);
                 if (billno != null)
                 {
                     dynamic expando = new ExpandoObject();
                     expando.BillNo = billno;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
-               
+
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
             }
             catch (Exception ex)
@@ -57,7 +57,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GeStateList")]
-        public async Task<IActionResult> GeStateList()
+        public IActionResult GeStateList()
         {
             try
             {
@@ -75,7 +75,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GeSelectedState/{stateCode}")]
-        public async Task<IActionResult> GeStateList(string stateCode)
+        public IActionResult GeStateList(string stateCode)
         {
             if (string.IsNullOrEmpty(stateCode))
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
@@ -94,7 +94,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetBillingList/{branchCode}")]
-        public async Task<IActionResult> GetBillingList(string branchCode)
+        public IActionResult GetBillingList(string branchCode)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetBranchesList")]
-        public async Task<IActionResult> GetBranchesList()
+        public IActionResult GetBranchesList()
         {
             try
             {
@@ -130,7 +130,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetCashPartyAccountList/{ledgerCode?}")]
-        public async Task<IActionResult> GetCashPartyAccountList(string ledgerCode=null)
+        public IActionResult GetCashPartyAccountList(string ledgerCode = null)
         {
             try
             {
@@ -145,7 +145,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetCashPartyAccount/{ledgercode}")]
-        public async Task<IActionResult> GetCashPartyAccount(string ledgercode)
+        public IActionResult GetCashPartyAccount(string ledgercode)
         {
             if (string.IsNullOrEmpty(ledgercode))
             {
@@ -164,7 +164,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetAccountBalance/{ledgercode}")]
-        public async Task<IActionResult> GetAccountBalance(string ledgercode)
+        public IActionResult GetAccountBalance(string ledgercode)
         {
             if (string.IsNullOrEmpty(ledgercode))
             {
@@ -183,7 +183,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetProductByProductCode/{productCode}")]
-        public async Task<IActionResult> GetProductByProductCode(string productCode)
+        public IActionResult GetProductByProductCode(string productCode)
         {
             if (string.IsNullOrEmpty(productCode))
             {
@@ -192,7 +192,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.Products = new InvoiceHelper().GetProducts(productCode, null).OrderBy(x=> x.ProductCode?.Length).Take(50).Select(p => new { ID = p.ProductCode, TEXT = p.ProductCode, Name = p.ProductName });
+                expando.Products = new InvoiceHelper().GetProducts(productCode, null).OrderBy(x => x.ProductCode?.Length).Take(50).Select(p => new { ID = p.ProductCode, TEXT = p.ProductCode, Name = p.ProductName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -202,7 +202,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetProductByProductName/{productName}")]
-        public async Task<IActionResult> GetProductByProductName(string productName)
+        public IActionResult GetProductByProductName(string productName)
         {
             if (string.IsNullOrEmpty(productName))
             {
@@ -221,7 +221,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetmemberNames/{memberName}")]
-        public async Task<IActionResult> GetmemberNames(string memberName)
+        public IActionResult GetmemberNames(string memberName)
         {
             if (string.IsNullOrEmpty(memberName))
             {
@@ -230,7 +230,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.Members = new InvoiceHelper().GetMembers( memberName).Select(x => new { ID = x.MemberCode, Text = x.MemberName, PhoneNo = x.Phone,GeneralNo=x.MemberCode });
+                expando.Members = new InvoiceHelper().GetMembers(memberName).Select(x => new { ID = x.MemberCode, Text = x.MemberName, PhoneNo = x.Phone, GeneralNo = x.MemberCode });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -240,7 +240,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetmemberNamesByCode/{memberCode}")]
-        public async Task<IActionResult> GetmemberNamesByCode(string memberCode)
+        public IActionResult GetmemberNamesByCode(string memberCode)
         {
             if (string.IsNullOrEmpty(memberCode))
             {
@@ -252,7 +252,7 @@ namespace CoreERP.Controllers
                 if (result != null)
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.Members = new { MemberCode = result.MemberCode, MemberName = result.MemberName, PhoneNo = result.Phone, GeneralNo = result.MemberCode };
+                    expando.Members = new { result.MemberCode, result.MemberName, PhoneNo = result.Phone, GeneralNo = result.MemberCode };
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
@@ -265,7 +265,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetVechiels/{vechileNo}/{memberCode?}")]
-        public async Task<IActionResult> GetVechiels(string vechileNo,string memberCode=null)
+        public IActionResult GetVechiels(string vechileNo, string memberCode = null)
         {
             if (string.IsNullOrEmpty(vechileNo))
             {
@@ -274,7 +274,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.Members = new InvoiceHelper().GetVehicles(vechileNo, memberCode).Take(100).Select(x => new { ID = x.VehicleId, Text = x.VehicleRegNo , MemberCode =x.MemberCode });
+                expando.Members = new InvoiceHelper().GetVehicles(vechileNo, memberCode).Take(100).Select(x => new { ID = x.VehicleId, Text = x.VehicleRegNo, x.MemberCode });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -284,7 +284,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetBillingDetailsRcd/{productCode}/{branchCode}")]
-        public async Task<IActionResult> GetBillingDetailsRcd(string productCode, string branchCode)
+        public IActionResult GetBillingDetailsRcd(string productCode, string branchCode)
         {
             if (string.IsNullOrEmpty(productCode) || string.IsNullOrEmpty(branchCode))
             {
@@ -303,7 +303,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("GetInvoiceList/{branchCode}")]
-        public async Task<IActionResult> GetInvoiceList(string branchCode,[FromBody]SearchCriteria searchCriteria)
+        public IActionResult GetInvoiceList([FromBody]SearchCriteria searchCriteria)
         {
 
             if (searchCriteria == null)
@@ -327,7 +327,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetInvoiceDeatilList/{invoiceNo}")]
-        public async Task<IActionResult> GetInvoiceDeatilList(string invoiceNo)
+        public IActionResult GetInvoiceDeatilList(string invoiceNo)
         {
 
             if (string.IsNullOrEmpty(invoiceNo))
@@ -351,7 +351,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("RegisterInvoice")]
-        public async Task<IActionResult> RegisterBilling([FromBody]JObject objData)
+        public IActionResult RegisterBilling([FromBody]JObject objData)
         {
 
             if (objData == null)
@@ -375,7 +375,7 @@ namespace CoreERP.Controllers
             }
         }
 
-       
+
     }
 }
 

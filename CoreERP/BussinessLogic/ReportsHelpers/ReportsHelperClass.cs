@@ -29,13 +29,17 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         public static DataTable GetMemberMasterReportDataTable(string includeMobileNumberOrNot, string userID)
         {
             List<parametersClass> dbParametersList = new List<parametersClass>();
-            parametersClass parameters = new parametersClass();
-            parameters.paramName = "IncludeMblNumber";
-            parameters.paramValue = includeMobileNumberOrNot;
+            parametersClass parameters = new parametersClass
+            {
+                paramName = "IncludeMblNumber",
+                paramValue = includeMobileNumberOrNot
+            };
             dbParametersList.Add(parameters);
-            parameters = new parametersClass();
-            parameters.paramName = "userID";
-            parameters.paramValue = userID;
+            parameters = new parametersClass
+            {
+                paramName = "userID",
+                paramValue = userID
+            };
             dbParametersList.Add(parameters);
             string procedureName = "Usp_GetMemberMasterReport";
             DataTable dt = getDataFromDataBase(dbParametersList, procedureName).Tables[0];
@@ -78,79 +82,107 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             parametersClass parameters = new parametersClass();
             if (reportID == 1)
             {
-                parameters = new parametersClass();
-                parameters.paramName = "userID";
-                parameters.paramValue = userID;
+                parameters = new parametersClass
+                {
+                    paramName = "userID",
+                    paramValue = userID
+                };
                 dbParametersList.Add(parameters);
 
-                parameters = new parametersClass();
-                parameters.paramName = "userName";
-                parameters.paramValue = userName;
+                parameters = new parametersClass
+                {
+                    paramName = "userName",
+                    paramValue = userName
+                };
                 dbParametersList.Add(parameters);
 
-                parameters = new parametersClass();
-                parameters.paramName = "branchCode";
-                parameters.paramValue = branchCode;
+                parameters = new parametersClass
+                {
+                    paramName = "branchCode",
+                    paramValue = branchCode
+                };
                 dbParametersList.Add(parameters);
 
-                parameters = new parametersClass();
-                parameters.paramName = "shiftId";
-                parameters.paramValue = shiftId;
+                parameters = new parametersClass
+                {
+                    paramName = "shiftId",
+                    paramValue = shiftId
+                };
                 dbParametersList.Add(parameters);
 
-                parameters = new parametersClass();
-                parameters.paramName = "fromDate";
-                parameters.paramValue = fromDate;
+                parameters = new parametersClass
+                {
+                    paramName = "fromDate",
+                    paramValue = fromDate
+                };
                 dbParametersList.Add(parameters);
 
-                parameters = new parametersClass();
-                parameters.paramName = "toDate";
-                parameters.paramValue = toDate;
+                parameters = new parametersClass
+                {
+                    paramName = "toDate",
+                    paramValue = toDate
+                };
                 dbParametersList.Add(parameters);
             }
             else if (reportID == 2)
             {
-                parameters = new parametersClass();
-                parameters.paramName = "userID";
-                parameters.paramValue = userID;
+                parameters = new parametersClass
+                {
+                    paramName = "userID",
+                    paramValue = userID
+                };
                 dbParametersList.Add(parameters);
 
-                parameters = new parametersClass();
-                parameters.paramName = "shiftId";
-                parameters.paramValue = shiftId;
+                parameters = new parametersClass
+                {
+                    paramName = "shiftId",
+                    paramValue = shiftId
+                };
                 dbParametersList.Add(parameters);
 
-                parameters = new parametersClass();
-                parameters.paramName = "fromDate";
-                parameters.paramValue = fromDate;
+                parameters = new parametersClass
+                {
+                    paramName = "fromDate",
+                    paramValue = fromDate
+                };
                 dbParametersList.Add(parameters);
 
-                parameters = new parametersClass();
-                parameters.paramName = "toDate";
-                parameters.paramValue = toDate;
+                parameters = new parametersClass
+                {
+                    paramName = "toDate",
+                    paramValue = toDate
+                };
                 dbParametersList.Add(parameters);
             }
             else if (reportID == 3 || reportID == 6)
             {
-                parameters = new parametersClass();
-                parameters.paramName = "shiftId";
-                parameters.paramValue = shiftId;
+                parameters = new parametersClass
+                {
+                    paramName = "shiftId",
+                    paramValue = shiftId
+                };
                 dbParametersList.Add(parameters);
             }
             else if (reportID == 4 || reportID == 5)
             {
-                parameters = new parametersClass();
-                parameters.paramName = "shiftId";
-                parameters.paramValue = shiftId;
+                parameters = new parametersClass
+                {
+                    paramName = "shiftId",
+                    paramValue = shiftId
+                };
                 dbParametersList.Add(parameters);
 
-                parameters = new parametersClass();
-                parameters.paramName = "UserID";
-                parameters.paramValue = userID;
+                parameters = new parametersClass
+                {
+                    paramName = "UserID",
+                    paramValue = userID
+                };
                 dbParametersList.Add(parameters);
 
-                parameters = new parametersClass();
-                parameters.paramName = "ReportType";
+                parameters = new parametersClass
+                {
+                    paramName = "ReportType"
+                };
                 if (reportID == 4)
                     parameters.paramValue = "HDFC";
                 else if (reportID == 5)
@@ -209,25 +241,23 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
-            using (DbCommand command = scopeRepository.CreateCommand())
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_GetEmployeeRegisterReport";
+            #region Parameters
+            DbParameter UserID = command.CreateParameter();
+            UserID.Direction = ParameterDirection.Input;
+            UserID.Value = (object)userID ?? DBNull.Value;
+            UserID.ParameterName = "UserID";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(UserID);
+            DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
+            if (dt.Rows.Count > 0)
             {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "Usp_GetEmployeeRegisterReport";
-                #region Parameters
-                DbParameter UserID = command.CreateParameter();
-                UserID.Direction = ParameterDirection.Input;
-                UserID.Value = (object)userID ?? DBNull.Value;
-                UserID.ParameterName = "UserID";
-                #endregion
-                // Add parameter as specified in the store procedure
-                command.Parameters.Add(UserID);
-                DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
-                if (dt.Rows.Count > 0)
-                {
-                    return dt;
-                }
-                else return null;
+                return dt;
             }
+            else return null;
         }
         #endregion
         #region AccountLedgerReport
@@ -259,47 +289,43 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
-            using (DbCommand command = scopeRepository.CreateCommand())
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "Usp_GetAccountLedgerReport";
-                #region Parameters
-                DbParameter pmledgerCode = command.CreateParameter();
-                pmledgerCode.Direction = ParameterDirection.Input;
-                pmledgerCode.Value = (object)ledgerCode ?? DBNull.Value;
-                pmledgerCode.ParameterName = "ledgerCode";
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_GetAccountLedgerReport";
+            #region Parameters
+            DbParameter pmledgerCode = command.CreateParameter();
+            pmledgerCode.Direction = ParameterDirection.Input;
+            pmledgerCode.Value = (object)ledgerCode ?? DBNull.Value;
+            pmledgerCode.ParameterName = "ledgerCode";
 
-                DbParameter pmfromDate = command.CreateParameter();
-                pmfromDate.Direction = ParameterDirection.Input;
-                pmfromDate.Value = (object)fromDate ?? DBNull.Value;
-                pmfromDate.ParameterName = "FromDate";
+            DbParameter pmfromDate = command.CreateParameter();
+            pmfromDate.Direction = ParameterDirection.Input;
+            pmfromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmfromDate.ParameterName = "FromDate";
 
-                DbParameter pmtoDate = command.CreateParameter();
-                pmtoDate.Direction = ParameterDirection.Input;
-                pmtoDate.Value = (object)toDate ?? DBNull.Value;
-                pmtoDate.ParameterName = "ToDate";
+            DbParameter pmtoDate = command.CreateParameter();
+            pmtoDate.Direction = ParameterDirection.Input;
+            pmtoDate.Value = (object)toDate ?? DBNull.Value;
+            pmtoDate.ParameterName = "ToDate";
 
-                DbParameter pmUserID = command.CreateParameter();
-                pmUserID.Direction = ParameterDirection.Input;
-                pmUserID.Value = (object)UserID ?? DBNull.Value;
-                pmUserID.ParameterName = "UserID";
-                #endregion
-                // Add parameter as specified in the store procedure
-                command.Parameters.Add(pmledgerCode);
-                command.Parameters.Add(pmfromDate);
-                command.Parameters.Add(pmtoDate);
-                command.Parameters.Add(pmUserID);
-                return scopeRepository.ExecuteParamerizedCommand(command);
-            }
+            DbParameter pmUserID = command.CreateParameter();
+            pmUserID.Direction = ParameterDirection.Input;
+            pmUserID.Value = (object)UserID ?? DBNull.Value;
+            pmUserID.ParameterName = "UserID";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmledgerCode);
+            command.Parameters.Add(pmfromDate);
+            command.Parameters.Add(pmtoDate);
+            command.Parameters.Add(pmUserID);
+            return scopeRepository.ExecuteParamerizedCommand(command);
         }
         public static List<TblAccountLedger> GetAccountLedgers()
         {
             try
             {
-                using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
-                {
-                    return repo.TblAccountLedger.ToList();
-                }
+                using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
+                return repo.TblAccountLedger.ToList();
             }
             catch (Exception ex)
             {
@@ -310,10 +336,8 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    return repo.TblBranch.ToList();
-                }
+                using Repository<TblBranch> repo = new Repository<TblBranch>();
+                return repo.TblBranch.ToList();
             }
             catch (Exception ex)
             {
@@ -324,10 +348,8 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             try
             {
-                using (Repository<TblProduct> repo = new Repository<TblProduct>())
-                {
-                    return repo.TblProduct.ToList();
-                }
+                using Repository<TblProduct> repo = new Repository<TblProduct>();
+                return repo.TblProduct.ToList();
             }
             catch (Exception ex)
             {
@@ -364,35 +386,33 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
-            using (DbCommand command = scopeRepository.CreateCommand())
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "Usp_GetSaleValueReport";
-                #region Parameters
-                DbParameter UserID = command.CreateParameter();
-                UserID.Direction = ParameterDirection.Input;
-                UserID.Value = (object)userID ?? DBNull.Value;
-                UserID.ParameterName = "UserID";
-                DbParameter dbpBranchCode = command.CreateParameter();
-                dbpBranchCode.Direction = ParameterDirection.Input;
-                dbpBranchCode.Value = (object)branchCode ?? DBNull.Value;
-                dbpBranchCode.ParameterName = "branchCode";
-                DbParameter pmFromDate = command.CreateParameter();
-                pmFromDate.Direction = ParameterDirection.Input;
-                pmFromDate.Value = (object)fromDate ?? DBNull.Value;
-                pmFromDate.ParameterName = "fromDate";
-                DbParameter pmToDate = command.CreateParameter();
-                pmToDate.Direction = ParameterDirection.Input;
-                pmToDate.Value = (object)toDate ?? DBNull.Value;
-                pmToDate.ParameterName = "toDate";
-                #endregion
-                // Add parameter as specified in the store procedure
-                command.Parameters.Add(UserID);
-                command.Parameters.Add(dbpBranchCode);
-                command.Parameters.Add(pmFromDate);
-                command.Parameters.Add(pmToDate);
-                return scopeRepository.ExecuteParamerizedCommand(command);
-            }
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_GetSaleValueReport";
+            #region Parameters
+            DbParameter UserID = command.CreateParameter();
+            UserID.Direction = ParameterDirection.Input;
+            UserID.Value = (object)userID ?? DBNull.Value;
+            UserID.ParameterName = "UserID";
+            DbParameter dbpBranchCode = command.CreateParameter();
+            dbpBranchCode.Direction = ParameterDirection.Input;
+            dbpBranchCode.Value = (object)branchCode ?? DBNull.Value;
+            dbpBranchCode.ParameterName = "branchCode";
+            DbParameter pmFromDate = command.CreateParameter();
+            pmFromDate.Direction = ParameterDirection.Input;
+            pmFromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmFromDate.ParameterName = "fromDate";
+            DbParameter pmToDate = command.CreateParameter();
+            pmToDate.Direction = ParameterDirection.Input;
+            pmToDate.Value = (object)toDate ?? DBNull.Value;
+            pmToDate.ParameterName = "toDate";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(UserID);
+            command.Parameters.Add(dbpBranchCode);
+            command.Parameters.Add(pmFromDate);
+            command.Parameters.Add(pmToDate);
+            return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
         #region VehicalReport
@@ -424,35 +444,32 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
-            using (DbCommand command = scopeRepository.CreateCommand())
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "Usp_GetVehicleReport";
-                #region Parameters
-                DbParameter UserID = command.CreateParameter();
-                UserID.Direction = ParameterDirection.Input;
-                UserID.Value = (object)userID ?? DBNull.Value;
-                UserID.ParameterName = "UserID";
-                DbParameter pmVehicleRegNo = command.CreateParameter();
-                pmVehicleRegNo.Direction = ParameterDirection.Input;
-                pmVehicleRegNo.Value = (object)vehicleRegNo ?? DBNull.Value;
-                pmVehicleRegNo.ParameterName = "vehicleRegNo";
-                DbParameter pmFromDate = command.CreateParameter();
-                pmFromDate.Direction = ParameterDirection.Input;
-                pmFromDate.Value = (object)fromDate ?? DBNull.Value;
-                pmFromDate.ParameterName = "fromDate";
-                DbParameter pmToDate = command.CreateParameter();
-                pmToDate.Direction = ParameterDirection.Input;
-                pmToDate.Value = (object)toDate ?? DBNull.Value;
-                pmToDate.ParameterName = "toDate";
-                #endregion
-                // Add parameter as specified in the store procedure
-                command.Parameters.Add(pmVehicleRegNo);
-                command.Parameters.Add(pmFromDate);
-                command.Parameters.Add(pmToDate);
-                return scopeRepository.ExecuteParamerizedCommand(command);
-
-            }
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_GetVehicleReport";
+            #region Parameters
+            DbParameter UserID = command.CreateParameter();
+            UserID.Direction = ParameterDirection.Input;
+            UserID.Value = (object)userID ?? DBNull.Value;
+            UserID.ParameterName = "UserID";
+            DbParameter pmVehicleRegNo = command.CreateParameter();
+            pmVehicleRegNo.Direction = ParameterDirection.Input;
+            pmVehicleRegNo.Value = (object)vehicleRegNo ?? DBNull.Value;
+            pmVehicleRegNo.ParameterName = "vehicleRegNo";
+            DbParameter pmFromDate = command.CreateParameter();
+            pmFromDate.Direction = ParameterDirection.Input;
+            pmFromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmFromDate.ParameterName = "fromDate";
+            DbParameter pmToDate = command.CreateParameter();
+            pmToDate.Direction = ParameterDirection.Input;
+            pmToDate.Value = (object)toDate ?? DBNull.Value;
+            pmToDate.ParameterName = "toDate";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmVehicleRegNo);
+            command.Parameters.Add(pmFromDate);
+            command.Parameters.Add(pmToDate);
+            return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
         #region IntimateSaleReport
@@ -485,39 +502,37 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
-            using (DbCommand command = scopeRepository.CreateCommand())
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "Usp_GetIntimateSaleReport";
-                #region Parameters
-                DbParameter pmledgerCode = command.CreateParameter();
-                pmledgerCode.Direction = ParameterDirection.Input;
-                pmledgerCode.Value = (object)ledgerCode ?? DBNull.Value;
-                pmledgerCode.ParameterName = "ledgerCode";
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_GetIntimateSaleReport";
+            #region Parameters
+            DbParameter pmledgerCode = command.CreateParameter();
+            pmledgerCode.Direction = ParameterDirection.Input;
+            pmledgerCode.Value = (object)ledgerCode ?? DBNull.Value;
+            pmledgerCode.ParameterName = "ledgerCode";
 
-                DbParameter pmfDate = command.CreateParameter();
-                pmfDate.Direction = ParameterDirection.Input;
-                pmfDate.Value = (object)fromDate ?? DBNull.Value;
-                pmfDate.ParameterName = "fromDate";
+            DbParameter pmfDate = command.CreateParameter();
+            pmfDate.Direction = ParameterDirection.Input;
+            pmfDate.Value = (object)fromDate ?? DBNull.Value;
+            pmfDate.ParameterName = "fromDate";
 
-                DbParameter pmtDate = command.CreateParameter();
-                pmtDate.Direction = ParameterDirection.Input;
-                pmtDate.Value = (object)toDate ?? DBNull.Value;
-                pmtDate.ParameterName = "toDate";
+            DbParameter pmtDate = command.CreateParameter();
+            pmtDate.Direction = ParameterDirection.Input;
+            pmtDate.Value = (object)toDate ?? DBNull.Value;
+            pmtDate.ParameterName = "toDate";
 
-                DbParameter pmuserName = command.CreateParameter();
-                pmuserName.Direction = ParameterDirection.Input;
-                pmuserName.Value = (object)UserID ?? DBNull.Value;
-                pmuserName.ParameterName = "UserID";
+            DbParameter pmuserName = command.CreateParameter();
+            pmuserName.Direction = ParameterDirection.Input;
+            pmuserName.Value = (object)UserID ?? DBNull.Value;
+            pmuserName.ParameterName = "UserID";
 
-                #endregion
-                // Add parameter as specified in the store procedure
-                command.Parameters.Add(pmledgerCode);
-                command.Parameters.Add(pmfDate);
-                command.Parameters.Add(pmtDate);
-                command.Parameters.Add(pmuserName);
-                return scopeRepository.ExecuteParamerizedCommand(command);
-            }
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmledgerCode);
+            command.Parameters.Add(pmfDate);
+            command.Parameters.Add(pmtDate);
+            command.Parameters.Add(pmuserName);
+            return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
         #region SalesGSTReport
@@ -536,50 +551,48 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
-            using (DbCommand command = scopeRepository.CreateCommand())
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_SalesGSTReport";
+            #region Parameters
+            DbParameter pmcompanyId = command.CreateParameter();
+            pmcompanyId.Direction = ParameterDirection.Input;
+            pmcompanyId.Value = (object)companyId ?? DBNull.Value;
+            pmcompanyId.ParameterName = "companyId";
+
+            DbParameter pmbranchID = command.CreateParameter();
+            pmbranchID.Direction = ParameterDirection.Input;
+            pmbranchID.Value = (object)branchName ?? DBNull.Value;
+            pmbranchID.ParameterName = "branchName";
+
+            DbParameter pmfDate = command.CreateParameter();
+            pmfDate.Direction = ParameterDirection.Input;
+            pmfDate.Value = (object)DateTime.Now ?? DBNull.Value;
+            pmfDate.ParameterName = "fDate";
+
+            DbParameter pmtDate = command.CreateParameter();
+            pmtDate.Direction = ParameterDirection.Input;
+            pmtDate.Value = (object)DateTime.Now ?? DBNull.Value;
+            pmtDate.ParameterName = "tDate";
+
+            DbParameter pmuserName = command.CreateParameter();
+            pmuserName.Direction = ParameterDirection.Input;
+            pmuserName.Value = (object)userName ?? DBNull.Value;
+            pmuserName.ParameterName = "userName";
+
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmcompanyId);
+            command.Parameters.Add(pmbranchID);
+            command.Parameters.Add(pmfDate);
+            command.Parameters.Add(pmtDate);
+            command.Parameters.Add(pmuserName);
+            DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
+            if (dt.Rows.Count > 0)
             {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "Usp_SalesGSTReport";
-                #region Parameters
-                DbParameter pmcompanyId = command.CreateParameter();
-                pmcompanyId.Direction = ParameterDirection.Input;
-                pmcompanyId.Value = (object)companyId ?? DBNull.Value;
-                pmcompanyId.ParameterName = "companyId";
-
-                DbParameter pmbranchID = command.CreateParameter();
-                pmbranchID.Direction = ParameterDirection.Input;
-                pmbranchID.Value = (object)branchName ?? DBNull.Value;
-                pmbranchID.ParameterName = "branchName";
-
-                DbParameter pmfDate = command.CreateParameter();
-                pmfDate.Direction = ParameterDirection.Input;
-                pmfDate.Value = (object)DateTime.Now ?? DBNull.Value;
-                pmfDate.ParameterName = "fDate";
-
-                DbParameter pmtDate = command.CreateParameter();
-                pmtDate.Direction = ParameterDirection.Input;
-                pmtDate.Value = (object)DateTime.Now ?? DBNull.Value;
-                pmtDate.ParameterName = "tDate";
-
-                DbParameter pmuserName = command.CreateParameter();
-                pmuserName.Direction = ParameterDirection.Input;
-                pmuserName.Value = (object)userName ?? DBNull.Value;
-                pmuserName.ParameterName = "userName";
-
-                #endregion
-                // Add parameter as specified in the store procedure
-                command.Parameters.Add(pmcompanyId);
-                command.Parameters.Add(pmbranchID);
-                command.Parameters.Add(pmfDate);
-                command.Parameters.Add(pmtDate);
-                command.Parameters.Add(pmuserName);
-                DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
-                if (dt.Rows.Count > 0)
-                {
-                    return dt;
-                }
-                else return null;
+                return dt;
             }
+            else return null;
         }
         #endregion
         #region DailySalesReport
@@ -598,52 +611,50 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
-            using (DbCommand command = scopeRepository.CreateCommand())
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_GetDailySalesReport";
+            #region Parameters
+            DbParameter pmcompanyId = command.CreateParameter();
+            pmcompanyId.Direction = ParameterDirection.Input;
+            pmcompanyId.Value = (object)companyId ?? DBNull.Value;
+            pmcompanyId.ParameterName = "companyId";
+
+            DbParameter pmbranchID = command.CreateParameter();
+            pmbranchID.Direction = ParameterDirection.Input;
+            pmbranchID.Value = (object)branchName ?? DBNull.Value;
+            pmbranchID.ParameterName = "branchCode";
+
+            DbParameter pmuserName = command.CreateParameter();
+            pmuserName.Direction = ParameterDirection.Input;
+            pmuserName.Value = (object)userName ?? DBNull.Value;
+            pmuserName.ParameterName = "userName";
+
+            DbParameter pmfDate = command.CreateParameter();
+            pmfDate.Direction = ParameterDirection.Input;
+            pmfDate.Value = (object)DateTime.Now ?? DBNull.Value;
+            pmfDate.ParameterName = "fDate";
+
+            DbParameter pmtDate = command.CreateParameter();
+            pmtDate.Direction = ParameterDirection.Input;
+            pmtDate.Value = (object)DateTime.Now ?? DBNull.Value;
+            pmtDate.ParameterName = "tDate";
+
+
+
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmcompanyId);
+            command.Parameters.Add(pmbranchID);
+            command.Parameters.Add(pmfDate);
+            command.Parameters.Add(pmtDate);
+            command.Parameters.Add(pmuserName);
+            DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
+            if (dt.Rows.Count > 0)
             {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "Usp_GetDailySalesReport";
-                #region Parameters
-                DbParameter pmcompanyId = command.CreateParameter();
-                pmcompanyId.Direction = ParameterDirection.Input;
-                pmcompanyId.Value = (object)companyId ?? DBNull.Value;
-                pmcompanyId.ParameterName = "companyId";
-
-                DbParameter pmbranchID = command.CreateParameter();
-                pmbranchID.Direction = ParameterDirection.Input;
-                pmbranchID.Value = (object)branchName ?? DBNull.Value;
-                pmbranchID.ParameterName = "branchCode";
-
-                DbParameter pmuserName = command.CreateParameter();
-                pmuserName.Direction = ParameterDirection.Input;
-                pmuserName.Value = (object)userName ?? DBNull.Value;
-                pmuserName.ParameterName = "userName";
-
-                DbParameter pmfDate = command.CreateParameter();
-                pmfDate.Direction = ParameterDirection.Input;
-                pmfDate.Value = (object)DateTime.Now ?? DBNull.Value;
-                pmfDate.ParameterName = "fDate";
-
-                DbParameter pmtDate = command.CreateParameter();
-                pmtDate.Direction = ParameterDirection.Input;
-                pmtDate.Value = (object)DateTime.Now ?? DBNull.Value;
-                pmtDate.ParameterName = "tDate";
-
-
-
-                #endregion
-                // Add parameter as specified in the store procedure
-                command.Parameters.Add(pmcompanyId);
-                command.Parameters.Add(pmbranchID);
-                command.Parameters.Add(pmfDate);
-                command.Parameters.Add(pmtDate);
-                command.Parameters.Add(pmuserName);
-                DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
-                if (dt.Rows.Count > 0)
-                {
-                    return dt;
-                }
-                else return null;
+                return dt;
             }
+            else return null;
         }
         #endregion
         #region StockVerificationReport
@@ -676,38 +687,36 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
-            using (DbCommand command = scopeRepository.CreateCommand())
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "Usp_GetStockVerificationReport";
-                #region Parameters
-                DbParameter pmbranchID = command.CreateParameter();
-                pmbranchID.Direction = ParameterDirection.Input;
-                pmbranchID.Value = (object)branchCode ?? DBNull.Value;
-                pmbranchID.ParameterName = "branchCode";
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_GetStockVerificationReport";
+            #region Parameters
+            DbParameter pmbranchID = command.CreateParameter();
+            pmbranchID.Direction = ParameterDirection.Input;
+            pmbranchID.Value = (object)branchCode ?? DBNull.Value;
+            pmbranchID.ParameterName = "branchCode";
 
-                DbParameter pmuserName = command.CreateParameter();
-                pmuserName.Direction = ParameterDirection.Input;
-                pmuserName.Value = (object)UserID ?? DBNull.Value;
-                pmuserName.ParameterName = "UserID";
+            DbParameter pmuserName = command.CreateParameter();
+            pmuserName.Direction = ParameterDirection.Input;
+            pmuserName.Value = (object)UserID ?? DBNull.Value;
+            pmuserName.ParameterName = "UserID";
 
-                DbParameter pmFromDate = command.CreateParameter();
-                pmFromDate.Direction = ParameterDirection.Input;
-                pmFromDate.Value = (object)fromDate ?? DBNull.Value;
-                pmFromDate.ParameterName = "fromDate";
+            DbParameter pmFromDate = command.CreateParameter();
+            pmFromDate.Direction = ParameterDirection.Input;
+            pmFromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmFromDate.ParameterName = "fromDate";
 
-                DbParameter pmToDate = command.CreateParameter();
-                pmToDate.Direction = ParameterDirection.Input;
-                pmToDate.Value = (object)toDate ?? DBNull.Value;
-                pmToDate.ParameterName = "toDate";
-                #endregion
-                // Add parameter as specified in the store procedure
-                command.Parameters.Add(pmbranchID);
-                command.Parameters.Add(pmFromDate);
-                command.Parameters.Add(pmToDate);
-                command.Parameters.Add(pmuserName);
-                return scopeRepository.ExecuteParamerizedCommand(command);
-            }
+            DbParameter pmToDate = command.CreateParameter();
+            pmToDate.Direction = ParameterDirection.Input;
+            pmToDate.Value = (object)toDate ?? DBNull.Value;
+            pmToDate.ParameterName = "toDate";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmbranchID);
+            command.Parameters.Add(pmFromDate);
+            command.Parameters.Add(pmToDate);
+            command.Parameters.Add(pmuserName);
+            return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
         #region SalesGSTReport
@@ -740,45 +749,43 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
-            using (DbCommand command = scopeRepository.CreateCommand())
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "Usp_StockLedgerReport";
-                #region Parameters
-                DbParameter pmbranchID = command.CreateParameter();
-                pmbranchID.Direction = ParameterDirection.Input;
-                pmbranchID.Value = (object)branchCode ?? DBNull.Value;
-                pmbranchID.ParameterName = "branchCode";
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_StockLedgerReport";
+            #region Parameters
+            DbParameter pmbranchID = command.CreateParameter();
+            pmbranchID.Direction = ParameterDirection.Input;
+            pmbranchID.Value = (object)branchCode ?? DBNull.Value;
+            pmbranchID.ParameterName = "branchCode";
 
-                DbParameter pmProductCode = command.CreateParameter();
-                pmProductCode.Direction = ParameterDirection.Input;
-                pmProductCode.Value = (object)productCode ?? DBNull.Value;
-                pmProductCode.ParameterName = "productCode";
+            DbParameter pmProductCode = command.CreateParameter();
+            pmProductCode.Direction = ParameterDirection.Input;
+            pmProductCode.Value = (object)productCode ?? DBNull.Value;
+            pmProductCode.ParameterName = "productCode";
 
-                DbParameter pmfDate = command.CreateParameter();
-                pmfDate.Direction = ParameterDirection.Input;
-                pmfDate.Value = (object)fromDate ?? DBNull.Value;
-                pmfDate.ParameterName = "fromDate";
+            DbParameter pmfDate = command.CreateParameter();
+            pmfDate.Direction = ParameterDirection.Input;
+            pmfDate.Value = (object)fromDate ?? DBNull.Value;
+            pmfDate.ParameterName = "fromDate";
 
-                DbParameter pmtDate = command.CreateParameter();
-                pmtDate.Direction = ParameterDirection.Input;
-                pmtDate.Value = (object)toDate ?? DBNull.Value;
-                pmtDate.ParameterName = "toDate";
+            DbParameter pmtDate = command.CreateParameter();
+            pmtDate.Direction = ParameterDirection.Input;
+            pmtDate.Value = (object)toDate ?? DBNull.Value;
+            pmtDate.ParameterName = "toDate";
 
-                DbParameter pmuserName = command.CreateParameter();
-                pmuserName.Direction = ParameterDirection.Input;
-                pmuserName.Value = (object)UserID ?? DBNull.Value;
-                pmuserName.ParameterName = "UserID";
+            DbParameter pmuserName = command.CreateParameter();
+            pmuserName.Direction = ParameterDirection.Input;
+            pmuserName.Value = (object)UserID ?? DBNull.Value;
+            pmuserName.ParameterName = "UserID";
 
-                #endregion
-                // Add parameter as specified in the store procedure
-                command.Parameters.Add(pmbranchID);
-                command.Parameters.Add(pmProductCode);
-                command.Parameters.Add(pmfDate);
-                command.Parameters.Add(pmtDate);
-                command.Parameters.Add(pmuserName);
-                return scopeRepository.ExecuteParamerizedCommand(command);
-            }
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmbranchID);
+            command.Parameters.Add(pmProductCode);
+            command.Parameters.Add(pmfDate);
+            command.Parameters.Add(pmtDate);
+            command.Parameters.Add(pmuserName);
+            return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
         #region SalesAnalysisByBranch
@@ -811,38 +818,36 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
-            using (DbCommand command = scopeRepository.CreateCommand())
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "Usp_SalesAnalysisByBranch";
-                #region Parameters
-                DbParameter pmbranchID = command.CreateParameter();
-                pmbranchID.Direction = ParameterDirection.Input;
-                pmbranchID.Value = (object)branchCode ?? DBNull.Value;
-                pmbranchID.ParameterName = "branchCode";
-                
-                DbParameter pmfDate = command.CreateParameter();
-                pmfDate.Direction = ParameterDirection.Input;
-                pmfDate.Value = (object)fromDate ?? DBNull.Value;
-                pmfDate.ParameterName = "fromDate";
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_SalesAnalysisByBranch";
+            #region Parameters
+            DbParameter pmbranchID = command.CreateParameter();
+            pmbranchID.Direction = ParameterDirection.Input;
+            pmbranchID.Value = (object)branchCode ?? DBNull.Value;
+            pmbranchID.ParameterName = "branchCode";
 
-                DbParameter pmtDate = command.CreateParameter();
-                pmtDate.Direction = ParameterDirection.Input;
-                pmtDate.Value = (object)toDate ?? DBNull.Value;
-                pmtDate.ParameterName = "toDate";
+            DbParameter pmfDate = command.CreateParameter();
+            pmfDate.Direction = ParameterDirection.Input;
+            pmfDate.Value = (object)fromDate ?? DBNull.Value;
+            pmfDate.ParameterName = "fromDate";
 
-                DbParameter UserID = command.CreateParameter();
-                UserID.Direction = ParameterDirection.Input;
-                UserID.Value = (object)userID ?? DBNull.Value;
-                UserID.ParameterName = "UserID";
-                #endregion
-                // Add parameter as specified in the store procedure
-                command.Parameters.Add(pmbranchID);
-                command.Parameters.Add(pmfDate);
-                command.Parameters.Add(pmtDate);
-                command.Parameters.Add(UserID);
-                return scopeRepository.ExecuteParamerizedCommand(command);
-            }
+            DbParameter pmtDate = command.CreateParameter();
+            pmtDate.Direction = ParameterDirection.Input;
+            pmtDate.Value = (object)toDate ?? DBNull.Value;
+            pmtDate.ParameterName = "toDate";
+
+            DbParameter UserID = command.CreateParameter();
+            UserID.Direction = ParameterDirection.Input;
+            UserID.Value = (object)userID ?? DBNull.Value;
+            UserID.ParameterName = "UserID";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmbranchID);
+            command.Parameters.Add(pmfDate);
+            command.Parameters.Add(pmtDate);
+            command.Parameters.Add(UserID);
+            return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
         #region 24hrs sales stock report
@@ -875,36 +880,34 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
-            using (DbCommand command = scopeRepository.CreateCommand())
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "Usp_StockReport";
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_StockReport";
 
-                #region Parameters
-                DbParameter UserID = command.CreateParameter();
-                UserID.Direction = ParameterDirection.Input;
-                UserID.Value = (object)userID ?? DBNull.Value;
-                UserID.ParameterName = "UserID";
-                DbParameter dbpBranchCode = command.CreateParameter();
-                dbpBranchCode.Direction = ParameterDirection.Input;
-                dbpBranchCode.Value = (object)branchCode ?? DBNull.Value;
-                dbpBranchCode.ParameterName = "branchCode";
-                DbParameter pmFromDate = command.CreateParameter();
-                pmFromDate.Direction = ParameterDirection.Input;
-                pmFromDate.Value = (object)fromDate ?? DBNull.Value;
-                pmFromDate.ParameterName = "fromDate";
-                DbParameter pmToDate = command.CreateParameter();
-                pmToDate.Direction = ParameterDirection.Input;
-                pmToDate.Value = (object)toDate ?? DBNull.Value;
-                pmToDate.ParameterName = "toDate";
-                #endregion
-                // Add parameter as specified in the store procedure
-                command.Parameters.Add(UserID);
-                command.Parameters.Add(dbpBranchCode);
-                command.Parameters.Add(pmFromDate);
-                command.Parameters.Add(pmToDate);
-                return scopeRepository.ExecuteParamerizedCommand(command);
-            }
+            #region Parameters
+            DbParameter UserID = command.CreateParameter();
+            UserID.Direction = ParameterDirection.Input;
+            UserID.Value = (object)userID ?? DBNull.Value;
+            UserID.ParameterName = "UserID";
+            DbParameter dbpBranchCode = command.CreateParameter();
+            dbpBranchCode.Direction = ParameterDirection.Input;
+            dbpBranchCode.Value = (object)branchCode ?? DBNull.Value;
+            dbpBranchCode.ParameterName = "branchCode";
+            DbParameter pmFromDate = command.CreateParameter();
+            pmFromDate.Direction = ParameterDirection.Input;
+            pmFromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmFromDate.ParameterName = "fromDate";
+            DbParameter pmToDate = command.CreateParameter();
+            pmToDate.Direction = ParameterDirection.Input;
+            pmToDate.Value = (object)toDate ?? DBNull.Value;
+            pmToDate.ParameterName = "toDate";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(UserID);
+            command.Parameters.Add(dbpBranchCode);
+            command.Parameters.Add(pmFromDate);
+            command.Parameters.Add(pmToDate);
+            return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
         #region ProductWiseMonthlyPurchaseReport
@@ -937,34 +940,32 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
-            using (DbCommand command = scopeRepository.CreateCommand())
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "Usp_ProductWiseMonthlyPurchaseReport";
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_ProductWiseMonthlyPurchaseReport";
 
-                #region Parameters
-                DbParameter UserID = command.CreateParameter();
-                UserID.Direction = ParameterDirection.Input;
-                UserID.Value = (object)userID ?? DBNull.Value;
-                UserID.ParameterName = "UserID";
+            #region Parameters
+            DbParameter UserID = command.CreateParameter();
+            UserID.Direction = ParameterDirection.Input;
+            UserID.Value = (object)userID ?? DBNull.Value;
+            UserID.ParameterName = "UserID";
 
-                DbParameter pmFromDate = command.CreateParameter();
-                pmFromDate.Direction = ParameterDirection.Input;
-                pmFromDate.Value = (object)fromDate ?? DBNull.Value;
-                pmFromDate.ParameterName = "fromDate";
+            DbParameter pmFromDate = command.CreateParameter();
+            pmFromDate.Direction = ParameterDirection.Input;
+            pmFromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmFromDate.ParameterName = "fromDate";
 
-                DbParameter pmToDate = command.CreateParameter();
-                pmToDate.Direction = ParameterDirection.Input;
-                pmToDate.Value = (object)toDate ?? DBNull.Value;
-                pmToDate.ParameterName = "toDate";
+            DbParameter pmToDate = command.CreateParameter();
+            pmToDate.Direction = ParameterDirection.Input;
+            pmToDate.Value = (object)toDate ?? DBNull.Value;
+            pmToDate.ParameterName = "toDate";
 
-                #endregion
-                // Add parameter as specified in the store procedure
-                command.Parameters.Add(UserID);
-                command.Parameters.Add(pmFromDate);
-                command.Parameters.Add(pmToDate);
-                return scopeRepository.ExecuteParamerizedCommand(command);
-            }
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(UserID);
+            command.Parameters.Add(pmFromDate);
+            command.Parameters.Add(pmToDate);
+            return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
 

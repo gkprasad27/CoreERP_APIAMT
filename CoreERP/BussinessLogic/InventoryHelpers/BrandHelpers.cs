@@ -14,10 +14,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<Companies> repo = new Repository<Companies>())
-                {
-                    return repo.Companies.Where(m => m.Active == "Y").ToList();
-                }
+                using Repository<Companies> repo = new Repository<Companies>();
+                return repo.Companies.Where(m => m.Active == "Y").ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -25,27 +23,23 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<Brand> repo = new Repository<Brand>())
+                using Repository<Brand> repo = new Repository<Brand>();
+                brand.Active = "Y";
+                brand.AddDate = DateTime.Now;
+
+                var record = repo.Brand.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                if (record == null)
+                    brand.Code = "1";
+                else
                 {
-                   
-
-                    brand.Active = "Y";
-                    brand.AddDate = DateTime.Now;
-
-                    var record = repo.Brand.OrderByDescending(x => x.AddDate).FirstOrDefault();
-                    if (record == null)
-                        brand.Code = "1";
-                    else
-                    {
-                        brand.Code = CommonHelper.IncreaseCode(record.Code);
-                    }
-
-                    repo.Brand.Add(brand);
-                    if (repo.SaveChanges() > 0)
-                        return brand;
-
-                    return null;
+                    brand.Code = CommonHelper.IncreaseCode(record.Code);
                 }
+
+                repo.Brand.Add(brand);
+                if (repo.SaveChanges() > 0)
+                    return brand;
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -56,10 +50,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<Brand> repo = new Repository<Brand>())
-                {
-                    return repo.Brand.AsEnumerable().Where(x => x.Active == "Y").ToList();
-                }
+                using Repository<Brand> repo = new Repository<Brand>();
+                return repo.Brand.AsEnumerable().Where(x => x.Active == "Y").ToList();
             }
             catch
             {
@@ -70,14 +62,12 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<Brand> repo = new Repository<Brand>())
-                {
-                    repo.Brand.Update(brand);
-                    if (repo.SaveChanges() > 0)
-                        return brand;
+                using Repository<Brand> repo = new Repository<Brand>();
+                repo.Brand.Update(brand);
+                if (repo.SaveChanges() > 0)
+                    return brand;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -88,16 +78,14 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<Brand> repo = new Repository<Brand>())
-                {
-                    var brand = repo.Brand.Where(x => x.Code == code).FirstOrDefault();
-                    brand.Active = "N";
-                    repo.Brand.Remove(brand);
-                    if (repo.SaveChanges() > 0)
-                        return brand;
+                using Repository<Brand> repo = new Repository<Brand>();
+                var brand = repo.Brand.Where(x => x.Code == code).FirstOrDefault();
+                brand.Active = "N";
+                repo.Brand.Remove(brand);
+                if (repo.SaveChanges() > 0)
+                    return brand;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {

@@ -14,10 +14,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Employees> repo = new Repository<Employees>())
-                {
-                    return repo.Employees.Where(x => x.Active== "Y").ToList();
-                }
+                using Repository<Employees> repo = new Repository<Employees>();
+                return repo.Employees.Where(x => x.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -26,12 +24,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Employees> repo = new Repository<Employees>())
-                {
-                    return repo.Employees.AsEnumerable()
-                    .Where(x => x.Code == empCode && x.Active.Equals("Y", StringComparison.OrdinalIgnoreCase))
-                    .Select(x => x).ToList();
-                }
+                using Repository<Employees> repo = new Repository<Employees>();
+                return repo.Employees.AsEnumerable()
+.Where(x => x.Code == empCode && x.Active.Equals("Y", StringComparison.OrdinalIgnoreCase))
+.Select(x => x).ToList();
             }
             catch { throw; }
         }
@@ -40,12 +36,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Employees> repo = new Repository<Employees>())
-                {
-                    return repo.Employees
-                   .Where(x => x.Name.ToLower() == name.ToLower())
-                   .Select(x => x).ToList();
-                }
+                using Repository<Employees> repo = new Repository<Employees>();
+                return repo.Employees
+.Where(x => x.Name.ToLower() == name.ToLower())
+.Select(x => x).ToList();
             }
             catch { throw; }
         }
@@ -55,15 +49,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Employees> repo = new Repository<Employees>())
-                {
-                    employees.Active = "Y";
-                    repo.Employees.Add(employees);
-                    if (repo.SaveChanges() > 0)
-                        return employees;
+                using Repository<Employees> repo = new Repository<Employees>();
+                employees.Active = "Y";
+                repo.Employees.Add(employees);
+                if (repo.SaveChanges() > 0)
+                    return employees;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -73,14 +65,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Employees> repo = new Repository<Employees>())
-                {
-                    repo.Employees.Update(employees);
-                    if (repo.SaveChanges() > 0)
-                        return employees;
+                using Repository<Employees> repo = new Repository<Employees>();
+                repo.Employees.Update(employees);
+                if (repo.SaveChanges() > 0)
+                    return employees;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -90,16 +80,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Employees> repo = new Repository<Employees>())
-                {
-                    var emp = repo.Employees.Where(e => e.Code == empCode).FirstOrDefault();
-                    emp.Active = "N";
-                    repo.Employees.Update(emp);
-                    if (repo.SaveChanges() > 0)
-                        return emp;
+                using Repository<Employees> repo = new Repository<Employees>();
+                var emp = repo.Employees.Where(e => e.Code == empCode).FirstOrDefault();
+                emp.Active = "N";
+                repo.Employees.Update(emp);
+                if (repo.SaveChanges() > 0)
+                    return emp;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -110,14 +98,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>())
-                {
-                    return repo.EmployeeInBranches.AsEnumerable()
-                           .Where(x => x.EmpCode == (empCode ?? x.EmpCode)
-                                    && x.BranchCode == (branchCode ?? x.BranchCode)
-                                    && x.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)
-                           ).ToList();
-                }
+                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                return repo.EmployeeInBranches.AsEnumerable()
+.Where(x => x.EmpCode == (empCode ?? x.EmpCode)
+&& x.BranchCode == (branchCode ?? x.BranchCode)
+&& x.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+).ToList();
             }
             catch { throw; }
         }
@@ -127,26 +113,24 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>())
+                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                empbr.Active = "Y";
+
+                var lastrecord = repo.EmployeeInBranches.Select(x => x).OrderByDescending(emp => emp.Ext1).FirstOrDefault();
+                if (lastrecord != null)
                 {
-                    empbr.Active = "Y";
-
-                    var lastrecord = repo.EmployeeInBranches.Select(x => x).OrderByDescending(emp => emp.Ext1).FirstOrDefault();
-                    if (lastrecord != null)
-                    {
-                        empbr.Ext1 = (int.Parse(lastrecord.Ext1) + 1).ToString();
-                    }
-                    else
-                    {
-                        empbr.Ext1 = "1";
-                    }
-
-                    repo.EmployeeInBranches.Add(empbr);
-                    if (repo.SaveChanges() > 0)
-                        return empbr;
-
-                    return null;
+                    empbr.Ext1 = (int.Parse(lastrecord.Ext1) + 1).ToString();
                 }
+                else
+                {
+                    empbr.Ext1 = "1";
+                }
+
+                repo.EmployeeInBranches.Add(empbr);
+                if (repo.SaveChanges() > 0)
+                    return empbr;
+
+                return null;
             }
             catch { throw; }
         }
@@ -156,14 +140,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>())
-                {
-                    repo.EmployeeInBranches.Update(empbr);
-                    if (repo.SaveChanges() > 0)
-                        return empbr;
+                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                repo.EmployeeInBranches.Update(empbr);
+                if (repo.SaveChanges() > 0)
+                    return empbr;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -173,16 +155,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>())
-                {
-                    var emp = repo.EmployeeInBranches.Where(e => e.EmpCode == empCode).FirstOrDefault();
-                    emp.Active = "N";
-                    repo.EmployeeInBranches.Remove(emp);
-                    if (repo.SaveChanges() > 0)
-                        return emp;
+                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                var emp = repo.EmployeeInBranches.Where(e => e.EmpCode == empCode).FirstOrDefault();
+                emp.Active = "N";
+                repo.EmployeeInBranches.Remove(emp);
+                if (repo.SaveChanges() > 0)
+                    return emp;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }

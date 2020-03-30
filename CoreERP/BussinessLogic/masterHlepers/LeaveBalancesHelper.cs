@@ -12,10 +12,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>())
-                {
-                    return repo.LeaveBalanceMaster.ToList();
-                }
+                using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
+                return repo.LeaveBalanceMaster.ToList();
             }
             catch { throw; }
         }
@@ -25,15 +23,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>())
-                {
-                    //lbm.Active = "Y";
-                    repo.LeaveBalanceMaster.Add(lbm);
-                    if (repo.SaveChanges() > 0)
-                        return lbm;
+                using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
+                //lbm.Active = "Y";
+                repo.LeaveBalanceMaster.Add(lbm);
+                if (repo.SaveChanges() > 0)
+                    return lbm;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -42,12 +38,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>())
-                {
-                    return repo.LeaveBalanceMaster
-                               .Where(x => x.EmpCode == Code)
-                               .ToList();
-                }
+                using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
+                return repo.LeaveBalanceMaster
+.Where(x => x.EmpCode == Code)
+.ToList();
             }
             catch { throw; }
         }
@@ -55,14 +49,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>())
-                {
-                    repo.LeaveBalanceMaster.Update(lbm);
-                    if (repo.SaveChanges() > 0)
-                        return lbm;
+                using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
+                repo.LeaveBalanceMaster.Update(lbm);
+                if (repo.SaveChanges() > 0)
+                    return lbm;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -72,15 +64,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>())
-                {
-                    var ltype = repo.LeaveBalanceMaster.Where(x => x.EmpCode ==code.ToString()).FirstOrDefault();
-                    repo.LeaveBalanceMaster.Remove(ltype);
-                    if (repo.SaveChanges() > 0)
-                        return ltype;
+                using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
+                var ltype = repo.LeaveBalanceMaster.Where(x => x.EmpCode == code.ToString()).FirstOrDefault();
+                repo.LeaveBalanceMaster.Remove(ltype);
+                if (repo.SaveChanges() > 0)
+                    return ltype;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }

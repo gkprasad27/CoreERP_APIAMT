@@ -17,24 +17,24 @@ namespace CoreERP.Controllers
     public class BrandController : ControllerBase
     {
         [HttpPost("RegisterBrand")]
-        public async Task<IActionResult> RegisterBrand([FromBody]Brand brand)
+        public IActionResult RegisterBrand([FromBody]Brand brand)
         {
             try
             {
                 Brand result = BrandHelpers.RegisterBrand(brand);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-              
+
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpGet("GetBbrandList")]
-        public async Task<IActionResult> GetBbrandList()
+        public IActionResult GetBbrandList()
         {
             try
             {
@@ -47,14 +47,14 @@ namespace CoreERP.Controllers
                 }
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpGet("GetBrandCompaniesList")]
-        public async Task<IActionResult> GetBrandCompaniesList()
+        public IActionResult GetBrandCompaniesList()
         {
             try
             {
@@ -70,7 +70,7 @@ namespace CoreERP.Controllers
 
         [HttpPut("UpdateBrand")]
         [Produces(typeof(Brand))]
-        public async Task<IActionResult> UpdateBrand([FromBody] Brand brands)
+        public IActionResult UpdateBrand([FromBody] Brand brands)
         {
             if (brands == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(brands)} cannot be null" });
@@ -78,21 +78,21 @@ namespace CoreERP.Controllers
             try
             {
                 Brand result = BrandHelpers.UpdateBrand(brands);
-                if (result!=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = brands });
-               
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Updation Failed" });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
+                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
 
         [HttpDelete("DeleteBrand/{code}")]
         [Produces(typeof(Brand))]
-        public async Task<IActionResult> DeleteBrand(string code)
+        public IActionResult DeleteBrand(string code)
         {
 
             if (string.IsNullOrWhiteSpace(code))
@@ -101,7 +101,7 @@ namespace CoreERP.Controllers
             try
             {
                 Brand result = BrandHelpers.DeleteBrand(code);
-                if (result!=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = code });
                 else
                     return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });

@@ -18,51 +18,51 @@ namespace CoreERP.Controllers
     public class NoAssignmentController : ControllerBase
     {
         [HttpPost("RegisterNoAssignment")]
-        public async Task<IActionResult> RegisterNoAssignment([FromBody]NoAssignment noAssignment)
+        public IActionResult RegisterNoAssignment([FromBody]NoAssignment noAssignment)
         {
             try
             {
-                if(NoAssignmentHelper.GetNoAssignmentList(noAssignment.Code).Count > 0)
+                if (NoAssignmentHelper.GetNoAssignmentList(noAssignment.Code).Count > 0)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $" code={noAssignment.Code} Already exists." });
 
                 NoAssignment result = NoAssignmentHelper.RegisterNoAssignment(noAssignment);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-                
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Failed" });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Failed" });
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
 
         }
 
         [HttpPut("UpdateNoAssignment")]
         [Produces(typeof(NoAssignment))]
-        public async Task<IActionResult> UpdateNoAssignment([FromBody] NoAssignment noAssignments)
+        public IActionResult UpdateNoAssignment([FromBody] NoAssignment noAssignments)
         {
             if (noAssignments == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(noAssignments)} cannot be null" });
 
-          
+
             try
             {
                 NoAssignment result = NoAssignmentHelper.UpdateNoAssignment(noAssignments);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Updation Failed" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpDelete("DeleteNoAssignment/{code}")]
         [Produces(typeof(NoAssignment))]
-        public async Task<IActionResult> DeleteNoAssignment(string code)
+        public IActionResult DeleteNoAssignment(string code)
         {
 
             if (string.IsNullOrWhiteSpace(code))
@@ -83,7 +83,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetNoAssignmentList")]
-        public async Task<IActionResult> GetNoAssignmentList()
+        public IActionResult GetNoAssignmentList()
         {
             try
             {
@@ -103,26 +103,27 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetCompanysList")]
-        public async Task<IActionResult> GetCompanysList()
+        public IActionResult GetCompanysList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CompanysList = CompaniesHelper.GetListOfCompanies().Select(comp=> new { ID=comp.CompanyCode,TEXT=comp.Name});
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response =expando });
-            } catch (Exception ex)
+                expando.CompanysList = CompaniesHelper.GetListOfCompanies().Select(comp => new { ID = comp.CompanyCode, TEXT = comp.Name });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
             {
-                return Ok(new APIResponse() { status=APIStatus.FAIL.ToString(),response=ex.Message});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpGet("GetMaterialGroupList")]
-        public async Task<IActionResult> GetMaterialGroupList()
+        public IActionResult GetMaterialGroupList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.MaterialGroupList = MaterialGroupHelper.GetMaterialGroupList().Select(matgrp=>new { ID=matgrp.Code ,TEXT=matgrp.GroupName});
+                expando.MaterialGroupList = MaterialGroupHelper.GetMaterialGroupList().Select(matgrp => new { ID = matgrp.Code, TEXT = matgrp.GroupName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -132,7 +133,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetNumberTypes")]
-        public async Task<IActionResult> GetNumberTypes()
+        public IActionResult GetNumberTypes()
         {
             try
             {

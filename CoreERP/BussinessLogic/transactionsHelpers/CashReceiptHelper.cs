@@ -15,10 +15,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    return repo.TblBranch.ToList();
-                }
+                using Repository<TblBranch> repo = new Repository<TblBranch>();
+                return repo.TblBranch.ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -27,10 +25,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (Repository<TblCashReceiptMaster> repo = new Repository<TblCashReceiptMaster>())
-                {
-                    return repo.TblCashReceiptMaster.ToList();
-                }
+                using Repository<TblCashReceiptMaster> repo = new Repository<TblCashReceiptMaster>();
+                return repo.TblCashReceiptMaster.ToList();
 
             }
             catch { throw; }
@@ -40,10 +36,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
-                {
-                    return repo.TblAccountLedger.Where(acl => acl.LedgerCode.Contains(ledegerCode)).ToList();
-                }
+                using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
+                return repo.TblAccountLedger.Where(acl => acl.LedgerCode.Contains(ledegerCode)).ToList();
 
             }
             catch { throw; }
@@ -53,10 +47,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
-                {
-                    return repo.TblAccountLedger.ToList();
-                }
+                using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
+                return repo.TblAccountLedger.ToList();
             }
             catch { throw; }
         }
@@ -64,10 +56,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (Repository<TblVoucherMaster> repo = new Repository<TblVoucherMaster>())
-                {
-                    return repo.TblVoucherMaster.ToList();
-                }
+                using Repository<TblVoucherMaster> repo = new Repository<TblVoucherMaster>();
+                return repo.TblVoucherMaster.ToList();
 
             }
             catch { throw; }
@@ -77,10 +67,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (Repository<TblVoucherType> repo = new Repository<TblVoucherType>())
-                {
-                    return repo.TblVoucherType.ToList();
-                }
+                using Repository<TblVoucherType> repo = new Repository<TblVoucherType>();
+                return repo.TblVoucherType.ToList();
 
             }
             catch { throw; }
@@ -100,10 +88,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
-                }
+                using Repository<TblBranch> repo = new Repository<TblBranch>();
+                return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
             }
             catch (Exception ex)
             {
@@ -116,24 +102,22 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             try
             {
 
-                using (Repository<TblCashReceiptMaster> repo = new Repository<TblCashReceiptMaster>())
-                {
-                    List<TblCashReceiptMaster> _cashreceiptMasterList = null;
+                using Repository<TblCashReceiptMaster> repo = new Repository<TblCashReceiptMaster>();
+                List<TblCashReceiptMaster> _cashreceiptMasterList = null;
 
 
-                    _cashreceiptMasterList = repo.TblCashReceiptMaster.AsEnumerable()
-                              .Where(cp =>
-                                         DateTime.Parse(cp.CashReceiptDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.CashReceiptDate).Value.ToShortDateString())
-                                       && DateTime.Parse(cp.CashReceiptDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.CashReceiptDate).Value.ToShortDateString())
-                                 )
-                               .ToList();
+                _cashreceiptMasterList = repo.TblCashReceiptMaster.AsEnumerable()
+                          .Where(cp =>
+                                     DateTime.Parse(cp.CashReceiptDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.CashReceiptDate).Value.ToShortDateString())
+                                   && DateTime.Parse(cp.CashReceiptDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.CashReceiptDate).Value.ToShortDateString())
+                             )
+                           .ToList();
 
-                    if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
-                        _cashreceiptMasterList = _cashreceiptMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
+                if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
+                    _cashreceiptMasterList = _cashreceiptMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
-                    return _cashreceiptMasterList;
-                }
+                return _cashreceiptMasterList;
             }
             catch (Exception ex)
             {
@@ -146,15 +130,12 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
-                {
-                    return repo.TblAccountLedger
-                        .Where(al => al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower())
-                         && al.LedgerCode == (ledgercode ?? al.LedgerCode)
-                         )
-                        .ToList();
-                    //
-                }
+                using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
+                return repo.TblAccountLedger
+.Where(al => al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower())
+&& al.LedgerCode == (ledgercode ?? al.LedgerCode)
+)
+.ToList();
             }
             catch (Exception ex)
             {
@@ -166,10 +147,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (Repository<TblVoucherType> repo = new Repository<TblVoucherType>())
-                {
-                    return repo.TblVoucherType.Where(v => v.VoucherTypeId == voucherTypeId).ToList();
-                }
+                using Repository<TblVoucherType> repo = new Repository<TblVoucherType>();
+                return repo.TblVoucherType.Where(v => v.VoucherTypeId == voucherTypeId).ToList();
             }
             catch (Exception ex)
             {
@@ -181,21 +160,23 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             try
             {
 
-                
-                var _voucherMaster = new TblVoucherMaster();
-                _voucherMaster.BranchCode = cashReceiptMaster.BranchCode;
-                _voucherMaster.BranchName = branch.BranchName;
-                _voucherMaster.VoucherDate = cashReceiptMaster.CashReceiptDate;
-                _voucherMaster.VoucherTypeIdMain = voucherTypeId;
-                _voucherMaster.VoucherTypeIdSub = 37;
-                _voucherMaster.VoucherNo = cashReceiptMaster.VoucherNo;
-                _voucherMaster.Amount = cashReceiptMaster.TotalAmount;
-                _voucherMaster.PaymentType = "Cash";
-                _voucherMaster.Narration = "Cash Receipt";
-                _voucherMaster.ServerDate = DateTime.Now;
-                _voucherMaster.UserId = cashReceiptMaster.UserId;
-                _voucherMaster.UserName = cashReceiptMaster.UserName;
-                _voucherMaster.EmployeeId = -1;
+
+                var _voucherMaster = new TblVoucherMaster
+                {
+                    BranchCode = cashReceiptMaster.BranchCode,
+                    BranchName = branch.BranchName,
+                    VoucherDate = cashReceiptMaster.CashReceiptDate,
+                    VoucherTypeIdMain = voucherTypeId,
+                    VoucherTypeIdSub = 37,
+                    VoucherNo = cashReceiptMaster.VoucherNo,
+                    Amount = cashReceiptMaster.TotalAmount,
+                    PaymentType = "Cash",
+                    Narration = "Cash Receipt",
+                    ServerDate = DateTime.Now,
+                    UserId = cashReceiptMaster.UserId,
+                    UserName = cashReceiptMaster.UserName,
+                    EmployeeId = -1
+                };
 
                 context.TblVoucherMaster.Add(_voucherMaster);
                 if (context.SaveChanges() > 0)
@@ -304,16 +285,18 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                var _accountLedgerTransactions = new TblAccountLedgerTransactions();
-                _accountLedgerTransactions.VoucherDetailId = _voucherDetail.VoucherDetailId;
-             
-                _accountLedgerTransactions.BranchId = _voucherDetail.BranchId;
-                _accountLedgerTransactions.BranchCode = _voucherDetail.BranchCode;
-                _accountLedgerTransactions.BranchName = _voucherDetail.BranchName;
-                _accountLedgerTransactions.TransactionDate = invoiceDate;
-               
-                _accountLedgerTransactions.VoucherAmount = _voucherDetail.Amount;
-                if(isdebit==true)
+                var _accountLedgerTransactions = new TblAccountLedgerTransactions
+                {
+                    VoucherDetailId = _voucherDetail.VoucherDetailId,
+
+                    BranchId = _voucherDetail.BranchId,
+                    BranchCode = _voucherDetail.BranchCode,
+                    BranchName = _voucherDetail.BranchName,
+                    TransactionDate = invoiceDate,
+
+                    VoucherAmount = _voucherDetail.Amount
+                };
+                if (isdebit==true)
                 {
                     _accountLedgerTransactions.LedgerId = cashReceiptMaster.FromLedgerId;
                     _accountLedgerTransactions.LedgerCode = cashReceiptMaster.FromLedgerCode;
@@ -350,78 +333,74 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (ERPContext repo = new ERPContext())
+                using ERPContext repo = new ERPContext();
+                using var dbTransaction = repo.Database.BeginTransaction();
+                try
                 {
-                    using (var dbTransaction = repo.Database.BeginTransaction())
+                    //add voucher typedetails
+
+                    var _branch = GetBranches(cashReceiptMaster.BranchCode).ToArray().FirstOrDefault();
+
+                    var _accountLedger = GetAccountLedgersCode(cashReceiptMaster.FromLedgerCode).ToArray().FirstOrDefault();
+                    var _cashpayAccountLedger = GetAccountLedgerList().Where(x => x.LedgerId == 175).FirstOrDefault();
+                    var _vouchertType = GetVoucherTypeList(34).ToArray().FirstOrDefault();
+
+                    #region Add voucher master record
+                    var _voucherMaster = AddVoucherMaster(repo, cashReceiptMaster, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
+                    #endregion
+
+
+                    cashReceiptMaster.CashReceiptVchNo = _voucherMaster.VoucherMasterId.ToString();
+                    cashReceiptMaster.ServerDate = DateTime.Now;
+                    cashReceiptMaster.BranchId = _branch.BranchId;
+                    cashReceiptMaster.BranchName = _branch.BranchName;
+                    cashReceiptMaster.FromLedgerId = _cashpayAccountLedger.LedgerId;
+                    cashReceiptMaster.FromLedgerName = _cashpayAccountLedger.LedgerName;
+                    cashReceiptMaster.FromLedgerCode = _cashpayAccountLedger.LedgerCode;
+                    cashReceiptMaster.EmployeeId = _voucherMaster.EmployeeId;
+                    repo.TblCashReceiptMaster.Add(cashReceiptMaster);
+                    repo.SaveChanges();
+
+                    foreach (var cashDtl in cashReceiptDetails)
                     {
-                        try
-                        {
-                            //add voucher typedetails
-
-                            var _branch = GetBranches(cashReceiptMaster.BranchCode).ToArray().FirstOrDefault();
-
-                            var _accountLedger = GetAccountLedgersCode(cashReceiptMaster.FromLedgerCode).ToArray().FirstOrDefault();
-                            var _cashpayAccountLedger = GetAccountLedgerList().Where(x => x.LedgerId == 175).FirstOrDefault();
-                            var _vouchertType = GetVoucherTypeList(34).ToArray().FirstOrDefault();
-                            
-                            #region Add voucher master record
-                            var _voucherMaster = AddVoucherMaster(repo, cashReceiptMaster, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
-                            #endregion
+                        //   _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure.SalesAccount).FirstOrDefault();
+                        var _cashDtlLedger = GetAccountLedgerList().Where(x => x.LedgerCode == cashDtl.ToLedgerCode).FirstOrDefault();
 
 
-                            cashReceiptMaster.CashReceiptVchNo = _voucherMaster.VoucherMasterId.ToString();
-                            cashReceiptMaster.ServerDate = DateTime.Now;
-                            cashReceiptMaster.BranchId = _branch.BranchId;
-                            cashReceiptMaster.BranchName = _branch.BranchName;
-                            cashReceiptMaster.FromLedgerId = _cashpayAccountLedger.LedgerId;
-                            cashReceiptMaster.FromLedgerName = _cashpayAccountLedger.LedgerName;
-                            cashReceiptMaster.FromLedgerCode = _cashpayAccountLedger.LedgerCode;
-                            cashReceiptMaster.EmployeeId = _voucherMaster.EmployeeId;
-                            repo.TblCashReceiptMaster.Add(cashReceiptMaster);
-                            repo.SaveChanges();
+                        #region CashReceiptDetail
+                        cashDtl.CashReceiptMasterId = cashReceiptMaster.CashReceiptMasterId;
+                        cashDtl.CashReceiptDetailsDate = cashReceiptMaster.CashReceiptDate;
+                        cashDtl.ToLedgerId = _cashDtlLedger.LedgerId;
+                        repo.TblCashReceiptDetails.Add(cashDtl);
+                        repo.SaveChanges();
 
-                            foreach (var cashDtl in cashReceiptDetails)
-                            {
-                                //   _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure.SalesAccount).FirstOrDefault();
-                                var _cashDtlLedger = GetAccountLedgerList().Where(x => x.LedgerCode == cashDtl.ToLedgerCode).FirstOrDefault();
-                               
+                        #endregion
 
-                                #region CashReceiptDetail
-                                cashDtl.CashReceiptMasterId = cashReceiptMaster.CashReceiptMasterId;
-                                cashDtl.CashReceiptDetailsDate = cashReceiptMaster.CashReceiptDate;
-                                cashDtl.ToLedgerId = _cashDtlLedger.LedgerId;
-                                repo.TblCashReceiptDetails.Add(cashDtl);
-                                repo.SaveChanges();
+                        #region Add voucher Details
+                        var _voucherDetail = AddVoucherDetails(repo, cashReceiptMaster, _branch, _voucherMaster, _accountLedger, cashDtl.Amount, cashDtl.ToLedgerId, cashDtl.ToLedgerCode);
 
-                                #endregion
+                        #endregion
 
-                                #region Add voucher Details
-                                var _voucherDetail = AddVoucherDetails(repo, cashReceiptMaster, _branch, _voucherMaster, _accountLedger, cashDtl.Amount,cashDtl.ToLedgerId,cashDtl.ToLedgerCode);
+                        #region Add Account Ledger Transaction
 
-                                #endregion
-
-                                #region Add Account Ledger Transaction
-
-                                AddAccountLedgerTransactions(repo, cashReceiptMaster, _voucherDetail,  cashReceiptMaster.CashReceiptDate);
-                                #endregion
-                                _accountLedger = GetAccountLedgers(cashReceiptMaster.FromLedgerCode).ToArray().FirstOrDefault();
-                                AddVoucherDetails(repo, cashReceiptMaster, _branch, _voucherMaster, _accountLedger, cashDtl.Amount, cashDtl.ToLedgerId, cashDtl.ToLedgerCode, false);
-                                AddAccountLedgerTransactions(repo, cashReceiptMaster, _voucherDetail,  cashReceiptMaster.CashReceiptDate,true);
-                            }
-
-                            //_accountLedger = GetAccountLedgers(cashReceiptMaster.FromLedgerCode).ToArray().FirstOrDefault();
-                            //AddVoucherDetails(repo, cashReceiptMaster, _branch, _voucherMaster, _accountLedger, cashReceiptMaster.TotalAmount,cashReceiptDetails[].ToLedgerId,cashReceiptDetails[].ToLedgerCode ,false);
-
-
-                            dbTransaction.Commit();
-                            return true;
-                        }
-                        catch (Exception ex)
-                        {
-                            dbTransaction.Rollback();
-                            throw ex;
-                        }
+                        AddAccountLedgerTransactions(repo, cashReceiptMaster, _voucherDetail, cashReceiptMaster.CashReceiptDate);
+                        #endregion
+                        _accountLedger = GetAccountLedgers(cashReceiptMaster.FromLedgerCode).ToArray().FirstOrDefault();
+                        AddVoucherDetails(repo, cashReceiptMaster, _branch, _voucherMaster, _accountLedger, cashDtl.Amount, cashDtl.ToLedgerId, cashDtl.ToLedgerCode, false);
+                        AddAccountLedgerTransactions(repo, cashReceiptMaster, _voucherDetail, cashReceiptMaster.CashReceiptDate, true);
                     }
+
+                    //_accountLedger = GetAccountLedgers(cashReceiptMaster.FromLedgerCode).ToArray().FirstOrDefault();
+                    //AddVoucherDetails(repo, cashReceiptMaster, _branch, _voucherMaster, _accountLedger, cashReceiptMaster.TotalAmount,cashReceiptDetails[].ToLedgerId,cashReceiptDetails[].ToLedgerCode ,false);
+
+
+                    dbTransaction.Commit();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    dbTransaction.Rollback();
+                    throw ex;
                 }
             }
             catch (Exception ex)
@@ -435,12 +414,10 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                using (Repository<TblCashPaymentDetails> repo = new Repository<TblCashPaymentDetails>())
-                {
-                    
-                    //var cashPaymentDetails = GetCashReceipts().Where(c => c.VoucherNo == invoiceNo).FirstOrDefault();
-                    return repo.TblCashReceiptDetails.Where(x => x.CashReceiptMasterId == id).ToList();
-                }
+                using Repository<TblCashPaymentDetails> repo = new Repository<TblCashPaymentDetails>();
+
+                //var cashPaymentDetails = GetCashReceipts().Where(c => c.VoucherNo == invoiceNo).FirstOrDefault();
+                return repo.TblCashReceiptDetails.Where(x => x.CashReceiptMasterId == id).ToList();
             }
             catch (Exception ex)
             {

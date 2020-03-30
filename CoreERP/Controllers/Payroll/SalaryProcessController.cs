@@ -10,11 +10,11 @@ namespace CoreERP.Controllers.Payroll
     public class SalaryProcessController : Controller
     {
         [HttpGet("SalaryProcess")]
-        public async Task<IActionResult> SalaryProcess(string Year, string Month, string CompanyCode, string EmpCode, string Status)
+        public IActionResult SalaryProcess(string Year, string Month, string CompanyCode, string EmpCode, string Status)
         {
             try
             {
-                var salaryprocessList = SalaryProcessHelper.SalaryProcess(Year,Month,CompanyCode,EmpCode,Status);
+                var salaryprocessList = SalaryProcessHelper.SalaryProcess(Year, Month, CompanyCode, EmpCode, Status);
                 if (salaryprocessList != null)
                 {
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = salaryprocessList });

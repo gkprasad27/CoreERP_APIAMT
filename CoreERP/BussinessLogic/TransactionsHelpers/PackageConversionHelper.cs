@@ -13,12 +13,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblPackageConversion> repo = new Repository<TblPackageConversion>())
-                {
-                    return repo.TblPackageConversion
-                               .Where(x => x.InputproductCode == Code)
-                               .ToList();
-                }
+                using Repository<TblPackageConversion> repo = new Repository<TblPackageConversion>();
+                return repo.TblPackageConversion
+.Where(x => x.InputproductCode == Code)
+.ToList();
             }
             catch { throw; }
         }
@@ -26,10 +24,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblProduct> repo = new Repository<TblProduct>())
-                {
-                    return repo.TblProduct.ToList();
-                }
+                using Repository<TblProduct> repo = new Repository<TblProduct>();
+                return repo.TblProduct.ToList();
             }
             catch { throw; }
         }
@@ -38,10 +34,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblPackageConversion> repo = new Repository<TblPackageConversion>())
-                {
-                    return repo.TblPackageConversion.ToList();
-                }
+                using Repository<TblPackageConversion> repo = new Repository<TblPackageConversion>();
+                return repo.TblPackageConversion.ToList();
             }
             catch { throw; }
         }
@@ -50,12 +44,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblProduct> repo = new Repository<TblProduct>())
-                {
-                    return repo.TblProduct
-                          .Where(x =>x.ProductCode.Equals(code))
-                          .ToList();
-                }
+                using Repository<TblProduct> repo = new Repository<TblProduct>();
+                return repo.TblProduct
+.Where(x => x.ProductCode.Equals(code))
+.ToList();
             }
             catch { throw; }
         }
@@ -64,18 +56,16 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblPackageConversion> repo = new Repository<TblPackageConversion>())
-                {
-                    int outproductdata = Convert.ToInt32(repo.TblProduct.Where(x => x.ProductCode == packageconversion.OutputproductCode).Select(x => x.ProductId).FirstOrDefault());
-                    int inputproductdata =Convert.ToInt32( repo.TblProduct.Where(x => x.ProductCode == packageconversion.InputproductCode).Select(x => x.ProductId).FirstOrDefault());
-                    packageconversion.InputProductId =  inputproductdata;
-                    packageconversion.OutputProductId = outproductdata;
-                    repo.TblPackageConversion.Add(packageconversion);
-                    if (repo.SaveChanges() > 0)
-                        return packageconversion;
+                using Repository<TblPackageConversion> repo = new Repository<TblPackageConversion>();
+                int outproductdata = Convert.ToInt32(repo.TblProduct.Where(x => x.ProductCode == packageconversion.OutputproductCode).Select(x => x.ProductId).FirstOrDefault());
+                int inputproductdata = Convert.ToInt32(repo.TblProduct.Where(x => x.ProductCode == packageconversion.InputproductCode).Select(x => x.ProductId).FirstOrDefault());
+                packageconversion.InputProductId = inputproductdata;
+                packageconversion.OutputProductId = outproductdata;
+                repo.TblPackageConversion.Add(packageconversion);
+                if (repo.SaveChanges() > 0)
+                    return packageconversion;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -87,22 +77,20 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblPackageConversion> repo = new Repository<TblPackageConversion>())
+                using Repository<TblPackageConversion> repo = new Repository<TblPackageConversion>();
+                if (packageconversion.InputProductId == 0 || packageconversion.OutputProductId == 0)
                 {
-                    if(packageconversion.InputProductId==0 || packageconversion.OutputProductId==0)
-                    {
-                        int outproductdata = Convert.ToInt32(repo.TblProduct.Where(x => x.ProductCode == packageconversion.OutputproductCode).Select(x => x.ProductId).FirstOrDefault());
-                        int inputproductdata = Convert.ToInt32(repo.TblProduct.Where(x => x.ProductCode == packageconversion.InputproductCode).Select(x => x.ProductId).FirstOrDefault());
-                        packageconversion.InputProductId = inputproductdata;
-                        packageconversion.OutputProductId = outproductdata;
-                    }
-                    
-                    repo.TblPackageConversion.Update(packageconversion);
-                    if (repo.SaveChanges() > 0)
-                        return packageconversion;
-
-                    return null;
+                    int outproductdata = Convert.ToInt32(repo.TblProduct.Where(x => x.ProductCode == packageconversion.OutputproductCode).Select(x => x.ProductId).FirstOrDefault());
+                    int inputproductdata = Convert.ToInt32(repo.TblProduct.Where(x => x.ProductCode == packageconversion.InputproductCode).Select(x => x.ProductId).FirstOrDefault());
+                    packageconversion.InputProductId = inputproductdata;
+                    packageconversion.OutputProductId = outproductdata;
                 }
+
+                repo.TblPackageConversion.Update(packageconversion);
+                if (repo.SaveChanges() > 0)
+                    return packageconversion;
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -114,15 +102,13 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblPackageConversion> repo = new Repository<TblPackageConversion>())
-                {
-                    var packgeconversion = repo.TblPackageConversion.Where(x => x.PackingConversionId == Convert.ToInt32(Code)).FirstOrDefault();
-                    repo.TblPackageConversion.Remove(packgeconversion);
-                    if (repo.SaveChanges() > 0)
-                        return packgeconversion;
+                using Repository<TblPackageConversion> repo = new Repository<TblPackageConversion>();
+                var packgeconversion = repo.TblPackageConversion.Where(x => x.PackingConversionId == Convert.ToInt32(Code)).FirstOrDefault();
+                repo.TblPackageConversion.Remove(packgeconversion);
+                if (repo.SaveChanges() > 0)
+                    return packgeconversion;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {

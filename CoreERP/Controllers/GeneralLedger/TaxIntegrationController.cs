@@ -14,9 +14,9 @@ namespace CoreERP.Controllers
     public class TaxIntegrationController : ControllerBase
     {
         [HttpPost("RegisterTaxIntegration")]
-        public async Task<IActionResult> RegisterTaxIntegration([FromBody]TaxIntegration taxintegration)
+        public IActionResult RegisterTaxIntegration([FromBody]TaxIntegration taxintegration)
         {
-           if (taxintegration == null)
+            if (taxintegration == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
             try
             {
@@ -36,7 +36,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetTaxintigrationList")]
-        public async Task<IActionResult> GetTaxintigrationList()
+        public IActionResult GetTaxintigrationList()
         {
             try
             {
@@ -70,13 +70,13 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetTaxCodesList")]
-        public async Task<IActionResult> GetTaxCodesList()
+        public IActionResult GetTaxCodesList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
                 expando.TaxcodesList = GLHelper.GetTaxMastersList().Select(x => new { ID = x.Code, TEXT = x.Description });
-                return Ok(new APIResponse(){status=APIStatus.PASS.ToString(),response= expando });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
@@ -85,7 +85,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetCompanysList")]
-        public async Task<IActionResult> GetCompanysList()
+        public IActionResult GetCompanysList()
         {
             try
             {
@@ -100,7 +100,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetBranchesList")]
-        public async Task<IActionResult> GetBranchesList()
+        public IActionResult GetBranchesList()
         {
             try
             {
@@ -115,12 +115,12 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetGLTaxAccountList")]
-        public async Task<IActionResult> GetGLTaxAccountList()
+        public IActionResult GetGLTaxAccountList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GLTaxAccountList = GLHelper.GetTaxAccounts().Select(x=> new { ID=x.Glcode,TEXT=x.GlaccountName});
+                expando.GLTaxAccountList = GLHelper.GetTaxAccounts().Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -130,9 +130,9 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateTaxIntegration")]
-        public async Task<IActionResult> UpdateTaxIntegration(string code, [FromBody] TaxIntegration taxintegration)
+        public IActionResult UpdateTaxIntegration( [FromBody] TaxIntegration taxintegration)
         {
-              if (taxintegration == null)
+            if (taxintegration == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(taxintegration)} cannot be null" });
 
             try
@@ -150,7 +150,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteTaxIntegration/{code}")]
-        public async Task<IActionResult> DeleteTaxIntegration(string code)
+        public IActionResult DeleteTaxIntegration(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)} cannot be null" });

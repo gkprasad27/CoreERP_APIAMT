@@ -14,11 +14,9 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
     {
       try
       {
-        using (Repository<PermissionRequest> repo = new Repository<PermissionRequest>())
-        {
-          return repo.PermissionRequest.AsEnumerable().ToList();
-        }
-      }
+                using Repository<PermissionRequest> repo = new Repository<PermissionRequest>();
+                return repo.PermissionRequest.AsEnumerable().ToList();
+            }
       catch { throw; }
     }
 
@@ -26,16 +24,14 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
     {
       try
       {
-        using (Repository<PermissionRequest> repo = new Repository<PermissionRequest>())
-        {
-          permissionRequest.Status = "Applied";
-          permissionRequest.PermissionDate = DateTime.Now;
-          repo.PermissionRequest.Add(permissionRequest);
-          if (repo.SaveChanges() > 0)
-            return permissionRequest;
-          return null;
-        }
-      }
+                using Repository<PermissionRequest> repo = new Repository<PermissionRequest>();
+                permissionRequest.Status = "Applied";
+                permissionRequest.PermissionDate = DateTime.Now;
+                repo.PermissionRequest.Add(permissionRequest);
+                if (repo.SaveChanges() > 0)
+                    return permissionRequest;
+                return null;
+            }
       catch { throw; }
     }
   }

@@ -17,19 +17,19 @@ namespace CoreERP.Controllers.Selfservice
   [Route("api/Selfservice/PermissionApproval")]
   public class PermissionApprovalController : ControllerBase
   {
-    [HttpGet("GetPermissionApprovalApplDetailsList")]
-    public async Task<IActionResult> GetPermissionApprovalDetailsList()
-    {
-      try
-      {
-        dynamic expando = new ExpandoObject();
-        expando.PermissionApprovalApplDetailsList = PermissionApprovalHelper.GetApplyPermissionRequestDetailsList().ToList();
-        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-      }
-      catch (Exception ex)
-      {
-        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-      }
+        [HttpGet("GetPermissionApprovalApplDetailsList")]
+        public IActionResult GetPermissionApprovalDetailsList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.PermissionApprovalApplDetailsList = PermissionApprovalHelper.GetApplyPermissionRequestDetailsList().ToList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
-  }
 }

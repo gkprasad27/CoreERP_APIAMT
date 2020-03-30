@@ -111,7 +111,7 @@ namespace CoreERP.Controllers
         ////no series APi pending
 
         [HttpGet("GetPartnerCreationList")]
-        public async Task<IActionResult> GetPartnerCreationList()
+        public IActionResult GetPartnerCreationList()
         {
             try
             {
@@ -141,7 +141,7 @@ namespace CoreERP.Controllers
         //}
 
         [HttpGet("GetAsigCasNBankAcc")]
-        public async Task<IActionResult> GetAsigCasNBankAcc()
+        public IActionResult GetAsigCasNBankAcc()
         {
             try
             {
@@ -169,7 +169,7 @@ namespace CoreERP.Controllers
         //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
         //    }
         //}
-      
+
         //[HttpGet("GetVendorNamesList")]
         //public async Task<IActionResult> GetVendorNamesList()
         //{
@@ -201,7 +201,7 @@ namespace CoreERP.Controllers
         //}
 
         [HttpGet("GetCompanysList")]
-        public async Task<IActionResult> GetCompanysList()
+        public IActionResult GetCompanysList()
         {
             try
             {

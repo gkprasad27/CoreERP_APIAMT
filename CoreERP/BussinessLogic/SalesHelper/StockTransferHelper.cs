@@ -28,13 +28,11 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 productCode = string.IsNullOrEmpty(productCode) ? null: productCode.ToLower();
                 productName = string.IsNullOrEmpty(productName) ? null : productName.ToLower();
 
-                using (Repository<TblProduct> repo = new Repository<TblProduct>())
-                {
-                    return repo.TblProduct
-                               .Where(p => (productCode !=null ? p.ProductCode.ToLower().Contains(productCode) : true)
-                                        && (productName!=null ? p.ProductName.ToLower().Contains(productName):true))
-                               .ToList();
-                }
+                using Repository<TblProduct> repo = new Repository<TblProduct>();
+                return repo.TblProduct
+.Where(p => (productCode != null ? p.ProductCode.ToLower().Contains(productCode) : true)
+&& (productName != null ? p.ProductName.ToLower().Contains(productName) : true))
+.ToList();
             }
             catch(Exception ex)
             {
@@ -81,17 +79,19 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 var _product =GetProducts(productCode);
                 if (_product == null)
                     return null;
-                var _stockTransferDetail = new TblStockTransferDetail();
-                _stockTransferDetail.ProductId = _product.ProductId;
-                _stockTransferDetail.ProductCode = _product.ProductCode;
-                _stockTransferDetail.ProductName = _product.ProductName;
-                _stockTransferDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
-                _stockTransferDetail.Rate = GetProductRate(branchCode, productCode);
-                _stockTransferDetail.ProductGroupId = Convert.ToDecimal(_product.ProductGroupId ?? 0);
-                _stockTransferDetail.ProductGroupCode = Convert.ToDecimal(_product.ProductGroupCode ?? 0);
-                _stockTransferDetail.UnitId = Convert.ToDecimal(_product.UnitId ?? 0);
-                _stockTransferDetail.UnitName = _product.UnitName;
-                _stockTransferDetail.AvailStock = Convert.ToDecimal(GetProductQty(branchCode, productCode) ?? 0);
+                var _stockTransferDetail = new TblStockTransferDetail
+                {
+                    ProductId = _product.ProductId,
+                    ProductCode = _product.ProductCode,
+                    ProductName = _product.ProductName,
+                    HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0),
+                    Rate = GetProductRate(branchCode, productCode),
+                    ProductGroupId = Convert.ToDecimal(_product.ProductGroupId ?? 0),
+                    ProductGroupCode = Convert.ToDecimal(_product.ProductGroupCode ?? 0),
+                    UnitId = Convert.ToDecimal(_product.UnitId ?? 0),
+                    UnitName = _product.UnitName,
+                    AvailStock = Convert.ToDecimal(GetProductQty(branchCode, productCode) ?? 0)
+                };
 
 
                 return _stockTransferDetail;
@@ -105,20 +105,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                using(Repository<TblStockTransferMaster> repo=new Repository<TblStockTransferMaster>())
-                {
-                  
-                    return repo.TblStockTransferMaster
-                                .AsEnumerable()
-                                .Where(x => 
-                                            DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) >= DateTime.Parse(searchCriteria.FromDate.Value.ToShortDateString())
-                                         &&   DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) <= DateTime.Parse(searchCriteria.ToDate.Value.ToShortDateString())
-                                         //&& Convert.ToDateTime(x.StockTransferDate.Value.ToString("dd/MM/yyyy")) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToString("dd/MM/yyyy"))
-                                         && x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)
-                                         && x.FromBranchCode == branhCode
-                                         )                                
-                                .ToList();
-                }
+                using Repository<TblStockTransferMaster> repo = new Repository<TblStockTransferMaster>();
+                return repo.TblStockTransferMaster
+                            .AsEnumerable()
+                            .Where(x =>
+                                        DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) >= DateTime.Parse(searchCriteria.FromDate.Value.ToShortDateString())
+                                     && DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) <= DateTime.Parse(searchCriteria.ToDate.Value.ToShortDateString())
+                                     //&& Convert.ToDateTime(x.StockTransferDate.Value.ToString("dd/MM/yyyy")) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToString("dd/MM/yyyy"))
+                                     && x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)
+                                     && x.FromBranchCode == branhCode
+                                     )
+                            .ToList();
             }
             catch(Exception ex)
             {
@@ -129,14 +126,11 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                using (Repository<TblStockTransferMaster> repo = new Repository<TblStockTransferMaster>())
-                {
-                   
-                    return repo.TblStockTransferDetail
-                                .AsEnumerable()
-                                .Where(x => x.StockTransferMasterId  == Convert.ToDecimal(stocktransferMasterId))
-                                .ToList();
-                }
+                using Repository<TblStockTransferMaster> repo = new Repository<TblStockTransferMaster>();
+                return repo.TblStockTransferDetail
+                            .AsEnumerable()
+                            .Where(x => x.StockTransferMasterId == Convert.ToDecimal(stocktransferMasterId))
+                            .ToList();
             }
             catch (Exception ex)
             {
@@ -153,30 +147,26 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-               
-                using (ERPContext context=new ERPContext())
-                {
-                    using(var dbTransaction = context.Database.BeginTransaction())
-                    {
-                        try
-                        {
-                            var _stockTransferMaster = AddStockTransferMaster(context, stockTransferMaster);
-                            foreach (var stockdetail in stockTransferDetails)
-                            {
-                                AddStockTransferDetail(context, stockdetail, _stockTransferMaster);
-                                AddStockInformation(context, stockdetail, _stockTransferMaster, _stockTransferMaster.FromBranchCode, true);
-                                AddStockInformation(context, stockdetail, _stockTransferMaster, _stockTransferMaster.ToBranchCode, false);
-                            }
 
-                            dbTransaction.Commit();
-                            return true;
-                        }
-                        catch(Exception e)
-                        {
-                            dbTransaction.Rollback();
-                            throw e;
-                        }
+                using ERPContext context = new ERPContext();
+                using var dbTransaction = context.Database.BeginTransaction();
+                try
+                {
+                    var _stockTransferMaster = AddStockTransferMaster(context, stockTransferMaster);
+                    foreach (var stockdetail in stockTransferDetails)
+                    {
+                        AddStockTransferDetail(context, stockdetail, _stockTransferMaster);
+                        AddStockInformation(context, stockdetail, _stockTransferMaster, _stockTransferMaster.FromBranchCode, true);
+                        AddStockInformation(context, stockdetail, _stockTransferMaster, _stockTransferMaster.ToBranchCode, false);
                     }
+
+                    dbTransaction.Commit();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    dbTransaction.Rollback();
+                    throw e;
                 }
             }
             catch(Exception ex)

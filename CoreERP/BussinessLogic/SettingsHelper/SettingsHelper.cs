@@ -14,10 +14,8 @@ namespace CoreERP.BussinessLogic.SettingsHelper
         {
             try
             {
-                using(Repository<Menus> repo=new Repository<Menus>())
-                {
-                    return repo.Menus.ToList();
-                }
+                using Repository<Menus> repo = new Repository<Menus>();
+                return repo.Menus.ToList();
             }
             catch(Exception ex)
             {
@@ -30,10 +28,8 @@ namespace CoreERP.BussinessLogic.SettingsHelper
         {
             try
             {
-                using (Repository<Menus> repo = new Repository<Menus>())
-                {
-                    return repo.Menus.Where(m=> m.Code.ToString() == m.ParentId).ToList();
-                }
+                using Repository<Menus> repo = new Repository<Menus>();
+                return repo.Menus.Where(m => m.Code.ToString() == m.ParentId).ToList();
             }
             catch (Exception ex)
             {

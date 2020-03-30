@@ -17,39 +17,50 @@ namespace CoreERP.Controllers.Authentications
         [HttpGet("GetScreenNames")]
         public async Task<IActionResult> GetScreenNames()
         {
-            try
-            {
-                var menusList = new SettingsHelper().GetMenusList();
-                if (menusList.Count > 0) {
-                    dynamic expando = new ExpandoObject();
-                    expando.ScreenNames = menusList.Select(m=> new { ID=m.Code ,TEXT=m.DisplayName});
 
-                    return Ok(new APIResponse() { status =APIStatus.PASS.ToString(),response= expando});
-                }
+            var result = await Task.Run(() =>
+              {                  
+                  try
+                  {
+                      var menusList = new SettingsHelper().GetMenusList();
+                      if (menusList.Count > 0)
+                      {
+                          dynamic expando = new ExpandoObject();
+                          expando.ScreenNames = menusList.Select(m => new { ID = m.Code, TEXT = m.DisplayName });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Screen Found" });
-            }
-            catch(Exception ex)
-            {
-                string message = string.Empty;
+                          return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                      }
+                      else
+                      {
+                          return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Screen Found" });
+                      }
+                  }
+                  catch (Exception ex)
+                  {
+                      string message = string.Empty;
 
-                if(ex.InnerException == null)
-                {
-                    message = ex.Message;
-                }
-                else
-                {
-                    message = ex.InnerException.Message;
-                }
+                      if (ex.InnerException == null)
+                      {
+                          message = ex.Message;
+                      }
+                      else
+                      {
+                          message = ex.InnerException.Message;
+                      }
 
-                return Ok(new APIResponse() { status =APIStatus.FAIL.ToString(),response=message});
-            }
+                      return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                  }
+
+              });
+            return result;
         }
 
         [HttpGet("GetParentMenuNames")]
         public async Task<IActionResult> GetParentMenuNames()
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 var menusList = new SettingsHelper().GetMenusList();
                 if (menusList.Count > 0)
@@ -77,12 +88,16 @@ namespace CoreERP.Controllers.Authentications
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
             }
+            });
+            return result;
         }
 
         [HttpGet("GetUsersList")]
         public async Task<IActionResult> GetUsersList()
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 dynamic expando = new ExpandoObject();
                 expando.ScreenNames = UserManagmentHelper.GetErpusers().Select(m => new { ID = m.SeqId, TEXT = m.UserName });
@@ -104,6 +119,8 @@ namespace CoreERP.Controllers.Authentications
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
             }
+            });
+            return result;
         }
     }
 }

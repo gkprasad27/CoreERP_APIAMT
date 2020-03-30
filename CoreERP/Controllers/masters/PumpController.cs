@@ -17,54 +17,62 @@ namespace CoreERP.Controllers.masters
         [HttpPost("RegisterPump")]
         public async Task<IActionResult> RegisterPump([FromBody]TblPumps pumps)
         {
-            APIResponse apiResponse = null;
-            if (pumps == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
-
-            try
+            var result = await Task.Run(() =>
             {
-                var result = new PumpHelpers().Register(pumps);
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
-                else
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
+                APIResponse apiResponse = null;
+                if (pumps == null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
-                return Ok(apiResponse);
+                try
+                {
+                    var result = new PumpHelpers().Register(pumps);
+                    if (result != null)
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                    }
 
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(apiResponse);
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
 
         [HttpGet("GetPumpList")]
         public async Task<IActionResult> GetPumpList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var pumplist = new PumpHelpers().GetList();
-                if (pumplist.Count() > 0)
+                try
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.pumplist = pumplist;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    var pumplist = new PumpHelpers().GetList();
+                    if (pumplist.Count() > 0)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.pumplist = pumplist;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                    {
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    }
                 }
-                else
+
+                catch (Exception ex)
                 {
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-            }
-           
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+            });
+            return result;
         }
 
 
@@ -72,70 +80,82 @@ namespace CoreERP.Controllers.masters
         [HttpPut("UpdatePump")]
         public async Task<IActionResult> UpdatePump([FromBody] TblPumps pumps)
         {
-            APIResponse apiResponse = null;
-            if (pumps == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(pumps)} cannot be null" });
+            var result = await Task.Run(() =>
+            {
+                APIResponse apiResponse = null;
+                if (pumps == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(pumps)} cannot be null" });
 
-            try
-            {
-                var rs = new PumpHelpers().Update(pumps);
-                if (rs != null)
+                try
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                    var rs = new PumpHelpers().Update(pumps);
+                    if (rs != null)
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                    }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                    }
+                    return Ok(apiResponse);
                 }
-                else
+                catch (Exception ex)
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+            });
+            return result;
         }
 
 
         [HttpDelete("DeletePump/{code}")]
         public async Task<IActionResult> DeletePump(string code)
         {
-            APIResponse apiResponse = null;
-            try
+            var result = await Task.Run(() =>
             {
-                if (code == null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
+                APIResponse apiResponse = null;
+                try
+                {
+                    if (code == null)
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = new PumpHelpers().Delete(code);
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                    var rs = new PumpHelpers().Delete(code);
+                    if (rs != null)
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                    }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                    }
+                    return Ok(apiResponse);
                 }
-                else
+                catch (Exception ex)
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+            });
+            return result;
         }
 
         [HttpGet("GetProductGroups")]
         [Produces(typeof(List<MaterialGroup>))]
         public async Task<IActionResult> GetProductGroups()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.ProductGroupsList = new PumpHelpers().GetProductGroups().Select(pro => new { ID = pro.Code, TEXT = pro.GroupName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.ProductGroupsList = new PumpHelpers().GetProductGroups().Select(pro => new { ID = pro.Code, TEXT = pro.GroupName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         //[HttpGet("GetBranches")]
@@ -157,40 +177,48 @@ namespace CoreERP.Controllers.masters
         [HttpGet("GetBranchcodes/{branchname}")]
         public async Task<IActionResult> GetBranchcodes(string branchname)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                if (branchname!=null)
+                try
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                   // expdoObj.branchcode = new PumpHelpers().GetBranchcodes(branchname).BranchCode;
-                    expdoObj.branchcode = new PumpHelpers().GetBranchcodes(branchname).Select(bc => new { Name = bc.TankNo, Id = bc.BranchCode });
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    if (branchname != null)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        // expdoObj.branchcode = new PumpHelpers().GetBranchcodes(branchname).BranchCode;
+                        expdoObj.branchcode = new PumpHelpers().GetBranchcodes(branchname).Select(bc => new { Name = bc.TankNo, Id = bc.BranchCode });
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                    {
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+            });
+            return result;
         }
 
         [HttpGet("GetProductGroupsNames/{code}")]
         public async Task<IActionResult> GetProductGroupsNames(string code)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.ProductGroupsName = new PumpHelpers().GetProductGroupsNames(code).Select(pg => new { Name = pg.GroupName, Id = pg.Code });
-                //expando.ProductGroupsName = new PumpHelpers().GetProductGroupsNames(code).ToList();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expdoObj });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.ProductGroupsName = new PumpHelpers().GetProductGroupsNames(code).Select(pg => new { Name = pg.GroupName, Id = pg.Code });
+                    //expando.ProductGroupsName = new PumpHelpers().GetProductGroupsNames(code).ToList();
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
     }
 }

@@ -17,81 +17,89 @@ namespace CoreERP.Controllers.masters
         [HttpPost("RegisterUnit")]
         public async Task<IActionResult> RegisterUnit([FromBody]TblUnit unit)
         {
-            APIResponse apiResponse = null;
-            if (unit == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
-
-            try
+            var result = await Task.Run(() =>
             {
-                var unitlist = new UnitHelpers().GetList(unit.UnitName);
-                if (unitlist.Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"unit Code {nameof(unitlist)} is already exists ,Please Use Different Code " });
+                APIResponse apiResponse = null;
+                if (unit == null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
-                var result = new UnitHelpers().Register(unit);
-                if (result != null)
+                try
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    var unitlist = new UnitHelpers().GetList(unit.UnitName);
+                    if (unitlist.Count() > 0)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"unit Code {nameof(unitlist)} is already exists ,Please Use Different Code " });
+
+                    var result = new UnitHelpers().Register(unit);
+                    if (result != null)
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                    }
+
+                    return Ok(apiResponse);
+
                 }
-                else
+                catch (Exception ex)
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-
-                return Ok(apiResponse);
-
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+            });
+            return result;
         }
 
 
         [HttpGet("GetUnitList")]
         public async Task<IActionResult> GetUnitList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var unitList =new UnitHelpers().GetList();
-                if (unitList.Count() > 0)
+                try
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.unitList = unitList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    var unitList = new UnitHelpers().GetList();
+                    if (unitList.Count() > 0)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.unitList = unitList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                    {
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-            //try
-            //{
-            //    dynamic expando = new ExpandoObject();
-            //    var unitList = new UnitHelpers().GetList();
-            //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            //}
-            //catch (Exception ex)
-            //{
-            //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            //}
+                //try
+                //{
+                //    dynamic expando = new ExpandoObject();
+                //    var unitList = new UnitHelpers().GetList();
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                //}
+                //catch (Exception ex)
+                //{
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                //}
+            });
+            return result;
         }
 
 
 
         [HttpPut("UpdateUnit")]
-        public async Task<IActionResult> UpdateUnit([FromBody] TblUnit unit)
+        public IActionResult UpdateUnit([FromBody] TblUnit unit)
         {
-            APIResponse apiResponse = null;
             if (unit == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(unit)} cannot be null" });
 
             try
             {
                 var rs = new UnitHelpers().Update(unit);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -110,15 +118,15 @@ namespace CoreERP.Controllers.masters
 
 
         [HttpDelete("DeleteUnit/{code}")]
-        public async Task<IActionResult> DeleteUnit(string code)
+        public IActionResult DeleteUnit(string code)
         {
-            APIResponse apiResponse = null;
             try
             {
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 var rs = new UnitHelpers().Delete(code);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };

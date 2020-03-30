@@ -18,28 +18,28 @@ namespace CoreERP.Controllers
     {
 
         [HttpPost("RegisterItemMaster")]
-        public async Task<IActionResult> RegisterItemMaster([FromBody]ItemMaster itemMaster)
+        public IActionResult RegisterItemMaster([FromBody]ItemMaster itemMaster)
         {
             try
             {
-                if(ItemMasterHelper.GetItemMasterList(itemMaster.ItemNumber).Count > 0)
+                if (ItemMasterHelper.GetItemMasterList(itemMaster.ItemNumber).Count > 0)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Code ={itemMaster.ItemNumber} Already exists." });
 
                 ItemMaster result = ItemMasterHelper.RegisterItemMaster(itemMaster);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-                
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Failed" });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Registration Failed" });
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
 
         }
 
         [HttpGet("GetItemMasterList")]
-        public async Task<IActionResult> GetItemMasterList()
+        public IActionResult GetItemMasterList()
         {
             try
             {
@@ -61,22 +61,22 @@ namespace CoreERP.Controllers
 
         [HttpGet("GetAllMaterialGroup")]
         [Produces(typeof(List<Brand>))]
-        public async Task<IActionResult> GetAllMaterialGroup()
+        public IActionResult GetAllMaterialGroup()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.materialGroupList =MaterialGroupHelper.GetMaterialGroupList();
+                expando.materialGroupList = MaterialGroupHelper.GetMaterialGroupList();
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpGet("GetBrandsList")]
-        public async Task<IActionResult> GetBrandsList()
+        public IActionResult GetBrandsList()
         {
             try
             {
@@ -109,7 +109,7 @@ namespace CoreERP.Controllers
 
         [HttpGet("GetSizesList")]
         [Produces(typeof(List<Sizes>))]
-        public async Task<IActionResult> GetSizesList()
+        public IActionResult GetSizesList()
         {
             try
             {
@@ -127,7 +127,7 @@ namespace CoreERP.Controllers
 
         [HttpGet("GetAccoundingClasslist")]
         [Produces(typeof(List<AccountingClass>))]
-        public async Task<IActionResult> GetAccoundingClasslist()
+        public IActionResult GetAccoundingClasslist()
         {
             try
             {
@@ -146,29 +146,29 @@ namespace CoreERP.Controllers
 
         [HttpPut("UpdateItemMaster")]
         [Produces(typeof(ItemMaster))]
-        public async Task<IActionResult> UpdateItemMaster([FromBody] ItemMaster itemMasters)
+        public IActionResult UpdateItemMaster([FromBody] ItemMaster itemMasters)
         {
             if (itemMasters == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(itemMasters)} cannot be null" });
 
             try
             {
-                ItemMaster result =ItemMasterHelper.UpdateItemMaster(itemMasters);
+                ItemMaster result = ItemMasterHelper.UpdateItemMaster(itemMasters);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-                
+
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
 
         [HttpDelete("DeleteItemMaster/{code}")]
         [Produces(typeof(ItemMaster))]
-        public async Task<IActionResult> DeleteItemMaster(string code)
+        public IActionResult DeleteItemMaster(string code)
         {
 
             if (string.IsNullOrWhiteSpace(code))
@@ -192,17 +192,17 @@ namespace CoreERP.Controllers
 
         [HttpGet("GetCompanysList")]
         [Produces(typeof(List<Companies>))]
-        public async Task<IActionResult> GetCompanysList()
+        public IActionResult GetCompanysList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
                 expando.CompanysList = CompaniesHelper.GetListOfCompanies();
-                return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= expando });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Ok(new APIResponse() { status=APIStatus.FAIL.ToString(),response= ex .Message});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
     }

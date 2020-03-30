@@ -13,10 +13,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTaxStructure> repo = new Repository<TblTaxStructure>())
-                {
-                    return repo.TblTaxStructure.ToList();
-                }
+                using Repository<TblTaxStructure> repo = new Repository<TblTaxStructure>();
+                return repo.TblTaxStructure.ToList();
             }
             catch { throw; }
         }
@@ -25,20 +23,18 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTaxStructure> repo = new Repository<TblTaxStructure>())
+                using Repository<TblTaxStructure> repo = new Repository<TblTaxStructure>();
+                var data = repo.TblTaxGroup.Where(x => x.TaxGroupName == taxstructure.TaxGroupName).FirstOrDefault();
+                // string code = Convert.ToString(repo.TblTaxGroup.SingleOrDefault(obj => obj.TaxGroupName == Convert.ToString(taxstructure.TaxGroupName))?.TaxGroupCode);
+                if (data != null)
                 {
-                    var data = repo.TblTaxGroup.Where(x => x.TaxGroupName == taxstructure.TaxGroupName).FirstOrDefault();
-                   // string code = Convert.ToString(repo.TblTaxGroup.SingleOrDefault(obj => obj.TaxGroupName == Convert.ToString(taxstructure.TaxGroupName))?.TaxGroupCode);
-                    if (data != null)
-                    {
-                        taxstructure.TaxGroupCode = data.TaxGroupCode;
-                        taxstructure.TaxGroupId = data.TaxGroupId;
-                        repo.TblTaxStructure.Add(taxstructure);
-                        if (repo.SaveChanges() > 0)
+                    taxstructure.TaxGroupCode = data.TaxGroupCode;
+                    taxstructure.TaxGroupId = data.TaxGroupId;
+                    repo.TblTaxStructure.Add(taxstructure);
+                    if (repo.SaveChanges() > 0)
                         return taxstructure;
-                    }
-                    return null;
                 }
+                return null;
             }
             catch (Exception ex)
             {
@@ -50,21 +46,19 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTaxStructure> repo = new Repository<TblTaxStructure>())
+                using Repository<TblTaxStructure> repo = new Repository<TblTaxStructure>();
+                var data = repo.TblTaxGroup.Where(x => x.TaxGroupName == taxstructure.TaxGroupName).FirstOrDefault();
+                // string code = Convert.ToString(repo.TblTaxGroup.SingleOrDefault(obj => obj.TaxGroupName == Convert.ToString(taxstructure.TaxGroupName))?.TaxGroupCode);
+                if (data != null)
                 {
-                    var data = repo.TblTaxGroup.Where(x => x.TaxGroupName == taxstructure.TaxGroupName).FirstOrDefault();
-                    // string code = Convert.ToString(repo.TblTaxGroup.SingleOrDefault(obj => obj.TaxGroupName == Convert.ToString(taxstructure.TaxGroupName))?.TaxGroupCode);
-                    if (data != null)
-                    {
-                        taxstructure.TaxGroupCode = data.TaxGroupCode;
-                        taxstructure.TaxGroupId = data.TaxGroupId;
-                        repo.TblTaxStructure.Update(taxstructure);
-                        if (repo.SaveChanges() > 0)
-                            return taxstructure;
-                    }
-
-                    return null;
+                    taxstructure.TaxGroupCode = data.TaxGroupCode;
+                    taxstructure.TaxGroupId = data.TaxGroupId;
+                    repo.TblTaxStructure.Update(taxstructure);
+                    if (repo.SaveChanges() > 0)
+                        return taxstructure;
                 }
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -76,15 +70,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTaxStructure> repo = new Repository<TblTaxStructure>())
-                {
-                    var taxstructurecode = repo.TblTaxStructure.Where(x => x.TaxStructureId ==Convert.ToInt32(Code)).FirstOrDefault();
-                    repo.TblTaxStructure.Remove(taxstructurecode);
-                    if (repo.SaveChanges() > 0)
-                        return taxstructurecode;
+                using Repository<TblTaxStructure> repo = new Repository<TblTaxStructure>();
+                var taxstructurecode = repo.TblTaxStructure.Where(x => x.TaxStructureId == Convert.ToInt32(Code)).FirstOrDefault();
+                repo.TblTaxStructure.Remove(taxstructurecode);
+                if (repo.SaveChanges() > 0)
+                    return taxstructurecode;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -96,10 +88,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>())
-                {
-                    return repo.TblTaxGroup.ToList();
-                }
+                using Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>();
+                return repo.TblTaxGroup.ToList();
             }
             catch { throw; }
         }
@@ -109,10 +99,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
-                {
-                    return repo.TblAccountLedger.ToList();
-                }
+                using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
+                return repo.TblAccountLedger.ToList();
             }
             catch { throw; }
         }
