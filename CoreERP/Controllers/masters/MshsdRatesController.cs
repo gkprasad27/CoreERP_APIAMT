@@ -36,20 +36,36 @@ namespace CoreERP.Controllers
             }
         }
 
-        //[HttpGet("GetBranchesList")]
-        //public async Task<IActionResult> GetBranchesList()
-        //{
-        //    try
-        //    {
-        //        dynamic expando = new ExpandoObject();
-        //        expando.mshsdBranchesList = new MshsdRatesHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.Name });
-        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
+        [HttpGet("GetBranchesList")]
+        public async Task<IActionResult> GetBranchesList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.mshsdBranchesList = new MshsdRatesHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+
+        [HttpGet("GetProductList")]
+        public async Task<IActionResult> GetProductList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.mshsdProductsList = new MshsdRatesHelper().GetListOfMshsdRates().Select(x => new { ID = x.ProductCode, TEXT = x.ProductName }).Distinct();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
 
         [HttpPost("RegisterMshsdRate")]
@@ -102,7 +118,7 @@ namespace CoreERP.Controllers
 
 
         [HttpDelete("DeleteMshsdRate/{code}")]
-        public async Task<IActionResult> DeleteMshsdRate(string code)
+        public async Task<IActionResult> DeleteMshsdRate(int code)
         {
             APIResponse apiResponse = null;
             if (code == null)

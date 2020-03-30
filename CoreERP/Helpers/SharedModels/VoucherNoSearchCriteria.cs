@@ -38,5 +38,6 @@ namespace CoreERP.Helpers.SharedModels
             }
         }
         public string VoucherNo { get; set; }
+        public string StockExcessNo { get; set; }
     }
 }

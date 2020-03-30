@@ -1,4 +1,7 @@
-﻿using CoreERP.DataAccess;
+﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.SalesHelper;
+using CoreERP.DataAccess;
+using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -95,5 +98,215 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             }
             catch { throw; }
         }
+
+        private TblMshsdrates GetMshsdrates(string branchCode, string productCode)
+        {
+            try
+            {
+                using (Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>())
+                {
+                    return repo.TblMshsdrates.Where(x => x.ProductCode == productCode && x.BranchCode == branchCode).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public decimal? GetProductRate(string branchCode, string productCode)
+        {
+            try
+            {
+                decimal? _salesRate = default(decimal?);
+
+                using (Repository<TblProduct> repo = new Repository<TblProduct>())
+                {
+                    var _product = repo.TblProduct.Where(p => p.ProductCode == productCode).FirstOrDefault();
+
+                    var _mshrates = GetMshsdrates(branchCode, _product.ProductCode);
+                    if (_mshrates != null)
+                    {
+                        _salesRate = _mshrates.Rate;
+                    }
+                    else if (_product != null)
+                        _salesRate = _product.SalesRate;
+                }
+
+                return _salesRate;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public TblProduct Getproduct(string productCode)
+        {
+            try
+            {
+                return new InvoiceHelper().GetProducts(productCode).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public TblStockshortDetails GetOpStockShortDetailsection(string productCode, string branchCode)
+        {
+            try
+            {
+                var _product = Getproduct(productCode);
+
+                using (Repository<TblProduct> repo = new Repository<TblProduct>())
+                {
+                    var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
+                    //var date = DateTime.Now.ToString();
+                    var issueno = new StockExcessHelper().GenerateStockENumber(45, branchCode);
+                    var operatorStockIssuesDetail = new TblStockshortDetails();
+                    operatorStockIssuesDetail.BatchNo = 0;
+                    //date + "-" + issueno + "-" + _product.ProductCode;
+                    operatorStockIssuesDetail.Qty = 0;
+                    operatorStockIssuesDetail.TotalAmount = 0;
+                    operatorStockIssuesDetail.Rate = GetProductRate(branchCode, productCode);
+                    //operatorStockIssuesDetail.AvailStock = GetProductQty(branchCode, productCode);
+                    operatorStockIssuesDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
+                    operatorStockIssuesDetail.ProductCode = _product.ProductCode;
+                    operatorStockIssuesDetail.ProductName = _product.ProductName;
+                    operatorStockIssuesDetail.UnitName = _product.UnitName;
+
+                    return operatorStockIssuesDetail;
+
+                }
+            }
+            catch { throw; }
+        }
+
+        public List<TblBranch> GetBranches(string branchCode = null)
+        {
+            try
+            {
+                using (Repository<TblBranch> repo = new Repository<TblBranch>())
+                {
+                    return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<TblStockExcessMaster> GetStockexcesslist(string code)
+        {
+            try
+            {
+                using (Repository<TblStockExcessMaster> repo = new Repository<TblStockExcessMaster>())
+                {
+                    return repo.TblStockExcessMaster.Where(x => x.StockExcessNo == code).ToList();
+                }
+
+            }
+            catch { throw; }
+        }
+        public bool RegisterStocksexcess(TblStockExcessMaster stockexcessMaster, List<TblStockExcessDetails> stockexcessDetails)
+        {
+            try
+            {
+                
+                using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
+                {
+                    //add voucher typedetails
+                    var user = repo.TblUser.Where(x => x.UserName == stockexcessMaster.UserName).FirstOrDefault();
+                    var shift = repo.TblShift.Where(x => x.UserId == user.UserId).FirstOrDefault();
+                    var _branch = GetBranches(stockexcessMaster.BranchCode).ToArray().FirstOrDefault();
+                    var shiftid = repo.TblShift.Where(x => x.UserId == stockexcessMaster.UserId).FirstOrDefault();
+                    stockexcessMaster.BranchCode = _branch.BranchCode;
+                    stockexcessMaster.BranchName = _branch.BranchName;
+                    stockexcessMaster.ServerDate = DateTime.Now;
+                    stockexcessMaster.StockExcessDate = stockexcessMaster.StockExcessDate;
+                    stockexcessMaster.StockExcessNo = stockexcessMaster.StockExcessNo;
+                    stockexcessMaster.ShiftId = shift.ShiftId;
+                    stockexcessMaster.UserId = user.UserId;
+                    stockexcessMaster.UserName = stockexcessMaster.UserName;
+                    stockexcessMaster.EmployeeId = -1;
+                    stockexcessMaster.Narration = stockexcessMaster.Narration;
+                    repo.TblStockExcessMaster.Add(stockexcessMaster);
+                    repo.SaveChanges();
+                    foreach (var item in stockexcessDetails)
+                    {
+                        var _product = new InvoiceHelper().GetProducts(item.ProductCode).FirstOrDefault();
+                        var operatorStockexcessId = GetStockexcesslist(stockexcessMaster.StockExcessNo).FirstOrDefault();
+                        #region StockIssueDetails
+                        item.StockExcessMasterId = operatorStockexcessId.StockExcessMasterId;
+
+                        item.StockExcessDetailsDate = DateTime.Now;
+                        item.ProductId = _product.ProductId;
+                        item.ProductCode = item.ProductCode;
+                        item.ProductName = item.ProductName;
+                        item.HsnNo = item.HsnNo;
+                        item.Rate = item.Rate;
+                        item.Qty = item.Qty;
+                        item.BatchNo = item.BatchNo;
+                        item.UnitId = Convert.ToDecimal(_product.UnitId);
+                        item.UnitName = item.UnitName;
+                        item.TotalAmount = Convert.ToDecimal(item.TotalAmount);
+                        repo.TblStockExcessDetails.Add(item);
+                        repo.SaveChanges();
+                        #endregion
+                        {
+
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<TblStockExcessDetails> StockexcessDeatilList(decimal id)
+        {
+            try
+            {
+                using (Repository<TblStockExcessDetails> repo = new Repository<TblStockExcessDetails>())
+                {
+                    return repo.TblStockExcessDetails.Where(x => x.StockExcessMasterId == id).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<TblStockExcessMaster> GetStockexcessList(VoucherNoSearchCriteria searchCriteria)
+        {
+            try
+            {
+                searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
+                searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+
+                using (Repository<TblStockExcessMaster> repo = new Repository<TblStockExcessMaster>())
+                {
+                    return repo.TblStockExcessMaster.AsEnumerable()
+                               .Where(inv => Convert.ToDateTime(inv.StockExcessDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                                        && Convert.ToDateTime(inv.StockExcessDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                                        && inv.StockExcessNo == (searchCriteria.StockExcessNo ?? inv.StockExcessNo)
+                                  )
+                                .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
     }
 }
