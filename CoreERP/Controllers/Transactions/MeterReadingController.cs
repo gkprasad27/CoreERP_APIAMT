@@ -16,144 +16,170 @@ namespace CoreERP.Controllers.Transactions
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.BranchesList = new MeterReadingHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BranchesList = new MeterReadingHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetPump/{branchCode}")]
         public async Task<IActionResult> GetPump(string branchCode)
         {
-            if (string.IsNullOrEmpty(branchCode))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+            var result = await Task.Run(() =>
+            {
+                if (string.IsNullOrEmpty(branchCode))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
 
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.PumpList = new MeterReadingHelper().GetPumpList(branchCode).Select(x => new { ID = x.PumpNo, TEXT = x.PumpNo });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.PumpList = new MeterReadingHelper().GetPumpList(branchCode).Select(x => new { ID = x.PumpNo, TEXT = x.PumpNo });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetMeterReadingList")]
         public async Task<IActionResult> GetMeterReadingList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var meterRreadingList = new MeterReadingHelper().GetMeterReadingList();
-                if (meterRreadingList.Count > 0)
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.MeterReadingList = meterRreadingList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var meterRreadingList = new MeterReadingHelper().GetMeterReadingList();
+                    if (meterRreadingList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.MeterReadingList = meterRreadingList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
         [HttpPut("UpdateMeterReading")]
         public async Task<IActionResult> UpdateMeterReading([FromBody] TblMeterReading meterreading)
         {
-
-            if (meterreading == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(meterreading)} cannot be null" });
-            try
+            var result = await Task.Run(() =>
             {
-                APIResponse apiResponse = null;
 
-                TblMeterReading result = new MeterReadingHelper().Update(meterreading);
-                if (result != null)
+                if (meterreading == null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(meterreading)} cannot be null" });
+                try
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    APIResponse apiResponse = null;
+
+                    TblMeterReading result = new MeterReadingHelper().Update(meterreading);
+                    if (result != null)
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                    }
+                    return Ok(apiResponse);
                 }
-                else
+                catch (Exception ex)
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+            });
+            return result;
         }
 
         [HttpDelete("DeleteMeterReading/{code}")]
         public async Task<IActionResult> DeleteMeterReading(int code)
         {
-            APIResponse apiResponse = null;
-            if (code == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
+            var result = await Task.Run(() =>
+            {
+                APIResponse apiResponse = null;
+                if (code == null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
 
-            try
-            {
-                var result = new MeterReadingHelper().Delete(code);
-                if (result != null)
+                try
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    var result = new MeterReadingHelper().Delete(code);
+                    if (result != null)
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                    }
+                    return Ok(apiResponse);
                 }
-                else
+                catch (Exception ex)
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+            });
+            return result;
         }
         [HttpGet("GetShift/{userId}")]
         public async Task<IActionResult> GetShift(decimal userId)
         {
-            if (userId==0)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+            var result = await Task.Run(() =>
+            {
+                if (userId == 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
 
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.ShiftList = new MeterReadingHelper().GetShift(userId).LastOrDefault();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.ShiftList = new MeterReadingHelper().GetShift(userId).LastOrDefault();
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
         [HttpPost("RegisterMeterReading")]
         public async Task<IActionResult> RegisterMeterReading([FromBody]TblMeterReading meterreading)
         {
-
-            if (meterreading == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(meterreading)} cannot be null" });
-            try
+            var result = await Task.Run(() =>
             {
-                var reponse = new MeterReadingHelper().Register(meterreading);
-                if (reponse != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = reponse });
+                if (meterreading == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(meterreading)} cannot be null" });
+                try
+                {
+                    var reponse = new MeterReadingHelper().Register(meterreading);
+                    if (reponse != null)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = reponse });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
     }
 }

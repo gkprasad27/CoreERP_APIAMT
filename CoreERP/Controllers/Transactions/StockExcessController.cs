@@ -56,103 +56,121 @@ namespace CoreERP.Controllers.Transactions
         [HttpGet("GetProductLists/{productCode}/{branchCode}")]
         public async Task<IActionResult> GetOpStockShortDetailsection1(string productcode, string branchCode)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.productsList = new StockExcessHelper().GetOpStockShortDetailsection(productcode, branchCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.productsList = new StockExcessHelper().GetOpStockShortDetailsection(productcode, branchCode);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetstockexcessNo/{branchCode}")]
         public async Task<IActionResult> GetstockexcessNo(string branchCode)
         {
-            if (string.IsNullOrEmpty(branchCode))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+            var result = await Task.Run(() =>
+            {
+                if (string.IsNullOrEmpty(branchCode))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
 
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.stockexcessNo = new StockExcessHelper().GetVoucherNo(branchCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.stockexcessNo = new StockExcessHelper().GetVoucherNo(branchCode);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("RegisterStockexcess")]
         public async Task<IActionResult> RegisterStockexcess([FromBody]JObject objData)
         {
-            APIResponse apiResponse = null;
-            if (objData == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var _stockrexcessHdr = objData["StockexcessHdr"].ToObject<TblStockExcessMaster>();
-                var _stockexcessDtl = objData["StockexcessDtl"].ToObject<TblStockExcessDetails[]>();
+                APIResponse apiResponse = null;
+                if (objData == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
+                {
+                    var _stockrexcessHdr = objData["StockexcessHdr"].ToObject<TblStockExcessMaster>();
+                    var _stockexcessDtl = objData["StockexcessDtl"].ToObject<TblStockExcessDetails[]>();
 
-                var result = new StockExcessHelper().RegisterStocksexcess(_stockrexcessHdr, _stockexcessDtl.ToList());
-                apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    var result = new StockExcessHelper().RegisterStocksexcess(_stockrexcessHdr, _stockexcessDtl.ToList());
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    return Ok(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetStockExcessDetailsList/{id}")]
         public async Task<IActionResult> GetStockExcessDetailsList(decimal id)
         {
-
-            if (id == 0)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var stockExcessDetailsList = new StockExcessHelper().StockexcessDeatilList(id);
-                if (stockExcessDetailsList.Count > 0)
+                if (id == 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.StockExcessDetails = stockExcessDetailsList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var stockExcessDetailsList = new StockExcessHelper().StockexcessDeatilList(id);
+                    if (stockExcessDetailsList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.StockExcessDetails = stockExcessDetailsList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("GetStockexcessList/{branchCode}")]
-        public async Task<IActionResult> GetStockexcessList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
+        public async Task<IActionResult> GetStockexcessList( [FromBody]VoucherNoSearchCriteria searchCriteria)
         {
-
-            if (searchCriteria == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var stockexcessListMasterList = new StockExcessHelper().GetStockexcessList(searchCriteria);
-                if (stockexcessListMasterList.Count > 0)
+                if (searchCriteria == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.StockexcessList = stockexcessListMasterList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var stockexcessListMasterList = new StockExcessHelper().GetStockexcessList(searchCriteria);
+                    if (stockexcessListMasterList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.StockexcessList = stockexcessListMasterList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
     }
