@@ -15,7 +15,7 @@ namespace CoreERP.Controllers.Payroll
     public class StructureComponentsController : ControllerBase
     {
         [HttpGet("GetStructuresList")]
-        public async Task<IActionResult> GetStructuresList()
+        public IActionResult GetStructuresList()
         {
             try
             {
@@ -35,7 +35,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpGet("GetComponentsList")]
-        public async Task<IActionResult> GetComponentsList()
+        public IActionResult GetComponentsList()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpGet("GetStructureCreationList")]
-        public async Task<IActionResult> GetStructureCreationList()
+        public IActionResult GetStructureCreationList()
         {
             try
             {
@@ -65,7 +65,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpGet("GetPFList")]
-        public async Task<IActionResult> GetPFList()
+        public IActionResult GetPFList()
         {
             try
             {
@@ -80,36 +80,36 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPost("RegisterStructure")]
-        public async Task<IActionResult> RegisterStructure([FromBody]List<StructureComponents> structureComponents)
+        public IActionResult RegisterStructure([FromBody]List<StructureComponents> structureComponents)
         {
 
             if (structureComponents == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Request can not be null" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request can not be null" });
 
-                try
+            try
+            {
+                APIResponse apiResponse = null;
+                List<StructureComponents> result = StructureComponentsHelper.Register(structureComponents);
+                if (result != null)
                 {
-                    APIResponse apiResponse = null;
-                   List<StructureComponents> result = StructureComponentsHelper.Register(structureComponents);
-                    if (result != null)
-                    {
-                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                    }
-                    else
-                    {
-                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                    }
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                }
 
-                    return Ok(apiResponse);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-                }
-            
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+
         }
 
         [HttpPut("UpdateStructure")]
-        public async Task<IActionResult> UpdateStructure([FromBody] List<StructureComponents> structureComponents)
+        public IActionResult UpdateStructure([FromBody] List<StructureComponents> structureComponents)
         {
 
             if (structureComponents == null)
@@ -136,7 +136,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpDelete("DeleteStructure/{code}")]
-        public async Task<IActionResult> DeleteStructure(string code)
+        public IActionResult DeleteStructure(string code)
         {
             APIResponse apiResponse = null;
             if (code == null)

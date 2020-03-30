@@ -15,7 +15,7 @@ namespace CoreERP.Controllers.Payroll
     public class StructureCreationController : ControllerBase
     {
         [HttpGet("GetStructuresList")]
-        public async Task<IActionResult> GetStructuresList()
+        public IActionResult GetStructuresList()
         {
             try
             {
@@ -35,7 +35,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPost("RegisterStructureCreation")]
-        public async Task<IActionResult> RegisterStructureCreation([FromBody]StructureCreation structureCreation)
+        public IActionResult RegisterStructureCreation([FromBody]StructureCreation structureCreation)
         {
 
             if (structureCreation == null)
@@ -68,7 +68,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPut("UpdateStructureCreation")]
-        public async Task<IActionResult> UpdateStructureCreation([FromBody] StructureCreation structureCreation)
+        public IActionResult UpdateStructureCreation([FromBody] StructureCreation structureCreation)
         {
 
             if (structureCreation == null)
@@ -95,7 +95,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpDelete("DeleteStructureCreation/{code}")]
-        public async Task<IActionResult> DeleteStructureCreation(string code)
+        public IActionResult DeleteStructureCreation(string code)
         {
             APIResponse apiResponse = null;
             if (code == null)

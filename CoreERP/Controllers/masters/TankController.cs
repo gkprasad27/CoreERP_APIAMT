@@ -17,52 +17,59 @@ namespace CoreERP.Controllers.masters
         [HttpPost("RegisterTank")]
         public async Task<IActionResult> RegisterTank([FromBody]TblTanks tanks)
         {
-            APIResponse apiResponse = null;
-            if (tanks == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
-
-            try
+            var result = await Task.Run(() =>
             {
-                var tanklist = new TankHelpers().GetList(tanks.TankNo);
-                if (tanklist.Count() > 0)
-                {
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"tank Code {nameof(tanklist)} is already exists ,Please Use Different Code " });
-                }
-                var result = new TankHelpers().Register(tanks);
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
-                else
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
+                APIResponse apiResponse = null;
+                if (tanks == null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
-                return Ok(apiResponse);
+                try
+                {
+                    var tanklist = new TankHelpers().GetList(tanks.TankNo);
+                    if (tanklist.Count() > 0)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"tank Code {nameof(tanklist)} is already exists ,Please Use Different Code " });
+                    }
+                    var result = new TankHelpers().Register(tanks);
+                    if (result != null)
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                    }
 
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(apiResponse);
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
 
         [HttpGet("GetTankList")]
         public async Task<IActionResult> GetTankList()
         {
-            var tankList = new TankHelpers().GetList();
-            if (tankList.Count() > 0)
+            var result = await Task.Run(() =>
             {
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.tankList = tankList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-            }
-            else
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            
+                var tankList = new TankHelpers().GetList();
+                if (tankList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.tankList = tankList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+            });
+            return result;
         }
 
 
@@ -70,54 +77,62 @@ namespace CoreERP.Controllers.masters
         [HttpPut("UpdateTank")]
         public async Task<IActionResult> UpdateTank([FromBody] TblTanks tanks)
         {
-            APIResponse apiResponse = null;
-            if (tanks == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(tanks)} cannot be null" });
+            var result = await Task.Run(() =>
+            {
+                APIResponse apiResponse = null;
+                if (tanks == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(tanks)} cannot be null" });
 
-            try
-            {
-                var rs = new TankHelpers().Update(tanks);
-                if (rs != null)
+                try
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                    var rs = new TankHelpers().Update(tanks);
+                    if (rs != null)
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                    }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                    }
+                    return Ok(apiResponse);
                 }
-                else
+                catch (Exception ex)
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+            });
+            return result;
         }
 
 
         [HttpDelete("DeleteTank/{code}")]
         public async Task<IActionResult> DeleteTank(string code)
         {
-            APIResponse apiResponse = null;
-            try
+            var result = await Task.Run(() =>
             {
-                if (code == null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
+                APIResponse apiResponse = null;
+                try
+                {
+                    if (code == null)
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = new TankHelpers().Delete(code);
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                    var rs = new TankHelpers().Delete(code);
+                    if (rs != null)
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                    }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                    }
+                    return Ok(apiResponse);
                 }
-                else
+                catch (Exception ex)
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+            });
+            return result;
         }
 
         //[HttpGet("GetBranches")]

@@ -17,7 +17,7 @@ namespace CoreERP.Controllers
     public class MaterialGroupController : ControllerBase
     {
         [HttpPost("RegisterMaterialGroup")]
-        public async Task<IActionResult> RegisterMaterialGroup([FromBody]MaterialGroup materialGroup)
+        public IActionResult RegisterMaterialGroup([FromBody]MaterialGroup materialGroup)
         {
             if (materialGroup == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(materialGroup)} can not be null" });
@@ -38,7 +38,7 @@ namespace CoreERP.Controllers
 
         [HttpGet("GetAllMaterialGroup")]
         [Produces(typeof(List<MaterialGroup>))]
-        public async Task<IActionResult> GetAllMaterialGroup()
+        public IActionResult GetAllMaterialGroup()
         {
             try
             {
@@ -60,7 +60,7 @@ namespace CoreERP.Controllers
 
         [HttpPut("UpdateMaterialGroup")]
         [Produces(typeof(MaterialGroup))]
-        public async Task<IActionResult> UpdateMaterialGroup([FromBody] MaterialGroup materialGroups)
+        public IActionResult UpdateMaterialGroup([FromBody] MaterialGroup materialGroups)
         {
             if (materialGroups == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(materialGroups)} cannot be null" });
@@ -81,7 +81,7 @@ namespace CoreERP.Controllers
 
         [HttpDelete("DeleteMaterialGroup/{code}")]
         [Produces(typeof(MaterialGroup))]
-        public async Task<IActionResult> DeleteMaterialGroup(string code)
+        public IActionResult DeleteMaterialGroup(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
@@ -102,7 +102,7 @@ namespace CoreERP.Controllers
 
         [HttpGet("GetAccountingClassList")]
         [Produces(typeof(List<MaterialGroup>))]
-        public async Task<IActionResult> GetAccountingClassList()
+        public IActionResult GetAccountingClassList()
         {
             try
             {

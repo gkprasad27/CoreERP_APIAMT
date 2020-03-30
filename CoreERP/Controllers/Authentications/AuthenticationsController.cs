@@ -17,112 +17,130 @@ namespace CoreERP.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> ValidateUser([FromBody]Erpuser erpuser)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                //Response.Headers.Add("Access-Control-Allow-Origin", "*");
-                //Response.Headers.Add("Access-Control-Allow-Headers", "Accept");
-                //Response.Headers.Add("Access-Control-Request-Headers", "origin,x-requested-with");
-                //Response.Headers.Add("Access-Control-Allow-MethodsPOST, GET, OPTIONS, DELET", "Accept");
-                Erpuser user = UserManagmentHelper.ValidateUser(erpuser);
-
-                if (user != null)
+                try
                 {
-                    var _branch= UserManagmentHelper.GetBranchesByUser(user.SeqId);
-                    var shiftId = new UserManagmentHelper().GetShiftId(user.SeqId, _branch.FirstOrDefault());
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = user });
+                    //Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                    //Response.Headers.Add("Access-Control-Allow-Headers", "Accept");
+                    //Response.Headers.Add("Access-Control-Request-Headers", "origin,x-requested-with");
+                    //Response.Headers.Add("Access-Control-Allow-MethodsPOST, GET, OPTIONS, DELET", "Accept");
+                    Erpuser user = UserManagmentHelper.ValidateUser(erpuser);
+
+                    if (user != null)
+                    {
+                        var _branch = UserManagmentHelper.GetBranchesByUser(user.SeqId);
+                        var shiftId = new UserManagmentHelper().GetShiftId(user.SeqId, _branch.FirstOrDefault());
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = user });
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "User Name/ Password not valid." });
                 }
-                
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "User Name/ Password not valid." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
-            }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
         }
         //get branches
         [HttpGet("GetBranchesForUser/{seqid}")]
         public async Task<IActionResult> GetBranchesForUser(string seqid)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                if (string.IsNullOrEmpty(seqid))
+                try
                 {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+                    if (string.IsNullOrEmpty(seqid))
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+                    }
+
+                    dynamic expando = new ExpandoObject();
+                    expando.Branches = UserManagmentHelper.GetBranchesByUser(Convert.ToDecimal(seqid));
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
-
-                dynamic expando = new ExpandoObject();
-                expando.Branches = UserManagmentHelper.GetBranchesByUser(Convert.ToDecimal(seqid));
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
-            }
-
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("getMenu/{roleName}")]
         public async Task<IActionResult> GetMenus(string roleName)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var result = UserManagmentHelper.GetScreensListByUserRole(roleName);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                try
+                {
+                    var result = UserManagmentHelper.GetScreensListByUserRole(roleName);
+                    if (result != null)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found for user." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message: ex.InnerException.Message });
-            }
-
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found for user." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetMenuList")]
         public async Task<IActionResult> GetMenuList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var result = new UserManagmentHelper().GetMenus();
-                if (result != null)
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.MenusList = result;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var result = new UserManagmentHelper().GetMenus();
+                    if (result != null)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.MenusList = result;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("logout/{userId}")]
         public async Task<IActionResult> GetMenuList(string userId)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                string errorMessage = string.Empty;
-                var result = new UserManagmentHelper().GetErpuser(Convert.ToDecimal(userId));
-                if (result != null)
+                try
                 {
-                    var _branch = UserManagmentHelper.GetBranchesByUser(Convert.ToDecimal(userId));
-                    foreach(var br in _branch)
-                    new UserManagmentHelper().LogoutShiftId(Convert.ToDecimal(userId), br, out errorMessage);
+                    string errorMessage = string.Empty;
+                    var result = new UserManagmentHelper().GetErpuser(Convert.ToDecimal(userId));
+                    if (result != null)
+                    {
+                        var _branch = UserManagmentHelper.GetBranchesByUser(Convert.ToDecimal(userId));
+                        foreach (var br in _branch)
+                            new UserManagmentHelper().LogoutShiftId(Convert.ToDecimal(userId), br, out errorMessage);
 
-                  
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Log out successfully." });
+
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Log out successfully." });
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found." });
                 }
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
-            }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
         }
 
     }

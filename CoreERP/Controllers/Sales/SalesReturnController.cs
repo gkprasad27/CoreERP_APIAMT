@@ -16,67 +16,76 @@ namespace CoreERP.Controllers.Sales
         [HttpGet("GenerateSalesReturnInvNo/{branchCode}")]
         public async Task<IActionResult> GetSateteList(string branchCode)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.SalesReturnInvNo = new SalesReturnHelper().GenerateSalesReturnInvoiceNo(branchCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                string message = string.Empty;
-
-                if (ex.InnerException != null)
+                try
                 {
-                    message = ex.InnerException.Message;
+                    dynamic expando = new ExpandoObject();
+                    expando.SalesReturnInvNo = new SalesReturnHelper().GenerateSalesReturnInvoiceNo(branchCode);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
-                else
+                catch (Exception ex)
                 {
-                    message = ex.Message;
-                }
+                    string message = string.Empty;
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
-            }
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
+
         }
 
         [HttpGet("RegisterInvoiceReturn/{invoiceReturnNo}/{invoiceMasterID}")]
         public async Task<IActionResult> RegisterInvoiceReturn(string invoiceReturnNo,string invoiceMasterID)
         {
-            if (string.IsNullOrWhiteSpace(invoiceMasterID))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter is missing" });
-
-            try
+            var result = await Task.Run(() =>
             {
-                string errorMessage = string.Empty;
-                var _invoiceMasterReturn = new SalesReturnHelper().RegisterInvoiceReturns(invoiceReturnNo,Convert.ToDecimal(invoiceMasterID), out errorMessage);
-                if (_invoiceMasterReturn != null)
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.InvoiceMasterReturn = _invoiceMasterReturn;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                if (string.IsNullOrWhiteSpace(invoiceMasterID))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter is missing" });
 
-                if (string.IsNullOrEmpty(errorMessage))
+                try
                 {
-                    errorMessage = "Sales restuen Registration Failed";
-                }
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
-            }
-            catch (Exception ex)
-            {
-                string message = string.Empty;
+                    string errorMessage = string.Empty;
+                    var _invoiceMasterReturn = new SalesReturnHelper().RegisterInvoiceReturns(invoiceReturnNo, Convert.ToDecimal(invoiceMasterID), out errorMessage);
+                    if (_invoiceMasterReturn != null)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.InvoiceMasterReturn = _invoiceMasterReturn;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                if (ex.InnerException != null)
-                {
-                    message = ex.InnerException.Message;
+                    if (string.IsNullOrEmpty(errorMessage))
+                    {
+                        errorMessage = "Sales restuen Registration Failed";
+                    }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
                 }
-                else
+                catch (Exception ex)
                 {
-                    message = ex.Message;
-                }
+                    string message = string.Empty;
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
-            }
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
         }
     }
 }

@@ -18,157 +18,186 @@ namespace CoreERP.Controllers.Transactions
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.BranchesList = new BankPaymentHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BranchesList = new BankPaymentHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetBankPaymentList")]
         public async Task<IActionResult> GetBankPaymentList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var bankPaymentList = BankPaymentHelper.GetBankPayments();
-                if (bankPaymentList.Count > 0)
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.BankPaymentList = bankPaymentList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var bankPaymentList = BankPaymentHelper.GetBankPayments();
+                    if (bankPaymentList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.BankPaymentList = bankPaymentList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetVoucherNo/{branchCode}")]
         public async Task<IActionResult> GetVoucherNo(string branchCode)
         {
-            if (string.IsNullOrEmpty(branchCode))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+            var result = await Task.Run(() =>
+            {
+                if (string.IsNullOrEmpty(branchCode))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
 
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.BranchesList = new BankPaymentHelper().GetVoucherNo(branchCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BranchesList = new BankPaymentHelper().GetVoucherNo(branchCode);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetAccountLedger")]
         public async Task<IActionResult> GetAccountLedgerList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.AccountLedgerList = new BankPaymentHelper().GetAccountLedgerList().Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.AccountLedgerList = new BankPaymentHelper().GetAccountLedgerList().Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetAccountLedgerList/{ledegerCode}")]
         public async Task<IActionResult> GetAccountLedgerList(string ledegerCode)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.AccountLedgerList = BankPaymentHelper.GetAccountLedgers(ledegerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.AccountLedgerList = BankPaymentHelper.GetAccountLedgers(ledegerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("RegisterBankPayment")]
         public async Task<IActionResult> RegisterBankPayment([FromBody]JObject objData)
         {
-
-            if (objData == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var _bankpaymentHdr = objData["BankpaymentHdr"].ToObject<TblBankPaymentMaster>();
-                var _bankpaymentDtl = objData["BankpaymentDetail"].ToObject<TblBankPaymentDetails[]>();
-
-                var result = new BankPaymentHelper().RegisterBankPayment(_bankpaymentHdr, _bankpaymentDtl.ToList());
-                if (result)
+                if (objData == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _bankpaymentHdr });
-                }
+                    var _bankpaymentHdr = objData["BankpaymentHdr"].ToObject<TblBankPaymentMaster>();
+                    var _bankpaymentDtl = objData["BankpaymentDetail"].ToObject<TblBankPaymentDetails[]>();
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    var result = new BankPaymentHelper().RegisterBankPayment(_bankpaymentHdr, _bankpaymentDtl.ToList());
+                    if (result)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _bankpaymentHdr });
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
         [HttpPost("GetBankpaymentList/{branchCode}")]
         public async Task<IActionResult> GetBankpaymentList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
         {
-
-            if (searchCriteria == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var bankPaymentMasterList = new BankPaymentHelper().GetBankPaymentMasters(searchCriteria);
-                if (bankPaymentMasterList.Count > 0)
+                if (searchCriteria == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.BankPaymentList = bankPaymentMasterList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var bankPaymentMasterList = new BankPaymentHelper().GetBankPaymentMasters(searchCriteria);
+                    if (bankPaymentMasterList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.BankPaymentList = bankPaymentMasterList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetBankPaymentDetailsList/{id}")]
         public async Task<IActionResult> GetBankPaymentDetailsList(decimal id)
         {
-
-            if (id==0)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var bankPaymentDetailsList = new BankPaymentHelper().GetBankPaymentDetails(id);
-                if (bankPaymentDetailsList.Count > 0)
+                if (id == 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.BankPaymentDetails = bankPaymentDetailsList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var bankPaymentDetailsList = new BankPaymentHelper().GetBankPaymentDetails(id);
+                    if (bankPaymentDetailsList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.BankPaymentDetails = bankPaymentDetailsList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
     }
 }

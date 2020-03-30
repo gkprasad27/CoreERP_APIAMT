@@ -14,9 +14,9 @@ namespace CoreERP.Controllers.GL
     [Route("api/gl/VoucherType")]
     public class VoucherTypeController : ControllerBase
     {
-       
+
         [HttpGet("GetVoucherTypeList")]
-        public async Task<IActionResult> GetVoucherTypeList()
+        public IActionResult GetVoucherTypeList()
         {
             try
             {
@@ -37,12 +37,12 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetBranchesList")]
-        public async Task<IActionResult> GetBranchesList()
+        public IActionResult GetBranchesList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = GLHelper.GetBranches().Select(b=> new { ID=b.BranchCode,TEXT=b.BranchName});
+                expando.BranchesList = GLHelper.GetBranches().Select(b => new { ID = b.BranchCode, TEXT = b.BranchName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -52,7 +52,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetCompaniesList")]
-        public async Task<IActionResult> GetCompaniesList()
+        public IActionResult GetCompaniesList()
         {
             try
             {
@@ -82,7 +82,7 @@ namespace CoreERP.Controllers.GL
         //}
 
         [HttpPost("RegisterVoucherTypes")]
-        public async Task<IActionResult> RegisterVoucherTypes([FromBody]VoucherTypes vouhertype)
+        public IActionResult RegisterVoucherTypes([FromBody]VoucherTypes vouhertype)
         {
             if (vouhertype == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
@@ -105,10 +105,10 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpPut("UpdateVoucherTypes")]
-        public async Task<IActionResult> UpdateVoucherTypes(string code, [FromBody] VoucherTypes vouchertype)
+        public IActionResult UpdateVoucherTypes(string code, [FromBody] VoucherTypes vouchertype)
         {
-             if (vouchertype == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response ="Request cannot be null" });
+            if (vouchertype == null)
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Request cannot be null" });
 
             try
             {
@@ -126,9 +126,9 @@ namespace CoreERP.Controllers.GL
 
         [HttpDelete("DeleteVoucherTypes/{code}")]
         [Produces(typeof(VoucherTypes))]
-        public async Task<IActionResult> DeleteVoucherTypes(string code)
+        public IActionResult DeleteVoucherTypes(string code)
         {
-             if (string.IsNullOrWhiteSpace(code))
+            if (string.IsNullOrWhiteSpace(code))
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try

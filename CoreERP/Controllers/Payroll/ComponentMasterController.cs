@@ -15,7 +15,7 @@ namespace CoreERP.Controllers.Payroll
     public class ComponentMasterController : ControllerBase
     {
         [HttpGet("GetComponentsList")]
-        public async Task<IActionResult> GetComponentsList()
+        public IActionResult GetComponentsList()
         {
             try
             {
@@ -35,7 +35,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpGet("GetConfigurationList")]
-        public async Task<IActionResult> GetConfigurationList()
+        public IActionResult GetConfigurationList()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPost("RegisterComponent")]
-        public async Task<IActionResult> RegisterComponent([FromBody]ComponentMaster componentMaster)
+        public IActionResult RegisterComponent([FromBody]ComponentMaster componentMaster)
         {
 
             if (componentMaster == null)
@@ -83,7 +83,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPut("UpdateComponent")]
-        public async Task<IActionResult> UpdateComponent([FromBody] ComponentMaster componentMaster)
+        public IActionResult UpdateComponent([FromBody] ComponentMaster componentMaster)
         {
 
             if (componentMaster == null)
@@ -110,7 +110,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpDelete("DeleteComponent/{code}")]
-        public async Task<IActionResult> DeleteComponent(string code)
+        public IActionResult DeleteComponent(string code)
         {
             APIResponse apiResponse = null;
             if (code == null)

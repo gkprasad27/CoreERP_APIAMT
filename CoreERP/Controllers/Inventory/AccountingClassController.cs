@@ -17,7 +17,7 @@ namespace CoreERP.Controllers
     {
 
         [HttpPost("RegisterAccountingClass")]
-        public async Task<IActionResult> RegisterAccountingClass([FromBody]AccountingClass accountingClass)
+        public IActionResult RegisterAccountingClass([FromBody]AccountingClass accountingClass)
         {
             if (accountingClass == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(accountingClass)} can not be null" });
@@ -25,7 +25,7 @@ namespace CoreERP.Controllers
             try
             {
                 string errorMsg = string.Empty;
-                var result = AccountClassHelper.RegisterAccountingClass(accountingClass,out errorMsg);
+                var result = AccountClassHelper.RegisterAccountingClass(accountingClass, out errorMsg);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
                 else
@@ -33,18 +33,18 @@ namespace CoreERP.Controllers
                     if (string.IsNullOrEmpty(errorMsg))
                         errorMsg = " Registration Failed";
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMsg  });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMsg });
                 }
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpGet("GetAllAccountingClass")]
         [Produces(typeof(List<AccountingClass>))]
-        public async Task<IActionResult> GetAllAccountingClass()
+        public IActionResult GetAllAccountingClass()
         {
             try
             {
@@ -66,7 +66,7 @@ namespace CoreERP.Controllers
 
         [HttpPut("UpdateAccountingClass")]
         [Produces(typeof(AccountingClass))]
-        public async Task<IActionResult> UpdateAccountingClass([FromBody] AccountingClass accountingClasess)
+        public IActionResult UpdateAccountingClass([FromBody] AccountingClass accountingClasess)
         {
             if (accountingClasess == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(accountingClasess)} cannot be null" });
@@ -81,14 +81,14 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response =ex.Message });
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
 
         [HttpDelete("DeleteAccountingClass/{code}")]
         [Produces(typeof(AccountingClass))]
-        public async Task<IActionResult> DeleteAccountingClass(string code)
+        public IActionResult DeleteAccountingClass(string code)
         {
 
             if (string.IsNullOrWhiteSpace(code))
@@ -97,27 +97,27 @@ namespace CoreERP.Controllers
             try
             {
                 AccountingClass result = AccountClassHelper.DeleteAccountingClass(code);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = code });
-                
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response =ex.Message });
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpGet("GetCompanies")]
-        public async Task<IActionResult> GetCompanies()
+        public IActionResult GetCompanies()
         {
             try
             {
-              
-                    dynamic expando = new ExpandoObject();
-                    expando.AccountingClassList = AccountClassHelper.GetCompanies().Select(x=> new { ID=x.CompanyCode,TEXT=x.Name});
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
-                
+
+                dynamic expando = new ExpandoObject();
+                expando.AccountingClassList = AccountClassHelper.GetCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.Name });
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
+
             }
             catch (Exception ex)
             {

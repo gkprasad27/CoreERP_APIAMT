@@ -14,37 +14,37 @@ namespace CoreERP.Controllers
     public class MaterialTransactionTypesController : ControllerBase
     {
         [HttpGet("GetMatTranTypesList")]
-        public async Task<IActionResult> GetMatTranTypesList()
+        public IActionResult GetMatTranTypesList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
                 expando.materialtratypes = BillingHelpers.GetMatTranTypesList();
-                return Ok(new APIResponse() {status=APIStatus.PASS.ToString(),response=expando });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpGet("GetBranchesList")]
-        public async Task<IActionResult> GetBranchesList()
+        public IActionResult GetBranchesList()
         {
             try
-            {   
+            {
                 dynamic expando = new ExpandoObject();
-                expando.branchesList = BillingHelpers.GetBranchesList().Select(x => new { ID=x.BranchCode,TEXT=x.BranchName});
+                expando.branchesList = BillingHelpers.GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpGet("GetTransTypesList")]
-        public async Task<IActionResult> GetTransTypesList()
+        public IActionResult GetTransTypesList()
         {
             try
             {
@@ -59,7 +59,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("RegisterMatTransType")]
-        public async Task<IActionResult> RegisterMatTransType([FromBody]MatTranTypes mattrantypes)
+        public IActionResult RegisterMatTransType([FromBody]MatTranTypes mattrantypes)
         {
 
             if (mattrantypes == null)
@@ -82,7 +82,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateMatTranTypes")]
-        public async Task<IActionResult> UpdateMatTranTypes(string code, [FromBody] MatTranTypes mattrantype)
+        public IActionResult UpdateMatTranTypes(string code, [FromBody] MatTranTypes mattrantype)
         {
             if (mattrantype == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(mattrantype)} cannot be null" });
@@ -91,20 +91,20 @@ namespace CoreERP.Controllers
                 var result = BillingHelpers.UpdateMatTransType(mattrantype);
                 if (result != null)
                 {
-                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
                 }
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-       
+
         [HttpDelete("DeleteMatTranTypes/{seqid}")]
         [Produces(typeof(BillingNoSeries))]
-        public async Task<IActionResult> DeleteMatTranTypes(string seqid)
+        public IActionResult DeleteMatTranTypes(string seqid)
         {
             if (seqid == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(seqid)}can not be null" });
@@ -113,13 +113,13 @@ namespace CoreERP.Controllers
                 var result = BillingHelpers.DeleteMatTransType(Convert.ToInt32(seqid));
                 if (result != null)
                 {
-                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response=result});
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
                 }
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Deletion Failed." });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response =ex.Message});
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = ex.Message });
             }
         }
     }

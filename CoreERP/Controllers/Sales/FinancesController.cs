@@ -14,7 +14,7 @@ namespace CoreERP.Controllers
     {
 
         [HttpGet("GetFinanceList")]
-        public async Task<IActionResult> GetFinanceList()
+        public IActionResult GetFinanceList()
         {
             APIResponse apiResponse = null;
             try
@@ -36,7 +36,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetFinancesCutomerGLAccounts")]
-        public async Task<IActionResult> GetFinancesCutomerGLAccounts()
+        public IActionResult GetFinancesCutomerGLAccounts()
         {
 
             try
@@ -52,7 +52,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetBrandList")]
-        public async Task<IActionResult> GetBrandList()
+        public IActionResult GetBrandList()
         {
             try
             {
@@ -83,7 +83,7 @@ namespace CoreERP.Controllers
         //}
 
         [HttpPost("RegisterFiances")]
-        public async Task<IActionResult> RegisterFiances([FromBody]Finance finances)
+        public IActionResult RegisterFiances([FromBody]Finance finances)
         {
             if (finances == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(finances)} cannot be null" });
@@ -103,7 +103,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateFinance")]
-        public async Task<IActionResult> UpdateFinance([FromBody] Finance finances)
+        public IActionResult UpdateFinance([FromBody] Finance finances)
         {
             if (finances == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(finances)} cannot be null" });
@@ -123,7 +123,7 @@ namespace CoreERP.Controllers
 
         [HttpDelete("DeleteFinance/{code}")]
         [Produces(typeof(Finance))]
-        public async Task<IActionResult> DeleteFinance(string code)
+        public IActionResult DeleteFinance(string code)
         {
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
@@ -138,7 +138,7 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
 
         }

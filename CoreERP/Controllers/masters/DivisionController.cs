@@ -16,7 +16,7 @@ namespace CoreERP.Controllers
     public class DivisionController : ControllerBase
     {
         [HttpPost("RegisterDivision")]
-        public async Task<IActionResult> RegisterDivision([FromBody]Divisions division)
+        public IActionResult RegisterDivision([FromBody]Divisions division)
         {
             APIResponse apiResponse = null;
             if (division == null)
@@ -27,8 +27,8 @@ namespace CoreERP.Controllers
                 if (DivisionHelper.GetList(division.Code).Count() > 0)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Division Code {nameof(division.Code)} is already exists ,Please Use Different Code " });
 
-                var result=DivisionHelper.Register(division);
-                if (result !=null)
+                var result = DivisionHelper.Register(division);
+                if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -49,7 +49,7 @@ namespace CoreERP.Controllers
 
 
         [HttpGet("GetDivisionsList")]
-        public async Task<IActionResult> GetDivisionsList()
+        public IActionResult GetDivisionsList()
         {
             try
             {
@@ -72,7 +72,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateDivision")]
-        public async Task<IActionResult> UpdateDivision([FromBody] Divisions division)
+        public IActionResult UpdateDivision([FromBody] Divisions division)
         {
             APIResponse apiResponse = null;
             if (division == null)
@@ -81,7 +81,7 @@ namespace CoreERP.Controllers
             try
             {
                 var rs = DivisionHelper.Update(division);
-                if (rs!=null)
+                if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
                 }
@@ -99,7 +99,7 @@ namespace CoreERP.Controllers
 
 
         [HttpDelete("DeleteDivision/{code}")]
-        public async Task<IActionResult> DeleteDivisionByID(string code)
+        public IActionResult DeleteDivisionByID(string code)
         {
             APIResponse apiResponse = null;
             try
@@ -108,7 +108,7 @@ namespace CoreERP.Controllers
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 var rs = DivisionHelper.Delete(code);
-                if (rs !=null)
+                if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
                 }

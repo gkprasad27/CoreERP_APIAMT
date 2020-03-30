@@ -16,7 +16,7 @@ namespace CoreERP.Controllers
     {
 
         [HttpGet("GetcardtypeList")]
-        public async Task<IActionResult> GetcardtypeList()
+        public IActionResult GetcardtypeList()
         {
             try
             {
@@ -37,7 +37,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetGLAccountsList/{accountType}")]
-        public async Task<IActionResult> GetGLAccountsList(string accountType)
+        public IActionResult GetGLAccountsList(string accountType)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetTypeList")]
-        public async Task<IActionResult> GetTypeList(string accountType)
+        public IActionResult GetTypeList(string accountType)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("RegisterCardType")]
-        public async Task<IActionResult> RegisterCardType([FromBody]CardType cardType)
+        public IActionResult RegisterCardType([FromBody]CardType cardType)
         {
 
             if (cardType == null)
@@ -87,7 +87,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateCardType")]
-        public async Task<IActionResult> UpdateCardType([FromBody] CardType cardtype)
+        public IActionResult UpdateCardType([FromBody] CardType cardtype)
         {
             if (cardtype == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(cardtype)} cannot be null" });
@@ -107,7 +107,7 @@ namespace CoreERP.Controllers
 
         [HttpDelete("DeleteCardType/{code}")]
         [Produces(typeof(CardType))]
-        public async Task<IActionResult> DeleteCardType(string code)
+        public IActionResult DeleteCardType(string code)
         {
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });

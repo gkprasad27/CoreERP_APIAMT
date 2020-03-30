@@ -22,148 +22,169 @@ namespace CoreERP.Controllers
         [HttpGet("GetPupms/{pumpNo}/{branchCode}")]
         public async Task<IActionResult> GetPupms(string pumpNo, string branchCode)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                string errorMessage = string.Empty;
+                try
+                {
+                    string errorMessage = string.Empty;
 
-                var pumpsList = new InvoiceHelper().GetPumps(pumpNo, branchCode);
+                    var pumpsList = new InvoiceHelper().GetPumps(pumpNo, branchCode);
 
-                dynamic expando = new ExpandoObject();
-                expando.PumpsList = pumpsList.Select(x => new { ID = x.PumpId, TEXT = x.PumpNo });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    dynamic expando = new ExpandoObject();
+                    expando.PumpsList = pumpsList.Select(x => new { ID = x.PumpId, TEXT = x.PumpNo });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GeneratePurchaseInvNo/{branchCode}")]
         public async Task<IActionResult> GeneratePurchaseInvNo(string branchCode)
         {
-            if (string.IsNullOrEmpty(branchCode))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
-
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.PurchaseInvoiceNo = new PurchasesHelper().GeneratePurchaseInvoiceNo(branchCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                string message = string.Empty;
+                if (string.IsNullOrEmpty(branchCode))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
 
-                if (ex.InnerException != null)
+                try
                 {
-                    message = ex.InnerException.Message;
+                    dynamic expando = new ExpandoObject();
+                    expando.PurchaseInvoiceNo = new PurchasesHelper().GeneratePurchaseInvoiceNo(branchCode);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
-                else
+                catch (Exception ex)
                 {
-                    message = ex.Message;
-                }
+                    string message = string.Empty;
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
-            }
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetProductDeatilsSectionRcd/{branchCode}/{productCode}")]
         public async Task<IActionResult> GetProductDeatilsSectionRcd(string branchCode,string productCode)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.ProductDeatilsSectionRcd = new PurchasesHelper().GetProductDeatilsSectionRcd(branchCode,productCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                string message = string.Empty;
-
-                if (ex.InnerException != null)
+                try
                 {
-                    message = ex.InnerException.Message;
+                    dynamic expando = new ExpandoObject();
+                    expando.ProductDeatilsSectionRcd = new PurchasesHelper().GetProductDeatilsSectionRcd(branchCode, productCode);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
-                else
+                catch (Exception ex)
                 {
-                    message = ex.Message;
-                }
+                    string message = string.Empty;
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
-            }
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("RegisterPurchase")]
         public async Task<IActionResult> RegisterPurchase([FromBody]JObject objData)
         {
-
-            if (objData == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var _purchaseInvoiceHdr = objData["purchaseHdr"].ToObject<TblPurchaseInvoice>();
-                var _purchaseInvoiceDetail = objData["purchaseDetail"].ToObject<TblPurchaseInvoiceDetail[]>();
-
-                var result = new PurchasesHelper().AddPurchaseRecords(_purchaseInvoiceHdr, _purchaseInvoiceDetail.ToList());
-                if (result)
+                if (objData == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _purchaseInvoiceHdr });
-                }
+                    var _purchaseInvoiceHdr = objData["purchaseHdr"].ToObject<TblPurchaseInvoice>();
+                    var _purchaseInvoiceDetail = objData["purchaseDetail"].ToObject<TblPurchaseInvoiceDetail[]>();
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    var result = new PurchasesHelper().AddPurchaseRecords(_purchaseInvoiceHdr, _purchaseInvoiceDetail.ToList());
+                    if (result)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _purchaseInvoiceHdr });
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("GetInvoiceList/{branchCode}")]
         public async Task<IActionResult> GetInvoiceList(string branchCode, [FromBody]SearchCriteria searchCriteria)
         {
-
-            if (searchCriteria == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var invoiceMasterList = new PurchasesHelper().GetPurchaseInvoices(searchCriteria);
-                if (invoiceMasterList.Count > 0)
+                if (searchCriteria == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.InvoiceList = invoiceMasterList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var invoiceMasterList = new PurchasesHelper().GetPurchaseInvoices(searchCriteria);
+                    if (invoiceMasterList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.InvoiceList = invoiceMasterList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetInvoiceDeatilList/{invoiceNo}")]
         public async Task<IActionResult> GetInvoiceDeatilList(string invoiceNo)
         {
-
-            if (string.IsNullOrEmpty(invoiceNo))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var invoiceMasterList = new PurchasesHelper().GetPurchaseInvoiceDetails(invoiceNo);
-                if (invoiceMasterList.Count > 0)
+                if (string.IsNullOrEmpty(invoiceNo))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.InvoiceDetailList = invoiceMasterList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var invoiceMasterList = new PurchasesHelper().GetPurchaseInvoiceDetails(invoiceNo);
+                    if (invoiceMasterList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.InvoiceDetailList = invoiceMasterList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
     }
 }

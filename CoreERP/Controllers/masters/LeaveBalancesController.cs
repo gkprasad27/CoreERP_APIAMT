@@ -17,20 +17,24 @@ namespace CoreERP.Controllers.masters
         [HttpGet("GetLeaveBalancesList")]
         public async Task<IActionResult> GetLeaveBalancesList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.lopList = new LeaveBalancesHelper().GetLeaveOpeningBalancesList().ToList();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.lopList = new LeaveBalancesHelper().GetLeaveOpeningBalancesList().ToList();
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("RegisterLeaveBalancesList")]
-        public async Task<IActionResult> RegisterLeaveBalancesList([FromBody]LeaveBalanceMaster lbm)
+        public IActionResult RegisterLeaveBalancesList([FromBody]LeaveBalanceMaster lbm)
         {
             APIResponse apiResponse = null;
             if (lbm == null)
@@ -41,7 +45,7 @@ namespace CoreERP.Controllers.masters
                 if (new LeaveBalancesHelper().GetList(lbm.LeaveCode).Count() > 0)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"LeaveCode Code {nameof(lbm.LeaveCode)} is already exists ,Please Use Different Code " });
 
-                var result =new LeaveBalancesHelper().Register(lbm);
+                var result = new LeaveBalancesHelper().Register(lbm);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -62,7 +66,7 @@ namespace CoreERP.Controllers.masters
 
 
         [HttpPut("UpdateLeaveBalancesList")]
-        public async Task<IActionResult> UpdateLeaveBalancesList([FromBody] LeaveBalanceMaster lbm)
+        public IActionResult UpdateLeaveBalancesList([FromBody] LeaveBalanceMaster lbm)
         {
             APIResponse apiResponse = null;
             if (lbm == null)
@@ -70,7 +74,7 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs =new LeaveBalancesHelper().Update(lbm);
+                var rs = new LeaveBalancesHelper().Update(lbm);
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -89,7 +93,7 @@ namespace CoreERP.Controllers.masters
 
 
         [HttpDelete("DeleteLeaveBalancesList/{code}")]
-        public async Task<IActionResult> DeleteLeaveBalancesList(string code)
+        public IActionResult DeleteLeaveBalancesList(string code)
         {
             APIResponse apiResponse = null;
             try
@@ -97,7 +101,7 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs =new LeaveBalancesHelper().Delete(code);
+                var rs = new LeaveBalancesHelper().Delete(code);
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };

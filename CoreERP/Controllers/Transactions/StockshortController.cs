@@ -19,31 +19,39 @@ namespace CoreERP.Controllers.Transactions
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.BranchesList = new StockshortHelpers().GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BranchesList = new StockshortHelpers().GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetProductLists/{productCode}/{branchCode}")]
         public async Task<IActionResult> GetOpStockShortDetailsection1(string productcode, string branchCode)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.productsList = new StockshortHelpers().GetOpStockShortDetailsection(productcode, branchCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.productsList = new StockshortHelpers().GetOpStockShortDetailsection(productcode, branchCode);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         //stackshort vocherno
@@ -51,65 +59,75 @@ namespace CoreERP.Controllers.Transactions
         [HttpGet("GetstockshortVoucherNo/{branchCode}")]
         public async Task<IActionResult> GetstockshortVoucherNo(string branchCode)
         {
-            if (string.IsNullOrEmpty(branchCode))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+            var result = await Task.Run(() =>
+            {
+                if (string.IsNullOrEmpty(branchCode))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
 
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.stockshortVoucherNo = new StockshortHelpers().GetstockshortVoucherNo(branchCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.stockshortVoucherNo = new StockshortHelpers().GetstockshortVoucherNo(branchCode);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("RegisterStockshort")]
         public async Task<IActionResult> RegisterStockshort([FromBody]JObject objData)
         {
-            APIResponse apiResponse = null;
-            if (objData == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var _stockrshortHdr = objData["StockshortHdr"].ToObject<TblStockshortMaster>();
-                var _stockshortDtl = objData["StockshortDtl"].ToObject<TblStockshortDetails[]>();
+                if (objData == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
+                {
+                    var _stockrshortHdr = objData["StockshortHdr"].ToObject<TblStockshortMaster>();
+                    var _stockshortDtl = objData["StockshortDtl"].ToObject<TblStockshortDetails[]>();
 
-                var result = new StockshortHelpers().RegisterStockshort(_stockrshortHdr, _stockshortDtl.ToList());
-                apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    var result = new StockshortHelpers().RegisterStockshort(_stockrshortHdr, _stockshortDtl.ToList());
+                    APIResponse apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    return Ok(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
 
         [HttpPost("GetStockshortsList")]
         public async Task<IActionResult> GetStockshortsList([FromBody]SearchCriteria searchCriteria)
         {
-
-            if (searchCriteria == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var stockshortsListMasterList = new StockshortHelpers().GetStockshortsList(searchCriteria);
-                if (stockshortsListMasterList.Count > 0)
+                if (searchCriteria == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.StockshortsList = stockshortsListMasterList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var stockshortsListMasterList = new StockshortHelpers().GetStockshortsList(searchCriteria);
+                    if (stockshortsListMasterList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.StockshortsList = stockshortsListMasterList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
 
@@ -117,40 +135,47 @@ namespace CoreERP.Controllers.Transactions
         [HttpGet("GetCostCentersList")]
         public async Task<IActionResult> GetCostCentersList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                 expando.CostCentersList =new StockshortHelpers().GetCostCenters().Select(x => new { ID = x.Code, TEXT = x.Name });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.CostCentersList = new StockshortHelpers().GetCostCenters().Select(x => new { ID = x.Code, TEXT = x.Name });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetStockshortsDeatilList/{issueNo}")]
         public async Task<IActionResult> GetStockshortsDeatilList(string issueNo)
         {
-
-            if (string.IsNullOrEmpty(issueNo))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var StockshortsDeatilList = new StockshortHelpers().StockshortsDeatilList(issueNo);
-                if (StockshortsDeatilList.Count > 0)
+                if (string.IsNullOrEmpty(issueNo))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.StockshortsDeatilList = StockshortsDeatilList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var StockshortsDeatilList = new StockshortHelpers().StockshortsDeatilList(issueNo);
+                    if (StockshortsDeatilList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.StockshortsDeatilList = StockshortsDeatilList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockshortsDeatilList record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockshortsDeatilList record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
     }
 }

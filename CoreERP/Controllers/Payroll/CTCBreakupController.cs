@@ -15,7 +15,7 @@ namespace CoreERP.Controllers.Payroll
     public class CTCBreakupController : ControllerBase
     {
         [HttpGet("GetCTCList")]
-        public async Task<IActionResult> GetCTCList()
+        public IActionResult GetCTCList()
         {
             try
             {
@@ -35,7 +35,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpGet("GetComponentsList")]
-        public async Task<IActionResult> GetComponentsList()
+        public IActionResult GetComponentsList()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpGet("GetStructureList")]
-        public async Task<IActionResult> GetStructureList()
+        public IActionResult GetStructureList()
         {
             try
             {
@@ -65,7 +65,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpGet("GetPayrollCycleList")]
-        public async Task<IActionResult> GetPayrollCycleList()
+        public IActionResult GetPayrollCycleList()
         {
             try
             {
@@ -80,7 +80,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpGet("GetEmployeeList")]
-        public async Task<IActionResult> GetEmployeeList()
+        public IActionResult GetEmployeeList()
         {
             try
             {
@@ -96,7 +96,7 @@ namespace CoreERP.Controllers.Payroll
 
 
         [HttpPost("RegisterCTC")]
-        public async Task<IActionResult> RegisterCTC([FromBody]Ctcbreakup ctcBreakup)
+        public IActionResult RegisterCTC([FromBody]Ctcbreakup ctcBreakup)
         {
 
             if (ctcBreakup == null)
@@ -129,7 +129,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPut("UpdateCTC")]
-        public async Task<IActionResult> UpdateCTC([FromBody] Ctcbreakup ctcBreakup)
+        public IActionResult UpdateCTC([FromBody] Ctcbreakup ctcBreakup)
         {
 
             if (ctcBreakup == null)

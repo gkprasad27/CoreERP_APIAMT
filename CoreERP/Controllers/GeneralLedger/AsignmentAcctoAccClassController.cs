@@ -16,41 +16,48 @@ namespace CoreERP.Controllers.GL
         [HttpPost("RegisterAsigAcctoAccClass")]
         public async Task<IActionResult> RegisterAsigAcctoAccClass([FromBody]AsignmentAcctoAccClass asignmentAcctoAccClass)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                AsignmentAcctoAccClass result = GLHelper.RegisterAccToAccClass(asignmentAcctoAccClass);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                try
+                {
+                    AsignmentAcctoAccClass result = GLHelper.RegisterAccToAccClass(asignmentAcctoAccClass);
+                    if (result != null)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
 
         [HttpGet("GetAsigAcctoAccclassList")]
         public async Task<IActionResult> GetAsigAcctoAccclassList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var asigAcctoAccclass = GLHelper.GetAsignAccToAccClas();
-                if (asigAcctoAccclass.Count > 0)
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.AsigAcctoAccclassList = asigAcctoAccclass;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    var asigAcctoAccclass = GLHelper.GetAsignAccToAccClas();
+                    if (asigAcctoAccclass.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.AsigAcctoAccclassList = asigAcctoAccclass;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 }
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
             //return Json(
             //    new
             //    {
@@ -68,133 +75,162 @@ namespace CoreERP.Controllers.GL
         [HttpGet("GetMatTranTypes")]
         public async Task<IActionResult> GetMatTranTypes()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.mattranstype = GLHelper.GetMatTranTypesList().Select(mat=> new { ID= mat.Code,TEXT=mat.Description});
-                return Ok(new APIResponse{ status=APIStatus.PASS.ToString(),response= expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.mattranstype = GLHelper.GetMatTranTypesList().Select(mat => new { ID = mat.Code, TEXT = mat.Description });
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetAccountingClass")]
         public async Task<IActionResult> GetAccountingClass()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.AccountingclassList = GLHelper.GetAccountingClass().Select(acc=> new { ID=acc.Code,TEXT=acc.Description});
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.AccountingclassList = GLHelper.GetAccountingClass().Select(acc => new { ID = acc.Code, TEXT = acc.Description });
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPut("UpdateAccToAccClass")]
         public async Task<IActionResult> UpdateAccToAccClass([FromBody] AsignmentAcctoAccClass asignmentAcctoAccClass)
         {
-            if (asignmentAcctoAccClass == null)
-                return Ok(new APIResponse() {status=APIStatus.FAIL.ToString(),response= $"{nameof(asignmentAcctoAccClass)} cannot be null" });
-            try
+            var result = await Task.Run(() =>
             {
-                AsignmentAcctoAccClass result = GLHelper.UpdateAccToAccClass(asignmentAcctoAccClass);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                if (asignmentAcctoAccClass == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(asignmentAcctoAccClass)} cannot be null" });
+                try
+                {
+                    AsignmentAcctoAccClass result = GLHelper.UpdateAccToAccClass(asignmentAcctoAccClass);
+                    if (result != null)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Updation Failed." });
-            }
-            catch(Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpDelete("DeleteAccToAccClass")]
         public async Task<IActionResult> DeleteAccToAccClass(string code)
         {
-            if (string.IsNullOrWhiteSpace(code))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
-
-            try
+            var result = await Task.Run(() =>
             {
-                AsignmentAcctoAccClass result = GLHelper.DeleteAccToAccClass(code);
-                if (result !=null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                if (string.IsNullOrWhiteSpace(code))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    AsignmentAcctoAccClass result = GLHelper.DeleteAccToAccClass(code);
+                    if (result != null)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetGLAccountGroupList")]
         public async Task<IActionResult> GetGLAccountGroupList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.GLAccgroup = GLHelper.GetGLAccountGroupList().Select(glgrp=>new { ID=glgrp.GroupCode,TEXT=glgrp.GroupName});
-                return Ok(new APIResponse(){status=APIStatus.PASS.ToString(),response=expando  });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.GLAccgroup = GLHelper.GetGLAccountGroupList().Select(glgrp => new { ID = glgrp.GroupCode, TEXT = glgrp.GroupName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetSalesGlAccounts")]
         public async Task<IActionResult> GetSalesGlAccounts()
         {
-
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.GLSalesAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.SALES).Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.GLSalesAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.SALES).Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetPurchaseGlAccounts")]
         public async Task<IActionResult> GetPurchaseGlAccounts()
         {
-
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.GLPurchaseAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.PURCHASES).Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.GLPurchaseAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.PURCHASES).Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetInventoryGlAccounts")]
         public async Task<IActionResult> GetInventoryGlAccounts()
         {
-
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.GLInventoryAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.INVENTORY).Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.GLInventoryAccounts = GLHelper.GetGLAccountsList(NATURESOFACCOUNTS.INVENTORY).Select(x => new { ID = x.Glcode, TEXT = x.GlaccountName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         //[HttpGet("GetGLAccountsList")]

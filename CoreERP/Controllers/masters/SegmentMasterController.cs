@@ -17,7 +17,7 @@ namespace CoreERP.Controllers
 
 
         [HttpGet("GetSegmentList")]
-        public async Task<IActionResult> GetSegmentList()
+        public IActionResult GetSegmentList()
         {
             try
             {
@@ -38,13 +38,13 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("RegisterSegment")]
-        public async Task<IActionResult> RegisterSegment([FromBody]Segment segment)
+        public IActionResult RegisterSegment([FromBody]Segment segment)
         {
             if (segment == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(segment)} cannot be null" });
             try
             {
-                if(SegmentHelper.IsSegmentIDExists(segment.Id))
+                if (SegmentHelper.IsSegmentIDExists(segment.Id))
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"ID={segment.Id} Already Exists." });
 
                 var result = SegmentHelper.RegisterSegment(segment);
@@ -61,7 +61,7 @@ namespace CoreERP.Controllers
 
 
         [HttpPut("UpdateSegment")]
-        public async Task<IActionResult> UpdateSegment([FromBody] Segment segment)
+        public IActionResult UpdateSegment([FromBody] Segment segment)
         {
             if (segment == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(segment)} cannot be null" });
@@ -83,21 +83,21 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteSegment/{ID}")]
-        public async Task<IActionResult> DeleteSegment(string ID)
+        public IActionResult DeleteSegment(string ID)
         {
             if (ID == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(ID)}can not be null" });
             try
             {
                 var result = SegmentHelper.DeleteSegment(Convert.ToInt32(ID));
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Registration Failed." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
     }

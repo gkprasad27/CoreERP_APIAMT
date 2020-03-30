@@ -39,7 +39,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 //            where account.Nactureofaccount.ToUpper() == "BILLSRECEIVABLES"
                 //            select account).ToList(),
 
-                string accountType = "BILLSRECEIVABLES";
                 using Repository<Glaccounts> repo = new Repository<Glaccounts>();
                 return repo.Glaccounts.AsEnumerable()
 .Where(gl => NATURESOFACCOUNTS.BILLSRECEIVABLES.ToString().Equals(gl.Nactureofaccount, StringComparison.OrdinalIgnoreCase)

@@ -16,7 +16,7 @@ namespace CoreERP.Controllers
     public class SizesController : ControllerBase
     {
         [HttpPost("RegisterSizes")]
-        public async Task<IActionResult> RegisterSizes([FromBody]Sizes size)
+        public IActionResult RegisterSizes([FromBody]Sizes size)
         {
             if (size == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(size)} can not be null" });
@@ -25,7 +25,7 @@ namespace CoreERP.Controllers
             {
                 string errorMasg = string.Empty;
 
-                var result = SizesHelper.RegisterSizes(size,out errorMasg);
+                var result = SizesHelper.RegisterSizes(size, out errorMasg);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
                 else
@@ -44,7 +44,7 @@ namespace CoreERP.Controllers
 
         [HttpGet("GetAllSizes")]
         [Produces(typeof(List<Sizes>))]
-        public async Task<IActionResult> GetAllSizes()
+        public IActionResult GetAllSizes()
         {
             try
             {
@@ -66,7 +66,7 @@ namespace CoreERP.Controllers
 
         [HttpPut("UpdateSize")]
         [Produces(typeof(Sizes))]
-        public async Task<IActionResult> UpdateSize([FromBody] Sizes sizes)
+        public IActionResult UpdateSize([FromBody] Sizes sizes)
         {
             if (sizes == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(sizes)} cannot be null" });
@@ -87,7 +87,7 @@ namespace CoreERP.Controllers
 
         [HttpDelete("DeleteSize/{code}")]
         [Produces(typeof(Sizes))]
-        public async Task<IActionResult> DeleteSize(string code)
+        public IActionResult DeleteSize(string code)
         {
 
             if (string.IsNullOrWhiteSpace(code))

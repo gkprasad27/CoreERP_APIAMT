@@ -18,13 +18,13 @@ namespace CoreERP.Controllers
     {
         //
         [HttpPost("RegisterCreation")]
-        public async Task<IActionResult> RegisterCreation([FromBody]PartnerCreation partnercreation)
+        public IActionResult RegisterCreation([FromBody]PartnerCreation partnercreation)
         {
             try
             {
                 var result = PartnerCreationHelper.RegisterPartnerCreation(partnercreation);
-                if (result !=null)
-                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
             }
@@ -35,7 +35,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetPartnerCreationList")]
-        public async Task<IActionResult> GetPartnerCreationList()
+        public IActionResult GetPartnerCreationList()
         {
 
             try
@@ -58,7 +58,7 @@ namespace CoreERP.Controllers
 
         [HttpPut("UpdatePartnerCreation")]
         [Produces(typeof(PartnerCreation))]
-        public async Task<IActionResult> UpdatePartnerCreation([FromBody] PartnerCreation partnercreation)
+        public IActionResult UpdatePartnerCreation([FromBody] PartnerCreation partnercreation)
         {
             if (partnercreation == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(partnercreation)} cannot be null" });
@@ -75,12 +75,12 @@ namespace CoreERP.Controllers
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }            
+            }
         }
 
 
         [HttpDelete("DeletePartnerCreation/{code}")]
-        public async Task<IActionResult> DeletePartnerCreation(string code)
+        public IActionResult DeletePartnerCreation(string code)
         {
 
             if (string.IsNullOrWhiteSpace(code))
@@ -101,7 +101,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetBalanceTypes")]
-        public async Task<IActionResult> GetBalanceTypes()
+        public IActionResult GetBalanceTypes()
         {
             try
             {
@@ -141,9 +141,9 @@ namespace CoreERP.Controllers
         //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
         //    }
         //}
-       
+
         [HttpGet("GetGlAccounts")]
-        public async Task<IActionResult> GetGlAccounts()
+        public IActionResult GetGlAccounts()
         {
             try
             {
@@ -185,7 +185,7 @@ namespace CoreERP.Controllers
         //}
 
         [HttpGet("GetBranchesList")]
-        public async Task<IActionResult> GetBranchesList()
+        public IActionResult GetBranchesList()
         {
             try
             {
@@ -206,7 +206,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetCompaniesList")]
-        public async Task<IActionResult> GetCompaniesList()
+        public IActionResult GetCompaniesList()
         {
             try
             {

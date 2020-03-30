@@ -111,7 +111,7 @@ namespace CoreERP.Controllers
         //}
 
         [HttpGet("GetCompanyList")]
-        public async Task<IActionResult> GetCompanyList()
+        public IActionResult GetCompanyList()
         {
 
             try
