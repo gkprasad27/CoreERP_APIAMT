@@ -14,10 +14,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblPumps> repo = new Repository<TblPumps>())
-                {
-                    return repo.TblPumps.ToList();
-                }
+                using Repository<TblPumps> repo = new Repository<TblPumps>();
+                return repo.TblPumps.ToList();
             }
             catch { throw; }
         }
@@ -26,18 +24,16 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblPumps> repo = new Repository<TblPumps>())
-                {
-                    string name =Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo ==Convert.ToString(pumps.TankNo))?.TankId);
-                    pumps.TankId = int.Parse(name);
-                    pumps.BranchId =Convert.ToInt32(pumps.BranchCode);
-                    pumps.ProductId = Convert.ToInt32(pumps.ProductCode);
-                    repo.TblPumps.Add(pumps);
-                    if (repo.SaveChanges() > 0)
-                        return pumps;
+                using Repository<TblPumps> repo = new Repository<TblPumps>();
+                string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo))?.TankId);
+                pumps.TankId = int.Parse(name);
+                pumps.BranchId = Convert.ToInt32(pumps.BranchCode);
+                pumps.ProductId = Convert.ToInt32(pumps.ProductCode);
+                repo.TblPumps.Add(pumps);
+                if (repo.SaveChanges() > 0)
+                    return pumps;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -49,18 +45,16 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblPumps> repo = new Repository<TblPumps>())
-                {
-                    string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo))?.TankId);
-                    pumps.TankId = int.Parse(name);
-                    pumps.BranchId = Convert.ToInt32(pumps.BranchCode);
-                    pumps.ProductId = Convert.ToInt32(pumps.ProductCode);
-                    repo.TblPumps.Update(pumps);
-                    if (repo.SaveChanges() > 0)
-                        return pumps;
+                using Repository<TblPumps> repo = new Repository<TblPumps>();
+                string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo))?.TankId);
+                pumps.TankId = int.Parse(name);
+                pumps.BranchId = Convert.ToInt32(pumps.BranchCode);
+                pumps.ProductId = Convert.ToInt32(pumps.ProductCode);
+                repo.TblPumps.Update(pumps);
+                if (repo.SaveChanges() > 0)
+                    return pumps;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -72,15 +66,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblPumps> repo = new Repository<TblPumps>())
-                {
-                    var pumpno = repo.TblPumps.Where(x => x.PumpId ==Convert.ToInt32(Code)).FirstOrDefault();
-                    repo.TblPumps.Remove(pumpno);
-                    if (repo.SaveChanges() > 0)
-                        return pumpno;
+                using Repository<TblPumps> repo = new Repository<TblPumps>();
+                var pumpno = repo.TblPumps.Where(x => x.PumpId == Convert.ToInt32(Code)).FirstOrDefault();
+                repo.TblPumps.Remove(pumpno);
+                if (repo.SaveChanges() > 0)
+                    return pumpno;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -92,10 +84,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<MaterialGroup> repo = new Repository<MaterialGroup>())
-                {
-                    return repo.MaterialGroup.ToList();
-                }
+                using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
+                return repo.MaterialGroup.ToList();
             }
             catch { throw; }
         }
@@ -112,11 +102,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTanks> repo = new Repository<TblTanks>())
-                {
-                    return repo.TblTanks
-                               .Where(x => x.BranchName == name).ToList();
-                }
+                using Repository<TblTanks> repo = new Repository<TblTanks>();
+                return repo.TblTanks
+.Where(x => x.BranchName == name).ToList();
             }
             catch { throw; }
         }
@@ -125,12 +113,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<MaterialGroup> repo = new Repository<MaterialGroup>())
-                {
-                    return repo.MaterialGroup
-                               .Where(x => x.Code == code)
-                               .ToList();
-                }
+                using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
+                return repo.MaterialGroup
+.Where(x => x.Code == code)
+.ToList();
             }
             catch { throw; }
         }

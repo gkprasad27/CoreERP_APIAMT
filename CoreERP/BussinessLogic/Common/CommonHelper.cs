@@ -15,17 +15,15 @@ namespace CoreERP.BussinessLogic.Common
             suffix = string.Empty;
             try
             {
-                using (Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>())
-                {
-                    var _suffixPrefix = repo.TblSuffixPrefix
-                                            .Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode)
-                                            .FirstOrDefault();
+                using Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>();
+                var _suffixPrefix = repo.TblSuffixPrefix
+.Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode)
+.FirstOrDefault();
 
-                    preFix = _suffixPrefix?.Prefix;
-                    suffix = _suffixPrefix?.Suffix;
+                preFix = _suffixPrefix?.Prefix;
+                suffix = _suffixPrefix?.Suffix;
 
-                    return _suffixPrefix?.StartIndex;
-                }
+                return _suffixPrefix?.StartIndex;
             }
             catch(Exception ex)
             {
@@ -65,14 +63,12 @@ namespace CoreERP.BussinessLogic.Common
 
         public void UpdateInvoiceNumber(decimal? voucherTypeid, string branchCode,decimal? invoieNumber)
         {
-            using (Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>())
-            {
-                var _suffixPrefix = repo.TblSuffixPrefix .Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode).FirstOrDefault();
+            using Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>();
+            var _suffixPrefix = repo.TblSuffixPrefix.Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode).FirstOrDefault();
 
-                _suffixPrefix.StartIndex = invoieNumber;
-                repo.TblSuffixPrefix.Update(_suffixPrefix);
-                repo.SaveChanges();
-            }
+            _suffixPrefix.StartIndex = invoieNumber;
+            repo.TblSuffixPrefix.Update(_suffixPrefix);
+            repo.SaveChanges();
         }
         //public static string GetConfigurationValue(string module,string screenName,string keyName)
         //{
@@ -86,7 +82,7 @@ namespace CoreERP.BussinessLogic.Common
         //                      ).First().Values;
         //    }
         //}
-        public static int? AutonGenerateNo(string groupName,string branchCode, int rangeStart, int rangeEnds,out string errorMessage)
+        public static int? AutonGenerateNo(string branchCode, int rangeStart, int rangeEnds,out string errorMessage)
         {
             try
             {
@@ -117,12 +113,10 @@ namespace CoreERP.BussinessLogic.Common
         {
             try
             {
-                using (Repository<Counters> repo = new Repository<Counters>())
-                {
-                    return repo.Counters.AsEnumerable()
-                                         .Where(c => c.BranchCode == branchCode)
-                                         .FirstOrDefault();
-                }
+                using Repository<Counters> repo = new Repository<Counters>();
+                return repo.Counters.AsEnumerable()
+.Where(c => c.BranchCode == branchCode)
+.FirstOrDefault();
             }
             catch { throw; }
         }
@@ -130,12 +124,10 @@ namespace CoreERP.BussinessLogic.Common
         {
             try
             {
-                using (Repository<Counters> repo = new Repository<Counters>())
-                {
-                    var cntObj = new Counters() {Active="Y" ,BranchCode=branchCode,NumberRange= rangestarts };
-                    repo.Counters.Add(cntObj);
-                    return repo.SaveChanges();
-                }
+                using Repository<Counters> repo = new Repository<Counters>();
+                var cntObj = new Counters() { Active = "Y", BranchCode = branchCode, NumberRange = rangestarts };
+                repo.Counters.Add(cntObj);
+                return repo.SaveChanges();
             }
             catch { throw; }
         }
@@ -143,11 +135,9 @@ namespace CoreERP.BussinessLogic.Common
         {
             try
             {
-                using (Repository<Counters> repo = new Repository<Counters>())
-                {
-                    repo.Counters.Update(counters);
-                    return repo.SaveChanges();
-                }
+                using Repository<Counters> repo = new Repository<Counters>();
+                repo.Counters.Update(counters);
+                return repo.SaveChanges();
             }
             catch { throw; }
         }

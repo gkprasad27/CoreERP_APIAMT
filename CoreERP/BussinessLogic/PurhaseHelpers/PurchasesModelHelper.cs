@@ -17,13 +17,11 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
         {
             try
             {
-                using (Repository<Purchase> repo = new Repository<Purchase>())
-                {
-                    //  MaterialTransationType
-                    return repo.MatTranTypes.AsEnumerable()
-                    .Where(x => (string.Compare(x.TransactionType, "PURCHASE", true) == 0))
-                    .ToList();
-                }
+                using Repository<Purchase> repo = new Repository<Purchase>();
+                //  MaterialTransationType
+                return repo.MatTranTypes.AsEnumerable()
+                .Where(x => (string.Compare(x.TransactionType, "PURCHASE", true) == 0))
+                .ToList();
             }
             catch { throw; }
         }
@@ -31,10 +29,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
         {
             try
             {
-                using (Repository<Purchase> repo = new Repository<Purchase>())
-                {
-                    return CompaniesHelper.GetListOfCompanies();
-                }
+                using Repository<Purchase> repo = new Repository<Purchase>();
+                return CompaniesHelper.GetListOfCompanies();
             }
             catch { throw; }
         }
@@ -53,10 +49,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
         {
             try
             {
-                using (Repository<Purchase> repo = new Repository<Purchase>())
-                {
-                    return GLHelper.GetGLAccountsList();
-                }
+                using Repository<Purchase> repo = new Repository<Purchase>();
+                return GLHelper.GetGLAccountsList();
             }
             catch { throw; }
         }
@@ -67,12 +61,10 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 // materialTranstp = (from mattran in _unitOfWork.Mat_Tran_Types.GetAll().Where(x => x.TransactionType != null)
                 //                    where mattran.TransactionType.ToUpper() == MaterialTransationType.PURCHASE.ToString()
                 //                    select mattran),
-                using (Repository<Purchase> repo = new Repository<Purchase>())
-                {
-                    return GLHelper.GetMatTranTypesList().AsEnumerable()
-                                   .Where(m => m.TransactionType.Equals("PURCHASE", StringComparison.OrdinalIgnoreCase))
-                                   .ToList();
-                }
+                using Repository<Purchase> repo = new Repository<Purchase>();
+                return GLHelper.GetMatTranTypesList().AsEnumerable()
+.Where(m => m.TransactionType.Equals("PURCHASE", StringComparison.OrdinalIgnoreCase))
+.ToList();
             }
             catch { throw; }
         }
@@ -93,12 +85,10 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 //                  //on taxm.Code equals taxi.TaxCode
                 //                  where taxm.TaxType == "INPUT"
                 //                  select taxm),
-                using (Repository<Purchase> repo = new Repository<Purchase>())
-                {
-                    return GLHelper.GetTaxMasterList()
-                               .Where(t => t.TaxType.Equals("INPUT", StringComparison.OrdinalIgnoreCase))
-                               .ToList();
-                }
+                using Repository<Purchase> repo = new Repository<Purchase>();
+                return GLHelper.GetTaxMasterList()
+.Where(t => t.TaxType.Equals("INPUT", StringComparison.OrdinalIgnoreCase))
+.ToList();
             }
             catch { throw; }
         }
@@ -107,12 +97,10 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             try
             {
                 // taxintegration = (from taxingr in _unitOfWork.TaxIntegration.GetAll() where taxingr.TaxCode != null select taxingr),
-                using (Repository<Purchase> repo = new Repository<Purchase>())
-                {
-                    return GLHelper.GetTaxIntegrationList()
-                               .Where(t => t.TaxCode != null)
-                               .ToList();
-                }
+                using Repository<Purchase> repo = new Repository<Purchase>();
+                return GLHelper.GetTaxIntegrationList()
+.Where(t => t.TaxCode != null)
+.ToList();
             }
             catch { throw; }
         }
@@ -185,10 +173,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
         {
             try
             {
-                using (Repository<PurchaseReturns> context = new Repository<PurchaseReturns>())
-                {
-                    return context.PurchaseReturns.Where(p => p.GoodsReceiptDate != null).ToList();
-                }
+                using Repository<PurchaseReturns> context = new Repository<PurchaseReturns>();
+                return context.PurchaseReturns.Where(p => p.GoodsReceiptDate != null).ToList();
             }
             catch { throw; }
         }
@@ -331,10 +317,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                               .Select(x => x.CashGlacc)
                                               .Union(GLHelper.GetAsignCashAccBranch().Select(x => x.BankGlacc)).ToList();
 
-                using(Repository<Glaccounts> repo=new Repository<Glaccounts>())
-                {
-                    return repo.Glaccounts.AsEnumerable().Where(gl => glCodes.Contains(gl.Glcode)).ToList();
-                }
+                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                return repo.Glaccounts.AsEnumerable().Where(gl => glCodes.Contains(gl.Glcode)).ToList();
             }
             catch { throw; }
         }

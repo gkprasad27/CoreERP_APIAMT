@@ -13,10 +13,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>())
-                {
-                    return repo.TblMshsdrates.ToList();
-                }
+                using Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>();
+                return repo.TblMshsdrates.ToList();
             }
             catch { throw; }
         }
@@ -34,14 +32,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>())
-                {
-                    repo.TblMshsdrates.Add(mshsdrates);
-                    if (repo.SaveChanges() > 0)
-                        return mshsdrates;
+                using Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>();
+                repo.TblMshsdrates.Add(mshsdrates);
+                if (repo.SaveChanges() > 0)
+                    return mshsdrates;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -51,14 +47,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>())
-                {
-                    repo.TblMshsdrates.Update(mshsdrates);
-                    if (repo.SaveChanges() > 0)
-                        return mshsdrates;
+                using Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>();
+                repo.TblMshsdrates.Update(mshsdrates);
+                if (repo.SaveChanges() > 0)
+                    return mshsdrates;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -67,15 +61,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>())
-                {
-                    var mshsd = repo.TblMshsdrates.Where(x => x.BranchCode == code).FirstOrDefault();
-                    repo.TblMshsdrates.Remove(mshsd);
-                    if (repo.SaveChanges() > 0)
-                        return mshsd;
+                using Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>();
+                var mshsd = repo.TblMshsdrates.Where(x => x.BranchCode == code).FirstOrDefault();
+                repo.TblMshsdrates.Remove(mshsd);
+                if (repo.SaveChanges() > 0)
+                    return mshsd;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }

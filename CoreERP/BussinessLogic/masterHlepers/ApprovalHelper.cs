@@ -13,10 +13,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<ApprovalType> repo = new Repository<ApprovalType>())
-                {
-                    return repo.ApprovalType.AsEnumerable().Where(a => a.Active == "Y").ToList();
-                }
+                using Repository<ApprovalType> repo = new Repository<ApprovalType>();
+                return repo.ApprovalType.AsEnumerable().Where(a => a.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -25,15 +23,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<ApprovalType> repo = new Repository<ApprovalType>())
-                {
-                    approvalType.Active = "Y";
-                    repo.ApprovalType.Add(approvalType);
-                    if (repo.SaveChanges() > 0)
-                        return approvalType;
+                using Repository<ApprovalType> repo = new Repository<ApprovalType>();
+                approvalType.Active = "Y";
+                repo.ApprovalType.Add(approvalType);
+                if (repo.SaveChanges() > 0)
+                    return approvalType;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -42,14 +38,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<ApprovalType> repo = new Repository<ApprovalType>())
-                {
-                    repo.ApprovalType.Update(approvalType);
-                    if (repo.SaveChanges() > 0)
-                        return approvalType;
+                using Repository<ApprovalType> repo = new Repository<ApprovalType>();
+                repo.ApprovalType.Update(approvalType);
+                if (repo.SaveChanges() > 0)
+                    return approvalType;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -58,16 +52,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<ApprovalType> repo = new Repository<ApprovalType>())
-                {
-                    var approvalType = repo.ApprovalType.Where(a => a.ApprovalId == approvalTypeCode).FirstOrDefault();
-                    approvalType.Active = "N";
-                    repo.ApprovalType.Remove(approvalType);
-                    if (repo.SaveChanges() > 0)
-                        return approvalType;
+                using Repository<ApprovalType> repo = new Repository<ApprovalType>();
+                var approvalType = repo.ApprovalType.Where(a => a.ApprovalId == approvalTypeCode).FirstOrDefault();
+                approvalType.Active = "N";
+                repo.ApprovalType.Remove(approvalType);
+                if (repo.SaveChanges() > 0)
+                    return approvalType;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }

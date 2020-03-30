@@ -17,31 +17,29 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             try
             {
                 errorMsg = string.Empty;
-                using (Repository<AccountingClass> repo = new Repository<AccountingClass>())
+                using Repository<AccountingClass> repo = new Repository<AccountingClass>();
+                //var record = repo.AccountingClass.OrderByDescending(x => x.AddDate).FirstOrDefault();
+
+                //if (record != null)
+                //{
+                //    accountingClass.Code = CommonHelper.IncreaseCode(record.Code);
+                //}
+                //else
+                //    accountingClass.Code = "1";
+
+
+                if (GetAccountingClassList(accountingClass.Code).Count > 0)
                 {
-                    //var record = repo.AccountingClass.OrderByDescending(x => x.AddDate).FirstOrDefault();
-
-                    //if (record != null)
-                    //{
-                    //    accountingClass.Code = CommonHelper.IncreaseCode(record.Code);
-                    //}
-                    //else
-                    //    accountingClass.Code = "1";
-
-
-                    if (GetAccountingClassList(accountingClass.Code).Count > 0)
-                    {
-                        errorMsg = "Code already exists";
-                        return null;
-                    }
-                    accountingClass.Active = "Y";
-                    accountingClass.AddDate = DateTime.Now;
-                    repo.AccountingClass.Add(accountingClass);
-                    if (repo.SaveChanges() > 0)
-                        return accountingClass;
-
+                    errorMsg = "Code already exists";
                     return null;
                 }
+                accountingClass.Active = "Y";
+                accountingClass.AddDate = DateTime.Now;
+                repo.AccountingClass.Add(accountingClass);
+                if (repo.SaveChanges() > 0)
+                    return accountingClass;
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -52,10 +50,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<AccountingClass> repo = new Repository<AccountingClass>())
-                {
-                    return repo.AccountingClass.Where(x => x.Active =="Y").ToList();
-                }
+                using Repository<AccountingClass> repo = new Repository<AccountingClass>();
+                return repo.AccountingClass.Where(x => x.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -64,10 +60,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<AccountingClass> repo = new Repository<AccountingClass>())
-                {
-                    return repo.AccountingClass.Where(x => x.Code == code).ToList();
-                }
+                using Repository<AccountingClass> repo = new Repository<AccountingClass>();
+                return repo.AccountingClass.Where(x => x.Code == code).ToList();
             }
             catch { throw; }
         }
@@ -76,14 +70,12 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<AccountingClass> repo = new Repository<AccountingClass>())
-                {
-                    repo.AccountingClass.Update(accountingClass);
-                    if (repo.SaveChanges() > 0)
-                        return accountingClass;
+                using Repository<AccountingClass> repo = new Repository<AccountingClass>();
+                repo.AccountingClass.Update(accountingClass);
+                if (repo.SaveChanges() > 0)
+                    return accountingClass;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -94,16 +86,14 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<AccountingClass> repo = new Repository<AccountingClass>())
-                {
-                    var accountClass = repo.AccountingClass.Where(x => x.Code == code).FirstOrDefault();
-                    accountClass.Active = "N";
-                    repo.AccountingClass.Update(accountClass);
-                    if (repo.SaveChanges() > 0)
-                        return accountClass;
+                using Repository<AccountingClass> repo = new Repository<AccountingClass>();
+                var accountClass = repo.AccountingClass.Where(x => x.Code == code).FirstOrDefault();
+                accountClass.Active = "N";
+                repo.AccountingClass.Update(accountClass);
+                if (repo.SaveChanges() > 0)
+                    return accountClass;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {

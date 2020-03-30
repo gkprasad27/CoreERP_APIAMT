@@ -13,13 +13,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>())
-                {
-
-                    return repo.TblTaxGroup
-                               .Where(x => x.TaxGroupCode == code)
-                               .ToList();
-                }
+                using Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>();
+                return repo.TblTaxGroup
+                           .Where(x => x.TaxGroupCode == code)
+                           .ToList();
             }
             catch { throw; }
         }
@@ -28,10 +25,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>())
-                {
-                    return repo.TblTaxGroup.ToList();
-                }
+                using Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>();
+                return repo.TblTaxGroup.ToList();
             }
             catch { throw; }
         }
@@ -40,17 +35,15 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>())
-                {
-                    string name = Convert.ToString(repo.MaterialGroup.SingleOrDefault(obj => obj.GroupName == Convert.ToString(taxgroup.ProductGroupName))?.Code);
-                    taxgroup.ProductGroupId = int.Parse(name);
-                    taxgroup.ProductGroupCode = int.Parse(name);
-                    repo.TblTaxGroup.Add(taxgroup);
-                    if (repo.SaveChanges() > 0)
-                        return taxgroup;
+                using Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>();
+                string name = Convert.ToString(repo.MaterialGroup.SingleOrDefault(obj => obj.GroupName == Convert.ToString(taxgroup.ProductGroupName))?.Code);
+                taxgroup.ProductGroupId = int.Parse(name);
+                taxgroup.ProductGroupCode = int.Parse(name);
+                repo.TblTaxGroup.Add(taxgroup);
+                if (repo.SaveChanges() > 0)
+                    return taxgroup;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -62,17 +55,15 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>())
-                {
-                    string name = Convert.ToString(repo.MaterialGroup.SingleOrDefault(obj => obj.GroupName == Convert.ToString(taxgroup.ProductGroupName))?.Code);
-                    taxgroup.ProductGroupId = int.Parse(name);
-                    taxgroup.ProductGroupCode = int.Parse(name);
-                    repo.TblTaxGroup.Update(taxgroup);
-                    if (repo.SaveChanges() > 0)
-                        return taxgroup;
+                using Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>();
+                string name = Convert.ToString(repo.MaterialGroup.SingleOrDefault(obj => obj.GroupName == Convert.ToString(taxgroup.ProductGroupName))?.Code);
+                taxgroup.ProductGroupId = int.Parse(name);
+                taxgroup.ProductGroupCode = int.Parse(name);
+                repo.TblTaxGroup.Update(taxgroup);
+                if (repo.SaveChanges() > 0)
+                    return taxgroup;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -84,15 +75,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>())
-                {
-                    var taxcode = repo.TblTaxGroup.Where(x => x.TaxGroupId ==Convert.ToInt32(Code)).FirstOrDefault();
-                    repo.TblTaxGroup.Remove(taxcode);
-                    if (repo.SaveChanges() > 0)
-                        return taxcode;
+                using Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>();
+                var taxcode = repo.TblTaxGroup.Where(x => x.TaxGroupId == Convert.ToInt32(Code)).FirstOrDefault();
+                repo.TblTaxGroup.Remove(taxcode);
+                if (repo.SaveChanges() > 0)
+                    return taxcode;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -104,10 +93,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<MaterialGroup> repo = new Repository<MaterialGroup>())
-                {
-                    return repo.MaterialGroup.ToList();
-                }
+                using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
+                return repo.MaterialGroup.ToList();
             }
             catch { throw; }
         }

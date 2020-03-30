@@ -13,12 +13,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblProductPacking> repo = new Repository<TblProductPacking>())
-                {
-                    return repo.TblProductPacking
-                               .Where(x => x.PackingCode == code)
-                               .ToList();
-                }
+                using Repository<TblProductPacking> repo = new Repository<TblProductPacking>();
+                return repo.TblProductPacking
+.Where(x => x.PackingCode == code)
+.ToList();
             }
             catch { throw; }
         }
@@ -27,10 +25,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblProductPacking> repo = new Repository<TblProductPacking>())
-                {
-                    return repo.TblProductPacking.ToList();
-                }
+                using Repository<TblProductPacking> repo = new Repository<TblProductPacking>();
+                return repo.TblProductPacking.ToList();
             }
             catch { throw; }
         }
@@ -39,21 +35,19 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblProductPacking> repo = new Repository<TblProductPacking>())
+                using Repository<TblProductPacking> repo = new Repository<TblProductPacking>();
+                if (productpak != null)
                 {
-                    if(productpak!=null)
-                    {
-                        //if(productpak.BarrelVerify==true)
-                        //{
+                    //if(productpak.BarrelVerify==true)
+                    //{
 
-                        //}
-                    }
-                    repo.TblProductPacking.Add(productpak);
-                    if (repo.SaveChanges() > 0)
-                        return productpak;
-
-                    return null;
+                    //}
                 }
+                repo.TblProductPacking.Add(productpak);
+                if (repo.SaveChanges() > 0)
+                    return productpak;
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -65,14 +59,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblProductPacking> repo = new Repository<TblProductPacking>())
-                {
-                    repo.TblProductPacking.Update(productpack);
-                    if (repo.SaveChanges() > 0)
-                        return productpack;
+                using Repository<TblProductPacking> repo = new Repository<TblProductPacking>();
+                repo.TblProductPacking.Update(productpack);
+                if (repo.SaveChanges() > 0)
+                    return productpack;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -84,15 +76,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblProductPacking> repo = new Repository<TblProductPacking>())
-                {
-                    var productpack = repo.TblProductPacking.Where(x => x.PackingId ==Convert.ToUInt32(Code)).FirstOrDefault();
-                    repo.TblProductPacking.Remove(productpack);
-                    if (repo.SaveChanges() > 0)
-                        return productpack;
+                using Repository<TblProductPacking> repo = new Repository<TblProductPacking>();
+                var productpack = repo.TblProductPacking.Where(x => x.PackingId == Convert.ToUInt32(Code)).FirstOrDefault();
+                repo.TblProductPacking.Remove(productpack);
+                if (repo.SaveChanges() > 0)
+                    return productpack;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {

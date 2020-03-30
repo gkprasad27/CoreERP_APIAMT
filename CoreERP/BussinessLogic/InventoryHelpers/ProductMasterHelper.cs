@@ -14,10 +14,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using (Repository<TblProduct> repo = new Repository<TblProduct>())
-                {
-                    return repo.TblProduct.AsEnumerable().Where(x => x.IsActive == true).ToList();
-                }
+                using Repository<TblProduct> repo = new Repository<TblProduct>();
+                return repo.TblProduct.AsEnumerable().Where(x => x.IsActive == true).ToList();
             }
             catch { throw; }
         }

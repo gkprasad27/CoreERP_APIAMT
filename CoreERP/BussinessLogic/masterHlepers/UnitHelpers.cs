@@ -13,12 +13,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblUnit> repo = new Repository<TblUnit>())
-                {
-                    return repo.TblUnit
-                               .Where(x => x.UnitName == (name ?? x.UnitName))
-                               .ToList();
-                }
+                using Repository<TblUnit> repo = new Repository<TblUnit>();
+                return repo.TblUnit
+.Where(x => x.UnitName == (name ?? x.UnitName))
+.ToList();
             }
             catch { throw; }
         }
@@ -27,14 +25,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblUnit> repo = new Repository<TblUnit>())
-                {
-                    repo.TblUnit.Add(unit);
-                    if (repo.SaveChanges() > 0)
-                        return unit;
+                using Repository<TblUnit> repo = new Repository<TblUnit>();
+                repo.TblUnit.Add(unit);
+                if (repo.SaveChanges() > 0)
+                    return unit;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -46,14 +42,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblUnit> repo = new Repository<TblUnit>())
-                {
-                    repo.TblUnit.Update(units);
-                    if (repo.SaveChanges() > 0)
-                        return units;
+                using Repository<TblUnit> repo = new Repository<TblUnit>();
+                repo.TblUnit.Update(units);
+                if (repo.SaveChanges() > 0)
+                    return units;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -65,15 +59,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblUnit> repo = new Repository<TblUnit>())
-                {
-                    var unitno = repo.TblUnit.Where(x => x.UnitId == Convert.ToInt32(Code)).FirstOrDefault();
-                    repo.TblUnit.Remove(unitno);
-                    if (repo.SaveChanges() > 0)
-                        return unitno;
+                using Repository<TblUnit> repo = new Repository<TblUnit>();
+                var unitno = repo.TblUnit.Where(x => x.UnitId == Convert.ToInt32(Code)).FirstOrDefault();
+                repo.TblUnit.Remove(unitno);
+                if (repo.SaveChanges() > 0)
+                    return unitno;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {

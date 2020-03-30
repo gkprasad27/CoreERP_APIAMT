@@ -13,28 +13,24 @@ namespace CoreERP.BussinessLogic.masterHlepers
         public  static Erpuser ValidateUser(Erpuser erpuser)
         {
             Erpuser user = null;
-            using (Repository<Erpuser> _repo = new Repository<Erpuser>())
-            {
-               user = _repo.Erpuser
-                             .Where(u => u.UserName.Equals(erpuser.UserName)
-                             && u.Password.Equals(erpuser.Password)
-                          ).FirstOrDefault();
-
-              
+            using Repository<Erpuser> _repo = new Repository<Erpuser>();
+            user = _repo.Erpuser
+.Where(u => u.UserName.Equals(erpuser.UserName)
+&& u.Password.Equals(erpuser.Password)
+).FirstOrDefault();
 
 
-                return user;
-            }
+
+
+            return user;
         }
 
         public Erpuser GetErpuser(decimal seqiId)
         {
             try
             {
-                using (Repository<Erpuser> _repo = new Repository<Erpuser>())
-                {
-                   return  _repo.Erpuser.Where(u =>u.SeqId == seqiId).FirstOrDefault();
-                }
+                using Repository<Erpuser> _repo = new Repository<Erpuser>();
+                return _repo.Erpuser.Where(u => u.SeqId == seqiId).FirstOrDefault();
             }
             catch(Exception ex)
             {
@@ -45,10 +41,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using(ERPContext context=new ERPContext())
-                {
-                    return context.TblUserBranch.Where(x => x.UserId == SeqId).FirstOrDefault().BranchName.Split(";")?.ToList();
-                }
+                using ERPContext context = new ERPContext();
+                return context.TblUserBranch.Where(x => x.UserId == SeqId).FirstOrDefault().BranchName.Split(";")?.ToList();
             }
             catch(Exception ex)
             {
@@ -59,10 +53,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using(Repository<Erpuser> repo=new Repository<Erpuser>())
-                {
-                    return repo.Erpuser.ToList();
-                }
+                using Repository<Erpuser> repo = new Repository<Erpuser>();
+                return repo.Erpuser.ToList();
             }
             catch(Exception ex)
             {
@@ -73,10 +65,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Menus> repo=new Repository<Menus>())
-                {
-                    return repo.Menus.ToList();
-                }
+                using Repository<Menus> repo = new Repository<Menus>();
+                return repo.Menus.ToList();
             }
             catch(Exception ex)
             {
@@ -89,76 +79,72 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 List<ExpandoObject> menusbyRole = new List<ExpandoObject>();
 
-                using (Repository<Erpuser> _repo = new Repository<Erpuser>())
+                using Repository<Erpuser> _repo = new Repository<Erpuser>();
+                var menuAccLst = _repo.MenuAccesses
+//.Where(m => m.RoleId == userRole)
+.OrderByDescending(x => x.AddDate)
+.FirstOrDefault()
+.Ext4.Split(',')
+.ToList();
+                var menuList = _repo.Menus
+                                    .Where(x => menuAccLst.Contains(x.Code.ToString()))
+                                    .ToList();
+                var parentIDs = menuList.Where(x => x.ParentId != null).Select(x => x.ParentId).Distinct();
+
+                foreach (var pid in parentIDs)
                 {
-                    var menuAccLst = _repo.MenuAccesses
-                                  //.Where(m => m.RoleId == userRole)
-                                  .OrderByDescending(x => x.AddDate)
-                                  .FirstOrDefault()
-                                  .Ext4.Split(',')
-                                  .ToList();
-                    var menuList = _repo.Menus
-                                        .Where(x => menuAccLst.Contains(x.Code.ToString()))
-                                        .ToList();
-                    var parentIDs = menuList.Where(x => x.ParentId != null).Select(x => x.ParentId).Distinct();
-
-                    foreach (var pid in parentIDs)
+                    //find child menus by using parent id
+                    List<Menus> menulst = _repo.Menus
+                                          .Where(x => x.ParentId == pid)
+                                          .ToList();
+                    // create Array structure for UI to show menus
+                    if (menulst.Count() > 0)
                     {
-                        //find child menus by using parent id
-                        List<Menus> menulst = _repo.Menus
-                                              .Where(x => x.ParentId == pid)
-                                              .ToList();
-                        // create Array structure for UI to show menus
-                        if (menulst.Count() > 0)
+                        List<ExpandoObject> childList = new List<ExpandoObject>();
+                        Menus mobj = menuList.Where(m => m.Code.ToString() == pid).FirstOrDefault();
+
+                        // this is for to Add headers of Parent
+                        foreach (Menus m in menulst)
                         {
-                            List<ExpandoObject> childList = new List<ExpandoObject>();
-                            Menus mobj = menuList.Where(m => m.Code.ToString() == pid).FirstOrDefault();
+                            dynamic expandoChild = new ExpandoObject();
+                            expandoChild.displayName = m.DisplayName;
+                            expandoChild.iconName = m.IconName;
+                            expandoChild.route = m.Route;
 
-                            // this is for to Add headers of Parent
-                            foreach (Menus m in menulst)
-                            {
-                                dynamic expandoChild = new ExpandoObject();
-                                expandoChild.displayName = m.DisplayName;
-                                expandoChild.iconName = m.IconName;
-                                expandoChild.route = m.Route;
-
-                                if (!m.IsMasterScreen.Equals("Y", StringComparison.OrdinalIgnoreCase))
-                                    childList.Add(expandoChild);
-                            }
-
-                            // parent Name along with its child menus
-                            dynamic expandoObj = new ExpandoObject();
-                            expandoObj.displayName = mobj.DisplayName;
-                            expandoObj.iconName = mobj.IconName;
-                            expandoObj.route = mobj.Route;
-                            expandoObj.children = childList;
-
-                            menusbyRole.Add(expandoObj);
+                            if (!m.IsMasterScreen.Equals("Y", StringComparison.OrdinalIgnoreCase))
+                                childList.Add(expandoChild);
                         }
 
+                        // parent Name along with its child menus
+                        dynamic expandoObj = new ExpandoObject();
+                        expandoObj.displayName = mobj.DisplayName;
+                        expandoObj.iconName = mobj.IconName;
+                        expandoObj.route = mobj.Route;
+                        expandoObj.children = childList;
+
+                        menusbyRole.Add(expandoObj);
                     }
 
-                    return menusbyRole;
                 }
+
+                return menusbyRole;
             }
             catch (Exception ex) { throw ex; }
         }
 
-        private bool isShiftIdExists(decimal userID,string branchCode)
+        private bool IsShiftIdExists(decimal userID,string branchCode)
         {
             try
             {
-                using (Repository<TblShift> _repo=new Repository<TblShift>())
-                {
-                    var _shift= _repo.TblShift
-                                .Where(x => x.UserId == userID 
-                                        && x.BranchCode == branchCode)
-                                .ToList();
-                    // DateTime.Parse(x.InTime.Value.ToShortDateString()) == DateTime.Parse((DateTime.Today).ToShortDateString())
-                    var result = _shift.Where(x=> DateTime.Parse(x.InTime.Value.ToShortDateString()) == DateTime.Parse((DateTime.Today).ToShortDateString())).Count() > 0;
+                using Repository<TblShift> _repo = new Repository<TblShift>();
+                var _shift = _repo.TblShift
+.Where(x => x.UserId == userID
+&& x.BranchCode == branchCode)
+.ToList();
+                // DateTime.Parse(x.InTime.Value.ToShortDateString()) == DateTime.Parse((DateTime.Today).ToShortDateString())
+                var result = _shift.Where(x => DateTime.Parse(x.InTime.Value.ToShortDateString()) == DateTime.Parse((DateTime.Today).ToShortDateString())).Count() > 0;
 
-                    return result;
-                }
+                return result;
             }
             catch
             {
@@ -172,46 +158,44 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 TblShift _shift = null;
 
-                if (!isShiftIdExists(userId, branchCode)) 
+                if (!IsShiftIdExists(userId, branchCode)) 
                 {
                     var _branch = BrancheHelper.GetBranches().Where(b => b.BranchCode == branchCode).FirstOrDefault();
-                  
-                    _shift = new TblShift();
-                    _shift.UserId = userId;
-                    _shift.Narration = "Shift in Progress.";
-                    _shift.Status = 0;
-                    _shift.EmployeeId = -1;
-                    _shift.BranchId = _branch?.BranchId;
-                    _shift.BranchCode = _branch?.BranchCode;
-                    _shift.BranchName = _branch?.BranchName;
-                    _shift.InTime = DateTime.Now;
-                    _shift.OutTime = DateTime.Now;
 
-                    using (Repository<TblShift> _repo = new Repository<TblShift>())
+                    _shift = new TblShift
                     {
-                        _repo.TblShift.Add(_shift);
-                        _repo.SaveChanges();
-                    } 
+                        UserId = userId,
+                        Narration = "Shift in Progress.",
+                        Status = 0,
+                        EmployeeId = -1,
+                        BranchId = _branch?.BranchId,
+                        BranchCode = _branch?.BranchCode,
+                        BranchName = _branch?.BranchName,
+                        InTime = DateTime.Now,
+                        OutTime = DateTime.Now
+                    };
+
+                    using Repository<TblShift> _repo = new Repository<TblShift>();
+                    _repo.TblShift.Add(_shift);
+                    _repo.SaveChanges();
                 }
                 else
                 {
                     //if user entry exists for today
-                    using (Repository<TblShift> _repo = new Repository<TblShift>())
-                    {
-                        _shift = _repo.TblShift
-                                  .AsEnumerable()
-                                .Where(x => DateTime.Parse(x.InTime.Value.ToShortDateString()) == DateTime.Parse((DateTime.Today).ToShortDateString())
-                                        && x.UserId == userId
-                                        && x.BranchCode == branchCode)
-                                 .FirstOrDefault();
+                    using Repository<TblShift> _repo = new Repository<TblShift>();
+                    _shift = _repo.TblShift
+.AsEnumerable()
+.Where(x => DateTime.Parse(x.InTime.Value.ToShortDateString()) == DateTime.Parse((DateTime.Today).ToShortDateString())
+&& x.UserId == userId
+&& x.BranchCode == branchCode)
+.FirstOrDefault();
 
-                        _shift.OutTime = DateTime.Now;
-                        _shift.Status = 0;
-                        _shift.Narration = "Shift in Progress.";
+                    _shift.OutTime = DateTime.Now;
+                    _shift.Status = 0;
+                    _shift.Narration = "Shift in Progress.";
 
-                        _repo.TblShift.Update(_shift);
-                        _repo.SaveChanges();
-                    }
+                    _repo.TblShift.Update(_shift);
+                    _repo.SaveChanges();
                 }
 
                 return _shift.ShiftId.ToString();
@@ -229,23 +213,21 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 errorMessage = string.Empty;
 
-                if (isShiftIdExists(userId, branchCode))
+                if (IsShiftIdExists(userId, branchCode))
                 {
-                    using (Repository<TblShift> _repo = new Repository<TblShift>())
-                    {
-                     var  _shift = _repo.TblShift
-                                  .Where(x => x.UserId == userId
-                                         && x.BranchCode == branchCode)
-                                .OrderByDescending(s=> s.InTime)
-                                .FirstOrDefault();
+                    using Repository<TblShift> _repo = new Repository<TblShift>();
+                    var _shift = _repo.TblShift
+.Where(x => x.UserId == userId
+&& x.BranchCode == branchCode)
+.OrderByDescending(s => s.InTime)
+.FirstOrDefault();
 
-                        _shift.OutTime = DateTime.Now;
-                        _shift.Status = 1;
-                        _shift.Narration = "Shift Logged Out";
+                    _shift.OutTime = DateTime.Now;
+                    _shift.Status = 1;
+                    _shift.Narration = "Shift Logged Out";
 
-                        _repo.TblShift.Update(_shift);
-                        _repo.SaveChanges();
-                    }
+                    _repo.TblShift.Update(_shift);
+                    _repo.SaveChanges();
                 }
                 else
                 {
