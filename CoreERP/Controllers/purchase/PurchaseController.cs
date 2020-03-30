@@ -134,7 +134,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("GetInvoiceList/{branchCode}")]
-        public async Task<IActionResult> GetInvoiceList(string branchCode, [FromBody]SearchCriteria searchCriteria)
+        public async Task<IActionResult> GetInvoiceList([FromBody]SearchCriteria searchCriteria)
         {
             var result = await Task.Run(() =>
             {

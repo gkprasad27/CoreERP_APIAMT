@@ -36,7 +36,6 @@ namespace CoreERP.Controllers.masters
         [HttpPost("RegisterLeaveBalancesList")]
         public IActionResult RegisterLeaveBalancesList([FromBody]LeaveBalanceMaster lbm)
         {
-            APIResponse apiResponse = null;
             if (lbm == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
@@ -46,6 +45,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"LeaveCode Code {nameof(lbm.LeaveCode)} is already exists ,Please Use Different Code " });
 
                 var result = new LeaveBalancesHelper().Register(lbm);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -68,13 +68,13 @@ namespace CoreERP.Controllers.masters
         [HttpPut("UpdateLeaveBalancesList")]
         public IActionResult UpdateLeaveBalancesList([FromBody] LeaveBalanceMaster lbm)
         {
-            APIResponse apiResponse = null;
             if (lbm == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(lbm)} cannot be null" });
 
             try
             {
                 var rs = new LeaveBalancesHelper().Update(lbm);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -95,13 +95,13 @@ namespace CoreERP.Controllers.masters
         [HttpDelete("DeleteLeaveBalancesList/{code}")]
         public IActionResult DeleteLeaveBalancesList(string code)
         {
-            APIResponse apiResponse = null;
             try
             {
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 var rs = new LeaveBalancesHelper().Delete(code);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };

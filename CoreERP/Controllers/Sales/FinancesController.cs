@@ -16,7 +16,7 @@ namespace CoreERP.Controllers
         [HttpGet("GetFinanceList")]
         public IActionResult GetFinanceList()
         {
-            APIResponse apiResponse = null;
+            APIResponse apiResponse;
             try
             {
                 var financeList = BillingHelpers.GetFinances();
@@ -114,7 +114,7 @@ namespace CoreERP.Controllers
                 if (response != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = response });
             }
-            catch (Exception ex)
+            catch (Exception )
             {
             }
 

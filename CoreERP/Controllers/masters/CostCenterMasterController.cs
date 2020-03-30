@@ -39,7 +39,6 @@ namespace CoreERP.Controllers
         [HttpPost("RegisterCostCenter")]
         public IActionResult RegisterCostCenter([FromBody]CostCenters costCenter)
         {
-            APIResponse apiResponse = null;
             if (costCenter == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(costCenter)} cannot be null" });
             try
@@ -48,6 +47,7 @@ namespace CoreERP.Controllers
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"Code ={costCenter.Code} Already Exists." });
 
                 var result = CostCenterHelper.RegisterCostCenter(costCenter);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -70,13 +70,13 @@ namespace CoreERP.Controllers
         [HttpPut("UpdateCostCenter")]
         public IActionResult UpdateCostCenter([FromBody] CostCenters costCenter)
         {
-            APIResponse apiResponse = null;
             if (costCenter == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(costCenter)} cannot be null" });
             try
             {
 
                 var rs = CostCenterHelper.UpdateCostCenter(costCenter);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -97,12 +97,12 @@ namespace CoreERP.Controllers
         [HttpDelete("DeleteCostCenter/{code}")]
         public IActionResult DeleteCostCenter(string code)
         {
-            APIResponse apiResponse = null;
             if (string.IsNullOrWhiteSpace(code))
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
             try
             {
                 var result = CostCenterHelper.DeleteCostCenter(code);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

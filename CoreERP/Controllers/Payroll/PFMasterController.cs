@@ -112,13 +112,13 @@ namespace CoreERP.Controllers.Payroll
         [HttpDelete("DeletePF/{code}")]
         public IActionResult DeletePF(string code)
         {
-            APIResponse apiResponse = null;
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
             {
                 var result = PFMasterHelper.DeletePF(code);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

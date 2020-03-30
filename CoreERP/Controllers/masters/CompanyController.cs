@@ -101,13 +101,13 @@ namespace CoreERP.Controllers
         [HttpDelete("DeleteCompany/{code}")]
         public IActionResult DeleteCompany(string code)
         {
-            APIResponse apiResponse = null;
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
             {
                 var result = CompaniesHelper.DeleteCompanies(code);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

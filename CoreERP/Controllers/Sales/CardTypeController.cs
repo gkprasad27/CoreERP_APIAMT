@@ -52,7 +52,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetTypeList")]
-        public IActionResult GetTypeList(string accountType)
+        public IActionResult GetTypeList()
         {
             try
             {

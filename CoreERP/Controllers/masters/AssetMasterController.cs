@@ -83,12 +83,12 @@ namespace CoreERP.Controllers
         [HttpPut("UpdateAssetMaster")]
         public IActionResult UpdateAssetMaster([FromBody]AssetMaster assetMaster)
         {
-            APIResponse apiResponse = null;
             if (assetMaster == null)
                 return BadRequest($"{nameof(assetMaster)} cannot be null");
             try
             {
                 var result = AssetHelper.UpdateAssetMaster(assetMaster);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

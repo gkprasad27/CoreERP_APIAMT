@@ -69,13 +69,13 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("getMenu/{roleName}")]
-        public async Task<IActionResult> GetMenus(string roleName)
+        public async Task<IActionResult> GetMenus()
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var result = UserManagmentHelper.GetScreensListByUserRole(roleName);
+                    var result = UserManagmentHelper.GetScreensListByUserRole();
                     if (result != null)
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 

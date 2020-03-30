@@ -17,7 +17,6 @@ namespace CoreERP.Controllers.masters
         [HttpPost("RegisterTaxStructure")]
         public IActionResult RegisterTaxStructure([FromBody]TblTaxStructure taxstructure)
         {
-            APIResponse apiResponse = null;
             if (taxstructure == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
@@ -28,6 +27,7 @@ namespace CoreERP.Controllers.masters
                 //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"productpacking Code {nameof(taxstructurelist)} is already exists ,Please Use Different Code " });
 
                 var result = new TaxstructureHelpers().Register(taxstructure);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -72,13 +72,13 @@ namespace CoreERP.Controllers.masters
         [HttpPut("UpdateTaxStructure")]
         public IActionResult UpdateTaxStructure([FromBody] TblTaxStructure taxstructure)
         {
-            APIResponse apiResponse = null;
             if (taxstructure == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(taxstructure)} cannot be null" });
 
             try
             {
                 var rs = new TaxstructureHelpers().Update(taxstructure);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -99,13 +99,13 @@ namespace CoreERP.Controllers.masters
         [HttpDelete("DeleteTaxStructure/{code}")]
         public IActionResult DeleteTaxStructure(string code)
         {
-            APIResponse apiResponse = null;
             try
             {
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 var rs = new TaxstructureHelpers().Delete(code);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };

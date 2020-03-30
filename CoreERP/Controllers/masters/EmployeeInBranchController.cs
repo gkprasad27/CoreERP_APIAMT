@@ -86,12 +86,12 @@ namespace CoreERP.Controllers
         [HttpPost("RegisterEmployeeInBranch")]
         public IActionResult RegisterEmployeeInBranch([FromBody]EmployeeInBranches employeeInBranch)
         {
-            APIResponse apiResponse = null;
             if (employeeInBranch == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(employeeInBranch)} cannot be null" });
             try
             {
                 var result = EmployeeHelper.RegisterEmployeeInBranch(employeeInBranch);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -114,13 +114,13 @@ namespace CoreERP.Controllers
         [HttpPut("UpdateEmployeeInBranch")]
         public IActionResult UpdateEmployeeInBranch([FromBody] EmployeeInBranches employeeInBranch)
         {
-            APIResponse apiResponse = null;
             if (employeeInBranch == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(employeeInBranch)} cannot be null." });
 
             try
             {
                 var result = EmployeeHelper.UpdateEmployeeInBranches(employeeInBranch);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -142,13 +142,13 @@ namespace CoreERP.Controllers
         [HttpDelete("DeleteEmployeeInBranch/{code}")]
         public IActionResult DeleteEmployeeInBranch(string code)
         {
-            APIResponse apiResponse = null;
             if (code == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
             {
                 var result = EmployeeHelper.DeleteEmployeeInBranches(code);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

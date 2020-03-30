@@ -82,7 +82,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateMatTranTypes")]
-        public IActionResult UpdateMatTranTypes(string code, [FromBody] MatTranTypes mattrantype)
+        public IActionResult UpdateMatTranTypes([FromBody] MatTranTypes mattrantype)
         {
             if (mattrantype == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(mattrantype)} cannot be null" });

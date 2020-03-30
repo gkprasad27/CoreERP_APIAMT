@@ -73,7 +73,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
-        public static List<ExpandoObject> GetScreensListByUserRole(string userRole)
+        public static List<ExpandoObject> GetScreensListByUserRole()
         {
             try
             {
@@ -200,7 +200,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
 
                 return _shift.ShiftId.ToString();
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 //throw Exception;
                 return "-1";

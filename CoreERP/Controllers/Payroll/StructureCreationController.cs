@@ -97,13 +97,13 @@ namespace CoreERP.Controllers.Payroll
         [HttpDelete("DeleteStructureCreation/{code}")]
         public IActionResult DeleteStructureCreation(string code)
         {
-            APIResponse apiResponse = null;
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
             {
                 var result = StructureCreationHelper.Delete(code);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

@@ -18,7 +18,6 @@ namespace CoreERP.Controllers
         [HttpPost("RegisterDivision")]
         public IActionResult RegisterDivision([FromBody]Divisions division)
         {
-            APIResponse apiResponse = null;
             if (division == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
@@ -28,6 +27,7 @@ namespace CoreERP.Controllers
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Division Code {nameof(division.Code)} is already exists ,Please Use Different Code " });
 
                 var result = DivisionHelper.Register(division);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -74,13 +74,13 @@ namespace CoreERP.Controllers
         [HttpPut("UpdateDivision")]
         public IActionResult UpdateDivision([FromBody] Divisions division)
         {
-            APIResponse apiResponse = null;
             if (division == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(division)} cannot be null" });
 
             try
             {
                 var rs = DivisionHelper.Update(division);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -101,13 +101,13 @@ namespace CoreERP.Controllers
         [HttpDelete("DeleteDivision/{code}")]
         public IActionResult DeleteDivisionByID(string code)
         {
-            APIResponse apiResponse = null;
             try
             {
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 var rs = DivisionHelper.Delete(code);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };

@@ -37,7 +37,6 @@ namespace CoreERP.Controllers.Transactions
         [HttpPost("RegisterPackageConversion")]
         public IActionResult RegisterPackageConversion([FromBody]TblPackageConversion packageconversion)
         {
-            APIResponse apiResponse = null;
             if (packageconversion == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
@@ -47,6 +46,7 @@ namespace CoreERP.Controllers.Transactions
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Inputproduct Code {nameof(packageconversion.InputproductCode)} is already exists ,Please Use Different Code " });
 
                 var result = new PackageConversionHelper().Register(packageconversion);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -115,13 +115,13 @@ namespace CoreERP.Controllers.Transactions
         [HttpPut("UpdatePackageConversionList")]
         public IActionResult UpdatePackageConversionList([FromBody] TblPackageConversion packagesconvrsn)
         {
-            APIResponse apiResponse = null;
             if (packagesconvrsn == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(packagesconvrsn)} cannot be null" });
 
             try
             {
                 var rs = new PackageConversionHelper().Update(packagesconvrsn);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -142,13 +142,13 @@ namespace CoreERP.Controllers.Transactions
         [HttpDelete("DeletePackageConversion/{code}")]
         public IActionResult DeletePackageConversion(string code)
         {
-            APIResponse apiResponse = null;
             try
             {
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 var rs = new PackageConversionHelper().Delete(code);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };

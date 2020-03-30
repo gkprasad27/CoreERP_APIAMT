@@ -148,7 +148,7 @@ namespace CoreERP.Controllers.Transactions
         }
 
         [HttpPost("GetCashreceiptList/{branchCode}")]
-        public async Task<IActionResult> GetCashreceiptList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
+        public async Task<IActionResult> GetCashreceiptList([FromBody]VoucherNoSearchCriteria searchCriteria)
         {
             var result = await Task.Run(() =>
             {

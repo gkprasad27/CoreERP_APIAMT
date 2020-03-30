@@ -77,13 +77,13 @@ namespace CoreERP.Controllers.masters
         [HttpPut("UpdateProductpacking")]
         public IActionResult UpdateProductpacking([FromBody] TblProductPacking productpack)
         {
-            APIResponse apiResponse = null;
             if (productpack == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(productpack)} cannot be null" });
 
             try
             {
                 var rs = new ProductpackingHelpers().Update(productpack);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -104,13 +104,13 @@ namespace CoreERP.Controllers.masters
         [HttpDelete("DeleteProductpacking/{code}")]
         public IActionResult DeleteProductpacking(string code)
         {
-            APIResponse apiResponse = null;
             try
             {
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 var rs = new ProductpackingHelpers().Delete(code);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };

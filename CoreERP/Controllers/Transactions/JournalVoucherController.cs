@@ -95,7 +95,7 @@ namespace CoreERP.Controllers.Transactions
         }
 
         [HttpPost("GetJournalvoucherList/{branchCode}")]
-        public async Task<IActionResult> GetJournalvoucherList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
+        public async Task<IActionResult> GetJournalvoucherList( [FromBody]VoucherNoSearchCriteria searchCriteria)
         {
             var result = await Task.Run(() =>
             {

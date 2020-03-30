@@ -105,7 +105,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpPut("UpdateVoucherTypes")]
-        public IActionResult UpdateVoucherTypes(string code, [FromBody] VoucherTypes vouchertype)
+        public IActionResult UpdateVoucherTypes([FromBody] VoucherTypes vouchertype)
         {
             if (vouchertype == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Request cannot be null" });

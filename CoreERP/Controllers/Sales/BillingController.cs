@@ -252,7 +252,7 @@ namespace CoreERP.Controllers
                 if (result != null)
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.Members = new { MemberCode = result.MemberCode, MemberName = result.MemberName, PhoneNo = result.Phone, GeneralNo = result.MemberCode };
+                    expando.Members = new { result.MemberCode, result.MemberName, PhoneNo = result.Phone, GeneralNo = result.MemberCode };
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
@@ -274,7 +274,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.Members = new InvoiceHelper().GetVehicles(vechileNo, memberCode).Take(100).Select(x => new { ID = x.VehicleId, Text = x.VehicleRegNo, MemberCode = x.MemberCode });
+                expando.Members = new InvoiceHelper().GetVehicles(vechileNo, memberCode).Take(100).Select(x => new { ID = x.VehicleId, Text = x.VehicleRegNo, x.MemberCode });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -303,7 +303,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("GetInvoiceList/{branchCode}")]
-        public IActionResult GetInvoiceList(string branchCode, [FromBody]SearchCriteria searchCriteria)
+        public IActionResult GetInvoiceList([FromBody]SearchCriteria searchCriteria)
         {
 
             if (searchCriteria == null)

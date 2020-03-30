@@ -93,13 +93,13 @@ namespace CoreERP.Controllers.masters
         [HttpPut("UpdateUnit")]
         public IActionResult UpdateUnit([FromBody] TblUnit unit)
         {
-            APIResponse apiResponse = null;
             if (unit == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(unit)} cannot be null" });
 
             try
             {
                 var rs = new UnitHelpers().Update(unit);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -120,13 +120,13 @@ namespace CoreERP.Controllers.masters
         [HttpDelete("DeleteUnit/{code}")]
         public IActionResult DeleteUnit(string code)
         {
-            APIResponse apiResponse = null;
             try
             {
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 var rs = new UnitHelpers().Delete(code);
+                APIResponse apiResponse;
                 if (rs != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };

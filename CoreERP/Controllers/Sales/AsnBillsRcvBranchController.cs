@@ -24,7 +24,7 @@ namespace CoreERP.Controllers
                 expanddo.asnbillsrcvbranch = AsnBillsRcvBranchHelper.GetAsnBillsRcvBranchList();
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expanddo });
             }
-            catch (Exception ex) { }
+            catch (Exception ) { }
             return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Failed to Load Asn Bill Receivable Branches." });
 
         }

@@ -25,7 +25,7 @@ namespace CoreERP.BussinessLogic.Common
 
                 return _suffixPrefix?.StartIndex;
             }
-            catch(Exception ex)
+            catch(Exception )
             {
                 return null;
             }
