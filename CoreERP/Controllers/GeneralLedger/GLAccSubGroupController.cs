@@ -14,7 +14,7 @@ namespace CoreERP.Controllers.GL
     public class GLAccSubGroupController : ControllerBase
     {
         [HttpPost("RegisterGlaccSubGroup")]
-        public async Task<IActionResult> RegisterGlaccSubGroup([FromBody]GlaccSubGroup accSubGroup)
+        public IActionResult RegisterGlaccSubGroup([FromBody]GlaccSubGroup accSubGroup)
         {
             if (accSubGroup == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(accSubGroup)} can not be null" });
@@ -36,9 +36,9 @@ namespace CoreERP.Controllers.GL
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-       
+
         [HttpPut("UpdateGLAccSubGroup")]
-        public async Task<IActionResult> UpdateGLAccSubGroup([FromBody] GlaccSubGroup accSubGroup)
+        public IActionResult UpdateGLAccSubGroup([FromBody] GlaccSubGroup accSubGroup)
         {
             if (accSubGroup == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(accSubGroup)} can not be null" });
@@ -46,7 +46,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 GlaccSubGroup result = GLHelper.UpdateAccSubGroup(accSubGroup);
-                if (result!=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
@@ -58,16 +58,16 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpDelete("DeleteAccountSubGroup/{code}")]
-        public async Task<IActionResult> DeleteAccountSubGroup(string code)
+        public IActionResult DeleteAccountSubGroup(string code)
         {
-            
+
             if (string.IsNullOrWhiteSpace(code))
-                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} can not be null" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} can not be null" });
 
             try
             {
                 GlaccSubGroup result = GLHelper.DeleteAccSubGroup(code);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
@@ -79,7 +79,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetGLAccountSubGroupList")]
-        public async Task<IActionResult> GetGLAccountSubGroupList()
+        public IActionResult GetGLAccountSubGroupList()
         {
             try
             {
@@ -100,7 +100,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetGLAccountGroupList")]
-        public async Task<IActionResult> GetGLAccountGroupList()
+        public IActionResult GetGLAccountGroupList()
         {
             try
             {

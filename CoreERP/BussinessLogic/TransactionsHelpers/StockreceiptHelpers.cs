@@ -11,15 +11,12 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 {
     public class StockreceiptHelpers
     {
-        string receipno = null;
         public  List<TblOperatorStockReceipt> GetStockreceiptList()
         {
             try
             {
-                using (Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>())
-                {
-                    return repo.TblOperatorStockReceipt.ToList();
-                }
+                using Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>();
+                return repo.TblOperatorStockReceipt.ToList();
             }
             catch { throw; }
         }
@@ -29,10 +26,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    return repo.TblBranch.AsEnumerable().Where(b => b.SubBranchof != -1).ToList();
-                }
+                using Repository<TblBranch> repo = new Repository<TblBranch>();
+                return repo.TblBranch.AsEnumerable().Where(b => b.SubBranchof != -1).ToList();
             }
             catch (Exception ex)
             {
@@ -79,7 +74,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                decimal? _salesRate = default(decimal?);
+                decimal? _salesRate = default;
 
                 using (Repository<TblProduct> repo = new Repository<TblProduct>())
                 {
@@ -105,10 +100,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>())
-                {
-                    return repo.TblMshsdrates.Where(x => x.ProductCode == productCode && x.BranchCode == branchCode).FirstOrDefault();
-                }
+                using Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>();
+                return repo.TblMshsdrates.Where(x => x.ProductCode == productCode && x.BranchCode == branchCode).FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -123,27 +116,26 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             {
                 var _product = Geproduct(productCode);
 
-                using (Repository<TblProduct> repo = new Repository<TblProduct>())
+                using Repository<TblProduct> repo = new Repository<TblProduct>();
+                var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
+                //var date = DateTime.Now.ToString();
+                var receiptno = repo.TblSuffixPrefix.Where(x => x.BranchCode == branchCode && x.VoucherTypeId == 42).FirstOrDefault();
+                var operatorStockreceiptDetail = new TblOperatorStockReceiptDetail
                 {
-                    var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
-                    //var date = DateTime.Now.ToString();
-                    var receiptno = repo.TblSuffixPrefix.Where(x => x.BranchCode == branchCode && x.VoucherTypeId == 42).FirstOrDefault();
-                    var operatorStockreceiptDetail = new TblOperatorStockReceiptDetail();
-                    operatorStockreceiptDetail.BatchNo = date + "-" + receiptno.Prefix + "-" + receiptno.StartIndex + "-" + receiptno.Suffix + "-" + "-" + _product.ProductCode;
+                    BatchNo = date + "-" + receiptno.Prefix + "-" + receiptno.StartIndex + "-" + receiptno.Suffix + "-" + "-" + _product.ProductCode,
                     //var receiptno = new CommonHelper().GenerateNumber(42, branchCode);
                     //operatorStockreceiptDetail.BatchNo = date + "-" + receiptno + "-" + _product.ProductCode;
-                    operatorStockreceiptDetail.Qty = 0;
-                    operatorStockreceiptDetail.GrossAmount = 0;
-                    operatorStockreceiptDetail.Rate = GetProductRate(branchCode, productCode);
-                    operatorStockreceiptDetail.AvailStock = GetProductQty(branchCode, productCode);
-                    operatorStockreceiptDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
-                    operatorStockreceiptDetail.ProductCode = _product.ProductCode;
-                    operatorStockreceiptDetail.ProductName = _product.ProductName;
-                    operatorStockreceiptDetail.UnitName = _product.UnitName;
+                    Qty = 0,
+                    GrossAmount = 0,
+                    Rate = GetProductRate(branchCode, productCode),
+                    AvailStock = GetProductQty(branchCode, productCode),
+                    HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0),
+                    ProductCode = _product.ProductCode,
+                    ProductName = _product.ProductName,
+                    UnitName = _product.UnitName
+                };
 
-                    return operatorStockreceiptDetail;
-
-                }
+                return operatorStockreceiptDetail;
             }
             catch { throw; }
         }
@@ -152,10 +144,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
-                }
+                using Repository<TblBranch> repo = new Repository<TblBranch>();
+                return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
             }
             catch (Exception ex)
             {
@@ -167,10 +157,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>())
-                {
-                    return repo.TblOperatorStockReceipt.Where(x => x.ReceiptNo == code).ToList();
-                }
+                using Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>();
+                return repo.TblOperatorStockReceipt.Where(x => x.ReceiptNo == code).ToList();
 
             }
             catch { throw; }
@@ -263,15 +251,13 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
                 searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
 
-                using (Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>())
-                {
-                    return repo.TblOperatorStockReceipt.AsEnumerable()
-                               .Where(inv => Convert.ToDateTime(inv.ReceiptDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                                        && Convert.ToDateTime(inv.ReceiptDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-                                        && inv.ReceiptNo == (searchCriteria.InvoiceNo ?? inv.ReceiptNo)
-                                  )
-                                .ToList();
-                }
+                using Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>();
+                return repo.TblOperatorStockReceipt.AsEnumerable()
+.Where(inv => Convert.ToDateTime(inv.ReceiptDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+&& Convert.ToDateTime(inv.ReceiptDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+&& inv.ReceiptNo == (searchCriteria.InvoiceNo ?? inv.ReceiptNo)
+)
+.ToList();
             }
             catch (Exception ex)
             {
@@ -284,10 +270,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblOperatorStockReceiptDetail> repo = new Repository<TblOperatorStockReceiptDetail>())
-                {
-                    return repo.TblOperatorStockReceiptDetail.Where(x => x.ReceiptNo == receptno).ToList();
-                }
+                using Repository<TblOperatorStockReceiptDetail> repo = new Repository<TblOperatorStockReceiptDetail>();
+                return repo.TblOperatorStockReceiptDetail.Where(x => x.ReceiptNo == receptno).ToList();
             }
             catch (Exception ex)
             {

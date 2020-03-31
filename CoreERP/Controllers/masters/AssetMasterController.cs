@@ -15,20 +15,20 @@ namespace CoreERP.Controllers
     [Route("api/masters/AssetMaster")]
     public class AssetMasterController : ControllerBase
     {
-       
+
         [HttpPost("RegisterAssetMaster")]
-        public async Task<IActionResult> RegisterAssetMaster([FromBody]  AssetMaster assetMaster)
+        public IActionResult RegisterAssetMaster([FromBody]  AssetMaster assetMaster)
         {
-           
+
             try
             {
                 APIResponse apiResponse = null;
 
                 if (AssetHelper.GetList(assetMaster.AssetNo) != null)
-                    return Ok(new APIResponse() { status=APIStatus.FAIL.ToString(),response=$"AssetNo ={assetMaster.AssetNo} Aready Exists."});
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"AssetNo ={assetMaster.AssetNo} Aready Exists." });
 
                 var result = AssetHelper.RegisterAssetMaster(assetMaster);
-                if (result !=null)
+                if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -42,13 +42,13 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
 
         }
 
         [HttpGet("GetAssetMasterList")]
-        public async Task<IActionResult> GetAssetMasterList()
+        public IActionResult GetAssetMasterList()
         {
             try
             {
@@ -62,7 +62,7 @@ namespace CoreERP.Controllers
                 else
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "No Data  Found" });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = ex.Message });
             }
@@ -81,14 +81,14 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateAssetMaster")]
-        public async Task<IActionResult> UpdateAssetMaster([FromBody]AssetMaster assetMaster)
+        public IActionResult UpdateAssetMaster([FromBody]AssetMaster assetMaster)
         {
-            APIResponse apiResponse = null;
             if (assetMaster == null)
                 return BadRequest($"{nameof(assetMaster)} cannot be null");
             try
             {
                 var result = AssetHelper.UpdateAssetMaster(assetMaster);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -102,24 +102,24 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message});
-            }  
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 
         [HttpDelete("DeleteAssetMaster/{code}")]
-        public async Task<IActionResult> DeleteAssetMaster(string code)
+        public IActionResult DeleteAssetMaster(string code)
         {
-      
+
             if (string.IsNullOrWhiteSpace(code))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Request cannot be null" });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
 
             try
             {
                 APIResponse apiResponse = null;
 
                 var result = AssetHelper.DeleteAssetMaster(code);
-                if (result !=null)
+                if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -132,9 +132,9 @@ namespace CoreERP.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message });
+                return BadRequest(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-       }
+        }
 
         //[HttpGet("isNoSeriesIsAuto")]
         //public async Task<IActionResult> IsNoSeriesIsAuto()

@@ -13,10 +13,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<CostCenters> repo = new Repository<CostCenters>())
-                {
-                    return repo.CostCenters.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
-                }
+                using Repository<CostCenters> repo = new Repository<CostCenters>();
+                return repo.CostCenters.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
             }
             catch { throw; }
         }
@@ -25,13 +23,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<CostCenters> repo = new Repository<CostCenters>())
-                {
-                    return repo.CostCenters
-                               .AsEnumerable()
-                               .Where(c => c.Code == code)
-                               .Count() > 0;
-                }
+                using Repository<CostCenters> repo = new Repository<CostCenters>();
+                return repo.CostCenters
+.AsEnumerable()
+.Where(c => c.Code == code)
+.Count() > 0;
             }
             catch { throw; }
         }
@@ -40,15 +36,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<CostCenters> repo = new Repository<CostCenters>())
-                {
-                    costCenter.Active = "Y";
-                    repo.CostCenters.Add(costCenter);
-                    if (repo.SaveChanges() > 0)
-                        return costCenter;
+                using Repository<CostCenters> repo = new Repository<CostCenters>();
+                costCenter.Active = "Y";
+                repo.CostCenters.Add(costCenter);
+                if (repo.SaveChanges() > 0)
+                    return costCenter;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -59,14 +53,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<CostCenters> repo = new Repository<CostCenters>())
-                {
-                    repo.CostCenters.Update(costCenters);
-                    if (repo.SaveChanges() > 0)
-                        return costCenters;
+                using Repository<CostCenters> repo = new Repository<CostCenters>();
+                repo.CostCenters.Update(costCenters);
+                if (repo.SaveChanges() > 0)
+                    return costCenters;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -77,16 +69,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<CostCenters> repo = new Repository<CostCenters>())
-                {
-                    var costcntr = repo.CostCenters.Where(c => c.Code == costCenterCode).FirstOrDefault();
-                    costcntr.Active = "N";
-                    repo.CostCenters.Update(costcntr);
-                    if (repo.SaveChanges() > 0)
-                        return costcntr;
+                using Repository<CostCenters> repo = new Repository<CostCenters>();
+                var costcntr = repo.CostCenters.Where(c => c.Code == costCenterCode).FirstOrDefault();
+                costcntr.Active = "N";
+                repo.CostCenters.Update(costcntr);
+                if (repo.SaveChanges() > 0)
+                    return costcntr;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }

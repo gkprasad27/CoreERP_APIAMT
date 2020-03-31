@@ -15,19 +15,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
+                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                if (string.IsNullOrEmpty(accountGroupCode))
+                    return repo.GlaccGroup.AsEnumerable().Where(glacc => glacc.Active == "Y").ToList();
+                else
                 {
-                    if (string.IsNullOrEmpty(accountGroupCode))
-                        return repo.GlaccGroup.AsEnumerable().Where(glacc => glacc.Active == "Y").ToList();
-                    else
-                    {
-                        return repo.GlaccGroup
-                                   .AsEnumerable()
-                                  .Where(glacc => glacc.Active == "Y"
-                                              &&  glacc.GroupCode == accountGroupCode
-                                        )
-                                  .ToList();
-                    }
+                    return repo.GlaccGroup
+                               .AsEnumerable()
+                              .Where(glacc => glacc.Active == "Y"
+                                          && glacc.GroupCode == accountGroupCode
+                                    )
+                              .ToList();
                 }
             }
             catch { throw; }
@@ -36,10 +34,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<MatTranTypes> repo = new Repository<MatTranTypes>())
-                {
-                    return repo.MatTranTypes.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                }
+                using Repository<MatTranTypes> repo = new Repository<MatTranTypes>();
+                return repo.MatTranTypes.AsEnumerable().Where(m => m.Active == "Y").ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -47,10 +43,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<MaterialGroup> repo = new Repository<MaterialGroup>())
-                {
-                    return repo.MaterialGroup.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                }
+                using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
+                return repo.MaterialGroup.AsEnumerable().Where(m => m.Active == "Y").ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -58,10 +52,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
-                {
-                    return repo.AsignmentAcctoAccClass.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                }
+                using Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>();
+                return repo.AsignmentAcctoAccClass.AsEnumerable().Where(m => m.Active == "Y").ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -69,10 +61,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<TaxMasters> repo = new Repository<TaxMasters>())
-                {
-                    return repo.TaxMasters.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                }
+                using Repository<TaxMasters> repo = new Repository<TaxMasters>();
+                return repo.TaxMasters.AsEnumerable().Where(m => m.Active == "Y").ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -93,16 +83,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccGroup> repo = new Repository<GlaccGroup>())
-                {
-                    glAccGroup.Active = "Y";
-                  //  glAccGroup.AddDate = DateTime.Now;
-                    repo.GlaccGroup.Add(glAccGroup);
-                    if (repo.SaveChanges() > 0)
-                        return glAccGroup;
+                using Repository<GlaccGroup> repo = new Repository<GlaccGroup>();
+                glAccGroup.Active = "Y";
+                //  glAccGroup.AddDate = DateTime.Now;
+                repo.GlaccGroup.Add(glAccGroup);
+                if (repo.SaveChanges() > 0)
+                    return glAccGroup;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -110,14 +98,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccGroup> repo = new Repository<GlaccGroup>())
-                {
-                    repo.GlaccGroup.Update(glAccGroup);
-                    if (repo.SaveChanges() > 0)
-                        return glAccGroup;
+                using Repository<GlaccGroup> repo = new Repository<GlaccGroup>();
+                repo.GlaccGroup.Update(glAccGroup);
+                if (repo.SaveChanges() > 0)
+                    return glAccGroup;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -125,16 +111,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccGroup> repo = new Repository<GlaccGroup>())
-                {
-                    var glAccGroup = repo.GlaccGroup.Where(a => a.GroupCode == glAccGroupCode).FirstOrDefault();
-                    glAccGroup.Active = "N";
-                    repo.GlaccGroup.Update(glAccGroup);
-                    if (repo.SaveChanges() > 0)
-                        return glAccGroup;
+                using Repository<GlaccGroup> repo = new Repository<GlaccGroup>();
+                var glAccGroup = repo.GlaccGroup.Where(a => a.GroupCode == glAccGroupCode).FirstOrDefault();
+                glAccGroup.Active = "N";
+                repo.GlaccGroup.Update(glAccGroup);
+                if (repo.SaveChanges() > 0)
+                    return glAccGroup;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -146,22 +130,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
+                using Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>();
+                if (string.IsNullOrEmpty(accGroupCode))
                 {
-                    if (string.IsNullOrEmpty(accGroupCode))
-                    {
-                        return repo.GlaccSubGroup.AsEnumerable()
-                                   .Where(glaccsub => glaccsub.Active == "Y")
-                                   .ToList();
-                    }
-                    else
-                    {
-                        return repo.GlaccSubGroup.AsEnumerable()
-                               .Where(glaccsub => glaccsub.Active == "Y"
-                                               && glaccsub.AccGroup == accGroupCode
-                               )
+                    return repo.GlaccSubGroup.AsEnumerable()
+                               .Where(glaccsub => glaccsub.Active == "Y")
                                .ToList();
-                    }
+                }
+                else
+                {
+                    return repo.GlaccSubGroup.AsEnumerable()
+                           .Where(glaccsub => glaccsub.Active == "Y"
+                                           && glaccsub.AccGroup == accGroupCode
+                           )
+                           .ToList();
                 }
             }
             catch { throw; }
@@ -170,13 +152,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
-                {
-                   
-                        return repo.GlaccSubGroup.AsEnumerable()
-                               .Where(glaccsub => glaccsub.Active == "Y")
-                               .ToList();
-                }
+                using Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>();
+                return repo.GlaccSubGroup.AsEnumerable()
+                       .Where(glaccsub => glaccsub.Active == "Y")
+                       .ToList();
             }
             catch { throw; }
         }
@@ -184,10 +163,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
-                {
-                    return repo.GlaccSubGroup.AsEnumerable().Where(glaccsub => glaccsub.SubGroupCode == subGroupCode).ToList();
-                }
+                using Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>();
+                return repo.GlaccSubGroup.AsEnumerable().Where(glaccsub => glaccsub.SubGroupCode == subGroupCode).ToList();
             }
             catch { throw; }
         }
@@ -195,16 +172,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
-                {
-                    glAccSubGroup.Active = "Y";
-                    glAccSubGroup.AddDate = DateTime.Now;
-                    repo.GlaccSubGroup.Add(glAccSubGroup);
-                    if (repo.SaveChanges() > 0)
-                        return glAccSubGroup;
+                using Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>();
+                glAccSubGroup.Active = "Y";
+                glAccSubGroup.AddDate = DateTime.Now;
+                repo.GlaccSubGroup.Add(glAccSubGroup);
+                if (repo.SaveChanges() > 0)
+                    return glAccSubGroup;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -212,14 +187,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
-                {
-                    repo.GlaccSubGroup.Update(glAccSubGroup);
-                    if (repo.SaveChanges() > 0)
-                        return glAccSubGroup;
+                using Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>();
+                repo.GlaccSubGroup.Update(glAccSubGroup);
+                if (repo.SaveChanges() > 0)
+                    return glAccSubGroup;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -227,16 +200,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>())
-                {
-                    var glAccountSubGroup = repo.GlaccSubGroup.Where(a => a.SubGroupCode == glAccSubGroupCode).FirstOrDefault();
-                    glAccountSubGroup.Active = "N";
-                    repo.GlaccSubGroup.Update(glAccountSubGroup);
-                    if (repo.SaveChanges() > 0)
-                        return glAccountSubGroup;
+                using Repository<GlaccSubGroup> repo = new Repository<GlaccSubGroup>();
+                var glAccountSubGroup = repo.GlaccSubGroup.Where(a => a.SubGroupCode == glAccSubGroupCode).FirstOrDefault();
+                glAccountSubGroup.Active = "N";
+                repo.GlaccSubGroup.Update(glAccountSubGroup);
+                if (repo.SaveChanges() > 0)
+                    return glAccountSubGroup;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -247,10 +218,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>())
-                {
-                    return repo.GlaccUnderSubGroup.AsEnumerable().Where(glundersub => glundersub.Active == "Y").ToList();
-                }
+                using Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>();
+                return repo.GlaccUnderSubGroup.AsEnumerable().Where(glundersub => glundersub.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -259,10 +228,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>())
-                {
-                    return repo.TblAccountGroup.AsEnumerable().ToList();
-                }
+                using Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>();
+                return repo.TblAccountGroup.AsEnumerable().ToList();
             }
             catch { throw; }
         }
@@ -270,10 +237,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>())
-                {
-                    return repo.GlaccUnderSubGroup.AsEnumerable().Where(glundersub => glundersub.UnderSubGroupCode == underSubGroupCode).ToList();
-                }
+                using Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>();
+                return repo.GlaccUnderSubGroup.AsEnumerable().Where(glundersub => glundersub.UnderSubGroupCode == underSubGroupCode).ToList();
             }
             catch { throw; }
         }
@@ -282,16 +247,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>())
-                {
-                    glUnderSubGroup.Active = "Y";
-                    glUnderSubGroup.AddDate = DateTime.Now;
-                    repo.GlaccUnderSubGroup.Add(glUnderSubGroup);
-                    if (repo.SaveChanges() > 0)
-                        return glUnderSubGroup;
+                using Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>();
+                glUnderSubGroup.Active = "Y";
+                glUnderSubGroup.AddDate = DateTime.Now;
+                repo.GlaccUnderSubGroup.Add(glUnderSubGroup);
+                if (repo.SaveChanges() > 0)
+                    return glUnderSubGroup;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -300,25 +263,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>())
+                using Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>();
+                var record = repo.TblAccountGroup.OrderByDescending(x => x.ExtraDate).FirstOrDefault();
+
+                if (record != null)
                 {
-                    var record = repo.TblAccountGroup.OrderByDescending(x => x.ExtraDate).FirstOrDefault();
-
-                    if (record != null)
-                    {
-                        tblAccGroup.AccountGroupId =Convert.ToDecimal(CommonHelper.IncreaseCode(record.AccountGroupId.ToString()));
-                    }
-                    else
-                        tblAccGroup.AccountGroupId = 1;
-
-                    tblAccGroup.ExtraDate = DateTime.Now;
-                    tblAccGroup.IsDefault = false;
-                    repo.TblAccountGroup.Add(tblAccGroup);
-                    if (repo.SaveChanges() > 0)
-                        return tblAccGroup;
-
-                    return null;
+                    tblAccGroup.AccountGroupId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.AccountGroupId.ToString()));
                 }
+                else
+                    tblAccGroup.AccountGroupId = 1;
+
+                tblAccGroup.ExtraDate = DateTime.Now;
+                tblAccGroup.IsDefault = false;
+                repo.TblAccountGroup.Add(tblAccGroup);
+                if (repo.SaveChanges() > 0)
+                    return tblAccGroup;
+
+                return null;
             }
             catch { throw; }
         }
@@ -327,16 +288,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>())
-                {
-                    tblAccGrp.ExtraDate = DateTime.Now;
-                    tblAccGrp.IsDefault = false;
-                    repo.TblAccountGroup.Update(tblAccGrp);
-                    if (repo.SaveChanges() > 0)
-                        return tblAccGrp;
+                using Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>();
+                tblAccGrp.ExtraDate = DateTime.Now;
+                tblAccGrp.IsDefault = false;
+                repo.TblAccountGroup.Update(tblAccGrp);
+                if (repo.SaveChanges() > 0)
+                    return tblAccGrp;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -344,14 +303,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>())
-                {
-                    repo.GlaccUnderSubGroup.Update(glUnderSubGroup);
-                    if (repo.SaveChanges() > 0)
-                        return glUnderSubGroup;
+                using Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>();
+                repo.GlaccUnderSubGroup.Update(glUnderSubGroup);
+                if (repo.SaveChanges() > 0)
+                    return glUnderSubGroup;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -359,16 +316,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>())
-                {
-                    var glUnderSubGroup = repo.GlaccUnderSubGroup.Where(a => a.UnderSubGroupCode == glUnderSubGroupCode).FirstOrDefault();
-                    glUnderSubGroup.Active = "N";
-                    repo.GlaccUnderSubGroup.Update(glUnderSubGroup);
-                    if (repo.SaveChanges() > 0)
-                        return glUnderSubGroup;
+                using Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>();
+                var glUnderSubGroup = repo.GlaccUnderSubGroup.Where(a => a.UnderSubGroupCode == glUnderSubGroupCode).FirstOrDefault();
+                glUnderSubGroup.Active = "N";
+                repo.GlaccUnderSubGroup.Update(glUnderSubGroup);
+                if (repo.SaveChanges() > 0)
+                    return glUnderSubGroup;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -377,15 +332,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>())
-                {
-                    var tblAccGrp = repo.TblAccountGroup.Where(x => x.AccountGroupId == code).FirstOrDefault();
-                    repo.TblAccountGroup.Remove(tblAccGrp);
-                    if (repo.SaveChanges() > 0)
-                        return tblAccGrp;
+                using Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>();
+                var tblAccGrp = repo.TblAccountGroup.Where(x => x.AccountGroupId == code).FirstOrDefault();
+                repo.TblAccountGroup.Remove(tblAccGrp);
+                if (repo.SaveChanges() > 0)
+                    return tblAccGrp;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -429,10 +382,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
-                {
-                    return repo.Glaccounts.AsEnumerable().Where(gl => gl.Active == "Y").ToList();
-                }
+                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                return repo.Glaccounts.AsEnumerable().Where(gl => gl.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -440,10 +391,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
-                {
-                    return repo.Glaccounts.AsEnumerable().Where(gl => gl.Glcode == glCode).ToList();
-                }
+                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                return repo.Glaccounts.AsEnumerable().Where(gl => gl.Glcode == glCode).ToList();
             }
             catch { throw; }
         }
@@ -451,13 +400,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
-                {
-                    return repo.Glaccounts.AsEnumerable()
-                               .Where(gl => gl.Nactureofaccount == natureOfAccounts.ToString() 
-                                         && gl.Active =="Y")
-                               .ToList();
-                }
+                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                return repo.Glaccounts.AsEnumerable()
+.Where(gl => gl.Nactureofaccount == natureOfAccounts.ToString()
+&& gl.Active == "Y")
+.ToList();
             }
             catch { throw; }
         }   
@@ -465,16 +412,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
-                {
-                    glAccounts.Active = "Y";
-                    glAccounts.AddDate = DateTime.Now;
-                    repo.Glaccounts.Add(glAccounts);
-                    if (repo.SaveChanges() > 0)
-                        return glAccounts;
-                  
-                    return null;
-                }
+                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                glAccounts.Active = "Y";
+                glAccounts.AddDate = DateTime.Now;
+                repo.Glaccounts.Add(glAccounts);
+                if (repo.SaveChanges() > 0)
+                    return glAccounts;
+
+                return null;
             }
             catch { throw; }
         }
@@ -482,14 +427,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
-                {
-                    repo.Glaccounts.Update(glAccounts);
-                    if (repo.SaveChanges() > 0)
-                        return glAccounts;
+                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                repo.Glaccounts.Update(glAccounts);
+                if (repo.SaveChanges() > 0)
+                    return glAccounts;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -497,16 +440,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
-                {
-                    var glAcc = repo.Glaccounts.Where(a => a.Glcode == glAccountsCode).FirstOrDefault();
-                    glAcc.Active = "N";
-                    repo.Glaccounts.Update(glAcc);
-                    if (repo.SaveChanges() > 0)
-                        return glAcc;
+                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                var glAcc = repo.Glaccounts.Where(a => a.Glcode == glAccountsCode).FirstOrDefault();
+                glAcc.Active = "N";
+                repo.Glaccounts.Update(glAcc);
+                if (repo.SaveChanges() > 0)
+                    return glAcc;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -518,10 +459,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlsubCode> repo = new Repository<GlsubCode>())
-                {
-                    return repo.GlsubCode.AsEnumerable().Where(s => s.Active == "Y").ToList();
-                }
+                using Repository<GlsubCode> repo = new Repository<GlsubCode>();
+                return repo.GlsubCode.AsEnumerable().Where(s => s.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -529,10 +468,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlsubCode> repo = new Repository<GlsubCode>())
-                {
-                    return repo.GlsubCode.AsEnumerable().Where(s => s.SubCode == subCode).ToList();
-                }
+                using Repository<GlsubCode> repo = new Repository<GlsubCode>();
+                return repo.GlsubCode.AsEnumerable().Where(s => s.SubCode == subCode).ToList();
             }
             catch { throw; }
         }
@@ -540,16 +477,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlsubCode> repo = new Repository<GlsubCode>())
-                {
-                    glSubCode.Active = "Y";
-                    glSubCode.AddDate =DateTime.Now;
-                    repo.GlsubCode.Add(glSubCode);
-                    if (repo.SaveChanges() > 0)
-                        return glSubCode;
+                using Repository<GlsubCode> repo = new Repository<GlsubCode>();
+                glSubCode.Active = "Y";
+                glSubCode.AddDate = DateTime.Now;
+                repo.GlsubCode.Add(glSubCode);
+                if (repo.SaveChanges() > 0)
+                    return glSubCode;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -557,14 +492,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlsubCode> repo = new Repository<GlsubCode>())
-                {
-                    repo.GlsubCode.Update(glSubCode);
-                    if (repo.SaveChanges() > 0)
-                        return glSubCode;
+                using Repository<GlsubCode> repo = new Repository<GlsubCode>();
+                repo.GlsubCode.Update(glSubCode);
+                if (repo.SaveChanges() > 0)
+                    return glSubCode;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -572,16 +505,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<GlsubCode> repo = new Repository<GlsubCode>())
-                {
-                    var glsubCode = repo.GlsubCode.Where(a => a.SubCode == glSubCode).FirstOrDefault();
-                    glsubCode.Active = "N";
-                    repo.GlsubCode.Update(glsubCode);
-                    if (repo.SaveChanges() > 0)
-                        return glsubCode;
+                using Repository<GlsubCode> repo = new Repository<GlsubCode>();
+                var glsubCode = repo.GlsubCode.Where(a => a.SubCode == glSubCode).FirstOrDefault();
+                glsubCode.Active = "N";
+                repo.GlsubCode.Update(glsubCode);
+                if (repo.SaveChanges() > 0)
+                    return glsubCode;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -593,10 +524,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<TaxIntegration> repo = new Repository<TaxIntegration>())
-                {
-                    return repo.TaxIntegration.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                }
+                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
+                return repo.TaxIntegration.AsEnumerable().Where(m => m.Active == "Y").ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -604,10 +533,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<TaxIntegration> repo = new Repository<TaxIntegration>())
-                {
-                    return repo.TaxIntegration.AsEnumerable().Where(m => m.TaxCode == taxCode).ToList();
-                }
+                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
+                return repo.TaxIntegration.AsEnumerable().Where(m => m.TaxCode == taxCode).ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -615,16 +542,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<TaxIntegration> repo = new Repository<TaxIntegration>())
-                {
-                    taxintegration.Active = "Y";
-                    taxintegration.AddDate = DateTime.Now;
-                    repo.TaxIntegration.Add(taxintegration);
-                    if (repo.SaveChanges() > 0)
-                        return taxintegration;
+                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
+                taxintegration.Active = "Y";
+                taxintegration.AddDate = DateTime.Now;
+                repo.TaxIntegration.Add(taxintegration);
+                if (repo.SaveChanges() > 0)
+                    return taxintegration;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -632,14 +557,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<TaxIntegration> repo = new Repository<TaxIntegration>())
-                {
-                    repo.TaxIntegration.Update(taxintegration);
-                    if (repo.SaveChanges() > 0)
-                        return taxintegration;
+                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
+                repo.TaxIntegration.Update(taxintegration);
+                if (repo.SaveChanges() > 0)
+                    return taxintegration;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -647,16 +570,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<TaxIntegration> repo = new Repository<TaxIntegration>())
-                {
-                    var taxInteCode = repo.TaxIntegration.Where(a => a.TaxCode == taxCode).FirstOrDefault();
-                    taxInteCode.Active = "N";
-                    repo.TaxIntegration.Update(taxInteCode);
-                    if (repo.SaveChanges() > 0)
-                        return taxInteCode;
+                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
+                var taxInteCode = repo.TaxIntegration.Where(a => a.TaxCode == taxCode).FirstOrDefault();
+                taxInteCode.Active = "N";
+                repo.TaxIntegration.Update(taxInteCode);
+                if (repo.SaveChanges() > 0)
+                    return taxInteCode;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -693,16 +614,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<AsignmentCashAccBranch> repo = new Repository<AsignmentCashAccBranch>())
-                {
-                    assignCashToBranch.Active = "Y";
-                    assignCashToBranch.AddDate = DateTime.Now;
-                    repo.AsignmentCashAccBranch.Add(assignCashToBranch);
-                    if (repo.SaveChanges() > 0)
-                        return assignCashToBranch;
+                using Repository<AsignmentCashAccBranch> repo = new Repository<AsignmentCashAccBranch>();
+                assignCashToBranch.Active = "Y";
+                assignCashToBranch.AddDate = DateTime.Now;
+                repo.AsignmentCashAccBranch.Add(assignCashToBranch);
+                if (repo.SaveChanges() > 0)
+                    return assignCashToBranch;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -710,14 +629,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<AsignmentCashAccBranch> repo = new Repository<AsignmentCashAccBranch>())
-                {
-                    repo.AsignmentCashAccBranch.Update(assignCashToBranch);
-                    if (repo.SaveChanges() > 0)
-                        return assignCashToBranch;
+                using Repository<AsignmentCashAccBranch> repo = new Repository<AsignmentCashAccBranch>();
+                repo.AsignmentCashAccBranch.Update(assignCashToBranch);
+                if (repo.SaveChanges() > 0)
+                    return assignCashToBranch;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -725,16 +642,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<AsignmentCashAccBranch> repo = new Repository<AsignmentCashAccBranch>())
-                {
-                    var asignCashToBranch = repo.AsignmentCashAccBranch.Where(a => a.Code == assignCashToBranchCode).FirstOrDefault();
-                    asignCashToBranch.Active = "N";
-                    repo.AsignmentCashAccBranch.Update(asignCashToBranch);
-                    if (repo.SaveChanges() > 0)
-                        return asignCashToBranch;
+                using Repository<AsignmentCashAccBranch> repo = new Repository<AsignmentCashAccBranch>();
+                var asignCashToBranch = repo.AsignmentCashAccBranch.Where(a => a.Code == assignCashToBranchCode).FirstOrDefault();
+                asignCashToBranch.Active = "N";
+                repo.AsignmentCashAccBranch.Update(asignCashToBranch);
+                if (repo.SaveChanges() > 0)
+                    return asignCashToBranch;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -744,11 +659,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using(Repository<TaxMasters> repo=new Repository<TaxMasters>())
-                {
-                    return repo.TaxMasters.AsEnumerable().Where(x => x.Active =="Y").ToList();
-                }
-                 
+                using Repository<TaxMasters> repo = new Repository<TaxMasters>();
+                return repo.TaxMasters.AsEnumerable().Where(x => x.Active == "Y").ToList();
+
             }
             catch { throw; }
         }
@@ -756,10 +669,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
-                {
-                    return repo.AsignmentCashAccBranch.AsEnumerable().Where(a => a.Active=="Y").ToList();
-                }
+                using Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>();
+                return repo.AsignmentCashAccBranch.AsEnumerable().Where(a => a.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -769,10 +680,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
-                {
-                    return repo.AsignmentAcctoAccClass.AsEnumerable().Where(a => a.Active =="Y").ToList();
-                }
+                using Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>();
+                return repo.AsignmentAcctoAccClass.AsEnumerable().Where(a => a.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -780,24 +689,22 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
+                using Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>();
+                var record = repo.AsignmentAcctoAccClass.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                if (record != null)
                 {
-                    var record = repo.AsignmentAcctoAccClass.OrderByDescending(x => x.AddDate).FirstOrDefault();
-                    if (record != null)
-                    {
-                        assignAcctoAcc.Code = CommonHelper.IncreaseCode(record.Code);
-                    }
-                    else
-                        assignAcctoAcc.Code = "1";
-
-                    assignAcctoAcc.Active = "Y";
-                    assignAcctoAcc.AddDate = DateTime.Now;
-                    repo.AsignmentAcctoAccClass.Add(assignAcctoAcc);
-                    if (repo.SaveChanges() > 0)
-                        return assignAcctoAcc;
-
-                    return null;
+                    assignAcctoAcc.Code = CommonHelper.IncreaseCode(record.Code);
                 }
+                else
+                    assignAcctoAcc.Code = "1";
+
+                assignAcctoAcc.Active = "Y";
+                assignAcctoAcc.AddDate = DateTime.Now;
+                repo.AsignmentAcctoAccClass.Add(assignAcctoAcc);
+                if (repo.SaveChanges() > 0)
+                    return assignAcctoAcc;
+
+                return null;
             }
             catch { throw; }
         }
@@ -805,14 +712,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
-                {
-                    repo.AsignmentAcctoAccClass.Update(assignAcctoAcc);
-                    if (repo.SaveChanges() > 0)
-                        return assignAcctoAcc;
+                using Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>();
+                repo.AsignmentAcctoAccClass.Update(assignAcctoAcc);
+                if (repo.SaveChanges() > 0)
+                    return assignAcctoAcc;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -820,16 +725,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>())
-                {
-                    var asignAccToAccClass = repo.AsignmentAcctoAccClass.Where(a => a.Code == assignAcctoAccCode).FirstOrDefault();
-                    asignAccToAccClass.Active = "N";
-                    repo.AsignmentAcctoAccClass.Update(asignAccToAccClass);
-                    if (repo.SaveChanges() > 0)
-                        return asignAccToAccClass;
+                using Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>();
+                var asignAccToAccClass = repo.AsignmentAcctoAccClass.Where(a => a.Code == assignAcctoAccCode).FirstOrDefault();
+                asignAccToAccClass.Active = "N";
+                repo.AsignmentAcctoAccClass.Update(asignAccToAccClass);
+                if (repo.SaveChanges() > 0)
+                    return asignAccToAccClass;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -839,10 +742,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<AccountingClass> repo = new Repository<AccountingClass>())
-                {
-                    return repo.AccountingClass.AsEnumerable().Where(a => a.Active =="Y").ToList();
-                }
+                using Repository<AccountingClass> repo = new Repository<AccountingClass>();
+                return repo.AccountingClass.AsEnumerable().Where(a => a.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -856,15 +757,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 //                          glacc.Nactureofaccount == NatureOfAccounts.INVENTORY.ToString()
                 //                    select glacc),
 
-                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
-                {
-                    return repo.Glaccounts.Where(gacc => gacc.Nactureofaccount != null)
-                                       .Where(acc => acc.Nactureofaccount == NATURESOFACCOUNTS.PURCHASES.ToString()
-                                                || acc.Nactureofaccount == NATURESOFACCOUNTS.SALES.ToString()
-                                                || acc.Nactureofaccount == NATURESOFACCOUNTS.INVENTORY.ToString())
-                                       .ToList();
-
-                }
+                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                return repo.Glaccounts.Where(gacc => gacc.Nactureofaccount != null)
+.Where(acc => acc.Nactureofaccount == NATURESOFACCOUNTS.PURCHASES.ToString()
+|| acc.Nactureofaccount == NATURESOFACCOUNTS.SALES.ToString()
+|| acc.Nactureofaccount == NATURESOFACCOUNTS.INVENTORY.ToString())
+.ToList();
             }
             catch { throw; }
         }
@@ -885,10 +783,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<VoucherTypes> repo = new Repository<VoucherTypes>())
-                {
-                    return repo.VoucherTypes.AsEnumerable().Where(v => v.Active=="Y").ToList();
-                }
+                using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+                return repo.VoucherTypes.AsEnumerable().Where(v => v.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -896,10 +792,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<VoucherTypes> repo = new Repository<VoucherTypes>())
-                {
-                    return repo.VoucherTypes.AsEnumerable().Where(v => v.VoucherCode == voucherCode).ToList();
-                }
+                using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+                return repo.VoucherTypes.AsEnumerable().Where(v => v.VoucherCode == voucherCode).ToList();
             }
             catch { throw; }
         }
@@ -907,24 +801,22 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<VoucherTypes> repo = new Repository<VoucherTypes>())
+                using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+                var record = repo.VoucherTypes.OrderByDescending(v => v.AddDate).FirstOrDefault();
+                if (record != null)
                 {
-                    var record = repo.VoucherTypes.OrderByDescending(v => v.AddDate).FirstOrDefault();
-                    if (record != null)
-                    {
-                        voucherTypes.VoucherCode = CommonHelper.IncreaseCode(record.VoucherCode);
-                    }
-                    else
-                        voucherTypes.VoucherCode = "1";
-
-                    voucherTypes.Active = "Y";
-                    voucherTypes.AddDate = DateTime.Now;
-                    repo.VoucherTypes.Add(voucherTypes);
-                    if (repo.SaveChanges() > 0)
-                        return voucherTypes;
-
-                    return null;
+                    voucherTypes.VoucherCode = CommonHelper.IncreaseCode(record.VoucherCode);
                 }
+                else
+                    voucherTypes.VoucherCode = "1";
+
+                voucherTypes.Active = "Y";
+                voucherTypes.AddDate = DateTime.Now;
+                repo.VoucherTypes.Add(voucherTypes);
+                if (repo.SaveChanges() > 0)
+                    return voucherTypes;
+
+                return null;
             }
             catch { throw; }
         }
@@ -932,14 +824,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<VoucherTypes> repo = new Repository<VoucherTypes>())
-                {
-                    repo.VoucherTypes.Update(voucherTypes);
-                    if (repo.SaveChanges() > 0)
-                        return voucherTypes;
+                using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+                repo.VoucherTypes.Update(voucherTypes);
+                if (repo.SaveChanges() > 0)
+                    return voucherTypes;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -947,16 +837,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using (Repository<VoucherTypes> repo = new Repository<VoucherTypes>())
-                {
-                    var voucherType = repo.VoucherTypes.Where(v => v.VoucherCode == voucherTypeCode).FirstOrDefault();
-                    voucherType.Active = "N";
-                    repo.VoucherTypes.Remove(voucherType);
-                    if (repo.SaveChanges() > 0)
-                        return voucherType;
+                using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+                var voucherType = repo.VoucherTypes.Where(v => v.VoucherCode == voucherTypeCode).FirstOrDefault();
+                voucherType.Active = "N";
+                repo.VoucherTypes.Remove(voucherType);
+                if (repo.SaveChanges() > 0)
+                    return voucherType;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }

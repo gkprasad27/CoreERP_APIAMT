@@ -34,7 +34,7 @@ namespace CoreERP.Controllers
 
         //}
         [HttpGet("GetCutomerReceiptList")]
-        public async Task<IActionResult> GetCutomerReceiptList()
+        public IActionResult GetCutomerReceiptList()
         {
             try
             {
@@ -55,7 +55,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetCompanyList")]
-        public async Task<IActionResult> GetCompanyList()
+        public IActionResult GetCompanyList()
         {
             try
             {
@@ -70,7 +70,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetBranchList")]
-        public async Task<IActionResult> GetBranchList()
+        public IActionResult GetBranchList()
         {
             try
             {
@@ -85,7 +85,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetAsigCashAccBranches")]
-        public async Task<IActionResult> GetAsigCashAccBranches()
+        public IActionResult GetAsigCashAccBranches()
         {
             try
             {
@@ -100,7 +100,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetPartnerCreationList")]
-        public async Task<IActionResult> GetPartnerCreationList()
+        public IActionResult GetPartnerCreationList()
         {
             try
             {
@@ -115,7 +115,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetAsigAcctobranchGlAcc")]
-        public async Task<IActionResult> GetAsigAcctobranchGlAcc()
+        public IActionResult GetAsigAcctobranchGlAcc()
         {
             try
             {
@@ -145,7 +145,7 @@ namespace CoreERP.Controllers
         //}
 
         [HttpGet("GetVoucherTypeList")]
-        public async Task<IActionResult> GetVoucherTypeList()
+        public IActionResult GetVoucherTypeList()
         {
             try
             {
@@ -161,7 +161,7 @@ namespace CoreERP.Controllers
 
         [HttpPost("RegisterCustomerReceipts")]
         [Produces(typeof(CustomerReceipts))]
-        public async Task<IActionResult> RegisterCustomerReceipts([FromBody]CustomerReceipts customerReceipts)
+        public IActionResult RegisterCustomerReceipts([FromBody]CustomerReceipts customerReceipts)
         {
             if (customerReceipts == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(customerReceipts)} cannot be null" });
@@ -181,7 +181,7 @@ namespace CoreERP.Controllers
 
         [HttpPut("UpdateCustomerReceipt")]
         [Produces(typeof(CustomerReceipts))]
-        public async Task<IActionResult> UpdateCustomerReceipt([FromBody] CustomerReceipts customerReceipts)
+        public IActionResult UpdateCustomerReceipt([FromBody] CustomerReceipts customerReceipts)
         {
             if (customerReceipts == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(customerReceipts)} cannot be null" });
@@ -202,7 +202,7 @@ namespace CoreERP.Controllers
 
         [HttpDelete("DeleteCustomerReceipt/{seqID}")]
         [Produces(typeof(CustomerReceipts))]
-        public async Task<IActionResult> DeleteCustomerReceipt(string seqID)
+        public IActionResult DeleteCustomerReceipt(string seqID)
         {
             if (seqID == null)
                 return BadRequest($"{nameof(seqID)}can not be null");

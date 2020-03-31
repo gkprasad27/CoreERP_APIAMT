@@ -16,8 +16,9 @@ namespace CoreERP.Controllers.GL
         [HttpPost("RegisterGlaccGroup")]
         public async Task<IActionResult> RegisterGlaccGroup([FromBody]GlaccGroup accGroup)
         {
-          
-            if (accGroup == null)
+            var result = await Task.Run(() =>
+            {
+                if (accGroup == null)
                 return Ok(new APIResponse() {status=APIStatus.FAIL.ToString(),response= $"{nameof(accGroup)} cannot be null" });
             try
             {
@@ -35,12 +36,16 @@ namespace CoreERP.Controllers.GL
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("GetAccountGroupList")]
         public async Task<IActionResult> GetAccountGroupList()
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 var glAccountGroupList = GLHelper.GetGLAccountGroupList();
                 if (glAccountGroupList.Count > 0)
@@ -56,48 +61,57 @@ namespace CoreERP.Controllers.GL
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpPut("UpdateAccountGroup")]
         public async Task<IActionResult> UpdateAccountGroup([FromBody] GlaccGroup accGroup)
         {
-            if (accGroup == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(accGroup)} cannot be null" });
-           
-            try
+            var result = await Task.Run(() =>
             {
-                GlaccGroup result = GLHelper.UpdateAccountsGroup(accGroup);
-                if (result !=null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                if (accGroup == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(accGroup)} cannot be null" });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Updation Failed." });
-            }
-            catch(Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    GlaccGroup result = GLHelper.UpdateAccountsGroup(accGroup);
+                    if (result != null)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
 
         [HttpDelete("DeleteAccountGroup/{code}")]
         public async Task<IActionResult> DeleteAccountGroup(string code)
         {
-
-            if (string.IsNullOrWhiteSpace(code))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null"});
-
-            try
+            var result = await Task.Run(() =>
             {
-                GlaccGroup result = GLHelper.DeleteAccountsGroup(code);
-                if (result !=null)
-                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
+                if (string.IsNullOrWhiteSpace(code))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "DeletionFailed." });
-            }
-            catch(Exception ex) 
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    GlaccGroup result = GLHelper.DeleteAccountsGroup(code);
+                    if (result != null)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "DeletionFailed." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
     }
 }

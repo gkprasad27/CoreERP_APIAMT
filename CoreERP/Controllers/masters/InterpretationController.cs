@@ -20,16 +20,16 @@ namespace CoreERP.Controllers
         //    return NoContent();
         //}      
 
-        
+
         [HttpPost("RegisterInterpretation")]
-        public async Task<IActionResult> RegisterInterpretation([FromBody]Interpretation interpretation)  
+        public IActionResult RegisterInterpretation([FromBody]Interpretation interpretation)
         {
-            APIResponse apiResponse = null;
             if (interpretation == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
             try
             {
                 int result = InterpretationHelper.RegisterInterpretation(interpretation);
+                APIResponse apiResponse;
                 if (result > 0)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -41,16 +41,16 @@ namespace CoreERP.Controllers
 
                 return Ok(apiResponse);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response =ex.Message});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
 
 
         [HttpGet("GetInterpretationList")]
-        public async Task<IActionResult> GetInterpretationList()
+        public IActionResult GetInterpretationList()
         {
             try
             {
@@ -67,15 +67,15 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateInterpretation")]
-        public async Task<IActionResult> UpdateInterpretation([FromBody] Interpretation interpretation)
+        public IActionResult UpdateInterpretation([FromBody] Interpretation interpretation)
         {
-            APIResponse apiResponse = null;
             try
             {
                 if (interpretation == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
 
-                int rs =InterpretationHelper.UpdateInterpretation(interpretation);
+                int rs = InterpretationHelper.UpdateInterpretation(interpretation);
+                APIResponse apiResponse;
                 if (rs > 0)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
@@ -91,14 +91,14 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        
+
         [HttpDelete("DeleteInterpretation/{code}")]
-        public async Task<IActionResult> DeleteInterpretation(string code)
+        public IActionResult DeleteInterpretation(string code)
         {
-            APIResponse apiResponse = null;
             try
             {
                 int result = InterpretationHelper.DeleteInterpretation(code);
+                APIResponse apiResponse;
                 if (result > 0)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

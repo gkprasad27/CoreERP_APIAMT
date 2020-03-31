@@ -15,10 +15,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>())
-                {
-                    return repo.TblOilConversionMaster.ToList();
-                }
+                using Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>();
+                return repo.TblOilConversionMaster.ToList();
             }
             catch { throw; }
         }
@@ -41,29 +39,26 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             {
                 var _product = Geproduct(productCode);
 
-                using (Repository<TblProduct> repo = new Repository<TblProduct>())
-                {
-                    var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
-                    //var date = DateTime.Now.ToString();
-                    var operatoroilcnvsnsDetail = new TblOilConversionDetails();
-                    var oilcnvsnno = repo.TblSuffixPrefix.Where(x => x.BranchCode == branchCode && x.VoucherTypeId == 52).FirstOrDefault();
-                    operatoroilcnvsnsDetail.BatchNo = date + "-" + oilcnvsnno.Prefix + "-" + oilcnvsnno.StartIndex + "-" + oilcnvsnno.Suffix + "-" + "-" + _product.ProductCode;
+                using Repository<TblProduct> repo = new Repository<TblProduct>();
+                var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
+                //var date = DateTime.Now.ToString();
+                var operatoroilcnvsnsDetail = new TblOilConversionDetails();
+                var oilcnvsnno = repo.TblSuffixPrefix.Where(x => x.BranchCode == branchCode && x.VoucherTypeId == 52).FirstOrDefault();
+                operatoroilcnvsnsDetail.BatchNo = date + "-" + oilcnvsnno.Prefix + "-" + oilcnvsnno.StartIndex + "-" + oilcnvsnno.Suffix + "-" + "-" + _product.ProductCode;
 
-                    //var oilcnvsnno = new CommonHelper().GenerateNumber(52, branchCode);
-                    //operatorStockIssuesDetail.BatchNo = date + "-" + oilcnvsnno + "-" + _product.ProductCode;
-                    //date + "-" + issueno + "-" + _product.ProductCode;
-                    operatoroilcnvsnsDetail.Qty = 0;
-                    //operatorStockIssuesDetail.TotalAmount = 0;
-                    operatoroilcnvsnsDetail.Rate = GetProductRate(branchCode, productCode);
-                    //operatorStockIssuesDetail.AvailStock = GetProductQty(branchCode, productCode);
-                    operatoroilcnvsnsDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
-                    operatoroilcnvsnsDetail.ProductCode = _product.ProductCode;
-                    operatoroilcnvsnsDetail.ProductName = _product.ProductName;
-                    operatoroilcnvsnsDetail.UnitName = _product.UnitName;
+                //var oilcnvsnno = new CommonHelper().GenerateNumber(52, branchCode);
+                //operatorStockIssuesDetail.BatchNo = date + "-" + oilcnvsnno + "-" + _product.ProductCode;
+                //date + "-" + issueno + "-" + _product.ProductCode;
+                operatoroilcnvsnsDetail.Qty = 0;
+                //operatorStockIssuesDetail.TotalAmount = 0;
+                operatoroilcnvsnsDetail.Rate = GetProductRate(branchCode, productCode);
+                //operatorStockIssuesDetail.AvailStock = GetProductQty(branchCode, productCode);
+                operatoroilcnvsnsDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
+                operatoroilcnvsnsDetail.ProductCode = _product.ProductCode;
+                operatoroilcnvsnsDetail.ProductName = _product.ProductName;
+                operatoroilcnvsnsDetail.UnitName = _product.UnitName;
 
-                    return operatoroilcnvsnsDetail;
-
-                }
+                return operatoroilcnvsnsDetail;
             }
             catch { throw; }
         }
@@ -85,7 +80,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                decimal? _salesRate = default(decimal?);
+                decimal? _salesRate = default;
 
                 using (Repository<TblProduct> repo = new Repository<TblProduct>())
                 {
@@ -111,10 +106,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>())
-                {
-                    return repo.TblMshsdrates.Where(x => x.ProductCode == productCode && x.BranchCode == branchCode).FirstOrDefault();
-                }
+                using Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>();
+                return repo.TblMshsdrates.Where(x => x.ProductCode == productCode && x.BranchCode == branchCode).FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -127,10 +120,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
-                }
+                using Repository<TblBranch> repo = new Repository<TblBranch>();
+                return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
             }
             catch (Exception ex)
             {
@@ -142,10 +133,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>())
-                {
-                    return repo.TblOilConversionMaster.Where(x => x.OilConversionVchNo == code).ToList();
-                }
+                using Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>();
+                return repo.TblOilConversionMaster.Where(x => x.OilConversionVchNo == code).ToList();
 
             }
             catch { throw; }
@@ -224,15 +213,13 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
                 searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
 
-                using (Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>())
-                {
-                    return repo.TblOilConversionMaster.AsEnumerable()
-                               .Where(inv => Convert.ToDateTime(inv.OilConversionDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                                        && Convert.ToDateTime(inv.OilConversionDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-                                        && inv.OilConversionVchNo == (searchCriteria.InvoiceNo ?? inv.OilConversionVchNo)
-                                  )
-                                .ToList();
-                }
+                using Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>();
+                return repo.TblOilConversionMaster.AsEnumerable()
+.Where(inv => Convert.ToDateTime(inv.OilConversionDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+&& Convert.ToDateTime(inv.OilConversionDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+&& inv.OilConversionVchNo == (searchCriteria.InvoiceNo ?? inv.OilConversionVchNo)
+)
+.ToList();
             }
             catch (Exception ex)
             {
@@ -245,11 +232,9 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using (Repository<TblOilConversionDetails> repo = new Repository<TblOilConversionDetails>())
-                {
-                    var vocher = repo.TblOilConversionMaster.Where(x => x.OilConversionVchNo == vocherno).FirstOrDefault();
-                    return repo.TblOilConversionDetails.Where(x => x.OilConversionMasterId == vocher.OilConversionMasterId).ToList();
-                }
+                using Repository<TblOilConversionDetails> repo = new Repository<TblOilConversionDetails>();
+                var vocher = repo.TblOilConversionMaster.Where(x => x.OilConversionVchNo == vocherno).FirstOrDefault();
+                return repo.TblOilConversionDetails.Where(x => x.OilConversionMasterId == vocher.OilConversionMasterId).ToList();
             }
             catch (Exception ex)
             {

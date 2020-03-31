@@ -19,22 +19,26 @@ namespace CoreERP.Controllers.Inventory
         [HttpGet("GetProductMasterList")]
         public async Task<IActionResult> GetProductMasterList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var productMasterList = new ProductMasterHelper().GetProductMasterList();
-                if (productMasterList.Count > 0)
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.productMasterList = productMasterList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var productMasterList = new ProductMasterHelper().GetProductMasterList();
+                    if (productMasterList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.productMasterList = productMasterList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
     }
 }

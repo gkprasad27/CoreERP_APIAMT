@@ -12,10 +12,8 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using (Repository<Ctcbreakup> repo = new Repository<Ctcbreakup>())
-                {
-                    return repo.Ctcbreakup.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
-                }
+                using Repository<Ctcbreakup> repo = new Repository<Ctcbreakup>();
+                return repo.Ctcbreakup.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
             }
             catch { throw; }
         }
@@ -24,12 +22,10 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using (Repository<Ctcbreakup> repo = new Repository<Ctcbreakup>())
-                {
-                    return repo.Ctcbreakup.AsEnumerable()
-                               .Where(x => x.CompanyCode.Equals(compCode))
-                                         .FirstOrDefault();
-                }
+                using Repository<Ctcbreakup> repo = new Repository<Ctcbreakup>();
+                return repo.Ctcbreakup.AsEnumerable()
+.Where(x => x.CompanyCode.Equals(compCode))
+.FirstOrDefault();
             }
             catch { throw; }
         }
@@ -38,10 +34,8 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using (Repository<Employees> repo = new Repository<Employees>())
-                {
-                    return repo.Employees.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                }
+                using Repository<Employees> repo = new Repository<Employees>();
+                return repo.Employees.AsEnumerable().Where(m => m.Active == "Y").ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -50,15 +44,13 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using (Repository<Ctcbreakup> repo = new Repository<Ctcbreakup>())
-                {
-                    ctcBreakup.Active = "Y";
-                    repo.Ctcbreakup.Add(ctcBreakup);
-                    if (repo.SaveChanges() > 0)
-                        return ctcBreakup;
+                using Repository<Ctcbreakup> repo = new Repository<Ctcbreakup>();
+                ctcBreakup.Active = "Y";
+                repo.Ctcbreakup.Add(ctcBreakup);
+                if (repo.SaveChanges() > 0)
+                    return ctcBreakup;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -67,14 +59,12 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using (Repository<Ctcbreakup> repo = new Repository<Ctcbreakup>())
-                {
-                    repo.Ctcbreakup.Update(ctcBreakup);
-                    if (repo.SaveChanges() > 0)
-                        return ctcBreakup;
+                using Repository<Ctcbreakup> repo = new Repository<Ctcbreakup>();
+                repo.Ctcbreakup.Update(ctcBreakup);
+                if (repo.SaveChanges() > 0)
+                    return ctcBreakup;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -84,10 +74,8 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using (Repository<ComponentMaster> repo = new Repository<ComponentMaster>())
-                {
-                    return repo.ComponentMaster.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                }
+                using Repository<ComponentMaster> repo = new Repository<ComponentMaster>();
+                return repo.ComponentMaster.AsEnumerable().Where(m => m.Active == "Y").ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -96,10 +84,8 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using (Repository<StructureCreation> repo = new Repository<StructureCreation>())
-                {
-                    return repo.StructureCreation.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                }
+                using Repository<StructureCreation> repo = new Repository<StructureCreation>();
+                return repo.StructureCreation.AsEnumerable().Where(m => m.Active == "Y").ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -108,10 +94,8 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using (Repository<PayrollCycle> repo = new Repository<PayrollCycle>())
-                {
-                    return repo.PayrollCycle.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                }
+                using Repository<PayrollCycle> repo = new Repository<PayrollCycle>();
+                return repo.PayrollCycle.AsEnumerable().Where(m => m.Active == "Y").ToList();
             }
             catch (Exception ex) { throw ex; }
         }

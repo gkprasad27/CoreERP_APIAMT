@@ -13,17 +13,17 @@ namespace CoreERP.Controllers
     {
 
         [HttpPost("RegisterApprovalType")]
-        public async Task<IActionResult> RegisterApprovalType([FromBody]ApprovalType approvalType)
+        public IActionResult RegisterApprovalType([FromBody]ApprovalType approvalType)
         {
             if (approvalType == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
             try
             {
                 ApprovalType result = ApprovalHelper.RegisterApprovalType(approvalType);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response ="Registration Failed." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
             }
             catch (Exception ex)
             {
@@ -32,7 +32,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GeApprovalTypeList")]
-        public async Task<IActionResult> GeApprovalTypeList()
+        public IActionResult GeApprovalTypeList()
         {
             try
             {
@@ -52,12 +52,12 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateApprovalType")]
-        public async Task<IActionResult> UpdateApprovalType([FromBody] ApprovalType approvalType)
+        public IActionResult UpdateApprovalType([FromBody] ApprovalType approvalType)
         {
             try
             {
                 if (approvalType == null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(approvalType)} cannot be null"});
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(approvalType)} cannot be null" });
 
                 ApprovalType result = ApprovalHelper.UpdateApprovalType(approvalType);
                 if (result != null)
@@ -74,7 +74,7 @@ namespace CoreERP.Controllers
 
 
         [HttpDelete("DeleteApprovalType/{approvalID}")]
-        public async Task<IActionResult> DeleteApprovalType(int approvalId)
+        public IActionResult DeleteApprovalType(int approvalId)
         {
             try
             {

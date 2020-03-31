@@ -17,110 +17,127 @@ namespace CoreERP.Controllers
         [HttpGet("GetStateWiseGstList")]
         public async Task<IActionResult> GetStateWiseGstList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var stateWiseGstList = new StateWiseGstHelper().GetStatesWiseGstList();
-                if (stateWiseGstList.Count > 0)
+                try
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.stateWiseGstList = stateWiseGstList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    var stateWiseGstList = new StateWiseGstHelper().GetStatesWiseGstList();
+                    if (stateWiseGstList.Count > 0)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.stateWiseGstList = stateWiseGstList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 }
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetStatesList")]
         public async Task<IActionResult> GetStatesList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.StatesList = new StateWiseGstHelper().GetStatesList().Select(x => new { ID = x.Id, TEXT = x.StateName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.StatesList = new StateWiseGstHelper().GetStatesList().Select(x => new { ID = x.Id, TEXT = x.StateName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("RegisterStateWiseGst")]
         public async Task<IActionResult> RegisterStateWiseGst([FromBody]TblStateWiseGst stateWiseGst)
         {
-
-            if (stateWiseGst == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(stateWiseGst)} cannot be null" });
-            try
+            var result = await Task.Run(() =>
             {
-                var reponse = new StateWiseGstHelper().Register(stateWiseGst);
-                if (reponse != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = reponse });
+                if (stateWiseGst == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(stateWiseGst)} cannot be null" });
+                try
+                {
+                    var reponse = new StateWiseGstHelper().Register(stateWiseGst);
+                    if (reponse != null)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = reponse });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPut("UpdateStateWiseGst")]
         public async Task<IActionResult> UpdateStateWiseGst([FromBody] TblStateWiseGst stateWiseGst)
         {
-
-            if (stateWiseGst == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(stateWiseGst)} cannot be null" });
-            try
+            var result = await Task.Run(() =>
             {
-                APIResponse apiResponse = null;
+                if (stateWiseGst == null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(stateWiseGst)} cannot be null" });
+                try
+                {
+                    APIResponse apiResponse = null;
 
-                TblStateWiseGst result = new StateWiseGstHelper().Update(stateWiseGst);
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    TblStateWiseGst result = new StateWiseGstHelper().Update(stateWiseGst);
+                    if (result != null)
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                    }
+                    return Ok(apiResponse);
                 }
-                else
+                catch (Exception ex)
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+            });
+            return result;
         }
 
         [HttpDelete("DeleteStateWiseGst/{code}")]
         public async Task<IActionResult> DeleteStateWiseGst(int code)
         {
-            APIResponse apiResponse = null;
-            if (code == 0)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
+            var result = await Task.Run(() =>
+            {
+                APIResponse apiResponse = null;
+                if (code == 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
 
-            try
-            {
-                var result = new StateWiseGstHelper().Delete(code);
-                if (result != null)
+                try
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    var result = new StateWiseGstHelper().Delete(code);
+                    if (result != null)
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    }
+                    else
+                    {
+                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                    }
+                    return Ok(apiResponse);
                 }
-                else
+                catch (Exception ex)
                 {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+            });
+            return result;
         }
     }
 }

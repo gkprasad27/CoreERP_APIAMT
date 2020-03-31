@@ -13,10 +13,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblStateWiseGst> repo = new Repository<TblStateWiseGst>())
-                {
-                    return repo.TblStateWiseGst.ToList();
-                }
+                using Repository<TblStateWiseGst> repo = new Repository<TblStateWiseGst>();
+                return repo.TblStateWiseGst.ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -25,10 +23,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<States> repo = new Repository<States>())
-                {
-                    return repo.States.ToList();
-                }
+                using Repository<States> repo = new Repository<States>();
+                return repo.States.ToList();
             }
             catch (Exception ex) { throw ex; }
         }
@@ -36,14 +32,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblStateWiseGst> repo = new Repository<TblStateWiseGst>())
-                {
-                    repo.TblStateWiseGst.Add(stateWiseGst);
-                    if (repo.SaveChanges() > 0)
-                        return stateWiseGst;
+                using Repository<TblStateWiseGst> repo = new Repository<TblStateWiseGst>();
+                repo.TblStateWiseGst.Add(stateWiseGst);
+                if (repo.SaveChanges() > 0)
+                    return stateWiseGst;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -51,14 +45,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblStateWiseGst> repo = new Repository<TblStateWiseGst>())
-                {
-                    repo.TblStateWiseGst.Update(stateWiseGst);
-                    if (repo.SaveChanges() > 0)
-                        return stateWiseGst;
+                using Repository<TblStateWiseGst> repo = new Repository<TblStateWiseGst>();
+                repo.TblStateWiseGst.Update(stateWiseGst);
+                if (repo.SaveChanges() > 0)
+                    return stateWiseGst;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -66,15 +58,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblStateWiseGst> repo = new Repository<TblStateWiseGst>())
-                {
-                    var state = repo.TblStateWiseGst.Where(x => x.StateId == code).FirstOrDefault();
-                    repo.TblStateWiseGst.Remove(state);
-                    if (repo.SaveChanges() > 0)
-                        return state;
+                using Repository<TblStateWiseGst> repo = new Repository<TblStateWiseGst>();
+                var state = repo.TblStateWiseGst.Where(x => x.StateId == code).FirstOrDefault();
+                repo.TblStateWiseGst.Remove(state);
+                if (repo.SaveChanges() > 0)
+                    return state;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }

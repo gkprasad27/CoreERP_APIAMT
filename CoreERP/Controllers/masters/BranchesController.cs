@@ -19,38 +19,46 @@ namespace CoreERP.Controllers
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var branchesList = BrancheHelper.GetBranches();
-                if (branchesList.Count() > 0)
+                try
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.branchesList = branchesList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    var branchesList = BrancheHelper.GetBranches();
+                    if (branchesList.Count() > 0)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.branchesList = branchesList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetAllCompanys")]
         public async Task<IActionResult> GetAllCompanys()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var companiesList = CompaniesHelper.GetListOfCompanies();
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.companiesList = companiesList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    var companiesList = CompaniesHelper.GetListOfCompanies();
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.companiesList = companiesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         //[HttpPost("RegisterBranch")]

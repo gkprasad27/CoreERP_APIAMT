@@ -18,137 +18,162 @@ namespace CoreERP.Controllers.Transactions
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.BranchesList = new JournalVoucherHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BranchesList = new JournalVoucherHelper().GetBranchesList().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetAccountLedger")]
         public async Task<IActionResult> GetAccountLedgerList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.AccountLedgerList = new JournalVoucherHelper().GetAccountLedgerList().Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.AccountLedgerList = new JournalVoucherHelper().GetAccountLedgerList().Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetVoucherNo/{branchCode}")]
         public async Task<IActionResult> GetVoucherNo(string branchCode)
         {
-            if (string.IsNullOrEmpty(branchCode))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+            var result = await Task.Run(() =>
+            {
+                if (string.IsNullOrEmpty(branchCode))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
 
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.BranchesList = new JournalVoucherHelper().GetVoucherNo(branchCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BranchesList = new JournalVoucherHelper().GetVoucherNo(branchCode);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetAccountLedgerList/{ledegerCode}")]
         public async Task<IActionResult> GetAccountLedgerList(string ledegerCode)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.AccountLedgerList = JournalVoucherHelper.GetAccountLedgers(ledegerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.AccountLedgerList = JournalVoucherHelper.GetAccountLedgers(ledegerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("GetJournalvoucherList/{branchCode}")]
-        public async Task<IActionResult> GetJournalvoucherList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
+        public async Task<IActionResult> GetJournalvoucherList( [FromBody]VoucherNoSearchCriteria searchCriteria)
         {
-
-            if (searchCriteria == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var journalVoucherMasterList = new JournalVoucherHelper().GetJournalVoucherMasters(searchCriteria);
-                if (journalVoucherMasterList.Count > 0)
+                if (searchCriteria == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.JournalVoucherList = journalVoucherMasterList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var journalVoucherMasterList = new JournalVoucherHelper().GetJournalVoucherMasters(searchCriteria);
+                    if (journalVoucherMasterList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.JournalVoucherList = journalVoucherMasterList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("RegisterJournalVoucher")]
         public async Task<IActionResult> RegisterJournalVoucher([FromBody]JObject objData)
         {
-
-            if (objData == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var _journalVoucherHdr = objData["JournalVoucherHdr"].ToObject<TblJournalVoucherMaster>();
-                var _journalVoucherDtl = objData["JournalVoucherDetail"].ToObject<TblJournalVoucherDetails[]>();
-
-                var result = new JournalVoucherHelper().RegisterJournalVoucher(_journalVoucherHdr, _journalVoucherDtl.ToList());
-                if (result)
+                if (objData == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _journalVoucherHdr });
-                }
+                    var _journalVoucherHdr = objData["JournalVoucherHdr"].ToObject<TblJournalVoucherMaster>();
+                    var _journalVoucherDtl = objData["JournalVoucherDetail"].ToObject<TblJournalVoucherDetails[]>();
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    var result = new JournalVoucherHelper().RegisterJournalVoucher(_journalVoucherHdr, _journalVoucherDtl.ToList());
+                    if (result)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _journalVoucherHdr });
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetJournalVoucherDetailsList/{id}")]
         public async Task<IActionResult> GetJournalVoucherDetailsList(decimal id)
         {
-
-            if (id==0)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var journalVoucherDetailsList = new JournalVoucherHelper().GetJournalVoucherDetails(id);
-                if (journalVoucherDetailsList.Count > 0)
+                if (id == 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.JournalVoucherDetails = journalVoucherDetailsList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var journalVoucherDetailsList = new JournalVoucherHelper().GetJournalVoucherDetails(id);
+                    if (journalVoucherDetailsList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.JournalVoucherDetails = journalVoucherDetailsList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
     }
 }

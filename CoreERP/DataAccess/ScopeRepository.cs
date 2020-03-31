@@ -30,11 +30,9 @@ namespace CoreERP.DataAccess
                     command.Connection.Open();
                 try
                 {
-                    using (DbDataAdapter da = DbProviderFactories.GetFactory(command.Connection).CreateDataAdapter())
-                    {
-                        da.SelectCommand = command;
-                        da.Fill(ds);
-                    }
+                    using DbDataAdapter da = DbProviderFactories.GetFactory(command.Connection).CreateDataAdapter();
+                    da.SelectCommand = command;
+                    da.Fill(ds);
                 }
                 finally
                 {

@@ -13,12 +13,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTanks> repo = new Repository<TblTanks>())
-                {
-                    return repo.TblTanks
-                               .Where(x => x.TankNo == (code ?? x.TankNo))
-                               .ToList();
-                }
+                using Repository<TblTanks> repo = new Repository<TblTanks>();
+                return repo.TblTanks
+.Where(x => x.TankNo == (code ?? x.TankNo))
+.ToList();
             }
             catch { throw; }
         }
@@ -27,15 +25,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTanks> repo = new Repository<TblTanks>())
-                {
-                    tanks.BranchId = Convert.ToInt32(tanks.BranchCode);
-                    repo.TblTanks.Add(tanks);
-                    if (repo.SaveChanges() > 0)
-                        return tanks;
+                using Repository<TblTanks> repo = new Repository<TblTanks>();
+                tanks.BranchId = Convert.ToInt32(tanks.BranchCode);
+                repo.TblTanks.Add(tanks);
+                if (repo.SaveChanges() > 0)
+                    return tanks;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -47,15 +43,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTanks> repo = new Repository<TblTanks>())
-                {
-                    tanks.BranchId = Convert.ToInt32(tanks.BranchCode);
-                    repo.TblTanks.Update(tanks);
-                    if (repo.SaveChanges() > 0)
-                        return tanks;
+                using Repository<TblTanks> repo = new Repository<TblTanks>();
+                tanks.BranchId = Convert.ToInt32(tanks.BranchCode);
+                repo.TblTanks.Update(tanks);
+                if (repo.SaveChanges() > 0)
+                    return tanks;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -67,15 +61,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblTanks> repo = new Repository<TblTanks>())
-                {
-                    var tankno = repo.TblTanks.Where(x => x.TankId ==Convert.ToInt32(Code)).FirstOrDefault();
-                    repo.TblTanks.Remove(tankno);
-                    if (repo.SaveChanges() > 0)
-                        return tankno;
+                using Repository<TblTanks> repo = new Repository<TblTanks>();
+                var tankno = repo.TblTanks.Where(x => x.TankId == Convert.ToInt32(Code)).FirstOrDefault();
+                repo.TblTanks.Remove(tankno);
+                if (repo.SaveChanges() > 0)
+                    return tankno;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {

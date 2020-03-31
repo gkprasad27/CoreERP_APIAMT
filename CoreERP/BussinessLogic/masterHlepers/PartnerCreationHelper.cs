@@ -14,10 +14,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<PartnerCreation> repo = new Repository<PartnerCreation>())
-                {
-                    return repo.PartnerCreation.ToList();
-                }
+                using Repository<PartnerCreation> repo = new Repository<PartnerCreation>();
+                return repo.PartnerCreation.ToList();
             }
             catch { throw; }
         }
@@ -26,26 +24,24 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<PartnerCreation> repo = new Repository<PartnerCreation>())
+                using Repository<PartnerCreation> repo = new Repository<PartnerCreation>();
+                partnerCreation.Active = "Y";
+                partnerCreation.AddDate = DateTime.Now;
+                partnerCreation.EditDate = DateTime.Now;
+
+                var record = ((from prtnrcrt in repo.PartnerCreation select prtnrcrt.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
+                if (record != 0)
                 {
-                    partnerCreation.Active = "Y";
-                    partnerCreation.AddDate = DateTime.Now;
-                    partnerCreation.EditDate = DateTime.Now;
-
-                    var record = ((from prtnrcrt in repo.PartnerCreation select prtnrcrt.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
-                    if (record != 0)
-                    {
-                        partnerCreation.Code = (record + 1).ToString();
-                    }
-                    else
-                        partnerCreation.Code = "1";
-
-                    repo.PartnerCreation.Add(partnerCreation);
-                    if (repo.SaveChanges() > 0)
-                        return partnerCreation;
-
-                    return null;
+                    partnerCreation.Code = (record + 1).ToString();
                 }
+                else
+                    partnerCreation.Code = "1";
+
+                repo.PartnerCreation.Add(partnerCreation);
+                if (repo.SaveChanges() > 0)
+                    return partnerCreation;
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -57,14 +53,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<PartnerCreation> repo = new Repository<PartnerCreation>())
-                {
-                    repo.PartnerCreation.Update(partnerCreation);
-                    if (repo.SaveChanges() > 0)
-                        return partnerCreation;
+                using Repository<PartnerCreation> repo = new Repository<PartnerCreation>();
+                repo.PartnerCreation.Update(partnerCreation);
+                if (repo.SaveChanges() > 0)
+                    return partnerCreation;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -76,16 +70,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<PartnerCreation> repo = new Repository<PartnerCreation>())
-                {
-                    var partnerCreation = repo.PartnerCreation.Where(x => x.Code == code).FirstOrDefault();
-                    partnerCreation.Active = "N";
-                    repo.PartnerCreation.Update(partnerCreation);
-                    if (repo.SaveChanges() > 0)
-                        return partnerCreation;
+                using Repository<PartnerCreation> repo = new Repository<PartnerCreation>();
+                var partnerCreation = repo.PartnerCreation.Where(x => x.Code == code).FirstOrDefault();
+                partnerCreation.Active = "N";
+                repo.PartnerCreation.Update(partnerCreation);
+                if (repo.SaveChanges() > 0)
+                    return partnerCreation;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {

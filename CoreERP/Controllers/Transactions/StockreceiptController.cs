@@ -18,150 +18,179 @@ namespace CoreERP.Controllers.Transactions
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesListforStockreceipt()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.BranchesList = new StockreceiptHelpers().GetBranchesListforStockreceipt().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BranchesList = new StockreceiptHelpers().GetBranchesListforStockreceipt().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetProductLists/{productCode}/{branchCode}")]
         public async Task<IActionResult> GetOpStockreceiptDetailsection1(string productcode, string branchCode)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.productsList = new StockreceiptHelpers().GetOpStockIssuesDetailsection(productcode, branchCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.productsList = new StockreceiptHelpers().GetOpStockIssuesDetailsection(productcode, branchCode);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetToBranchesList")]
         public async Task<IActionResult> GetToBranchesList()
         {
-
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.branch = new StockissuesHelper().GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.branch = new StockissuesHelper().GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GettobranchesList/{branchcode}")]
         public async Task<IActionResult> GetbranchcodeList(string branchcode)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.branch = new StockissuesHelper().Getbranchcodes(branchcode).Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.branch = new StockissuesHelper().Getbranchcodes(branchcode).Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
         //GetReceiptNo
         [HttpGet("GetReceiptNo/{branchCode}")]
         public async Task<IActionResult> GetReceiptNo(string branchCode)
         {
-            if (string.IsNullOrEmpty(branchCode))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+            var result = await Task.Run(() =>
+            {
+                if (string.IsNullOrEmpty(branchCode))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
 
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.ReceiptNo = new StockreceiptHelpers().GetReceiptNo(branchCode);
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.ReceiptNo = new StockreceiptHelpers().GetReceiptNo(branchCode);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("RegisterStockreceipts")]
         public async Task<IActionResult> RegisterStockreceipts([FromBody]JObject objData)
         {
-            APIResponse apiResponse = null;
-            if (objData == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var _stockreceiptHdr = objData["StackreceiptsHdr"].ToObject<TblOperatorStockReceipt>();
-                var _stockreceiptDtl = objData["StackreceiptsDetail"].ToObject<TblOperatorStockReceiptDetail[]>();
+                APIResponse apiResponse = null;
+                if (objData == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
+                {
+                    var _stockreceiptHdr = objData["StackreceiptsHdr"].ToObject<TblOperatorStockReceipt>();
+                    var _stockreceiptDtl = objData["StackreceiptsDetail"].ToObject<TblOperatorStockReceiptDetail[]>();
 
-                var result = new StockreceiptHelpers().RegisterStockreceipts(_stockreceiptHdr, _stockreceiptDtl.ToList());
-                apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    var result = new StockreceiptHelpers().RegisterStockreceipts(_stockreceiptHdr, _stockreceiptDtl.ToList());
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                    return Ok(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("GetStockreceiptsList")]
         public async Task<IActionResult> GetStockreceiptsList([FromBody]SearchCriteria searchCriteria)
         {
-
-            if (searchCriteria == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var stockreceiptMasterList = new StockreceiptHelpers().GetStockissuesMasters(searchCriteria);
-                if (stockreceiptMasterList.Count > 0)
+                if (searchCriteria == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.StockreceiptList = stockreceiptMasterList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var stockreceiptMasterList = new StockreceiptHelpers().GetStockissuesMasters(searchCriteria);
+                    if (stockreceiptMasterList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.StockreceiptList = stockreceiptMasterList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
 
         [HttpGet("GetStockreceiptDeatilList/{issueNo}")]
         public async Task<IActionResult> GetStockreceiptDeatilList(string issueNo)
         {
-
-            if (string.IsNullOrEmpty(issueNo))
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var StockreceiptDeatilList = new StockreceiptHelpers().StockreceiptDeatils(issueNo);
-                if (StockreceiptDeatilList.Count > 0)
+                if (string.IsNullOrEmpty(issueNo))
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.StockreceiptDeatilList = StockreceiptDeatilList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var StockreceiptDeatilList = new StockreceiptHelpers().StockreceiptDeatils(issueNo);
+                    if (StockreceiptDeatilList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.StockreceiptDeatilList = StockreceiptDeatilList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
 

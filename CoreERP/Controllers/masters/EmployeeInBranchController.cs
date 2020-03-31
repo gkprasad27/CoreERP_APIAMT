@@ -15,13 +15,13 @@ namespace CoreERP.Controllers
     [Route("api/masters/EmployeeInBranch")]
     public class EmployeeInBranchController : ControllerBase
     {
-       
+
         [HttpGet("GetAllEmployeesInBranch/{BranchCode}")]
-        public async Task<IActionResult> GetAllEmployeesInBranch(string BranchCode)
+        public IActionResult GetAllEmployeesInBranch(string BranchCode)
         {
             try
             {
-                var empinbrList = EmployeeHelper.GetEmployeeInBranches(null,BranchCode);
+                var empinbrList = EmployeeHelper.GetEmployeeInBranches(null, BranchCode);
                 if (empinbrList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -39,7 +39,7 @@ namespace CoreERP.Controllers
 
 
         [HttpGet("GetEmployeeList")]
-        public async Task<IActionResult> GetEmployeeList()
+        public IActionResult GetEmployeeList()
         {
 
             try
@@ -62,7 +62,7 @@ namespace CoreERP.Controllers
 
 
         [HttpGet("GetBranchesList")]
-        public async Task<IActionResult> GetBranchesList()
+        public IActionResult GetBranchesList()
         {
             try
             {
@@ -84,15 +84,15 @@ namespace CoreERP.Controllers
 
 
         [HttpPost("RegisterEmployeeInBranch")]
-        public async Task<IActionResult> RegisterEmployeeInBranch([FromBody]EmployeeInBranches employeeInBranch)
+        public IActionResult RegisterEmployeeInBranch([FromBody]EmployeeInBranches employeeInBranch)
         {
-            APIResponse apiResponse = null;
             if (employeeInBranch == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(employeeInBranch)} cannot be null" });
             try
             {
                 var result = EmployeeHelper.RegisterEmployeeInBranch(employeeInBranch);
-                if (result !=null)
+                APIResponse apiResponse;
+                if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }
@@ -112,15 +112,15 @@ namespace CoreERP.Controllers
 
 
         [HttpPut("UpdateEmployeeInBranch")]
-        public async Task<IActionResult> UpdateEmployeeInBranch([FromBody] EmployeeInBranches employeeInBranch)
+        public IActionResult UpdateEmployeeInBranch([FromBody] EmployeeInBranches employeeInBranch)
         {
-            APIResponse apiResponse = null;
             if (employeeInBranch == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(employeeInBranch)} cannot be null." });
 
             try
             {
                 var result = EmployeeHelper.UpdateEmployeeInBranches(employeeInBranch);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -140,16 +140,16 @@ namespace CoreERP.Controllers
 
         // Delete Branch
         [HttpDelete("DeleteEmployeeInBranch/{code}")]
-        public async Task<IActionResult> DeleteEmployeeInBranch(string code)
+        public IActionResult DeleteEmployeeInBranch(string code)
         {
-            APIResponse apiResponse = null;
             if (code == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
             {
                 var result = EmployeeHelper.DeleteEmployeeInBranches(code);
-                if (result !=null)
+                APIResponse apiResponse;
+                if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 }

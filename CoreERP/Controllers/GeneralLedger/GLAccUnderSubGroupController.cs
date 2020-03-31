@@ -13,18 +13,18 @@ namespace CoreERP.Controllers.GL
     public class GLAccUnderSubGroupController : ControllerBase
     {
         [HttpPost("RegisterGlaccUnderSubGroup")]
-        public async Task<IActionResult> RegisterGlaccUnderSubGroup([FromBody]GlaccUnderSubGroup glaccUnderSubGroup)
+        public IActionResult RegisterGlaccUnderSubGroup([FromBody]GlaccUnderSubGroup glaccUnderSubGroup)
         {
             if (glaccUnderSubGroup == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(glaccUnderSubGroup)}cannot be null" });
             try
             {
-                if(GLHelper.GetGLUnderSubGroupList(glaccUnderSubGroup.UnderSubGroupCode).Count > 0)
+                if (GLHelper.GetGLUnderSubGroupList(glaccUnderSubGroup.UnderSubGroupCode).Count > 0)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Under SubGroup Code{glaccUnderSubGroup.UnderSubGroupCode} already exists." });
 
                 GlaccUnderSubGroup result = GLHelper.RegisterUnderSubGroup(glaccUnderSubGroup);
-                if (result !=null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result});
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }
@@ -35,7 +35,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpPost("RegisterTblAccGroup")]
-        public async Task<IActionResult> RegisterTblAccGroup([FromBody]TblAccountGroup tblAccGrp)
+        public IActionResult RegisterTblAccGroup([FromBody]TblAccountGroup tblAccGrp)
         {
             if (tblAccGrp == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(tblAccGrp)} can not be null" });
@@ -47,7 +47,7 @@ namespace CoreERP.Controllers.GL
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
-               
+
             }
             catch (Exception ex)
             {
@@ -56,15 +56,15 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpPut("UpdateGLAccUnderSubGroup")]
-        public async Task<IActionResult> UpdateGLAccUnderSubGroup([FromBody] GlaccUnderSubGroup glaccUnderSubGroup)
+        public IActionResult UpdateGLAccUnderSubGroup([FromBody] GlaccUnderSubGroup glaccUnderSubGroup)
         {
             if (glaccUnderSubGroup == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(glaccUnderSubGroup)} cannot be null"});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(glaccUnderSubGroup)} cannot be null" });
 
             try
             {
                 GlaccUnderSubGroup result = GLHelper.UpdateUnderSubGroup(glaccUnderSubGroup);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
@@ -76,7 +76,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpPut("UpdateTblAccountGroup")]
-        public async Task<IActionResult> UpdateTblAccountGroup([FromBody] TblAccountGroup tblAccGrp)
+        public IActionResult UpdateTblAccountGroup([FromBody] TblAccountGroup tblAccGrp)
         {
             if (tblAccGrp == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(tblAccGrp)} cannot be null" });
@@ -96,7 +96,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpDelete("DeleteTblAccountGroup/{code}")]
-        public async Task<IActionResult> DeleteTblAccountGroup(int code)
+        public IActionResult DeleteTblAccountGroup(int code)
         {
 
             //if (string.IsNullOrWhiteSpace(code))
@@ -117,7 +117,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpDelete("DeleteGLAccUnderSubGroup/{code}")]
-        public async Task<IActionResult> DeleteGLAccUnderSubGroup(string code)
+        public IActionResult DeleteGLAccUnderSubGroup(string code)
         {
 
             if (string.IsNullOrWhiteSpace(code))
@@ -126,7 +126,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 GlaccUnderSubGroup result = GLHelper.DeleteUnderSubGroup(code);
-                if (result !=null)
+                if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
@@ -138,7 +138,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetGLUnderSubGroupList")]
-        public async Task<IActionResult> GetGLUnderSubGroupList()
+        public IActionResult GetGLUnderSubGroupList()
         {
             try
             {
@@ -159,7 +159,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetTblAccountGroupList")]
-        public async Task<IActionResult> GetTblAccountGroupList()
+        public IActionResult GetTblAccountGroupList()
         {
             try
             {
@@ -180,12 +180,12 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetGLAccountGrouplist")]
-        public async Task<IActionResult> GetGLAccountGrouplist()
+        public IActionResult GetGLAccountGrouplist()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GLAccGroupList = GLHelper.GetGLAccountGroupList().Select(a=> new { ID=a.GroupCode,TEXT=a.GroupName});
+                expando.GLAccGroupList = GLHelper.GetGLAccountGroupList().Select(a => new { ID = a.GroupCode, TEXT = a.GroupName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -195,7 +195,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetAccountNamelist")]
-        public async Task<IActionResult> GetAccountNamelist()
+        public IActionResult GetAccountNamelist()
         {
             try
             {
@@ -210,9 +210,9 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetAccountSubGrouplist/{glaccGroupCode}")]
-        public async Task<IActionResult> GetAccountSubGrouplist(string glaccGroupCode)
+        public IActionResult GetAccountSubGrouplist(string glaccGroupCode)
         {
-            if(string.IsNullOrEmpty(glaccGroupCode))
+            if (string.IsNullOrEmpty(glaccGroupCode))
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Account group Can not be null/empty." });
             try
             {

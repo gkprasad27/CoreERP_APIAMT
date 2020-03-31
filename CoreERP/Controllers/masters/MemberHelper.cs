@@ -13,10 +13,8 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                using (Repository<TblMemberMaster>    repo=new Repository<TblMemberMaster>())
-                {
-                    return repo.TblMemberMaster.Where(m=> m.MemberName.Contains(memberName)).ToList();
-                }
+                using Repository<TblMemberMaster> repo = new Repository<TblMemberMaster>();
+                return repo.TblMemberMaster.Where(m => m.MemberName.Contains(memberName)).ToList();
             }
             catch(Exception ex)
             {
@@ -27,10 +25,8 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                using (Repository<TblMemberMaster> repo = new Repository<TblMemberMaster>())
-                {
-                    return repo.TblMemberMaster.Where(m => m.MemberCode == memberCode).FirstOrDefault();
-                }
+                using Repository<TblMemberMaster> repo = new Repository<TblMemberMaster>();
+                return repo.TblMemberMaster.Where(m => m.MemberCode == memberCode).FirstOrDefault();
             }
             catch (Exception ex)
             {

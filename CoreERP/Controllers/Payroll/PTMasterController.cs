@@ -15,7 +15,7 @@ namespace CoreERP.Controllers.Payroll
     public class PTMasterController : ControllerBase
     {
         [HttpGet("GetPTList")]
-        public async Task<IActionResult> GetPTList()
+        public IActionResult GetPTList()
         {
             try
             {
@@ -35,7 +35,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPost("RegisterPT")]
-        public async Task<IActionResult> RegisterPT([FromBody]Ptmaster pt)
+        public IActionResult RegisterPT([FromBody]Ptmaster pt)
         {
 
             if (pt == null)
@@ -43,7 +43,7 @@ namespace CoreERP.Controllers.Payroll
             else
             {
                 if (PTMasterHelper.GetPT(pt.Ptslab) != null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + pt.Ptslab+ " is already Exists,Please Use Another Code" });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + pt.Ptslab + " is already Exists,Please Use Another Code" });
 
                 try
                 {
@@ -68,7 +68,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPut("UpdatePT")]
-        public async Task<IActionResult> UpdatePT([FromBody] Ptmaster pt)
+        public IActionResult UpdatePT([FromBody] Ptmaster pt)
         {
 
             if (pt == null)
@@ -95,15 +95,15 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpDelete("DeletePT/{code}")]
-        public async Task<IActionResult> DeletePT(string code)
+        public IActionResult DeletePT(string code)
         {
-            APIResponse apiResponse = null;
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
             {
                 var result = PTMasterHelper.DeletePT(code);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

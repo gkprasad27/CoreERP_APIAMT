@@ -15,7 +15,7 @@ namespace CoreERP.Controllers.Payroll
     public class PFMasterController : ControllerBase
     {
         [HttpGet("GetPFList")]
-        public async Task<IActionResult> GetPFList()
+        public IActionResult GetPFList()
         {
             try
             {
@@ -35,7 +35,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpGet("GetComponentsList")]
-        public async Task<IActionResult> GetComponentsList()
+        public IActionResult GetComponentsList()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPost("RegisterPF")]
-        public async Task<IActionResult> RegisterPF([FromBody]Pfmaster pf)
+        public IActionResult RegisterPF([FromBody]Pfmaster pf)
         {
 
             if (pf == null)
@@ -58,7 +58,7 @@ namespace CoreERP.Controllers.Payroll
             else
             {
                 if (PFMasterHelper.GetPF(pf.PftypeName) != null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + pf.PftypeName+ " is already Exists,Please Use Another Code" });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + pf.PftypeName + " is already Exists,Please Use Another Code" });
 
                 try
                 {
@@ -83,7 +83,7 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpPut("UpdatePF")]
-        public async Task<IActionResult> UpdatePF([FromBody] Pfmaster pf)
+        public IActionResult UpdatePF([FromBody] Pfmaster pf)
         {
 
             if (pf == null)
@@ -110,15 +110,15 @@ namespace CoreERP.Controllers.Payroll
         }
 
         [HttpDelete("DeletePF/{code}")]
-        public async Task<IActionResult> DeletePF(string code)
+        public IActionResult DeletePF(string code)
         {
-            APIResponse apiResponse = null;
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
             {
                 var result = PFMasterHelper.DeletePF(code);
+                APIResponse apiResponse;
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

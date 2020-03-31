@@ -12,10 +12,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Segment> repo = new Repository<Segment>())
-                {
-                    return repo.Segment.AsEnumerable().Where(s => s.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
-                }
+                using Repository<Segment> repo = new Repository<Segment>();
+                return repo.Segment.AsEnumerable().Where(s => s.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
             }
             catch { throw; }
         }
@@ -24,13 +22,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Segment> repo = new Repository<Segment>())
-                {
-                    return repo.Segment
-                               .AsEnumerable()
-                               .Where(s => s.Id == ID)
-                               .Count() > 0;
-                }
+                using Repository<Segment> repo = new Repository<Segment>();
+                return repo.Segment
+.AsEnumerable()
+.Where(s => s.Id == ID)
+.Count() > 0;
             }
             catch { throw; }
         }
@@ -39,15 +35,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Segment> repo = new Repository<Segment>())
-                {
-                    segment.Active = "Y";
-                    repo.Segment.Add(segment);
-                    if (repo.SaveChanges() > 0)
-                        return segment;
+                using Repository<Segment> repo = new Repository<Segment>();
+                segment.Active = "Y";
+                repo.Segment.Add(segment);
+                if (repo.SaveChanges() > 0)
+                    return segment;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -56,14 +50,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Segment> repo = new Repository<Segment>())
-                {
-                    repo.Segment.Update(segment);
-                    if (repo.SaveChanges() > 0)
-                        return segment;
+                using Repository<Segment> repo = new Repository<Segment>();
+                repo.Segment.Update(segment);
+                if (repo.SaveChanges() > 0)
+                    return segment;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -73,16 +65,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Segment> repo = new Repository<Segment>())
-                {
-                    var segment = repo.Segment.Where(s => s.SeqId == seqID).FirstOrDefault();
-                    segment.Active = "N";
-                    repo.Segment.Update(segment);
-                    if (repo.SaveChanges() > 0)
-                        return segment;
+                using Repository<Segment> repo = new Repository<Segment>();
+                var segment = repo.Segment.Where(s => s.SeqId == seqID).FirstOrDefault();
+                segment.Active = "N";
+                repo.Segment.Update(segment);
+                if (repo.SaveChanges() > 0)
+                    return segment;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }

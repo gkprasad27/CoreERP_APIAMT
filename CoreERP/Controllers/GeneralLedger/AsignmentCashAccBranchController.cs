@@ -13,24 +13,24 @@ namespace CoreERP.Controllers.GL
     public class AsignmentCashAccBranchController : ControllerBase
     {
         [HttpPost("RegisterAsigCashAccBranch")]
-        public async Task<IActionResult> RegisterAsigCashAccBranch([FromBody]AsignmentCashAccBranch asignmentCashAccBranch)
+        public IActionResult RegisterAsigCashAccBranch([FromBody]AsignmentCashAccBranch asignmentCashAccBranch)
         {
             try
             {
                 AsignmentCashAccBranch result = GLHelper.RegisterCashAccToBranches(asignmentCashAccBranch);
                 if (result != null)
-                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "" });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
-       [HttpGet("GetAsignCashAccBranchList")]
-        public async Task<IActionResult> GetAsignCashAccBranchList()
+        [HttpGet("GetAsignCashAccBranchList")]
+        public IActionResult GetAsignCashAccBranchList()
         {
             try
             {
@@ -64,16 +64,16 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpPut("UpdateaAignmentCashAccBranch")]
-        public async Task<IActionResult> UpdateaAignmentCashAccBranch([FromBody] AsignmentCashAccBranch asignmentCashAccBranch)
+        public IActionResult UpdateaAignmentCashAccBranch([FromBody] AsignmentCashAccBranch asignmentCashAccBranch)
         {
             if (asignmentCashAccBranch == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(asignmentCashAccBranch)} cannot be null" });
-            
+
             try
             {
                 AsignmentCashAccBranch result = GLHelper.UpdateCashAccToBranches(asignmentCashAccBranch);
-                if (result !=null)
-                    return Ok(new APIResponse() {status=APIStatus.PASS.ToString(), response=result});
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Updation Failed" });
             }
@@ -84,7 +84,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpDelete("DeleteAignmentCashAccBranch/{code}")]
-        public async Task<IActionResult> DeleteAignmentCashAccBranch(string code)
+        public IActionResult DeleteAignmentCashAccBranch(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
@@ -92,8 +92,8 @@ namespace CoreERP.Controllers.GL
             try
             {
                 AsignmentCashAccBranch result = GLHelper.DeleteCashAccToBranches(code);
-                if (result !=null)
-                    return Ok(new APIResponse() { status=APIStatus.PASS.ToString(),response= result });
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
             }
@@ -104,13 +104,13 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetBranchesList")]
-        public async Task<IActionResult> GetBranchesList()
+        public IActionResult GetBranchesList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
                 expando.BranchesList = GLHelper.GetBranches().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
-                return Ok(new APIResponse(){status=APIStatus.PASS.ToString(),response= expando });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
@@ -119,7 +119,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetBankAccounts")]
-        public async Task<IActionResult> GetBankAccounts()
+        public IActionResult GetBankAccounts()
         {
 
             try
@@ -135,7 +135,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetCashAccounts")]
-        public async Task<IActionResult> GetCashAccounts()
+        public IActionResult GetCashAccounts()
         {
 
             try

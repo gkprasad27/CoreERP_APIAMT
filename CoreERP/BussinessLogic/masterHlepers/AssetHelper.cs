@@ -14,10 +14,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<AssetMaster> repo = new Repository<AssetMaster>())
-                {
-                    return repo.AssetMaster.AsEnumerable().Where(a=> a.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)).ToList();
-                }
+                using Repository<AssetMaster> repo = new Repository<AssetMaster>();
+                return repo.AssetMaster.AsEnumerable().Where(a => a.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
             }
             catch { throw; }
         }
@@ -37,24 +35,22 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<AssetMaster> repo = new Repository<AssetMaster>())
+                using Repository<AssetMaster> repo = new Repository<AssetMaster>();
+                var record = ((from asiacc in repo.AssetMaster select asiacc.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
+                if (record != 0)
                 {
-                    var record = ((from asiacc in repo.AssetMaster select asiacc.Code).ToList()).ConvertAll<Int64>(Int64.Parse).OrderByDescending(x => x).FirstOrDefault();
-                    if (record != 0)
-                    {
-                        // noSeries.Code = (int.Parse(lstrcd.Code) + 1).ToString(); 
-                        assetMaster.Code = (record + 1).ToString();
-                    }
-                    else
-                        assetMaster.Code = "1";
-
-                    assetMaster.Active = "Y";
-                    repo.AssetMaster.Add(assetMaster);
-                    if (repo.SaveChanges() > 0)
-                        return assetMaster;
-
-                    return null;
+                    // noSeries.Code = (int.Parse(lstrcd.Code) + 1).ToString(); 
+                    assetMaster.Code = (record + 1).ToString();
                 }
+                else
+                    assetMaster.Code = "1";
+
+                assetMaster.Active = "Y";
+                repo.AssetMaster.Add(assetMaster);
+                if (repo.SaveChanges() > 0)
+                    return assetMaster;
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -66,14 +62,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<AssetMaster> repo = new Repository<AssetMaster>())
-                {
-                    repo.AssetMaster.Update(assetMaster);
-                    if (repo.SaveChanges() > 0)
-                        return assetMaster;
+                using Repository<AssetMaster> repo = new Repository<AssetMaster>();
+                repo.AssetMaster.Update(assetMaster);
+                if (repo.SaveChanges() > 0)
+                    return assetMaster;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -84,16 +78,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<AssetMaster> repo = new Repository<AssetMaster>())
-                {
-                    var assetMaster = repo.AssetMaster.Where(x => x.Code == code).FirstOrDefault();
-                    assetMaster.Active = "N";
-                    repo.AssetMaster.Update(assetMaster);
-                    if (repo.SaveChanges() > 0)
-                        return assetMaster;
+                using Repository<AssetMaster> repo = new Repository<AssetMaster>();
+                var assetMaster = repo.AssetMaster.Where(x => x.Code == code).FirstOrDefault();
+                assetMaster.Active = "N";
+                repo.AssetMaster.Update(assetMaster);
+                if (repo.SaveChanges() > 0)
+                    return assetMaster;
 
-                    return null;
-                }
+                return null;
             }
             catch (Exception ex)
             {
