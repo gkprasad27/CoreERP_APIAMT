@@ -140,27 +140,30 @@ namespace CoreERP.Controllers.Transactions
         }
 
         [HttpPost("GetStockissuesList/{branchCode}")]
-        public async Task<IActionResult> GetStockissuesList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
+        public async Task<IActionResult> GetStockissuesList([FromBody]VoucherNoSearchCriteria searchCriteria)
         {
-
-            if (searchCriteria == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            var result = await Task.Run(() =>
             {
-                var stockissueMasterList = new StockissuesHelper().GetStockissuesMasters(searchCriteria);
-                if (stockissueMasterList.Count > 0)
+                if (searchCriteria == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+                try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.StockIssueList = stockissueMasterList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var stockissueMasterList = new StockissuesHelper().GetStockissuesMasters(searchCriteria);
+                    if (stockissueMasterList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.StockIssueList = stockissueMasterList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No stockissues record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No stockissues record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
 
