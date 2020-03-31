@@ -139,57 +139,30 @@ namespace CoreERP.Controllers.Transactions
             return result;
         }
 
-        //[HttpPost("GetStockissuesList/{branchCode}")]
-        //public async Task<IActionResult> GetStockissuesList(string branchCode, [FromBody]SearchCriteria searchCriteria)
-        //{
-
-        //    if (searchCriteria == null)
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-        //    try
-        //    {
-        //        var stockissueMasterList = new StockissuesHelper().GetStockissuesMasters(searchCriteria);
-        //        if (stockissueMasterList.Count > 0)
-        //        {
-        //            dynamic expando = new ExpandoObject();
-        //            expando.StockIssueList = stockissueMasterList;
-        //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-        //        }
-
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No stockissues record found." });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
-
-
-        [HttpPost("GetStockissuesList")]
-        public async Task<IActionResult> GetStockissuesList([FromBody]SearchCriteria searchCriteria)
+        [HttpPost("GetStockissuesList/{branchCode}")]
+        public async Task<IActionResult> GetStockissuesList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
         {
-            var result = await Task.Run(() =>
-            {
-                if (searchCriteria == null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-                try
-                {
-                    var stockissueMasterList = new StockissuesHelper().GetStockissuesMasters(searchCriteria);
-                    if (stockissueMasterList.Count > 0)
-                    {
-                        dynamic expando = new ExpandoObject();
-                        expando.StockIssueList = stockissueMasterList;
-                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                    }
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockIssueList record found." });
-                }
-                catch (Exception ex)
+            if (searchCriteria == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var stockissueMasterList = new StockissuesHelper().GetStockissuesMasters(searchCriteria);
+                if (stockissueMasterList.Count > 0)
                 {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                    dynamic expando = new ExpandoObject();
+                    expando.StockIssueList = stockissueMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
-            });
-            return result;
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No stockissues record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
+
 
         [HttpGet("GetStockissuesDeatilList/{issueNo}")]
         public async Task<IActionResult> GetStockissuesDeatilList(string issueNo)

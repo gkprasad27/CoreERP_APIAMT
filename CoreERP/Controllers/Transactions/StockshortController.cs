@@ -103,31 +103,28 @@ namespace CoreERP.Controllers.Transactions
         }
 
 
-        [HttpPost("GetStockshortsList")]
-        public async Task<IActionResult> GetStockshortsList([FromBody]SearchCriteria searchCriteria)
+        [HttpPost("GetStockshortsList/{branchCode}")]
+        public async Task<IActionResult> GetStockshortsList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
         {
-            var result = await Task.Run(() =>
-            {
-                if (searchCriteria == null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-                try
-                {
-                    var stockshortsListMasterList = new StockshortHelpers().GetStockshortsList(searchCriteria);
-                    if (stockshortsListMasterList.Count > 0)
-                    {
-                        dynamic expando = new ExpandoObject();
-                        expando.StockshortsList = stockshortsListMasterList;
-                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                    }
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
-                }
-                catch (Exception ex)
+            if (searchCriteria == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var stockshortsListMasterList = new StockshortHelpers().GetStockshortsList(searchCriteria);
+                if (stockshortsListMasterList.Count > 0)
                 {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                    dynamic expando = new ExpandoObject();
+                    expando.StockshortsList = stockshortsListMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
-            });
-            return result;
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 

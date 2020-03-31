@@ -39,5 +39,9 @@ namespace CoreERP.Helpers.SharedModels
         }
         public string VoucherNo { get; set; }
         public string StockExcessNo { get; set; }
+        public string OilConversionVchNo { get; set; }
+        public string issueNo { get; set; }
+        public string StockshortNo { get; set; }
+        public string receiptNo { get; set; }
     }
 }

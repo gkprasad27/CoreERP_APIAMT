@@ -80,7 +80,7 @@ namespace CoreERP.Controllers.Transactions
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.branch = new StockissuesHelper().Getbranchcodes(branchcode).Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                    expando.branch = new StockreceiptHelpers().Getbranchcodes(branchcode).Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -90,6 +90,7 @@ namespace CoreERP.Controllers.Transactions
             });
             return result;
         }
+
         //GetReceiptNo
         [HttpGet("GetReceiptNo/{branchCode}")]
         public async Task<IActionResult> GetReceiptNo(string branchCode)
@@ -138,31 +139,28 @@ namespace CoreERP.Controllers.Transactions
             return result;
         }
 
-        [HttpPost("GetStockreceiptsList")]
-        public async Task<IActionResult> GetStockreceiptsList([FromBody]SearchCriteria searchCriteria)
+        [HttpPost("GetStockreceiptsList/{branchCode}")]
+        public async Task<IActionResult> GetStockreceiptsList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
         {
-            var result = await Task.Run(() =>
-            {
-                if (searchCriteria == null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-                try
-                {
-                    var stockreceiptMasterList = new StockreceiptHelpers().GetStockissuesMasters(searchCriteria);
-                    if (stockreceiptMasterList.Count > 0)
-                    {
-                        dynamic expando = new ExpandoObject();
-                        expando.StockreceiptList = stockreceiptMasterList;
-                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                    }
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
-                }
-                catch (Exception ex)
+            if (searchCriteria == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var stockreceiptMasterList = new StockreceiptHelpers().GetStockissuesMasters(searchCriteria);
+                if (stockreceiptMasterList.Count > 0)
                 {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                    dynamic expando = new ExpandoObject();
+                    expando.StockreceiptList = stockreceiptMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
-            });
-            return result;
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
 

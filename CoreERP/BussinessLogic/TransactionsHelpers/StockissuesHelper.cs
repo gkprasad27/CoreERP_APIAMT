@@ -308,20 +308,30 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         //    }
 
         //}
-        public List<TblOperatorStockIssues> GetStockissuesMasters(SearchCriteria searchCriteria)
+        //Searchcode
+        public List<TblOperatorStockIssues> GetStockissuesMasters(VoucherNoSearchCriteria searchCriteria)
         {
             try
             {
-                searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
-                searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
 
-                using Repository<TblOperatorStockIssues> repo = new Repository<TblOperatorStockIssues>();
-                return repo.TblOperatorStockIssues.AsEnumerable()
-.Where(inv => Convert.ToDateTime(inv.IssueDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-&& Convert.ToDateTime(inv.IssueDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-&& inv.IssueNo == (searchCriteria.InvoiceNo ?? inv.IssueNo)
-)
-.ToList();
+                using (Repository<TblOperatorStockIssues> repo = new Repository<TblOperatorStockIssues>())
+                {
+                    List<TblOperatorStockIssues> _cashpaymentMasterList = null;
+
+
+                    _cashpaymentMasterList = repo.TblOperatorStockIssues.AsEnumerable()
+                              .Where(cp =>
+                                         DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.IssueDate).Value.ToShortDateString())
+                                       && DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.IssueDate).Value.ToShortDateString())
+                                 )
+                               .ToList();
+
+                    if (!string.IsNullOrEmpty(searchCriteria.issueNo))
+                        _cashpaymentMasterList = GetStockissuesList().Where(x => x.IssueNo == searchCriteria.issueNo).ToList();
+
+
+                    return _cashpaymentMasterList;
+                }
             }
             catch (Exception ex)
             {

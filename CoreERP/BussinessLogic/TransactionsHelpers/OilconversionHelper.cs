@@ -206,20 +206,29 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 
 
         //Searchcode
-        public List<TblOilConversionMaster> GetOilConversionMasters(SearchCriteria searchCriteria)
+        public List<TblOilConversionMaster> GetOilConversionMasters(VoucherNoSearchCriteria searchCriteria)
         {
             try
             {
-                searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
-                searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
 
-                using Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>();
-                return repo.TblOilConversionMaster.AsEnumerable()
-.Where(inv => Convert.ToDateTime(inv.OilConversionDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-&& Convert.ToDateTime(inv.OilConversionDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-&& inv.OilConversionVchNo == (searchCriteria.InvoiceNo ?? inv.OilConversionVchNo)
-)
-.ToList();
+                using (Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>())
+                {
+                    List<TblOilConversionMaster> _oilconvsnMasterList = null;
+
+
+                    _oilconvsnMasterList = repo.TblOilConversionMaster.AsEnumerable()
+                              .Where(cp =>
+                                         DateTime.Parse(cp.OilConversionDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.OilConversionDate).Value.ToShortDateString())
+                                       && DateTime.Parse(cp.OilConversionDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.OilConversionDate).Value.ToShortDateString())
+                                 )
+                               .ToList();
+
+                    if (!string.IsNullOrEmpty(searchCriteria.OilConversionVchNo))
+                        _oilconvsnMasterList = GetOilconversionList().Where(x => x.OilConversionVchNo == searchCriteria.OilConversionVchNo).ToList();
+
+
+                    return _oilconvsnMasterList;
+                }
             }
             catch (Exception ex)
             {
@@ -227,6 +236,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
 
         }
+
 
         public List<TblOilConversionDetails> OilconversionsDeatilList(string vocherno)
         {

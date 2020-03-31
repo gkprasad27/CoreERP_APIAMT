@@ -86,31 +86,28 @@ namespace CoreERP.Controllers.Transactions
             return result;
         }
 
-        [HttpPost("GetOilconversionList")]
-        public async Task<IActionResult> GetOilconversionList([FromBody]SearchCriteria searchCriteria)
+        [HttpPost("GetOilconversionList/{branchCode}")]
+        public async Task<IActionResult> GetOilconversionList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
         {
-            var result = await Task.Run(() =>
-            {
-                if (searchCriteria == null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-                try
-                {
-                    var oilconversionList = new OilconversionHelper().GetOilConversionMasters(searchCriteria);
-                    if (oilconversionList.Count > 0)
-                    {
-                        dynamic expando = new ExpandoObject();
-                        expando.oilconversionsList = oilconversionList;
-                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                    }
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
-                }
-                catch (Exception ex)
+            if (searchCriteria == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var oilconversionList = new OilconversionHelper().GetOilConversionMasters(searchCriteria);
+                if (oilconversionList.Count > 0)
                 {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                    dynamic expando = new ExpandoObject();
+                    expando.oilconversionsList = oilconversionList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
-            });
-            return result;
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpGet("GetOilconversionsDeatilList/{issueNo}")]

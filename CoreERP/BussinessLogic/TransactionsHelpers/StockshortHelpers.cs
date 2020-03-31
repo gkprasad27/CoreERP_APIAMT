@@ -239,20 +239,29 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 
 
         //Searchcode
-        public List<TblStockshortMaster> GetStockshortsList(SearchCriteria searchCriteria)
+        public List<TblStockshortMaster> GetStockshortsList(VoucherNoSearchCriteria searchCriteria)
         {
             try
             {
-                searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
-                searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
 
-                using Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>();
-                return repo.TblStockshortMaster.AsEnumerable()
-.Where(inv => Convert.ToDateTime(inv.StockshortDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-&& Convert.ToDateTime(inv.StockshortDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-&& inv.StockshortNo == (searchCriteria.InvoiceNo ?? inv.StockshortNo)
-)
-.ToList();
+                using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
+                {
+                    List<TblStockshortMaster> _stockshortMasterList = null;
+
+
+                    _stockshortMasterList = repo.TblStockshortMaster.AsEnumerable()
+                              .Where(cp =>
+                                         DateTime.Parse(cp.StockshortDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.StockshortDate).Value.ToShortDateString())
+                                       && DateTime.Parse(cp.StockshortDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.StockshortDate).Value.ToShortDateString())
+                                 )
+                               .ToList();
+
+                    if (!string.IsNullOrEmpty(searchCriteria.StockshortNo))
+                        _stockshortMasterList = GetStockshortsList().Where(x => x.StockshortNo == searchCriteria.StockshortNo).ToList();
+
+
+                    return _stockshortMasterList;
+                }
             }
             catch (Exception ex)
             {
@@ -260,6 +269,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
 
         }
+
 
 
         public List<TblStockshortDetails> StockshortsDeatilList(string shortno)

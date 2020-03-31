@@ -109,6 +109,20 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
 
+        public List<TblBranch> Getbranchcodes(string codes)
+        {
+            try
+            {
+                using (Repository<TblBranch> repo = new Repository<TblBranch>())
+                {
+                    var code = repo.TblBranch.Where(x => x.BranchCode == (codes)).FirstOrDefault();
+                    return repo.TblBranch
+                          .Where(x => (x.SubBranchof == Convert.ToDecimal(codes)))
+                          .ToList();
+                }
+            }
+            catch { throw; }
+        }
 
         public TblOperatorStockReceiptDetail GetOpStockIssuesDetailsection(string productCode, string branchCode)
         {
@@ -244,20 +258,30 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
         //Searchcode
-        public List<TblOperatorStockReceipt> GetStockissuesMasters(SearchCriteria searchCriteria)
+
+        public List<TblOperatorStockReceipt> GetStockissuesMasters(VoucherNoSearchCriteria searchCriteria)
         {
             try
             {
-                searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
-                searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
 
-                using Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>();
-                return repo.TblOperatorStockReceipt.AsEnumerable()
-.Where(inv => Convert.ToDateTime(inv.ReceiptDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-&& Convert.ToDateTime(inv.ReceiptDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-&& inv.ReceiptNo == (searchCriteria.InvoiceNo ?? inv.ReceiptNo)
-)
-.ToList();
+                using (Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>())
+                {
+                    List<TblOperatorStockReceipt> _stockreceiptMasterList = null;
+
+
+                    _stockreceiptMasterList = repo.TblOperatorStockReceipt.AsEnumerable()
+                              .Where(cp =>
+                                         DateTime.Parse(cp.ReceiptDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.ReceiptDate).Value.ToShortDateString())
+                                       && DateTime.Parse(cp.ReceiptDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.ReceiptDate).Value.ToShortDateString())
+                                 )
+                               .ToList();
+
+                    if (!string.IsNullOrEmpty(searchCriteria.receiptNo))
+                        _stockreceiptMasterList = GetStockreceiptList().Where(x => x.ReceiptNo == searchCriteria.receiptNo).ToList();
+
+
+                    return _stockreceiptMasterList;
+                }
             }
             catch (Exception ex)
             {
@@ -265,6 +289,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
 
         }
+
 
         public List<TblOperatorStockReceiptDetail> StockreceiptDeatils(string receptno)
         {
