@@ -167,6 +167,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                     {
                         try
                         {
+                            decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(purchaseInvoice.UserId, null));
                             TblProduct _product = null;
                             TblTaxStructure _taxStructure = null;
 
@@ -180,7 +181,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             var _voucherMaster = AddVoucherMaster(context, purchaseInvoice, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
                             #endregion
 
-
+                            purchaseInvoice.ShiftId = shifId;
                             purchaseInvoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
                             purchaseInvoice.VoucherTypeId = 13;
 
@@ -207,7 +208,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 purInv.UserId = purchaseInvoice.UserId;
                                 purInv.EmployeeId = -1;
                                 purInv.ServerDateTime = DateTime.Now;
-
+                                purInv.ShiftId = shifId;
                                 context.TblPurchaseInvoiceDetail.Add(purInv);
                                 context.SaveChanges();
 

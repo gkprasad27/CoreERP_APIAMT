@@ -171,6 +171,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 TblShift _shift = null;
+               
+                if (string.IsNullOrEmpty(branchCode))
+                {
+                    var branches = GetBranchesByUser(userId);
+                    branchCode = branches.FirstOrDefault();
+                }
 
                 if (!isShiftIdExists(userId, branchCode)) 
                 {

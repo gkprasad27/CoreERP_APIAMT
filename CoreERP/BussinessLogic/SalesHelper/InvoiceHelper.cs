@@ -1,4 +1,5 @@
-﻿using CoreERP.Controllers.masters;
+﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.Controllers.masters;
 using CoreERP.DataAccess;
 using CoreERP.Helpers;
 using CoreERP.Helpers.SharedModels;
@@ -431,6 +432,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
+                decimal shifId= Convert.ToDecimal(new UserManagmentHelper().GetShiftId(invoice.UserId, null));
                 invoice.IsSalesReturned = false;
                 invoice.IsManualEntry = false;
                 TblTaxStructure _taxStructure = null;
@@ -451,7 +453,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             var _voucherMaster = AddVoucherMaster(repo, invoice, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
                             #endregion
 
-                            
+                            invoice.ShiftId = shifId;
                             invoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
                             invoice.BranchName = _branch.BranchName;
                             invoice.VoucherTypeId = 19;
@@ -466,6 +468,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure?.SalesAccount).FirstOrDefault();
                                
                                 #region Add voucher Details
+
                                 var _voucherDetail = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, invdtl.Rate);
                                 #endregion
 
@@ -478,7 +481,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 invdtl.UserId = invoice.UserId;
                                 invdtl.EmployeeId = -1;
                                 invdtl.ServerDateTime = DateTime.Now;
-
+                                invdtl.ShiftId = shifId;
                                 invdtl.PumpId = invdtl.PumpId ?? -1;
                                 invdtl.PumpNo = invdtl.PumpNo ?? -1;
                                 invdtl.SlipNo = invdtl.SlipNo ?? -1;
