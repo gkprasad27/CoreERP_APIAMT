@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.BussinessLogic.SalesHelper;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
@@ -206,12 +207,11 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-                
                 using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
                 {
                     //add voucher typedetails
                     var user = repo.TblUser.Where(x => x.UserName == stockexcessMaster.UserName).FirstOrDefault();
-                    var shift = repo.TblShift.Where(x => x.UserId == user.UserId).FirstOrDefault();
+                    var shift = repo.TblShift.Where(x => x.UserId == user.UserId).LastOrDefault();
                     var _branch = GetBranches(stockexcessMaster.BranchCode).ToArray().FirstOrDefault();
                     var shiftid = repo.TblShift.Where(x => x.UserId == stockexcessMaster.UserId).FirstOrDefault();
                     stockexcessMaster.BranchCode = _branch.BranchCode;

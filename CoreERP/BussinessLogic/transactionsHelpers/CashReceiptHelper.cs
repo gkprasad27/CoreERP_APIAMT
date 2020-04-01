@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
@@ -160,7 +161,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             try
             {
 
-
+                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(cashReceiptMaster.UserId ?? 0, null));
                 var _voucherMaster = new TblVoucherMaster
                 {
                     BranchCode = cashReceiptMaster.BranchCode,
@@ -175,7 +176,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     ServerDate = DateTime.Now,
                     UserId = cashReceiptMaster.UserId,
                     UserName = cashReceiptMaster.UserName,
-                    EmployeeId = -1
+                    EmployeeId = -1,
+                    ShiftId=shifId
                 };
 
                 context.TblVoucherMaster.Add(_voucherMaster);
@@ -333,6 +335,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
+                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(cashReceiptMaster.UserId ?? 0, null));
                 using ERPContext repo = new ERPContext();
                 using var dbTransaction = repo.Database.BeginTransaction();
                 try
@@ -358,6 +361,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     cashReceiptMaster.FromLedgerName = _cashpayAccountLedger.LedgerName;
                     cashReceiptMaster.FromLedgerCode = _cashpayAccountLedger.LedgerCode;
                     cashReceiptMaster.EmployeeId = _voucherMaster.EmployeeId;
+                    cashReceiptMaster.ShiftId = shifId;
                     repo.TblCashReceiptMaster.Add(cashReceiptMaster);
                     repo.SaveChanges();
 
