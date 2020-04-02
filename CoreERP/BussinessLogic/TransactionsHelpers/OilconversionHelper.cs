@@ -151,6 +151,19 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     var user = repo.TblUser.Where(x => x.UserName == oilcnvsmaster.UserName).FirstOrDefault();
                     var shift= repo.TblShift.Where(x => x.UserId == user.UserId).FirstOrDefault();
                     var _branch = GetBranches(oilcnvsmaster.BranchCode).ToArray().FirstOrDefault();
+                    TblVoucherMaster vchrmastr = new TblVoucherMaster();
+                    vchrmastr.BranchCode= _branch.BranchCode;
+                    vchrmastr.BranchName= _branch.BranchName;
+                    vchrmastr.VoucherDate = DateTime.Now;
+                    vchrmastr.VoucherTypeIdMain= oilcnvsmaster.VoucherTypeId;
+                    vchrmastr.VoucherTypeIdSub = oilcnvsmaster.VoucherTypeId;
+                    vchrmastr.Narration = oilcnvsmaster.Narration;
+                    vchrmastr.ServerDate = DateTime.Now;
+                    vchrmastr.ShiftId = shift.ShiftId;
+                    vchrmastr.UserId = user.UserId;
+                    vchrmastr.UserName = oilcnvsmaster.UserName;
+                    vchrmastr.EmployeeId = -1;
+
                     oilcnvsmaster.BranchCode = _branch.BranchCode;
                     oilcnvsmaster.BranchName = _branch.BranchName;
                     oilcnvsmaster.BranchId = _branch.BranchId;
@@ -163,6 +176,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     oilcnvsmaster.UserName = oilcnvsmaster.UserName;
                     oilcnvsmaster.EmployeeId = -1;
                     oilcnvsmaster.Narration = oilcnvsmaster.Narration;
+                    repo.TblVoucherMaster.Add(vchrmastr);
                     repo.TblOilConversionMaster.Add(oilcnvsmaster);
                     repo.SaveChanges();
                     foreach (var oilconversions in oilcnvsmasterDetails)
