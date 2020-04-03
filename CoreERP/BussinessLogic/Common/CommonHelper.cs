@@ -9,7 +9,7 @@ namespace CoreERP.BussinessLogic.Common
 {
     public class CommonHelper
     {
-        public decimal? GetSuffixPrefix(decimal? voucherTypeid,string branchCode,out string preFix,out string suffix)
+        public decimal? GetSuffixPrefix(decimal? voucherTypeid, string branchCode, out string preFix, out string suffix)
         {
             preFix = string.Empty;
             suffix = string.Empty;
@@ -17,15 +17,15 @@ namespace CoreERP.BussinessLogic.Common
             {
                 using Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>();
                 var _suffixPrefix = repo.TblSuffixPrefix
-.Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode)
-.FirstOrDefault();
+                                        .Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode)
+                                        .FirstOrDefault();
 
                 preFix = _suffixPrefix?.Prefix;
                 suffix = _suffixPrefix?.Suffix;
 
                 return _suffixPrefix?.StartIndex;
             }
-            catch(Exception )
+            catch (Exception)
             {
                 return null;
             }
@@ -107,8 +107,6 @@ namespace CoreERP.BussinessLogic.Common
             }
             catch { throw; }
         }
-
-
         private static Counters GetCounter(string branchCode)
         {
             try

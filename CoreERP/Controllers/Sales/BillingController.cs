@@ -303,14 +303,14 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("GetInvoiceList/{branchCode}")]
-        public IActionResult GetInvoiceList([FromBody]SearchCriteria searchCriteria)
+        public IActionResult GetInvoiceList([FromBody]SearchCriteria searchCriteria,string branchCode)
         {
 
             if (searchCriteria == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
             try
             {
-                var invoiceMasterList = new InvoiceHelper().GetInvoiceMasters(searchCriteria);
+                var invoiceMasterList = new InvoiceHelper().GetInvoiceMasters(searchCriteria, branchCode);
                 if (invoiceMasterList.Count > 0)
                 {
                     dynamic expando = new ExpandoObject();

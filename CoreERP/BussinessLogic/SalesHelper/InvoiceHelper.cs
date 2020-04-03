@@ -51,7 +51,24 @@ namespace CoreERP.BussinessLogic.SalesHelper
             try
             {
                 errorMessage = string.Empty;
-                var billno =new Common.CommonHelper().GenerateNumber(19, branchCode);
+                string suffix = string.Empty, prefix = string.Empty, billno=string.Empty;
+                TblInvoiceMaster _invoiceMaster = null;
+                using (Repository<TblInvoiceMaster> _repo = new Repository<TblInvoiceMaster>())
+                {
+                    _invoiceMaster= _repo.TblInvoiceMaster.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.InvoiceMasterId).FirstOrDefault();
+
+                    if(_invoiceMaster != null)
+                    {
+                        var invSplit = _invoiceMaster.InvoiceNo.Split('-');
+                        billno = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1])+1}-{invSplit[2]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(19, branchCode, out prefix, out suffix);
+                        billno = $"{prefix}-1-{suffix}";
+                    }
+                }
+                
                 if (string.IsNullOrEmpty(billno))
                 {
                     errorMessage = "Invoice no not gererated please enter manully.";
@@ -64,7 +81,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-        public List<TblInvoiceMaster> GetInvoiceMasters(SearchCriteria searchCriteria)
+        public List<TblInvoiceMaster> GetInvoiceMasters(SearchCriteria searchCriteria,string branchCode)
         {
             try
             {
@@ -80,7 +97,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                               .Where(inv=>
                                          DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
                                        && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
-                                      
+                                      && inv.BranchCode == branchCode
                                        &&  !inv.IsSalesReturned.Value
                                  )
                                .ToList();
