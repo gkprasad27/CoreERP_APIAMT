@@ -86,7 +86,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public List<TblBankPaymentMaster> GetBankPaymentMasters(VoucherNoSearchCriteria searchCriteria)
+        public List<TblBankPaymentMaster> GetBankPaymentMasters(VoucherNoSearchCriteria searchCriteria,string branchCode)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                           .Where(cp =>
                                      DateTime.Parse(cp.BankPaymentDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.BankPaymentDate).Value.ToShortDateString())
                                    && DateTime.Parse(cp.BankPaymentDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.BankPaymentDate).Value.ToShortDateString())
-                             )
+                                   && cp.BranchCode==branchCode)
                            .ToList();
 
                 if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))

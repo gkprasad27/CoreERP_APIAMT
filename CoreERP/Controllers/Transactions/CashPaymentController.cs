@@ -96,7 +96,7 @@ namespace CoreERP.Controllers.Transactions
         }
 
         [HttpPost("GetCashpaymentList/{branchCode}")]
-        public async Task<IActionResult> GetCashpaymentList([FromBody]VoucherNoSearchCriteria searchCriteria)
+        public async Task<IActionResult> GetCashpaymentList([FromBody]VoucherNoSearchCriteria searchCriteria,string branchCode)
         {
             var result = await Task.Run(() =>
             {
@@ -104,7 +104,7 @@ namespace CoreERP.Controllers.Transactions
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
                 try
                 {
-                    var cashPaymentMasterList = new CashPaymentHelper().GetCashPaymentMasters(searchCriteria);
+                    var cashPaymentMasterList = new CashPaymentHelper().GetCashPaymentMasters(searchCriteria, branchCode);
                     if (cashPaymentMasterList.Count > 0)
                     {
                         dynamic expando = new ExpandoObject();
@@ -112,7 +112,7 @@ namespace CoreERP.Controllers.Transactions
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No CashPayment record found." });
                 }
                 catch (Exception ex)
                 {

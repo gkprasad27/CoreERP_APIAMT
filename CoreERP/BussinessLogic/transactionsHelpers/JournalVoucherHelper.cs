@@ -64,7 +64,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public List<TblJournalVoucherMaster> GetJournalVoucherMasters(VoucherNoSearchCriteria searchCriteria)
+        public List<TblJournalVoucherMaster> GetJournalVoucherMasters(VoucherNoSearchCriteria searchCriteria,string branchCode)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                           .Where(cp =>
                                      DateTime.Parse(cp.JournalVoucherDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.JournalVoucherDate).Value.ToShortDateString())
                                    && DateTime.Parse(cp.JournalVoucherDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.JournalVoucherDate).Value.ToShortDateString())
-                             )
+                                   && cp.BranchCode==branchCode)
                            .ToList();
 
                 if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))

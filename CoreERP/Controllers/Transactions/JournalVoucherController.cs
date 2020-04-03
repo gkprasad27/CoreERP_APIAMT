@@ -95,7 +95,7 @@ namespace CoreERP.Controllers.Transactions
         }
 
         [HttpPost("GetJournalvoucherList/{branchCode}")]
-        public async Task<IActionResult> GetJournalvoucherList( [FromBody]VoucherNoSearchCriteria searchCriteria)
+        public async Task<IActionResult> GetJournalvoucherList( [FromBody]VoucherNoSearchCriteria searchCriteria,string branchCode)
         {
             var result = await Task.Run(() =>
             {
@@ -103,7 +103,7 @@ namespace CoreERP.Controllers.Transactions
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
                 try
                 {
-                    var journalVoucherMasterList = new JournalVoucherHelper().GetJournalVoucherMasters(searchCriteria);
+                    var journalVoucherMasterList = new JournalVoucherHelper().GetJournalVoucherMasters(searchCriteria,branchCode);
                     if (journalVoucherMasterList.Count > 0)
                     {
                         dynamic expando = new ExpandoObject();
@@ -111,7 +111,7 @@ namespace CoreERP.Controllers.Transactions
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Journal Voucher record found." });
                 }
                 catch (Exception ex)
                 {
