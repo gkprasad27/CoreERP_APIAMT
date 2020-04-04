@@ -14,6 +14,51 @@ namespace CoreERP.BussinessLogic.SalesHelper
 {
     public class InvoiceHelper
     {
+//to get the invoice Master data while page load
+        public List<TblInvoiceMaster> GetInvoiceList(int role,string branchCode)
+        {
+            try
+            {
+                //searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
+                //searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+
+                using (Repository<TblInvoiceMaster> repo = new Repository<TblInvoiceMaster>())
+                {
+                    List<TblInvoiceMaster> _invoiceMasterList = null;
+                    if (role ==1)
+                    {
+                        _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
+                                  .Where(inv =>
+                                           inv.InvoiceDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                           && !inv.IsSalesReturned.Value
+                                     )
+                                   .ToList();
+                    }
+                    else
+                    {
+                        _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
+                                                         .Where(inv =>
+                                                                  inv.BranchCode == branchCode
+                                                                  && inv.InvoiceDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                                  && !inv.IsSalesReturned.Value
+                                                            )
+                                                          .ToList();
+                    }
+                    //if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
+                    //    _invoiceMasterList = _invoiceMasterList.Where(x => x.InvoiceNo == searchCriteria.InvoiceNo).ToList();
+
+                    // && inv.InvoiceNo == (searchCriteria.InvoiceNo ?? inv.InvoiceNo)
+
+                    return _invoiceMasterList.OrderByDescending(x => x.InvoiceDate).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
         public List<TblPumps> GetPumps(string pumpNo,string branchCode)
         {
             try
@@ -91,23 +136,33 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using (Repository<TblInvoiceMaster> repo=new Repository<TblInvoiceMaster>())
                 {
                     List<TblInvoiceMaster> _invoiceMasterList = null;
-
-
-                    _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
-                              .Where(inv=>
+                    if (searchCriteria.Role == 1)
+                    {
+                        _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
+                             .Where(inv =>
+                                        DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                      && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                      && !inv.IsSalesReturned.Value
+                                )
+                              .ToList();
+                    }
+                    else
+                    {
+                        _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
+                              .Where(inv =>
                                          DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
                                        && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
                                       && inv.BranchCode == branchCode
-                                       &&  !inv.IsSalesReturned.Value
+                                       && !inv.IsSalesReturned.Value
                                  )
                                .ToList();
-
+                    }
                     if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
                         _invoiceMasterList = _invoiceMasterList.Where(x=> x.InvoiceNo == searchCriteria.InvoiceNo).ToList();
 
                     // && inv.InvoiceNo == (searchCriteria.InvoiceNo ?? inv.InvoiceNo)
 
-                    return _invoiceMasterList;
+                    return _invoiceMasterList.OrderByDescending(x=>x.InvoiceDate).ToList();
                 }
             }
             catch(Exception ex)
@@ -417,7 +472,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-        public List<TblVehicle> GetVehicles(string vechileRegno,string memberCode)
+        public List<TblVehicle> GetVehicles(String vechileRegno,string memberCode)
         {
             try
             {
@@ -461,15 +516,23 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         try
                         {
                             //add voucher typedetails
+
                             var _branch = GetBranches(invoice.BranchCode).ToArray().FirstOrDefault();
 
                             var _accountLedger = GetAccountLedgers(invoice.LedgerCode).ToArray().FirstOrDefault();
                             var _vouchertType = GetVoucherType(19).FirstOrDefault();
 
+                           
                             #region Add voucher master record
                             var _voucherMaster = AddVoucherMaster(repo, invoice, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
                             #endregion
-
+                            invoice.LedgerId = _accountLedger.LedgerId;
+                            if (invoice.VehicleRegNo != null && invoice.MemberCode != null)
+                            {
+                                var vehicleId = GetVehicles(invoice.VehicleRegNo, Convert.ToString(invoice.MemberCode)).ToArray().FirstOrDefault();
+                                invoice.VehicleId = vehicleId.VehicleId == null ? -1 : vehicleId.VehicleId; //vehicleId.VehicleId;
+                            }
+                            invoice.MemberCode = invoice.MemberCode==null?-1: invoice.MemberCode;
                             invoice.ShiftId = shifId;
                             invoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
                             invoice.BranchName = _branch.BranchName;

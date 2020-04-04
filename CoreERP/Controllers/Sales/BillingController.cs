@@ -14,6 +14,28 @@ namespace CoreERP.Controllers
     [Route("api/sales/Billing")]
     public class BillingController : ControllerBase
     {
+        ////to get the invoice Master data while page load
+        [HttpPost("GetInvoiceDetails/{branchCode}")]
+        public IActionResult GetInvoiceDetails([FromBody]SearchCriteria searchCriteria,string branchCode)
+        {
+            try
+            {
+                var InvoiceDetails = new InvoiceHelper().GetInvoiceList(searchCriteria.Role, branchCode);
+                if (InvoiceDetails.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.InvoiceList = InvoiceDetails;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Invoice records not found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetPupms/{pumpNo}/{branchCode}")]
         public IActionResult GetPupms(string pumpNo, string branchCode)
         {
