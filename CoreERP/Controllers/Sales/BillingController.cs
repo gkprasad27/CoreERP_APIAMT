@@ -7,6 +7,7 @@ using System.Linq;
 using CoreERP.Models;
 using Newtonsoft.Json.Linq;
 using CoreERP.Helpers.SharedModels;
+using Microsoft.Extensions.Configuration;
 
 namespace CoreERP.Controllers
 {
@@ -14,6 +15,11 @@ namespace CoreERP.Controllers
     [Route("api/sales/Billing")]
     public class BillingController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
+        public BillingController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         ////to get the invoice Master data while page load
         [HttpPost("GetInvoiceDetails/{branchCode}")]
         public IActionResult GetInvoiceDetails([FromBody]SearchCriteria searchCriteria,string branchCode)
@@ -315,7 +321,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BillingDetailsSection = new InvoiceHelper().GetBillingDetailsSection(branchCode, productCode);
+                expando.BillingDetailsSection = new InvoiceHelper().GetBillingDetailsSection(branchCode, productCode,_configuration);
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

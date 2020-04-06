@@ -5,6 +5,7 @@ using CoreERP.Helpers;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -310,6 +311,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
+
         public decimal? GetProductRate(string branchCode,string productCode)
         {
             try
@@ -386,33 +388,31 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-     
-         
-        
-        public TblInvoiceDetail GetBillingDetailsSection(string branchCode,string productCode)
+        public TblInvoiceDetail GetBillingDetailsSection(string branchCode,string productCode, IConfiguration configuration=null)
         {
             try
             {
                 var _product = GetProducts(productCode).FirstOrDefault();
-                
-                var invoceDetails = new TblInvoiceDetail();
 
-                invoceDetails.UnitId =Convert.ToDecimal(_product.UnitId??0);
+                var invoceDetails = new TblInvoiceDetail();
+                if(_product == null)
+                {
+                    return invoceDetails;
+                }
+                invoceDetails.UnitId = Convert.ToDecimal(_product.UnitId ?? 0);
                 invoceDetails.UnitName = _product.UnitName;
-                
-                invoceDetails.TaxStructureCode = Convert.ToDecimal(_product.TaxStructureCode??0);
-                invoceDetails.TaxStructureId =Convert.ToDecimal(_product.TaxStructureId ?? 0);
-                invoceDetails.TaxGroupCode =_product.TaxGroupCode;
-                invoceDetails.TaxGroupId = Convert.ToDecimal(_product.TaxGroupId??0);
+
+                invoceDetails.TaxStructureCode = Convert.ToDecimal(_product.TaxStructureCode ?? 0);
+                invoceDetails.TaxStructureId = Convert.ToDecimal(_product.TaxStructureId ?? 0);
+                invoceDetails.TaxGroupCode = _product.TaxGroupCode;
+                invoceDetails.TaxGroupId = Convert.ToDecimal(_product.TaxGroupId ?? 0);
                 invoceDetails.TaxGroupName = _product.TaxGroupName;
-               
-                invoceDetails.Rate = GetProductRate(branchCode,productCode);
-                invoceDetails.AvailStock =Convert.ToDecimal(GetProductQty(branchCode,productCode) ?? 0);
+                invoceDetails.Rate = GetProductRate(branchCode, productCode);
+
                 invoceDetails.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
-                
                 invoceDetails.ProductCode = _product.ProductCode;
-                invoceDetails.ProductGroupCode =Convert.ToDecimal(_product.ProductGroupCode??0);
-                invoceDetails.ProductGroupId =Convert.ToDecimal(_product.ProductGroupId??0);
+                invoceDetails.ProductGroupCode = Convert.ToDecimal(_product.ProductGroupCode ?? 0);
+                invoceDetails.ProductGroupId = Convert.ToDecimal(_product.ProductGroupId ?? 0);
                 invoceDetails.ProductId = _product.ProductId;
                 invoceDetails.ProductName = _product.ProductName;
                 if (_product.TaxStructureCode != null)
@@ -422,13 +422,33 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     invoceDetails.Cgst = taxStructure.Sgst;
                     invoceDetails.Igst = taxStructure.Igst;
                     invoceDetails.TotalGst = taxStructure.TotalGst;
-               
-                invoceDetails.ServerDateTime = DateTime.Now;
+
+                    invoceDetails.ServerDateTime = DateTime.Now;
                 }
 
+                try
+                {
+                    string _ChildBranches = string.Empty;
+
+                    //to get data from child branch
+                    string _productCodes = configuration.GetSection("ProductCods").Value;
+                    if (!string.IsNullOrEmpty(_productCodes))
+                    {
+                        if (_productCodes.ToUpper().Contains(productCode.ToUpper()))
+                        {
+                            _ChildBranches = configuration.GetSection("ChildBranches:" + branchCode).Value;
+                        }
+                    }
+
+                    if(string.IsNullOrEmpty(_ChildBranches))
+                      invoceDetails.AvailStock = Convert.ToDecimal(GetProductQty(branchCode, productCode) ?? 0);
+                    else
+                        invoceDetails.AvailStock = Convert.ToDecimal(GetProductQty(_ChildBranches, productCode) ?? 0);
+                }
+                catch { }
                 return invoceDetails;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
