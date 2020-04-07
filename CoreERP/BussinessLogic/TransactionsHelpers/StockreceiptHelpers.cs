@@ -109,16 +109,22 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
 
-        public List<TblBranch> Getbranchcodes(string codes)
+        public string Getbranchcodes(string codes)
         {
             try
             {
+                string name = null;
                 using (Repository<TblBranch> repo = new Repository<TblBranch>())
                 {
                     var code = repo.TblBranch.Where(x => x.BranchCode == (codes)).FirstOrDefault();
-                    return repo.TblBranch
+                    var data = repo.TblBranch
                           .Where(x => (x.SubBranchof == Convert.ToDecimal(codes)))
                           .ToList();
+                    foreach (var item in data)
+                    {
+                        name = item.BranchCode + "-" + item.BranchName;
+                    }
+                    return name;
                 }
             }
             catch { throw; }
