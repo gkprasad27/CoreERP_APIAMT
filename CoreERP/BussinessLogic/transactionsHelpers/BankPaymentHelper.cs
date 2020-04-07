@@ -93,20 +93,66 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
                 using Repository<TblBankPaymentMaster> repo = new Repository<TblBankPaymentMaster>();
                 List<TblBankPaymentMaster> _bankpaymentMasterList = null;
-
-
-                _bankpaymentMasterList = repo.TblBankPaymentMaster.AsEnumerable()
-                          .Where(cp =>
-                                     DateTime.Parse(cp.BankPaymentDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.BankPaymentDate).Value.ToShortDateString())
-                                   && DateTime.Parse(cp.BankPaymentDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.BankPaymentDate).Value.ToShortDateString())
-                                   && cp.BranchCode==branchCode)
+                if (searchCriteria.Role == 1)
+                {
+                    _bankpaymentMasterList = repo.TblBankPaymentMaster.AsEnumerable()
+                         .Where(bp =>
+                                    DateTime.Parse(bp.BankPaymentDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? bp.BankPaymentDate).Value.ToShortDateString())
+                                  && DateTime.Parse(bp.BankPaymentDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? bp.BankPaymentDate).Value.ToShortDateString()))
+                          .ToList();
+                }
+                else
+                {
+                    _bankpaymentMasterList = repo.TblBankPaymentMaster.AsEnumerable()
+                          .Where(bp =>
+                                     DateTime.Parse(bp.BankPaymentDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? bp.BankPaymentDate).Value.ToShortDateString())
+                                   && DateTime.Parse(bp.BankPaymentDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? bp.BankPaymentDate).Value.ToShortDateString())
+                                   && bp.BranchCode == branchCode)
                            .ToList();
+                }
+
 
                 if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
                     _bankpaymentMasterList = _bankpaymentMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
                 return _bankpaymentMasterList;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public List<TblBankPaymentMaster> GetBankPaymentMasterList(int role, string branchCode)
+        {
+            try
+            {
+
+                using (Repository<TblBankPaymentMaster> repo = new Repository<TblBankPaymentMaster>())
+                {
+                    List<TblBankPaymentMaster> _bankPaymentMasterList = null;
+                    if (role == 1)
+                    {
+                        _bankPaymentMasterList = repo.TblBankPaymentMaster.AsEnumerable()
+                                  .Where(bp =>
+                                           bp.BankPaymentDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                     )
+                                   .ToList();
+                    }
+                    else
+                    {
+                        _bankPaymentMasterList = repo.TblBankPaymentMaster.AsEnumerable()
+                                                         .Where(bp =>
+                                                                  bp.BranchCode == branchCode
+                                                                  && bp.BankPaymentDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                            )
+                                                          .ToList();
+                    }
+
+                    return _bankPaymentMasterList.OrderByDescending(x => x.BankPaymentDate).ToList();
+                }
             }
             catch (Exception ex)
             {

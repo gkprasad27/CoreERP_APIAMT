@@ -106,19 +106,66 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 using Repository<TblCashReceiptMaster> repo = new Repository<TblCashReceiptMaster>();
                 List<TblCashReceiptMaster> _cashreceiptMasterList = null;
 
-
-                _cashreceiptMasterList = repo.TblCashReceiptMaster.AsEnumerable()
-                          .Where(cp =>
-                                     DateTime.Parse(cp.CashReceiptDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.CashReceiptDate).Value.ToShortDateString())
-                                   && DateTime.Parse(cp.CashReceiptDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.CashReceiptDate).Value.ToShortDateString())
-                                    && cp.BranchCode==branchCode)
+                if (searchCriteria.Role == 1)
+                {
+                    _cashreceiptMasterList = repo.TblCashReceiptMaster.AsEnumerable()
+                          .Where(cr =>
+                                     DateTime.Parse(cr.CashReceiptDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cr.CashReceiptDate).Value.ToShortDateString())
+                                   && DateTime.Parse(cr.CashReceiptDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cr.CashReceiptDate).Value.ToShortDateString()))
                            .ToList();
+                }
+                else
+                {
+                    _cashreceiptMasterList = repo.TblCashReceiptMaster.AsEnumerable()
+                          .Where(cr =>
+                                     DateTime.Parse(cr.CashReceiptDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cr.CashReceiptDate).Value.ToShortDateString())
+                                   && DateTime.Parse(cr.CashReceiptDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cr.CashReceiptDate).Value.ToShortDateString())
+                                    && cr.BranchCode == branchCode)
+                           .ToList();
+                }
+                    
 
                 if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
                     _cashreceiptMasterList = _cashreceiptMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
                 return _cashreceiptMasterList;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public List<TblCashReceiptMaster> GetCashReceiptMasterList(int role, string branchCode)
+        {
+            try
+            {
+
+                using (Repository<TblCashReceiptMaster> repo = new Repository<TblCashReceiptMaster>())
+                {
+                    List<TblCashReceiptMaster> _cashReceiptMasterList = null;
+                    if (role == 1)
+                    {
+                        _cashReceiptMasterList = repo.TblCashReceiptMaster.AsEnumerable()
+                                  .Where(cr =>
+                                           cr.CashReceiptDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                     )
+                                   .ToList();
+                    }
+                    else
+                    {
+                        _cashReceiptMasterList = repo.TblCashReceiptMaster.AsEnumerable()
+                                                         .Where(cr =>
+                                                                  cr.BranchCode == branchCode
+                                                                  && cr.CashReceiptDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                            )
+                                                          .ToList();
+                    }
+
+                    return _cashReceiptMasterList.OrderByDescending(x => x.CashReceiptDate).ToList();
+                }
             }
             catch (Exception ex)
             {

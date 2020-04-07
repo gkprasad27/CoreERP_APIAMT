@@ -43,5 +43,6 @@ namespace CoreERP.Helpers.SharedModels
         public string issueNo { get; set; }
         public string StockshortNo { get; set; }
         public string receiptNo { get; set; }
+        public int Role { get; set; }
     }
 }

@@ -173,6 +173,28 @@ namespace CoreERP.Controllers.Transactions
             return result;
         }
 
+
+        [HttpPost("GetBankReceiptMasterList/{branchCode}")]
+        public IActionResult GetBankReceiptMasterList([FromBody]VoucherNoSearchCriteria searchCriteria, string branchCode)
+        {
+            try
+            {
+                var bankReceiptMasterList = new BankReceiptHelper().GetBankReceiptMasterList(searchCriteria.Role, branchCode);
+                if (bankReceiptMasterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.bankReceiptMasterList = bankReceiptMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "BankReceipt Records not found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetBankReceiptDetailsList/{id}")]
         public async Task<IActionResult> GetBankReceiptDetailsList(decimal id)
         {

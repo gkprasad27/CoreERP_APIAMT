@@ -71,20 +71,66 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
                 using Repository<TblJournalVoucherMaster> repo = new Repository<TblJournalVoucherMaster>();
                 List<TblJournalVoucherMaster> _journalVoucherMasterList = null;
-
-
-                _journalVoucherMasterList = repo.TblJournalVoucherMaster.AsEnumerable()
-                          .Where(cp =>
-                                     DateTime.Parse(cp.JournalVoucherDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.JournalVoucherDate).Value.ToShortDateString())
-                                   && DateTime.Parse(cp.JournalVoucherDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.JournalVoucherDate).Value.ToShortDateString())
-                                   && cp.BranchCode==branchCode)
+                if (searchCriteria.Role == 1)
+                {
+                    _journalVoucherMasterList = repo.TblJournalVoucherMaster.AsEnumerable()
+                          .Where(jv =>
+                                     DateTime.Parse(jv.JournalVoucherDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? jv.JournalVoucherDate).Value.ToShortDateString())
+                                   && DateTime.Parse(jv.JournalVoucherDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? jv.JournalVoucherDate).Value.ToShortDateString()))
                            .ToList();
+                }
+                else
+                {
+                    _journalVoucherMasterList = repo.TblJournalVoucherMaster.AsEnumerable()
+                                             .Where(jv =>
+                                                        DateTime.Parse(jv.JournalVoucherDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? jv.JournalVoucherDate).Value.ToShortDateString())
+                                                      && DateTime.Parse(jv.JournalVoucherDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? jv.JournalVoucherDate).Value.ToShortDateString())
+                                                      && jv.BranchCode == branchCode)
+                                              .ToList();
+                }
+
 
                 if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
                     _journalVoucherMasterList = _journalVoucherMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
                 return _journalVoucherMasterList;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public List<TblJournalVoucherMaster> GetJournalVoucherMasterList(int role, string branchCode)
+        {
+            try
+            {
+
+                using (Repository<TblJournalVoucherMaster> repo = new Repository<TblJournalVoucherMaster>())
+                {
+                    List<TblJournalVoucherMaster> _journalVoucherMasterList = null;
+                    if (role == 1)
+                    {
+                        _journalVoucherMasterList = repo.TblJournalVoucherMaster.AsEnumerable()
+                                  .Where(jv =>
+                                           jv.JournalVoucherDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                     )
+                                   .ToList();
+                    }
+                    else
+                    {
+                        _journalVoucherMasterList = repo.TblJournalVoucherMaster.AsEnumerable()
+                                                         .Where(jv =>
+                                                                  jv.BranchCode == branchCode
+                                                                  && jv.JournalVoucherDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                            )
+                                                          .ToList();
+                    }
+
+                    return _journalVoucherMasterList.OrderByDescending(x => x.JournalVoucherDate).ToList();
+                }
             }
             catch (Exception ex)
             {

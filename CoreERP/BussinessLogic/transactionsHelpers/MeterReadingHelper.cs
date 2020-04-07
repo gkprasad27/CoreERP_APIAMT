@@ -61,6 +61,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             {
                 using (Repository<TblMeterReading> repo = new Repository<TblMeterReading>())
                 {
+                    meterreading.EntryDate = DateTime.Now;
                     repo.TblMeterReading.Update(meterreading);
                     if (repo.SaveChanges() > 0)
                         return meterreading;
@@ -109,6 +110,22 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 using (Repository<TblPumps> repo = new Repository<TblPumps>())
                 {
                     return repo.TblPumps.AsEnumerable().Where(b => b.PumpNo == pumpNo).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<TblMeterReading> GetOBFromPump(string branchCode,decimal pumpNo = 0)
+        {
+            
+            try
+            {
+                using (Repository<TblMeterReading> repo = new Repository<TblMeterReading>())
+                {
+                    return repo.TblMeterReading.AsEnumerable().Where(b => b.PumpNo == pumpNo && b.BranchCode==branchCode).OrderByDescending(b=>b.EntryDate).ToList();
                 }
             }
             catch (Exception ex)

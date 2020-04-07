@@ -41,20 +41,30 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
                 using Repository<TblCashPaymentMaster> repo = new Repository<TblCashPaymentMaster>();
                 List<TblCashPaymentMaster> _cashpaymentMasterList = null;
-
-
-                _cashpaymentMasterList = repo.TblCashPaymentMaster.AsEnumerable()
+                if (searchCriteria.Role == 1)
+                {
+                    _cashpaymentMasterList = repo.TblCashPaymentMaster.AsEnumerable()
                           .Where(cp =>
                                      DateTime.Parse(cp.CashPaymentDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.CashPaymentDate).Value.ToShortDateString())
-                                   && DateTime.Parse(cp.CashPaymentDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.CashPaymentDate).Value.ToShortDateString())
-                                   &&cp.BranchCode==branchCode )
+                                   && DateTime.Parse(cp.CashPaymentDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.CashPaymentDate).Value.ToShortDateString()))
                            .ToList();
+                }
+                else
+                {
+                    _cashpaymentMasterList = repo.TblCashPaymentMaster.AsEnumerable()
+                                              .Where(cp =>
+                                                         DateTime.Parse(cp.CashPaymentDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.CashPaymentDate).Value.ToShortDateString())
+                                                       && DateTime.Parse(cp.CashPaymentDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.CashPaymentDate).Value.ToShortDateString())
+                                                       && cp.BranchCode == branchCode)
+                                               .ToList();
+
+                }
 
                 if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
                     _cashpaymentMasterList = _cashpaymentMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
-                return _cashpaymentMasterList;
+                return _cashpaymentMasterList.OrderByDescending(cp=>cp.CashPaymentDate).ToList();
             }
             catch (Exception ex)
             {
@@ -62,7 +72,43 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             }
 
         }
-      
+
+        public List<TblCashPaymentMaster> GetCashPaymentMasterList(int role, string branchCode)
+        {
+            try
+            {
+
+                using (Repository<TblCashPaymentMaster> repo = new Repository<TblCashPaymentMaster>())
+                {
+                    List<TblCashPaymentMaster> _cashPaymentMasterList = null;
+                    if (role == 1)
+                    {
+                        _cashPaymentMasterList = repo.TblCashPaymentMaster.AsEnumerable()
+                                  .Where(cp =>
+                                           cp.CashPaymentDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                     )
+                                   .ToList();
+                    }
+                    else
+                    {
+                        _cashPaymentMasterList = repo.TblCashPaymentMaster.AsEnumerable()
+                                                         .Where(cp =>
+                                                                  cp.BranchCode == branchCode
+                                                                  && cp.CashPaymentDate>= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                            )
+                                                          .ToList();
+                    }
+
+                    return _cashPaymentMasterList.OrderByDescending(x => x.CashPaymentDate).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
 
         public List<TblCashPaymentDetails> GetCashpaymentDetails(decimal id)
         {

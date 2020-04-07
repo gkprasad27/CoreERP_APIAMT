@@ -121,6 +121,27 @@ namespace CoreERP.Controllers.Transactions
             return result;
         }
 
+        [HttpPost("GetJournalVoucherMasterList/{branchCode}")]
+        public IActionResult GetJournalVoucherMasterList([FromBody]VoucherNoSearchCriteria searchCriteria, string branchCode)
+        {
+            try
+            {
+                var journalVoucherMasterList = new JournalVoucherHelper().GetJournalVoucherMasterList(searchCriteria.Role, branchCode);
+                if (journalVoucherMasterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.journalVoucherMasterList = journalVoucherMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Journal Voucher Records not found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPost("RegisterJournalVoucher")]
         public async Task<IActionResult> RegisterJournalVoucher([FromBody]JObject objData)
         {

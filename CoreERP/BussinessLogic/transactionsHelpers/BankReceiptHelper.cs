@@ -82,20 +82,66 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
                 using Repository<TblBankReceiptMaster> repo = new Repository<TblBankReceiptMaster>();
                 List<TblBankReceiptMaster> _bankreceiptMasterList = null;
-
-
-                _bankreceiptMasterList = repo.TblBankReceiptMaster.AsEnumerable()
-                          .Where(cp =>
-                                     DateTime.Parse(cp.BankReceiptDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.BankReceiptDate).Value.ToShortDateString())
-                                   && DateTime.Parse(cp.BankReceiptDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.BankReceiptDate).Value.ToShortDateString())
-                                   && cp.BranchCode==branchCode)
-                           .ToList();
+                if (searchCriteria.Role == 1)
+                {
+                    _bankreceiptMasterList = repo.TblBankReceiptMaster.AsEnumerable()
+                                             .Where(br =>
+                                                        DateTime.Parse(br.BankReceiptDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? br.BankReceiptDate).Value.ToShortDateString())
+                                                      && DateTime.Parse(br.BankReceiptDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? br.BankReceiptDate).Value.ToShortDateString()))
+                                              .ToList();
+                }
+                else
+                {
+                    _bankreceiptMasterList = repo.TblBankReceiptMaster.AsEnumerable()
+                                              .Where(br =>
+                                                         DateTime.Parse(br.BankReceiptDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? br.BankReceiptDate).Value.ToShortDateString())
+                                                       && DateTime.Parse(br.BankReceiptDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? br.BankReceiptDate).Value.ToShortDateString())
+                                                       && br.BranchCode == branchCode)
+                                               .ToList();
+                }
+                    
 
                 if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
                     _bankreceiptMasterList = _bankreceiptMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
                 return _bankreceiptMasterList;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public List<TblBankReceiptMaster> GetBankReceiptMasterList(int role, string branchCode)
+        {
+            try
+            {
+
+                using (Repository<TblBankReceiptMaster> repo = new Repository<TblBankReceiptMaster>())
+                {
+                    List<TblBankReceiptMaster> _bankReceiptMasterList = null;
+                    if (role == 1)
+                    {
+                        _bankReceiptMasterList = repo.TblBankReceiptMaster.AsEnumerable()
+                                  .Where(br =>
+                                           br.BankReceiptDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                     )
+                                   .ToList();
+                    }
+                    else
+                    {
+                        _bankReceiptMasterList = repo.TblBankReceiptMaster.AsEnumerable()
+                                                         .Where(br =>
+                                                                  br.BranchCode == branchCode
+                                                                  && br.BankReceiptDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                            )
+                                                          .ToList();
+                    }
+
+                    return _bankReceiptMasterList.OrderByDescending(x => x.BankReceiptDate).ToList();
+                }
             }
             catch (Exception ex)
             {

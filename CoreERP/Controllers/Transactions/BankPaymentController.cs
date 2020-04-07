@@ -173,6 +173,27 @@ namespace CoreERP.Controllers.Transactions
             return result;
         }
 
+        [HttpPost("GetBankPaymentMasterList/{branchCode}")]
+        public IActionResult GetBankPaymentMasterList([FromBody]VoucherNoSearchCriteria searchCriteria, string branchCode)
+        {
+            try
+            {
+                var bankPaymentMasterList = new BankPaymentHelper().GetBankPaymentMasterList(searchCriteria.Role, branchCode);
+                if (bankPaymentMasterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.bankPaymentMasterList = bankPaymentMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "BankPayment Records not found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetBankPaymentDetailsList/{id}")]
         public async Task<IActionResult> GetBankPaymentDetailsList(decimal id)
         {
