@@ -140,7 +140,7 @@ namespace CoreERP.Controllers.Transactions
         }
 
         [HttpPost("GetStockissuesList/{branchCode}")]
-        public async Task<IActionResult> GetStockissuesList([FromBody]VoucherNoSearchCriteria searchCriteria)
+        public async Task<IActionResult> GetStockissuesList(string branchCode,[FromBody]VoucherNoSearchCriteria searchCriteria)
         {
             var result = await Task.Run(() =>
             {
@@ -148,7 +148,7 @@ namespace CoreERP.Controllers.Transactions
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
                 try
                 {
-                    var stockissueMasterList = new StockissuesHelper().GetStockissuesMasters(searchCriteria);
+                    var stockissueMasterList = new StockissuesHelper().GetStockissuesMasters(searchCriteria,branchCode);
                     if (stockissueMasterList.Count > 0)
                     {
                         dynamic expando = new ExpandoObject();
@@ -193,5 +193,26 @@ namespace CoreERP.Controllers.Transactions
             });
             return result;
         }
+        [HttpPost("GetInvoiceDetails/{branchCode}")]
+        public IActionResult GetInvoiceDetails([FromBody]SearchCriteria searchCriteria, string branchCode)
+        {
+            try
+            {
+                var InvoiceDetails = new StockissuesHelper().GetInvoiceList(searchCriteria.Role, branchCode);
+                if (InvoiceDetails.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.StockIssueList = InvoiceDetails;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Invoice records not found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
     }
 }

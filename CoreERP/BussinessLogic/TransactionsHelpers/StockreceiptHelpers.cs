@@ -259,7 +259,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         }
         //Searchcode
 
-        public List<TblOperatorStockReceipt> GetStockissuesMasters(VoucherNoSearchCriteria searchCriteria)
+        public List<TblOperatorStockReceipt> GetStockissuesMasters(VoucherNoSearchCriteria searchCriteria, string branchCode)
         {
             try
             {
@@ -268,19 +268,69 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 {
                     List<TblOperatorStockReceipt> _stockreceiptMasterList = null;
 
-
-                    _stockreceiptMasterList = repo.TblOperatorStockReceipt.AsEnumerable()
+                    if (searchCriteria.Role == 1)
+                    {
+                        _stockreceiptMasterList = repo.TblOperatorStockReceipt.AsEnumerable()
                               .Where(cp =>
                                          DateTime.Parse(cp.ReceiptDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.ReceiptDate).Value.ToShortDateString())
                                        && DateTime.Parse(cp.ReceiptDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.ReceiptDate).Value.ToShortDateString())
                                  )
                                .ToList();
+                    }
+                    else
+                    {
+                        _stockreceiptMasterList = repo.TblOperatorStockReceipt.AsEnumerable()
+                            .Where(cp =>
+                                        DateTime.Parse(cp.ReceiptDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.ReceiptDate).Value.ToShortDateString())
+                                      && DateTime.Parse(cp.ReceiptDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.ReceiptDate).Value.ToShortDateString())
+                                 && cp.FromBranchCode == branchCode)
+                              .ToList();
+                    }
 
                     if (!string.IsNullOrEmpty(searchCriteria.receiptNo))
                         _stockreceiptMasterList = GetStockreceiptList().Where(x => x.ReceiptNo == searchCriteria.receiptNo).ToList();
 
 
-                    return _stockreceiptMasterList;
+                    return _stockreceiptMasterList.OrderByDescending(x => x.ReceiptDate).ToList();
+                    //_stockreceiptMasterList;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+
+        //to get the invoice Master data while page load
+        public List<TblOperatorStockReceipt> GetInvoiceList(int role, string branchCode)
+        {
+            try
+            {
+
+                using (Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>())
+                {
+                    List<TblOperatorStockReceipt> _invoiceMasterList = null;
+                    if (role == 1)
+                    {
+                        _invoiceMasterList = repo.TblOperatorStockReceipt.AsEnumerable()
+                                  .Where(inv =>
+                                           inv.ReceiptDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                     )
+                                   .ToList();
+                    }
+                    else
+                    {
+                        _invoiceMasterList = repo.TblOperatorStockReceipt.AsEnumerable()
+                                                         .Where(inv =>
+                                                                  inv.FromBranchCode == branchCode
+                                                                  && inv.ReceiptDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                            )
+                                                          .ToList();
+                    }
+
+                    return _invoiceMasterList.OrderByDescending(x => x.ReceiptDate).ToList();
                 }
             }
             catch (Exception ex)

@@ -75,6 +75,28 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 throw ex;
             }
         }
+        public decimal? GetProductQty(string branchCode, string productCode, string ProductId = null)
+        {
+            try
+            {
+                List<TblStockInformation> stocInfoList = null;
+                using (Repository<TblStockInformation> repo = new Repository<TblStockInformation>())
+                {
+                    stocInfoList = repo.TblStockInformation.Where(stock => stock.ProductCode == productCode && stock.BranchCode == branchCode).ToList();
+                }
+
+                var qty = stocInfoList.Sum(x => x.InwardQty) - stocInfoList.Sum(x => x.OutwardQty);
+
+                if (qty > 0)
+                    return qty;
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         public decimal? GetProductRate(string branchCode, string productCode)
         {
@@ -129,16 +151,21 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
 
-        public List<TblOilConversionMaster> GetOilConversionslist(string code)
-        {
-            try
-            {
-                using Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>();
-                return repo.TblOilConversionMaster.Where(x => x.OilConversionVchNo == code).ToList();
+        //public List<TblOilConversionMaster> GetOilConversionslist(string code ,string codes)
+        //{
+        //    try
+        //    {
+        //        using (Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>())
+        //        {
+        //            return repo.TblOilConversionMaster.Where(stock => stock.OilConversionVchNo == code &&(stock.UserId == Convert.ToDecimal(codes))).ToList();
 
-            }
-            catch { throw; }
-        }
+        //           // return repo.TblOilConversionMaster.Where(x => x.OilConversionVchNo == code).ToList();
+        //        }
+
+        //    }
+        //    catch { throw; }
+        //}
+
         public bool RegisterBill(TblOilConversionMaster oilcnvsmaster, List<TblOilConversionDetails> oilcnvsmasterDetails)
         {
             try
@@ -182,8 +209,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     foreach (var oilconversions in oilcnvsmasterDetails)
                     {
                         var _product = new InvoiceHelper().GetProducts(oilconversions.ProductCode).FirstOrDefault();
-
-                        var oilcnvsmmstrid = GetOilConversionslist(oilcnvsmaster.OilConversionVchNo).FirstOrDefault();
+                        var oilcnvsmmstrid = repo.TblOilConversionMaster.Where(stock => stock.OilConversionVchNo == oilcnvsmaster.OilConversionVchNo && (stock.UserId == user.UserId)).FirstOrDefault();
+                        //var oilcnvsmmstrid = GetOilConversionslist(oilcnvsmaster.OilConversionVchNo).FirstOrDefault();
                         #region StockIssueDetails
                         oilconversions.OilConversionMasterId = oilcnvsmmstrid.OilConversionMasterId;
                         oilconversions.OilConversionMasterId = oilconversions.OilConversionMasterId;
@@ -220,7 +247,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 
 
         //Searchcode
-        public List<TblOilConversionMaster> GetOilConversionMasters(VoucherNoSearchCriteria searchCriteria)
+        public List<TblOilConversionMaster> GetOilConversionMasters(VoucherNoSearchCriteria searchCriteria,string branchCode)
         {
             try
             {
@@ -229,19 +256,67 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 {
                     List<TblOilConversionMaster> _oilconvsnMasterList = null;
 
-
-                    _oilconvsnMasterList = repo.TblOilConversionMaster.AsEnumerable()
+                    if (searchCriteria.Role == 1)
+                    {
+                        _oilconvsnMasterList = repo.TblOilConversionMaster.AsEnumerable()
                               .Where(cp =>
                                          DateTime.Parse(cp.OilConversionDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.OilConversionDate).Value.ToShortDateString())
                                        && DateTime.Parse(cp.OilConversionDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.OilConversionDate).Value.ToShortDateString())
                                  )
                                .ToList();
-
+                    }
+                    else
+                    {
+                        _oilconvsnMasterList = repo.TblOilConversionMaster.AsEnumerable()
+                                                      .Where(cp =>
+                                                                 DateTime.Parse(cp.OilConversionDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.OilConversionDate).Value.ToShortDateString())
+                                                               && DateTime.Parse(cp.OilConversionDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.OilConversionDate).Value.ToShortDateString())
+                                                         && cp.BranchCode == branchCode)
+                                                       .ToList();
+                    }
                     if (!string.IsNullOrEmpty(searchCriteria.OilConversionVchNo))
                         _oilconvsnMasterList = GetOilconversionList().Where(x => x.OilConversionVchNo == searchCriteria.OilConversionVchNo).ToList();
 
 
-                    return _oilconvsnMasterList;
+                    return _oilconvsnMasterList.OrderByDescending(x => x.OilConversionDate).ToList();
+                    ;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        //to get the oilcnvsn Master data while page load
+        public List<TblOilConversionMaster> GetInvoiceList(int role, string branchCode)
+        {
+            try
+            {
+
+                using (Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>())
+                {
+                    List<TblOilConversionMaster> _oilcnvsnMasterList = null;
+                    if (role == 1)
+                    {
+                        _oilcnvsnMasterList = repo.TblOilConversionMaster.AsEnumerable()
+                                  .Where(inv =>
+                                           inv.OilConversionDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                     )
+                                   .ToList();
+                    }
+                    else
+                    {
+                        _oilcnvsnMasterList = repo.TblOilConversionMaster.AsEnumerable()
+                                                         .Where(inv =>
+                                                                  inv.BranchCode == branchCode
+                                                                  && inv.OilConversionDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                            )
+                                                          .ToList();
+                    }
+
+                    return _oilcnvsnMasterList.OrderByDescending(x => x.OilConversionDate).ToList();
                 }
             }
             catch (Exception ex)

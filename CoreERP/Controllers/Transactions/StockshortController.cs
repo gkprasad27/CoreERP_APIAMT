@@ -104,7 +104,7 @@ namespace CoreERP.Controllers.Transactions
 
 
         [HttpPost("GetStockshortsList/{branchCode}")]
-        public async Task<IActionResult> GetStockshortsList( [FromBody]VoucherNoSearchCriteria searchCriteria)
+        public async Task<IActionResult> GetStockshortsList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
         {
             var result = await Task.Run(() =>
             {
@@ -112,7 +112,7 @@ namespace CoreERP.Controllers.Transactions
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
                 try
                 {
-                    var stockshortsListMasterList = new StockshortHelpers().GetStockshortsList(searchCriteria);
+                    var stockshortsListMasterList = new StockshortHelpers().GetStockshortsList(searchCriteria,branchCode);
                     if (stockshortsListMasterList.Count > 0)
                     {
                         dynamic expando = new ExpandoObject();
@@ -176,6 +176,26 @@ namespace CoreERP.Controllers.Transactions
                 }
             });
             return result;
+        }
+        [HttpPost("GetInvoiceDetails/{branchCode}")]
+        public IActionResult GetInvoiceDetails([FromBody]SearchCriteria searchCriteria, string branchCode)
+        {
+            try
+            {
+                var StockshortsDetails = new StockshortHelpers().GetInvoiceList(searchCriteria.Role, branchCode);
+                if (StockshortsDetails.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.StockshortsList = StockshortsDetails;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Stockshrt records not found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
     }
 }

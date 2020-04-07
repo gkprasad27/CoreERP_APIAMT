@@ -239,7 +239,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 
 
         //Searchcode
-        public List<TblStockshortMaster> GetStockshortsList(VoucherNoSearchCriteria searchCriteria)
+        public List<TblStockshortMaster> GetStockshortsList(VoucherNoSearchCriteria searchCriteria,string branchCode)
         {
             try
             {
@@ -247,20 +247,68 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
                 {
                     List<TblStockshortMaster> _stockshortMasterList = null;
+                    if (searchCriteria.Role == 1)
+                    {
 
-
-                    _stockshortMasterList = repo.TblStockshortMaster.AsEnumerable()
+                        _stockshortMasterList = repo.TblStockshortMaster.AsEnumerable()
                               .Where(cp =>
                                          DateTime.Parse(cp.StockshortDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.StockshortDate).Value.ToShortDateString())
                                        && DateTime.Parse(cp.StockshortDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.StockshortDate).Value.ToShortDateString())
-                                 )
+                               )
                                .ToList();
-
+                    }
+                    else
+                    {
+                        _stockshortMasterList = repo.TblStockshortMaster.AsEnumerable()
+                              .Where(cp =>
+                                         DateTime.Parse(cp.StockshortDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.StockshortDate).Value.ToShortDateString())
+                                       && DateTime.Parse(cp.StockshortDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.StockshortDate).Value.ToShortDateString())
+                                && cp.BranchCode == branchCode)
+                               .ToList();
+                    }
                     if (!string.IsNullOrEmpty(searchCriteria.StockshortNo))
                         _stockshortMasterList = GetStockshortsList().Where(x => x.StockshortNo == searchCriteria.StockshortNo).ToList();
 
 
-                    return _stockshortMasterList;
+                    return _stockshortMasterList.OrderByDescending(x => x.StockshortDate).ToList();
+                    ;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+
+        public List<TblStockshortMaster> GetInvoiceList(int role, string branchCode)
+        {
+            try
+            {
+
+                using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
+                {
+                    List<TblStockshortMaster> _stockshortMasterList = null;
+                    if (role == 1)
+                    {
+                        _stockshortMasterList = repo.TblStockshortMaster.AsEnumerable()
+                                  .Where(inv =>
+                                           inv.StockshortDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                     )
+                                   .ToList();
+                    }
+                    else
+                    {
+                        _stockshortMasterList = repo.TblStockshortMaster.AsEnumerable()
+                                                         .Where(inv =>
+                                                                  inv.BranchCode == branchCode
+                                                                  && inv.StockshortDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                            )
+                                                          .ToList();
+                    }
+
+                    return _stockshortMasterList.OrderByDescending(x => x.StockshortDate).ToList();
                 }
             }
             catch (Exception ex)

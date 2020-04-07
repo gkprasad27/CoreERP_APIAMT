@@ -11,6 +11,45 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 {
     public class StockissuesHelper
     {
+
+
+        //to get the invoice Master data while page load
+        public List<TblOperatorStockIssues> GetInvoiceList(int role, string branchCode)
+        {
+            try
+            {
+
+                using (Repository<TblOperatorStockIssues> repo = new Repository<TblOperatorStockIssues>())
+                {
+                    List<TblOperatorStockIssues> _invoiceMasterList = null;
+                    if (role == 1)
+                    {
+                        _invoiceMasterList = repo.TblOperatorStockIssues.AsEnumerable()
+                                  .Where(inv =>
+                                           inv.IssueDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                     )
+                                   .ToList();
+                    }
+                    else
+                    {
+                        _invoiceMasterList = repo.TblOperatorStockIssues.AsEnumerable()
+                                                         .Where(inv =>
+                                                                  inv.FromBranchCode == branchCode
+                                                                  && inv.IssueDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                            )
+                                                          .ToList();
+                    }
+
+                    return _invoiceMasterList.OrderByDescending(x => x.IssueDate).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
         public List<TblOperatorStockIssues> GetStockissuesList()
         {
             try
@@ -309,7 +348,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 
         //}
         //Searchcode
-        public List<TblOperatorStockIssues> GetStockissuesMasters(VoucherNoSearchCriteria searchCriteria)
+        public List<TblOperatorStockIssues> GetStockissuesMasters(VoucherNoSearchCriteria searchCriteria, string branchCode)
         {
             try
             {
@@ -318,19 +357,32 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 {
                     List<TblOperatorStockIssues> _cashpaymentMasterList = null;
 
-
-                    _cashpaymentMasterList = repo.TblOperatorStockIssues.AsEnumerable()
-                              .Where(cp =>
-                                         DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.IssueDate).Value.ToShortDateString())
-                                       && DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.IssueDate).Value.ToShortDateString())
-                                 )
-                               .ToList();
+                    if (searchCriteria.Role == 1)
+                    {
+                        _cashpaymentMasterList = repo.TblOperatorStockIssues.AsEnumerable()
+                            .Where(inv =>
+                                        DateTime.Parse(inv.IssueDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.IssueDate).Value.ToShortDateString())
+                                      && DateTime.Parse(inv.IssueDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.IssueDate).Value.ToShortDateString())
+                                )
+                              .ToList();
+                    }
+                    else
+                    {
+                        _cashpaymentMasterList = repo.TblOperatorStockIssues.AsEnumerable()
+                             .Where(cp =>
+                                        DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.IssueDate).Value.ToShortDateString())
+                                      && DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.IssueDate).Value.ToShortDateString())
+                                 && cp.FromBranchCode == branchCode)
+                              .ToList();
+                    }
+                   
 
                     if (!string.IsNullOrEmpty(searchCriteria.issueNo))
                         _cashpaymentMasterList = GetStockissuesList().Where(x => x.IssueNo == searchCriteria.issueNo).ToList();
 
 
-                    return _cashpaymentMasterList;
+                    return _cashpaymentMasterList.OrderByDescending(x => x.IssueDate).ToList();
+                    //_cashpaymentMasterList;
                 }
             }
             catch (Exception ex)
