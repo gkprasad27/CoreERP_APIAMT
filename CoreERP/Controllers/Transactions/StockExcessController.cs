@@ -147,7 +147,7 @@ namespace CoreERP.Controllers.Transactions
         }
 
         [HttpPost("GetStockexcessList/{branchCode}")]
-        public async Task<IActionResult> GetStockexcessList( [FromBody]VoucherNoSearchCriteria searchCriteria)
+        public async Task<IActionResult> GetStockexcessList( [FromBody]VoucherNoSearchCriteria searchCriteria, string branchCode)
         {
             var result = await Task.Run(() =>
             {
@@ -155,7 +155,7 @@ namespace CoreERP.Controllers.Transactions
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
                 try
                 {
-                    var stockexcessListMasterList = new StockExcessHelper().GetStockexcessList(searchCriteria);
+                    var stockexcessListMasterList = new StockExcessHelper().GetStockexcessList(searchCriteria,branchCode);
                     if (stockexcessListMasterList.Count > 0)
                     {
                         dynamic expando = new ExpandoObject();
@@ -163,7 +163,7 @@ namespace CoreERP.Controllers.Transactions
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockreceiptsList record found." });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No StockExcess record found." });
                 }
                 catch (Exception ex)
                 {

@@ -90,6 +90,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
+                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
 
                 using Repository<TblBankPaymentMaster> repo = new Repository<TblBankPaymentMaster>();
                 List<TblBankPaymentMaster> _bankpaymentMasterList = null;
@@ -125,41 +127,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
         }
 
-        public List<TblBankPaymentMaster> GetBankPaymentMasterList(int role, string branchCode)
-        {
-            try
-            {
-
-                using (Repository<TblBankPaymentMaster> repo = new Repository<TblBankPaymentMaster>())
-                {
-                    List<TblBankPaymentMaster> _bankPaymentMasterList = null;
-                    if (role == 1)
-                    {
-                        _bankPaymentMasterList = repo.TblBankPaymentMaster.AsEnumerable()
-                                  .Where(bp =>
-                                           bp.BankPaymentDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
-                                     )
-                                   .ToList();
-                    }
-                    else
-                    {
-                        _bankPaymentMasterList = repo.TblBankPaymentMaster.AsEnumerable()
-                                                         .Where(bp =>
-                                                                  bp.BranchCode == branchCode
-                                                                  && bp.BankPaymentDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
-                                                            )
-                                                          .ToList();
-                    }
-
-                    return _bankPaymentMasterList.OrderByDescending(x => x.BankPaymentDate).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-        }
+      
         public List<TblBranch> GetBranches(string branchCode = null)
         {
             try

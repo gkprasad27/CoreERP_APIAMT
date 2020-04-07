@@ -174,27 +174,6 @@ namespace CoreERP.Controllers.Transactions
             return result;
         }
 
-        [HttpPost("GetCashReceiptMasterList/{branchCode}")]
-        public IActionResult GetCashReceiptMasterList([FromBody]VoucherNoSearchCriteria searchCriteria, string branchCode)
-        {
-            try
-            {
-                var cashReceiptMasterList = new CashReceiptHelper().GetCashReceiptMasterList(searchCriteria.Role, branchCode);
-                if (cashReceiptMasterList.Count > 0)
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.cashReceiptMasterList = cashReceiptMasterList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "CashReceipt Records not found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
         [HttpGet("GetCashReceiptDetailsList/{id}")]
         public async Task<IActionResult> GetCashReceiptDetailsList(decimal id)
         {

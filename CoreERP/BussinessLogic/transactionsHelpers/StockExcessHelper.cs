@@ -276,22 +276,37 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             }
         }
 
-        public List<TblStockExcessMaster> GetStockexcessList(VoucherNoSearchCriteria searchCriteria)
+        public List<TblStockExcessMaster> GetStockexcessList(VoucherNoSearchCriteria searchCriteria, string branchCode)
         {
             try
             {
-                searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
-                searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
 
-                using (Repository<TblStockExcessMaster> repo = new Repository<TblStockExcessMaster>())
+                using Repository<TblStockExcessMaster> repo = new Repository<TblStockExcessMaster>();
+                List<TblStockExcessMaster> _stockexcess = null;
+                if (searchCriteria.Role == 1)
                 {
-                    return repo.TblStockExcessMaster.AsEnumerable()
-                               .Where(inv => Convert.ToDateTime(inv.StockExcessDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                                        && Convert.ToDateTime(inv.StockExcessDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-                                        && inv.StockExcessNo == (searchCriteria.StockExcessNo ?? inv.StockExcessNo)
-                                  )
-                                .ToList();
+                    _stockexcess = repo.TblStockExcessMaster.AsEnumerable()
+                          .Where(se =>
+                                     DateTime.Parse(se.StockExcessDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? se.StockExcessDate).Value.ToShortDateString())
+                                   && DateTime.Parse(se.StockExcessDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? se.StockExcessDate).Value.ToShortDateString()))
+                           .ToList();
                 }
+                else
+                {
+                    _stockexcess = repo.TblStockExcessMaster.AsEnumerable()
+                                             .Where(se =>
+                                                        DateTime.Parse(se.StockExcessDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? se.StockExcessDate).Value.ToShortDateString())
+                                                      && DateTime.Parse(se.StockExcessDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? se.StockExcessDate).Value.ToShortDateString())
+                                                      && se.BranchCode == branchCode)
+                                              .ToList();
+                }
+                if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
+                    _stockexcess = _stockexcess.Where(x => x.StockExcessNo == searchCriteria.VoucherNo).ToList();
+
+
+                return _stockexcess;
             }
             catch (Exception ex)
             {

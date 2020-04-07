@@ -68,6 +68,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
+                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
 
                 using Repository<TblJournalVoucherMaster> repo = new Repository<TblJournalVoucherMaster>();
                 List<TblJournalVoucherMaster> _journalVoucherMasterList = null;
@@ -103,41 +105,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
         }
 
-        public List<TblJournalVoucherMaster> GetJournalVoucherMasterList(int role, string branchCode)
-        {
-            try
-            {
-
-                using (Repository<TblJournalVoucherMaster> repo = new Repository<TblJournalVoucherMaster>())
-                {
-                    List<TblJournalVoucherMaster> _journalVoucherMasterList = null;
-                    if (role == 1)
-                    {
-                        _journalVoucherMasterList = repo.TblJournalVoucherMaster.AsEnumerable()
-                                  .Where(jv =>
-                                           jv.JournalVoucherDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
-                                     )
-                                   .ToList();
-                    }
-                    else
-                    {
-                        _journalVoucherMasterList = repo.TblJournalVoucherMaster.AsEnumerable()
-                                                         .Where(jv =>
-                                                                  jv.BranchCode == branchCode
-                                                                  && jv.JournalVoucherDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
-                                                            )
-                                                          .ToList();
-                    }
-
-                    return _journalVoucherMasterList.OrderByDescending(x => x.JournalVoucherDate).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-        }
+     
 
         public List<TblBranch> GetBranches(string branchCode = null)
         {

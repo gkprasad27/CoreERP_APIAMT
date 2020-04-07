@@ -79,6 +79,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
+                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
 
                 using Repository<TblBankReceiptMaster> repo = new Repository<TblBankReceiptMaster>();
                 List<TblBankReceiptMaster> _bankreceiptMasterList = null;
@@ -114,41 +116,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
         }
 
-        public List<TblBankReceiptMaster> GetBankReceiptMasterList(int role, string branchCode)
-        {
-            try
-            {
-
-                using (Repository<TblBankReceiptMaster> repo = new Repository<TblBankReceiptMaster>())
-                {
-                    List<TblBankReceiptMaster> _bankReceiptMasterList = null;
-                    if (role == 1)
-                    {
-                        _bankReceiptMasterList = repo.TblBankReceiptMaster.AsEnumerable()
-                                  .Where(br =>
-                                           br.BankReceiptDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
-                                     )
-                                   .ToList();
-                    }
-                    else
-                    {
-                        _bankReceiptMasterList = repo.TblBankReceiptMaster.AsEnumerable()
-                                                         .Where(br =>
-                                                                  br.BranchCode == branchCode
-                                                                  && br.BankReceiptDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
-                                                            )
-                                                          .ToList();
-                    }
-
-                    return _bankReceiptMasterList.OrderByDescending(x => x.BankReceiptDate).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-        }
+       
         public string GetVoucherNo(string branchCode)
         {
             try

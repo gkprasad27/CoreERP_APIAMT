@@ -102,6 +102,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
+                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
 
                 using Repository<TblCashReceiptMaster> repo = new Repository<TblCashReceiptMaster>();
                 List<TblCashReceiptMaster> _cashreceiptMasterList = null;
@@ -138,41 +140,6 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
         }
 
-        public List<TblCashReceiptMaster> GetCashReceiptMasterList(int role, string branchCode)
-        {
-            try
-            {
-
-                using (Repository<TblCashReceiptMaster> repo = new Repository<TblCashReceiptMaster>())
-                {
-                    List<TblCashReceiptMaster> _cashReceiptMasterList = null;
-                    if (role == 1)
-                    {
-                        _cashReceiptMasterList = repo.TblCashReceiptMaster.AsEnumerable()
-                                  .Where(cr =>
-                                           cr.CashReceiptDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
-                                     )
-                                   .ToList();
-                    }
-                    else
-                    {
-                        _cashReceiptMasterList = repo.TblCashReceiptMaster.AsEnumerable()
-                                                         .Where(cr =>
-                                                                  cr.BranchCode == branchCode
-                                                                  && cr.CashReceiptDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
-                                                            )
-                                                          .ToList();
-                    }
-
-                    return _cashReceiptMasterList.OrderByDescending(x => x.CashReceiptDate).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-        }
 
         public List<TblAccountLedger> GetAccountLedgersCode(string ledgercode = null, string ledgerName = null)
         {

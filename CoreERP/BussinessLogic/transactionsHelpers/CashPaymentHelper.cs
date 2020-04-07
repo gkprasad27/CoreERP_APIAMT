@@ -38,7 +38,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
-
+                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
                 using Repository<TblCashPaymentMaster> repo = new Repository<TblCashPaymentMaster>();
                 List<TblCashPaymentMaster> _cashpaymentMasterList = null;
                 if (searchCriteria.Role == 1)
@@ -72,43 +73,6 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             }
 
         }
-
-        public List<TblCashPaymentMaster> GetCashPaymentMasterList(int role, string branchCode)
-        {
-            try
-            {
-
-                using (Repository<TblCashPaymentMaster> repo = new Repository<TblCashPaymentMaster>())
-                {
-                    List<TblCashPaymentMaster> _cashPaymentMasterList = null;
-                    if (role == 1)
-                    {
-                        _cashPaymentMasterList = repo.TblCashPaymentMaster.AsEnumerable()
-                                  .Where(cp =>
-                                           cp.CashPaymentDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
-                                     )
-                                   .ToList();
-                    }
-                    else
-                    {
-                        _cashPaymentMasterList = repo.TblCashPaymentMaster.AsEnumerable()
-                                                         .Where(cp =>
-                                                                  cp.BranchCode == branchCode
-                                                                  && cp.CashPaymentDate>= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
-                                                            )
-                                                          .ToList();
-                    }
-
-                    return _cashPaymentMasterList.OrderByDescending(x => x.CashPaymentDate).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-        }
-
 
         public List<TblCashPaymentDetails> GetCashpaymentDetails(decimal id)
         {
