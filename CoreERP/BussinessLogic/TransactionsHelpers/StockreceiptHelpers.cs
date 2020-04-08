@@ -310,7 +310,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 
 
         //to get the invoice Master data while page load
-        public List<TblOperatorStockReceipt> GetInvoiceList(int role, string branchCode)
+        public List<TblOperatorStockReceipt> GetInvoiceList(int? role, string branchCode)
         {
             try
             {
@@ -318,7 +318,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 using (Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>())
                 {
                     List<TblOperatorStockReceipt> _invoiceMasterList = null;
-                    if (role == 1)
+                    if (role.Value == 1)
                     {
                         _invoiceMasterList = repo.TblOperatorStockReceipt.AsEnumerable()
                                   .Where(inv =>

@@ -282,7 +282,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         }
 
 
-        public List<TblStockshortMaster> GetInvoiceList(int role, string branchCode)
+        public List<TblStockshortMaster> GetInvoiceList(int? role, string branchCode)
         {
             try
             {
@@ -290,7 +290,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
                 {
                     List<TblStockshortMaster> _stockshortMasterList = null;
-                    if (role == 1)
+                    if (role.Value == 1)
                     {
                         _stockshortMasterList = repo.TblStockshortMaster.AsEnumerable()
                                   .Where(inv =>

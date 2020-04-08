@@ -11,11 +11,38 @@ namespace CoreERP.BussinessLogic.SalesHelper
 {
     public class SalesReturnHelper
     {
-        public string GenerateSalesReturnInvoiceNo(string branchCode)
+        public string GenerateSalesReturnInvoiceNo(string branchCode,out string errorMessage)
         {
             try
             {
-                return new Common.CommonHelper().GenerateNumber(20, branchCode);
+                string invoiceNo = string.Empty, prefix = string.Empty, suffix = string.Empty;
+                errorMessage = string.Empty;
+                //return new Common.CommonHelper().GenerateNumber(20, branchCode);
+                TblInvoiceMasterReturn _invoiceMasterReturn = null;
+
+                using (Repository<TblInvoiceMaster> _repo = new Repository<TblInvoiceMaster>())
+                {
+                    _invoiceMasterReturn = _repo.TblInvoiceMasterReturn.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.InvoiceMasterReturnId).FirstOrDefault();
+
+                    if (_invoiceMasterReturn != null)
+                    {
+                        var invSplit = _invoiceMasterReturn.InvoiceReturnNo.Split('-');
+                        invoiceNo = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1]) + 1}-{invSplit[2]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(13, branchCode, out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
+                            return invoiceNo = string.Empty;
+                        }
+
+                        invoiceNo = $"{prefix}-1-{suffix}";
+                    }
+                }
+
+                return invoiceNo;
             }
             catch (Exception ex)
             {

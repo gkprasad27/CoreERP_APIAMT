@@ -10,13 +10,39 @@ namespace CoreERP.BussinessLogic.SalesHelper
 {
     public class StockTransferHelper
     {
-        public string GenerateStockTranfNo(string branchCode)
+        public string GenerateStockTranfNo(string branchCode,out string errorMessage)
         {
             try
             {
-               return new Common.CommonHelper().GenerateNumber(29, branchCode);
+                string stockTransferNo = string.Empty, prefix = string.Empty, suffix = string.Empty;
+                errorMessage = string.Empty;
+                // return new Common.CommonHelper().GenerateNumber(29, branchCode);
+                TblStockTransferMaster _stockTransferMaster = null;
+                using (Repository<TblInvoiceMaster> _repo = new Repository<TblInvoiceMaster>())
+                {
+                    _stockTransferMaster = _repo.TblStockTransferMaster.Where(x => x.FromBranchCode == branchCode).OrderByDescending(x => x.StockTransferMasterId).FirstOrDefault();
+
+                    if (_stockTransferMaster != null)
+                    {
+                        var invSplit = _stockTransferMaster.StockTransferNo.Split('-');
+                        stockTransferNo = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1]) + 1}-{invSplit[2]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(29, branchCode, out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
+                            return stockTransferNo = string.Empty;
+                        }
+
+                        stockTransferNo = $"{prefix}-1-{suffix}";
+                    }
+                }
+
+                return stockTransferNo;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -30,9 +56,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                 using Repository<TblProduct> repo = new Repository<TblProduct>();
                 return repo.TblProduct
-.Where(p => (productCode != null ? p.ProductCode.ToLower().Contains(productCode) : true)
-&& (productName != null ? p.ProductName.ToLower().Contains(productName) : true))
-.ToList();
+                            .Where(p => (productCode != null ? p.ProductCode.ToLower().Contains(productCode) : true)
+                                    && (productName != null ? p.ProductName.ToLower().Contains(productName) : true))
+                            .ToList();
             }
             catch(Exception ex)
             {
@@ -105,17 +131,40 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                using Repository<TblStockTransferMaster> repo = new Repository<TblStockTransferMaster>();
-                return repo.TblStockTransferMaster
-                            .AsEnumerable()
-                            .Where(x =>
-                                        DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) >= DateTime.Parse(searchCriteria.FromDate.Value.ToShortDateString())
-                                     && DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) <= DateTime.Parse(searchCriteria.ToDate.Value.ToShortDateString())
-                                     //&& Convert.ToDateTime(x.StockTransferDate.Value.ToString("dd/MM/yyyy")) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToString("dd/MM/yyyy"))
-                                     && x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)
-                                     && x.FromBranchCode == branhCode
-                                     )
-                            .ToList();
+                if (searchCriteria.Role.Value == 1)
+                {
+                    using (Repository<TblStockTransferMaster> repo = new Repository<TblStockTransferMaster>())
+                    {
+                        return repo.TblStockTransferMaster
+                                   .AsEnumerable()
+                                   .Where(x =>
+                                               DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) >= DateTime.Parse(searchCriteria.FromDate.Value.ToShortDateString())
+                                            && DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) <= DateTime.Parse(searchCriteria.ToDate.Value.ToShortDateString())
+                                            //&& Convert.ToDateTime(x.StockTransferDate.Value.ToString("dd/MM/yyyy")) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToString("dd/MM/yyyy"))
+                                            && x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)
+                                            //&& x.FromBranchCode == branhCode
+                                            )
+                                   .ToList();
+                    }
+                       
+                }
+                else
+                {
+                    using (Repository<TblStockTransferMaster> repo = new Repository<TblStockTransferMaster>())
+                    {
+                        return repo.TblStockTransferMaster
+                                   .AsEnumerable()
+                                   .Where(x =>
+                                               DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) >= DateTime.Parse(searchCriteria.FromDate.Value.ToShortDateString())
+                                            && DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) <= DateTime.Parse(searchCriteria.ToDate.Value.ToShortDateString())
+                                            //&& Convert.ToDateTime(x.StockTransferDate.Value.ToString("dd/MM/yyyy")) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToString("dd/MM/yyyy"))
+                                            && x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)
+                                            && x.FromBranchCode == branhCode
+                                            )
+                                   .ToList();
+                    }
+                }
+                
             }
             catch(Exception ex)
             {

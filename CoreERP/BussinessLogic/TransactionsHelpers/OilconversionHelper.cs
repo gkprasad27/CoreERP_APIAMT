@@ -290,7 +290,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         }
 
         //to get the oilcnvsn Master data while page load
-        public List<TblOilConversionMaster> GetInvoiceList(int role, string branchCode)
+        public List<TblOilConversionMaster> GetInvoiceList(int? role, string branchCode)
         {
             try
             {
@@ -298,7 +298,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 using (Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>())
                 {
                     List<TblOilConversionMaster> _oilcnvsnMasterList = null;
-                    if (role == 1)
+                    if (role.Value == 1)
                     {
                         _oilcnvsnMasterList = repo.TblOilConversionMaster.AsEnumerable()
                                   .Where(inv =>
