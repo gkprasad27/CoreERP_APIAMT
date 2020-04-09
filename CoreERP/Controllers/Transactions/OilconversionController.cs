@@ -50,7 +50,11 @@ namespace CoreERP.Controllers.Transactions
                 {
                     dynamic expando = new ExpandoObject();
                     expando.oilconversionVoucherNo = new OilconversionHelper().GetoilconversionVoucherNo(branchCode);
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    if (expando.oilconversionVoucherNo != null)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "oilconversionVoucherNo Empty." });
                 }
                 catch (Exception ex)
                 {
