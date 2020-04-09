@@ -16,7 +16,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
     public class InvoiceHelper
     {
 //to get the invoice Master data while page load
-        public List<TblInvoiceMaster> GetInvoiceList(int role,string branchCode)
+        public List<TblInvoiceMaster> GetInvoiceList(int? role,string branchCode)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using (Repository<TblInvoiceMaster> repo = new Repository<TblInvoiceMaster>())
                 {
                     List<TblInvoiceMaster> _invoiceMasterList = null;
-                    if (role ==1)
+                    if (role.Value ==1)
                     {
                         _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
                                   .Where(inv =>
@@ -111,6 +111,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     else
                     {
                         new Common.CommonHelper().GetSuffixPrefix(19, branchCode, out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
+                            return billno = string.Empty;
+                        }
+
                         billno = $"{prefix}-1-{suffix}";
                     }
                 }
@@ -134,6 +140,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 //searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
                 //searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
 
+                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+
                 using (Repository<TblInvoiceMaster> repo=new Repository<TblInvoiceMaster>())
                 {
                     List<TblInvoiceMaster> _invoiceMasterList = null;
@@ -141,8 +150,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     {
                         _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
                              .Where(inv =>
-                                        DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
-                                      && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                         DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
                                       && !inv.IsSalesReturned.Value
                                 )
                               .ToList();
@@ -234,6 +242,11 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 {
                     _OpeningBalance = repo.TblOpeningBalance.Where(a => a.LedgerCode == ldgerCode ).FirstOrDefault();
                 }
+
+                if (_OpeningBalance == null)
+                    return 0;
+
+
                 //select * from tbl_OpeningBalance where ledgercode=2030 -- 230270
 
                 using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
@@ -434,7 +447,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     string _productCodes = configuration.GetSection("ProductCods").Value;
                     if (!string.IsNullOrEmpty(_productCodes))
                     {
-                        if (_productCodes.ToUpper().Contains(productCode.ToUpper()))
+                        if (!_productCodes.ToUpper().Contains(productCode.ToUpper()))
                         {
                             _ChildBranches = configuration.GetSection("ChildBranches:" + branchCode).Value;
                         }
@@ -520,7 +533,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
 
         /*************************   Helper methods For invoice*******************************************/
-        public bool RegisterBill(TblInvoiceMaster invoice, List<TblInvoiceDetail> invoiceDetails)
+        public bool RegisterBill(IConfiguration configuration,TblInvoiceMaster invoice, List<TblInvoiceDetail> invoiceDetails)
         {
             try
             {
@@ -558,6 +571,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             invoice.BranchName = _branch.BranchName;
                             invoice.VoucherTypeId = 19;
                             invoice.ServerDateTime = DateTime.Now;
+                            invoice.IsSalesReturned = false;
                             repo.TblInvoiceMaster.Add(invoice);
                             repo.SaveChanges();
 
@@ -592,7 +606,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 #endregion
 
                                 #region Add stock transaction  and Account Ledger Transaction
-                                AddStockInformation(repo, invoice, _branch, _product, invdtl.Qty > 0 ? invdtl.Qty : invdtl.FQty, invdtl.Rate);
+                                AddStockInformation(configuration,repo, invoice, _branch, _product, invdtl.Qty > 0 ? invdtl.Qty : invdtl.FQty, invdtl.Rate);
 
                                 AddAccountLedgerTransactions(repo, _voucherDetail, invoice.InvoiceDate);
                                 #endregion
@@ -773,51 +787,68 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-        public TblStockInformation AddStockInformation(ERPContext context,TblInvoiceMaster invoice,TblBranch _branch,TblProduct _product,decimal? qty,decimal? rate)
+        public TblStockInformation AddStockInformation(IConfiguration configuration,ERPContext context,TblInvoiceMaster invoice,TblBranch _branch,TblProduct _product,decimal? qty,decimal? rate)
         {
             try
             {
-                //using(ERPContext context=new ERPContext())
-                //{
-                    var _stockInformation = new TblStockInformation();
+                string _ChildBranches = string.Empty;
+                var _stockInformation = new TblStockInformation();
 
+                string _productCodes = configuration.GetSection("ProductCods").Value;
+                if (!string.IsNullOrEmpty(_productCodes))
+                {
+                    if (!_productCodes.ToUpper().Contains(_product.ProductCode.ToUpper()))
+                    {
+                        _ChildBranches = configuration.GetSection("ChildBranches:" + _branch.BranchCode).Value;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(_ChildBranches))
+                {
+                    var branch = GetBranches(_ChildBranches).FirstOrDefault();
+                    _stockInformation.BranchId = branch.BranchId;
+                    _stockInformation.BranchCode = branch.BranchCode;
+                }
+                else
+                {
                     _stockInformation.BranchId = _branch.BranchId;
                     _stockInformation.BranchCode = _branch.BranchCode;
-                    _stockInformation.ShiftId = invoice.ShiftId;
-                    _stockInformation.VoucherNo = invoice.VoucherNo;
-                    _stockInformation.VoucherTypeId = invoice.VoucherTypeId;
-                    _stockInformation.InvoiceNo = invoice.InvoiceNo;
-                    _stockInformation.ProductId = _product.ProductId;
-                    _stockInformation.ProductCode = _product.ProductCode;
-                    _stockInformation.OutwardQty = qty;
-                    _stockInformation.Rate = rate;
+                }
+                _stockInformation.ShiftId = invoice.ShiftId;
+                _stockInformation.VoucherNo = invoice.VoucherNo;
+                _stockInformation.VoucherTypeId = invoice.VoucherTypeId;
+                _stockInformation.InvoiceNo = invoice.InvoiceNo;
+                _stockInformation.ProductId = _product.ProductId;
+                _stockInformation.ProductCode = _product.ProductCode;
+                _stockInformation.OutwardQty = qty;
+                _stockInformation.Rate = rate;
 
-                    context.TblStockInformation.Add(_stockInformation);
-                    if (context.SaveChanges() > 0)
-                        return _stockInformation;
+                context.TblStockInformation.Add(_stockInformation);
+                if (context.SaveChanges() > 0)
+                    return _stockInformation;
 
-                    #region Comment
-                    //var _stockInformation = new TblStockInformation();
+                #region Comment
+                //var _stockInformation = new TblStockInformation();
 
-                    //_stockInformation.BranchId = _branch.BranchId;
-                    //_stockInformation.BranchCode = _branch.BranchCode;
-                    //_stockInformation.ShiftId = invoice.ShiftId;
-                    //_stockInformation.VoucherNo = invoice.VoucherNo;
-                    //_stockInformation.VoucherTypeId = invoice.VoucherTypeId;
-                    //_stockInformation.InvoiceNo = invoice.InvoiceNo;
-                    //_stockInformation.ProductId = _product.ProductId;
-                    //_stockInformation.ProductCode = _product.ProductCode;
-                    //_stockInformation.OutwardQty = invdtl.Qty > 0 ? invdtl.Qty : invdtl.FQty;
-                    //_stockInformation.Rate = invdtl.Rate;
+                //_stockInformation.BranchId = _branch.BranchId;
+                //_stockInformation.BranchCode = _branch.BranchCode;
+                //_stockInformation.ShiftId = invoice.ShiftId;
+                //_stockInformation.VoucherNo = invoice.VoucherNo;
+                //_stockInformation.VoucherTypeId = invoice.VoucherTypeId;
+                //_stockInformation.InvoiceNo = invoice.InvoiceNo;
+                //_stockInformation.ProductId = _product.ProductId;
+                //_stockInformation.ProductCode = _product.ProductCode;
+                //_stockInformation.OutwardQty = invdtl.Qty > 0 ? invdtl.Qty : invdtl.FQty;
+                //_stockInformation.Rate = invdtl.Rate;
 
-                    //repo.TblStockInformation.Add(_stockInformation);
-                    //repo.SaveChanges();
-                    #endregion
+                //repo.TblStockInformation.Add(_stockInformation);
+                //repo.SaveChanges();
+                #endregion
 
-                    return null;
-              //  }
+                return null;
+                //  }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }

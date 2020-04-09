@@ -21,10 +21,17 @@ namespace CoreERP.Controllers.Sales
         {
             var result = await Task.Run(() =>
             {
+                string errorMessage = string.Empty;
                 try
                 {
+                    var _stockNo = new StockTransferHelper().GenerateStockTranfNo(branchCode, out errorMessage);
+                    if (string.IsNullOrEmpty(_stockNo))
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
+                    }
+
                     dynamic expando = new ExpandoObject();
-                    expando.SateteList = new StockTransferHelper().GenerateStockTranfNo(branchCode);
+                    expando.SateteList = _stockNo;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)

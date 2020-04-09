@@ -20,9 +20,16 @@ namespace CoreERP.Controllers.Sales
             {
                 try
                 {
+                    string errorMessage = string.Empty;
+                    string _salesReturnInvNo = new SalesReturnHelper().GenerateSalesReturnInvoiceNo(branchCode, out errorMessage);
+                    if (string.IsNullOrEmpty(_salesReturnInvNo))
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
+                    }
                     dynamic expando = new ExpandoObject();
-                    expando.SalesReturnInvNo = new SalesReturnHelper().GenerateSalesReturnInvoiceNo(branchCode);
+                    expando.SalesReturnInvNo = _salesReturnInvNo;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+
                 }
                 catch (Exception ex)
                 {

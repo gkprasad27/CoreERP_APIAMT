@@ -163,7 +163,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CashPartyAccountList = new InvoiceHelper().GetAccountLedgers(ledgerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                expando.CashPartyAccountList = new InvoiceHelper().GetAccountLedgers(ledgerCode).OrderBy(al=> al.LedgerCode.Length).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -389,7 +389,7 @@ namespace CoreERP.Controllers
                 var _invoiceHdr = objData["InvoiceHdr"].ToObject<TblInvoiceMaster>();
                 var _invoiceDtl = objData["InvoiceDetail"].ToObject<TblInvoiceDetail[]>();
 
-                var result = new InvoiceHelper().RegisterBill(_invoiceHdr, _invoiceDtl.ToList());
+                var result = new InvoiceHelper().RegisterBill(_configuration ,_invoiceHdr, _invoiceDtl.ToList());
                 if (result)
                 {
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _invoiceHdr });

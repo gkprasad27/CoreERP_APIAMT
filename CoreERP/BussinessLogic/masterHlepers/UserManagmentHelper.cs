@@ -10,19 +10,25 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class UserManagmentHelper
     {
-        public  static Erpuser ValidateUser(Erpuser erpuser)
+        public static Erpuser ValidateUser(Erpuser erpuser)
         {
             Erpuser user = null;
-            using Repository<Erpuser> _repo = new Repository<Erpuser>();
-            user = _repo.Erpuser
-.Where(u => u.UserName.Equals(erpuser.UserName)
-&& u.Password.Equals(erpuser.Password)
-).FirstOrDefault();
+            using (ERPContext _repo = new ERPContext())
+            {
+                user = _repo.Erpuser
+                                .Where(u => u.UserName.Equals(erpuser.UserName)
+                                && u.Password.Equals(erpuser.Password)
+                                ).FirstOrDefault();
 
 
-
+                //int _userName
+               
+                user.Role = _repo.TblUser.Where(u=> u.UserName  == erpuser.UserName)
+                                 .FirstOrDefault()?.RoleId.ToString();
+            }
 
             return user;
+
         }
 
         public Erpuser GetErpuser(decimal seqiId)
