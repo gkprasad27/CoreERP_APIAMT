@@ -54,14 +54,14 @@ namespace CoreERP.Controllers.Transactions
             return result;
         }
 
-        [HttpGet("GetMeterReadingList")]
-        public async Task<IActionResult> GetMeterReadingList()
+        [HttpGet("GetMeterReadingList/{branchCode}/{role}")]
+        public async Task<IActionResult> GetMeterReadingList(string branchCode,int role)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var meterRreadingList = new MeterReadingHelper().GetMeterReadingList();
+                    var meterRreadingList = new MeterReadingHelper().GetMeterReadingList(branchCode,role);
                     if (meterRreadingList.Count > 0)
                     {
                         dynamic expando = new ExpandoObject();
@@ -78,6 +78,7 @@ namespace CoreERP.Controllers.Transactions
             });
             return result;
         }
+
         [HttpPut("UpdateMeterReading")]
         public async Task<IActionResult> UpdateMeterReading([FromBody] TblMeterReading meterreading)
         {
