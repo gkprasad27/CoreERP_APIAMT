@@ -47,13 +47,19 @@ namespace CoreERP.Controllers
         {
             var result = await Task.Run(() =>
             {
+                string errorMessage = string.Empty;
+
                 if (string.IsNullOrEmpty(branchCode))
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
 
                 try
                 {
+                    var _purchaseInvoiceNo = new PurchasesHelper().GeneratePurchaseInvoiceNo(branchCode, out errorMessage);
+                    if(string.IsNullOrEmpty(_purchaseInvoiceNo))
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
+
                     dynamic expando = new ExpandoObject();
-                    expando.PurchaseInvoiceNo = new PurchasesHelper().GeneratePurchaseInvoiceNo(branchCode);
+                    expando.PurchaseInvoiceNo = _purchaseInvoiceNo;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -117,6 +123,19 @@ namespace CoreERP.Controllers
                     var _purchaseInvoiceHdr = objData["purchaseHdr"].ToObject<TblPurchaseInvoice>();
                     var _purchaseInvoiceDetail = objData["purchaseDetail"].ToObject<TblPurchaseInvoiceDetail[]>();
 
+                    if (_purchaseInvoiceHdr == null)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No request records found to Save" });
+                    }
+                    if (_purchaseInvoiceDetail == null || _purchaseInvoiceDetail.Count() == 0)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "In request no product found in to save" });
+                    }
+                    if (string.IsNullOrEmpty(_purchaseInvoiceHdr.PurchaseInvNo))
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Purchase Invoice no canontbe null/empty." });
+                    }
+
                     var result = new PurchasesHelper().AddPurchaseRecords(_purchaseInvoiceHdr, _purchaseInvoiceDetail.ToList());
                     if (result)
                     {
@@ -134,15 +153,15 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("GetInvoiceList/{branchCode}")]
-        public async Task<IActionResult> GetInvoiceList([FromBody]SearchCriteria searchCriteria)
+        public async Task<IActionResult> GetInvoiceList(string branchCode,[FromBody]SearchCriteria searchCriteria)
         {
             var result = await Task.Run(() =>
             {
-                if (searchCriteria == null)
+                if (searchCriteria == null || string.IsNullOrEmpty(branchCode))
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
                 try
                 {
-                    var invoiceMasterList = new PurchasesHelper().GetPurchaseInvoices(searchCriteria);
+                    var invoiceMasterList = new PurchasesHelper().GetPurchaseInvoices(branchCode,searchCriteria);
                     if (invoiceMasterList.Count > 0)
                     {
                         dynamic expando = new ExpandoObject();
@@ -150,7 +169,7 @@ namespace CoreERP.Controllers
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Purchase record found." });
                 }
                 catch (Exception ex)
                 {
@@ -177,7 +196,7 @@ namespace CoreERP.Controllers
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Purchase details record found." });
                 }
                 catch (Exception ex)
                 {
@@ -189,9 +208,3 @@ namespace CoreERP.Controllers
     }
 }
 
-///api/Purchase/purchases/GetPupms/{pumpNo}/{branchCode}
-///api/Purchase/purchases/GeneratePurchaseInvNo/{branchCode}
-///GetProductDeatilsSectionRcd/{branchCode}/{productCode}
-///RegisterPurchase
-///GetInvoiceList/{branchCode}
-///GetInvoiceDeatilList/{invoiceNo}

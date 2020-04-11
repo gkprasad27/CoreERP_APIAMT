@@ -14,11 +14,37 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 {
     public class PurchasesHelper
     {
-        public string GeneratePurchaseInvoiceNo(string branchCode)
+        public string GeneratePurchaseInvoiceNo(string branchCode,out string errorMessage)
         {
             try
             {
-                var invoiceNo =new Common.CommonHelper().GenerateNumber(13, branchCode);
+                string invoiceNo = string.Empty, prefix = string.Empty, suffix = string.Empty;
+                errorMessage = string.Empty;
+
+                // var invoiceNo =new Common.CommonHelper().GenerateNumber(13, branchCode);
+                TblPurchaseInvoice _purchaseInvoice = null;
+                using (Repository<TblInvoiceMaster> _repo = new Repository<TblInvoiceMaster>())
+                {
+                    _purchaseInvoice = _repo.TblPurchaseInvoice.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.PurchaseInvId).FirstOrDefault();
+
+                    if (_purchaseInvoice != null)
+                    {
+                        var invSplit = _purchaseInvoice.PurchaseInvNo.Split('-');
+                        invoiceNo = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1]) + 1}-{invSplit[2]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(13, branchCode, out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
+                            return invoiceNo = string.Empty;
+                        }
+
+                        invoiceNo = $"{prefix}-1-{suffix}";
+                    }
+                }
+
                 return invoiceNo;
             }
             catch (Exception ex)
@@ -142,6 +168,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
+    
         #region register Purchase Record
         public List<TblVoucherType> GetVoucherType(decimal voucherTypeId)
         {
@@ -184,15 +211,15 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             purchaseInvoice.ShiftId = shifId;
                             purchaseInvoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
                             purchaseInvoice.VoucherTypeId = 13;
-
                             purchaseInvoice.ServerDateTime = DateTime.Now;
+                            purchaseInvoice.IsPurchaseReturned = false;
                             context.TblPurchaseInvoice.Add(purchaseInvoice);
                             context.SaveChanges();
 
                             foreach (var purInv in purchaseInvoiceDetails)
                             {
                                 _product = GetProducts(purInv.ProductCode).FirstOrDefault();
-                                _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureId));
+                                _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
                                 _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure.PurchaseAccount).FirstOrDefault();
 
                                 #region Add voucher Details
@@ -471,13 +498,16 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
         #endregion
 
         #region  Search Purchase Records in Master Table
-        public List<TblPurchaseInvoice> GetPurchaseInvoices(SearchCriteria searchCriteria)
+        public List<TblPurchaseInvoice> GetPurchaseInvoices(string branchCode,SearchCriteria searchCriteria)
         {
             try
             {
                 using(Repository<TblPurchaseInvoice> repo=new Repository<TblPurchaseInvoice>())
                 {
                     List<TblPurchaseInvoice> _purchaseList = null;
+
+
+
                     _purchaseList= repo.TblPurchaseInvoice.AsEnumerable()
                                        .Where(inv => DateTime.Parse(inv.PurchaseInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.PurchaseInvDate).Value.ToShortDateString())
                                                  && DateTime.Parse(inv.PurchaseInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.PurchaseInvDate).Value.ToShortDateString())
@@ -486,6 +516,10 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                     if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
                         _purchaseList = _purchaseList.Where(x=> x.PurchaseInvNo == searchCriteria.InvoiceNo).ToList();
+                    if(searchCriteria.Role != 1)
+                    {
+                        _purchaseList = _purchaseList.Where(x => x.BranchCode == branchCode).ToList();
+                    }
 
                     return _purchaseList;
                 }

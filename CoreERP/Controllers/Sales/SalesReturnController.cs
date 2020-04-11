@@ -61,6 +61,17 @@ namespace CoreERP.Controllers.Sales
 
                 try
                 {
+                    if (string.IsNullOrEmpty(invoiceReturnNo))
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Invoice return no can not be empty." });
+                    }
+
+                    if (string.IsNullOrEmpty(invoiceMasterID))
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Invoice no can not be empty." });
+                    }
+
+
                     string errorMessage = string.Empty;
                     var _invoiceMasterReturn = new SalesReturnHelper().RegisterInvoiceReturns(invoiceReturnNo, Convert.ToDecimal(invoiceMasterID), out errorMessage);
                     if (_invoiceMasterReturn != null)
