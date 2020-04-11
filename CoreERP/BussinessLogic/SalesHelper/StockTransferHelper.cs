@@ -15,6 +15,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             try
             {
                 string stockTransferNo = string.Empty, prefix = string.Empty, suffix = string.Empty;
+                decimal _no=0;
                 errorMessage = string.Empty;
                 // return new Common.CommonHelper().GenerateNumber(29, branchCode);
                 TblStockTransferMaster _stockTransferMaster = null;
@@ -24,8 +25,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                     if (_stockTransferMaster != null)
                     {
-                        var invSplit = _stockTransferMaster.StockTransferNo.Split('-');
-                        stockTransferNo = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1]) + 1}-{invSplit[2]}";
+                       var invSplit = System.Text.RegularExpressions.Regex.Split(_stockTransferMaster.StockTransferNo, @"(-)|(/)");
+                        prefix = invSplit[0];
+                        _no = Convert.ToDecimal(invSplit[2]);
+                        suffix = invSplit[4];
+                     
+                        stockTransferNo = $"{prefix}{invSplit[1]}{ _no + 1}{invSplit[3]}{suffix}";
                     }
                     else
                     {
@@ -131,7 +136,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                if (searchCriteria.Role.Value == 1)
+                if (searchCriteria.Role == 1)
                 {
                     using (Repository<TblStockTransferMaster> repo = new Repository<TblStockTransferMaster>())
                     {

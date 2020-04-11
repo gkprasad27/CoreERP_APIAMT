@@ -158,6 +158,20 @@ namespace CoreERP.Controllers.Sales
                     var _stockTransferMaster = objData["stockTransferMaster"].ToObject<TblStockTransferMaster>();
                     var _stockTransferDetail = objData["stockTransferDetail"].ToObject<TblStockTransferDetail[]>();
 
+                    if (_stockTransferMaster == null)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No request records found to Save" });
+                    }
+
+                    if (_stockTransferDetail == null || _stockTransferDetail.Count() == 0)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "In request no product found in to save" });
+                    }
+
+                    if (string.IsNullOrEmpty(_stockTransferMaster.StockTransferNo))
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Stock transfer no canontbe null/empty." });
+                    }
                     var result = new StockTransferHelper().AddStockTransfer(_stockTransferMaster, _stockTransferDetail.ToList());
                     if (result)
                     {

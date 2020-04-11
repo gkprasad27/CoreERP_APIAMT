@@ -31,7 +31,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     }
                     else
                     {
-                        new Common.CommonHelper().GetSuffixPrefix(13, branchCode, out prefix, out suffix);
+                        new Common.CommonHelper().GetSuffixPrefix(20, branchCode, out prefix, out suffix);
                         if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
                         {
                             errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
@@ -51,7 +51,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         }
 
         #region Search sals return records
-        public List<TblInvoiceMasterReturn> GetInvoiceMasterReturns(SearchCriteria searchCriteria)
+        public List<TblInvoiceMasterReturn> GetInvoiceMasterReturns(string branchCode,SearchCriteria searchCriteria)
         {
             try
             {
@@ -68,6 +68,11 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                 if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
                     _invoiceMasterReturnList = _invoiceMasterReturnList.Where(x => x.InvoiceReturnNo == searchCriteria.InvoiceNo).ToList();
+
+                if(searchCriteria.Role != 1)
+                {
+                    _invoiceMasterReturnList = _invoiceMasterReturnList.Where(x=> x.BranchCode == branchCode).ToList();
+                }
 
                 return _invoiceMasterReturnList;
             }
