@@ -9,13 +9,17 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 {
     public class MeterReadingHelper
     {
-        public List<TblMeterReading> GetMeterReadingList()
+        public List<TblMeterReading> GetMeterReadingList(string branchCode,int role)
         {
             try
             {
                 using (Repository<TblMeterReading> repo = new Repository<TblMeterReading>())
                 {
-                    return repo.TblMeterReading.ToList();
+                    if(role==1)
+                    {
+                        return repo.TblMeterReading.OrderByDescending(m => m.MeterReadingId).ToList();
+                    }
+                    return repo.TblMeterReading.Where(m=>m.BranchCode==branchCode).OrderByDescending(m=>m.MeterReadingId).ToList();
                 }
             }
             catch (Exception ex) { throw ex; }
@@ -37,7 +41,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             {
                 using (Repository<TblPumps> repo = new Repository<TblPumps>())
                 {
-                    return repo.TblPumps.Where(p=>p.BranchCode==branchCode && p.IsWorking==1).ToList();
+                    return repo.TblPumps.Where(p=>p.BranchCode==branchCode && p.IsWorking==1).OrderBy(p=>p.PumpNo).ToList();
                 }
             }
             catch (Exception ex) { throw ex; }
