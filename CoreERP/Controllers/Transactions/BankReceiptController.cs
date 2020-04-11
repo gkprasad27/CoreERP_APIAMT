@@ -118,6 +118,26 @@ namespace CoreERP.Controllers.Transactions
             });
             return result;
         }
+
+        [HttpGet("GetAccountLedgerListByName/{ledegerName}")]
+        public async Task<IActionResult> GetAccountLedgerListByName(string ledegerName)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.AccountLedgerList = BankReceiptHelper.GetAccountLedgerByName(ledegerName).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpPost("RegisterBankReceipt")]
         public async Task<IActionResult> RegisterBankReceipt([FromBody]JObject objData)
         {

@@ -20,6 +20,22 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch { throw; }
         }
 
+        public List<TblMshsdrates> GetMshsdRatesList(string branchCode, int role)
+        {
+            try
+            {
+                using (Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>())
+                {
+                    if (role == 1)
+                    {
+                        return repo.TblMshsdrates.OrderByDescending(m => m.ID).ToList();
+                    }
+                    return repo.TblMshsdrates.Where(m => m.BranchCode == branchCode).OrderByDescending(m => m.ID).ToList();
+                }
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
         public  List<TblBranch> GetBranchesList()
         {
             try

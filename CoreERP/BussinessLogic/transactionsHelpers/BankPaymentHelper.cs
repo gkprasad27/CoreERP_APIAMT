@@ -45,6 +45,17 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
+        public static List<TblAccountLedger> GetAccountLedgerByName(string ledegerName)
+        {
+            try
+            {
+                using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
+                return repo.TblAccountLedger.Where(acl => acl.LedgerName.Contains(ledegerName)).ToList();
+
+            }
+            catch { throw; }
+        }
+
         public List<TblAccountLedger> GetAccountLedgerList()
         {
             try

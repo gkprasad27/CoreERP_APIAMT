@@ -93,11 +93,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             try
             {
                 using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
-                return repo.TblAccountLedger
-.Where(al => al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower())
-&& al.LedgerCode == (ledgercode ?? al.LedgerCode)
-)
-.ToList();
+                return repo.TblAccountLedger.Where(al => al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower())&& al.LedgerCode == (ledgercode ?? al.LedgerCode)).ToList();
             }
             catch (Exception ex)
             {
@@ -110,6 +106,17 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             {
                 using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
                 return repo.TblAccountLedger.Where(acl => acl.LedgerCode.Contains(ledegerCode)).ToList();
+
+            }
+            catch { throw; }
+        }
+
+        public static List<TblAccountLedger> GetAccountLedgerByName(string ledegerName)
+        {
+            try
+            {
+                using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
+                return repo.TblAccountLedger.Where(acl => acl.LedgerName.Contains(ledegerName)).ToList();
 
             }
             catch { throw; }

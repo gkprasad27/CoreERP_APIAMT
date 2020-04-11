@@ -16,14 +16,14 @@ namespace CoreERP.Controllers
     public class MshsdRatesController : ControllerBase
     {
 
-        [HttpGet("GetMshsdRateList")]
-        public async Task<IActionResult> GetMshsdRateList()
+        [HttpGet("GetMshsdRateList/{branchCode}/{role}")]
+        public async Task<IActionResult> GetMshsdRateList(string branchCode, int role)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var mshsdRateList = new MshsdRatesHelper().GetListOfMshsdRates();
+                    var mshsdRateList = new MshsdRatesHelper().GetMshsdRatesList(branchCode, role);
                     if (mshsdRateList.Count > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
