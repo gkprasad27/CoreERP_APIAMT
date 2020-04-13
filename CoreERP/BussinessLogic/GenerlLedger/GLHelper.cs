@@ -898,15 +898,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
                 var record = repo.TblAccountLedger.OrderByDescending(x => x.LedgerId).FirstOrDefault();
+                var _accountTypeName= GetTblAccountTypeList().Where(x => x.TypeId == tblAccLedger.AccountTypeId).FirstOrDefault();
 
                 if (record != null)
                 {
-                    tblAccLedger.LedgerId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.AccountGroupId.ToString()));
+                    tblAccLedger.LedgerId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.LedgerId.ToString()));
                 }
                 else
                     tblAccLedger.LedgerId = 1;
 
                 tblAccLedger.IsDefault = false;
+                tblAccLedger.AccountTypeName = _accountTypeName.TypeName;
                 repo.TblAccountLedger.Add(tblAccLedger);
                 if (repo.SaveChanges() > 0)
                     return tblAccLedger;
@@ -921,7 +923,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             try
             {
                 using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
+                var _accountTypeName = GetTblAccountTypeList().Where(x => x.TypeId == tblAccLedger.AccountTypeId).FirstOrDefault();
                 tblAccLedger.IsDefault = false;
+                tblAccLedger.AccountTypeName = _accountTypeName.TypeName;
                 repo.TblAccountLedger.Update(tblAccLedger);
                 if (repo.SaveChanges() > 0)
                     return tblAccLedger;
