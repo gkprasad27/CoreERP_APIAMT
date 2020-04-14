@@ -83,7 +83,7 @@ namespace CoreERP.Controllers.Transactions
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.AccountLedgerList = JournalVoucherHelper.GetAccountLedgers(ledegerCode).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                    expando.AccountLedgerList = new JournalVoucherHelper().GetAccountLedgers(ledegerCode).OrderBy(acl => acl.LedgerCode.Length).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)

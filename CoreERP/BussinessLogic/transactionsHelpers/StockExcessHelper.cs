@@ -207,11 +207,12 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
         {
             try
             {
+                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(stockexcessMaster.UserId, null));
                 using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
                 {
                     //add voucher typedetails
                     var user = repo.TblUser.Where(x => x.UserName == stockexcessMaster.UserName).FirstOrDefault();
-                    var shift = repo.TblShift.Where(x => x.UserId == user.UserId).LastOrDefault();
+                    //var shift = repo.TblShift.Where(x => x.UserId == user.UserId).LastOrDefault();
                     var _branch = GetBranches(stockexcessMaster.BranchCode).ToArray().FirstOrDefault();
                     var shiftid = repo.TblShift.Where(x => x.UserId == stockexcessMaster.UserId).FirstOrDefault();
                     stockexcessMaster.BranchCode = _branch.BranchCode;
@@ -219,7 +220,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     stockexcessMaster.ServerDate = DateTime.Now;
                     stockexcessMaster.StockExcessDate = stockexcessMaster.StockExcessDate;
                     stockexcessMaster.StockExcessNo = stockexcessMaster.StockExcessNo;
-                    stockexcessMaster.ShiftId = shift.ShiftId;
+                    stockexcessMaster.ShiftId = shifId;
                     stockexcessMaster.UserId = user.UserId;
                     stockexcessMaster.UserName = stockexcessMaster.UserName;
                     stockexcessMaster.EmployeeId = -1;

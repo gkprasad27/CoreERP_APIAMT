@@ -33,12 +33,12 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public static List<TblAccountLedger> GetAccountLedgers(string ledegerCode)
+        public List<TblAccountLedger> GetAccountLedgers(string ledegerCode)
         {
             try
             {
                 using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
-                return repo.TblAccountLedger.Where(acl => acl.LedgerCode.Contains(ledegerCode)).ToList();
+                return repo.TblAccountLedger.Where(acl => acl.LedgerCode.Contains(ledegerCode ?? acl.LedgerCode)).OrderBy(x=>x.LedgerCode).ToList();
 
             }
             catch { throw; }
