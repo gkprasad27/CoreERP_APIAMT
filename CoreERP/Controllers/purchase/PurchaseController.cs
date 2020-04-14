@@ -81,6 +81,62 @@ namespace CoreERP.Controllers
             return result;
         }
 
+        [HttpGet("GeStateList")]
+        public IActionResult GeStateList()
+        {
+            try
+            {
+                string errorMessage = string.Empty;
+
+
+                dynamic expando = new ExpandoObject();
+                expando.StateList = new InvoiceHelper().GetStateWiseGsts().Select(x => new { ID = x.StateCode, TEXT = x.StateName, IsDefualtSelected = (x.IsDefault == 1) });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GeSelectedState/{stateCode}")]
+        public IActionResult GeStateList(string stateCode)
+        {
+            if (string.IsNullOrEmpty(stateCode))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            try
+            {
+                string errorMessage = string.Empty;
+
+                dynamic expando = new ExpandoObject();
+                expando.StateList = new InvoiceHelper().GetStateWiseGsts(stateCode);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetCashPartyAccount/{ledgercode}")]
+        public IActionResult GetCashPartyAccount(string ledgercode)
+        {
+            if (string.IsNullOrEmpty(ledgercode))
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.CashPartyAccount = new InvoiceHelper().GetAccountLedgers(ledgercode).FirstOrDefault();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetProductDeatilsSectionRcd/{branchCode}/{productCode}")]
         public async Task<IActionResult> GetProductDeatilsSectionRcd(string branchCode,string productCode)
         {
@@ -207,4 +263,15 @@ namespace CoreERP.Controllers
         }
     }
 }
+
+
+/*
+ 
+ api/Purchase/purchases/GeStateList
+ api/Purchase/purchases/GeSelectedState/{stateCode}   -response samelike billing screen
+ api/Purchase/purchases/GetCashPartyAccount/{ledgercode}     bind gsstno of purchse (tin property of response)
+ api/Purchase/purchases/GetProductDeatilsSectionRcd/{branchCode}/{productCode}   whenproduct code is selected
+
+*/
+
 

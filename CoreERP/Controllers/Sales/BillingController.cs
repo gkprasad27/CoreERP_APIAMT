@@ -182,7 +182,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CashPartyAccount = new InvoiceHelper().GetAccountLedgers(ledgercode).FirstOrDefault();
+                expando.CashPartyAccount = new InvoiceHelper().GetAccountLedgersByCode(ledgercode);
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -386,6 +386,8 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
             try
             {
+                string errorMessage = string.Empty;
+
                 var _invoiceHdr = objData["InvoiceHdr"].ToObject<TblInvoiceMaster>();
                 var _invoiceDtl = objData["InvoiceDetail"].ToObject<TblInvoiceDetail[]>();
 
@@ -405,13 +407,17 @@ namespace CoreERP.Controllers
                 }
 
 
-                var result = new InvoiceHelper().RegisterBill(_configuration ,_invoiceHdr, _invoiceDtl.ToList());
+                var result = new InvoiceHelper().RegisterBill(_configuration ,_invoiceHdr, _invoiceDtl.ToList(), out errorMessage);
                 if (result)
                 {
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _invoiceHdr });
                 }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = "Registration failed.";
+                }
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage});
             }
             catch (Exception ex)
             {

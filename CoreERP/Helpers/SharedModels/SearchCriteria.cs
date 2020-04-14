@@ -40,6 +40,8 @@ namespace CoreERP.Helpers.SharedModels
         public string InvoiceNo { get; set; }
         public int? Role { get; set; }
 
+        public string Name { get; set; }
+
        
     }
 }

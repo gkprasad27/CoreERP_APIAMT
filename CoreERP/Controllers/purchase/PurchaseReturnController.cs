@@ -5,8 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.PurhaseHelpers;
 using CoreERP.Helpers.SharedModels;
+using CoreERP.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers.purchase
 {
@@ -106,6 +108,48 @@ namespace CoreERP.Controllers.purchase
             });
             return result;
         }
-   
+
+        [HttpGet("RegisterPurchaseReturn/{purchaseReturnInvNo}/{purchaseInvId}")]
+        public async Task<IActionResult> RegisterPurchaseReturn(string purchaseReturnInvNo, string purchaseInvId)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    string errorMessage = string.Empty;
+
+                    if (string.IsNullOrEmpty(purchaseReturnInvNo))
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Purchase  returnInvoice no can not be null/empty." });
+                    }
+
+                    if (string.IsNullOrEmpty(purchaseInvId))
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Purchase  Inv Id can not be null/empty." });
+                    }
+
+                    var result = new PurchaseReturnHelper().AddPurchaseReturns(purchaseReturnInvNo, Convert.ToDecimal(purchaseInvId),out errorMessage);
+                    if (result !=null)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                    }
+
+                    if (string.IsNullOrEmpty(errorMessage))
+                        errorMessage = "Registration failed.";
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
     }
 }
+/*
+ api/purchase/PurchaseReturn/GeneratePurchaseReturnInvNo/{branchCode}   -  to getpurchase return no
+ api/purchase/PurchaseReturn/RegisterPurchaseReturn
+ */

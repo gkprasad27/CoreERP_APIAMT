@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblVehicle
     {
-        public decimal VehicleId { get; set; }
+        public decimal? VehicleId { get; set; }
         public decimal? MemberId { get; set; }
         public decimal? MemberCode { get; set; }
         public int? MemberShares { get; set; }
