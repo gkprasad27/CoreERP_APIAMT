@@ -213,7 +213,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         #endregion
 
-        #region GL Under SubGroup
+        #region Tbl Account Group
         public static List<GlaccUnderSubGroup> GetGLUnderSubGroupList()
         {
             try
@@ -847,6 +847,110 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 return null;
             }
             catch { throw; }
+        }
+        #endregion
+
+        #region Account Ledger
+
+        public List<TblAccountLedger> GetTblAccountLedgerList()
+        {
+            try
+            {
+                using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
+                return repo.TblAccountLedger.AsEnumerable().ToList();
+            }
+            catch { throw; }
+        }
+
+        public List<TblPaymentType> GetTblPaymentTypeList()
+        {
+            try
+            {
+                using Repository<TblPaymentType> repo = new Repository<TblPaymentType>();
+                return repo.TblPaymentType.AsEnumerable().ToList();
+            }
+            catch { throw; }
+        }
+
+        public List<TblAccountType> GetTblAccountTypeList()
+        {
+            try
+            {
+                using Repository<TblAccountType> repo = new Repository<TblAccountType>();
+                return repo.TblAccountType.AsEnumerable().ToList();
+            }
+            catch { throw; }
+        }
+
+        public List<TblPricingLevel> GetTblPricingLevelList()
+        {
+            try
+            {
+                using Repository<TblPricingLevel> repo = new Repository<TblPricingLevel>();
+                return repo.TblPricingLevel.AsEnumerable().ToList();
+            }
+            catch { throw; }
+        }
+
+        public TblAccountLedger RegisterTblAccLedger(TblAccountLedger tblAccLedger)
+        {
+            try
+            {
+                using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
+                var record = repo.TblAccountLedger.OrderByDescending(x => x.LedgerId).FirstOrDefault();
+                var _accountTypeName= GetTblAccountTypeList().Where(x => x.TypeId == tblAccLedger.AccountTypeId).FirstOrDefault();
+
+                if (record != null)
+                {
+                    tblAccLedger.LedgerId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.LedgerId.ToString()));
+                }
+                else
+                    tblAccLedger.LedgerId = 1;
+
+                tblAccLedger.IsDefault = false;
+                tblAccLedger.AccountTypeName = _accountTypeName.TypeName;
+                repo.TblAccountLedger.Add(tblAccLedger);
+                if (repo.SaveChanges() > 0)
+                    return tblAccLedger;
+
+                return null;
+            }
+            catch { throw; }
+        }
+
+        public TblAccountLedger UpdateTblAccountLedger(TblAccountLedger tblAccLedger)
+        {
+            try
+            {
+                using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
+                var _accountTypeName = GetTblAccountTypeList().Where(x => x.TypeId == tblAccLedger.AccountTypeId).FirstOrDefault();
+                tblAccLedger.IsDefault = false;
+                tblAccLedger.AccountTypeName = _accountTypeName.TypeName;
+                repo.TblAccountLedger.Update(tblAccLedger);
+                if (repo.SaveChanges() > 0)
+                    return tblAccLedger;
+
+                return null;
+            }
+            catch { throw; }
+        }
+
+        public TblAccountLedger DeleteTblAccountLedger(int code)
+        {
+            try
+            {
+                using Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>();
+                var tblAccLedger = repo.TblAccountLedger.Where(x => x.LedgerId == code).FirstOrDefault();
+                repo.TblAccountLedger.Remove(tblAccLedger);
+                if (repo.SaveChanges() > 0)
+                    return tblAccLedger;
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         #endregion
     }

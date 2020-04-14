@@ -22,7 +22,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 using (Repository<TblOperatorStockIssues> repo = new Repository<TblOperatorStockIssues>())
                 {
                     List<TblOperatorStockIssues> _invoiceMasterList = null;
-                    if (role.Value == 1)
+                    if (role == 1)
                     {
                         _invoiceMasterList = repo.TblOperatorStockIssues.AsEnumerable()
                                   .Where(inv =>
@@ -70,6 +70,20 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             catch { throw; }
         }
 
+        public string Getbranchcode(string codes)
+        {
+            try
+            {
+                string name = null;
+                using (Repository<TblBranch> repo = new Repository<TblBranch>())
+                {
+                    //var code = repo.TblBranch.Where(x => x.SubBranchof == (codes)).FirstOrDefault();
+                    string strName = repo.TblBranch.Where(x => x.SubBranchof == Convert.ToDecimal(codes)).SingleOrDefault()?.BranchCode;
+                    return strName;
+                }
+            }
+            catch { throw; }
+        }
 
         public string Getbranchcodes(string codes)
         {
@@ -78,19 +92,20 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 string name = null;
                 using (Repository<TblBranch> repo = new Repository<TblBranch>())
                 {
-                    var code = repo.TblBranch.Where(x => x.BranchCode == (codes)).FirstOrDefault();
-                    var data = repo.TblBranch
+                    var code = repo.TblBranch.Where(x => x.BranchCode ==(codes)).FirstOrDefault();
+                    var data= repo.TblBranch
                           .Where(x => (x.BranchCode == Convert.ToString(code.SubBranchof)))
                           .ToList();
                     foreach (var item in data)
                     {
-                        name = item.BranchCode + "-" + item.BranchName;
+                         name= item.BranchCode+"-"+item.BranchName;
                     }
                     return name;
                 }
             }
             catch { throw; }
         }
+
         public List<TblProduct> GetProductLists(string productcode)
         {
             try
@@ -260,9 +275,13 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 {
                     //add voucher typedetails
                     //userid and shiftid not saving
+                    var yourString = stockissue.ToBranchCode;
+                    string str = yourString;
+                    string ext = str.Substring(0, str.LastIndexOf('-') + 0);
+
                     var shiftid = repo.TblShift.Where(x => x.UserId == stockissue.UserId).FirstOrDefault();
                     var _branch = GetBranches(stockissue.FromBranchCode).ToArray().FirstOrDefault();
-                    var _tobranch = GetBranches(stockissue.ToBranchCode).ToArray().FirstOrDefault();
+                    var _tobranch = GetBranches(ext).ToArray().FirstOrDefault();
                     stockissue.FromBranchCode = _branch.BranchCode;
                     stockissue.FromBranchName = _branch.BranchName;
                     stockissue.ToBranchCode = stockissue.ToBranchCode;
@@ -324,37 +343,6 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
 
-        //Searchcode
-        //public List<TblOperatorStockIssues> GetStockissuesMasters(SearchCriteria searchCriteria)
-        //{
-        //    try
-        //    {
-
-        //        using (Repository<TblOperatorStockIssues> repo = new Repository<TblOperatorStockIssues>())
-        //        {
-        //            List<TblOperatorStockIssues> _cashpaymentMasterList = null;
-
-
-        //            _cashpaymentMasterList = repo.TblOperatorStockIssues.AsEnumerable()
-        //                      .Where(cp =>
-        //                                 DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.IssueDate).Value.ToShortDateString())
-        //                               && DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.IssueDate).Value.ToShortDateString())
-        //                         )
-        //                       .ToList();
-
-        //            if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
-        //                _cashpaymentMasterList = GetStockissuesList().Where(x => x.IssueNo == searchCriteria.InvoiceNo).ToList();
-
-
-        //            return _cashpaymentMasterList;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-
-        //}
         //Searchcode
         public List<TblOperatorStockIssues> GetStockissuesMasters(VoucherNoSearchCriteria searchCriteria, string branchCode)
         {

@@ -39,26 +39,25 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             {
                 var _product = Geproduct(productCode);
 
-                using Repository<TblProduct> repo = new Repository<TblProduct>();
-                var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
-                //var date = DateTime.Now.ToString();
-                var operatoroilcnvsnsDetail = new TblOilConversionDetails();
-                var oilcnvsnno = repo.TblSuffixPrefix.Where(x => x.BranchCode == branchCode && x.VoucherTypeId == 52).FirstOrDefault();
-                operatoroilcnvsnsDetail.BatchNo = date + "-" + oilcnvsnno.Prefix + "-" + oilcnvsnno.StartIndex + "-" + oilcnvsnno.Suffix + "-" + "-" + _product.ProductCode;
+                using (Repository<TblProduct> repo = new Repository<TblProduct>())
+                {
+                    var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
+                    //var date = DateTime.Now.ToString();
+                    var operatorStockIssuesDetail = new TblOperatorStockIssuesDetail();
+                    var operatoroilcnvsnsDetail = new TblOilConversionDetails();
+                    var oilcnvsnno = repo.TblSuffixPrefix.Where(x => x.BranchCode == branchCode && x.VoucherTypeId == 52).FirstOrDefault();
+                    operatoroilcnvsnsDetail.BatchNo = date + "-" + oilcnvsnno.Prefix + "-" + oilcnvsnno.StartIndex + "-" + oilcnvsnno.Suffix + "-" + "-" + _product.ProductCode;
+                    operatoroilcnvsnsDetail.Qty = 0;
+                    operatoroilcnvsnsDetail.Rate = GetProductRate(branchCode, productCode);
+                    operatoroilcnvsnsDetail.GrossAmount =Convert.ToDecimal(GetProductQty(branchCode, productCode));
+                    operatoroilcnvsnsDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
+                    operatoroilcnvsnsDetail.ProductCode = _product.ProductCode;
+                    operatoroilcnvsnsDetail.ProductName = _product.ProductName;
+                    operatoroilcnvsnsDetail.UnitName = _product.UnitName;
 
-                //var oilcnvsnno = new CommonHelper().GenerateNumber(52, branchCode);
-                //operatorStockIssuesDetail.BatchNo = date + "-" + oilcnvsnno + "-" + _product.ProductCode;
-                //date + "-" + issueno + "-" + _product.ProductCode;
-                operatoroilcnvsnsDetail.Qty = 0;
-                //operatorStockIssuesDetail.TotalAmount = 0;
-                operatoroilcnvsnsDetail.Rate = GetProductRate(branchCode, productCode);
-                //operatorStockIssuesDetail.AvailStock = GetProductQty(branchCode, productCode);
-                operatoroilcnvsnsDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
-                operatoroilcnvsnsDetail.ProductCode = _product.ProductCode;
-                operatoroilcnvsnsDetail.ProductName = _product.ProductName;
-                operatoroilcnvsnsDetail.UnitName = _product.UnitName;
+                    return operatoroilcnvsnsDetail;
 
-                return operatoroilcnvsnsDetail;
+                }
             }
             catch { throw; }
         }
@@ -176,14 +175,16 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 {
                     //add voucher typedetails
                     var user = repo.TblUser.Where(x => x.UserName == oilcnvsmaster.UserName).FirstOrDefault();
-                    var shift= repo.TblShift.Where(x => x.UserId == user.UserId).FirstOrDefault();
+                    var userid = repo.TblUserNew.Where(x => x.UserName == user.UserName).FirstOrDefault();
+                    var shift= repo.TblShift.Where(x => x.UserId == userid.UserId).FirstOrDefault();
                     var _branch = GetBranches(oilcnvsmaster.BranchCode).ToArray().FirstOrDefault();
                     TblVoucherMaster vchrmastr = new TblVoucherMaster();
                     vchrmastr.BranchCode= _branch.BranchCode;
                     vchrmastr.BranchName= _branch.BranchName;
                     vchrmastr.VoucherDate = DateTime.Now;
-                    vchrmastr.VoucherTypeIdMain= oilcnvsmaster.VoucherTypeId;
-                    vchrmastr.VoucherTypeIdSub = oilcnvsmaster.VoucherTypeId;
+                    vchrmastr.VoucherTypeIdMain= 52;
+                    vchrmastr.VoucherTypeIdSub = 52;
+                    vchrmastr.VoucherNo = oilcnvsmaster.OilConversionVchNo;
                     vchrmastr.Narration = oilcnvsmaster.Narration;
                     vchrmastr.ServerDate = DateTime.Now;
                     vchrmastr.ShiftId = shift.ShiftId;
@@ -298,7 +299,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 using (Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>())
                 {
                     List<TblOilConversionMaster> _oilcnvsnMasterList = null;
-                    if (role.Value == 1)
+                    if (role == 1)
                     {
                         _oilcnvsnMasterList = repo.TblOilConversionMaster.AsEnumerable()
                                   .Where(inv =>
@@ -311,7 +312,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                         _oilcnvsnMasterList = repo.TblOilConversionMaster.AsEnumerable()
                                                          .Where(inv =>
                                                                   inv.BranchCode == branchCode
-                                                                  && inv.OilConversionDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                                  && inv.OilConversionDate >= DateTime.Parse(DateTime.Now.Date.ToString("yyyy-MM-dd"))
+                                                                  //Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy-MM-dd"))
                                                             )
                                                           .ToList();
                     }
@@ -325,7 +327,6 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
 
         }
-
 
         public List<TblOilConversionDetails> OilconversionsDeatilList(string vocherno)
         {

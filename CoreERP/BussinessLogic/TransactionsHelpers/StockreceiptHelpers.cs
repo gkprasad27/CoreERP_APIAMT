@@ -11,6 +11,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 {
     public class StockreceiptHelpers
     {
+        string receipno = null;
         public  List<TblOperatorStockReceipt> GetStockreceiptList()
         {
             try
@@ -21,7 +22,26 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             catch { throw; }
         }
 
-
+        public string Getbranchcodes(string codes)
+        {
+            try
+            {
+                string name = null;
+                using (Repository<TblBranch> repo = new Repository<TblBranch>())
+                {
+                    var code = repo.TblBranch.Where(x => x.BranchCode == (codes)).FirstOrDefault();
+                    var data= repo.TblBranch
+                          .Where(x => (x.SubBranchof == Convert.ToDecimal(codes)))
+                          .ToList();
+                    foreach (var item in data)
+                    {
+                        name = item.BranchCode + "-" + item.BranchName;
+                    }
+                    return name;
+                }
+            }
+            catch { throw; }
+        }
         public List<TblBranch> GetBranchesListforStockreceipt()
         {
             try
@@ -109,26 +129,6 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
 
-        public string Getbranchcodes(string codes)
-        {
-            try
-            {
-                string name = null;
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    var code = repo.TblBranch.Where(x => x.BranchCode == (codes)).FirstOrDefault();
-                    var data = repo.TblBranch
-                          .Where(x => (x.SubBranchof == Convert.ToDecimal(codes)))
-                          .ToList();
-                    foreach (var item in data)
-                    {
-                        name = item.BranchCode + "-" + item.BranchName;
-                    }
-                    return name;
-                }
-            }
-            catch { throw; }
-        }
 
         public TblOperatorStockReceiptDetail GetOpStockIssuesDetailsection(string productCode, string branchCode)
         {
@@ -193,9 +193,12 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 using (Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>())
                 {
                     //add voucher typedetails
+                    var yourString = stockreceipt.ToBranchCode;
+                    string str = yourString;
+                    string ext = str.Substring(0, str.LastIndexOf('-') + 0);
                     var shiftid = repo.TblShift.Where(x => x.UserId == stockreceipt.UserId).FirstOrDefault();
                     var _branch = GetBranches(stockreceipt.FromBranchCode).ToArray().FirstOrDefault();
-                    var _tobranch = GetBranches(stockreceipt.ToBranchCode).ToArray().FirstOrDefault();
+                    var _tobranch = GetBranches(ext).ToArray().FirstOrDefault();
                     stockreceipt.FromBranchCode = _branch.BranchCode;
                     stockreceipt.FromBranchName = _branch.BranchName;
                     stockreceipt.ToBranchCode = stockreceipt.ToBranchCode;
@@ -252,7 +255,9 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                         repo.TblOperatorStockReceiptDetail.Add(invdtl);
                         repo.SaveChanges();
                         #endregion
-                     
+                        {
+
+                        }
                     }
                 }
 
@@ -318,7 +323,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 using (Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>())
                 {
                     List<TblOperatorStockReceipt> _invoiceMasterList = null;
-                    if (role.Value == 1)
+                    if (role == 1)
                     {
                         _invoiceMasterList = repo.TblOperatorStockReceipt.AsEnumerable()
                                   .Where(inv =>
@@ -346,6 +351,29 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 
         }
 
+        //public List<TblOperatorStockReceipt> GetStockissuesMasters(VoucherNoSearchCriteria searchCriteria)
+        //{
+        //    try
+        //    {
+        //        searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
+        //        searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+
+        //        using (Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>())
+        //        {
+        //            return repo.TblOperatorStockReceipt.AsEnumerable()
+        //                       .Where(inv => Convert.ToDateTime(inv.ReceiptDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+        //                                && Convert.ToDateTime(inv.ReceiptDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+        //                                && inv.ReceiptNo == (searchCriteria.InvoiceNo ?? inv.ReceiptNo)
+        //                          )
+        //                        .ToList();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+
+        //}
 
         public List<TblOperatorStockReceiptDetail> StockreceiptDeatils(string receptno)
         {
