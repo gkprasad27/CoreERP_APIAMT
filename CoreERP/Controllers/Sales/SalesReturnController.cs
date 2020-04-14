@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.SalesHelper;
+using CoreERP.Helpers.SharedModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,6 +50,54 @@ namespace CoreERP.Controllers.Sales
             });
             return result;
 
+        }
+       
+        [HttpPost("GetInvoiceReturnList/{branchCode}")]
+        public IActionResult GetInvoiceList([FromBody]SearchCriteria searchCriteria, string branchCode)
+        {
+
+            if (searchCriteria == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var invoiceMasterList = new SalesReturnHelper().GetInvoiceMasterReturns(branchCode, searchCriteria);
+                if (invoiceMasterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.InvoiceReturnList = invoiceMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetInvoiceReturnDetail/{invoiceMasterReturnId}")]
+        public IActionResult GetInvoiceReturnDetail( string invoiceMasterReturnId)
+        {
+
+            if (string.IsNullOrEmpty(invoiceMasterReturnId))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var invoiceReturnDtlList = new SalesReturnHelper().GetInvoiceReturnDetail(Convert.ToDecimal(invoiceMasterReturnId));
+                if (invoiceReturnDtlList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.InvoiceReturnDtlsList = invoiceReturnDtlList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpGet("RegisterInvoiceReturn/{invoiceReturnNo}/{invoiceMasterID}")]
@@ -108,6 +157,3 @@ namespace CoreERP.Controllers.Sales
     }
 }
 
-///
-///api/transaction/SalesReturn/GenerateSalesReturnInvNo/{branchCode}
-///RegisterInvoiceReturn/{invoiceReturnNo}/{invoiceMasterID}

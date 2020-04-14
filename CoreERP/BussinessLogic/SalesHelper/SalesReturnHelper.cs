@@ -82,12 +82,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
 
         }
-        public List<TblInvoiceReturnDetail> GetInvoiceDetails(string invoiceNo)
+        public List<TblInvoiceReturnDetail> GetInvoiceReturnDetail(decimal invoiceMasterReturnId)
         {
             try
             {
                 using Repository<TblInvoiceReturnDetail> repo = new Repository<TblInvoiceReturnDetail>();
-                return repo.TblInvoiceReturnDetail.Where(x => x.InvoiceReturnNo == invoiceNo).ToList();
+                return repo.TblInvoiceReturnDetail.Where(x => x.InvoiceMasterReturnId == invoiceMasterReturnId).ToList();
             }
             catch (Exception ex)
             {
@@ -135,6 +135,10 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 TblInvoiceMaster invoice = GetInvoiceMaster(invoiceMasterId);
                 List<TblInvoiceDetail> invoiceDetails = GetInvoiceDetail(invoiceMasterId);
 
+                if (invoice ==null)
+                {
+                    return null;
+                }
 
                 if (invoice.IsSalesReturned.Value)
                 {
@@ -169,7 +173,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     var _invoiceHelper = new InvoiceHelper();
                     var _branch = _invoiceHelper.GetBranches(invoice.BranchCode).ToArray().FirstOrDefault();
 
-                    var _accountLedger = _invoiceHelper.GetAccountLedgers(invoice.LedgerCode).ToArray().FirstOrDefault();
+                    var _accountLedger = _invoiceHelper.GetAccountLedgersByCode(invoice.LedgerCode);
                     var _vouchertType = GetVoucherType(20).FirstOrDefault();
 
                     #region Add voucher master record
@@ -218,7 +222,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         #endregion
                     }
 
-                    _accountLedger = _invoiceHelper.GetAccountLedgers(invoice.LedgerCode).ToArray().FirstOrDefault();
+                    _accountLedger = _invoiceHelper.GetAccountLedgersByCode(invoice.LedgerCode);
                     AddVoucherDetails(repo, invoiceMasterReturn, _branch, _voucherMaster, _accountLedger, invoice.GrandTotal, false);
 
                     //CHech weather igs or sg ,cg st
@@ -226,17 +230,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     if (_stateWiseGsts.Igst == 1)
                     {
                         //Add IGST record
-                        var _accAL = _invoiceHelper.GetAccountLedgers("243").ToArray().FirstOrDefault();
+                        var _accAL = _invoiceHelper.GetAccountLedgersByCode("243");
                         AddVoucherDetails(repo, invoiceMasterReturn, _branch, _voucherMaster, _accAL, invoice.TotalAmount, false);
 
                     }
                     else
                     {
                         // sgst
-                        var _accAL = _invoiceHelper.GetAccountLedgers("240").ToArray().FirstOrDefault();
+                        var _accAL = _invoiceHelper.GetAccountLedgersByCode("240");
                         AddVoucherDetails(repo, invoiceMasterReturn, _branch, _voucherMaster, _accAL, invoice.TotalAmount, false);
                         // sgst
-                        _accAL = _invoiceHelper.GetAccountLedgers("241").ToArray().FirstOrDefault();
+                        _accAL = _invoiceHelper.GetAccountLedgersByCode("241");
                         AddVoucherDetails(repo, invoiceMasterReturn, _branch, _voucherMaster, _accAL, invoice.TotalAmount, false);
                     }
 

@@ -101,7 +101,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 TblInvoiceMaster _invoiceMaster = null;
                 using (Repository<TblInvoiceMaster> _repo = new Repository<TblInvoiceMaster>())
                 {
-                    _invoiceMaster= _repo.TblInvoiceMaster.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.InvoiceMasterId).FirstOrDefault();
+                    _invoiceMaster= _repo.TblInvoiceMaster.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.ServerDateTime).FirstOrDefault();
 
                     if(_invoiceMaster != null)
                     {
@@ -137,31 +137,45 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                //searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
-                //searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
-
-                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
-                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
-
+              
                 using (Repository<TblInvoiceMaster> repo=new Repository<TblInvoiceMaster>())
                 {
                     List<TblInvoiceMaster> _invoiceMasterList = null;
                     if (searchCriteria.Role == 1)
                     {
-                        _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
+                        //searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                        searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                        if (searchCriteria.FromDate == null)
+                        {
+                            _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
+                                 .Where(inv =>
+                                             DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                          && !inv.IsSalesReturned.Value
+                                    )
+                                  .ToList();
+                        }
+                        else
+                        {
+                            _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
                              .Where(inv =>
-                                         DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                        DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString())
+                                        >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                      && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString())
+                                        <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
                                       && !inv.IsSalesReturned.Value
                                 )
                               .ToList();
+                        }
                     }
                     else
                     {
                         _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
                               .Where(inv =>
-                                         DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
-                                       && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
-                                      && inv.BranchCode == branchCode
+                                         DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) 
+                                         >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                       && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) 
+                                         <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                       && inv.BranchCode == branchCode
                                        && !inv.IsSalesReturned.Value
                                  )
                                .ToList();
@@ -211,6 +225,25 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 }
             }
             catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public TblAccountLedger GetAccountLedgersByCode(string ledgercode)
+        {
+            try
+            {
+                ledgercode = ledgercode?.ToLower();
+                using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
+                {
+                    return repo.TblAccountLedger
+                        .Where(al => al.LedgerCode ==ledgercode)
+                        .OrderBy(o => o.LedgerCode)
+                        .FirstOrDefault();
+                    //
+                }
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -303,7 +336,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-
         public List<TblProduct> GetProducts(string productCode)
         {
             try
@@ -533,10 +565,38 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
 
         /*************************   Helper methods For invoice*******************************************/
-        public bool RegisterBill(IConfiguration configuration,TblInvoiceMaster invoice, List<TblInvoiceDetail> invoiceDetails)
+
+        public bool IsInvoiceNoExists(string branchCode,string invoiceNo)
         {
             try
             {
+                using (Repository<TblInvoiceMaster> _repo = new Repository<TblInvoiceMaster>())
+                {
+                    return _repo.TblInvoiceMaster.Where(inv => inv.BranchCode == branchCode && inv.InvoiceNo == invoiceNo).Count() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool RegisterBill(IConfiguration configuration,TblInvoiceMaster invoice, List<TblInvoiceDetail> invoiceDetails,out string errorMessage)
+        {
+            try
+            {
+                errorMessage = string.Empty;
+
+                //check no of record allowed 
+              int allowedRecorsCount= NoOfrecordsAllowed(configuration, invoice.BranchCode);
+                if (allowedRecorsCount < invoiceDetails.Count())
+                {
+                    errorMessage = $"maximum  {allowedRecorsCount} records are allowed for branchCode :{invoice.BranchCode}";
+                    return false;
+                }
+               
+
+
                 decimal shifId= Convert.ToDecimal(new UserManagmentHelper().GetShiftId(invoice.UserId, null));
                 invoice.IsSalesReturned = false;
                 invoice.IsManualEntry = false;
@@ -548,11 +608,20 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     {
                         try
                         {
-                            //add voucher typedetails
+
+                            if(IsInvoiceNoExists(invoice.BranchCode, invoice.InvoiceNo))
+                            {
+                              
+                                var invoice_No = GenerateInvoiceNo(invoice.BranchCode, out errorMessage);
+                                if(string.IsNullOrEmpty(invoice_No))
+                                    invoice_No = GenerateInvoiceNo(invoice.BranchCode, out errorMessage);
+
+                                if (!string.IsNullOrEmpty(invoice_No))
+                                    invoice.InvoiceNo = invoice_No;
+                            }
 
                             var _branch = GetBranches(invoice.BranchCode).ToArray().FirstOrDefault();
-
-                            var _accountLedger = GetAccountLedgers(invoice.LedgerCode).ToArray().FirstOrDefault();
+                            var _accountLedger = GetAccountLedgersByCode(invoice.LedgerCode);
                             var _vouchertType = GetVoucherType(19).FirstOrDefault();
 
                            
@@ -570,6 +639,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             invoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
                             invoice.BranchName = _branch.BranchName;
                             invoice.VoucherTypeId = 19;
+                            invoice.EmployeeId = -1;
                             invoice.ServerDateTime = DateTime.Now;
                             invoice.IsSalesReturned = false;
                             repo.TblInvoiceMaster.Add(invoice);
@@ -612,7 +682,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 #endregion
                             }
 
-                            _accountLedger = GetAccountLedgers(invoice.LedgerCode).ToArray().FirstOrDefault();
+                            _accountLedger = GetAccountLedgersByCode(invoice.LedgerCode);
                             AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, invoice.GrandTotal, false);
 
                             //CHech weather igs or sg ,cg st
@@ -620,17 +690,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             if (_stateWiseGsts.Igst == 1)
                             {
                                 //Add IGST record
-                                var _accAL = GetAccountLedgers("243").ToArray().FirstOrDefault();
+                                var _accAL = GetAccountLedgersByCode("243");
                                 AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalAmount, false);
 
                             }
                             else
                             {
                                 // sgst
-                                var _accAL = GetAccountLedgers("240").ToArray().FirstOrDefault();
+                                var _accAL = GetAccountLedgersByCode("240");
                                 AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalAmount, false);
                                 // sgst
-                                _accAL = GetAccountLedgers("241").ToArray().FirstOrDefault();
+                                _accAL = GetAccountLedgersByCode("241");
                                 AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalAmount, false);
                             }
 
@@ -894,6 +964,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 throw ex;
             }
+        }
+
+
+        // validation 
+        public int NoOfrecordsAllowed(IConfiguration configuration, string branchCode)
+        {
+            var _branchList =configuration.GetSection("InvoiceRecordsCount:3").Value;
+            if (_branchList.Split(",").Contains(branchCode))
+                return 3;
+
+            return 6;
         }
     }
 }

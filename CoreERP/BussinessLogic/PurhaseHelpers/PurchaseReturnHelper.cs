@@ -3,6 +3,7 @@ using CoreERP.BussinessLogic.SalesHelper;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,11 +65,11 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-        public List<TblAccountLedger> GetAccountLedgers(string ledgercode)
+        public TblAccountLedger GetAccountLedgers(string ledgercode)
         {
             try
             {
-                return new InvoiceHelper().GetAccountLedgers(ledgercode);
+                return new InvoiceHelper().GetAccountLedgersByCode(ledgercode);
             }
             catch (Exception ex)
             {
@@ -138,16 +139,54 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
         }
       
         #region register Purchase Record
-        public bool AddPurchaseReturns(TblPurchaseReturn purchaseReturn, List<TblPurchaseReturnDetails> purchaseReturnDetails)
+        public TblPurchaseReturn AddPurchaseReturns(string purchaseReturnInvNo,decimal? purchaseInvID,out string errorMessage)
         {
             try
             {
+                errorMessage = string.Empty;
+                string _purchaseDetailsjson = string.Empty;
+                TblPurchaseInvoice purchaseInvoice = null;
+                List<TblPurchaseInvoiceDetail> purchaseInvoiceDetails = null;
+                TblPurchaseReturn purchaseReturn = null;
+                TblPurchaseReturnDetails purchaseReturnDetails = null;
+                List <TblPurchaseReturnDetails> _purchaseReturnDtl=new List<TblPurchaseReturnDetails>();
+               
+                
                 using (ERPContext context = new ERPContext())
                 {
                     using (var dbTransaction = context.Database.BeginTransaction())
                     {
                         try
                         {
+                            purchaseInvoice = context.TblPurchaseInvoice.Where(p=>p.PurchaseInvId == purchaseInvID).FirstOrDefault();
+                            if (purchaseInvoice == null)
+                            {
+                                return null;
+                            }
+
+                            if (purchaseInvoice.IsPurchaseReturned == true)
+                            {
+                                errorMessage = $"Purchase No: {purchaseInvoice.PurchaseInvNo} is already return.";
+                                return null;
+                            }
+
+                            var _purchaseInvoicejson = JsonConvert.SerializeObject(purchaseInvoice);
+                            purchaseReturn = (JsonConvert.DeserializeObject<TblPurchaseReturn>(_purchaseInvoicejson));
+                            //set purchase return no & Date
+                            purchaseReturn.PurchaseMasterInvId = purchaseInvID;
+                            purchaseReturn.PurchaseReturnInvNo = purchaseReturnInvNo;
+                            purchaseReturn.PurchaseReturnInvDate = DateTime.Now;
+
+                            //details section
+                            purchaseInvoiceDetails = context.TblPurchaseInvoiceDetail.Where(pd=> pd.PurchaseInvId == purchaseInvID).ToList();
+                            foreach (var purchaseDtl in purchaseInvoiceDetails)
+                            {
+                                _purchaseDetailsjson = JsonConvert.SerializeObject(purchaseDtl);
+                                purchaseReturnDetails = JsonConvert.DeserializeObject<TblPurchaseReturnDetails>(_purchaseDetailsjson);
+                                
+                                _purchaseReturnDtl.Add(purchaseReturnDetails);
+                            }
+
                             decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(purchaseReturn.UserId, null));
                             TblProduct _product = null;
                             TblTaxStructure _taxStructure = null;
@@ -157,9 +196,10 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             _purchaseMaster.IsPurchaseReturned = true;
                             context.TblPurchaseInvoice.Update(_purchaseMaster);
                             context.SaveChanges();
+                            
                             //add voucher typedetails
                             var _branch = GetBranches(purchaseReturn.BranchCode).FirstOrDefault();
-                            var _accountLedger = GetAccountLedgers(purchaseReturn.LedgerCode).FirstOrDefault();
+                            var _accountLedger = GetAccountLedgers(purchaseReturn.LedgerCode);
                             var _vouchertType = GetVoucherType(14).FirstOrDefault();
 
                             #region Add voucher master record
@@ -169,12 +209,13 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             purchaseReturn.ShiftId = shifId;
                             purchaseReturn.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
                             purchaseReturn.VoucherTypeId = 14;
-
+                            purchaseReturn.BranchCode = _branch.BranchCode;
+                            purchaseReturn.BranchName = _branch.BranchName;
                             purchaseReturn.ServerDateTime = DateTime.Now;
                             context.TblPurchaseReturn.Add(purchaseReturn);
                             context.SaveChanges();
 
-                            foreach (var purReturnInv in purchaseReturnDetails)
+                            foreach (var purReturnInv in _purchaseReturnDtl)
                             {
                                 _product = GetProducts(purReturnInv.ProductCode).FirstOrDefault();
                                 _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
@@ -186,8 +227,10 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                                 #region InvioceDetail
                                 purReturnInv.PurchaseReturnId = purchaseReturn.PurchaseReturnId;
-                                purReturnInv.VoucherNo = purchaseReturn.VoucherNo;
                                 purReturnInv.PurchaseReturnNo = purchaseReturn.PurchaseReturnInvNo;
+                                purReturnInv.PurchaseReturnDate = DateTime.Now;
+
+                                purReturnInv.VoucherNo = purchaseReturn.VoucherNo;
                                 purReturnInv.StateCode = purchaseReturn.StateCode;
                                 purReturnInv.ShiftId = purchaseReturn.ShiftId;
                                 purReturnInv.UserId = purchaseReturn.UserId;
@@ -206,7 +249,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 #endregion
                             }
 
-                            _accountLedger = GetAccountLedgers(purchaseReturn.LedgerCode).FirstOrDefault();
+                            _accountLedger = GetAccountLedgers(purchaseReturn.LedgerCode);
                             AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, purchaseReturn.GrandTotal, false);
 
                             //CHech weather igs or sg ,cg st
@@ -214,21 +257,22 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             if (_stateWiseGsts.Igst == 1)
                             {
                                 //Add IGST record
-                                var _accAL = GetAccountLedgers("243").ToArray().FirstOrDefault();
+                                var _accAL = GetAccountLedgers("243");
                                 AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalAmount, false);
 
                             }
                             else
                             {
                                 // sgst
-                                var _accAL = GetAccountLedgers("240").ToArray().FirstOrDefault();
+                                var _accAL = GetAccountLedgers("240");
                                 AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalAmount, false);
                                 // sgst
-                                _accAL = GetAccountLedgers("241").ToArray().FirstOrDefault();
+                                _accAL = GetAccountLedgers("241");
                                 AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalAmount, false);
                             }
+                           
                             dbTransaction.Commit();
-                            return true;
+                            return purchaseReturn;
                         }
                         catch (Exception e)
                         {
@@ -256,7 +300,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _voucherMaster.VoucherNo = purchaseReturn.PurchaseReturnInvNo;
                 _voucherMaster.Amount = purchaseReturn.GrandTotal;
                 _voucherMaster.PaymentType = paymentType;//accountLedger.CrOrD
-                _voucherMaster.Narration = "Purchase Invoice";
+                _voucherMaster.Narration = "Purchase Return Invoice";
                 _voucherMaster.ServerDate = DateTime.Now;
                 _voucherMaster.UserId = purchaseReturn.UserId;
                 _voucherMaster.UserName = purchaseReturn.UserName;
@@ -302,7 +346,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _voucherDetail.TransactionType = _accountLedger.CrOrDr;
                 _voucherDetail.CostCenter = _accountLedger.BranchCode;
                 _voucherDetail.ServerDate = DateTime.Now;
-                _voucherDetail.Narration = $"Sales Invoice {_accountLedger.LedgerName} A /c: {_voucherDetail.TransactionType}";
+                _voucherDetail.Narration = $"Purchase Return Invoice {_accountLedger.LedgerName} A /c: {_voucherDetail.TransactionType}";
 
                 context.TblVoucherDetail.Add(_voucherDetail);
                 if (context.SaveChanges() > 0)
@@ -332,7 +376,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _stockInformation.InvoiceNo = purchaseReturn.PurchaseReturnInvNo;
                 _stockInformation.ProductId = _product.ProductId;
                 _stockInformation.ProductCode = _product.ProductCode;
-                _stockInformation.InwardQty = qty;
+                _stockInformation.OutwardQty = qty;
                 _stockInformation.Rate = rate;
 
                 context.TblStockInformation.Add(_stockInformation);

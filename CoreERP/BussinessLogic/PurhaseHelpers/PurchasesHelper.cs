@@ -124,11 +124,11 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-        public List<TblAccountLedger> GetAccountLedgers(string ledgercode)
+        public TblAccountLedger GetAccountLedgers(string ledgercode)
         {
             try
             {
-                return new InvoiceHelper().GetAccountLedgers(ledgercode);
+                return new InvoiceHelper().GetAccountLedgersByCode(ledgercode);
             }
             catch (Exception ex)
             {
@@ -201,13 +201,16 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             //add voucher typedetails
                             var _branch = GetBranches(purchaseInvoice.BranchCode).FirstOrDefault();
 
-                            var _accountLedger = GetAccountLedgers(purchaseInvoice.LedgerCode).FirstOrDefault();
+                            var _accountLedger = GetAccountLedgers(purchaseInvoice.LedgerCode);
                             var _vouchertType = GetVoucherType(13).FirstOrDefault();
 
                             #region Add voucher master record
                             var _voucherMaster = AddVoucherMaster(context, purchaseInvoice, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
                             #endregion
 
+                            purchaseInvoice.LedgerId = _accountLedger.LedgerId;
+                            purchaseInvoice.EmployeeId = -1;
+                            purchaseInvoice.Discount = purchaseInvoice.Discount ?? 0;
                             purchaseInvoice.ShiftId = shifId;
                             purchaseInvoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
                             purchaseInvoice.VoucherTypeId = 13;
@@ -248,7 +251,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 #endregion
                             }
 
-                            _accountLedger = GetAccountLedgers(purchaseInvoice.LedgerCode).FirstOrDefault();
+                            _accountLedger = GetAccountLedgers(purchaseInvoice.LedgerCode);
                             AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purchaseInvoice.GrandTotal, false);
 
                             //CHech weather igs or sg ,cg st
@@ -256,17 +259,17 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             if (_stateWiseGsts.Igst == 1)
                             {
                                 //Add IGST record
-                                var _accAL = GetAccountLedgers("243").ToArray().FirstOrDefault();
+                                var _accAL = GetAccountLedgers("243");
                                 AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalAmount, false);
 
                             }
                             else
                             {
                                 // sgst
-                                var _accAL = GetAccountLedgers("240").ToArray().FirstOrDefault();
+                                var _accAL = GetAccountLedgers("240");
                                 AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalAmount, false);
                                 // sgst
-                                _accAL = GetAccountLedgers("241").ToArray().FirstOrDefault();
+                                _accAL = GetAccountLedgers("241");
                                 AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalAmount, false);
                             }
                             dbTransaction.Commit();
@@ -367,7 +370,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _voucherDetail.TransactionType = _accountLedger.CrOrDr;
                 _voucherDetail.CostCenter = _accountLedger.BranchCode;
                 _voucherDetail.ServerDate = DateTime.Now;
-                _voucherDetail.Narration = $"Sales Invoice {_accountLedger.LedgerName} A /c: {_voucherDetail.TransactionType}";
+                _voucherDetail.Narration = $"Purchase Invoice {_accountLedger.LedgerName} A /c: {_voucherDetail.TransactionType}";
 
                 context.TblVoucherDetail.Add(_voucherDetail);
                 if (context.SaveChanges() > 0)
