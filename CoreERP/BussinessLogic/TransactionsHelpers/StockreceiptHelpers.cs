@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.BussinessLogic.SalesHelper;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
@@ -55,12 +56,73 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
 
+        public decimal? GetSuffixPrefix(decimal? voucherTypeid, string branchCode, out string preFix, out string suffix)
+        {
+            preFix = string.Empty;
+            suffix = string.Empty;
+            try
+            {
+                using Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>();
+                var _suffixPrefix = repo.TblSuffixPrefix
+                                        .Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode)
+                                        .FirstOrDefault();
+
+                preFix = _suffixPrefix?.Prefix;
+                suffix = _suffixPrefix?.Suffix;
+
+                return _suffixPrefix?.StartIndex;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public string GenerateNumber(decimal? voucherTypeid, string branchCode)
+        {
+            try
+            {
+                string prefix = string.Empty, sufix = string.Empty;
+                var _number = GetSuffixPrefix(voucherTypeid, branchCode, out prefix, out sufix);
+
+                if (string.IsNullOrEmpty(prefix))
+                {
+                    return null;
+                }
+
+                if (_number == null)
+                {
+                    _number = 1;
+                }
+                else
+                {
+                    _number += 1;// prefix + "-" + (_number + 1) + "-" + sufix;
+                }
+
+                UpdateInvoiceNumber(voucherTypeid, branchCode, _number);
+                return $"{prefix}/{_number}-{sufix}";
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void UpdateInvoiceNumber(decimal? voucherTypeid, string branchCode, decimal? invoieNumber)
+        {
+            using Repository<TblSuffixPrefix> repo = new Repository<TblSuffixPrefix>();
+            var _suffixPrefix = repo.TblSuffixPrefix.Where(s => s.VoucherTypeId == voucherTypeid && s.BranchCode == branchCode).FirstOrDefault();
+
+            _suffixPrefix.StartIndex = invoieNumber;
+            repo.TblSuffixPrefix.Update(_suffixPrefix);
+            repo.SaveChanges();
+        }
         public string GetReceiptNo(string branchCode)
         {
 
             try
             {
-                return new CommonHelper().GenerateNumber(42, branchCode);
+                return  GenerateNumber(42, branchCode);
                
             }
             catch { throw; }
@@ -188,31 +250,30 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                //invoice.IsSalesReturned = false;
-                //invoice.IsManualEntry = false;
+                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(stockreceipt.UserId, null));
+
                 using (Repository<TblOperatorStockReceipt> repo = new Repository<TblOperatorStockReceipt>())
                 {
                     //add voucher typedetails
                     var yourString = stockreceipt.ToBranchCode;
                     string str = yourString;
                     string ext = str.Substring(0, str.LastIndexOf('-') + 0);
-                    var shiftid = repo.TblShift.Where(x => x.UserId == stockreceipt.UserId).FirstOrDefault();
                     var _branch = GetBranches(stockreceipt.FromBranchCode).ToArray().FirstOrDefault();
                     var _tobranch = GetBranches(ext).ToArray().FirstOrDefault();
                     stockreceipt.FromBranchCode = _branch.BranchCode;
                     stockreceipt.FromBranchName = _branch.BranchName;
-                    stockreceipt.ToBranchCode = stockreceipt.ToBranchCode;
+                    stockreceipt.ToBranchCode = str.Substring(0, str.LastIndexOf('-') + 0); ;
                     stockreceipt.ToBranchName = _tobranch.BranchName;
                     stockreceipt.ServerDateTime = DateTime.Now;
                     stockreceipt.ReceiptDate = stockreceipt.ReceiptDate;
                     stockreceipt.ReceiptNo = stockreceipt.ReceiptNo;
-                    if(shiftid==null)
+                    if(shifId == 0)
                     {
-                        stockreceipt.ShiftId =2;
+                        stockreceipt.ShiftId =0;
                     }
                     else
                     {
-                        stockreceipt.ShiftId = shiftid.ShiftId;
+                        stockreceipt.ShiftId = shifId;
                     }
                     
                     stockreceipt.UserId = stockreceipt.UserId;
@@ -375,12 +436,12 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 
         //}
 
-        public List<TblOperatorStockReceiptDetail> StockreceiptDeatils(string receptno)
+        public List<TblOperatorStockReceiptDetail> StockreceiptDeatils(decimal receptno)
         {
             try
             {
                 using Repository<TblOperatorStockReceiptDetail> repo = new Repository<TblOperatorStockReceiptDetail>();
-                return repo.TblOperatorStockReceiptDetail.Where(x => x.ReceiptNo == receptno).ToList();
+                return repo.TblOperatorStockReceiptDetail.Where(x => x.OperatorStockReceiptId == receptno).ToList();
             }
             catch (Exception ex)
             {

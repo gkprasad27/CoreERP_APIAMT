@@ -145,10 +145,10 @@ namespace CoreERP.Controllers.Transactions
 
 
         [HttpGet("GetStockreceiptDeatilList/{issueNo}")]
-        public async Task<IActionResult> GetStockreceiptDeatilList(string issueNo)
+        public async Task<IActionResult> GetStockreceiptDeatilList(decimal issueNo)
         {
 
-            if (string.IsNullOrEmpty(issueNo))
+            if (issueNo==0)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
             try
             {
