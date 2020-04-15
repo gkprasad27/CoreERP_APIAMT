@@ -62,15 +62,13 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
-
-
         [HttpGet("GettobranchesList/{branchcode}")]
         public async Task<IActionResult> GetbranchcodeList(string branchcode)
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.branchno = new StockissuesHelper().Getbranchcode(branchcode);
+                expando.branch = new StockissuesHelper().Getbranchcodes(branchcode);
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -201,7 +199,7 @@ namespace CoreERP.Controllers.Transactions
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Invoice records not found." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Stockissues records not found." });
             }
             catch (Exception ex)
             {

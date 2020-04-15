@@ -54,8 +54,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblOperatorStockIssues> repo = new Repository<TblOperatorStockIssues>();
-                return repo.TblOperatorStockIssues.ToList();
+                using (Repository<TblOperatorStockIssues> repo = new Repository<TblOperatorStockIssues>())
+                {
+                    return repo.TblOperatorStockIssues.ToList();
+                }
             }
             catch { throw; }
         }
@@ -110,11 +112,13 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblProduct> repo = new Repository<TblProduct>();
-                return repo.TblProduct
-.Where(x => (x.ProductCode.Contains(productcode))
-)
-.ToList();
+                using (Repository<TblProduct> repo = new Repository<TblProduct>())
+                {
+                    return repo.TblProduct
+                          .Where(x => (x.ProductCode.Contains(productcode))
+                                )
+                          .ToList();
+                }
             }
             catch { throw; }
         }
@@ -122,8 +126,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblBranch> repo = new Repository<TblBranch>();
-                return repo.TblBranch.AsEnumerable().Where(b => b.SubBranchof != -1).ToList();
+                using (Repository<TblBranch> repo = new Repository<TblBranch>())
+                {
+                    return repo.TblBranch.AsEnumerable().Where(b => b.SubBranchof != -1).ToList();
+                }
             }
             catch (Exception ex)
             {
@@ -135,8 +141,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblBranch> repo = new Repository<TblBranch>();
-                return repo.TblBranch.AsEnumerable().Where(b => b.SubBranchof == -1).ToList();
+                using (Repository<TblBranch> repo = new Repository<TblBranch>())
+                {
+                    return repo.TblBranch.AsEnumerable().Where(b => b.SubBranchof == -1).ToList();
+                }
             }
             catch (Exception ex)
             {
@@ -148,39 +156,42 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblOperatorStockIssues> repo = new Repository<TblOperatorStockIssues>();
-                return repo.TblOperatorStockIssues.Where(x => x.IssueNo == code).ToList();
+                using (Repository<TblOperatorStockIssues> repo = new Repository<TblOperatorStockIssues>())
+                {
+                    return repo.TblOperatorStockIssues.Where(x => x.IssueNo == code).ToList();
+                }
 
             }
             catch { throw; }
         }
 
 
-        public TblOperatorStockIssuesDetail GetOpStockIssuesDetailsection(string productCode, string branchCode)
+        public TblOperatorStockIssuesDetail GetOpStockIssuesDetailsection(string productCode, string branchCode) 
         {
             try
             {
                 var _product = Geproduct(productCode);
 
-                using Repository<TblProduct> repo = new Repository<TblProduct>();
-                var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
-                //var date = DateTime.Now.ToString();
-                var issueno = repo.TblSuffixPrefix.Where(x => x.BranchCode == branchCode && x.VoucherTypeId == 43).FirstOrDefault();
-                //var issueno = new CommonHelper().GenerateNumber(43, branchCode);
-                var operatorStockIssuesDetail = new TblOperatorStockIssuesDetail
+                using (Repository<TblProduct> repo = new Repository<TblProduct>())
                 {
-                    BatchNo = date + "-" + issueno.Prefix + "-" + issueno.StartIndex + "-" + issueno.Suffix + "-" + "-" + _product.ProductCode,
-                    Qty = 0,
-                    GrossAmount = 0,
-                    Rate = GetProductRate(branchCode, productCode),
-                    AvailStock = GetProductQty(branchCode, productCode),
-                    HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0),
-                    ProductCode = _product.ProductCode,
-                    ProductName = _product.ProductName,
-                    UnitName = _product.UnitName
-                };
+                    var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
+                    //var date = DateTime.Now.ToString();
+                    var issueno = repo.TblSuffixPrefix.Where(x => x.BranchCode == branchCode && x.VoucherTypeId == 43).FirstOrDefault();
+                    //var issueno = new CommonHelper().GenerateNumber(43, branchCode);
+                    var operatorStockIssuesDetail = new TblOperatorStockIssuesDetail();
+                    operatorStockIssuesDetail.BatchNo = date + "-" + issueno.Prefix + "-" + issueno.StartIndex + "-" + issueno.Suffix + "-" + "-" + _product.ProductCode;
+                    operatorStockIssuesDetail.Qty = 0;
+                    operatorStockIssuesDetail.GrossAmount = 0;
+                    operatorStockIssuesDetail.Rate = GetProductRate(branchCode, productCode);
+                    operatorStockIssuesDetail.AvailStock = GetProductQty(branchCode, productCode);
+                    operatorStockIssuesDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
+                    operatorStockIssuesDetail.ProductCode = _product.ProductCode;
+                    operatorStockIssuesDetail.ProductName = _product.ProductName;
+                    operatorStockIssuesDetail.UnitName = _product.UnitName;
 
-                return operatorStockIssuesDetail;
+                    return operatorStockIssuesDetail;
+
+                }
             }
             catch { throw; }
         }
@@ -213,7 +224,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                decimal? _salesRate = default;
+                decimal? _salesRate = default(decimal?);
 
                 using (Repository<TblProduct> repo = new Repository<TblProduct>())
                 {
@@ -242,8 +253,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>();
-                return repo.TblMshsdrates.Where(x => x.ProductCode == productCode && x.BranchCode == branchCode).FirstOrDefault();
+                using (Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>())
+                {
+                    return repo.TblMshsdrates.Where(x => x.ProductCode == productCode && x.BranchCode == branchCode).FirstOrDefault();
+                }
             }
             catch (Exception ex)
             {
@@ -255,8 +268,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblBranch> repo = new Repository<TblBranch>();
-                return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
+                using (Repository<TblBranch> repo = new Repository<TblBranch>())
+                {
+                    return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
+                }
             }
             catch (Exception ex)
             {
@@ -387,14 +402,16 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
 
         }
-
+       
 
         public List<TblOperatorStockIssuesDetail> StockissuesDeatils(string issueNo)
         {
             try
             {
-                using Repository<TblOperatorStockIssuesDetail> repo = new Repository<TblOperatorStockIssuesDetail>();
-                return repo.TblOperatorStockIssuesDetail.Where(x => x.IssueNo == issueNo).ToList();
+                using (Repository<TblOperatorStockIssuesDetail> repo = new Repository<TblOperatorStockIssuesDetail>())
+                {
+                    return repo.TblOperatorStockIssuesDetail.Where(x => x.IssueNo == issueNo).ToList();
+                }
             }
             catch (Exception ex)
             {

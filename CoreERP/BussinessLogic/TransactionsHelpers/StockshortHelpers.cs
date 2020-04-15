@@ -15,8 +15,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>();
-                return repo.TblStockshortMaster.ToList();
+                using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
+                {
+                    return repo.TblStockshortMaster.ToList();
+                }
             }
             catch { throw; }
         }
@@ -27,8 +29,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblBranch> repo = new Repository<TblBranch>();
-                return repo.TblBranch.ToList();
+                using (Repository<TblBranch> repo = new Repository<TblBranch>())
+                {
+                    return repo.TblBranch.ToList();
+                }
             }
             catch (Exception ex)
             {
@@ -39,8 +43,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<CostCenters> repo = new Repository<CostCenters>();
-                return repo.CostCenters.ToList();
+                using (Repository<CostCenters> repo = new Repository<CostCenters>())
+                {
+                    return repo.CostCenters.ToList();
+                }
             }
             catch { throw; }
         }
@@ -65,25 +71,26 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             {
                 var _product = Geproduct(productCode);
 
-                using Repository<TblProduct> repo = new Repository<TblProduct>();
-                var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
-                //var date = DateTime.Now.ToString();
-                var issueno = new CommonHelper().GenerateNumber(44, branchCode);
-                var operatorStockIssuesDetail = new TblStockshortDetails
+                using (Repository<TblProduct> repo = new Repository<TblProduct>())
                 {
-                    BatchNo = 0,
+                    var date = DateTime.Now.ToString("dd/MM/yyyy").Replace('-', '/');
+                    //var date = DateTime.Now.ToString();
+                    var issueno = new CommonHelper().GenerateNumber(44, branchCode);
+                    var operatorStockIssuesDetail = new TblStockshortDetails();
+                    operatorStockIssuesDetail.BatchNo = 0;
                     //date + "-" + issueno + "-" + _product.ProductCode;
-                    Qty = 0,
-                    TotalAmount = 0,
-                    Rate = GetProductRate(branchCode, productCode),
+                    operatorStockIssuesDetail.Qty = 0;
+                    operatorStockIssuesDetail.TotalAmount = 0;
+                    operatorStockIssuesDetail.Rate = GetProductRate(branchCode, productCode);
                     //operatorStockIssuesDetail.AvailStock = GetProductQty(branchCode, productCode);
-                    HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0),
-                    ProductCode = _product.ProductCode,
-                    ProductName = _product.ProductName,
-                    UnitName = _product.UnitName
-                };
+                    operatorStockIssuesDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
+                    operatorStockIssuesDetail.ProductCode = _product.ProductCode;
+                    operatorStockIssuesDetail.ProductName = _product.ProductName;
+                    operatorStockIssuesDetail.UnitName = _product.UnitName;
 
-                return operatorStockIssuesDetail;
+                    return operatorStockIssuesDetail;
+
+                }
             }
             catch { throw; }
         }
@@ -116,7 +123,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                decimal? _salesRate = default;
+                decimal? _salesRate = default(decimal?);
 
                 using (Repository<TblProduct> repo = new Repository<TblProduct>())
                 {
@@ -145,8 +152,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>();
-                return repo.TblMshsdrates.Where(x => x.ProductCode == productCode && x.BranchCode == branchCode).FirstOrDefault();
+                using (Repository<TblMshsdrates> repo = new Repository<TblMshsdrates>())
+                {
+                    return repo.TblMshsdrates.Where(x => x.ProductCode == productCode && x.BranchCode == branchCode).FirstOrDefault();
+                }
             }
             catch (Exception ex)
             {
@@ -158,8 +167,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblBranch> repo = new Repository<TblBranch>();
-                return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
+                using (Repository<TblBranch> repo = new Repository<TblBranch>())
+                {
+                    return repo.TblBranch.AsEnumerable().Where(b => b.BranchCode == (branchCode ?? b.BranchCode)).ToList();
+                }
             }
             catch (Exception ex)
             {
@@ -170,8 +181,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>();
-                return repo.TblStockshortMaster.Where(x => x.StockshortNo == code).ToList();
+                using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
+                {
+                    return repo.TblStockshortMaster.Where(x => x.StockshortNo == code).ToList();
+                }
 
             }
             catch { throw; }
@@ -195,7 +208,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     stockshort.ServerDate = DateTime.Now;
                     stockshort.StockshortDate = stockshort.StockshortDate;
                     stockshort.StockshortNo = stockshort.StockshortNo;
-                    stockshort.ShiftId = shift.ShiftId;
+                    stockshort.ShiftId = shiftid.ShiftId;
                     stockshort.UserId = user.UserId;
                     stockshort.UserName = stockshort.UserName;
                     stockshort.EmployeeId = -1;
@@ -290,7 +303,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
                 {
                     List<TblStockshortMaster> _stockshortMasterList = null;
-                    if (role.Value == 1)
+                    if (role == 1)
                     {
                         _stockshortMasterList = repo.TblStockshortMaster.AsEnumerable()
                                   .Where(inv =>
@@ -319,14 +332,15 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         }
 
 
-
         public List<TblStockshortDetails> StockshortsDeatilList(string shortno)
         {
             try
             {
-                using Repository<TblStockshortDetails> repo = new Repository<TblStockshortDetails>();
-                var shorno = repo.TblStockshortMaster.Where(x => x.StockshortNo == shortno).FirstOrDefault();
-                return repo.TblStockshortDetails.Where(x => x.StockshortMasterId == shorno.StockshortMasterId).ToList();
+                using (Repository<TblStockshortDetails> repo = new Repository<TblStockshortDetails>())
+                {
+                    var shorno = repo.TblStockshortMaster.Where(x => x.StockshortNo == shortno).FirstOrDefault();
+                    return repo.TblStockshortDetails.Where(x => x.StockshortMasterId == shorno.StockshortMasterId).ToList();
+                }
             }
             catch (Exception ex)
             {
