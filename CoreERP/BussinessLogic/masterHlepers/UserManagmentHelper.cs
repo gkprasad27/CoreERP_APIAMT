@@ -10,9 +10,23 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class UserManagmentHelper
     {
-        public static Erpuser ValidateUser(Erpuser erpuser)
+        public static Erpuser ValidateUser(Erpuser erpuser,out string errorMessage)
         {
             Erpuser user = null;
+            errorMessage = string.Empty;
+
+            if (string.IsNullOrEmpty(erpuser.UserName))
+            {
+                errorMessage = "Username Can not be empty.";
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(erpuser.Password))
+            {
+                errorMessage = "Password Can not be empty.";
+                return null;
+            }
+
             using (ERPContext _repo = new ERPContext())
             {
                 user = _repo.Erpuser
@@ -21,10 +35,24 @@ namespace CoreERP.BussinessLogic.masterHlepers
                                 ).FirstOrDefault();
 
 
-                //int _userName
+                if(user == null)
+                {
+                    errorMessage = "User name /password not valid.";
+                    return null;
+                }
                
-                user.Role = _repo.TblUser.Where(u=> u.UserName  == erpuser.UserName)
-                                 .FirstOrDefault()?.RoleId.ToString();
+                var _userNew = _repo.TblUserNew.Where(u=> u.UserName  == erpuser.UserName)
+                                 .FirstOrDefault();
+               
+                user.Role = _userNew?.RoleId.ToString();
+
+                if(_userNew.Active == false)
+                {
+                    errorMessage = "User profile is inactive.contact to admin.";
+                    return null;
+                }
+
+
             }
 
             return user;

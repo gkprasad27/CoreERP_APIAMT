@@ -52,7 +52,7 @@ namespace CoreERP.Controllers
                 var pumpsList = new InvoiceHelper().GetPumps(pumpNo, branchCode);
 
                 dynamic expando = new ExpandoObject();
-                expando.PumpsList = pumpsList.Select(x => new { ID = x.PumpId, TEXT = x.PumpNo });
+                expando.PumpsList = pumpsList.OrderBy(x=>x.PumpNo).Select(x => new { ID = x.PumpId, TEXT = x.PumpNo });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

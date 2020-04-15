@@ -5,6 +5,7 @@ using CoreERP.BussinessLogic.SalesHelper;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -168,7 +169,25 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-    
+        public List<TblTanks> GetTanks(string branchCode,string tankNo)
+        {
+            try
+            {
+                using(Repository<TblTanks> _repo=new Repository<TblTanks>())
+                {
+                    return _repo.TblTanks.AsEnumerable()
+                                .Where(t => t.BranchCode == branchCode
+                                        && t.TankNo.Contains(tankNo))
+                                .GroupBy(x => x.TankNo)
+                                .Select(grp=> grp.FirstOrDefault())
+                                .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         #region register Purchase Record
         public List<TblVoucherType> GetVoucherType(decimal voucherTypeId)
         {
@@ -184,11 +203,29 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-        public bool AddPurchaseRecords(TblPurchaseInvoice purchaseInvoice,List<TblPurchaseInvoiceDetail> purchaseInvoiceDetails)
+        public bool AddPurchaseRecords(IConfiguration configuration,TblPurchaseInvoice purchaseInvoice,List<TblPurchaseInvoiceDetail> purchaseInvoiceDetails,out string errorMessage)
         {
+            
             try
             {
-                using(ERPContext context=new ERPContext())
+                errorMessage = string.Empty;
+                var _productCodes = configuration.GetSection("Purchase:ProductCods")?.Value?.Split(",");
+                foreach(var pdtl in purchaseInvoiceDetails)
+                {
+                    if (_productCodes.Count() > 0)
+                    {
+                        if (_productCodes.Contains(pdtl.ProductCode.ToUpper()))
+                        {
+                            if (pdtl.TankNo == null)
+                            {
+                                errorMessage = "Tank no Canot be null for product code:" + pdtl.ProductCode;
+                                return false;
+                            }
+                        }
+                    }
+                }
+
+                using (ERPContext context=new ERPContext())
                 {
                     using(var dbTransaction = context.Database.BeginTransaction())
                     {

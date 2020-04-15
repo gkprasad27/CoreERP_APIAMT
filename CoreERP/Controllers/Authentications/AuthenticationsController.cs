@@ -21,11 +21,8 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    //Response.Headers.Add("Access-Control-Allow-Origin", "*");
-                    //Response.Headers.Add("Access-Control-Allow-Headers", "Accept");
-                    //Response.Headers.Add("Access-Control-Request-Headers", "origin,x-requested-with");
-                    //Response.Headers.Add("Access-Control-Allow-MethodsPOST, GET, OPTIONS, DELET", "Accept");
-                    Erpuser user = UserManagmentHelper.ValidateUser(erpuser);
+                    string errorMessage = string.Empty;
+                    Erpuser user = UserManagmentHelper.ValidateUser(erpuser,out errorMessage);
 
                     if (user != null)
                     {
@@ -34,7 +31,7 @@ namespace CoreERP.Controllers
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = user });
                     }
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "User Name/ Password not valid." });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
                 }
                 catch (Exception ex)
                 {

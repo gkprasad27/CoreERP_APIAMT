@@ -12,6 +12,7 @@ using System.Dynamic;
 using CoreERP.BussinessLogic.SalesHelper;
 using Newtonsoft.Json.Linq;
 using CoreERP.Helpers.SharedModels;
+using Microsoft.Extensions.Configuration;
 
 namespace CoreERP.Controllers
 {
@@ -19,8 +20,13 @@ namespace CoreERP.Controllers
     [Route("api/Purchase/purchases")] 
     public class PurchaseController : ControllerBase
     {
-        [HttpGet("GetPupms/{pumpNo}/{branchCode}")]
-        public async Task<IActionResult> GetPupms(string pumpNo, string branchCode)
+        private readonly IConfiguration _configuration;
+        public PurchaseController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        [HttpGet("GetTankas/{tankNo}/{branchCode}")]
+        public async Task<IActionResult> GetPupms(string tankNo, string branchCode)
         {
             var result = await Task.Run(() =>
             {
@@ -28,10 +34,9 @@ namespace CoreERP.Controllers
                 {
                     string errorMessage = string.Empty;
 
-                    var pumpsList = new InvoiceHelper().GetPumps(pumpNo, branchCode);
-
+                    var pumpsList = new PurchasesHelper().GetTanks(branchCode, tankNo);
                     dynamic expando = new ExpandoObject();
-                    expando.PumpsList = pumpsList.Select(x => new { ID = x.PumpId, TEXT = x.PumpNo });
+                    expando.TankList = pumpsList.Select(x => new { ID = x.TankId, TEXT = x.TankNo }).Distinct();
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -172,13 +177,15 @@ namespace CoreERP.Controllers
         {
             var result = await Task.Run(() =>
             {
+                string errorMessage = string.Empty;
+
                 if (objData == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
                 try
                 {
                     var _purchaseInvoiceHdr = objData["purchaseHdr"].ToObject<TblPurchaseInvoice>();
                     var _purchaseInvoiceDetail = objData["purchaseDetail"].ToObject<TblPurchaseInvoiceDetail[]>();
-
+                    
                     if (_purchaseInvoiceHdr == null)
                     {
                         return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No request records found to Save" });
@@ -192,13 +199,17 @@ namespace CoreERP.Controllers
                         return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Purchase Invoice no canontbe null/empty." });
                     }
 
-                    var result = new PurchasesHelper().AddPurchaseRecords(_purchaseInvoiceHdr, _purchaseInvoiceDetail.ToList());
+                    var result = new PurchasesHelper().AddPurchaseRecords(_configuration ,_purchaseInvoiceHdr, _purchaseInvoiceDetail.ToList(),out errorMessage);
                     if (result)
                     {
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _purchaseInvoiceHdr });
                     }
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+                    if (string.IsNullOrEmpty(errorMessage))
+                    {
+                        errorMessage = "Registration failed.";
+                    }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
                 }
                 catch (Exception ex)
                 {
