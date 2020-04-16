@@ -210,15 +210,17 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetProductByProductCode/{productCode}")]
-        public IActionResult GetProductByProductCode(string productCode)
+        [HttpPost("GetProductByProductCode")]
+        public IActionResult GetProductByProductCode([FromBody]JObject objData)
         {
-            if (string.IsNullOrEmpty(productCode))
+           // if (string.IsNullOrEmpty(productCode))
+            if (objData == null)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
             }
             try
             {
+                string productCode = objData["productCode"].ToString();
                 dynamic expando = new ExpandoObject();
                 expando.Products = new InvoiceHelper().GetProducts(productCode, null).OrderBy(x => x.ProductCode?.Length).Take(50).Select(p => new { ID = p.ProductCode, TEXT = p.ProductCode, Name = p.ProductName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
@@ -229,15 +231,16 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetProductByProductName/{productName}")]
-        public IActionResult GetProductByProductName(string productName)
+        [HttpPost("GetProductByProductName")]
+        public IActionResult GetProductByProductName([FromBody]JObject objData)
         {
-            if (string.IsNullOrEmpty(productName))
+            if (objData == null)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
             }
             try
             {
+                string productName = objData["productName"].ToString();
                 dynamic expando = new ExpandoObject();
                 expando.Products = new InvoiceHelper().GetProducts(null, productName).Select(p => new { ID = p.ProductCode, TEXT = p.ProductName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
@@ -311,15 +314,19 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetBillingDetailsRcd/{productCode}/{branchCode}")]
-        public IActionResult GetBillingDetailsRcd(string productCode, string branchCode)
+        [HttpPost("GetBillingDetailsRcd")]
+        public IActionResult GetBillingDetailsRcd([FromBody]JObject objData)
         {
-            if (string.IsNullOrEmpty(productCode) || string.IsNullOrEmpty(branchCode))
+            // string productCode, string branchCode
+            if (objData == null)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
             }
             try
             {
+                string branchCode = objData["branchCode"].ToString();
+                string productCode = objData["productCode"].ToString();
+
                 dynamic expando = new ExpandoObject();
                 expando.BillingDetailsSection = new InvoiceHelper().GetBillingDetailsSection(branchCode, productCode,_configuration);
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });

@@ -53,17 +53,20 @@ namespace CoreERP.Controllers.Sales
             return result;
         }
 
-        [HttpGet("GetStockTransferDetailsSection/{branchCode}/{productCode}")]
-        public async Task<IActionResult> GetStockTransferDetailsSection(string branchCode,string productCode)
+        [HttpPost("GetStockTransferDetailsSection")]
+        public async Task<IActionResult> GetStockTransferDetailsSection([FromBody]JObject objData)
         {
             var result = await Task.Run(() =>
             {
-                if (string.IsNullOrEmpty(branchCode) || string.IsNullOrEmpty(branchCode))
+                if (objData == null)
                 {
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Query string paramter missing." });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Rquest is empty." });
                 }
                 try
                 {
+                    string branchCode = objData["branchCode"].ToString();
+                    string productCode = objData["productCode"].ToString();
+
                     var result = new StockTransferHelper().GetStockTransferDetailsSection(branchCode, productCode);
                     if (result != null)
                     {
