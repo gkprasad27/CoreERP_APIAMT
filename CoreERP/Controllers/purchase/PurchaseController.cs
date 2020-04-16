@@ -142,13 +142,20 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetProductDeatilsSectionRcd/{branchCode}/{productCode}")]
-        public async Task<IActionResult> GetProductDeatilsSectionRcd(string branchCode,string productCode)
+        [HttpPost("GetProductDeatilsSectionRcd")]
+        public async Task<IActionResult> GetProductDeatilsSectionRcd([FromBody]JObject objData)
         {
             var result = await Task.Run(() =>
             {
+                if(objData == null)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+                }
                 try
                 {
+                    string branchCode = objData["branchCode"].ToString();
+                    string productCode= objData["productCode"].ToString();
+
                     dynamic expando = new ExpandoObject();
                     expando.ProductDeatilsSectionRcd = new PurchasesHelper().GetProductDeatilsSectionRcd(branchCode, productCode);
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
@@ -274,15 +281,5 @@ namespace CoreERP.Controllers
         }
     }
 }
-
-
-/*
- 
- api/Purchase/purchases/GeStateList
- api/Purchase/purchases/GeSelectedState/{stateCode}   -response samelike billing screen
- api/Purchase/purchases/GetCashPartyAccount/{ledgercode}     bind gsstno of purchse (tin property of response)
- api/Purchase/purchases/GetProductDeatilsSectionRcd/{branchCode}/{productCode}   whenproduct code is selected
-
-*/
 
 
