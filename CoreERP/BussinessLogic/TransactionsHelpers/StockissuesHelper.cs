@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.BussinessLogic.SalesHelper;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
@@ -284,8 +285,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                //invoice.IsSalesReturned = false;
-                //invoice.IsManualEntry = false;
+                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(stockissue.UserId, null));
                 using (Repository<TblInvoiceDetail> repo = new Repository<TblInvoiceDetail>())
                 {
                     //add voucher typedetails
@@ -299,13 +299,13 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     var _tobranch = GetBranches(ext).ToArray().FirstOrDefault();
                     stockissue.FromBranchCode = _branch.BranchCode;
                     stockissue.FromBranchName = _branch.BranchName;
-                    stockissue.ToBranchCode = stockissue.ToBranchCode;
+                    stockissue.ToBranchCode = str.Substring(0, str.LastIndexOf('-') + 0);
                     stockissue.ToBranchName = _tobranch.BranchName;
                     stockissue.ServerDateTime = DateTime.Now;
                     stockissue.IssueDate = stockissue.IssueDate;
                     stockissue.IssueNo = stockissue.IssueNo;
                     stockissue.UserName = stockissue.UserName;
-                    stockissue.ShiftId = shiftid.ShiftId;
+                    stockissue.ShiftId = shifId;
                     stockissue.UserId = stockissue.UserId;
                     stockissue.EmployeeId = -1;
                     stockissue.Remarks = stockissue.Remarks;

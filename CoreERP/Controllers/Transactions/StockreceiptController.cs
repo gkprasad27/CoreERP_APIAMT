@@ -120,14 +120,14 @@ namespace CoreERP.Controllers.Transactions
 
         [HttpPost("GetStockreceiptsList/{branchCode}")]
         //[HttpPost("GetStockreceiptsList")]
-        public async Task<IActionResult> GetStockreceiptsList(string branchCode,[FromBody]VoucherNoSearchCriteria searchCriteria)
+        public async Task<IActionResult> GetStockreceiptsList(string branchCode, [FromBody]VoucherNoSearchCriteria searchCriteria)
         {
 
             if (searchCriteria == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
             try
             {
-                var stockreceiptMasterList = new StockreceiptHelpers().GetStockissuesMasters(searchCriteria,branchCode);
+                var stockreceiptMasterList = new StockreceiptHelpers().GetStockissuesMasters(searchCriteria, branchCode);
                 if (stockreceiptMasterList.Count > 0)
                 {
                     dynamic expando = new ExpandoObject();
@@ -145,10 +145,10 @@ namespace CoreERP.Controllers.Transactions
 
 
         [HttpGet("GetStockreceiptDeatilList/{issueNo}")]
-        public async Task<IActionResult> GetStockreceiptDeatilList(string issueNo)
+        public async Task<IActionResult> GetStockreceiptDeatilList(decimal issueNo)
         {
 
-            if (string.IsNullOrEmpty(issueNo))
+            if (issueNo == 0)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
             try
             {
