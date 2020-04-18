@@ -208,22 +208,20 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             try
             {
                 decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(stockexcessMaster.UserId, null));
-                using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
+                using (Repository<TblStockExcessMaster> repo = new Repository<TblStockExcessMaster>())
                 {
                     //add voucher typedetails
-                    var user = repo.TblUser.Where(x => x.UserName == stockexcessMaster.UserName).FirstOrDefault();
-                    //var shift = repo.TblShift.Where(x => x.UserId == user.UserId).LastOrDefault();
+                    var user = repo.TblUserNew.Where(x => x.UserName == stockexcessMaster.UserName).FirstOrDefault();
                     var _branch = GetBranches(stockexcessMaster.BranchCode).ToArray().FirstOrDefault();
-                    var shiftid = repo.TblShift.Where(x => x.UserId == stockexcessMaster.UserId).FirstOrDefault();
                     stockexcessMaster.BranchCode = _branch.BranchCode;
                     stockexcessMaster.BranchName = _branch.BranchName;
                     stockexcessMaster.ServerDate = DateTime.Now;
                     stockexcessMaster.StockExcessDate = stockexcessMaster.StockExcessDate;
                     stockexcessMaster.StockExcessNo = stockexcessMaster.StockExcessNo;
                     stockexcessMaster.ShiftId = shifId;
-                    stockexcessMaster.UserId = user.UserId;
+                    stockexcessMaster.UserId = stockexcessMaster.UserId;
                     stockexcessMaster.UserName = stockexcessMaster.UserName;
-                    stockexcessMaster.EmployeeId = -1;
+                    stockexcessMaster.EmployeeId = user.EmployeeId;
                     stockexcessMaster.Narration = stockexcessMaster.Narration;
                     repo.TblStockExcessMaster.Add(stockexcessMaster);
                     repo.SaveChanges();
@@ -248,9 +246,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                         repo.TblStockExcessDetails.Add(item);
                         repo.SaveChanges();
                         #endregion
-                        {
 
-                        }
                     }
                 }
 
