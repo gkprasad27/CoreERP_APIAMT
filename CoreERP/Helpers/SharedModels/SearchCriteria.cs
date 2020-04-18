@@ -9,6 +9,8 @@ namespace CoreERP.Helpers.SharedModels
     {
         private DateTime? _fromDate;
         private DateTime? _toDate;
+        private string _invoiceNo;
+        private string _name;
         public DateTime? FromDate
         {
             get
@@ -37,10 +39,36 @@ namespace CoreERP.Helpers.SharedModels
                 _toDate = value;
             }
         }
-        public string InvoiceNo { get; set; }
+        public string InvoiceNo 
+        {
+            get
+            {
+                return _invoiceNo;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    _invoiceNo = null;
+                else
+                    _invoiceNo = value;
+            }
+        }
         public int? Role { get; set; }
 
-        public string Name { get; set; }
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    _name = null;
+                else
+                    _name = value;
+            }
+        }
 
        
     }

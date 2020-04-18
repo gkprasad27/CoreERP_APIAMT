@@ -137,13 +137,15 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-      
+
+        
         #region register Purchase Record
         public TblPurchaseReturn AddPurchaseReturns(string purchaseReturnInvNo,decimal? purchaseInvID,out string errorMessage)
         {
             try
             {
                 errorMessage = string.Empty;
+                decimal? _qty = null;
                 string _purchaseDetailsjson = string.Empty;
                 TblPurchaseInvoice purchaseInvoice = null;
                 List<TblPurchaseInvoiceDetail> purchaseInvoiceDetails = null;
@@ -217,6 +219,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                             foreach (var purReturnInv in _purchaseReturnDtl)
                             {
+                                
                                 _product = GetProducts(purReturnInv.ProductCode).FirstOrDefault();
                                 _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
                                 _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure.PurchaseAccount).FirstOrDefault();
@@ -243,7 +246,25 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 #endregion
 
                                 #region Add stock transaction  and Account Ledger Transaction
-                                AddStockInformation(context, purchaseReturn, _branch, _product, purReturnInv.Qty > 0 ? purReturnInv.Qty : purReturnInv.FQty, purReturnInv.Rate);
+                                _qty = null;
+                                if (purReturnInv.TotalLiters != null)
+                                {
+                                    if (purReturnInv.TotalLiters > 0)
+                                        _qty = purReturnInv.TotalLiters;
+                                }
+
+                                if (purReturnInv.Qty != null)
+                                {
+                                    if (purReturnInv.Qty > 0 && _qty == null)
+                                        _qty = purReturnInv.Qty;
+                                }
+
+                                if (purReturnInv.FQty != null)
+                                {
+                                    if (purReturnInv.FQty > 0 && _qty == null)
+                                        _qty = purReturnInv.FQty;
+                                }
+                                AddStockInformation(context, purchaseReturn, _branch, _product, _qty, purReturnInv.Rate);
 
                                 AddAccountLedgerTransactions(context, _voucherDetail, purchaseReturn.PurchaseReturnInvDate);
                                 #endregion
@@ -376,8 +397,11 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _stockInformation.InvoiceNo = purchaseReturn.PurchaseReturnInvNo;
                 _stockInformation.ProductId = _product.ProductId;
                 _stockInformation.ProductCode = _product.ProductCode;
+                _stockInformation.InwardQty = 0;
                 _stockInformation.OutwardQty = qty;
                 _stockInformation.Rate = rate;
+                _stockInformation.UserId = purchaseReturn.UserId;
+                _stockInformation.TransactionDate =DateTime.Now;
 
                 context.TblStockInformation.Add(_stockInformation);
                 if (context.SaveChanges() > 0)
@@ -451,7 +475,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                         .ToList();
 
                     if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
-                        _purchaseList = _purchaseList.Where(x => x.PurchaseInvNo == searchCriteria.InvoiceNo).ToList();
+                        _purchaseList = _purchaseList.Where(x => x.PurchaseReturnInvNo == searchCriteria.InvoiceNo).ToList();
                    
                     if (searchCriteria.Role != 1)
                     {

@@ -97,15 +97,16 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 }
               
                 purchaseDetail.Rate = _invoiceHelper.GetProductRate(branchCode, productCode);
-               
                 purchaseDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
-                // purchaseDetail.AvailStock = Convert.ToDecimal(_invoiceHelper.GetProductQty(branchCode, productCode) ?? 0);
-                // purchaseDetail.ProductCode = _product.ProductCode;
-                // purchaseDetail.ProductGroupCode = Convert.ToDecimal(_product.ProductGroupCode ?? 0);
-                // purchaseDetail.ProductGroupId = Convert.ToDecimal(_product.ProductGroupId ?? 0);
                 purchaseDetail.ProductId = _product.ProductId;
                 purchaseDetail.ProductCode = _product.ProductCode;
                 purchaseDetail.ProductName = _product.ProductName;
+                //  purchaseDetail.AvailStock = Convert.ToDecimal(_invoiceHelper.GetProductQty(branchCode, productCode) ?? 0);
+                // purchaseDetail.ProductCode = _product.ProductCode;
+                // purchaseDetail.ProductGroupCode = Convert.ToDecimal(_product.ProductGroupCode ?? 0);
+                // purchaseDetail.ProductGroupId = Convert.ToDecimal(_product.ProductGroupId ?? 0);
+
+
 
                 return purchaseDetail;
             }
@@ -188,6 +189,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
+      
         #region register Purchase Record
         public List<TblVoucherType> GetVoucherType(decimal voucherTypeId)
         {
@@ -209,6 +211,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             try
             {
                 errorMessage = string.Empty;
+                decimal? _qty = null;
                 var _productCodes = configuration.GetSection("Purchase:ProductCods")?.Value?.Split(",");
                 foreach(var pdtl in purchaseInvoiceDetails)
                 {
@@ -246,12 +249,14 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             #endregion
 
                             purchaseInvoice.LedgerId = _accountLedger.LedgerId;
+                            purchaseInvoice.BranchName = _branch.BranchName;
                             purchaseInvoice.EmployeeId = -1;
                             purchaseInvoice.Discount = purchaseInvoice.Discount ?? 0;
                             purchaseInvoice.ShiftId = shifId;
                             purchaseInvoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
                             purchaseInvoice.VoucherTypeId = 13;
                             purchaseInvoice.ServerDateTime = DateTime.Now;
+                            purchaseInvoice.PurchaseInvDate = purchaseInvoice.PurchaseInvDate ?? DateTime.Now;
                             purchaseInvoice.IsPurchaseReturned = false;
                             context.TblPurchaseInvoice.Add(purchaseInvoice);
                             context.SaveChanges();
@@ -282,7 +287,28 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 #endregion
 
                                 #region Add stock transaction  and Account Ledger Transaction
-                                AddStockInformation(context, purchaseInvoice, _branch, _product, purInv.Qty > 0 ? purInv.Qty : purInv.FQty, purInv.Rate);
+
+                                
+                                _qty = null;
+                                if (purInv.TotalLiters != null)
+                                {
+                                    if (purInv.TotalLiters > 0)
+                                        _qty = purInv.TotalLiters;
+                                }
+                                
+                                if (purInv.Qty != null)
+                                {
+                                    if (purInv.Qty > 0 && _qty== null)
+                                        _qty = purInv.Qty;
+                                }
+                                
+                                if (purInv.FQty != null)
+                                {
+                                    if (purInv.FQty > 0 && _qty == null)
+                                        _qty = purInv.FQty;
+                                }
+
+                                AddStockInformation(context, purchaseInvoice, _branch, _product, _qty, purInv.Rate);
 
                                 AddAccountLedgerTransactions(context, _voucherDetail, purchaseInvoice.PurchaseInvDate);
                                 #endregion
@@ -460,8 +486,10 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _stockInformation.InvoiceNo = invoice.PurchaseInvNo;
                 _stockInformation.ProductId = _product.ProductId;
                 _stockInformation.ProductCode = _product.ProductCode;
-                _stockInformation.InwardQty = qty;
+                _stockInformation.InwardQty = qty ?? 0;
+                _stockInformation.OutwardQty = 0;
                 _stockInformation.Rate = rate;
+                _stockInformation.UserId = invoice.UserId;
 
                 context.TblStockInformation.Add(_stockInformation);
                 if (context.SaveChanges() > 0)

@@ -127,6 +127,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             try
             {
                 errorMessage = string.Empty;
+                decimal? _qty = null;
                 string _invoiceMasterDetailsjson = string.Empty;
                 TblTaxStructure _taxStructure = null;
                 TblProduct _product = null;
@@ -190,7 +191,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     foreach (var invdtl in invoiceReturnDetailList)
                     {
                         _product = _invoiceHelper.GetProducts(invdtl.ProductCode).FirstOrDefault();
-                        _taxStructure = _invoiceHelper.GetTaxStructure(invdtl.TaxStructureId);
+                        _taxStructure = _invoiceHelper.GetTaxStructure(Convert.ToDecimal(invdtl.TaxStructureCode));
                         _accountLedger = _invoiceHelper.GetAccountLedgersByLedgerId((decimal)_taxStructure.SalesAccount).FirstOrDefault();
 
                         #region Add voucher Details
@@ -216,7 +217,16 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         #endregion
 
                         #region Add stock transaction  and Account Ledger Transaction
-                        AddStockInformation(repo, invoiceMasterReturn, _branch, _product, invdtl.Qty > 0 ? invdtl.Qty : invdtl.FQty, invdtl.Rate);
+                        _qty = null;
+                        if(invdtl.Qty == null)
+                        {
+                            _qty = invdtl.Qty;
+                        }
+                        else
+                        {
+                            _qty = invdtl.FQty;
+                        }
+                        AddStockInformation(repo, invoiceMasterReturn, _branch, _product, _qty, invdtl.Rate);
 
                         AddAccountLedgerTransactions(repo, _voucherDetail, invoice.InvoiceDate);
                         #endregion
@@ -363,7 +373,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     InvoiceNo = invoiceReturn.InvoiceReturnNo,
                     ProductId = _product.ProductId,
                     ProductCode = _product.ProductCode,
-                    OutwardQty = qty,
+                    OutwardQty = 0,
+                    InwardQty = qty,
                     Rate = rate
                 };
 

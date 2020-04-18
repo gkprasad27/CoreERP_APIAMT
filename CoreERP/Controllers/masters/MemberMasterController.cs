@@ -88,8 +88,8 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetVehicles/{memberId}")]
-        public async Task<IActionResult> GetVehicles(string memberId)
+        [HttpGet("GetVehicles/{memberCode}")]
+        public async Task<IActionResult> GetVehicles(string memberCode)
         {
             var result = await Task.Run(() =>
             {
@@ -97,11 +97,11 @@ namespace CoreERP.Controllers.masters
                 List<TblVehicle> _members = null;
                 try
                 {
-                    if (string.IsNullOrEmpty(memberId))
+                    if (string.IsNullOrEmpty(memberCode))
                     {
-                        memberId = "0";
+                        memberCode = "0";
                     }
-                    _members = new MemberMasterHelper().GetVehicles(Convert.ToDecimal(memberId));
+                    _members = new MemberMasterHelper().GetVehicles(Convert.ToDecimal(memberCode));
 
                     if (_members == null && _members.Count() > 0)
                         return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data found." });

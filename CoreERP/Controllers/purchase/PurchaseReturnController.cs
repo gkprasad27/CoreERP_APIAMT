@@ -68,7 +68,7 @@ namespace CoreERP.Controllers.purchase
                     if (invoiceMasterList.Count > 0)
                     {
                         dynamic expando = new ExpandoObject();
-                        expando.InvoiceList = invoiceMasterList;
+                        expando.PurchaseReturnHdr = invoiceMasterList;
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
 
@@ -82,7 +82,7 @@ namespace CoreERP.Controllers.purchase
             return result;
         }
 
-        [HttpGet("GetInvoiceDeatilList/{purchaseReturnId}")]
+        [HttpGet("GetPurchaseReturnsDetails/{purchaseReturnId}")]
         public async Task<IActionResult> GetInvoiceDeatilList(string purchaseReturnId)
         {
             var result = await Task.Run(() =>
@@ -95,7 +95,7 @@ namespace CoreERP.Controllers.purchase
                     if (invoiceMasterList.Count > 0)
                     {
                         dynamic expando = new ExpandoObject();
-                        expando.InvoiceDetailList = invoiceMasterList;
+                        expando.PurchaseReturnDetails = invoiceMasterList;
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
 
@@ -149,7 +149,4 @@ namespace CoreERP.Controllers.purchase
 
     }
 }
-/*
- api/purchase/PurchaseReturn/GeneratePurchaseReturnInvNo/{branchCode}   -  to getpurchase return no
- api/purchase/PurchaseReturn/RegisterPurchaseReturn
- */
+

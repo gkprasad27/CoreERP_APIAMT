@@ -45,7 +45,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using (Repository<TblMemberMaster> _repo = new Repository<TblMemberMaster>())
                 {
                     return _repo.TblMemberMaster
-                                 .Where(m =>(m.MemberCode == Convert.ToDecimal((searchCriteria.InvoiceNo == null ? m.MemberCode.ToString() : searchCriteria.InvoiceNo)))
+                                 .Where(m =>m.MemberCode.ToString().Contains((searchCriteria.InvoiceNo == null ? m.MemberCode.ToString() : searchCriteria.InvoiceNo))
                                           && m.MemberName.Contains((searchCriteria.Name ?? m.MemberName)))
                                  .ToList();
                 }
@@ -57,13 +57,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         }
      
         #region Vechile
-        public List<TblVehicle> GetVehicles(decimal? memberId)
+        public List<TblVehicle> GetVehicles(decimal? memberCode)
         {
             try
             {
                 using (Repository<TblVehicle> _repo = new Repository<TblVehicle>())
                 {
-                    return _repo.TblVehicle.Where(v => v.MemberId == memberId).ToList();
+                    return _repo.TblVehicle.Where(v => v.MemberCode == memberCode).ToList();
                 }
 
             }

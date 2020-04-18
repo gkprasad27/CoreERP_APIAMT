@@ -203,7 +203,7 @@ namespace CoreERP.Controllers
                     }
                     if (string.IsNullOrEmpty(_purchaseInvoiceHdr.PurchaseInvNo))
                     {
-                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Purchase Invoice no canontbe null/empty." });
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Purchase Invoice no can not be empty." });
                     }
 
                     var result = new PurchasesHelper().AddPurchaseRecords(_configuration ,_purchaseInvoiceHdr, _purchaseInvoiceDetail.ToList(),out errorMessage);

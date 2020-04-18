@@ -586,6 +586,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             try
             {
                 errorMessage = string.Empty;
+                decimal? _qty = null;
 
                 //check no of record allowed 
               int allowedRecorsCount= NoOfrecordsAllowed(configuration, invoice.BranchCode);
@@ -676,7 +677,16 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 #endregion
 
                                 #region Add stock transaction  and Account Ledger Transaction
-                                AddStockInformation(configuration,repo, invoice, _branch, _product, invdtl.Qty > 0 ? invdtl.Qty : invdtl.FQty, invdtl.Rate);
+                                _qty = null;
+                                if(invdtl.Qty != null)
+                                {
+                                    _qty = invdtl.Qty;
+                                }
+                                else
+                                {
+                                    _qty = invdtl.FQty;
+                                }
+                                AddStockInformation(configuration,repo, invoice, _branch, _product, _qty, invdtl.Rate);
 
                                 AddAccountLedgerTransactions(repo, _voucherDetail, invoice.InvoiceDate);
                                 #endregion
@@ -891,6 +901,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 _stockInformation.ProductId = _product.ProductId;
                 _stockInformation.ProductCode = _product.ProductCode;
                 _stockInformation.OutwardQty = qty;
+                _stockInformation.InwardQty = 0;
                 _stockInformation.Rate = rate;
 
                 context.TblStockInformation.Add(_stockInformation);
