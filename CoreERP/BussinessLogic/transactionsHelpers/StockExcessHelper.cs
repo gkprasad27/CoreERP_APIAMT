@@ -203,54 +203,55 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             }
             catch { throw; }
         }
+
+        public TblBranch GetBranch(string branchCode)
+        {
+            return new InvoiceHelper().GetBranches(branchCode).FirstOrDefault();
+        }
         public bool RegisterStocksexcess(TblStockExcessMaster stockexcessMaster, List<TblStockExcessDetails> stockexcessDetails)
         {
             try
             {
-                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(stockexcessMaster.UserId, null));
-                using (Repository<TblStockExcessMaster> repo = new Repository<TblStockExcessMaster>())
+                using ERPContext context = new ERPContext();
+                using var dbTransaction = context.Database.BeginTransaction();
+                try
                 {
-                    //add voucher typedetails
-                    var user = repo.TblUserNew.Where(x => x.UserName == stockexcessMaster.UserName).FirstOrDefault();
-                    var _branch = GetBranches(stockexcessMaster.BranchCode).ToArray().FirstOrDefault();
-                    stockexcessMaster.BranchCode = _branch.BranchCode;
-                    stockexcessMaster.BranchName = _branch.BranchName;
-                    stockexcessMaster.ServerDate = DateTime.Now;
-                    stockexcessMaster.StockExcessDate = stockexcessMaster.StockExcessDate;
-                    stockexcessMaster.StockExcessNo = stockexcessMaster.StockExcessNo;
-                    stockexcessMaster.ShiftId = shifId;
-                    stockexcessMaster.UserId = stockexcessMaster.UserId;
-                    stockexcessMaster.UserName = stockexcessMaster.UserName;
-                    stockexcessMaster.EmployeeId = user.EmployeeId;
-                    stockexcessMaster.Narration = stockexcessMaster.Narration;
-                    repo.TblStockExcessMaster.Add(stockexcessMaster);
-                    repo.SaveChanges();
-                    foreach (var item in stockexcessDetails)
+                    var _stockexcessMaster = AddStockExcessMaster(context, stockexcessMaster);
+                    foreach (var stockexcessdetail in stockexcessDetails)
                     {
-                        var _product = new InvoiceHelper().GetProducts(item.ProductCode).FirstOrDefault();
-                        var operatorStockexcessId = GetStockexcesslist(stockexcessMaster.StockExcessNo).FirstOrDefault();
-                        #region StockIssueDetails
-                        item.StockExcessMasterId = operatorStockexcessId.StockExcessMasterId;
-
-                        item.StockExcessDetailsDate = DateTime.Now;
-                        item.ProductId = _product.ProductId;
-                        item.ProductCode = item.ProductCode;
-                        item.ProductName = item.ProductName;
-                        item.HsnNo = item.HsnNo;
-                        item.Rate = item.Rate;
-                        item.Qty = item.Qty;
-                        item.BatchNo = item.BatchNo;
-                        item.UnitId = Convert.ToDecimal(_product.UnitId);
-                        item.UnitName = item.UnitName;
-                        item.TotalAmount = Convert.ToDecimal(item.TotalAmount);
-                        repo.TblStockExcessDetails.Add(item);
-                        repo.SaveChanges();
-                        #endregion
-
+                        AddStockExcessDetail(context, stockexcessdetail, _stockexcessMaster);
+                        AddStockInformation(context, stockexcessdetail, _stockexcessMaster);
                     }
+                    dbTransaction.Commit();
+                    return true;
                 }
+                catch (Exception e)
+                {
+                    dbTransaction.Rollback();
+                    throw e;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
-                return true;
+        }
+
+        private TblStockExcessMaster AddStockExcessMaster(ERPContext context, TblStockExcessMaster stockexcessMaster)
+        {
+            try
+            {
+                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(stockexcessMaster.UserId, null));
+                var user = context.TblUserNew.Where(x => x.UserName == stockexcessMaster.UserName).FirstOrDefault();
+                stockexcessMaster.BranchName = GetBranch(stockexcessMaster.BranchCode)?.BranchName;
+                stockexcessMaster.EmployeeId = user.EmployeeId;
+                stockexcessMaster.ShiftId = shifId;
+                context.TblStockExcessMaster.Add(stockexcessMaster);
+                if (context.SaveChanges() > 0)
+                    return stockexcessMaster;
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -258,6 +259,56 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             }
         }
 
+        private TblStockExcessDetails AddStockExcessDetail(ERPContext context, TblStockExcessDetails stockExcessDetail, TblStockExcessMaster stockExcessMaster)
+        {
+            try
+            {
+                var _product = new InvoiceHelper().GetProducts(stockExcessDetail.ProductCode).FirstOrDefault();
+                stockExcessDetail.StockExcessMasterId = stockExcessMaster.StockExcessMasterId;
+                stockExcessDetail.StockExcessDetailsDate = stockExcessMaster.StockExcessDate;
+                stockExcessDetail.ProductId = _product.ProductId;
+                stockExcessDetail.UnitId = Convert.ToDecimal(_product.UnitId);
+                context.TblStockExcessDetails.Add(stockExcessDetail);
+                if (context.SaveChanges() > 0)
+                    return stockExcessDetail;
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private TblStockInformation AddStockInformation(ERPContext context, TblStockExcessDetails stockExcessDetail, TblStockExcessMaster stockExcessMaster, decimal? voucherTypeID = 45)
+        {
+            try
+            {
+                TblStockInformation stockInformation = new TblStockInformation();
+                try { stockInformation.BranchId = Convert.ToDecimal(stockExcessMaster.BranchCode ?? "0"); } catch { };
+                stockInformation.BranchCode = stockExcessMaster.BranchCode;
+                stockInformation.UserId = stockExcessMaster.UserId;
+                stockInformation.ShiftId = stockExcessMaster.ShiftId;
+                stockInformation.TransactionDate = stockExcessMaster.StockExcessDate;
+                stockInformation.VoucherNo = string.Empty;
+                stockInformation.VoucherTypeId = voucherTypeID;
+                stockInformation.InvoiceNo = stockExcessMaster.StockExcessNo;
+                stockInformation.ProductId = stockExcessDetail.ProductId;
+                stockInformation.ProductCode = stockExcessDetail.ProductCode;
+                stockInformation.Rate = stockExcessDetail.Rate;
+                stockInformation.InwardQty = stockExcessDetail.Qty;
+                stockInformation.OutwardQty = 0;
+                context.TblStockInformation.Add(stockInformation);
+                if (context.SaveChanges() > 0)
+                    return stockInformation;
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public List<TblStockExcessDetails> StockexcessDeatilList(decimal id)
         {
             try
