@@ -315,6 +315,47 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     {
                         var _product = new InvoiceHelper().GetProducts(invdtl.ProductCode).FirstOrDefault();
                         var operatorStockIssueId = GetStockIssueslist(stockissue.IssueNo).FirstOrDefault();
+
+                        int i = 0;
+                        int[] array = new int[] { Convert.ToInt32(stockissue.FromBranchCode), Convert.ToInt32(ext) };
+                        foreach (var item in array)
+                        {
+                            TblStockInformation stockinformation = new TblStockInformation();
+                            i = item;
+                            stockinformation.BranchCode = Convert.ToString(i);
+                            var _branchcode = GetBranches(Convert.ToString(i)).ToArray().FirstOrDefault();
+                            //(stockreceipt.FromBranchCode)==null ? stockreceipt.FromBranchCode : ext;
+                            stockinformation.BranchId = _branchcode.BranchId;
+
+                            if (shifId == 0)
+                            {
+                                stockinformation.ShiftId = 0;
+                            }
+                            else
+                            {
+                                stockinformation.ShiftId = shifId;
+                            }
+                            stockinformation.UserId = stockissue.UserId;
+                            stockinformation.TransactionDate = DateTime.Now;
+                            stockinformation.VoucherTypeId = 43;
+                            stockinformation.InvoiceNo = stockissue.IssueNo;
+                            stockinformation.ProductId = _product.ProductId;
+                            stockinformation.ProductCode = invdtl.ProductCode;
+                            stockinformation.Rate = invdtl.Rate;
+                            if ((item) == Convert.ToInt32(stockissue.FromBranchCode))
+                            {
+                                stockinformation.InwardQty = invdtl.Qty;
+                                stockinformation.OutwardQty = 0;
+                            }
+                            else
+                            {
+                                stockinformation.InwardQty = 0;
+                                stockinformation.OutwardQty = invdtl.Qty;
+                            }
+                            repo.TblStockInformation.Add(stockinformation);
+                            repo.SaveChanges();
+                        }
+
                         #region StockIssueDetails
                         invdtl.OperatorStockIssueId = operatorStockIssueId.OperatorStockIssueId;
                         invdtl.IssueNo = stockissue.IssueNo;
@@ -410,7 +451,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             {
                 using (Repository<TblOperatorStockIssuesDetail> repo = new Repository<TblOperatorStockIssuesDetail>())
                 {
-                    return repo.TblOperatorStockIssuesDetail.Where(x => x.IssueNo == issueNo).ToList();
+                    return repo.TblOperatorStockIssuesDetail.Where(x => x.OperatorStockIssueId ==Convert.ToDecimal(issueNo)).ToList();
                 }
             }
             catch (Exception ex)

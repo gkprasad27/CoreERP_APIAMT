@@ -182,7 +182,7 @@ namespace CoreERP.Controllers.Transactions
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Stockissues records not found." });
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Stockreceipt records not found." });
             }
             catch (Exception ex)
             {

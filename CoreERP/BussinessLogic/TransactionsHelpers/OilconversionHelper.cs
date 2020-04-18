@@ -332,9 +332,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                using Repository<TblOilConversionDetails> repo = new Repository<TblOilConversionDetails>();
-                var vocher = repo.TblOilConversionMaster.Where(x => x.OilConversionVchNo == vocherno).FirstOrDefault();
-                return repo.TblOilConversionDetails.Where(x => x.OilConversionMasterId == vocher.OilConversionMasterId).ToList();
+                using (Repository<TblOilConversionDetails> repo = new Repository<TblOilConversionDetails>())
+                {
+                    return repo.TblOilConversionDetails.Where(x => x.OilConversionMasterId == Convert.ToDecimal(vocherno)).ToList();
+                }
             }
             catch (Exception ex)
             {

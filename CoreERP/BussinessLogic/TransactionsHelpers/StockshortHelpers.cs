@@ -338,8 +338,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             {
                 using (Repository<TblStockshortDetails> repo = new Repository<TblStockshortDetails>())
                 {
-                    var shorno = repo.TblStockshortMaster.Where(x => x.StockshortNo == shortno).FirstOrDefault();
-                    return repo.TblStockshortDetails.Where(x => x.StockshortMasterId == shorno.StockshortMasterId).ToList();
+                    return repo.TblStockshortDetails.Where(x => x.StockshortMasterId ==Convert.ToDecimal(shortno)).ToList();
                 }
             }
             catch (Exception ex)

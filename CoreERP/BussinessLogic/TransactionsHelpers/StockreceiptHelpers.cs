@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
 namespace CoreERP.BussinessLogic.TransactionsHelpers
 {
     public class StockreceiptHelpers
@@ -284,7 +285,48 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     repo.SaveChanges();
                     foreach (var invdtl in stockreceiptDetails)
                     {
+                        int i = 0;
                         var _product = new InvoiceHelper().GetProducts(invdtl.ProductCode).FirstOrDefault();
+                        int[] array = new int[] {Convert.ToInt32(stockreceipt.FromBranchCode), Convert.ToInt32(ext)};
+                        foreach (var item in array)
+                        {
+                            TblStockInformation stockinformation = new TblStockInformation();
+                            i = item;
+                            stockinformation.BranchCode =Convert.ToString(i);
+                            var _branchcode = GetBranches(Convert.ToString(i)).ToArray().FirstOrDefault();
+                            //(stockreceipt.FromBranchCode)==null ? stockreceipt.FromBranchCode : ext;
+                            stockinformation.BranchId = _branchcode.BranchId;
+                            
+                            if (shifId == 0)
+                            {
+                                stockinformation.ShiftId = 0;
+                            }
+                            else
+                            {
+                                stockinformation.ShiftId = shifId;
+                            }
+                            stockinformation.UserId = stockreceipt.UserId;
+                            stockinformation.TransactionDate = DateTime.Now;
+                            stockinformation.VoucherTypeId = 43;
+                            stockinformation.InvoiceNo = stockreceipt.ReceiptNo;
+                            stockinformation.ProductId = _product.ProductId;
+                            stockinformation.ProductCode = invdtl.ProductCode;
+                            stockinformation.Rate = invdtl.Rate;
+                            if ((item) == Convert.ToInt32(stockreceipt.FromBranchCode))
+                            {
+                                stockinformation.InwardQty = invdtl.Qty;
+                                stockinformation.OutwardQty = 0;
+                            }
+                            else
+                            {
+                                stockinformation.InwardQty = 0;
+                                stockinformation.OutwardQty = invdtl.Qty;
+                            }
+                            repo.TblStockInformation.Add(stockinformation);
+                            repo.SaveChanges();
+                        }
+                        //TblStockInformation stockinformation = new TblStockInformation();
+                        //stockinformation.BranchCode
                         //#region StockIssueDetails
                         var operatorStockreceiptId = GetStockreceiptslist(stockreceipt.ReceiptNo).FirstOrDefault();
                         #region StockIssueDetails
