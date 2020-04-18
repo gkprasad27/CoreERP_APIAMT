@@ -166,7 +166,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             try
             {
                 decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(journalVoucherMaster.UserId ?? 0, null));
-
+                var user = context.TblUserNew.Where(x => x.UserName == journalVoucherMaster.UserName).FirstOrDefault();
                 var _voucherMaster = new TblVoucherMaster
                 {
                     BranchCode = journalVoucherMaster.BranchCode,
@@ -181,7 +181,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     ServerDate = DateTime.Now,
                     UserId = journalVoucherMaster.UserId,
                     UserName = journalVoucherMaster.UserName,
-                    EmployeeId = -1,
+                    EmployeeId = user.EmployeeId,
                     ShiftId=shifId
                 };
 
