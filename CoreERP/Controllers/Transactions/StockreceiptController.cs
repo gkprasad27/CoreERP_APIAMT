@@ -86,8 +86,9 @@ namespace CoreERP.Controllers.Transactions
 
             try
             {
+                string errorMessage = string.Empty;
                 dynamic expando = new ExpandoObject();
-                expando.ReceiptNo = new StockreceiptHelpers().GetReceiptNo(branchCode);
+                expando.ReceiptNo = new StockreceiptHelpers().GenerateInvoiceNo(branchCode,out errorMessage);
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

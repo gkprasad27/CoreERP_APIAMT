@@ -249,6 +249,9 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 
         public bool RegisterStockreceipts(TblOperatorStockReceipt stockreceipt, List<TblOperatorStockReceiptDetail> stockreceiptDetails)
         {
+            using ERPContext context = new ERPContext();
+
+            using var dbTransaction = context.Database.BeginTransaction();
             try
             {
                 decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(stockreceipt.UserId, null));
@@ -276,10 +279,10 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     {
                         stockreceipt.ShiftId = shifId;
                     }
-                    
+                    var empid = context.TblUserNew.Where(x => x.UserName == stockreceipt.UserName).FirstOrDefault();
                     stockreceipt.UserId = stockreceipt.UserId;
                     stockreceipt.UserName = stockreceipt.UserName;
-                    stockreceipt.EmployeeId = -1;
+                    stockreceipt.EmployeeId = empid.EmployeeId; 
                     stockreceipt.Remarks = stockreceipt.Remarks;
                     repo.TblOperatorStockReceipt.Add(stockreceipt);
                     repo.SaveChanges();
@@ -309,6 +312,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                             stockinformation.TransactionDate = DateTime.Now;
                             stockinformation.VoucherTypeId = 42;
                             stockinformation.InvoiceNo = stockreceipt.ReceiptNo;
+                            stockinformation.VoucherNo = string.Empty;
                             stockinformation.ProductId = _product.ProductId;
                             stockinformation.ProductCode = invdtl.ProductCode;
                             stockinformation.Rate = invdtl.Rate;
@@ -357,6 +361,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                         invdtl.AvailStock = Convert.ToDecimal(invdtl.AvailStock);
                         repo.TblOperatorStockReceiptDetail.Add(invdtl);
                         repo.SaveChanges();
+                        dbTransaction.Commit();
                         #endregion
                         {
 
@@ -369,6 +374,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             catch (Exception ex)
             {
                 throw ex;
+                dbTransaction.Rollback();
             }
         }
         //Searchcode
@@ -484,6 +490,51 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             {
                 using Repository<TblOperatorStockReceiptDetail> repo = new Repository<TblOperatorStockReceiptDetail>();
                 return repo.TblOperatorStockReceiptDetail.Where(x => x.OperatorStockReceiptId == receptno).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        //get the stockReceiptNo
+
+        public string GenerateInvoiceNo(string branchCode, out string errorMessage)
+        {
+            try
+            {
+                errorMessage = string.Empty;
+                string suffix = string.Empty, prefix = string.Empty, billno = string.Empty;
+                TblOperatorStockReceipt _receiptNo = null;
+                using (Repository<TblOperatorStockReceipt> _repo = new Repository<TblOperatorStockReceipt>())
+                {
+                    _receiptNo = _repo.TblOperatorStockReceipt.Where(x => x.FromBranchCode == branchCode).OrderByDescending(x => x.ServerDateTime).FirstOrDefault();
+
+                    if (_receiptNo != null)
+                    {
+                        var invSplit = _receiptNo.ReceiptNo.Split('/');
+                        var invNo = invSplit[1].Split('-');
+                        billno = $"{invSplit[0]}/{Convert.ToDecimal(invNo[0]) + 1}-{invNo[1]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(42, branchCode, out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
+                            return billno = string.Empty;
+                        }
+
+                        billno = $"{prefix}/1-{suffix}";
+                    }
+                }
+
+                if (string.IsNullOrEmpty(billno))
+                {
+                    errorMessage = "Invoice no not gererated please enter manully.";
+                }
+
+                return billno;
             }
             catch (Exception ex)
             {
