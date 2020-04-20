@@ -211,6 +211,46 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     {
                         var _product = new InvoiceHelper().GetProducts(oilconversions.ProductCode).FirstOrDefault();
                         var oilcnvsmmstrid = repo.TblOilConversionMaster.Where(stock => stock.OilConversionVchNo == oilcnvsmaster.OilConversionVchNo && (stock.UserId == user.UserId)).FirstOrDefault();
+                        int i = 0;
+                        //var _product = new InvoiceHelper().GetProducts(invdtl.ProductCode).FirstOrDefault();
+                        int[] array = new int[] { Convert.ToInt32(oilcnvsmaster.BranchCode)};
+                        foreach (var item in array)
+                        {
+                            TblStockInformation stockinformation = new TblStockInformation();
+                            i = item;
+                            stockinformation.BranchCode = Convert.ToString(i);
+                            var _branchcode = GetBranches(Convert.ToString(i)).ToArray().FirstOrDefault();
+                            //(stockreceipt.FromBranchCode)==null ? stockreceipt.FromBranchCode : ext;
+                            stockinformation.BranchId = _branchcode.BranchId;
+
+                            if (shift.ShiftId == 0)
+                            {
+                                stockinformation.ShiftId = 0;
+                            }
+                            else
+                            {
+                                stockinformation.ShiftId = shift.ShiftId;
+                            }
+                            stockinformation.UserId = oilcnvsmaster.UserId;
+                            stockinformation.TransactionDate = DateTime.Now;
+                            stockinformation.VoucherTypeId = 52;
+                            stockinformation.InvoiceNo = oilcnvsmaster.OilConversionVchNo;
+                            stockinformation.ProductId = _product.ProductId;
+                            stockinformation.ProductCode = oilconversions.ProductCode;
+                            stockinformation.Rate = oilconversions.Rate;
+                            if ((item) == Convert.ToInt32(oilcnvsmaster.BranchCode))
+                            {
+                                stockinformation.InwardQty = 0;
+                                stockinformation.OutwardQty = oilconversions.Qty;
+                            }
+                            else
+                            {
+                                stockinformation.InwardQty = oilconversions.Qty;
+                                stockinformation.OutwardQty = 0;
+                            }
+                            repo.TblStockInformation.Add(stockinformation);
+                            repo.SaveChanges();
+                        }
                         //var oilcnvsmmstrid = GetOilConversionslist(oilcnvsmaster.OilConversionVchNo).FirstOrDefault();
                         #region StockIssueDetails
                         oilconversions.OilConversionMasterId = oilcnvsmmstrid.OilConversionMasterId;

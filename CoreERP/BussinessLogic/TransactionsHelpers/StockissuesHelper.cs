@@ -420,12 +420,14 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     }
                     else
                     {
+
                         _cashpaymentMasterList = repo.TblOperatorStockIssues.AsEnumerable()
-                             .Where(cp =>
+                            .Where(cp =>
                                         DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.IssueDate).Value.ToShortDateString())
                                       && DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.IssueDate).Value.ToShortDateString())
                                  && cp.FromBranchCode == branchCode)
                               .ToList();
+                        
                     }
                    
 

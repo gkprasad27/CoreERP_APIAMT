@@ -307,20 +307,20 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                             }
                             stockinformation.UserId = stockreceipt.UserId;
                             stockinformation.TransactionDate = DateTime.Now;
-                            stockinformation.VoucherTypeId = 43;
+                            stockinformation.VoucherTypeId = 42;
                             stockinformation.InvoiceNo = stockreceipt.ReceiptNo;
                             stockinformation.ProductId = _product.ProductId;
                             stockinformation.ProductCode = invdtl.ProductCode;
                             stockinformation.Rate = invdtl.Rate;
                             if ((item) == Convert.ToInt32(stockreceipt.FromBranchCode))
                             {
-                                stockinformation.InwardQty = invdtl.Qty;
-                                stockinformation.OutwardQty = 0;
+                                stockinformation.InwardQty = 0;
+                                stockinformation.OutwardQty = invdtl.Qty;
                             }
                             else
                             {
-                                stockinformation.InwardQty = 0;
-                                stockinformation.OutwardQty = invdtl.Qty;
+                                stockinformation.InwardQty = invdtl.Qty;
+                                stockinformation.OutwardQty = 0;
                             }
                             repo.TblStockInformation.Add(stockinformation);
                             repo.SaveChanges();
