@@ -32,7 +32,6 @@ namespace CoreERP.Controllers.Transactions
             }
         }
 
-
         //oilconversionVoucherNo
         [HttpGet("GetoilconversionVoucherNo/{branchCode}")]
         public async Task<IActionResult> GetoilconversionVoucherNo(string branchCode)
@@ -42,8 +41,9 @@ namespace CoreERP.Controllers.Transactions
 
             try
             {
+                string errorMessage = string.Empty;
                 dynamic expando = new ExpandoObject();
-                expando.oilconversionVoucherNo = new OilconversionHelper().GetoilconversionVoucherNo(branchCode);
+                expando.oilconversionVoucherNo = new OilconversionHelper().GetoilconversionVoucherNo(branchCode, out errorMessage);
                 if(expando.oilconversionVoucherNo != null)
                 {
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });

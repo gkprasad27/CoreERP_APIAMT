@@ -63,15 +63,58 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             catch { throw; }
         }
 
-        public string GetStackissueNo(string branchCode)
+        public string GetStackissueNo(string branchCode, out string errorMessage)
         {
-
             try
             {
-                return new CommonHelper().GenerateNumber(43, branchCode);
+                errorMessage = string.Empty;
+                string suffix = string.Empty, prefix = string.Empty, billno = string.Empty;
+                TblOperatorStockIssues _receiptNo = null;
+                using (Repository<TblOperatorStockIssues> _repo = new Repository<TblOperatorStockIssues>())
+                {
+                    _receiptNo = _repo.TblOperatorStockIssues.Where(x => x.FromBranchCode == branchCode).OrderByDescending(x => x.ServerDateTime).FirstOrDefault();
+
+                    if (_receiptNo != null)
+                    {
+                        var invSplit = _receiptNo.IssueNo.Split('/');
+                        var invNo = invSplit[1].Split('-');
+                        billno = $"{invSplit[0]}/{Convert.ToDecimal(invNo[0]) + 1}-{invNo[1]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(43, branchCode, out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
+                            return billno = string.Empty;
+                        }
+
+                        billno = $"{prefix}/1-{suffix}";
+                    }
+                }
+
+                if (string.IsNullOrEmpty(billno))
+                {
+                    errorMessage = "Issue no not gererated please enter manully.";
+                }
+
+                return billno;
             }
-            catch { throw; }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
+
+        //public string GetStackissueNo(string branchCode)
+        //{
+
+        //    try
+        //    {
+        //        return new CommonHelper().GenerateNumber(43, branchCode);
+        //    }
+        //    catch { throw; }
+        //}
 
         public string Getbranchcode(string codes)
         {
@@ -285,6 +328,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
+                using ERPContext context = new ERPContext();
                 decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(stockissue.UserId, null));
                 using (Repository<TblInvoiceDetail> repo = new Repository<TblInvoiceDetail>())
                 {
@@ -297,6 +341,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     var shiftid = repo.TblShift.Where(x => x.UserId == stockissue.UserId).FirstOrDefault();
                     var _branch = GetBranches(stockissue.FromBranchCode).ToArray().FirstOrDefault();
                     var _tobranch = GetBranches(ext).ToArray().FirstOrDefault();
+                    var empid = context.TblUserNew.Where(x => x.UserName == stockissue.UserName).FirstOrDefault();
                     stockissue.FromBranchCode = _branch.BranchCode;
                     stockissue.FromBranchName = _branch.BranchName;
                     stockissue.ToBranchCode = str.Substring(0, str.LastIndexOf('-') + 0);
@@ -307,7 +352,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     stockissue.UserName = stockissue.UserName;
                     stockissue.ShiftId = shifId;
                     stockissue.UserId = stockissue.UserId;
-                    stockissue.EmployeeId = -1;
+                    stockissue.EmployeeId = empid.EmployeeId;
                     stockissue.Remarks = stockissue.Remarks;
                     repo.TblOperatorStockIssues.Add(stockissue);
                     repo.SaveChanges();
@@ -399,6 +444,50 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
 
+        //public List<TblOperatorStockIssues> GetStockissuesMasters(VoucherNoSearchCriteria searchCriteria, string branchCode)
+        //{
+        //    try
+        //    {
+
+        //        using (Repository<TblOperatorStockIssues> repo = new Repository<TblOperatorStockIssues>())
+        //        {
+        //            List<TblOperatorStockIssues> _stockissuesMasterList = null;
+
+        //            if (searchCriteria.Role == 1)
+        //            {
+        //                _stockissuesMasterList = repo.TblOperatorStockIssues.AsEnumerable()
+        //                      .Where(cp =>
+        //                                 DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.IssueDate).Value.ToShortDateString())
+        //                               && DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.IssueDate).Value.ToShortDateString())
+        //                         )
+        //                       .ToList();
+        //            }
+        //            else
+        //            {
+        //                _stockissuesMasterList = repo.TblOperatorStockIssues.AsEnumerable()
+        //                    .Where(cp =>
+        //                                DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.IssueDate).Value.ToShortDateString())
+        //                              && DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.IssueDate).Value.ToShortDateString())
+        //                         && cp.FromBranchCode == branchCode)
+        //                      .ToList();
+        //            }
+
+        //            if (!string.IsNullOrEmpty(searchCriteria.receiptNo))
+        //                _stockissuesMasterList = GetStockissuesList().Where(x => x.IssueNo == searchCriteria.issueNo).ToList();
+
+        //            return _stockissuesMasterList.OrderByDescending(x => x.IssueDate).ToList();
+        //            //_stockreceiptMasterList;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+
+        //}
+
+
+
         //Searchcode
         public List<TblOperatorStockIssues> GetStockissuesMasters(VoucherNoSearchCriteria searchCriteria, string branchCode)
         {
@@ -420,20 +509,17 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     }
                     else
                     {
-
                         _cashpaymentMasterList = repo.TblOperatorStockIssues.AsEnumerable()
                             .Where(cp =>
                                         DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? cp.IssueDate).Value.ToShortDateString())
                                       && DateTime.Parse(cp.IssueDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? cp.IssueDate).Value.ToShortDateString())
-                                 && cp.FromBranchCode == branchCode)
+                                 &&
+                                 cp.ToBranchCode == branchCode)
                               .ToList();
-                        
                     }
-                   
 
                     if (!string.IsNullOrEmpty(searchCriteria.issueNo))
                         _cashpaymentMasterList = GetStockissuesList().Where(x => x.IssueNo == searchCriteria.issueNo).ToList();
-
 
                     return _cashpaymentMasterList.OrderByDescending(x => x.IssueDate).ToList();
                     //_cashpaymentMasterList;
@@ -445,7 +531,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
 
         }
-       
+
 
         public List<TblOperatorStockIssuesDetail> StockissuesDeatils(string issueNo)
         {

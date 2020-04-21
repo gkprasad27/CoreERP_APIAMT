@@ -51,18 +51,60 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             catch { throw; }
         }
 
-        
-        public string GetstockshortVoucherNo(string branchCode)
+        public string GetstockshortVoucherNo(string branchCode, out string errorMessage)
         {
-
             try
             {
-                return new CommonHelper().GenerateNumber(44, branchCode);
+                errorMessage = string.Empty;
+                string suffix = string.Empty, prefix = string.Empty, billno = string.Empty;
+                TblStockshortMaster _receiptNo = null;
+                using (Repository<TblStockshortMaster> _repo = new Repository<TblStockshortMaster>())
+                {
+                    _receiptNo = _repo.TblStockshortMaster.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.StockshortDate).FirstOrDefault();
+
+                    if (_receiptNo != null)
+                    {
+                        var invSplit = _receiptNo.StockshortNo.Split('/');
+                        var invNo = invSplit[1].Split('-');
+                        billno = $"{invSplit[0]}/{Convert.ToDecimal(invNo[0]) + 1}-{invNo[1]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(44, branchCode, out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
+                            return billno = string.Empty;
+                        }
+
+                        billno = $"{prefix}/1-{suffix}";
+                    }
+                }
+
+                if (string.IsNullOrEmpty(billno))
+                {
+                    errorMessage = "stockshort no not gererated please enter manully.";
+                }
+
+                return billno;
             }
-            catch { throw; }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-       
+        //public string GetstockshortVoucherNo(string branchCode)
+        //{
+
+        //    try
+        //    {
+        //        return new CommonHelper().GenerateNumber(44, branchCode);
+        //    }
+        //    catch { throw; }
+        //}
+
+
 
 
         public TblStockshortDetails GetOpStockShortDetailsection(string productCode, string branchCode)
@@ -177,6 +219,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 throw ex;
             }
         }
+
+       
         public List<TblStockshortMaster> GetStockshortlist(string code)
         {
             try
@@ -203,6 +247,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     var shift = repo.TblShift.Where(x => x.UserId == user.UserId).FirstOrDefault();
                     var _branch = GetBranches(stockshort.BranchCode).ToArray().FirstOrDefault();
                     var shiftid = repo.TblShift.Where(x => x.UserId == stockshort.UserId).FirstOrDefault();
+                   
                     stockshort.BranchCode = _branch.BranchCode;
                     stockshort.BranchName = _branch.BranchName;
                     stockshort.ServerDate = DateTime.Now;
@@ -211,7 +256,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     stockshort.ShiftId = shiftid.ShiftId;
                     stockshort.UserId = user.UserId;
                     stockshort.UserName = stockshort.UserName;
-                    stockshort.EmployeeId = -1;
+                    stockshort.EmployeeId = user.EmployeeId;
+                    stockshort.CostCenter = stockshort.CostCenter;
                     stockshort.Narration = stockshort.Narration;
                     repo.TblStockshortMaster.Add(stockshort);
                     repo.SaveChanges();

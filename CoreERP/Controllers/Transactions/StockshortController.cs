@@ -56,8 +56,9 @@ namespace CoreERP.Controllers.Transactions
 
             try
             {
+                string errorMessage = string.Empty;
                 dynamic expando = new ExpandoObject();
-                expando.stockshortVoucherNo = new StockshortHelpers().GetstockshortVoucherNo(branchCode);
+                expando.stockshortVoucherNo = new StockshortHelpers().GetstockshortVoucherNo(branchCode, out errorMessage);
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

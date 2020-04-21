@@ -86,8 +86,9 @@ namespace CoreERP.Controllers.Transactions
 
             try
             {
+                string errorMessage = string.Empty;
                 dynamic expando = new ExpandoObject();
-                expando.StackissueNo = new StockissuesHelper().GetStackissueNo(branchCode);
+                expando.StackissueNo = new StockissuesHelper().GetStackissueNo(branchCode, out errorMessage);
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

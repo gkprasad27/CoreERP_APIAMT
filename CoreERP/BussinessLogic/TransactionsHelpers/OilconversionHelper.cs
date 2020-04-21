@@ -20,15 +20,57 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
             catch { throw; }
         }
-        public string GetoilconversionVoucherNo(string branchCode)
+        public string GetoilconversionVoucherNo(string branchCode, out string errorMessage)
         {
-
             try
             {
-                return new CommonHelper().GenerateNumber(52, branchCode);
+                errorMessage = string.Empty;
+                string suffix = string.Empty, prefix = string.Empty, billno = string.Empty;
+                TblOilConversionMaster _receiptNo = null;
+                using (Repository<TblOilConversionMaster> _repo = new Repository<TblOilConversionMaster>())
+                {
+                    _receiptNo = _repo.TblOilConversionMaster.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.OilConversionDate).FirstOrDefault();
+
+                    if (_receiptNo != null)
+                    {
+                        var invSplit = _receiptNo.OilConversionVchNo.Split('/');
+                        var invNo = invSplit[1].Split('-');
+                        billno = $"{invSplit[0]}/{Convert.ToDecimal(invNo[0]) + 1}-{invNo[1]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(52, branchCode, out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
+                            return billno = string.Empty;
+                        }
+
+                        billno = $"{prefix}/1-{suffix}";
+                    }
+                }
+
+                if (string.IsNullOrEmpty(billno))
+                {
+                    errorMessage = "oilconversion no not gererated please enter manully.";
+                }
+
+                return billno;
             }
-            catch { throw; }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
+        //public string GetoilconversionVoucherNo(string branchCode)
+        //{
+
+        //    try
+        //    {
+        //        return new CommonHelper().GenerateNumber(52, branchCode);
+        //    }
+        //    catch { throw; }
+        //}
 
 
 
@@ -150,20 +192,18 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
 
-        //public List<TblOilConversionMaster> GetOilConversionslist(string code ,string codes)
-        //{
-        //    try
-        //    {
-        //        using (Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>())
-        //        {
-        //            return repo.TblOilConversionMaster.Where(stock => stock.OilConversionVchNo == code &&(stock.UserId == Convert.ToDecimal(codes))).ToList();
-
-        //           // return repo.TblOilConversionMaster.Where(x => x.OilConversionVchNo == code).ToList();
-        //        }
-
-        //    }
-        //    catch { throw; }
-        //}
+        public List<TblVoucherType> GetVoucherTypeList(decimal voucherTypeId)
+        {
+            try
+            {
+                using Repository<TblVoucherType> repo = new Repository<TblVoucherType>();
+                return repo.TblVoucherType.Where(v => v.VoucherTypeId == voucherTypeId).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         public bool RegisterBill(TblOilConversionMaster oilcnvsmaster, List<TblOilConversionDetails> oilcnvsmasterDetails)
         {
@@ -178,6 +218,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     var userid = repo.TblUserNew.Where(x => x.UserName == user.UserName).FirstOrDefault();
                     var shift= repo.TblShift.Where(x => x.UserId == userid.UserId).FirstOrDefault();
                     var _branch = GetBranches(oilcnvsmaster.BranchCode).ToArray().FirstOrDefault();
+                    var _vouchertType = GetVoucherTypeList(52).ToArray().FirstOrDefault();
                     TblVoucherMaster vchrmastr = new TblVoucherMaster();
                     vchrmastr.BranchCode= _branch.BranchCode;
                     vchrmastr.BranchName= _branch.BranchName;
@@ -190,7 +231,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     vchrmastr.ShiftId = shift.ShiftId;
                     vchrmastr.UserId = user.UserId;
                     vchrmastr.UserName = oilcnvsmaster.UserName;
-                    vchrmastr.EmployeeId = -1;
+                    vchrmastr.EmployeeId = userid.EmployeeId;
 
                     oilcnvsmaster.BranchCode = _branch.BranchCode;
                     oilcnvsmaster.BranchName = _branch.BranchName;
@@ -198,11 +239,11 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     oilcnvsmaster.ServerDate = DateTime.Now;
                     oilcnvsmaster.OilConversionDate = oilcnvsmaster.OilConversionDate;
                     oilcnvsmaster.OilConversionVchNo = oilcnvsmaster.OilConversionVchNo;
-                    oilcnvsmaster.VoucherTypeId = oilcnvsmaster.VoucherTypeId;
+                    oilcnvsmaster.VoucherTypeId = _vouchertType.VoucherTypeId;
                     oilcnvsmaster.ShiftId = shift.ShiftId;
                     oilcnvsmaster.UserId = user.UserId;
                     oilcnvsmaster.UserName = oilcnvsmaster.UserName;
-                    oilcnvsmaster.EmployeeId = -1;
+                    oilcnvsmaster.EmployeeId = userid.EmployeeId;
                     oilcnvsmaster.Narration = oilcnvsmaster.Narration;
                     repo.TblVoucherMaster.Add(vchrmastr);
                     repo.TblOilConversionMaster.Add(oilcnvsmaster);
