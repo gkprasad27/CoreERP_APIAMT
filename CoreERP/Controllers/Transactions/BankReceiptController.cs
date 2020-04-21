@@ -69,8 +69,9 @@ namespace CoreERP.Controllers.Transactions
 
                 try
                 {
+                    string errorMessage = string.Empty;
                     dynamic expando = new ExpandoObject();
-                    expando.BranchesList = new BankReceiptHelper().GetVoucherNo(branchCode);
+                    expando.BranchesList = new BankReceiptHelper().GetVoucherNo(branchCode, out errorMessage);
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)

@@ -177,16 +177,56 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 throw ex;
             }
         }
-        public string GetVoucherNo(string branchCode)
+        //public string GetVoucherNo(string branchCode)
+        //{
+        //    try
+        //    {
+        //        var voucherNo = new CommonHelper().GenerateNumber(33, branchCode);
+        //        return voucherNo;
+        //    }
+        //    catch { throw; }
+        //}
+        public string GetVoucherNo(string branchCode, out string errorMessage)
         {
             try
             {
-                var voucherNo = new CommonHelper().GenerateNumber(33, branchCode);
-                return voucherNo;
-            }
-            catch { throw; }
-        }
+                errorMessage = string.Empty;
+                string suffix = string.Empty, prefix = string.Empty, billno = string.Empty;
+                TblCashPaymentMaster _cashPaymentMaster = null;
+                using (Repository<TblCashPaymentMaster> _repo = new Repository<TblCashPaymentMaster>())
+                {
+                    _cashPaymentMaster = _repo.TblCashPaymentMaster.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.ServerDate).FirstOrDefault();
 
+                    if (_cashPaymentMaster != null)
+                    {
+                        var invSplit = _cashPaymentMaster.VoucherNo.Split('-');
+                        billno = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1]) + 1}-{invSplit[2]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(33, branchCode, out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
+                            return billno = string.Empty;
+                        }
+
+                        billno = $"{prefix}-1-{suffix}";
+                    }
+                }
+
+                if (string.IsNullOrEmpty(billno))
+                {
+                    errorMessage = "CashPayment no not gererated please enter manully.";
+                }
+
+                return billno;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public List<TblAccountLedger> GetAccountLedgersByLedgerId(decimal LedgerId)
         {
             try
