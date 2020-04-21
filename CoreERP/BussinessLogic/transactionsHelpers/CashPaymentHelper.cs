@@ -358,19 +358,20 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _accountLedgerTransactions.LedgerId = cashPaymentMaster.FromLedgerId;
                     _accountLedgerTransactions.LedgerCode = cashPaymentMaster.FromLedgerCode;
                     _accountLedgerTransactions.LedgerName = cashPaymentMaster.FromLedgerName;
-                    _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
-                    _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
-                    _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
+                    _accountLedgerTransactions.TransactionType = "Credit";
+                    _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
+                    _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
+                   
 
                 }
                 else
                 {
                     _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
-                    _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
+                    _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode; 
                     _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
-                    _accountLedgerTransactions.TransactionType = "Credit";
-                    _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
-                    _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
+                    _accountLedgerTransactions.TransactionType = "Debit";
+                    _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
+                    _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
                 }
 
                 context.TblAccountLedgerTransactions.Add(_accountLedgerTransactions);
