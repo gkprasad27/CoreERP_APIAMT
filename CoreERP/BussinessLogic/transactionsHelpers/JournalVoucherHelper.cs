@@ -65,14 +65,56 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public string GetVoucherNo(string branchCode)
+        //public string GetVoucherNo(string branchCode)
+        //{
+        //    try
+        //    {
+        //        var voucherNo = new CommonHelper().GenerateNumber(32, branchCode);
+        //        return voucherNo;
+        //    }
+        //    catch { throw; }
+        //}
+
+        public string GetVoucherNo(string branchCode, out string errorMessage)
         {
             try
             {
-                var voucherNo = new CommonHelper().GenerateNumber(32, branchCode);
-                return voucherNo;
+                errorMessage = string.Empty;
+                string suffix = string.Empty, prefix = string.Empty, billno = string.Empty;
+                TblJournalVoucherMaster _journalVoucherMaster = null;
+                using (Repository<TblJournalVoucherMaster> _repo = new Repository<TblJournalVoucherMaster>())
+                {
+                    _journalVoucherMaster = _repo.TblJournalVoucherMaster.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.ServerDate).FirstOrDefault();
+
+                    if (_journalVoucherMaster != null)
+                    {
+                        var invSplit = _journalVoucherMaster.VoucherNo.Split('-');
+                        billno = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1]) + 1}-{invSplit[2]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(32, branchCode, out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
+                            return billno = string.Empty;
+                        }
+
+                        billno = $"{prefix}-1-{suffix}";
+                    }
+                }
+
+                if (string.IsNullOrEmpty(billno))
+                {
+                    errorMessage = "JournalVoucher no not gererated please enter manully.";
+                }
+
+                return billno;
             }
-            catch { throw; }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public List<TblJournalVoucherMaster> GetJournalVoucherMasters(VoucherNoSearchCriteria searchCriteria,string branchCode)

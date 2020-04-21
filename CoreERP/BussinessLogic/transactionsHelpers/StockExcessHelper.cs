@@ -82,14 +82,57 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             repo.SaveChanges();
         }
 
-        public string GetVoucherNo(string branchCode)
+        //public string GetVoucherNo(string branchCode)
+        //{
+        //    try
+        //    {
+        //        var voucherNo = new StockExcessHelper().GenerateStockENumber(45, branchCode);
+        //        return voucherNo;
+        //    }
+        //    catch { throw; }
+        //}
+
+        public string GetVoucherNo(string branchCode, out string errorMessage)
         {
             try
             {
-                var voucherNo = new StockExcessHelper().GenerateStockENumber(45, branchCode);
-                return voucherNo;
+                errorMessage = string.Empty;
+                string suffix = string.Empty, prefix = string.Empty, billno = string.Empty;
+                TblStockExcessMaster _stockExcessMaster = null;
+                using (Repository<TblStockExcessMaster> _repo = new Repository<TblStockExcessMaster>())
+                {
+                    _stockExcessMaster = _repo.TblStockExcessMaster.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.ServerDate).FirstOrDefault();
+
+                    if (_stockExcessMaster != null)
+                    {
+                        var invSplit = _stockExcessMaster.StockExcessNo.Split('/');
+                        var stockSplit = invSplit[1].Split('-');
+                        billno = $"{invSplit[0]}/{Convert.ToDecimal(stockSplit[0]) + 1}-{stockSplit[1]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(45, branchCode, out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
+                            return billno = string.Empty;
+                        }
+
+                        billno = $"{prefix}/1-{suffix}";
+                    }
+                }
+
+                if (string.IsNullOrEmpty(billno))
+                {
+                    errorMessage = "StockExcess no not gererated please enter manully.";
+                }
+
+                return billno;
             }
-            catch { throw; }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private TblMshsdrates GetMshsdrates(string branchCode, string productCode)

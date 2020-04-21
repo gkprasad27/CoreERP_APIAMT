@@ -127,18 +127,60 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
         }
 
-       
-        public string GetVoucherNo(string branchCode)
+
+        //public string GetVoucherNo(string branchCode)
+        //{
+        //    try
+        //    {
+
+        //        string sufix = string.Empty, prefix = string.Empty;
+        //        var voucherNo = new CommonHelper().GenerateNumber(30, branchCode);
+
+        //        return voucherNo;
+        //    }
+        //    catch { throw; }
+        //}
+
+        public string GetVoucherNo(string branchCode, out string errorMessage)
         {
             try
             {
-                
-                string sufix = string.Empty, prefix = string.Empty;
-                var voucherNo = new CommonHelper().GenerateNumber(30, branchCode);
+                errorMessage = string.Empty;
+                string suffix = string.Empty, prefix = string.Empty, billno = string.Empty;
+                TblBankReceiptMaster _bankReceiptMaster = null;
+                using (Repository<TblBankReceiptMaster> _repo = new Repository<TblBankReceiptMaster>())
+                {
+                    _bankReceiptMaster = _repo.TblBankReceiptMaster.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.ServerDate).FirstOrDefault();
 
-                return voucherNo;
+                    if (_bankReceiptMaster != null)
+                    {
+                        var invSplit = _bankReceiptMaster.VoucherNo.Split('-');
+                        billno = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1]) + 1}-{invSplit[2]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(30, branchCode, out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
+                            return billno = string.Empty;
+                        }
+
+                        billno = $"{prefix}-1-{suffix}";
+                    }
+                }
+
+                if (string.IsNullOrEmpty(billno))
+                {
+                    errorMessage = "BankReceipt no not gererated please enter manully.";
+                }
+
+                return billno;
             }
-            catch { throw; }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         public List<TblBranch> GetBranches(string branchCode = null)
         {
