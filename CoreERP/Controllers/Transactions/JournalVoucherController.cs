@@ -150,10 +150,11 @@ namespace CoreERP.Controllers.Transactions
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
                 try
                 {
+                    var _transactionType = objData["JournalVoucherHdr"].ToObject<TblVoucherDetail>();
                     var _journalVoucherHdr = objData["JournalVoucherHdr"].ToObject<TblJournalVoucherMaster>();
                     var _journalVoucherDtl = objData["JournalVoucherDetail"].ToObject<TblJournalVoucherDetails[]>();
 
-                    var result = new JournalVoucherHelper().RegisterJournalVoucher(_journalVoucherHdr, _journalVoucherDtl.ToList());
+                    var result = new JournalVoucherHelper().RegisterJournalVoucher(_journalVoucherHdr, _journalVoucherDtl.ToList(),_transactionType);
                     if (result)
                     {
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _journalVoucherHdr });

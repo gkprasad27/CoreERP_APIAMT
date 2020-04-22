@@ -243,7 +243,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             }
         }
 
-        public TblVoucherDetail AddVoucherDetails(ERPContext context, TblJournalVoucherMaster journalVoucherMaster, TblBranch _branch, TblVoucherMaster _voucherMaster, TblAccountLedger _accountLedger, decimal? productRate, decimal? ledgerId, string ledgerCode, bool isFromCashDetials = true)
+        public TblVoucherDetail AddVoucherDetails(ERPContext context, TblJournalVoucherMaster journalVoucherMaster, TblBranch _branch, TblVoucherMaster _voucherMaster, TblAccountLedger _accountLedger, decimal? productRate, decimal? ledgerId, string ledgerCode, string transacstionType,bool isFromCashDetials = true)
         {
             try
             {
@@ -263,7 +263,15 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _voucherDetail.ToLedgerCode = ledgerCode;
                     _voucherDetail.ToLedgerName = ledgerName.LedgerName;
                     _voucherDetail.Amount = productRate;
-                    _voucherDetail.TransactionType = "Debit";
+                    if (transacstionType == "Debit")
+                    {
+                        _voucherDetail.TransactionType = "Credit";
+                    }
+                    else
+                    {
+                        _voucherDetail.TransactionType = "Debit";
+                    }
+                    //_voucherDetail.TransactionType = transacstionType;
                     _voucherDetail.CostCenter = journalVoucherMaster.BranchCode;
                     _voucherDetail.ServerDate = DateTime.Now;
                     _voucherDetail.Narration = "Journal Voucher";
@@ -278,7 +286,15 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _voucherDetail.ToLedgerCode = journalVoucherMaster.FromLedgerCode;
                     _voucherDetail.ToLedgerName = journalVoucherMaster.FromLedgerName;
                     _voucherDetail.Amount = productRate;
-                    _voucherDetail.TransactionType = "Credit";
+                    _voucherDetail.TransactionType = transacstionType;
+                    //if (transacstionType == "Debit")
+                    //{
+                    //    _voucherDetail.TransactionType = "Credit";
+                    //}
+                    //else
+                    //{
+                    //    _voucherDetail.TransactionType = "Debit";
+                    //}
                     _voucherDetail.CostCenter = journalVoucherMaster.BranchCode;
                     _voucherDetail.ServerDate = DateTime.Now;
                     _voucherDetail.Narration = "Journal Voucher";
@@ -320,8 +336,17 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
                     _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
                     _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
-                    _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
-                    _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
+                    if (_voucherDetail.TransactionType == "Debit")
+                    {
+                        _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
+                        _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
+                    }
+                    else
+                    {
+                        _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
+                        _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
+                    }
+                    
                 }
                 else
                 {
@@ -329,9 +354,19 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _accountLedgerTransactions.LedgerId = journalVoucherMaster.FromLedgerId;
                     _accountLedgerTransactions.LedgerCode = journalVoucherMaster.FromLedgerCode;
                     _accountLedgerTransactions.LedgerName = journalVoucherMaster.FromLedgerName;
-                    _accountLedgerTransactions.TransactionType = "Credit";
-                    _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
-                    _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
+                    if(_voucherDetail.TransactionType== "Debit")
+                    {
+                        _accountLedgerTransactions.TransactionType = "Credit";
+                        _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
+                        _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
+                    }
+                    else
+                    {
+                        _accountLedgerTransactions.TransactionType = "Debit";
+                        _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
+                        _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
+                    }
+                   
                 }
 
 
@@ -348,11 +383,12 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 throw ex;
             }
         }
-        public bool RegisterJournalVoucher(TblJournalVoucherMaster journalVoucherMaster, List<TblJournalVoucherDetails> journalVoucherDetails)
+        public bool RegisterJournalVoucher(TblJournalVoucherMaster journalVoucherMaster, List<TblJournalVoucherDetails> journalVoucherDetails, TblVoucherDetail voucherDetail)
         {
             try
             {
                 decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(journalVoucherMaster.UserId ?? 0, null));
+                
                 using ERPContext repo = new ERPContext();
                 using var dbTransaction = repo.Database.BeginTransaction();
                 try
@@ -363,7 +399,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     var _accountLedger = GetAccountLedgersCode(journalVoucherMaster.FromLedgerCode).ToArray().FirstOrDefault();
                     var _cashpayAccountLedger = GetAccountLedgerList().Where(x => x.LedgerCode == journalVoucherMaster.FromLedgerCode).FirstOrDefault();
                     var _vouchertType = GetVoucherTypeList(32).ToArray().FirstOrDefault();
-
+                    var _voucher = voucherDetail.TransactionType;
                     #region Add voucher master record
                     var _voucherMaster = AddVoucherMaster(repo, journalVoucherMaster, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
                     #endregion
@@ -386,7 +422,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                         //   _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure.SalesAccount).FirstOrDefault();
 
                         #region Add voucher Details
-                        var _voucherDetail = AddVoucherDetails(repo, journalVoucherMaster, _branch, _voucherMaster, _accountLedger, bankDtl.Amount, bankDtl.ToLedgerId, bankDtl.ToLedgerCode);
+                        var _voucherDetail = AddVoucherDetails(repo, journalVoucherMaster, _branch, _voucherMaster, _accountLedger, bankDtl.Amount, bankDtl.ToLedgerId, bankDtl.ToLedgerCode, voucherDetail.TransactionType);
                         var _cashDtlLedger = GetAccountLedgerList().Where(x => x.LedgerCode == bankDtl.ToLedgerCode).FirstOrDefault();
                         #endregion
 
@@ -403,7 +439,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
                         AddAccountLedgerTransactions(repo, journalVoucherMaster, _voucherDetail, journalVoucherMaster.JournalVoucherDate);
                         #endregion
-                        AddVoucherDetails(repo, journalVoucherMaster, _branch, _voucherMaster, _accountLedger, bankDtl.Amount, bankDtl.ToLedgerId, bankDtl.ToLedgerCode, false);
+                        AddVoucherDetails(repo, journalVoucherMaster, _branch, _voucherMaster, _accountLedger, bankDtl.Amount, bankDtl.ToLedgerId, bankDtl.ToLedgerCode, voucherDetail.TransactionType, false);
                         AddAccountLedgerTransactions(repo, journalVoucherMaster, _voucherDetail, journalVoucherMaster.JournalVoucherDate, false);
                     }
 
