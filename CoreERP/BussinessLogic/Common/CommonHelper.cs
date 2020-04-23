@@ -111,10 +111,11 @@ namespace CoreERP.BussinessLogic.Common
         {
             try
             {
-                using Repository<Counters> repo = new Repository<Counters>();
-                return repo.Counters.AsEnumerable()
-.Where(c => c.BranchCode == branchCode)
-.FirstOrDefault();
+                //                using Repository<Counters> repo = new Repository<Counters>();
+                //                return repo.Counters.AsEnumerable()
+                //.Where(c => c.BranchCode == branchCode)
+                //.FirstOrDefault();
+                return null;
             }
             catch { throw; }
         }
@@ -122,10 +123,11 @@ namespace CoreERP.BussinessLogic.Common
         {
             try
             {
-                using Repository<Counters> repo = new Repository<Counters>();
-                var cntObj = new Counters() { Active = "Y", BranchCode = branchCode, NumberRange = rangestarts };
-                repo.Counters.Add(cntObj);
-                return repo.SaveChanges();
+                //using Repository<Counters> repo = new Repository<Counters>();
+                //var cntObj = new Counters() { Active = "Y", BranchCode = branchCode, NumberRange = rangestarts };
+                //repo.Counters.Add(cntObj);
+                //return repo.SaveChanges();
+                return -1;
             }
             catch { throw; }
         }
@@ -133,9 +135,10 @@ namespace CoreERP.BussinessLogic.Common
         {
             try
             {
-                using Repository<Counters> repo = new Repository<Counters>();
-                repo.Counters.Update(counters);
-                return repo.SaveChanges();
+                //using Repository<Counters> repo = new Repository<Counters>();
+                //repo.Counters.Update(counters);
+                //return repo.SaveChanges();
+                return -1;
             }
             catch { throw; }
         }

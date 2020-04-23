@@ -10,6 +10,20 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class UserManagmentHelper
     {
+        public TblUserNew GetEmployeeID(string userName)
+        {
+            try
+            {
+                using(Repository<TblUserNew> _repo=new Repository<TblUserNew>())
+                {
+                   return _repo.TblUserNew.Where(u => u.UserName == userName).FirstOrDefault();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
         public static Erpuser ValidateUser(Erpuser erpuser,out string errorMessage)
         {
             Erpuser user = null;
@@ -165,7 +179,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch (Exception ex) { throw ex; }
         }
-
         private bool IsShiftIdExists(decimal userID,string branchCode)
         {
             try
@@ -185,7 +198,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 return false;
             }
         }
-
         public string GetShiftId(decimal userId,string branchCode)
         {
             try
@@ -215,9 +227,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
                         OutTime = DateTime.Now
                     };
 
-                    using Repository<TblShift> _repo = new Repository<TblShift>();
-                    _repo.TblShift.Add(_shift);
-                    _repo.SaveChanges();
+                    using (Repository<TblShift> _repo = new Repository<TblShift>())
+                    {
+                        _repo.TblShift.Add(_shift);
+                        _repo.SaveChanges();
+                    }
                 }
                 else
                 {
@@ -246,7 +260,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 return "-1";
             }
         }
-
         public void LogoutShiftId(decimal userId, string branchCode,out string errorMessage)
         {
             try

@@ -41,12 +41,16 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
                 searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
-                
+                if (string.IsNullOrEmpty(searchCriteria.InvoiceNo))
+                    searchCriteria.InvoiceNo = null;
+                if (string.IsNullOrEmpty(searchCriteria.Name))
+                    searchCriteria.Name = null;
+
                 using (Repository<TblMemberMaster> _repo = new Repository<TblMemberMaster>())
                 {
                     return _repo.TblMemberMaster
                                  .Where(m =>m.MemberCode.ToString().Contains((searchCriteria.InvoiceNo == null ? m.MemberCode.ToString() : searchCriteria.InvoiceNo))
-                                          && m.MemberName.Contains((searchCriteria.Name ?? m.MemberName)))
+                                          && m.MemberName.ToLower().Contains((searchCriteria.Name ?? m.MemberName).ToLower()))
                                  .ToList();
                 }
             }
@@ -79,6 +83,24 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using (Repository<TblVehicleType> _repo = new Repository<TblVehicleType>())
                 {
                     return _repo.TblVehicleType.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public TblVehicle UpdateVehicle(TblVehicle vehicle)
+        {
+            try
+            {
+                using (Repository<TblVehicle> _repo = new Repository<TblVehicle>())
+                {
+                    _repo.TblVehicle.Update(vehicle);
+                    if (_repo.SaveChanges() > 0)
+                        return vehicle;
+
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -324,6 +346,27 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
+
+
         #endregion
+
+        public TblMemberMaster UpdateMemberMaster(TblMemberMaster memberMaster)
+        {
+            try
+            {
+                using (Repository<TblMemberMaster> _repo = new Repository<TblMemberMaster>())
+                {
+                    _repo.TblMemberMaster.Update(memberMaster);
+                    if (_repo.SaveChanges() > 0)
+                        return memberMaster;
+
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

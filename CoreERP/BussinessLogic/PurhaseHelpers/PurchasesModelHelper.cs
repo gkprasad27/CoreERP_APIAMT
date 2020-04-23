@@ -17,11 +17,13 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
         {
             try
             {
-                using Repository<Purchase> repo = new Repository<Purchase>();
-                //  MaterialTransationType
-                return repo.MatTranTypes.AsEnumerable()
-                .Where(x => (string.Compare(x.TransactionType, "PURCHASE", true) == 0))
-                .ToList();
+                //using Repository<Purchase> repo = new Repository<Purchase>();
+                ////  MaterialTransationType
+                //return repo.MatTranTypes.AsEnumerable()
+                //.Where(x => (string.Compare(x.TransactionType, "PURCHASE", true) == 0))
+                //.ToList();
+
+                return null;
             }
             catch { throw; }
         }
@@ -173,8 +175,9 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
         {
             try
             {
-                using Repository<PurchaseReturns> context = new Repository<PurchaseReturns>();
-                return context.PurchaseReturns.Where(p => p.GoodsReceiptDate != null).ToList();
+                //using Repository<PurchaseReturns> context = new Repository<PurchaseReturns>();
+                //return context.PurchaseReturns.Where(p => p.GoodsReceiptDate != null).ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -318,7 +321,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                               .Union(GLHelper.GetAsignCashAccBranch().Select(x => x.BankGlacc)).ToList();
 
                 using Repository<Glaccounts> repo = new Repository<Glaccounts>();
-                return repo.Glaccounts.AsEnumerable().Where(gl => glCodes.Contains(gl.Glcode)).ToList();
+                //return repo.Glaccounts.AsEnumerable().Where(gl => glCodes.Contains(gl.Glcode)).ToList();
+                return null;
             }
             catch { throw; }
         }

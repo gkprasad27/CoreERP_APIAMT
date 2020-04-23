@@ -12,60 +12,16 @@ namespace CoreERP.BussinessLogic.SalesHelper
 {
     public class BillingHelpers
     {
-        #region Invoice Returns
-        public static List<Invoice> GetBilling(string billNo)
-        {
-            try
-            {
-                using Repository<Invoice> repo = new Repository<Invoice>();
-                return repo.Invoice.Where(x => x.InvoiceNo == billNo).ToList();
-            }
-            catch { throw; }
-        }
-
-        public static bool IsBillExistsInBillReturns(string billNo)
-        {
-            try
-            {
-                using Repository<BillingReturns> repo = new Repository<BillingReturns>();
-                var result = repo.BillingReturns.Where(x => x.BillNo == billNo).ToList();
-
-                return (result.Count() > 0);
-            }
-            catch { throw; }
-        }
-        public static List<BillingReturns> RegisterBillingReturns(BillingReturns[] billingReturns)
-        {
-            try
-            {
-                using Repository<BillingReturns> repo = new Repository<BillingReturns>();
-                /* var lastreacord = _unitOfWork.Billing.GetAll().OrderByDescending(x => x.Code).FirstOrDefault();
-if (lastreacord != null)
-billing[0].Code = (int.Parse(lastreacord.Code) + 1).ToString();
-else
-billing[0].Code = "1";
-
-for (int i = 1; i < billing.Count(); i++)
-billing[i].Code = (int.Parse(billing[i - 1].Code) + 1).ToString();
-
-_unitOfWork.Billing.AddRange(billing);*/
-                repo.BillingReturns.AddRange(billingReturns);
-                if (repo.SaveChanges() > 0)
-                    return billingReturns.ToList();
-
-                return null;
-            }
-            catch { throw; }
-        }
-        #endregion
+       
 
         #region Card Type
         public static List<CardType> GetCardTypeList()
         {
             try
             {
-                using Repository<CardType> repo = new Repository<CardType>();
-                return repo.CardType.Where(c => c.Active == "Y").ToList();
+                //using Repository<CardType> repo = new Repository<CardType>();
+                //return repo.CardType.Where(c => c.Active == "Y").ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -73,9 +29,10 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<CardType> repo = new Repository<CardType>();
-                return repo.CardType.Where(c => c.Active.Equals("Y")
-&& c.Code == code).FirstOrDefault();
+                //                using Repository<CardType> repo = new Repository<CardType>();
+                //                return repo.CardType.Where(c => c.Active.Equals("Y")
+                //&& c.Code == code).FirstOrDefault();
+                return null;
             }
             catch { throw; }
         }
@@ -83,12 +40,13 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
-                return repo.Glaccounts
-.Where(x => x.Active.Equals("Y")
-&& (x.Nactureofaccount.Equals(natureofAccount))
-)
-.ToList();
+                //                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                //                return repo.Glaccounts
+                //.Where(x => x.Active.Equals("Y")
+                //&& (x.Nactureofaccount.Equals(natureofAccount))
+                //)
+                //.ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -104,17 +62,17 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<CardType> repo = new Repository<CardType>();
-                var reacord = repo.CardType.OrderByDescending(x => x.AddDate).FirstOrDefault();
-                if (reacord == null)
-                    cardType.Code = "1";
-                else
-                    cardType.Code = CommonHelper.IncreaseCode(cardType.Code);
+                //using Repository<CardType> repo = new Repository<CardType>();
+                //var reacord = repo.CardType.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                //if (reacord == null)
+                //    cardType.Code = "1";
+                //else
+                //    cardType.Code = CommonHelper.IncreaseCode(cardType.Code);
 
-                cardType.Active = "Y";
-                repo.CardType.Add(cardType);
-                if (repo.SaveChanges() > 0)
-                    return cardType;
+                //cardType.Active = "Y";
+                //repo.CardType.Add(cardType);
+                //if (repo.SaveChanges() > 0)
+                //    return cardType;
 
                 return null;
 
@@ -125,10 +83,10 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<CardType> repo = new Repository<CardType>();
-                repo.CardType.Update(cardType);
-                if (repo.SaveChanges() > 0)
-                    return cardType;
+                //using Repository<CardType> repo = new Repository<CardType>();
+                //repo.CardType.Update(cardType);
+                //if (repo.SaveChanges() > 0)
+                //    return cardType;
 
                 return null;
             }
@@ -138,12 +96,12 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<CardType> repo = new Repository<CardType>();
-                var cardtype = BillingHelpers.GetCardTypeList(code);
-                cardtype.Active = "N";
-                repo.CardType.Update(cardtype);
-                if (repo.SaveChanges() > 0)
-                    return cardtype;
+                //using Repository<CardType> repo = new Repository<CardType>();
+                //var cardtype = BillingHelpers.GetCardTypeList(code);
+                //cardtype.Active = "N";
+                //repo.CardType.Update(cardtype);
+                //if (repo.SaveChanges() > 0)
+                //    return cardtype;
 
                 return null;
             }
@@ -156,8 +114,10 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<Finance> repo = new Repository<Finance>();
-                return repo.Finance.Where(x => x.Active.Equals("Y")).ToList();
+                //using Repository<Finance> repo = new Repository<Finance>();
+                //return repo.Finance.Where(x => x.Active.Equals("Y")).ToList();
+
+                return null;
             }
             catch { throw; }
         }
@@ -165,8 +125,10 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<Finance> repo = new Repository<Finance>();
-                return repo.Finance.Where(x => x.Active.Equals("Y") && x.Code == code).FirstOrDefault();
+                //using Repository<Finance> repo = new Repository<Finance>();
+                //return repo.Finance.Where(x => x.Active.Equals("Y") && x.Code == code).FirstOrDefault();
+
+                return null;
             }
             catch { throw; }
         }
@@ -178,13 +140,14 @@ _unitOfWork.Billing.AddRange(billing);*/
                 //            where accounts.Nactureofaccount == "FINANCECUSTOMER"
                 //            select accounts)
 
-                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
-                return repo.Glaccounts
-.AsEnumerable()
-.Where(f => f.Active == "Y"
-&& f.Nactureofaccount == NATURESOFACCOUNTS.FINANCECUSTOMER.ToString()
-)
-.ToList();
+                //                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                //                return repo.Glaccounts
+                //.AsEnumerable()
+                //.Where(f => f.Active == "Y"
+                //&& f.Nactureofaccount == NATURESOFACCOUNTS.FINANCECUSTOMER.ToString()
+                //)
+                //.ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -192,10 +155,11 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<Brand> repo = new Repository<Brand>();
-                return repo.Brand.AsEnumerable()
-.Where(b => b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase))
-.ToList();
+                //                using Repository<Brand> repo = new Repository<Brand>();
+                //                return repo.Brand.AsEnumerable()
+                //.Where(b => b.Active.Equals("Y", StringComparison.OrdinalIgnoreCase))
+                //.ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -216,20 +180,20 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<Finance> repo = new Repository<Finance>();
-                finance.AddDate = DateTime.Now;
-                finance.EditDate = DateTime.Now;
-                finance.Active = "Y";
+                //using Repository<Finance> repo = new Repository<Finance>();
+                //finance.AddDate = DateTime.Now;
+                //finance.EditDate = DateTime.Now;
+                //finance.Active = "Y";
 
-                var reacord = repo.Finance.OrderByDescending(x => x.AddDate).FirstOrDefault();
-                if (reacord != null)
-                    finance.Code = CommonHelper.IncreaseCode(reacord.Code);
-                else
-                    finance.Code = "1";
+                //var reacord = repo.Finance.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                //if (reacord != null)
+                //    finance.Code = CommonHelper.IncreaseCode(reacord.Code);
+                //else
+                //    finance.Code = "1";
 
-                repo.Finance.Add(finance);
-                if (repo.SaveChanges() > 0)
-                    return finance;
+                //repo.Finance.Add(finance);
+                //if (repo.SaveChanges() > 0)
+                //    return finance;
 
                 return null;
             }
@@ -239,11 +203,11 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<Finance> repo = new Repository<Finance>();
-                finance.EditDate = DateTime.Now;
-                repo.Finance.Update(finance);
-                if (repo.SaveChanges() > 0)
-                    return finance;
+                //using Repository<Finance> repo = new Repository<Finance>();
+                //finance.EditDate = DateTime.Now;
+                //repo.Finance.Update(finance);
+                //if (repo.SaveChanges() > 0)
+                //    return finance;
 
                 return null;
             }
@@ -253,13 +217,13 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                var financeEntity = GetFinances(code);
-                financeEntity.Active = "N";
-                using Repository<Finance> repo = new Repository<Finance>();
-                financeEntity.EditDate = DateTime.Now;
-                repo.Finance.Update(financeEntity);
-                if (repo.SaveChanges() > 0)
-                    return financeEntity;
+                //var financeEntity = GetFinances(code);
+                //financeEntity.Active = "N";
+                //using Repository<Finance> repo = new Repository<Finance>();
+                //financeEntity.EditDate = DateTime.Now;
+                //repo.Finance.Update(financeEntity);
+                //if (repo.SaveChanges() > 0)
+                //    return financeEntity;
 
                 return null;
             }
@@ -272,10 +236,11 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<CustomerReceipts> repo = new Repository<CustomerReceipts>();
-                return repo.CustomerReceipts.AsEnumerable()
-.Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase))
-.ToList();
+                //                using Repository<CustomerReceipts> repo = new Repository<CustomerReceipts>();
+                //                return repo.CustomerReceipts.AsEnumerable()
+                //.Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase))
+                //.ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -283,12 +248,13 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<CustomerReceipts> repo = new Repository<CustomerReceipts>();
-                return repo.CustomerReceipts.AsEnumerable()
-.Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
-&& c.SeqId == seqID
-)
-.FirstOrDefault();
+                //                using Repository<CustomerReceipts> repo = new Repository<CustomerReceipts>();
+                //                return repo.CustomerReceipts.AsEnumerable()
+                //.Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+                //&& c.SeqId == seqID
+                //)
+                //.FirstOrDefault();
+                return null;
             }
             catch { throw; }
         }
@@ -296,8 +262,10 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<AsignmentCashAccBranch> repo = new Repository<AsignmentCashAccBranch>();
-                return repo.AsignmentCashAccBranch.Select(x => x).ToList();
+                //using Repository<AsignmentCashAccBranch> repo = new Repository<AsignmentCashAccBranch>();
+                //return repo.AsignmentCashAccBranch.Select(x => x).ToList();
+
+                return null;
             }
             catch { throw; }
         }
@@ -305,13 +273,13 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<CustomerReceipts> repo = new Repository<CustomerReceipts>();
-                customerReceipt.AddDate = DateTime.Now;
-                customerReceipt.EditDate = DateTime.Now;
+                //using Repository<CustomerReceipts> repo = new Repository<CustomerReceipts>();
+                //customerReceipt.AddDate = DateTime.Now;
+                //customerReceipt.EditDate = DateTime.Now;
 
-                repo.CustomerReceipts.Add(customerReceipt);
-                if (repo.SaveChanges() > 0)
-                    return customerReceipt;
+                //repo.CustomerReceipts.Add(customerReceipt);
+                //if (repo.SaveChanges() > 0)
+                //    return customerReceipt;
 
                 return null;
             }
@@ -321,11 +289,11 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<CustomerReceipts> repo = new Repository<CustomerReceipts>();
-                customerReceipt.EditDate = DateTime.Now;
-                repo.CustomerReceipts.Update(customerReceipt);
-                if (repo.SaveChanges() > 0)
-                    return customerReceipt;
+                //using Repository<CustomerReceipts> repo = new Repository<CustomerReceipts>();
+                //customerReceipt.EditDate = DateTime.Now;
+                //repo.CustomerReceipts.Update(customerReceipt);
+                //if (repo.SaveChanges() > 0)
+                //    return customerReceipt;
 
                 return null;
             }
@@ -335,12 +303,12 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<CustomerReceipts> repo = new Repository<CustomerReceipts>();
-                var custobj = GetCustomerReceiptList(seqID);
-                custobj.Active = "N";
-                repo.CustomerReceipts.Update(custobj);
-                if (repo.SaveChanges() > 0)
-                    return custobj;
+                //using Repository<CustomerReceipts> repo = new Repository<CustomerReceipts>();
+                //var custobj = GetCustomerReceiptList(seqID);
+                //custobj.Active = "N";
+                //repo.CustomerReceipts.Update(custobj);
+                //if (repo.SaveChanges() > 0)
+                //    return custobj;
 
                 return null;
             }
@@ -350,8 +318,10 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                return repo.VoucherTypes.Where(x => x.Active.Equals("Y")).ToList();
+                //using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+                //return repo.VoucherTypes.Where(x => x.Active.Equals("Y")).ToList();
+
+                return null;
             }
             catch { throw; }
         }
@@ -369,20 +339,22 @@ _unitOfWork.Billing.AddRange(billing);*/
             try
             {
                 List<string> accNosList = new List<string>();
-                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
-                {
-                    accNosList = ((from asig in repo.AsignmentCashAccBranch.ToList()
-                                   where asig.BankGlacc != null
-                                   select asig.BankGlacc).Union(from aasigcc in repo.AsignmentCashAccBranch.ToList()
-                                                                where aasigcc.CashGlacc != null
-                                                                select aasigcc.CashGlacc)).ToList();
-                }
-                using (Repository<Glaccounts> repo=new Repository<Glaccounts>())
-                {
-                    return (from glacc in repo.Glaccounts.ToList()
-                            where accNosList.Contains(glacc.Glcode)
-                            select glacc).ToList();
-                }
+                //using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
+                //{
+                //    accNosList = ((from asig in repo.AsignmentCashAccBranch.ToList()
+                //                   where asig.BankGlacc != null
+                //                   select asig.BankGlacc).Union(from aasigcc in repo.AsignmentCashAccBranch.ToList()
+                //                                                where aasigcc.CashGlacc != null
+                //                                                select aasigcc.CashGlacc)).ToList();
+                //}
+                //using (Repository<Glaccounts> repo=new Repository<Glaccounts>())
+                //{
+                //    return (from glacc in repo.Glaccounts.ToList()
+                //            where accNosList.Contains(glacc.Glcode)
+                //            select glacc).ToList();
+                //}
+
+                return null;
             }
             catch { throw; }
 
@@ -394,10 +366,11 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<MatTranTypes> repo = new Repository<MatTranTypes>();
-                return repo.MatTranTypes.AsEnumerable()
-.Where(m => m.Active.Equals("Y", StringComparison.OrdinalIgnoreCase))
-.ToList();
+                //                using Repository<MatTranTypes> repo = new Repository<MatTranTypes>();
+                //                return repo.MatTranTypes.AsEnumerable()
+                //.Where(m => m.Active.Equals("Y", StringComparison.OrdinalIgnoreCase))
+                //.ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -405,12 +378,13 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<MatTranTypes> repo = new Repository<MatTranTypes>();
-                return repo.MatTranTypes.AsEnumerable()
-.Where(m => m.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
-&& m.Code == code
-)
-.FirstOrDefault();
+                //                using Repository<MatTranTypes> repo = new Repository<MatTranTypes>();
+                //                return repo.MatTranTypes.AsEnumerable()
+                //.Where(m => m.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+                //&& m.Code == code
+                //)
+                //.FirstOrDefault();
+                return null;
             }
             catch { throw; }
         }
@@ -426,21 +400,21 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<MatTranTypes> repo = new Repository<MatTranTypes>();
-                matTranTypes.AddDate = DateTime.Now;
+                //using Repository<MatTranTypes> repo = new Repository<MatTranTypes>();
+                //matTranTypes.AddDate = DateTime.Now;
 
-                var record = repo.MatTranTypes.OrderByDescending(x => x.AddDate).FirstOrDefault();
-                if (record != null)
-                {
-                    matTranTypes.Code = CommonHelper.IncreaseCode(record.Code);
-                }
-                else
-                {
-                    matTranTypes.Code = "1";
-                }
-                repo.MatTranTypes.Add(matTranTypes);
-                if (repo.SaveChanges() > 0)
-                    return matTranTypes;
+                //var record = repo.MatTranTypes.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                //if (record != null)
+                //{
+                //    matTranTypes.Code = CommonHelper.IncreaseCode(record.Code);
+                //}
+                //else
+                //{
+                //    matTranTypes.Code = "1";
+                //}
+                //repo.MatTranTypes.Add(matTranTypes);
+                //if (repo.SaveChanges() > 0)
+                //    return matTranTypes;
 
                 return null;
             }
@@ -450,10 +424,10 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<MatTranTypes> repo = new Repository<MatTranTypes>();
-                repo.MatTranTypes.Update(matTranTypes);
-                if (repo.SaveChanges() > 0)
-                    return matTranTypes;
+                //using Repository<MatTranTypes> repo = new Repository<MatTranTypes>();
+                //repo.MatTranTypes.Update(matTranTypes);
+                //if (repo.SaveChanges() > 0)
+                //    return matTranTypes;
 
                 return null;
             }
@@ -463,12 +437,12 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<MatTranTypes> repo = new Repository<MatTranTypes>();
-                var mattransObj = repo.MatTranTypes.Where(m => m.SeqId == seqID).FirstOrDefault();
-                mattransObj.Active = "N";
-                repo.MatTranTypes.Update(mattransObj);
-                if (repo.SaveChanges() > 0)
-                    return mattransObj;
+                //using Repository<MatTranTypes> repo = new Repository<MatTranTypes>();
+                //var mattransObj = repo.MatTranTypes.Where(m => m.SeqId == seqID).FirstOrDefault();
+                //mattransObj.Active = "N";
+                //repo.MatTranTypes.Update(mattransObj);
+                //if (repo.SaveChanges() > 0)
+                //    return mattransObj;
 
                 return null;
             }
@@ -510,8 +484,10 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<Invoice> repo = new Repository<Invoice>();
-                return repo.Invoice.AsEnumerable().Where(b => b.Active == "Y" && b.BranchCode == branchCode).ToList();
+                //using Repository<Invoice> repo = new Repository<Invoice>();
+                //return repo.Invoice.AsEnumerable().Where(b => b.Active == "Y" && b.BranchCode == branchCode).ToList();
+
+                return null;
             }
             catch { throw; }
         }
@@ -521,11 +497,12 @@ _unitOfWork.Billing.AddRange(billing);*/
         {
             try
             {
-                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
-                return repo.Glaccounts
-.Where(gl => gl.Active == "Y"
-&& gl.Nactureofaccount == NATURESOFACCOUNTS.CASH.ToString())
-.ToList();
+                //                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                //                return repo.Glaccounts
+                //.Where(gl => gl.Active == "Y"
+                //&& gl.Nactureofaccount == NATURESOFACCOUNTS.CASH.ToString())
+                //.ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -534,12 +511,14 @@ _unitOfWork.Billing.AddRange(billing);*/
             try
             {
                 //cashAcctobranchAccounts = (from asiacc in _unitOfWork.AsignmentCashAccBranch.GetAll() select new { key = asiacc.CashGLAcc, value = asiacc.CashGLAcc }),
-                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
-                return (from gl in repo.Glaccounts.AsEnumerable()
-                        join asigacc in repo.AsignmentCashAccBranch.AsEnumerable().Where(x => x.Active == "Y")
-                         on gl.Glcode equals asigacc.CashGlacc
-                        where asigacc.BranchCode == branchcode
-                        select gl).ToList();
+                //using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                //return (from gl in repo.Glaccounts.AsEnumerable()
+                //        join asigacc in repo.AsignmentCashAccBranch.AsEnumerable().Where(x => x.Active == "Y")
+                //         on gl.Glcode equals asigacc.CashGlacc
+                //        where asigacc.BranchCode == branchcode
+                //        select gl).ToList();
+
+                return null;
             }
             catch { throw; }
         }

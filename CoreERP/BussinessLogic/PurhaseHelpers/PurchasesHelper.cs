@@ -240,24 +240,25 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                             //add voucher typedetails
                             var _branch = GetBranches(purchaseInvoice.BranchCode).FirstOrDefault();
-
                             var _accountLedger = GetAccountLedgers(purchaseInvoice.LedgerCode);
                             var _vouchertType = GetVoucherType(13).FirstOrDefault();
+
+                            purchaseInvoice.LedgerId = _accountLedger.LedgerId;
+                            purchaseInvoice.BranchName = _branch.BranchName;
+                            purchaseInvoice.EmployeeId = new UserManagmentHelper().GetEmployeeID(purchaseInvoice.UserName)?.EmployeeId;
+                            purchaseInvoice.Discount = purchaseInvoice.Discount ?? 0;
+                            purchaseInvoice.ShiftId = shifId;
+                            purchaseInvoice.VoucherTypeId = 13;
+                            purchaseInvoice.ServerDateTime = DateTime.Now;
+                            purchaseInvoice.PurchaseInvDate = purchaseInvoice.PurchaseInvDate ?? DateTime.Now;
+                            purchaseInvoice.IsPurchaseReturned = false;
 
                             #region Add voucher master record
                             var _voucherMaster = AddVoucherMaster(context, purchaseInvoice, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
                             #endregion
 
-                            purchaseInvoice.LedgerId = _accountLedger.LedgerId;
-                            purchaseInvoice.BranchName = _branch.BranchName;
-                            purchaseInvoice.EmployeeId = -1;
-                            purchaseInvoice.Discount = purchaseInvoice.Discount ?? 0;
-                            purchaseInvoice.ShiftId = shifId;
+                           
                             purchaseInvoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
-                            purchaseInvoice.VoucherTypeId = 13;
-                            purchaseInvoice.ServerDateTime = DateTime.Now;
-                            purchaseInvoice.PurchaseInvDate = purchaseInvoice.PurchaseInvDate ?? DateTime.Now;
-                            purchaseInvoice.IsPurchaseReturned = false;
                             context.TblPurchaseInvoice.Add(purchaseInvoice);
                             context.SaveChanges();
 
@@ -272,6 +273,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 #endregion
 
                                 #region InvioceDetail
+                               
+                                purInv.PurchaseDate = purchaseInvoice.PurchaseInvDate;
                                 purInv.PurchaseInvId = purchaseInvoice.PurchaseInvId;
                                 purInv.VoucherNo = purchaseInvoice.VoucherNo;
                                 purInv.PurchaseNo = purchaseInvoice.PurchaseInvNo;
@@ -368,7 +371,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _voucherMaster.ServerDate = DateTime.Now;
                 _voucherMaster.UserId = purchaseinvoice.UserId;
                 _voucherMaster.UserName = purchaseinvoice.UserName;
-                _voucherMaster.EmployeeId = -1;
+                _voucherMaster.ShiftId = purchaseinvoice.ShiftId;
+                _voucherMaster.EmployeeId = purchaseinvoice.EmployeeId ?? -1;
 
                 context.TblVoucherMaster.Add(_voucherMaster);
                 if (context.SaveChanges() > 0)

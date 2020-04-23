@@ -28,16 +28,16 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
                 //    accountingClass.Code = "1";
 
 
-                if (GetAccountingClassList(accountingClass.Code).Count > 0)
-                {
-                    errorMsg = "Code already exists";
-                    return null;
-                }
-                accountingClass.Active = "Y";
-                accountingClass.AddDate = DateTime.Now;
-                repo.AccountingClass.Add(accountingClass);
-                if (repo.SaveChanges() > 0)
-                    return accountingClass;
+                //if (GetAccountingClassList(accountingClass.Code).Count > 0)
+                //{
+                //    errorMsg = "Code already exists";
+                //    return null;
+                //}
+                //accountingClass.Active = "Y";
+                //accountingClass.AddDate = DateTime.Now;
+                //repo.AccountingClass.Add(accountingClass);
+                //if (repo.SaveChanges() > 0)
+                //    return accountingClass;
 
                 return null;
             }
@@ -50,8 +50,10 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using Repository<AccountingClass> repo = new Repository<AccountingClass>();
-                return repo.AccountingClass.Where(x => x.Active == "Y").ToList();
+                //using Repository<AccountingClass> repo = new Repository<AccountingClass>();
+                //return repo.AccountingClass.Where(x => x.Active == "Y").ToList();
+
+                return null;
             }
             catch { throw; }
         }
@@ -60,8 +62,9 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using Repository<AccountingClass> repo = new Repository<AccountingClass>();
-                return repo.AccountingClass.Where(x => x.Code == code).ToList();
+                //    using Repository<AccountingClass> repo = new Repository<AccountingClass>();
+                //    return repo.AccountingClass.Where(x => x.Code == code).ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -70,10 +73,10 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using Repository<AccountingClass> repo = new Repository<AccountingClass>();
-                repo.AccountingClass.Update(accountingClass);
-                if (repo.SaveChanges() > 0)
-                    return accountingClass;
+                //using Repository<AccountingClass> repo = new Repository<AccountingClass>();
+                //repo.AccountingClass.Update(accountingClass);
+                //if (repo.SaveChanges() > 0)
+                //    return accountingClass;
 
                 return null;
             }
@@ -86,12 +89,12 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using Repository<AccountingClass> repo = new Repository<AccountingClass>();
-                var accountClass = repo.AccountingClass.Where(x => x.Code == code).FirstOrDefault();
-                accountClass.Active = "N";
-                repo.AccountingClass.Update(accountClass);
-                if (repo.SaveChanges() > 0)
-                    return accountClass;
+                //using Repository<AccountingClass> repo = new Repository<AccountingClass>();
+                //var accountClass = repo.AccountingClass.Where(x => x.Code == code).FirstOrDefault();
+                //accountClass.Active = "N";
+                //repo.AccountingClass.Update(accountClass);
+                //if (repo.SaveChanges() > 0)
+                //    return accountClass;
 
                 return null;
             }

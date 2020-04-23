@@ -25,7 +25,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                return repo.Interpretation.ToList();
+                return null;
+                //return repo.Interpretation.ToList();
             }
             catch { throw; }
         }
@@ -35,17 +36,19 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                var result = repo.Interpretation.Where(x => x.Code != null).OrderByDescending(x => x.Code).FirstOrDefault();
-                if (result == null)
-                    interpretation.Code = "1";
-                else
-                {
-                    string codeno = (int.Parse(result.Code) + 1).ToString();
-                    interpretation.Code = codeno;
-                }
+                //var result = repo.Interpretation.Where(x => x.Code != null).OrderByDescending(x => x.Code).FirstOrDefault();
+                //if (result == null)
+                //    interpretation.Code = "1";
+                //else
+                //{
+                //    string codeno = (int.Parse(result.Code) + 1).ToString();
+                //    interpretation.Code = codeno;
+                //}
 
-                repo.Interpretation.Add(interpretation);
-                return repo.SaveChanges();
+                //repo.Interpretation.Add(interpretation);
+                //return repo.SaveChanges();
+
+                return 0;
             }
             catch
             {
@@ -57,8 +60,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                repo.Interpretation.Update(interpretation);
-                return repo.SaveChanges();
+                //repo.Interpretation.Update(interpretation);
+                //return repo.SaveChanges();
+                return 0;
             }
             catch
             {
@@ -71,9 +75,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-               var intpr = repo.Interpretation.Where(x=> x.Code == code).FirstOrDefault();
-                repo.Interpretation.Remove(intpr);
-                return repo.SaveChanges();
+                //var intpr = repo.Interpretation.Where(x=> x.Code == code).FirstOrDefault();
+                // repo.Interpretation.Remove(intpr);
+                // return repo.SaveChanges();
+
+                return 0;
             }
             catch
             {

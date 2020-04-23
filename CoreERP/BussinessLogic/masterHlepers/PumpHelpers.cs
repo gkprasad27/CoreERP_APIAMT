@@ -84,8 +84,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
-                return repo.MaterialGroup.ToList();
+                //using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
+                //return repo.MaterialGroup.ToList();
+
+                return null;
             }
             catch { throw; }
         }
@@ -113,10 +115,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
-                return repo.MaterialGroup
-.Where(x => x.Code == code)
-.ToList();
+                //                using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
+                //                return repo.MaterialGroup
+                //.Where(x => x.Code == code)
+                //.ToList();
+                return null;
             }
             catch { throw; }
         }

@@ -12,8 +12,10 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<Pfmaster> repo = new Repository<Pfmaster>();
-                return repo.Pfmaster.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+                //using Repository<Pfmaster> repo = new Repository<Pfmaster>();
+                //return repo.Pfmaster.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+
+                return null;
             }
             catch { throw; }
         }
@@ -22,8 +24,9 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<ComponentMaster> repo = new Repository<ComponentMaster>();
-                return repo.ComponentMaster.AsEnumerable().Where(m => m.Active == "Y").ToList();
+                //using Repository<ComponentMaster> repo = new Repository<ComponentMaster>();
+                //return repo.ComponentMaster.AsEnumerable().Where(m => m.Active == "Y").ToList();
+                return null;
             }
             catch (Exception ex) { throw ex; }
         }
@@ -31,10 +34,11 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<Pfmaster> repo = new Repository<Pfmaster>();
-                return repo.Pfmaster.AsEnumerable()
-.Where(x => x.PftypeName.Equals(PFCode))
-.FirstOrDefault();
+                //                using Repository<Pfmaster> repo = new Repository<Pfmaster>();
+                //                return repo.Pfmaster.AsEnumerable()
+                //.Where(x => x.PftypeName.Equals(PFCode))
+                //.FirstOrDefault();
+                return null;
             }
             catch { throw; }
         }
@@ -43,11 +47,11 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<Pfmaster> repo = new Repository<Pfmaster>();
-                pfMaster.Active = "Y";
-                repo.Pfmaster.Add(pfMaster);
-                if (repo.SaveChanges() > 0)
-                    return pfMaster;
+                //using Repository<Pfmaster> repo = new Repository<Pfmaster>();
+                //pfMaster.Active = "Y";
+                //repo.Pfmaster.Add(pfMaster);
+                //if (repo.SaveChanges() > 0)
+                //    return pfMaster;
 
                 return null;
             }
@@ -58,10 +62,10 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<Pfmaster> repo = new Repository<Pfmaster>();
-                repo.Pfmaster.Update(pfMaster);
-                if (repo.SaveChanges() > 0)
-                    return pfMaster;
+                //using Repository<Pfmaster> repo = new Repository<Pfmaster>();
+                //repo.Pfmaster.Update(pfMaster);
+                //if (repo.SaveChanges() > 0)
+                //    return pfMaster;
 
                 return null;
             }
@@ -72,12 +76,12 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<Pfmaster> repo = new Repository<Pfmaster>();
-                var pf = repo.Pfmaster.Where(x => x.PftypeName == code).FirstOrDefault();
-                pf.Active = "N";
-                repo.Pfmaster.Update(pf);
-                if (repo.SaveChanges() > 0)
-                    return pf;
+                //using Repository<Pfmaster> repo = new Repository<Pfmaster>();
+                //var pf = repo.Pfmaster.Where(x => x.PftypeName == code).FirstOrDefault();
+                //pf.Active = "N";
+                //repo.Pfmaster.Update(pf);
+                //if (repo.SaveChanges() > 0)
+                //    return pf;
 
                 return null;
             }

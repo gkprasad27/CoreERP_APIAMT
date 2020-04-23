@@ -427,5 +427,113 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpPut("UpdateMemberMaster")]
+        public async Task<IActionResult> UpdateMemberMaster([FromBody]TblMemberMaster memberMaster)
+        {
+            var result = await Task.Run(() =>
+            {
+                string errorMessage = string.Empty;
+                List<TblVehicle> _vehicles = null;
+                try
+                {
+                    // var _member = objData["member"].ToObject<TblMemberMaster>();
+
+                    if (memberMaster == null)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+                    }
+
+                    if (memberMaster.MemberCode == null)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "member code can not be null/empty." });
+                    }
+
+                    var result = new MemberMasterHelper().UpdateMemberMaster(memberMaster);
+                    if (result == null)
+                    {
+                        if (string.IsNullOrEmpty(errorMessage))
+                        {
+                            errorMessage = "Registration Failed.";
+                        }
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
+                    }
+
+                    dynamic expando = new ExpandoObject();
+                    expando.Member = result;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Empty;
+
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
+        }
+
+        [HttpPut("UpdateVehicle")]
+        public async Task<IActionResult> UpdateVehicle([FromBody]TblVehicle vehicle)
+        {
+            var result = await Task.Run(() =>
+            {
+                string errorMessage = string.Empty;
+                List<TblVehicle> _vehicles = null;
+                try
+                {
+                    // var _member = objData["member"].ToObject<TblMemberMaster>();
+
+                    if (vehicle == null)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+                    }
+
+                    if (vehicle.MemberCode == null)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "member code can not be null/empty." });
+                    }
+
+                    var result = new MemberMasterHelper().UpdateVehicle(vehicle);
+                    if (result == null)
+                    {
+                        if (string.IsNullOrEmpty(errorMessage))
+                        {
+                            errorMessage = "Registration Failed.";
+                        }
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
+                    }
+
+                    dynamic expando = new ExpandoObject();
+                    expando.Member = result;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Empty;
+
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
+        }
+
     }
 }

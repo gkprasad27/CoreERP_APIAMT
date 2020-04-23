@@ -12,8 +12,10 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<StructureComponents> repo = new Repository<StructureComponents>();
-                return repo.StructureComponents.Where(c => c.Active == "Y").ToList();
+                //using Repository<StructureComponents> repo = new Repository<StructureComponents>();
+                //return repo.StructureComponents.Where(c => c.Active == "Y").ToList();
+
+                return null;
             }
             catch { throw; }
         }
@@ -22,10 +24,11 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<StructureComponents> repo = new Repository<StructureComponents>();
-                return repo.StructureComponents
-.Where(x => x.CompanyCode == compCode)
-.FirstOrDefault();
+                //                using Repository<StructureComponents> repo = new Repository<StructureComponents>();
+                //                return repo.StructureComponents
+                //.Where(x => x.CompanyCode == compCode)
+                //.FirstOrDefault();
+                return null;
             }
             catch { throw; }
         }
@@ -34,10 +37,10 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<StructureComponents> repo = new Repository<StructureComponents>();
-                repo.StructureComponents.AddRange(structureComponents);
-                if (repo.SaveChanges() > 0)
-                    return structureComponents;
+                //using Repository<StructureComponents> repo = new Repository<StructureComponents>();
+                //repo.StructureComponents.AddRange(structureComponents);
+                //if (repo.SaveChanges() > 0)
+                //    return structureComponents;
 
                 return null;
             }
@@ -48,10 +51,10 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<StructureComponents> repo = new Repository<StructureComponents>();
-                repo.StructureComponents.UpdateRange(structureComponents);
-                if (repo.SaveChanges() > 0)
-                    return structureComponents;
+                //using Repository<StructureComponents> repo = new Repository<StructureComponents>();
+                //repo.StructureComponents.UpdateRange(structureComponents);
+                //if (repo.SaveChanges() > 0)
+                //    return structureComponents;
 
                 return null;
             }
@@ -62,12 +65,12 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<StructureComponents> repo = new Repository<StructureComponents>();
-                var structure = repo.StructureComponents.Where(x => x.StructureName == code).FirstOrDefault();
-                structure.Active = "N";
-                repo.StructureComponents.Update(structure);
-                if (repo.SaveChanges() > 0)
-                    return structure;
+                //using Repository<StructureComponents> repo = new Repository<StructureComponents>();
+                //var structure = repo.StructureComponents.Where(x => x.StructureName == code).FirstOrDefault();
+                //structure.Active = "N";
+                //repo.StructureComponents.Update(structure);
+                //if (repo.SaveChanges() > 0)
+                //    return structure;
 
                 return null;
             }
@@ -78,8 +81,9 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<ComponentMaster> repo = new Repository<ComponentMaster>();
-                return repo.ComponentMaster.Where(m => m.Active == "Y").ToList();
+                //    using Repository<ComponentMaster> repo = new Repository<ComponentMaster>();
+                //    return repo.ComponentMaster.Where(m => m.Active == "Y").ToList();
+                return null;
             }
             catch (Exception ex) { throw ex; }
         }
@@ -88,8 +92,9 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<StructureCreation> repo = new Repository<StructureCreation>();
-                return repo.StructureCreation.Where(m => m.Active == "Y").ToList();
+                //using Repository<StructureCreation> repo = new Repository<StructureCreation>();
+                //return repo.StructureCreation.Where(m => m.Active == "Y").ToList();
+                return null;
             }
             catch (Exception ex) { throw ex; }
         }
@@ -97,8 +102,9 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<Pfmaster> repo = new Repository<Pfmaster>();
-                return repo.Pfmaster.Where(m => m.Active == "Y").ToList();
+                //using Repository<Pfmaster> repo = new Repository<Pfmaster>();
+                //return repo.Pfmaster.Where(m => m.Active == "Y").ToList();
+                return null;
             }
             catch (Exception ex) { throw ex; }
         }
