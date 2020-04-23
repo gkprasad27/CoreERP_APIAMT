@@ -22,7 +22,5 @@ namespace CoreERP.Models
         public string ResponsiblePerson { get; set; }
         public string Active { get; set; }
         public DateTime? AddDate { get; set; }
-
-        public virtual Companies CompCodeNavigation { get; set; }
     }
 }

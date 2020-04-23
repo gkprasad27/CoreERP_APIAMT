@@ -5,10 +5,10 @@ namespace CoreERP.Models
 {
     public partial class Companies
     {
-        public Companies()
-        {
-            CostCenters = new HashSet<CostCenters>();
-        }
+        //public Companies()
+        //{
+        //    CostCenters = new HashSet<CostCenters>();
+        //}
 
         public string CompanyCode { get; set; }
         public string Address1 { get; set; }
@@ -41,6 +41,6 @@ namespace CoreERP.Models
         public string City { get; set; }
         public DateTime? AddDate { get; set; }
 
-        public virtual ICollection<CostCenters> CostCenters { get; set; }
+        //public virtual ICollection<CostCenters> CostCenters { get; set; }
     }
 }

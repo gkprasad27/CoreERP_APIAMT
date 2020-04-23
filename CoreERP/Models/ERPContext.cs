@@ -247,6 +247,7 @@ namespace CoreERP.Models
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=192.168.2.26;Database=ERP;User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
+                //optionsBuilder.UseSqlServer("Server=192.168.2.26;Database=ERP_Test;User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
             }
         }
 
@@ -266,13 +267,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<CostCenters>(entity =>
             {
-                entity.HasKey(e => new { e.Code, e.CompCode });
-
-                entity.Property(e => e.Code)
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.CompCode).HasMaxLength(20);
+                entity.HasNoKey();
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
@@ -296,6 +291,15 @@ namespace CoreERP.Models
                 entity.Property(e => e.Address4)
                     .HasMaxLength(40)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CompCode)
+                    .IsRequired()
+                    .HasMaxLength(20);
 
                 entity.Property(e => e.Email)
                     .HasMaxLength(100)
