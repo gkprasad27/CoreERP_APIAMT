@@ -251,7 +251,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             using ERPContext context = new ERPContext();
 
-            using var dbTransaction = context.Database.BeginTransaction();
+            //using var dbTransaction = context.Database.BeginTransaction();
             try
             {
                 decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(stockreceipt.UserId, null));
@@ -266,14 +266,14 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     var _tobranch = GetBranches(ext).ToArray().FirstOrDefault();
                     stockreceipt.FromBranchCode = _branch.BranchCode;
                     stockreceipt.FromBranchName = _branch.BranchName;
-                    stockreceipt.ToBranchCode = str.Substring(0, str.LastIndexOf('-') + 0); 
+                    stockreceipt.ToBranchCode = str.Substring(0, str.LastIndexOf('-') + 0);
                     stockreceipt.ToBranchName = _tobranch.BranchName;
                     stockreceipt.ServerDateTime = DateTime.Now;
                     stockreceipt.ReceiptDate = stockreceipt.ReceiptDate;
                     stockreceipt.ReceiptNo = stockreceipt.ReceiptNo;
-                    if(shifId == 0)
+                    if (shifId == 0)
                     {
-                        stockreceipt.ShiftId =0;
+                        stockreceipt.ShiftId = 0;
                     }
                     else
                     {
@@ -282,7 +282,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     var empid = context.TblUserNew.Where(x => x.UserName == stockreceipt.UserName).FirstOrDefault();
                     stockreceipt.UserId = stockreceipt.UserId;
                     stockreceipt.UserName = stockreceipt.UserName;
-                    stockreceipt.EmployeeId = empid.EmployeeId; 
+                    stockreceipt.EmployeeId = empid.EmployeeId;
                     stockreceipt.Remarks = stockreceipt.Remarks;
                     repo.TblOperatorStockReceipt.Add(stockreceipt);
                     repo.SaveChanges();
@@ -290,16 +290,17 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     {
                         int i = 0;
                         var _product = new InvoiceHelper().GetProducts(invdtl.ProductCode).FirstOrDefault();
-                        int[] array = new int[] {Convert.ToInt32(stockreceipt.FromBranchCode), Convert.ToInt32(ext)};
+                        var operatorStockreceiptId = GetStockreceiptslist(stockreceipt.ReceiptNo).FirstOrDefault();
+                        int[] array = new int[] { Convert.ToInt32(stockreceipt.FromBranchCode), Convert.ToInt32(ext) };
                         foreach (var item in array)
                         {
                             TblStockInformation stockinformation = new TblStockInformation();
                             i = item;
-                            stockinformation.BranchCode =Convert.ToString(i);
+                            stockinformation.BranchCode = Convert.ToString(i);
                             var _branchcode = GetBranches(Convert.ToString(i)).ToArray().FirstOrDefault();
                             //(stockreceipt.FromBranchCode)==null ? stockreceipt.FromBranchCode : ext;
                             stockinformation.BranchId = _branchcode.BranchId;
-                            
+
                             if (shifId == 0)
                             {
                                 stockinformation.ShiftId = 0;
@@ -332,8 +333,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                         //TblStockInformation stockinformation = new TblStockInformation();
                         //stockinformation.BranchCode
                         //#region StockIssueDetails
-                        var operatorStockreceiptId = GetStockreceiptslist(stockreceipt.ReceiptNo).FirstOrDefault();
                         #region StockIssueDetails
+
                         invdtl.OperatorStockReceiptId = operatorStockreceiptId.OperatorStockReceiptId;
                         invdtl.ReceiptNo = stockreceipt.ReceiptNo;
                         invdtl.ReceiptDate = DateTime.Now;
@@ -361,7 +362,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                         invdtl.AvailStock = Convert.ToDecimal(invdtl.AvailStock);
                         repo.TblOperatorStockReceiptDetail.Add(invdtl);
                         repo.SaveChanges();
-                        dbTransaction.Commit();
+                        //dbTransaction.Commit();
                         #endregion
                         {
 
@@ -374,7 +375,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             catch (Exception ex)
             {
                 throw ex;
-                dbTransaction.Rollback();
+                //dbTransaction.Rollback();
             }
         }
         //Searchcode

@@ -33,9 +33,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 
                     if (_receiptNo != null)
                     {
-                        var invSplit = _receiptNo.OilConversionVchNo.Split('/');
-                        var invNo = invSplit[1].Split('-');
-                        billno = $"{invSplit[0]}/{Convert.ToDecimal(invNo[0]) + 1}-{invNo[1]}";
+                        var invSplit = _receiptNo.OilConversionVchNo.Split('-');
+                        billno = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1]) + 1}-{invSplit[2]}";
                     }
                     else
                     {
@@ -46,7 +45,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                             return billno = string.Empty;
                         }
 
-                        billno = $"{prefix}/1-{suffix}";
+                        billno = $"{prefix}-1-{suffix}";
                     }
                 }
 
