@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
@@ -201,12 +202,18 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
+                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(Convert.ToDecimal(stockTransferMaster.UserId ?? 0), null));
+                var _user = new UserManagmentHelper().GetEmployeeID(stockTransferMaster.UserName);
 
                 using ERPContext context = new ERPContext();
                 using var dbTransaction = context.Database.BeginTransaction();
                 try
                 {
-                    var _stockTransferMaster = AddStockTransferMaster(context, stockTransferMaster);
+                    
+                    stockTransferMaster.ShiftId = shifId;
+                    stockTransferMaster.EmployeeId = _user?.EmployeeId;
+
+                     var _stockTransferMaster = AddStockTransferMaster(context, stockTransferMaster);
                     foreach (var stockdetail in stockTransferDetails)
                     {
                         AddStockTransferDetail(context, stockdetail, _stockTransferMaster);
@@ -279,6 +286,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 stockInformation.ProductId = stockTransferDetail.ProductId;
                 stockInformation.ProductCode = stockTransferDetail.ProductCode;
                 stockInformation.Rate = stockTransferDetail.Rate;
+               
                 if (isFromBranch)
                     stockInformation.OutwardQty = stockTransferDetail.FQty > 0 ? stockTransferDetail.FQty : stockTransferDetail.Qty;
                 else
