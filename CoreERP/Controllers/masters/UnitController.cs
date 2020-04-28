@@ -74,16 +74,7 @@ namespace CoreERP.Controllers.masters
                 {
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
-                //try
-                //{
-                //    dynamic expando = new ExpandoObject();
-                //    var unitList = new UnitHelpers().GetList();
-                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                //}
-                //catch (Exception ex)
-                //{
-                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-                //}
+                
             });
             return result;
         }

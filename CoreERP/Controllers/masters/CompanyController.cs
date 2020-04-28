@@ -38,18 +38,18 @@ namespace CoreERP.Controllers
 
 
         [HttpPost("RegisterCompany")]
-        public IActionResult RegisterCompany([FromBody]Companies company)
+        public IActionResult RegisterCompany([FromBody]TblCompany company)
         {
 
             if (company == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(company)} cannot be null" });
             else
             {
-                if (CompaniesHelper.GetCompanies(company.CompanyCode) != null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + company.CompanyCode + " is already Exists,Please Use Another Code" });
+                if (CompaniesHelper.GetCompanies(Convert.ToInt32(company.CompanyId))!=null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + company.CompanyId + " is already Exists,Please Use Another Code" });
 
                 try
-                {
+                 {
                     APIResponse apiResponse = null;
                     var result = CompaniesHelper.Register(company);
                     if (result != null)
@@ -71,7 +71,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateCompany")]
-        public IActionResult UpdateCompany([FromBody] Companies company)
+        public IActionResult UpdateCompany([FromBody] TblCompany company)
         {
 
             if (company == null)
@@ -80,7 +80,7 @@ namespace CoreERP.Controllers
             {
                 APIResponse apiResponse = null;
 
-                Companies result = CompaniesHelper.Update(company);
+                TblCompany result = CompaniesHelper.Update(company);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -99,7 +99,7 @@ namespace CoreERP.Controllers
 
 
         [HttpDelete("DeleteCompany/{code}")]
-        public IActionResult DeleteCompany(string code)
+        public IActionResult DeleteCompany(int code)
         {
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });

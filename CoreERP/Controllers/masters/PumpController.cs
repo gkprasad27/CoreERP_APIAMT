@@ -147,7 +147,7 @@ namespace CoreERP.Controllers.masters
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.ProductGroupsList = new PumpHelpers().GetProductGroups().Select(pro => new { ID = pro.Code, TEXT = pro.GroupName });
+                    expando.ProductGroupsList = new PumpHelpers().GetProductGroups().Select(pro => new { ID = pro.GroupCode, TEXT = pro.GroupName });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -158,21 +158,7 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        //[HttpGet("GetBranches")]
-        //[Produces(typeof(List<Branches>))]
-        //public async Task<IActionResult> GetBranches()
-        //{
-        //    try
-        //    {
-        //        dynamic expando = new ExpandoObject();
-        //        expando.BranchesList = new PumpHelpers().GetBranches().Select(pro => new { ID = pro.BranchCode, TEXT = pro.Address1 });
-        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
+      
 
         [HttpGet("GetBranchcodes/{branchname}")]
         public async Task<IActionResult> GetBranchcodes(string branchname)
@@ -209,8 +195,7 @@ namespace CoreERP.Controllers.masters
                 try
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.ProductGroupsName = new PumpHelpers().GetProductGroupsNames(code).Select(pg => new { Name = pg.GroupName, Id = pg.Code });
-                    //expando.ProductGroupsName = new PumpHelpers().GetProductGroupsNames(code).ToList();
+                    expdoObj.ProductGroupsName = new PumpHelpers().GetProductGroupsNames(code).Select(pg => new { Name = pg.GroupName, Id = pg.GroupCode });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 catch (Exception ex)

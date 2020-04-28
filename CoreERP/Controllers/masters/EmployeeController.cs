@@ -40,15 +40,15 @@ namespace CoreERP.Controllers
 
 
         [HttpPost("RegisterEmployee")]
-        public IActionResult RegisterEmployee([FromBody]Employees employee)
+        public IActionResult RegisterEmployee([FromBody]TblEmployee employee)
         {
             if (employee == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(employee)} cannot be null" });
 
             try
             {
-                if (EmployeeHelper.GetEmployesByID(employee.Code).Count() > 0)
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"Code {employee.Code} is already exists ,please use different code" });
+                if (EmployeeHelper.GetEmployesByID(employee.EmployeeCode).Count() > 0)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"Code {employee.EmployeeCode} is already exists ,please use different code" });
 
                 var result = EmployeeHelper.Register(employee);
                 APIResponse apiResponse;
@@ -72,7 +72,7 @@ namespace CoreERP.Controllers
 
 
         [HttpPut("UpdateEmployee")]
-        public IActionResult UpdateEmployee([FromBody] Employees employee)
+        public IActionResult UpdateEmployee([FromBody] TblEmployee employee)
         {
             try
             {

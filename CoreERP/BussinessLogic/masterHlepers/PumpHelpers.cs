@@ -80,14 +80,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
-        public List<MaterialGroup> GetProductGroups()
+        public List<TblProductGroup> GetProductGroups()
         {
             try
             {
-                //using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
-                //return repo.MaterialGroup.ToList();
-
-                return null;
+                using Repository<TblProductGroup> repo = new Repository<TblProductGroup>();
+                return repo.TblProductGroup.ToList();
             }
             catch { throw; }
         }
@@ -105,21 +103,17 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblTanks> repo = new Repository<TblTanks>();
-                return repo.TblTanks
-.Where(x => x.BranchName == name).ToList();
+                return repo.TblTanks.Where(x => x.BranchName == name).ToList();
             }
             catch { throw; }
         }
 
-        public List<MaterialGroup> GetProductGroupsNames(string code)
+        public List<TblProductGroup> GetProductGroupsNames(string code)
         {
             try
             {
-                //                using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
-                //                return repo.MaterialGroup
-                //.Where(x => x.Code == code)
-                //.ToList();
-                return null;
+                using Repository<TblProductGroup> repo = new Repository<TblProductGroup>();
+                return repo.TblProductGroup.Where(x => x.GroupCode ==Convert.ToDecimal(code)).ToList();
             }
             catch { throw; }
         }
