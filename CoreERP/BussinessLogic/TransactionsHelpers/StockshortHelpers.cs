@@ -238,63 +238,168 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         {
             try
             {
-                //invoice.IsSalesReturned = false;
-                //invoice.IsManualEntry = false;
-                using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
+                using ERPContext context = new ERPContext();
+                using var dbTransaction = context.Database.BeginTransaction();
+                try
                 {
-                    //add voucher typedetails
-                    var user = repo.TblUser.Where(x => x.UserName == stockshort.UserName).FirstOrDefault();
-                    var shift = repo.TblShift.Where(x => x.UserId == user.UserId).FirstOrDefault();
-                    var _branch = GetBranches(stockshort.BranchCode).ToArray().FirstOrDefault();
-                    var shiftid = repo.TblShift.Where(x => x.UserId == stockshort.UserId).FirstOrDefault();
-                   
-                    stockshort.BranchCode = _branch.BranchCode;
-                    stockshort.BranchName = _branch.BranchName;
-                    stockshort.ServerDate = DateTime.Now;
-                    stockshort.StockshortDate = stockshort.StockshortDate;
-                    stockshort.StockshortNo = stockshort.StockshortNo;
-                    stockshort.ShiftId = shiftid.ShiftId;
-                    stockshort.UserId = user.UserId;
-                    stockshort.UserName = stockshort.UserName;
-                    stockshort.EmployeeId = user.EmployeeId;
-                    stockshort.CostCenter = stockshort.CostCenter;
-                    stockshort.Narration = stockshort.Narration;
-                    repo.TblStockshortMaster.Add(stockshort);
-                    repo.SaveChanges();
-                    foreach (var stockshorts in stockshortDetails)
+                    var _stockshort = AddStockShortMaster(context, stockshort);
+                    foreach (var stockshortdetail in stockshortDetails)
                     {
-                        var _product = new InvoiceHelper().GetProducts(stockshorts.ProductCode).FirstOrDefault();
-                        var operatorStockshortId = GetStockshortlist(stockshort.StockshortNo).FirstOrDefault();
-                        #region StockIssueDetails
-                        stockshorts.StockshortMasterId = operatorStockshortId.StockshortMasterId;
-
-                        stockshorts.StockshortDetailsDate = DateTime.Now;
-                        stockshorts.ProductId = _product.ProductId;
-                        stockshorts.ProductCode = stockshorts.ProductCode;
-                        stockshorts.ProductName = stockshorts.ProductName;
-                        stockshorts.HsnNo = stockshorts.HsnNo;
-                        stockshorts.Rate = stockshorts.Rate;
-                        stockshorts.Qty = stockshorts.Qty;
-                        stockshorts.BatchNo = stockshorts.BatchNo;
-                        stockshorts.UnitId = Convert.ToDecimal(_product.UnitId);
-                        stockshorts.UnitName = stockshorts.UnitName;
-                        stockshorts.TotalAmount = Convert.ToDecimal(stockshorts.TotalAmount);
-                        repo.TblStockshortDetails.Add(stockshorts);
-                        repo.SaveChanges();
-                        #endregion
-                        {
-
-                        }
+                        AddStockShortDetail(context, stockshortdetail, _stockshort);
+                        AddStockInformation(context, stockshortdetail, _stockshort);
                     }
+                    dbTransaction.Commit();
+                    return true;
                 }
+                catch (Exception e)
+                {
+                    dbTransaction.Rollback();
+                    throw e;
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
 
-                return true;
+        public TblBranch GetBranch(string branchCode)
+        {
+            return new InvoiceHelper().GetBranches(branchCode).FirstOrDefault();
+        }
+        private TblStockshortMaster AddStockShortMaster(ERPContext context, TblStockshortMaster stockshort)
+        {
+            try
+            {
+                decimal shifId = Convert.ToDecimal(new masterHlepers.UserManagmentHelper().GetShiftId(stockshort.UserId, null));
+                var user = context.TblUserNew.Where(x => x.UserName == stockshort.UserName).FirstOrDefault();
+                stockshort.BranchName = GetBranch(stockshort.BranchCode)?.BranchName;
+                stockshort.EmployeeId = user.EmployeeId;
+                stockshort.ShiftId = shifId;
+                context.TblStockshortMaster.Add(stockshort);
+                if (context.SaveChanges() > 0)
+                    return stockshort;
+
+                return null;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
+
+        private TblStockshortDetails AddStockShortDetail(ERPContext context, TblStockshortDetails stockshortDetails, TblStockshortMaster stockshort)
+        {
+            try
+            {
+                var _product = new InvoiceHelper().GetProducts(stockshortDetails.ProductCode).FirstOrDefault();
+                stockshortDetails.StockshortMasterId = stockshort.StockshortMasterId;
+                stockshortDetails.StockshortDetailsDate = stockshort.StockshortDate;
+                stockshortDetails.ProductId = _product.ProductId;
+                stockshortDetails.UnitId = Convert.ToDecimal(_product.UnitId);
+                context.TblStockshortDetails.Add(stockshortDetails);
+                if (context.SaveChanges() > 0)
+                    return stockshortDetails;
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private TblStockInformation AddStockInformation(ERPContext context, TblStockshortDetails stockshortDetails, TblStockshortMaster stockshort, decimal? voucherTypeID = 44)
+        {
+            try
+            {
+                TblStockInformation stockInformation = new TblStockInformation();
+                try { stockInformation.BranchId = Convert.ToDecimal(stockshort.BranchCode ?? "0"); } catch { };
+                stockInformation.BranchCode = stockshort.BranchCode;
+                stockInformation.UserId = stockshort.UserId;
+                stockInformation.ShiftId = stockshort.ShiftId;
+                stockInformation.TransactionDate = stockshort.StockshortDate;
+                stockInformation.VoucherNo = string.Empty;
+                stockInformation.VoucherTypeId = voucherTypeID;
+                stockInformation.InvoiceNo = stockshort.StockshortNo;
+                stockInformation.ProductId = stockshortDetails.ProductId;
+                stockInformation.ProductCode = stockshortDetails.ProductCode;
+                stockInformation.Rate = stockshortDetails.Rate;
+                stockInformation.InwardQty = 0;
+                stockInformation.OutwardQty = stockshortDetails.Qty; 
+                context.TblStockInformation.Add(stockInformation);
+                if (context.SaveChanges() > 0)
+                    return stockInformation;
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        //public bool RegisterStockshort(TblStockshortMaster stockshort, List<TblStockshortDetails> stockshortDetails)
+        //{
+        //    try
+        //    {
+        //        //invoice.IsSalesReturned = false;
+        //        //invoice.IsManualEntry = false;
+        //        using (Repository<TblStockshortMaster> repo = new Repository<TblStockshortMaster>())
+        //        {
+        //            //add voucher typedetails
+        //            var user = repo.TblUser.Where(x => x.UserName == stockshort.UserName).FirstOrDefault();
+        //            var shift = repo.TblShift.Where(x => x.UserId == user.UserId).FirstOrDefault();
+        //            var _branch = GetBranches(stockshort.BranchCode).ToArray().FirstOrDefault();
+        //            var shiftid = repo.TblShift.Where(x => x.UserId == stockshort.UserId).FirstOrDefault();
+
+        //            stockshort.BranchCode = _branch.BranchCode;
+        //            stockshort.BranchName = _branch.BranchName;
+        //            stockshort.ServerDate = DateTime.Now;
+        //            stockshort.StockshortDate = stockshort.StockshortDate;
+        //            stockshort.StockshortNo = stockshort.StockshortNo;
+        //            stockshort.ShiftId = shiftid.ShiftId;
+        //            stockshort.UserId = user.UserId;
+        //            stockshort.UserName = stockshort.UserName;
+        //            stockshort.EmployeeId = user.EmployeeId;
+        //            stockshort.CostCenter = stockshort.CostCenter;
+        //            stockshort.Narration = stockshort.Narration;
+        //            repo.TblStockshortMaster.Add(stockshort);
+        //            repo.SaveChanges();
+        //            foreach (var stockshorts in stockshortDetails)
+        //            {
+        //                var _product = new InvoiceHelper().GetProducts(stockshorts.ProductCode).FirstOrDefault();
+        //                var operatorStockshortId = GetStockshortlist(stockshort.StockshortNo).FirstOrDefault();
+        //                #region StockIssueDetails
+        //                stockshorts.StockshortMasterId = operatorStockshortId.StockshortMasterId;
+
+        //                stockshorts.StockshortDetailsDate = DateTime.Now;
+        //                stockshorts.ProductId = _product.ProductId;
+        //                stockshorts.ProductCode = stockshorts.ProductCode;
+        //                stockshorts.ProductName = stockshorts.ProductName;
+        //                stockshorts.HsnNo = stockshorts.HsnNo;
+        //                stockshorts.Rate = stockshorts.Rate;
+        //                stockshorts.Qty = stockshorts.Qty;
+        //                stockshorts.BatchNo = stockshorts.BatchNo;
+        //                stockshorts.UnitId = Convert.ToDecimal(_product.UnitId);
+        //                stockshorts.UnitName = stockshorts.UnitName;
+        //                stockshorts.TotalAmount = Convert.ToDecimal(stockshorts.TotalAmount);
+        //                repo.TblStockshortDetails.Add(stockshorts);
+        //                repo.SaveChanges();
+        //                #endregion
+        //                {
+
+        //                }
+        //            }
+        //        }
+
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
 
         //Searchcode

@@ -389,13 +389,14 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                             stockinformation.Rate = invdtl.Rate;
                             if ((item) == Convert.ToInt32(stockissue.FromBranchCode))
                             {
-                                stockinformation.InwardQty = invdtl.Qty;
-                                stockinformation.OutwardQty = 0;
+                                stockinformation.InwardQty = 0;
+                                stockinformation.OutwardQty = invdtl.Qty;
+                               
                             }
                             else
                             {
-                                stockinformation.InwardQty = 0;
-                                stockinformation.OutwardQty = invdtl.Qty;
+                                stockinformation.InwardQty = invdtl.Qty;
+                                stockinformation.OutwardQty = 0;
                             }
                             repo.TblStockInformation.Add(stockinformation);
                             repo.SaveChanges();
