@@ -143,7 +143,7 @@ namespace CoreERP.Controllers.masters
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.ProductGroupsList = new TaxgroupHelpers().GetProductGroups().Select(pro => new { ID = pro.Code, TEXT = pro.GroupName });
+                    expando.ProductGroupsList = new TaxgroupHelpers().GetProductGroups().Select(pro => new { ID = pro.GroupCode, TEXT = pro.GroupName });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
