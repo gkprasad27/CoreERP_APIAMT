@@ -51,7 +51,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     return _repo.TblMemberMaster
                                  .Where(m =>m.MemberCode.ToString().Contains((searchCriteria.InvoiceNo == null ? m.MemberCode.ToString() : searchCriteria.InvoiceNo))
                                           && m.MemberName.ToLower().Contains((searchCriteria.Name ?? m.MemberName).ToLower()))
-                                 .ToList();
+                                 .OrderBy(m => m.MemberCode).ToList();
                 }
             }
             catch (Exception ex)
