@@ -36,7 +36,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         //    }
         //    catch { throw; }
         //}
-        public static List<Companies> GetCompaniesList()
+        public static List<TblCompany> GetCompaniesList()
         {
             try
             {

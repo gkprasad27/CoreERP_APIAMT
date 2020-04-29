@@ -100,7 +100,7 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         //        throw ex;
         //    }
         //}
-        public static List<Companies> GetCompanies()
+        public static List<TblCompany> GetCompanies()
         {
             try
             {

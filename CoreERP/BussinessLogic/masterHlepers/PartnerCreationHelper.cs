@@ -128,7 +128,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
         //});
         #endregion
 
-        public static List<Companies> GetCompanies()
+        public static List<TblCompany> GetCompanies()
         {
             try
             {

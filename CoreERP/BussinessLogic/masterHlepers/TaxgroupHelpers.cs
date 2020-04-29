@@ -89,12 +89,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
-        public  List<MaterialGroup> GetProductGroups()
+        public  List<TblProductGroup> GetProductGroups()
         {
             try
             {
-                using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
-                return repo.MaterialGroup.ToList();
+                using Repository<TblProductGroup> repo = new Repository<TblProductGroup>();
+                return repo.TblProductGroup.ToList();
             }
             catch { throw; }
         }

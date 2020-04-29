@@ -115,7 +115,7 @@ namespace CoreERP.Controllers
             {
 
                 dynamic expando = new ExpandoObject();
-                expando.AccountingClassList = AccountClassHelper.GetCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.Name });
+                expando.AccountingClassList = AccountClassHelper.GetCompanies().Select(x => new { ID = x.CompanyId, TEXT = x.CompanyName });
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expando });
 
             }

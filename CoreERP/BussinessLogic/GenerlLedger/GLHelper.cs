@@ -598,7 +598,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             catch { throw; }
         }
         #endregion
-        public static List<Companies> GetCompanies()
+        public static List<TblCompany> GetCompanies()
         {
             try { return masterHlepers.CompaniesHelper.GetListOfCompanies(); }
             catch { throw; }

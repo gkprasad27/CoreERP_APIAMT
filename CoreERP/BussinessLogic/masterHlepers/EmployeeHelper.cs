@@ -30,12 +30,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch { throw; }
         }
 
-        public static List<Employees> GetEmployesByName(string name)
+        public static List<TblEmployee> GetEmployesByName(string name)
         {
             try
             {
-                using Repository<Employees> repo = new Repository<Employees>();
-                return repo.Employees.Where(x => x.Name.ToLower() == name.ToLower()).Select(x => x).ToList();
+                using Repository<TblEmployee> repo = new Repository<TblEmployee>();
+                return repo.TblEmployee.Where(x => x.EmployeeName.ToLower() == name.ToLower()).Select(x => x).ToList();
             }
             catch { throw; }
         }
@@ -90,21 +90,22 @@ namespace CoreERP.BussinessLogic.masterHlepers
 
 
         #region Employee In Branch
-        public static List<EmployeeInBranches> GetEmployeeInBranches(string empCode=null,string branchCode=null)
+        public static List<EmployeeInBranches> GetEmployeeInBranches(string empCode = null, string branchCode = null)
         {
             try
             {
-                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
-                return repo.EmployeeInBranches.AsEnumerable()
-                    .Where(x => x.EmpCode == (empCode ?? x.EmpCode)
-                   && x.BranchCode == (branchCode ?? x.BranchCode)
-                    && x.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
-                   ).ToList();
+                //                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                //                return repo.EmployeeInBranches.AsEnumerable()
+                //.Where(x => x.EmpCode == (empCode ?? x.EmpCode)
+                //&& x.BranchCode == (branchCode ?? x.BranchCode)
+                //&& x.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+                //).ToList();
+                return null;
             }
             catch { throw; }
         }
 
-      
+
         public static EmployeeInBranches RegisterEmployeeInBranch(EmployeeInBranches empbr)
         {
             try
@@ -112,19 +113,19 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
                 empbr.Active = "Y";
 
-                var lastrecord = repo.EmployeeInBranches.Select(x => x).OrderByDescending(emp => emp.Ext1).FirstOrDefault();
-                if (lastrecord != null)
-                {
-                    empbr.Ext1 = (int.Parse(lastrecord.Ext1) + 1).ToString();
-                }
-                else
-                {
-                    empbr.Ext1 = "1";
-                }
+                //var lastrecord = repo.EmployeeInBranches.Select(x => x).OrderByDescending(emp => emp.Ext1).FirstOrDefault();
+                //if (lastrecord != null)
+                //{
+                //    empbr.Ext1 = (int.Parse(lastrecord.Ext1) + 1).ToString();
+                //}
+                //else
+                //{
+                //    empbr.Ext1 = "1";
+                //}
 
-                repo.EmployeeInBranches.Add(empbr);
-                if (repo.SaveChanges() > 0)
-                    return empbr;
+                //repo.EmployeeInBranches.Add(empbr);
+                //if (repo.SaveChanges() > 0)
+                //    return empbr;
 
                 return null;
             }
@@ -136,10 +137,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
-                repo.EmployeeInBranches.Update(empbr);
-                if (repo.SaveChanges() > 0)
-                    return empbr;
+                //using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                //repo.EmployeeInBranches.Update(empbr);
+                //if (repo.SaveChanges() > 0)
+                //    return empbr;
 
                 return null;
             }
@@ -151,12 +152,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
-                var emp = repo.EmployeeInBranches.Where(e => e.EmpCode == empCode).FirstOrDefault();
-                emp.Active = "N";
-                repo.EmployeeInBranches.Remove(emp);
-                if (repo.SaveChanges() > 0)
-                    return emp;
+                //using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                //var emp = repo.EmployeeInBranches.Where(e => e.EmpCode == empCode).FirstOrDefault();
+                //emp.Active = "N";
+                //repo.EmployeeInBranches.Remove(emp);
+                //if (repo.SaveChanges() > 0)
+                //    return emp;
 
                 return null;
             }

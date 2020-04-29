@@ -460,13 +460,13 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
 
         #region Billing
-        public static List<Employees> GetEmployee(string branchCode)
+        public static List<TblEmployee> GetEmployee(string branchCode)
         {
             try
             {
                 return (from empbr in EmployeeHelper.GetEmployeeInBranches(null,branchCode)
                         join emp in EmployeeHelper.GetEmployes()
-                        on empbr.EmpCode equals emp.Code
+                        on empbr.EmpCode equals emp.EmployeeCode
                         where empbr.BranchCode == branchCode
                         select emp).ToList();
             }

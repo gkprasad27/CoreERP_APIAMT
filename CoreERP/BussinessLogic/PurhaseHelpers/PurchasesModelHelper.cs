@@ -27,7 +27,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
-        public static List<Companies> GetCompanies()
+        public static List<TblCompany> GetCompanies()
         {
             try
             {
