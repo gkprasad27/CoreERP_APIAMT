@@ -137,12 +137,15 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 throw ex;
             }
         }
-        public List<TblBankPaymentMaster> GetBankPaymentMasters(VoucherNoSearchCriteria searchCriteria,string branchCode)
+        public List<TblBankPaymentMaster> GetBankPaymentMasters(VoucherNoSearchCriteria searchCriteria, string branchCode)
         {
             try
             {
-                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
-                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                if (string.IsNullOrEmpty(searchCriteria.VoucherNo) && string.IsNullOrEmpty(searchCriteria.BranchCode))
+                {
+                    searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                    searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                }
 
                 using Repository<TblBankPaymentMaster> repo = new Repository<TblBankPaymentMaster>();
                 List<TblBankPaymentMaster> _bankpaymentMasterList = null;
@@ -169,7 +172,10 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _bankpaymentMasterList = _bankpaymentMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
-                return _bankpaymentMasterList.OrderByDescending(x=>x.BankPaymentDate).ToList();
+                if (!string.IsNullOrEmpty(searchCriteria.BranchCode))
+                    _bankpaymentMasterList = _bankpaymentMasterList.Where(x => x.BranchCode == searchCriteria.BranchCode).ToList();
+
+                return _bankpaymentMasterList.OrderByDescending(x => x.VoucherNo).ToList();
             }
             catch (Exception ex)
             {
@@ -178,7 +184,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
         }
 
-      
+
         public List<TblBranch> GetBranches(string branchCode = null)
         {
             try

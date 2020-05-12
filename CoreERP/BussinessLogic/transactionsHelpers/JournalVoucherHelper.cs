@@ -117,12 +117,15 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             }
         }
 
-        public List<TblJournalVoucherMaster> GetJournalVoucherMasters(VoucherNoSearchCriteria searchCriteria,string branchCode)
+        public List<TblJournalVoucherMaster> GetJournalVoucherMasters(VoucherNoSearchCriteria searchCriteria, string branchCode)
         {
             try
             {
-                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
-                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                if (string.IsNullOrEmpty(searchCriteria.VoucherNo) && string.IsNullOrEmpty(searchCriteria.BranchCode))
+                {
+                    searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                    searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                }
 
                 using Repository<TblJournalVoucherMaster> repo = new Repository<TblJournalVoucherMaster>();
                 List<TblJournalVoucherMaster> _journalVoucherMasterList = null;
@@ -148,8 +151,10 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
                     _journalVoucherMasterList = _journalVoucherMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
+                if (!string.IsNullOrEmpty(searchCriteria.BranchCode))
+                    _journalVoucherMasterList = _journalVoucherMasterList.Where(x => x.BranchCode == searchCriteria.BranchCode).ToList();
 
-                return _journalVoucherMasterList.OrderByDescending(x=>x.JournalVoucherDate).ToList();
+                return _journalVoucherMasterList.OrderByDescending(x => x.JournalVchNo).ToList();
             }
             catch (Exception ex)
             {
@@ -158,7 +163,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
         }
 
-     
+
 
         public List<TblBranch> GetBranches(string branchCode = null)
         {

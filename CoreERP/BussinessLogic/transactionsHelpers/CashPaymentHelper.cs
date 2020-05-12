@@ -34,12 +34,15 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public List<TblCashPaymentMaster> GetCashPaymentMasters(VoucherNoSearchCriteria searchCriteria,string branchCode)
+        public List<TblCashPaymentMaster> GetCashPaymentMasters(VoucherNoSearchCriteria searchCriteria, string branchCode)
         {
             try
             {
-                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
-                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                if (string.IsNullOrEmpty(searchCriteria.VoucherNo) && string.IsNullOrEmpty(searchCriteria.BranchCode))
+                {
+                    searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                    searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                }
                 using Repository<TblCashPaymentMaster> repo = new Repository<TblCashPaymentMaster>();
                 List<TblCashPaymentMaster> _cashpaymentMasterList = null;
                 if (searchCriteria.Role == 1)
@@ -64,8 +67,10 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
                     _cashpaymentMasterList = _cashpaymentMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
+                if (!string.IsNullOrEmpty(searchCriteria.BranchCode))
+                    _cashpaymentMasterList = _cashpaymentMasterList.Where(x => x.BranchCode == searchCriteria.BranchCode).ToList();
 
-                return _cashpaymentMasterList.OrderByDescending(cp=>cp.CashPaymentDate).ToList();
+                return _cashpaymentMasterList.OrderByDescending(cp => cp.VoucherNo).ToList();
             }
             catch (Exception ex)
             {

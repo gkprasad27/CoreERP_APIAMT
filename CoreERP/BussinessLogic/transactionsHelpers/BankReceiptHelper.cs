@@ -86,12 +86,15 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             catch { throw; }
         }
 
-        public List<TblBankReceiptMaster> GetBankReceiptMasters(VoucherNoSearchCriteria searchCriteria,string branchCode)
+        public List<TblBankReceiptMaster> GetBankReceiptMasters(VoucherNoSearchCriteria searchCriteria, string branchCode)
         {
             try
             {
-                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
-                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                if (string.IsNullOrEmpty(searchCriteria.VoucherNo) && string.IsNullOrEmpty(searchCriteria.BranchCode))
+                {
+                    searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                    searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                }
 
                 using Repository<TblBankReceiptMaster> repo = new Repository<TblBankReceiptMaster>();
                 List<TblBankReceiptMaster> _bankreceiptMasterList = null;
@@ -112,13 +115,17 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                                                        && br.BranchCode == branchCode)
                                                .ToList();
                 }
-                    
+
 
                 if (!string.IsNullOrEmpty(searchCriteria.VoucherNo))
                     _bankreceiptMasterList = _bankreceiptMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
-                return _bankreceiptMasterList.OrderByDescending(x=>x.BankReceiptDate).ToList();
+                if (!string.IsNullOrEmpty(searchCriteria.BranchCode))
+                    _bankreceiptMasterList = _bankreceiptMasterList.Where(x => x.BranchCode == searchCriteria.BranchCode).ToList();
+
+
+                return _bankreceiptMasterList.OrderByDescending(x => x.VoucherNo).ToList();
             }
             catch (Exception ex)
             {
