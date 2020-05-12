@@ -71,8 +71,22 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
         {
             try
             {
+              bool  IsTaxApplicable = false;
                 var _invoiceHelper = new InvoiceHelper();
                 var _product =_invoiceHelper.GetProducts(productCode).FirstOrDefault();
+
+                //check tax calculation is required or not
+                if (_product.TaxapplicableOn != null)
+                {
+                    if (_product.TaxapplicableOn.Equals("OUTPUT", StringComparison.InvariantCultureIgnoreCase) || _product.TaxapplicableOn.Equals("NONE", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        IsTaxApplicable = false;
+                    }
+                    else
+                    {
+                        IsTaxApplicable = true;
+                    }
+                }
 
                // var invoceDetails = new TblInvoiceDetail();
                 var purchaseDetail = new TblPurchaseInvoiceDetail();
@@ -87,13 +101,26 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 //purchaseDetail.TaxGroupName = _product.TaxGroupName;
                 if (_product.TaxStructureCode != null)
                 {
-                    var taxStructure = _invoiceHelper.GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
-                    purchaseDetail.Sgst = taxStructure.Sgst;
-                    purchaseDetail.Cgst = taxStructure.Sgst;
-                    purchaseDetail.Igst = taxStructure.Igst;
-                    purchaseDetail.TotalGst = taxStructure.TotalGst;
-
-                    purchaseDetail.ServerDateTime = DateTime.Now;
+                    if (IsTaxApplicable)
+                    {
+                        var taxStructure = _invoiceHelper.GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
+                        if (taxStructure != null)
+                        {
+                            purchaseDetail.Sgst = taxStructure.Sgst;
+                            purchaseDetail.Cgst = taxStructure.Sgst;
+                            purchaseDetail.Igst = taxStructure.Igst;
+                            purchaseDetail.TotalGst = taxStructure.TotalGst;
+                        }
+                    }
+                    else
+                    {
+                        purchaseDetail.Sgst = 0;
+                        purchaseDetail.Cgst = 0;
+                        purchaseDetail.Igst = 0;
+                        purchaseDetail.TotalGst = 0;
+                    }
+                   
+                   
                 }
               
                 purchaseDetail.Rate = _invoiceHelper.GetProductRate(branchCode, productCode);
@@ -101,12 +128,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 purchaseDetail.ProductId = _product.ProductId;
                 purchaseDetail.ProductCode = _product.ProductCode;
                 purchaseDetail.ProductName = _product.ProductName;
-                //  purchaseDetail.AvailStock = Convert.ToDecimal(_invoiceHelper.GetProductQty(branchCode, productCode) ?? 0);
-                // purchaseDetail.ProductCode = _product.ProductCode;
-                // purchaseDetail.ProductGroupCode = Convert.ToDecimal(_product.ProductGroupCode ?? 0);
-                // purchaseDetail.ProductGroupId = Convert.ToDecimal(_product.ProductGroupId ?? 0);
-
-
+                purchaseDetail.ServerDateTime = DateTime.Now;
 
                 return purchaseDetail;
             }
@@ -212,6 +234,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             {
                 errorMessage = string.Empty;
                 decimal? _qty = null;
+                TblUserNew userNew = null;
                 var _productCodes = configuration.GetSection("Purchase:ProductCods")?.Value?.Split(",");
                 foreach(var pdtl in purchaseInvoiceDetails)
                 {
@@ -228,6 +251,9 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                     }
                 }
 
+                userNew = new UserManagmentHelper().GetUserNew(purchaseInvoice.UserId);
+                purchaseInvoice.EmployeeId = userNew?.EmployeeId ?? -1;
+
                 using (ERPContext context=new ERPContext())
                 {
                     using(var dbTransaction = context.Database.BeginTransaction())
@@ -242,11 +268,14 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             var _branch = GetBranches(purchaseInvoice.BranchCode).FirstOrDefault();
                             var _accountLedger = GetAccountLedgers(purchaseInvoice.LedgerCode);
                             var _vouchertType = GetVoucherType(13).FirstOrDefault();
-
+                            var paymentType = new Common.CommonHelper().GetPaymentType(_accountLedger.CrOrDr);
+                            purchaseInvoice.PaymentMode = paymentType == null ? 0 : paymentType.PaymentTypeId;
                             purchaseInvoice.LedgerId = _accountLedger.LedgerId;
                             purchaseInvoice.BranchName = _branch.BranchName;
                             purchaseInvoice.EmployeeId = new UserManagmentHelper().GetEmployeeID(purchaseInvoice.UserName)?.EmployeeId;
                             purchaseInvoice.Discount = purchaseInvoice.Discount ?? 0;
+                            purchaseInvoice.OtherAmount1 = purchaseInvoice.OtherAmount1 ?? 0;
+                            purchaseInvoice.OtherAmount2 = purchaseInvoice.OtherAmount2 ?? 0;
                             purchaseInvoice.ShiftId = shifId;
                             purchaseInvoice.VoucherTypeId = 13;
                             purchaseInvoice.ServerDateTime = DateTime.Now;
@@ -268,12 +297,11 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
                                 _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure.PurchaseAccount).FirstOrDefault();
 
-                                #region Add voucher Details
-                                var _voucherDetail = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purInv.Rate);
-                                #endregion
 
                                 #region InvioceDetail
-                               
+                                
+                                purInv.BatchNo = DateTime.Now.ToShortDateString().Replace('-', '/')+purchaseInvoice.PurchaseInvNo+purInv.ProductCode;
+                                purInv.EmployeeId = purchaseInvoice.EmployeeId;
                                 purInv.PurchaseDate = purchaseInvoice.PurchaseInvDate;
                                 purInv.PurchaseInvId = purchaseInvoice.PurchaseInvId;
                                 purInv.VoucherNo = purchaseInvoice.VoucherNo;
@@ -289,9 +317,13 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                                 #endregion
 
+                                #region Add voucher Details
+                                _accountLedger.CrOrDr = "Debit";
+                                var _voucherDetail = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purInv.GrossAmount);
+                                #endregion
+
                                 #region Add stock transaction  and Account Ledger Transaction
 
-                                
                                 _qty = null;
                                 if (purInv.TotalLiters != null)
                                 {
@@ -318,7 +350,9 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             }
 
                             _accountLedger = GetAccountLedgers(purchaseInvoice.LedgerCode);
-                            AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purchaseInvoice.GrandTotal, false);
+                            _accountLedger.CrOrDr = "Credit";
+                            var voucherDetail=AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purchaseInvoice.GrandTotal, false);
+                            AddAccountLedgerTransactions(context, voucherDetail, purchaseInvoice.PurchaseInvDate);
 
                             //CHech weather igs or sg ,cg st
                             var _stateWiseGsts = GetStateWiseGsts(purchaseInvoice.StateCode).FirstOrDefault();
@@ -326,17 +360,22 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             {
                                 //Add IGST record
                                 var _accAL = GetAccountLedgers("243");
-                                AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalAmount, false);
-
+                                _accAL.CrOrDr= "Debit";
+                               var voucherDetailIGST= AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalIgst, false);
+                                AddAccountLedgerTransactions(context, voucherDetailIGST, purchaseInvoice.PurchaseInvDate);
                             }
                             else
                             {
-                                // sgst
+                                // cgst
                                 var _accAL = GetAccountLedgers("240");
-                                AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalAmount, false);
+                                _accAL.CrOrDr = "Debit";
+                                var voucherDetailCGST = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalCgst, false);
+                                AddAccountLedgerTransactions(context, voucherDetailCGST, purchaseInvoice.PurchaseInvDate);
                                 // sgst
                                 _accAL = GetAccountLedgers("241");
-                                AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalAmount, false);
+                                _accAL.CrOrDr = "Debit";
+                                var voucherDetailSGST = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalSgst, false);
+                                AddAccountLedgerTransactions(context, voucherDetailSGST, purchaseInvoice.PurchaseInvDate);
                             }
                             dbTransaction.Commit();
                             return true;
@@ -379,29 +418,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 {
                     return _voucherMaster;
                 }
-                #region comment
-                //var _voucherMaster = new TblVoucherMaster();
-                //_voucherMaster.BranchCode = invoice.BranchCode;
-                //_voucherMaster.BranchName = _branch.BranchName;
-                //_voucherMaster.VoucherDate = invoice.InvoiceDate;
-                //_voucherMaster.VoucherTypeIdMain = _vouchertType.VoucherTypeId;
-                //_voucherMaster.VoucherTypeIdSub = 35;
-                //_voucherMaster.VoucherNo = invoice.InvoiceNo;
-                //_voucherMaster.Amount  = invoice.GrandTotal;
-                //_voucherMaster.PaymentType = _accountLedger.CrOrDr;
-                //_voucherMaster.Narration = "Sales Invoice";
-                //_voucherMaster.ServerDate = DateTime.Now;
-                //_voucherMaster.UserId = invoice.UserId;
-                //_voucherMaster.UserName = invoice.UserName;
-                //_voucherMaster.EmployeeId = -1;
-
-                //repo.TblVoucherMaster.Add(_voucherMaster);
-                //if(!(repo.SaveChanges() > 0))
-                //{
-                //    dbTransaction.Rollback();
-                //    return false;
-                //}
-                #endregion
+               
 
                 return null;
             }
@@ -410,7 +427,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-        private TblVoucherDetail AddVoucherDetails(ERPContext context, TblPurchaseInvoice invoice, TblBranch _branch, TblVoucherMaster _voucherMaster, TblAccountLedger _accountLedger, decimal? productRate, bool isFromInvoiceDetials = true)
+        private TblVoucherDetail AddVoucherDetails(ERPContext context, TblPurchaseInvoice invoice,TblBranch _branch, TblVoucherMaster _voucherMaster, TblAccountLedger _accountLedger, decimal? productRate, bool isFromInvoiceDetials = true)
         {
             try
             {
@@ -420,52 +437,42 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _voucherDetail.VoucherMasterId = _voucherMaster.VoucherMasterId;
                 _voucherDetail.VoucherDetailDate = _voucherMaster.VoucherDate;
                 _voucherDetail.BranchId = _branch.BranchId;
-                _voucherDetail.BranchCode = invoice.BranchCode;
+                _voucherDetail.CostCenter = _voucherDetail.BranchCode = invoice.BranchCode;
                 _voucherDetail.BranchName = invoice.BranchName;
-                if (isFromInvoiceDetials)
-                {
-                    _voucherDetail.FromLedgerId = invoice.LedgerId;
-                    _voucherDetail.FromLedgerCode = invoice.LedgerCode;
-                    _voucherDetail.FromLedgerName = invoice.LedgerName;
-                }
-                //To ledger  clarifiaction on selecion of product
-
-                _voucherDetail.ToLedgerId = _accountLedger.LedgerId;
-                _voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
-                _voucherDetail.ToLedgerName = _accountLedger.LedgerName;
                 _voucherDetail.Amount = productRate;
                 _voucherDetail.TransactionType = _accountLedger.CrOrDr;
-                _voucherDetail.CostCenter = _accountLedger.BranchCode;
                 _voucherDetail.ServerDate = DateTime.Now;
                 _voucherDetail.Narration = $"Purchase Invoice {_accountLedger.LedgerName} A /c: {_voucherDetail.TransactionType}";
+
+                if (isFromInvoiceDetials)
+                {
+                    _voucherDetail.FromLedgerId = _accountLedger.LedgerId;
+                    _voucherDetail.FromLedgerCode = _accountLedger.LedgerCode;
+                    _voucherDetail.FromLedgerName = _accountLedger.LedgerName;
+
+                    _voucherDetail.ToLedgerId = invoice.LedgerId;
+                    _voucherDetail.ToLedgerCode = invoice.LedgerCode;
+                    _voucherDetail.ToLedgerName = invoice.LedgerName;
+
+                   
+                }
+                else
+                {
+                    _voucherDetail.FromLedgerId = -1;
+                    _voucherDetail.FromLedgerCode = string.Empty;
+                    _voucherDetail.FromLedgerName = string.Empty;
+
+                    _voucherDetail.ToLedgerId = _accountLedger.LedgerId;
+                    _voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
+                    _voucherDetail.ToLedgerName = _accountLedger.LedgerName;
+                }
+               
 
                 context.TblVoucherDetail.Add(_voucherDetail);
                 if (context.SaveChanges() > 0)
                     return _voucherDetail;
 
-                #region comment
-                //var _voucherDetail = new TblVoucherDetail();
-                //_voucherDetail.VoucherMasterId = _voucherMaster.VoucherMasterId;
-                //_voucherDetail.VoucherDetailDate = _voucherMaster.VoucherDate;
-                //_voucherDetail.BranchId = _branch.BranchId;
-                //_voucherDetail.BranchCode = invoice.BranchCode;
-                //_voucherDetail.BranchName = invoice.BranchName;
-                //_voucherDetail.FromLedgerId = invoice.LedgerId;
-                //_voucherDetail.FromLedgerCode = invoice.LedgerCode;
-                //_voucherDetail.FromLedgerName = invoice.LedgerName;
-                ////To ledger  clarifiaction on selecion of product
-                //_voucherDetail.ToLedgerId = _accountLedger.LedgerId;
-                //_voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
-                //_voucherDetail.ToLedgerName = _accountLedger.LedgerName;
-                //_voucherDetail.Amount = invdtl.Rate;
-                //_voucherDetail.TransactionType = _accountLedger.CrOrDr;
-                //_voucherDetail.CostCenter = _accountLedger.BranchCode;
-                //_voucherDetail.ServerDate = DateTime.Now;
-                //_voucherDetail.Narration = "Sales Invoice Product group A/c:" + _voucherDetail.TransactionType;
-
-                //repo.TblVoucherDetail.Add(_voucherDetail);
-                //repo.SaveChanges();
-                #endregion
+               
                 return null;
                 // }
             }
@@ -543,12 +550,12 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
                 _accountLedgerTransactions.VoucherAmount = _voucherDetail.Amount;
 
-                if (_accountLedgerTransactions.TransactionType.Equals("dedit", StringComparison.OrdinalIgnoreCase))
+                if (_accountLedgerTransactions.TransactionType.ToUpper() =="DEBIT")
                 {
                     _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
                     _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
                 }
-                else if (_accountLedgerTransactions.TransactionType.Equals("credit", StringComparison.OrdinalIgnoreCase))
+                else if (_accountLedgerTransactions.TransactionType.ToUpper() =="CREDIT")
                 {
                     _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
                     _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
@@ -570,37 +577,93 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
         #endregion
 
         #region  Search Purchase Records in Master Table
-        public List<TblPurchaseInvoice> GetPurchaseInvoices(string branchCode,SearchCriteria searchCriteria)
+
+        public List<TblPurchaseInvoice> GetPurchaseInvoices(SearchCriteria searchCriteria, string branchCode)
         {
             try
             {
-                using(Repository<TblPurchaseInvoice> repo=new Repository<TblPurchaseInvoice>())
+                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+
+                using Repository<TblPurchaseInvoice> repo = new Repository<TblPurchaseInvoice>();
+                List<TblPurchaseInvoice> _purchaseList = null;
+                if (searchCriteria.Role == 1)
                 {
-                    List<TblPurchaseInvoice> _purchaseList = null;
-
-
-
-                    _purchaseList= repo.TblPurchaseInvoice.AsEnumerable()
-                                       .Where(inv => DateTime.Parse(inv.PurchaseInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.PurchaseInvDate).Value.ToShortDateString())
-                                                 && DateTime.Parse(inv.PurchaseInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.PurchaseInvDate).Value.ToShortDateString())
-                                                 && !inv.IsPurchaseReturned.Value)
-                        .ToList();
-
-                    if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
-                        _purchaseList = _purchaseList.Where(x=> x.PurchaseInvNo == searchCriteria.InvoiceNo).ToList();
-                    if(searchCriteria.Role != 1)
-                    {
-                        _purchaseList = _purchaseList.Where(x => x.BranchCode == branchCode).ToList();
-                    }
-
-                    return _purchaseList;
+                    _purchaseList = repo.TblPurchaseInvoice.AsEnumerable()
+                         .Where(pi =>
+                                    DateTime.Parse(pi.PurchaseInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? pi.PurchaseInvDate).Value.ToShortDateString())
+                                  && DateTime.Parse(pi.PurchaseInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? pi.PurchaseInvDate).Value.ToShortDateString())
+                                  && !pi.IsPurchaseReturned.Value)
+                          .ToList();
                 }
+                else
+                {
+                    _purchaseList = repo.TblPurchaseInvoice.AsEnumerable()
+                          .Where(pi =>
+                                     DateTime.Parse(pi.PurchaseInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? pi.PurchaseInvDate).Value.ToShortDateString())
+                                   && DateTime.Parse(pi.PurchaseInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? pi.PurchaseInvDate).Value.ToShortDateString())
+                                   && !pi.IsPurchaseReturned.Value && pi.BranchCode == branchCode)
+                           .ToList();
+                }
+
+
+                if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
+                {
+                    _purchaseList = _purchaseList.Where(x => x.PurchaseInvNo == searchCriteria.InvoiceNo).ToList();
+
+                    if (_purchaseList.Count() == 0)
+                        repo.TblPurchaseInvoice.AsEnumerable().Where(x => x.PurchaseInvNo == searchCriteria.InvoiceNo).ToList();
+                }
+                if (searchCriteria.Role != 1)
+                {
+                    _purchaseList = _purchaseList.Where(x => x.BranchCode == branchCode).ToList();
+                }
+
+                return _purchaseList.OrderByDescending(x => x.PurchaseInvDate).ToList();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
+
         }
+
+        //public List<TblPurchaseInvoice> GetPurchaseInvoices(string branchCode,SearchCriteria searchCriteria)
+        //{
+        //    try
+        //    {
+        //        using(Repository<TblPurchaseInvoice> repo=new Repository<TblPurchaseInvoice>())
+        //        {
+        //            List<TblPurchaseInvoice> _purchaseList = null;
+
+
+
+        //            _purchaseList= repo.TblPurchaseInvoice.AsEnumerable()
+        //                               .Where(inv => DateTime.Parse(inv.PurchaseInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.PurchaseInvDate).Value.ToShortDateString())
+        //                                         && DateTime.Parse(inv.PurchaseInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.PurchaseInvDate).Value.ToShortDateString())
+        //                                         && !inv.IsPurchaseReturned.Value)
+        //                .ToList();
+
+        //            if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
+        //            {
+        //                _purchaseList = _purchaseList.Where(x => x.PurchaseInvNo == searchCriteria.InvoiceNo).ToList();
+
+        //                if(_purchaseList.Count() == 0)
+        //                    repo.TblPurchaseInvoice.AsEnumerable().Where(x => x.PurchaseInvNo == searchCriteria.InvoiceNo).ToList();
+        //            }
+        //            if(searchCriteria.Role != 1)
+        //            {
+        //                _purchaseList = _purchaseList.Where(x => x.BranchCode == branchCode).ToList();
+        //            }
+
+        //            return _purchaseList;
+        //        }
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
         public  List<TblPurchaseInvoiceDetail> GetPurchaseInvoiceDetails(string purchaseNo)
         {
             try

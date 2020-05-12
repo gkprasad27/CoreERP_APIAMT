@@ -153,6 +153,7 @@ namespace CoreERP.Controllers
                 }
                 try
                 {
+
                     string branchCode = objData["branchCode"].ToString();
                     string productCode= objData["productCode"].ToString();
 
@@ -227,7 +228,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("GetInvoiceList/{branchCode}")]
-        public async Task<IActionResult> GetInvoiceList(string branchCode,[FromBody]SearchCriteria searchCriteria)
+        public async Task<IActionResult> GetInvoiceList([FromBody]SearchCriteria searchCriteria, string branchCode)
         {
             var result = await Task.Run(() =>
             {
@@ -235,7 +236,7 @@ namespace CoreERP.Controllers
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
                 try
                 {
-                    var invoiceMasterList = new PurchasesHelper().GetPurchaseInvoices(branchCode,searchCriteria);
+                    var invoiceMasterList = new PurchasesHelper().GetPurchaseInvoices(searchCriteria, branchCode);
                     if (invoiceMasterList.Count > 0)
                     {
                         dynamic expando = new ExpandoObject();
@@ -279,6 +280,26 @@ namespace CoreERP.Controllers
             });
             return result;
         }
+
+        [HttpGet("GetmemberNames/{memberName}")]
+        public IActionResult GetmemberNames(string memberName)
+        {
+            if (string.IsNullOrEmpty(memberName))
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.Members = new InvoiceHelper().GetMembers(memberName).Select(x => new { ID = x.MemberCode, Text = x.MemberName, PhoneNo = x.Phone, GeneralNo = x.MemberCode });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
     }
 }
 

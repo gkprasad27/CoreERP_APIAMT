@@ -224,9 +224,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
                                 _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure.PurchaseAccount).FirstOrDefault();
 
-                                #region Add voucher Details
-                                var _voucherDetail = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, purReturnInv.Rate);
-                                #endregion
+                                
 
                                 #region InvioceDetail
                                 purReturnInv.PurchaseReturnId = purchaseReturn.PurchaseReturnId;
@@ -243,6 +241,11 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 context.TblPurchaseReturnDetails.Add(purReturnInv);
                                 context.SaveChanges();
 
+                                #endregion
+
+                                #region Add voucher Details
+                                _accountLedger.CrOrDr = "Debit";
+                                var _voucherDetail = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, purReturnInv.Rate);
                                 #endregion
 
                                 #region Add stock transaction  and Account Ledger Transaction
@@ -271,27 +274,34 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             }
 
                             _accountLedger = GetAccountLedgers(purchaseReturn.LedgerCode);
-                            AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, purchaseReturn.GrandTotal, false);
-
+                            _accountLedger.CrOrDr = "Credit";
+                            var voucherDetail= AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, purchaseReturn.GrandTotal, false);
+                            AddAccountLedgerTransactions(context, voucherDetail, purchaseInvoice.PurchaseInvDate);
                             //CHech weather igs or sg ,cg st
                             var _stateWiseGsts = GetStateWiseGsts(purchaseReturn.StateCode).FirstOrDefault();
                             if (_stateWiseGsts.Igst == 1)
                             {
                                 //Add IGST record
                                 var _accAL = GetAccountLedgers("243");
-                                AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalAmount, false);
-
+                                _accAL.CrOrDr = "Debit";
+                                var voucherDetailIGST = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalAmount, false);
+                                AddAccountLedgerTransactions(context, voucherDetailIGST, purchaseInvoice.PurchaseInvDate);
                             }
                             else
                             {
-                                // sgst
+                                //CGST
                                 var _accAL = GetAccountLedgers("240");
-                                AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalAmount, false);
+                                _accAL.CrOrDr = "Debit";
+                                var voucherDetailCGST = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalAmount, false);
+                                AddAccountLedgerTransactions(context, voucherDetailCGST, purchaseInvoice.PurchaseInvDate);
                                 // sgst
                                 _accAL = GetAccountLedgers("241");
-                                AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalAmount, false);
+                                _accAL.CrOrDr = "Debit";
+                                var voucherDetailSGST = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalAmount, false);
+                                AddAccountLedgerTransactions(context, voucherDetailSGST, purchaseInvoice.PurchaseInvDate);
+
                             }
-                           
+
                             dbTransaction.Commit();
                             return purchaseReturn;
                         }
@@ -352,23 +362,37 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _voucherDetail.BranchId = _branch.BranchId;
                 _voucherDetail.BranchCode = purchaseReturn.BranchCode;
                 _voucherDetail.BranchName = purchaseReturn.BranchName;
-                if (isFromInvoiceDetials)
-                {
-                    _voucherDetail.FromLedgerId = purchaseReturn.LedgerId;
-                    _voucherDetail.FromLedgerCode = purchaseReturn.LedgerCode;
-                    _voucherDetail.FromLedgerName = purchaseReturn.LedgerName;
-                }
-                //To ledger  clarifiaction on selecion of product
-
-                _voucherDetail.ToLedgerId = _accountLedger.LedgerId;
-                _voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
-                _voucherDetail.ToLedgerName = _accountLedger.LedgerName;
                 _voucherDetail.Amount = productRate;
                 _voucherDetail.TransactionType = _accountLedger.CrOrDr;
-                _voucherDetail.CostCenter = _accountLedger.BranchCode;
+                _voucherDetail.CostCenter = _voucherDetail.BranchCode;
                 _voucherDetail.ServerDate = DateTime.Now;
                 _voucherDetail.Narration = $"Purchase Return Invoice {_accountLedger.LedgerName} A /c: {_voucherDetail.TransactionType}";
 
+                if (isFromInvoiceDetials)
+                {
+                    _voucherDetail.FromLedgerId = _accountLedger.LedgerId;
+                    _voucherDetail.FromLedgerCode = _accountLedger.LedgerCode;
+                    _voucherDetail.FromLedgerName = _accountLedger.LedgerName;
+
+                    _voucherDetail.ToLedgerId = purchaseReturn.LedgerId;
+                    _voucherDetail.ToLedgerCode = purchaseReturn.LedgerCode;
+                    _voucherDetail.ToLedgerName = purchaseReturn.LedgerName;
+
+                }
+                else
+                {
+
+                    _voucherDetail.FromLedgerId = -1;
+                    _voucherDetail.FromLedgerCode = string.Empty;
+                    _voucherDetail.FromLedgerName = string.Empty;
+
+                    _voucherDetail.ToLedgerId = _accountLedger.LedgerId;
+                    _voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
+                    _voucherDetail.ToLedgerName = _accountLedger.LedgerName;
+                }
+
+               
+               
                 context.TblVoucherDetail.Add(_voucherDetail);
                 if (context.SaveChanges() > 0)
                     return _voucherDetail;

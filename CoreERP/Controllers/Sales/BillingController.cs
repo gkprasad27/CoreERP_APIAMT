@@ -324,11 +324,13 @@ namespace CoreERP.Controllers
             }
             try
             {
+                bool taxapplicableOn = false;
                 string branchCode = objData["branchCode"].ToString();
                 string productCode = objData["productCode"].ToString();
 
                 dynamic expando = new ExpandoObject();
                 expando.BillingDetailsSection = new InvoiceHelper().GetBillingDetailsSection(branchCode, productCode,_configuration);
+                expando.TaxapplicableOn = taxapplicableOn;
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

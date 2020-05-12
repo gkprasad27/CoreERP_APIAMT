@@ -118,7 +118,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _bankreceiptMasterList = _bankreceiptMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
-                return _bankreceiptMasterList;
+                return _bankreceiptMasterList.OrderByDescending(x=>x.BankReceiptDate).ToList();
             }
             catch (Exception ex)
             {

@@ -59,7 +59,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
 
         }
-
         public List<TblPumps> GetPumps(string pumpNo,string branchCode)
         {
             try
@@ -76,7 +75,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-
         public List<TblStateWiseGst> GetStateWiseGsts(string stateId=null)
         {
             try
@@ -91,7 +89,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-
         public string GenerateInvoiceNo(string branchCode,out string  errorMessage)
         {
             try
@@ -145,6 +142,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     {
                         //searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
                         searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                       
                         if (searchCriteria.FromDate == null)
                         {
                             _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
@@ -171,17 +169,19 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     {
                         _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
                               .Where(inv =>
-                                         DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) 
-                                         >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
-                                       && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) 
-                                         <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                         DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                       && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString())<= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
                                        && inv.BranchCode == branchCode
                                        && !inv.IsSalesReturned.Value
                                  )
                                .ToList();
                     }
-                    if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
-                        _invoiceMasterList = _invoiceMasterList.Where(x=> x.InvoiceNo == searchCriteria.InvoiceNo).ToList();
+                    if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo)) 
+                    {
+                        _invoiceMasterList = _invoiceMasterList.Where(x => x.InvoiceNo == searchCriteria.InvoiceNo).ToList();
+                        if (_invoiceMasterList.Count() == 0)
+                            _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable().Where(i=> i.InvoiceNo.Contains(searchCriteria.InvoiceNo)).ToList();
+                    }
 
                     // && inv.InvoiceNo == (searchCriteria.InvoiceNo ?? inv.InvoiceNo)
 
@@ -294,7 +294,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     decimal totalCrditAmount = accountTransactions.Sum(x => Convert.ToDecimal(x.CreditAmount ?? 0));
                     decimal totalDebittAmount = accountTransactions.Sum(x => Convert.ToDecimal(x.DebitAmount ?? 0));
 
-                   var  _value =  _OpeningBalance.Amount +(totalCrditAmount - totalDebittAmount);
+                   var  _value =  _OpeningBalance.Amount +(totalDebittAmount - totalCrditAmount);
                     if(_value > 0)
                     {
                         return _value;
@@ -437,6 +437,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
+                bool IsTaxApplicable = false;
                 var _product = GetProducts(productCode).FirstOrDefault();
 
                 var invoceDetails = new TblInvoiceDetail();
@@ -444,6 +445,20 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 {
                     return invoceDetails;
                 }
+
+                //check tax calculation is required or not
+                if (_product.TaxapplicableOn != null)
+                {
+                    if (_product.TaxapplicableOn.Equals("INPUT", StringComparison.InvariantCultureIgnoreCase) || _product.TaxapplicableOn.Equals("NONE", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        IsTaxApplicable = false;
+                    }
+                    else
+                    {
+                        IsTaxApplicable = true;
+                    }
+                }
+
                 invoceDetails.UnitId = Convert.ToDecimal(_product.UnitId ?? 0);
                 invoceDetails.UnitName = _product.UnitName;
 
@@ -460,15 +475,27 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 invoceDetails.ProductGroupId = Convert.ToDecimal(_product.ProductGroupId ?? 0);
                 invoceDetails.ProductId = _product.ProductId;
                 invoceDetails.ProductName = _product.ProductName;
+                invoceDetails.ServerDateTime = DateTime.Now;
                 if (_product.TaxStructureCode != null)
                 {
-                    var taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
-                    invoceDetails.Sgst = taxStructure.Sgst;
-                    invoceDetails.Cgst = taxStructure.Sgst;
-                    invoceDetails.Igst = taxStructure.Igst;
-                    invoceDetails.TotalGst = taxStructure.TotalGst;
-
-                    invoceDetails.ServerDateTime = DateTime.Now;
+                    if (IsTaxApplicable)
+                    {
+                        var taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
+                        if (taxStructure != null)
+                        {
+                            invoceDetails.Sgst = taxStructure.Sgst;
+                            invoceDetails.Cgst = taxStructure.Sgst;
+                            invoceDetails.Igst = taxStructure.Igst;
+                            invoceDetails.TotalGst = taxStructure.TotalGst;
+                        }
+                    }
+                    else
+                    {
+                        invoceDetails.Sgst = 0;
+                        invoceDetails.Cgst = 0;
+                        invoceDetails.Igst = 0;
+                        invoceDetails.TotalGst = 0;
+                    }
                 }
 
                 try
@@ -587,6 +614,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 errorMessage = string.Empty;
                 decimal? _qty = null;
+                TblUserNew userNew = null;
+                TblAccountLedger _accountLedger = null;
 
                 //check no of record allowed 
                 int allowedRecorsCount = NoOfrecordsAllowed(configuration, invoice.BranchCode);
@@ -597,8 +626,10 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 }
 
 
-
+                userNew = new UserManagmentHelper().GetUserNew(invoice.UserId);
                 decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(invoice.UserId, null));
+               
+                invoice.EmployeeId = userNew?.EmployeeId ?? -1;
                 invoice.IsSalesReturned = false;
                 invoice.IsManualEntry = false;
                 TblTaxStructure _taxStructure = null;
@@ -609,7 +640,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     {
                         try
                         {
-
                             if (IsInvoiceNoExists(invoice.BranchCode, invoice.InvoiceNo))
                             {
 
@@ -622,10 +652,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             }
 
                             var _branch = GetBranches(invoice.BranchCode).ToArray().FirstOrDefault();
-                            var _accountLedger = GetAccountLedgersByCode(invoice.LedgerCode);
+                             _accountLedger = GetAccountLedgersByCode(invoice.LedgerCode);
                             var _vouchertType = GetVoucherType(19).FirstOrDefault();
                             var _user = new UserManagmentHelper().GetEmployeeID(invoice.UserName);
 
+                            var paymentType = new Common.CommonHelper().GetPaymentType(_accountLedger.CrOrDr);
+                            invoice.PaymentMode = paymentType == null ? -1: paymentType.PaymentTypeId;
                             invoice.LedgerId = _accountLedger.LedgerId;
                             if (invoice.VehicleRegNo != null && invoice.MemberCode != null)
                             {
@@ -640,7 +672,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             invoice.UserId = _user.UserId;
                             invoice.ServerDateTime = DateTime.Now;
                             invoice.IsSalesReturned = false;
-
+                           
                             #region Add voucher master record
                             var _voucherMaster = AddVoucherMaster(repo, invoice, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
                             #endregion
@@ -661,6 +693,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 #endregion
 
                                 #region InvioceDetail
+                                invdtl.EmployeeId = invoice.EmployeeId;
                                 invdtl.InvoiceMasterId = invoice.InvoiceMasterId;
                                 invdtl.VoucherNo = invoice.VoucherNo;
                                 invdtl.InvoiceNo = invoice.InvoiceNo;
@@ -698,7 +731,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             _accountLedger = GetAccountLedgersByCode(invoice.LedgerCode);
                             var voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, invoice.TotalAmount, "Debit", false);
                             AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
-                            //CHech weather igs or sg ,cg st
+                            //check weather igs or sg ,cg st
                             var _stateWiseGsts = GetStateWiseGsts(invoice.StateCode).FirstOrDefault();
                             if (_stateWiseGsts.Igst == 1)
                             {
@@ -884,42 +917,42 @@ namespace CoreERP.BussinessLogic.SalesHelper
         }
         public TblAccountLedgerTransactions AddAccountLedgerTransactions(ERPContext context,TblVoucherDetail _voucherDetail,DateTime? invoiceDate)
         {
-            try 
+            try
             {
                 //using(ERPContext context=new ERPContext())
                 //{
-                    var _accountLedgerTransactions = new TblAccountLedgerTransactions();
-                    _accountLedgerTransactions.VoucherDetailId = _voucherDetail.VoucherDetailId;
-                    _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
-                    _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
-                    _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
-                    _accountLedgerTransactions.BranchId = _voucherDetail.BranchId;
-                    _accountLedgerTransactions.BranchCode = _voucherDetail.BranchCode;
-                    _accountLedgerTransactions.BranchName = _voucherDetail.BranchName;
-                    _accountLedgerTransactions.TransactionDate = invoiceDate;
-                    _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
-                    _accountLedgerTransactions.VoucherAmount = _voucherDetail.Amount;
+                var _accountLedgerTransactions = new TblAccountLedgerTransactions();
+                _accountLedgerTransactions.VoucherDetailId = _voucherDetail.VoucherDetailId;
+                _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
+                _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
+                _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
+                _accountLedgerTransactions.BranchId = _voucherDetail.BranchId;
+                _accountLedgerTransactions.BranchCode = _voucherDetail.BranchCode;
+                _accountLedgerTransactions.BranchName = _voucherDetail.BranchName;
+                _accountLedgerTransactions.TransactionDate = invoiceDate;
+                _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
+                _accountLedgerTransactions.VoucherAmount = _voucherDetail.Amount;
 
-                    if (_accountLedgerTransactions.TransactionType.Equals("Debit", StringComparison.OrdinalIgnoreCase))
-                    {
-                        _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
-                        _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
-                    }
-                    else if (_accountLedgerTransactions.TransactionType.Equals("Credit", StringComparison.OrdinalIgnoreCase))
-                    {
-                        _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
-                        _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
-                    }
+                if (_accountLedgerTransactions.TransactionType.ToUpper().Equals("DEBIT", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
+                    _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
+                }
+                else if (_accountLedgerTransactions.TransactionType.ToUpper().Equals("CREDIT", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
+                    _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
+                }
 
-                    context.TblAccountLedgerTransactions.Add(_accountLedgerTransactions);
-                    if (context.SaveChanges() > 0)
-                        return _accountLedgerTransactions;
+                context.TblAccountLedgerTransactions.Add(_accountLedgerTransactions);
+                if (context.SaveChanges() > 0)
+                    return _accountLedgerTransactions;
 
 
-                    return null;
-              //  }
+                return null;
+                //  }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }

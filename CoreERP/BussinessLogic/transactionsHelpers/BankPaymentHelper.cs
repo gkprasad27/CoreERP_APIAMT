@@ -169,7 +169,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _bankpaymentMasterList = _bankpaymentMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
-                return _bankpaymentMasterList;
+                return _bankpaymentMasterList.OrderByDescending(x=>x.BankPaymentDate).ToList();
             }
             catch (Exception ex)
             {

@@ -184,7 +184,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _cashreceiptMasterList = _cashreceiptMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
-                return _cashreceiptMasterList;
+                return _cashreceiptMasterList.OrderByDescending(x=>x.CashReceiptDate).ToList();
             }
             catch (Exception ex)
             {

@@ -149,7 +149,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _journalVoucherMasterList = _journalVoucherMasterList.Where(x => x.VoucherNo == searchCriteria.VoucherNo).ToList();
 
 
-                return _journalVoucherMasterList;
+                return _journalVoucherMasterList.OrderByDescending(x=>x.JournalVoucherDate).ToList();
             }
             catch (Exception ex)
             {

@@ -397,7 +397,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _stockexcess = _stockexcess.Where(x => x.StockExcessNo == searchCriteria.VoucherNo).ToList();
 
 
-                return _stockexcess;
+                return _stockexcess.OrderByDescending(x=>x.StockExcessDate).ToList();
             }
             catch (Exception ex)
             {

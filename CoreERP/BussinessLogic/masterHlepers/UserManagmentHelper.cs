@@ -292,6 +292,21 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
+
+        public TblUserNew GetUserNew(decimal userId)
+        {
+            try
+            {
+                using(Repository<TblUserNew> _repo=new Repository<TblUserNew>())
+                {
+                    return _repo.TblUserNew.Where(u=> u.UserId == userId).FirstOrDefault();
+                }
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }
  //{

@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.BussinessLogic.SalesHelper;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
@@ -11,7 +12,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 {
     public class OilconversionHelper
     {
-        public  List<TblOilConversionMaster> GetOilconversionList()
+        public List<TblOilConversionMaster> GetOilconversionList()
         {
             try
             {
@@ -90,7 +91,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     operatoroilcnvsnsDetail.BatchNo = date + "-" + oilcnvsnno.Prefix + "-" + oilcnvsnno.StartIndex + "-" + oilcnvsnno.Suffix + "-" + "-" + _product.ProductCode;
                     operatoroilcnvsnsDetail.Qty = 0;
                     operatoroilcnvsnsDetail.Rate = GetProductRate(branchCode, productCode);
-                    operatoroilcnvsnsDetail.GrossAmount =Convert.ToDecimal(GetProductQty(branchCode, productCode));
+                    operatoroilcnvsnsDetail.GrossAmount = Convert.ToDecimal(GetProductQty(branchCode, productCode));
                     operatoroilcnvsnsDetail.HsnNo = Convert.ToDecimal(_product.HsnNo ?? 0);
                     operatoroilcnvsnsDetail.ProductCode = _product.ProductCode;
                     operatoroilcnvsnsDetail.ProductName = _product.ProductName;
@@ -138,6 +139,19 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
 
+        public List<TblPackageConversion> GetPackageProductQty(string productCode = null)
+        {
+            try
+            {
+                using Repository<TblPackageConversion> repo = new Repository<TblPackageConversion>();
+                return repo.TblPackageConversion.AsEnumerable().Where(b => b.InputproductCode == (productCode ?? b.InputproductCode)).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public decimal? GetProductRate(string branchCode, string productCode)
         {
             try
@@ -176,7 +190,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 throw ex;
             }
         }
-       
+
 
         public List<TblBranch> GetBranches(string branchCode = null)
         {
@@ -204,121 +218,105 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
 
-        public bool RegisterBill(TblOilConversionMaster oilcnvsmaster, List<TblOilConversionDetails> oilcnvsmasterDetails)
+        #region Stockinformation
+        private TblStockInformation AddStockInformation(ERPContext context, TblOilConversionDetails oilConversionDetail, TblOilConversionMaster oilConversionMaster, string branchCode, bool isFromBranch, decimal? voucherTypeID = 52)
         {
             try
             {
-                //invoice.IsSalesReturned = false;
-                //invoice.IsManualEntry = false;
-                using (Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>())
+                var _productQty = GetPackageProductQty(oilConversionDetail.ProductCode).FirstOrDefault();
+                TblStockInformation stockInformation = new TblStockInformation();
+                try { stockInformation.BranchId = Convert.ToDecimal(branchCode ?? "0"); } catch { };
+                stockInformation.BranchCode = branchCode;
+                stockInformation.UserId = oilConversionMaster.UserId;
+                stockInformation.ShiftId = oilConversionMaster.ShiftId;
+                stockInformation.TransactionDate = oilConversionMaster.OilConversionDate;
+                stockInformation.VoucherNo = oilConversionMaster.VoucherTypeId.ToString();
+                stockInformation.VoucherTypeId = voucherTypeID;
+                stockInformation.InvoiceNo = oilConversionMaster.OilConversionVchNo;
+                stockInformation.Rate = oilConversionDetail.Rate;
+
+
+                if (isFromBranch)
                 {
-                    //add voucher typedetails
-                    var user = repo.TblUser.Where(x => x.UserName == oilcnvsmaster.UserName).FirstOrDefault();
-                    var userid = repo.TblUserNew.Where(x => x.UserName == user.UserName).FirstOrDefault();
-                    var shift= repo.TblShift.Where(x => x.UserId == userid.UserId).FirstOrDefault();
-                    var _branch = GetBranches(oilcnvsmaster.BranchCode).ToArray().FirstOrDefault();
-                    var _vouchertType = GetVoucherTypeList(52).ToArray().FirstOrDefault();
-                    TblVoucherMaster vchrmastr = new TblVoucherMaster();
-                    vchrmastr.BranchCode= _branch.BranchCode;
-                    vchrmastr.BranchName= _branch.BranchName;
-                    vchrmastr.VoucherDate = DateTime.Now;
-                    vchrmastr.VoucherTypeIdMain= 52;
-                    vchrmastr.VoucherTypeIdSub = 52;
-                    vchrmastr.VoucherNo = oilcnvsmaster.OilConversionVchNo;
-                    vchrmastr.Narration = oilcnvsmaster.Narration;
-                    vchrmastr.ServerDate = DateTime.Now;
-                    vchrmastr.ShiftId = shift.ShiftId;
-                    vchrmastr.UserId = user.UserId;
-                    vchrmastr.UserName = oilcnvsmaster.UserName;
-                    vchrmastr.EmployeeId = userid.EmployeeId;
-
-                    oilcnvsmaster.BranchCode = _branch.BranchCode;
-                    oilcnvsmaster.BranchName = _branch.BranchName;
-                    oilcnvsmaster.BranchId = _branch.BranchId;
-                    oilcnvsmaster.ServerDate = DateTime.Now;
-                    oilcnvsmaster.OilConversionDate = oilcnvsmaster.OilConversionDate;
-                    oilcnvsmaster.OilConversionVchNo = oilcnvsmaster.OilConversionVchNo;
-                    oilcnvsmaster.VoucherTypeId = _vouchertType.VoucherTypeId;
-                    oilcnvsmaster.ShiftId = shift.ShiftId;
-                    oilcnvsmaster.UserId = user.UserId;
-                    oilcnvsmaster.UserName = oilcnvsmaster.UserName;
-                    oilcnvsmaster.EmployeeId = userid.EmployeeId;
-                    oilcnvsmaster.Narration = oilcnvsmaster.Narration;
-                    repo.TblVoucherMaster.Add(vchrmastr);
-                    repo.TblOilConversionMaster.Add(oilcnvsmaster);
-                    repo.SaveChanges();
-                    foreach (var oilconversions in oilcnvsmasterDetails)
-                    {
-                        var _product = new InvoiceHelper().GetProducts(oilconversions.ProductCode).FirstOrDefault();
-                        var oilcnvsmmstrid = repo.TblOilConversionMaster.Where(stock => stock.OilConversionVchNo == oilcnvsmaster.OilConversionVchNo && (stock.UserId == user.UserId)).FirstOrDefault();
-                        int i = 0;
-                        //var _product = new InvoiceHelper().GetProducts(invdtl.ProductCode).FirstOrDefault();
-                        int[] array = new int[] { Convert.ToInt32(oilcnvsmaster.BranchCode)};
-                        foreach (var item in array)
-                        {
-                            TblStockInformation stockinformation = new TblStockInformation();
-                            i = item;
-                            stockinformation.BranchCode = Convert.ToString(i);
-                            var _branchcode = GetBranches(Convert.ToString(i)).ToArray().FirstOrDefault();
-                            //(stockreceipt.FromBranchCode)==null ? stockreceipt.FromBranchCode : ext;
-                            stockinformation.BranchId = _branchcode.BranchId;
-
-                            if (shift.ShiftId == 0)
-                            {
-                                stockinformation.ShiftId = 0;
-                            }
-                            else
-                            {
-                                stockinformation.ShiftId = shift.ShiftId;
-                            }
-                            stockinformation.UserId = oilcnvsmaster.UserId;
-                            stockinformation.TransactionDate = DateTime.Now;
-                            stockinformation.VoucherTypeId = 52;
-                            stockinformation.InvoiceNo = oilcnvsmaster.OilConversionVchNo;
-                            stockinformation.ProductId = _product.ProductId;
-                            stockinformation.ProductCode = oilconversions.ProductCode;
-                            stockinformation.Rate = oilconversions.Rate;
-                            if ((item) == Convert.ToInt32(oilcnvsmaster.BranchCode))
-                            {
-                                stockinformation.InwardQty = 0;
-                                stockinformation.OutwardQty = oilconversions.Qty;
-                            }
-                            else
-                            {
-                                stockinformation.InwardQty = oilconversions.Qty;
-                                stockinformation.OutwardQty = 0;
-                            }
-                            repo.TblStockInformation.Add(stockinformation);
-                            repo.SaveChanges();
-                        }
-                        //var oilcnvsmmstrid = GetOilConversionslist(oilcnvsmaster.OilConversionVchNo).FirstOrDefault();
-                        #region StockIssueDetails
-                        oilconversions.OilConversionMasterId = oilcnvsmmstrid.OilConversionMasterId;
-                        oilconversions.OilConversionMasterId = oilconversions.OilConversionMasterId;
-                        oilconversions.OilConversionDetailsDate = DateTime.Now;
-                        oilconversions.ServerDateTime = DateTime.Now;
-                        oilconversions.ProductId = _product.ProductId;
-                        oilconversions.ProductCode = oilconversions.ProductCode;
-                        oilconversions.ProductName = oilconversions.ProductName;
-                        oilconversions.HsnNo = oilconversions.HsnNo;
-                        oilconversions.Rate = oilconversions.Rate;
-                        oilconversions.Qty = oilconversions.Qty;
-                        oilconversions.BatchNo = oilconversions.BatchNo;
-                        oilconversions.UnitId = Convert.ToDecimal(_product.UnitId);
-                        oilconversions.UnitName = oilconversions.UnitName;
-                        oilconversions.DamageQty = oilconversions.DamageQty;
-                        oilconversions.NewQty = oilconversions.NewQty;
-                        oilconversions.GrossAmount = oilconversions.GrossAmount;
-                        repo.TblOilConversionDetails.Add(oilconversions);
-                        repo.SaveChanges();
-                        #endregion
-                        {
-
-                        }
-                    }
+                    stockInformation.ProductId = oilConversionDetail.ProductId;
+                    stockInformation.ProductCode = oilConversionDetail.ProductCode;
+                    stockInformation.OutwardQty = oilConversionDetail.Qty;
+                }
+                else
+                {
+                    var _product = new InvoiceHelper().GetProducts(_productQty.OutputproductCode).FirstOrDefault();
+                    stockInformation.ProductId = _product.ProductId;
+                    stockInformation.ProductCode = _productQty.OutputproductCode;
+                    stockInformation.InwardQty = oilConversionDetail.Qty * _productQty.OutputQty;
                 }
 
-                return true;
+
+                stockInformation.OutwardQty = stockInformation.OutwardQty ?? 0;
+                stockInformation.InwardQty = stockInformation.InwardQty ?? 0;
+
+                context.TblStockInformation.Add(stockInformation);
+                if (context.SaveChanges() > 0)
+                    return stockInformation;
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
+
+        public bool RegisterBill(TblOilConversionMaster oilConversionMaster, List<TblOilConversionDetails> oilConversionDetail)
+        {
+            try
+            {
+                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(Convert.ToDecimal(oilConversionMaster.UserId ?? 0), null));
+                var _user = new UserManagmentHelper().GetEmployeeID(oilConversionMaster.UserName);
+                var _vouchertType = GetVoucherTypeList(52).ToArray().FirstOrDefault();
+                var _branch = GetBranches(oilConversionMaster.BranchCode).ToArray().FirstOrDefault();
+
+                using ERPContext context = new ERPContext();
+                using var dbTransaction = context.Database.BeginTransaction();
+                try
+                {
+                    #region Add voucher master record
+                    var _voucherMaster = AddVoucherMaster(context, oilConversionMaster, _branch, _vouchertType.VoucherTypeId);
+                    #endregion
+
+                    oilConversionMaster.VoucherTypeId = _voucherMaster.VoucherMasterId;
+                    oilConversionMaster.ServerDate = DateTime.Now;
+                    oilConversionMaster.BranchId = _branch.BranchId;
+                    oilConversionMaster.BranchName = _branch.BranchName;
+                    oilConversionMaster.EmployeeId = _voucherMaster.EmployeeId;
+                    oilConversionMaster.ShiftId = shifId;
+                    context.TblOilConversionMaster.Add(oilConversionMaster);
+                    context.SaveChanges();
+
+                    foreach (var oilCnvnDetail in oilConversionDetail)
+                    {
+                        var _product = new InvoiceHelper().GetProducts(oilCnvnDetail.ProductCode).FirstOrDefault();
+                        #region oilConversionDetail
+                        oilCnvnDetail.OilConversionMasterId = oilConversionMaster.OilConversionMasterId;
+                        oilCnvnDetail.OilConversionDetailsDate = oilConversionMaster.OilConversionDate;
+                        oilCnvnDetail.ProductId = _product.ProductId;
+                        oilCnvnDetail.UnitId = _product.UnitId ?? 0;
+                        oilCnvnDetail.GrossAmount = (oilCnvnDetail.Qty * oilCnvnDetail.Rate) ?? 0;
+                        context.TblOilConversionDetails.Add(oilCnvnDetail);
+                        context.SaveChanges();
+
+                        #endregion
+                        AddStockInformation(context, oilCnvnDetail, oilConversionMaster, oilConversionMaster.BranchCode, true);
+                        AddStockInformation(context, oilCnvnDetail, oilConversionMaster, oilConversionMaster.BranchCode, false);
+                    }
+                    dbTransaction.Commit();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    dbTransaction.Rollback();
+                    throw e;
+                }
             }
             catch (Exception ex)
             {
@@ -326,9 +324,174 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             }
         }
 
+        public TblVoucherMaster AddVoucherMaster(ERPContext context, TblOilConversionMaster oilConversionMaster, TblBranch branch, decimal? voucherTypeId)
+        {
+            try
+            {
+                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(oilConversionMaster.UserId ?? 0, null));
+                var user = context.TblUserNew.Where(x => x.UserName == oilConversionMaster.UserName).FirstOrDefault();
+                var _voucherMaster = new TblVoucherMaster
+                {
+                    BranchCode = oilConversionMaster.BranchCode,
+                    BranchName = branch.BranchName,
+                    VoucherDate = oilConversionMaster.OilConversionDate,
+                    VoucherTypeIdMain = voucherTypeId,
+                    VoucherTypeIdSub = voucherTypeId,
+                    VoucherNo = oilConversionMaster.OilConversionVchNo,
+                    Amount = 0,
+                    PaymentType = string.Empty,
+                    ChequeNo = string.Empty,
+                    Narration = "Stock Entry",
+                    ServerDate = DateTime.Now,
+                    UserId = oilConversionMaster.UserId,
+                    UserName = oilConversionMaster.UserName,
+                    EmployeeId = user.EmployeeId,
+                    ShiftId = shifId
+                };
+
+                context.TblVoucherMaster.Add(_voucherMaster);
+                if (context.SaveChanges() > 0)
+                {
+                    return _voucherMaster;
+                }
+
+                return null;
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        //public bool RegisterBill(TblOilConversionMaster oilcnvsmaster, List<TblOilConversionDetails> oilcnvsmasterDetails)
+        //{
+        //    try
+        //    {
+        //        //invoice.IsSalesReturned = false;
+        //        //invoice.IsManualEntry = false;
+        //        using (Repository<TblOilConversionMaster> repo = new Repository<TblOilConversionMaster>())
+        //        {
+        //            //add voucher typedetails
+        //            var user = repo.TblUser.Where(x => x.UserName == oilcnvsmaster.UserName).FirstOrDefault();
+        //            var userid = repo.TblUserNew.Where(x => x.UserName == user.UserName).FirstOrDefault();
+        //            var shift= repo.TblShift.Where(x => x.UserId == userid.UserId).FirstOrDefault();
+        //            var _branch = GetBranches(oilcnvsmaster.BranchCode).ToArray().FirstOrDefault();
+        //            var _vouchertType = GetVoucherTypeList(52).ToArray().FirstOrDefault();
+        //            TblVoucherMaster vchrmastr = new TblVoucherMaster();
+        //            vchrmastr.BranchCode= _branch.BranchCode;
+        //            vchrmastr.BranchName= _branch.BranchName;
+        //            vchrmastr.VoucherDate = DateTime.Now;
+        //            vchrmastr.VoucherTypeIdMain= 52;
+        //            vchrmastr.VoucherTypeIdSub = 52;
+        //            vchrmastr.VoucherNo = oilcnvsmaster.OilConversionVchNo;
+        //            vchrmastr.Narration = oilcnvsmaster.Narration;
+        //            vchrmastr.ServerDate = DateTime.Now;
+        //            vchrmastr.ShiftId = shift.ShiftId;
+        //            vchrmastr.UserId = user.UserId;
+        //            vchrmastr.UserName = oilcnvsmaster.UserName;
+        //            vchrmastr.EmployeeId = userid.EmployeeId;
+
+        //            oilcnvsmaster.BranchCode = _branch.BranchCode;
+        //            oilcnvsmaster.BranchName = _branch.BranchName;
+        //            oilcnvsmaster.BranchId = _branch.BranchId;
+        //            oilcnvsmaster.ServerDate = DateTime.Now;
+        //            oilcnvsmaster.OilConversionDate = oilcnvsmaster.OilConversionDate;
+        //            oilcnvsmaster.OilConversionVchNo = oilcnvsmaster.OilConversionVchNo;
+        //            oilcnvsmaster.VoucherTypeId = vchrmastr.VoucherMasterId;
+        //            oilcnvsmaster.ShiftId = shift.ShiftId;
+        //            oilcnvsmaster.UserId = user.UserId;
+        //            oilcnvsmaster.UserName = oilcnvsmaster.UserName;
+        //            oilcnvsmaster.EmployeeId = userid.EmployeeId;
+        //            oilcnvsmaster.Narration = oilcnvsmaster.Narration;
+        //            repo.TblVoucherMaster.Add(vchrmastr);
+        //            repo.TblOilConversionMaster.Add(oilcnvsmaster);
+        //            repo.SaveChanges();
+        //            foreach (var oilconversions in oilcnvsmasterDetails)
+        //            {
+        //                var _product = new InvoiceHelper().GetProducts(oilconversions.ProductCode).FirstOrDefault();
+        //                var _productQty = GetProductQty(oilconversions.ProductCode).FirstOrDefault();
+        //                var oilcnvsmmstrid = repo.TblOilConversionMaster.Where(stock => stock.OilConversionVchNo == oilcnvsmaster.OilConversionVchNo && (stock.UserId == user.UserId)).FirstOrDefault();
+        //                int i = 0;
+        //                //var _product = new InvoiceHelper().GetProducts(invdtl.ProductCode).FirstOrDefault();
+        //                int[] array = new int[] { Convert.ToInt32(oilcnvsmaster.BranchCode)};
+        //                foreach (var item in array)
+        //                {
+        //                    TblStockInformation stockinformation = new TblStockInformation();
+        //                    i = item;
+        //                    stockinformation.BranchCode = Convert.ToString(i);
+        //                    var _branchcode = GetBranches(Convert.ToString(i)).ToArray().FirstOrDefault();
+        //                    //(stockreceipt.FromBranchCode)==null ? stockreceipt.FromBranchCode : ext;
+        //                    stockinformation.BranchId = _branchcode.BranchId;
+
+        //                    if (shift.ShiftId == 0)
+        //                    {
+        //                        stockinformation.ShiftId = 0;
+        //                    }
+        //                    else
+        //                    {
+        //                        stockinformation.ShiftId = shift.ShiftId;
+        //                    }
+        //                    stockinformation.UserId = oilcnvsmaster.UserId;
+        //                    stockinformation.TransactionDate = DateTime.Now;
+        //                    stockinformation.VoucherNo = vchrmastr.VoucherMasterId.ToString();
+        //                    stockinformation.VoucherTypeId = 52;
+        //                    stockinformation.InvoiceNo = oilcnvsmaster.OilConversionVchNo;
+        //                    stockinformation.ProductId = _product.ProductId;
+        //                    stockinformation.ProductCode = oilconversions.ProductCode;
+        //                    stockinformation.Rate = oilconversions.Rate;
+        //                    if ((item) == Convert.ToInt32(oilcnvsmaster.BranchCode))
+        //                    {
+        //                        stockinformation.InwardQty = 0;
+        //                        stockinformation.OutwardQty = oilconversions.Qty;
+        //                    }
+        //                    else
+        //                    {
+        //                        stockinformation.InwardQty = oilconversions.Qty;
+        //                        stockinformation.OutwardQty = 0;
+        //                    }
+        //                    repo.TblStockInformation.Add(stockinformation);
+        //                    repo.SaveChanges();
+        //                }
+        //                //var oilcnvsmmstrid = GetOilConversionslist(oilcnvsmaster.OilConversionVchNo).FirstOrDefault();
+        //                #region StockIssueDetails
+        //                oilconversions.OilConversionMasterId = oilcnvsmmstrid.OilConversionMasterId;
+        //                oilconversions.OilConversionMasterId = oilconversions.OilConversionMasterId;
+        //                oilconversions.OilConversionDetailsDate = DateTime.Now;
+        //                oilconversions.ServerDateTime = DateTime.Now;
+        //                oilconversions.ProductId = _product.ProductId;
+        //                oilconversions.ProductCode = oilconversions.ProductCode;
+        //                oilconversions.ProductName = oilconversions.ProductName;
+        //                oilconversions.HsnNo = oilconversions.HsnNo;
+        //                oilconversions.Rate = oilconversions.Rate;
+        //                oilconversions.Qty = oilconversions.Qty;
+        //                oilconversions.BatchNo = oilconversions.BatchNo;
+        //                oilconversions.UnitId = Convert.ToDecimal(_product.UnitId);
+        //                oilconversions.UnitName = oilconversions.UnitName;
+        //                oilconversions.DamageQty = oilconversions.DamageQty;
+        //                oilconversions.NewQty = oilconversions.NewQty;
+        //                oilconversions.GrossAmount = oilconversions.GrossAmount;
+        //                repo.TblOilConversionDetails.Add(oilconversions);
+        //                repo.SaveChanges();
+        //                #endregion
+        //                {
+
+        //                }
+        //            }
+        //        }
+
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
+
 
         //Searchcode
-        public List<TblOilConversionMaster> GetOilConversionMasters(VoucherNoSearchCriteria searchCriteria,string branchCode)
+        public List<TblOilConversionMaster> GetOilConversionMasters(VoucherNoSearchCriteria searchCriteria, string branchCode)
         {
             try
             {
@@ -393,7 +556,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                                                          .Where(inv =>
                                                                   inv.BranchCode == branchCode
                                                                   && inv.OilConversionDate >= DateTime.Parse(DateTime.Now.Date.ToString("yyyy-MM-dd"))
-                                                                  //Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy-MM-dd"))
+                                                            //Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy-MM-dd"))
                                                             )
                                                           .ToList();
                     }

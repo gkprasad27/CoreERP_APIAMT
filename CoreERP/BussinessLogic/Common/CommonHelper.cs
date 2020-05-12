@@ -165,5 +165,20 @@ namespace CoreERP.BussinessLogic.Common
             }
             catch { throw; }
         }
+
+        public TblPaymentType GetPaymentType(string paymentType)
+        {
+            try
+            {
+                using(Repository<TblPaymentType> _repo=new Repository<TblPaymentType>())
+                {
+                    return _repo.TblPaymentType.Where(x=> x.PaymentTypeName.ToLower() == paymentType.ToLower()).FirstOrDefault();
+                }
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }
