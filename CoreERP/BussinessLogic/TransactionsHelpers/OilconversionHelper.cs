@@ -224,6 +224,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             try
             {
                 var _productQty = GetPackageProductQty(oilConversionDetail.ProductCode).FirstOrDefault();
+                var _productpackingType = new InvoiceHelper().GetProducts(oilConversionDetail.ProductCode).FirstOrDefault();
                 TblStockInformation stockInformation = new TblStockInformation();
                 try { stockInformation.BranchId = Convert.ToDecimal(branchCode ?? "0"); } catch { };
                 stockInformation.BranchCode = branchCode;
@@ -247,7 +248,15 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     var _product = new InvoiceHelper().GetProducts(_productQty.OutputproductCode).FirstOrDefault();
                     stockInformation.ProductId = _product.ProductId;
                     stockInformation.ProductCode = _productQty.OutputproductCode;
-                    stockInformation.InwardQty = oilConversionDetail.Qty * _productQty.OutputQty;
+                    if (_productpackingType.PackingName == "LOOSE")
+                    {
+                        stockInformation.InwardQty = _productQty.OutputQty;
+                    }
+                    else
+                    {
+                        stockInformation.InwardQty = oilConversionDetail.Qty * _productQty.OutputQty;
+                    }
+
                 }
 
 

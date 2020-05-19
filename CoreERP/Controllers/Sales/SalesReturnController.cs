@@ -12,7 +12,7 @@ namespace CoreERP.Controllers.Sales
 {
     [Route("api/transaction/SalesReturn")]
     [ApiController]
-    public class SalesReturnController : ControllerBase
+    public class SalesReturnController : BaseController
     {
         [HttpGet("GenerateSalesReturnInvNo/{branchCode}")]
         public async Task<IActionResult> GetSateteList(string branchCode)

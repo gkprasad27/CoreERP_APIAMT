@@ -688,8 +688,18 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure?.SalesAccount).FirstOrDefault();
 
                                 #region Add voucher Details
+                                decimal? _amountWithoutTax= invdtl.GrossAmount;
+                                if(invdtl.Cgst > 0 && invdtl.Sgst > 0)
+                                {
+                                    _amountWithoutTax = (_amountWithoutTax * 100) / (100 + invdtl.Cgst + invdtl.Sgst);
+                                }
+                                else if (invdtl.Igst > 0)
+                                {
+                                    _amountWithoutTax = (_amountWithoutTax * 100) / (100 + invdtl.Igst);
+                                }
 
-                                var _voucherDetail = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, invdtl.GrossAmount, "Credit");
+                                _amountWithoutTax = Math.Round(Convert.ToDecimal(_amountWithoutTax), 2, MidpointRounding.ToEven);
+                                var _voucherDetail = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, _amountWithoutTax, "Credit");
                                 #endregion
 
                                 #region InvioceDetail
@@ -729,7 +739,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             }
 
                             _accountLedger = GetAccountLedgersByCode(invoice.LedgerCode);
-                            var voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, invoice.TotalAmount, "Debit", false);
+                            var voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, invoice.GrandTotal, "Debit", false);
                             AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
                             //check weather igs or sg ,cg st
                             var _stateWiseGsts = GetStateWiseGsts(invoice.StateCode).FirstOrDefault();
