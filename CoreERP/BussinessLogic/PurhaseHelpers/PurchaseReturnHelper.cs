@@ -175,6 +175,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             var _purchaseInvoicejson = JsonConvert.SerializeObject(purchaseInvoice);
                             purchaseReturn = (JsonConvert.DeserializeObject<TblPurchaseReturn>(_purchaseInvoicejson));
                             //set purchase return no & Date
+                            
                             purchaseReturn.PurchaseMasterInvId = purchaseInvID;
                             purchaseReturn.PurchaseReturnInvNo = purchaseReturnInvNo;
                             purchaseReturn.PurchaseReturnInvDate = DateTime.Now;
@@ -235,7 +236,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 purReturnInv.StateCode = purchaseReturn.StateCode;
                                 purReturnInv.ShiftId = purchaseReturn.ShiftId;
                                 purReturnInv.UserId = purchaseReturn.UserId;
-                                purReturnInv.EmployeeId = -1;
+                                purReturnInv.EmployeeId =purchaseReturn.EmployeeId;
                                 purReturnInv.ServerDateTime = DateTime.Now;
                                 purReturnInv.ShiftId = shifId;
                                 context.TblPurchaseReturnDetails.Add(purReturnInv);
@@ -244,8 +245,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 #endregion
 
                                 #region Add voucher Details
-                                _accountLedger.CrOrDr = "Debit";
-                                var _voucherDetail = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, purReturnInv.Rate);
+                                _accountLedger.CrOrDr = "Credit";
+                                var _voucherDetail = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, purReturnInv.GrossAmount);
                                 #endregion
 
                                 #region Add stock transaction  and Account Ledger Transaction
@@ -274,8 +275,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             }
 
                             _accountLedger = GetAccountLedgers(purchaseReturn.LedgerCode);
-                            _accountLedger.CrOrDr = "Credit";
-                            var voucherDetail= AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, purchaseReturn.GrandTotal, false);
+                            _accountLedger.CrOrDr = "Debit";
+                            var voucherDetail= AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, purchaseReturn.TotalAmount, false);
                             AddAccountLedgerTransactions(context, voucherDetail, purchaseInvoice.PurchaseInvDate);
                             //CHech weather igs or sg ,cg st
                             var _stateWiseGsts = GetStateWiseGsts(purchaseReturn.StateCode).FirstOrDefault();
@@ -283,21 +284,21 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             {
                                 //Add IGST record
                                 var _accAL = GetAccountLedgers("243");
-                                _accAL.CrOrDr = "Debit";
-                                var voucherDetailIGST = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalAmount, false);
+                                _accAL.CrOrDr = "Credit";
+                                var voucherDetailIGST = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalIgst, false);
                                 AddAccountLedgerTransactions(context, voucherDetailIGST, purchaseInvoice.PurchaseInvDate);
                             }
                             else
                             {
                                 //CGST
                                 var _accAL = GetAccountLedgers("240");
-                                _accAL.CrOrDr = "Debit";
-                                var voucherDetailCGST = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalAmount, false);
+                                _accAL.CrOrDr = "Credit";
+                                var voucherDetailCGST = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalCgst, false);
                                 AddAccountLedgerTransactions(context, voucherDetailCGST, purchaseInvoice.PurchaseInvDate);
                                 // sgst
                                 _accAL = GetAccountLedgers("241");
-                                _accAL.CrOrDr = "Debit";
-                                var voucherDetailSGST = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalAmount, false);
+                                _accAL.CrOrDr = "Credit";
+                                var voucherDetailSGST = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalSgst, false);
                                 AddAccountLedgerTransactions(context, voucherDetailSGST, purchaseInvoice.PurchaseInvDate);
 
                             }
@@ -458,7 +459,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
                 _accountLedgerTransactions.VoucherAmount = _voucherDetail.Amount;
 
-                if (_accountLedgerTransactions.TransactionType.Equals("dedit", StringComparison.OrdinalIgnoreCase))
+                if (_accountLedgerTransactions.TransactionType.Equals("debit", StringComparison.OrdinalIgnoreCase))
                 {
                     _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
                     _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
@@ -492,20 +493,39 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 using (Repository<TblPurchaseReturn> repo = new Repository<TblPurchaseReturn>())
                 {
                     List<TblPurchaseReturn> _purchaseList = null;
-
-                    _purchaseList = repo.TblPurchaseReturn.AsEnumerable()
-                                        .Where(inv => DateTime.Parse(inv.PurchaseInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.PurchaseInvDate).Value.ToShortDateString())
-                                                 && DateTime.Parse(inv.PurchaseInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.PurchaseInvDate).Value.ToShortDateString()))
-                                        .ToList();
-
-                    if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
-                        _purchaseList = _purchaseList.Where(x => x.PurchaseReturnInvNo == searchCriteria.InvoiceNo).ToList();
-                   
                     if (searchCriteria.Role != 1)
                     {
-                        _purchaseList = _purchaseList.Where(x => x.BranchCode == branchCode).ToList();
-                    }
+                        if (searchCriteria.FromDate != null && searchCriteria.ToDate != null)
+                        {
 
+                            _purchaseList = repo.TblPurchaseReturn.AsEnumerable()
+                                                .Where(pur => DateTime.Parse(pur.PurchaseInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate).Value.ToShortDateString())
+                                                         && DateTime.Parse(pur.PurchaseInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate).Value.ToShortDateString())
+                                                         && pur.PurchaseInvNo.Contains(searchCriteria.InvoiceNo ?? pur.PurchaseInvNo))
+                                                .ToList();
+                        }
+                        else
+                        {
+                            _purchaseList = repo.TblPurchaseReturn.AsEnumerable().Where(pur => pur.PurchaseInvNo.Contains(searchCriteria.InvoiceNo ?? pur.PurchaseInvNo)
+                                                                                            && pur.PurchaseReturnInvDate.Value.Year == DateTime.Now.Year).ToList();
+                        }
+                    }
+                    else
+                    {
+                        if (searchCriteria.FromDate != null && searchCriteria.ToDate != null)
+                        {
+                            _purchaseList = repo.TblPurchaseReturn.AsEnumerable()
+                                                .Where(pur => DateTime.Parse(pur.PurchaseReturnInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate).Value.ToShortDateString())
+                                                         && DateTime.Parse(pur.PurchaseReturnInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate).Value.ToShortDateString())
+                                                         && pur.PurchaseInvNo.Contains(searchCriteria.InvoiceNo ?? pur.PurchaseInvNo))
+                                                .ToList();
+                        }
+                        else
+                            _purchaseList = repo.TblPurchaseReturn.AsEnumerable()
+                                                .Where(pur =>pur.PurchaseInvNo.Contains(searchCriteria.InvoiceNo ?? pur.PurchaseInvNo)
+                                                          && pur.PurchaseReturnInvDate.Value.Year == DateTime.Now.Year).ToList();
+                    }
+                   
                     return _purchaseList;
                 }
             }

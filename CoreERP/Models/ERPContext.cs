@@ -246,8 +246,9 @@ namespace CoreERP.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=192.168.2.26;Database=ERP;User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
-                //optionsBuilder.UseSqlServer("Server=192.168.2.26;Database=ERP_Test;User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
+                optionsBuilder.UseSqlServer("Server=192.168.1.91;Database=ERP;User Id=sa; pwd=Kanchari#123; MultipleActiveResultSets=true;");
+                //optionsBuilder.UseSqlServer("Server=192.168.1.91;Database=ERP;User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
+
             }
         }
 

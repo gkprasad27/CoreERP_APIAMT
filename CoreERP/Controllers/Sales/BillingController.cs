@@ -26,7 +26,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var InvoiceDetails = new InvoiceHelper().GetInvoiceList(searchCriteria.Role, branchCode);
+                var InvoiceDetails = new InvoiceHelper().GetInvoiceList(searchCriteria.Role, branchCode,searchCriteria.FromDate,searchCriteria.ToDate,searchCriteria.InvoiceNo);
                 if (InvoiceDetails.Count > 0)
                 {
                     dynamic expando = new ExpandoObject();

@@ -15,40 +15,73 @@ namespace CoreERP.BussinessLogic.SalesHelper
 {
     public class InvoiceHelper
     {
-//to get the invoice Master data while page load
-        public List<TblInvoiceMaster> GetInvoiceList(int? role,string branchCode)
+        //to get the invoice Master data while page load
+        public List<TblInvoiceMaster> GetInvoiceList(int? role, string branchCode, DateTime? fromDate = null, DateTime? toDate = null, string invoiceNo = null)
         {
             try
             {
-                //searchCriteria.FromDate = Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString());
-                //searchCriteria.ToDate = Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
 
                 using (Repository<TblInvoiceMaster> repo = new Repository<TblInvoiceMaster>())
                 {
                     List<TblInvoiceMaster> _invoiceMasterList = null;
-                    if (role.Value ==1)
+                    if (role.Value == 1)
                     {
-                        _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
-                                  .Where(inv =>
-                                           inv.InvoiceDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
-                                           && !inv.IsSalesReturned.Value
-                                     )
-                                   .ToList();
+                        //_invoicemasterlist = repo.tblinvoicemaster.asenumerable()
+                        //          .where(inv =>
+                        //                   inv.invoicedate >= convert.todatetime(datetime.now.date.tostring("yyyy/mm/dd"))
+                        //                   && !inv.issalesreturned.value
+                        //             )
+                        //           .tolist();
+
+                        if (fromDate != null && toDate != null)
+                        {
+                            _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
+                                                                .Where(inv =>
+                                                                            inv.InvoiceDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                                         && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((fromDate).Value.ToShortDateString())
+                                                                         && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((toDate).Value.ToShortDateString())
+                                                                         && inv.InvoiceNo.Contains(invoiceNo ?? inv.InvoiceNo)
+                                                                         && !inv.IsSalesReturned.Value
+                                                                   )
+                                                                 .ToList();
+                        }
+                        else
+                        {
+                            _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable().Where(inv => inv.InvoiceNo.Contains(invoiceNo ?? inv.InvoiceNo)
+                                                                                                && !inv.IsSalesReturned.Value
+                                                                                                && inv.InvoiceDate.Value.Year == DateTime.Now.Year
+                                                                                              )
+                                                                                            .ToList();
+                        }
+
+
                     }
                     else
                     {
-                        _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
-                                                         .Where(inv =>
-                                                                  inv.BranchCode == branchCode
-                                                                  && inv.InvoiceDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
-                                                                  && !inv.IsSalesReturned.Value
-                                                            )
-                                                          .ToList();
+                        if (fromDate != null && toDate != null)
+                        {
+                            _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
+                                                                .Where(inv =>
+                                                                         inv.BranchCode == branchCode
+                                                                         && inv.InvoiceDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                                         && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((fromDate).Value.ToShortDateString())
+                                                                         && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((toDate).Value.ToShortDateString())
+                                                                         && inv.InvoiceNo.Contains(invoiceNo ?? inv.InvoiceNo)
+                                                                         && !inv.IsSalesReturned.Value
+                                                                   )
+                                                                 .ToList();
+                        }
+                        else
+                        {
+                            _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable().Where(inv => inv.BranchCode == branchCode
+                                                                                                && inv.InvoiceNo.Contains(invoiceNo ?? inv.InvoiceNo)
+                                                                                                && !inv.IsSalesReturned.Value
+                                                                                                && inv.InvoiceDate.Value.Year == DateTime.Now.Year
+                                                                                              )
+                                                                                            .ToList();
+                        }
                     }
-                    //if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
-                    //    _invoiceMasterList = _invoiceMasterList.Where(x => x.InvoiceNo == searchCriteria.InvoiceNo).ToList();
 
-                    // && inv.InvoiceNo == (searchCriteria.InvoiceNo ?? inv.InvoiceNo)
 
                     return _invoiceMasterList.OrderByDescending(x => x.InvoiceDate).ToList();
                 }

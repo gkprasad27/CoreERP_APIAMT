@@ -70,7 +70,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 if (!string.IsNullOrEmpty(searchCriteria.BranchCode))
                     _cashpaymentMasterList = _cashpaymentMasterList.Where(x => x.BranchCode == searchCriteria.BranchCode).ToList();
 
-                return _cashpaymentMasterList.OrderByDescending(cp => cp.VoucherNo).ToList();
+                return _cashpaymentMasterList.OrderByDescending(cp => cp.ServerDate).ToList();
             }
             catch (Exception ex)
             {

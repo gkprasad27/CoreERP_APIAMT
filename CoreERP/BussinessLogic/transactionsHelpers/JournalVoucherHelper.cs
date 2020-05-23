@@ -154,7 +154,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 if (!string.IsNullOrEmpty(searchCriteria.BranchCode))
                     _journalVoucherMasterList = _journalVoucherMasterList.Where(x => x.BranchCode == searchCriteria.BranchCode).ToList();
 
-                return _journalVoucherMasterList.OrderByDescending(x => x.JournalVchNo).ToList();
+                return _journalVoucherMasterList.OrderByDescending(x => x.ServerDate).ToList();
             }
             catch (Exception ex)
             {

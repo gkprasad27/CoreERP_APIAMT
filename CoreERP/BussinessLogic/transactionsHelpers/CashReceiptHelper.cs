@@ -189,7 +189,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 if (!string.IsNullOrEmpty(searchCriteria.BranchCode))
                     _cashreceiptMasterList = _cashreceiptMasterList.Where(x => x.BranchCode == searchCriteria.BranchCode).ToList();
 
-                return _cashreceiptMasterList.OrderByDescending(x => x.VoucherNo).ToList();
+                return _cashreceiptMasterList.OrderByDescending(x => x.ServerDate).ToList();
             }
             catch (Exception ex)
             {

@@ -10,25 +10,24 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
 {
     public class MaterialGroupHelper
     {
-        public static MaterialGroup RegisterMaterialGroup(MaterialGroup materialGroup)
+        public static TblProductGroup RegisterMaterialGroup(TblProductGroup materialGroup)
         {
             try
             {
-                //using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
-                //var record = repo.MaterialGroup.OrderByDescending(x => x.AddDate).FirstOrDefault();
+                using Repository<TblProductGroup> repo = new Repository<TblProductGroup>();
+                var record = repo.TblProductGroup.OrderByDescending(x => x.GroupId).FirstOrDefault();
 
-                //if (record != null)
-                //{
-                //    materialGroup.Code = CommonHelper.IncreaseCode(record.Code);
-                //}
-                //else
-                //    materialGroup.Code = "1";
+                if (record != null)
+                {
+                    materialGroup.GroupId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.GroupId.ToString()));
+                }
+                else
+                    materialGroup.GroupId = 1;
 
-                //materialGroup.Active = "Y";
-                //materialGroup.AddDate = DateTime.Now;
-                //repo.MaterialGroup.Add(materialGroup);
-                //if (repo.SaveChanges() > 0)
-                //    return materialGroup;
+                materialGroup.ExtraDate = DateTime.Now;
+                repo.TblProductGroup.Add(materialGroup);
+                if (repo.SaveChanges() > 0)
+                    return materialGroup;
 
                 return null;
             }
@@ -37,25 +36,25 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
                 throw ex;
             }
         }
-        public static List<MaterialGroup> GetMaterialGroupList()
+        public static List<TblProductGroup> GetMaterialGroupList()
         {
             try
             {
-                using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
-                //return repo.MaterialGroup.Select(x => x).ToList();
+                using Repository<TblProductGroup> repo = new Repository<TblProductGroup>();
+                return repo.TblProductGroup.Select(x => x).OrderByDescending(x => x.GroupId).ToList();
 
-                return null;
+                //return null;
             }
             catch { throw; }
         }
-        public static MaterialGroup UpdateMaterialGroup(MaterialGroup materialGroup)
+        public static TblProductGroup UpdateMaterialGroup(TblProductGroup materialGroup)
         {
             try
             {
-                //using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
-                //repo.MaterialGroup.Update(materialGroup);
-                //if (repo.SaveChanges() > 0)
-                //    return materialGroup;
+                using Repository<TblProductGroup> repo = new Repository<TblProductGroup>();
+                repo.TblProductGroup.Update(materialGroup);
+                if (repo.SaveChanges() > 0)
+                    return materialGroup;
 
                 return null;
             }
@@ -64,16 +63,16 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
                 throw ex;
             }
         }
-        public static MaterialGroup DeleteMaterialGroup(string code)
+        public static TblProductGroup DeleteMaterialGroup(int code)
         {
             try
             {
-                //using Repository<MaterialGroup> repo = new Repository<MaterialGroup>();
-                //var materialGroup = repo.MaterialGroup.Where(x => x.Code == code).FirstOrDefault();
+                using Repository<TblProductGroup> repo = new Repository<TblProductGroup>();
+                var materialGroup = repo.TblProductGroup.Where(x => x.GroupId == code).FirstOrDefault();
                 //materialGroup.Active = "N";
-                //repo.MaterialGroup.Remove(materialGroup);
-                //if (repo.SaveChanges() > 0)
-                //    return materialGroup;
+                repo.TblProductGroup.Remove(materialGroup);
+                if (repo.SaveChanges() > 0)
+                    return materialGroup;
 
                 return null;
             }

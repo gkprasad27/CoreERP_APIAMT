@@ -57,21 +57,46 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 using Repository<TblInvoiceMasterReturn> repo = new Repository<TblInvoiceMasterReturn>();
                 List<TblInvoiceMasterReturn> _invoiceMasterReturnList = null;
-
-
-                _invoiceMasterReturnList = repo.TblInvoiceMasterReturn.AsEnumerable()
-                          .Where(inv =>
-                                     DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
-                                   && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
-                             )
-                           .ToList();
-
-                if (!string.IsNullOrEmpty(searchCriteria.InvoiceNo))
-                    _invoiceMasterReturnList = _invoiceMasterReturnList.Where(x => x.InvoiceReturnNo == searchCriteria.InvoiceNo).ToList();
-
-                if(searchCriteria.Role != 1)
+                if (searchCriteria.Role == 1)
                 {
-                    _invoiceMasterReturnList = _invoiceMasterReturnList.Where(x=> x.BranchCode == branchCode).ToList();
+                    if (searchCriteria.FromDate != null && searchCriteria.ToDate != null)
+                    {
+                        _invoiceMasterReturnList = repo.TblInvoiceMasterReturn.AsEnumerable()
+                                  .Where(inv =>
+                                             DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate).Value.ToShortDateString())
+                                           && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate).Value.ToShortDateString())
+                                           && inv.InvoiceReturnNo.Contains(searchCriteria.InvoiceNo ?? inv.InvoiceReturnNo)
+                                     )
+                                   .ToList();
+                    }
+                    else
+                    {
+                        _invoiceMasterReturnList = repo.TblInvoiceMasterReturn.AsEnumerable()
+                                                     .Where(inv => DateTime.Now.Year == inv.InvoiceDate.Value.Year
+                                                               && inv.InvoiceReturnNo.Contains(searchCriteria.InvoiceNo ?? inv.InvoiceReturnNo))
+                                                     .ToList();
+                    }
+                }
+                else
+                {
+                    if (searchCriteria.FromDate != null && searchCriteria.ToDate != null)
+                    {
+                        _invoiceMasterReturnList = repo.TblInvoiceMasterReturn.AsEnumerable()
+                                  .Where(inv =>
+                                             DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate).Value.ToShortDateString())
+                                           && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate).Value.ToShortDateString())
+                                           && inv.InvoiceReturnNo.Contains(searchCriteria.InvoiceNo ?? inv.InvoiceReturnNo)
+                                     )
+                                   .ToList();
+                    }
+                    else
+                    {
+                        _invoiceMasterReturnList = repo.TblInvoiceMasterReturn.AsEnumerable()
+                                                     .Where(inv => DateTime.Now.Year == inv.InvoiceDate.Value.Year
+                                                               && inv.BranchCode == branchCode
+                                                               && inv.InvoiceReturnNo.Contains(searchCriteria.InvoiceNo ?? inv.InvoiceReturnNo))
+                                                     .ToList();
+                    }
                 }
 
                 return _invoiceMasterReturnList;

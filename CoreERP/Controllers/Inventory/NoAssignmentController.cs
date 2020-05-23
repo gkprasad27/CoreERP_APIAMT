@@ -123,7 +123,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.MaterialGroupList = MaterialGroupHelper.GetMaterialGroupList().Select(matgrp => new { ID = matgrp.Code, TEXT = matgrp.GroupName });
+                expando.MaterialGroupList = MaterialGroupHelper.GetMaterialGroupList().Select(matgrp => new { ID = matgrp.GroupCode, TEXT = matgrp.GroupName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

@@ -175,7 +175,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 if (!string.IsNullOrEmpty(searchCriteria.BranchCode))
                     _bankpaymentMasterList = _bankpaymentMasterList.Where(x => x.BranchCode == searchCriteria.BranchCode).ToList();
 
-                return _bankpaymentMasterList.OrderByDescending(x => x.VoucherNo).ToList();
+                return _bankpaymentMasterList.OrderByDescending(x => x.ServerDate).ToList();
             }
             catch (Exception ex)
             {

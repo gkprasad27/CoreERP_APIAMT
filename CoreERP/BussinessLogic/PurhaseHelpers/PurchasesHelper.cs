@@ -351,7 +351,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                             _accountLedger = GetAccountLedgers(purchaseInvoice.LedgerCode);
                             _accountLedger.CrOrDr = "Credit";
-                            var voucherDetail=AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purchaseInvoice.GrandTotal, false);
+                            var voucherDetail=AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purchaseInvoice.TotalAmount, false);
                             AddAccountLedgerTransactions(context, voucherDetail, purchaseInvoice.PurchaseInvDate);
 
                             //CHech weather igs or sg ,cg st
@@ -582,28 +582,53 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
         {
             try
             {
-                searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
-                searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
-
                 using Repository<TblPurchaseInvoice> repo = new Repository<TblPurchaseInvoice>();
                 List<TblPurchaseInvoice> _purchaseList = null;
                 if (searchCriteria.Role == 1)
                 {
-                    _purchaseList = repo.TblPurchaseInvoice.AsEnumerable()
+                    if (searchCriteria.FromDate != null || searchCriteria.FromDate != null)
+                    {
+                        _purchaseList = repo.TblPurchaseInvoice.AsEnumerable()
                          .Where(pi =>
                                     DateTime.Parse(pi.PurchaseInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? pi.PurchaseInvDate).Value.ToShortDateString())
                                   && DateTime.Parse(pi.PurchaseInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? pi.PurchaseInvDate).Value.ToShortDateString())
+                                  && pi.PurchaseInvNo.Contains(searchCriteria.InvoiceNo ?? pi.PurchaseInvNo)
                                   && !pi.IsPurchaseReturned.Value)
                           .ToList();
+                    }
+                    else
+                    {
+                        _purchaseList = repo.TblPurchaseInvoice.AsEnumerable()
+                         .Where(pi =>
+                                    pi.PurchaseInvDate.Value.Year == DateTime.Now.Year
+                                  && pi.PurchaseInvNo.Contains(searchCriteria.InvoiceNo ?? pi.PurchaseInvNo)
+                                  && !pi.IsPurchaseReturned.Value)
+                          .ToList();
+                    }
                 }
                 else
                 {
-                    _purchaseList = repo.TblPurchaseInvoice.AsEnumerable()
+                    if (searchCriteria.FromDate != null || searchCriteria.FromDate != null)
+                    {
+                        _purchaseList = repo.TblPurchaseInvoice.AsEnumerable()
                           .Where(pi =>
                                      DateTime.Parse(pi.PurchaseInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? pi.PurchaseInvDate).Value.ToShortDateString())
                                    && DateTime.Parse(pi.PurchaseInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? pi.PurchaseInvDate).Value.ToShortDateString())
-                                   && !pi.IsPurchaseReturned.Value && pi.BranchCode == branchCode)
+                                   && pi.BranchCode == branchCode
+                                   && !pi.IsPurchaseReturned.Value)
                            .ToList();
+                    }
+                    else
+                    {
+                        _purchaseList = repo.TblPurchaseInvoice.AsEnumerable()
+                                                .Where(pi =>
+                                                           pi.PurchaseInvDate.Value.Year == DateTime.Now.Year
+                                                         && pi.PurchaseInvNo.Contains(searchCriteria.InvoiceNo ?? pi.PurchaseInvNo)
+                                                         && pi.PurchaseInvDate.Value.Year == DateTime.Now.Year
+                                                         && pi.BranchCode == branchCode
+                                                         && !pi.IsPurchaseReturned.Value)
+                                                 .ToList();
+                    }
                 }
 
 

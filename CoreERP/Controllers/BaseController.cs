@@ -12,16 +12,12 @@ namespace CoreERP.Controllers
     [ApiController]
     public class BaseController : ControllerBase
     {
-        public List<string> UserBranches
+        public List<string> UserBranches { get; private set; }
+
+        public BaseController()
         {
-            get
-            {
-                var identity = HttpContext.User.Identity as ClaimsIdentity;
-                var branches = identity.Claims.Where(x => x.Type == "BRANCHES").FirstOrDefault().Value;
-
-                return branches.Split(",").ToList();
-            }
-
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            UserBranches = identity.Claims.Where(x => x.Type == "BRANCHES").FirstOrDefault().Value.Split(",").ToList();
         }
     }
 }

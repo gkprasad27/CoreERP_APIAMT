@@ -17,14 +17,14 @@ namespace CoreERP.Controllers
     public class MaterialGroupController : ControllerBase
     {
         [HttpPost("RegisterMaterialGroup")]
-        public IActionResult RegisterMaterialGroup([FromBody]MaterialGroup materialGroup)
+        public IActionResult RegisterMaterialGroup([FromBody]TblProductGroup materialGroup)
         {
             if (materialGroup == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(materialGroup)} can not be null" });
 
             try
             {
-                MaterialGroup result = MaterialGroupHelper.RegisterMaterialGroup(materialGroup);
+                TblProductGroup result = MaterialGroupHelper.RegisterMaterialGroup(materialGroup);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
@@ -37,7 +37,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetAllMaterialGroup")]
-        [Produces(typeof(List<MaterialGroup>))]
+        //[Produces(typeof(List<MaterialGroup>))]
         public IActionResult GetAllMaterialGroup()
         {
             try
@@ -59,15 +59,15 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateMaterialGroup")]
-        [Produces(typeof(MaterialGroup))]
-        public IActionResult UpdateMaterialGroup([FromBody] MaterialGroup materialGroups)
+        //[Produces(typeof(MaterialGroup))]
+        public IActionResult UpdateMaterialGroup([FromBody] TblProductGroup materialGroups)
         {
             if (materialGroups == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(materialGroups)} cannot be null" });
 
             try
             {
-                MaterialGroup result = MaterialGroupHelper.UpdateMaterialGroup(materialGroups);
+                TblProductGroup result = MaterialGroupHelper.UpdateMaterialGroup(materialGroups);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
@@ -80,15 +80,15 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteMaterialGroup/{code}")]
-        [Produces(typeof(MaterialGroup))]
-        public IActionResult DeleteMaterialGroup(string code)
+        //[Produces(typeof(MaterialGroup))]
+        public IActionResult DeleteMaterialGroup(int code)
         {
-            if (string.IsNullOrWhiteSpace(code))
+            if (code == 0)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try
             {
-                MaterialGroup result = MaterialGroupHelper.DeleteMaterialGroup(code);
+                TblProductGroup result = MaterialGroupHelper.DeleteMaterialGroup(code);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = code });
                 else
