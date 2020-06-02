@@ -137,40 +137,52 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
+                List<TblStockTransferMaster> stockTransferList = null;
                 if (searchCriteria.Role == 1)
                 {
                     using (Repository<TblStockTransferMaster> repo = new Repository<TblStockTransferMaster>())
                     {
-                        return repo.TblStockTransferMaster
-                                   .AsEnumerable()
-                                   .Where(x =>
-                                               DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) >= DateTime.Parse(searchCriteria.FromDate.Value.ToShortDateString())
-                                            && DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) <= DateTime.Parse(searchCriteria.ToDate.Value.ToShortDateString())
-                                            //&& Convert.ToDateTime(x.StockTransferDate.Value.ToString("dd/MM/yyyy")) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToString("dd/MM/yyyy"))
-                                            && x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)
-                                            //&& x.FromBranchCode == branhCode
-                                            )
-                                   .ToList();
+
+                        if (searchCriteria.FromDate != null && searchCriteria.ToDate !=null)
+                        {
+                            stockTransferList = repo.TblStockTransferMaster
+                                                    .AsEnumerable()
+                                                    .Where(x => DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) >= DateTime.Parse(searchCriteria.FromDate.Value.ToShortDateString())
+                                                             && DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) <= DateTime.Parse(searchCriteria.ToDate.Value.ToShortDateString())
+                                                             && x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)).ToList();
+                        }
+                        else
+                        {
+                            stockTransferList = repo.TblStockTransferMaster.AsEnumerable().Where(x => x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)).ToList();
+                        }
                     }
-                       
                 }
                 else
                 {
+
+
+                   
+
                     using (Repository<TblStockTransferMaster> repo = new Repository<TblStockTransferMaster>())
                     {
-                        return repo.TblStockTransferMaster
-                                   .AsEnumerable()
-                                   .Where(x =>
-                                               DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) >= DateTime.Parse(searchCriteria.FromDate.Value.ToShortDateString())
-                                            && DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) <= DateTime.Parse(searchCriteria.ToDate.Value.ToShortDateString())
-                                            //&& Convert.ToDateTime(x.StockTransferDate.Value.ToString("dd/MM/yyyy")) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToString("dd/MM/yyyy"))
-                                            && x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)
-                                            && x.FromBranchCode == branhCode
-                                            )
-                                   .ToList();
+                        if (searchCriteria.FromDate != null && searchCriteria.ToDate != null)
+                        {
+                            stockTransferList = repo.TblStockTransferMaster
+                                                    .AsEnumerable()
+                                                    .Where(x => DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) >= DateTime.Parse(searchCriteria.FromDate.Value.ToShortDateString())
+                                                             && DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) <= DateTime.Parse(searchCriteria.ToDate.Value.ToShortDateString())
+                                                             && x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)
+                                                             && x.FromBranchCode == branhCode).ToList();
+                        }
+                        else
+                        {
+                            stockTransferList = repo.TblStockTransferMaster.AsEnumerable()
+                                                                           .Where(x => x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)
+                                                                                    && x.FromBranchCode == branhCode).ToList();
+                        }
                     }
                 }
-                
+                return stockTransferList;
             }
             catch(Exception ex)
             {

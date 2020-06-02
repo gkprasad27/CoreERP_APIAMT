@@ -108,7 +108,7 @@ namespace CoreERP.Controllers.Sales
                     if (invoiceMasterList.Count > 0)
                     {
                         dynamic expando = new ExpandoObject();
-                        expando.InvoiceList = invoiceMasterList;
+                        expando.InvoiceList = invoiceMasterList.OrderByDescending(x => x.ServerDateTime);
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
 

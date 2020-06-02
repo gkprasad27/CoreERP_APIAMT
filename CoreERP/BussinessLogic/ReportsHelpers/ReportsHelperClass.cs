@@ -607,6 +607,31 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             else return null;
         }
 
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetDailySalesReportData(string branchCode, string userName, DateTime fromDate, DateTime toDate)
+        {
+            DataSet dsResult = GetDailySalesReportDataSet(branchCode, userName, fromDate, toDate);
+            List<dynamic> dailySalesValue = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    dailySalesValue = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (dailySalesValue, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
+
         public static DataTable GetDailySalesReportDataTable(string companyId, string branchName, string userName)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
@@ -657,6 +682,38 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             else return null;
         }
         #endregion
+        public static DataSet GetDailySalesReportDataSet(string branchCode, string userName, DateTime fromDate, DateTime toDate)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_DailySalesReport";
+            #region Parameters
+            DbParameter pmbranchID = command.CreateParameter();
+            pmbranchID.Direction = ParameterDirection.Input;
+            pmbranchID.Value = (object)branchCode ?? DBNull.Value;
+            pmbranchID.ParameterName = "branchCode";
+            DbParameter pmuserName = command.CreateParameter();
+            pmuserName.Direction = ParameterDirection.Input;
+            pmuserName.Value = (object)userName ?? DBNull.Value;
+            pmuserName.ParameterName = "userName";
+            DbParameter pmfDate = command.CreateParameter();
+            pmfDate.Direction = ParameterDirection.Input;
+            pmfDate.Value = (object)fromDate ?? DBNull.Value;
+            pmfDate.ParameterName = "fDate";
+            DbParameter pmtDate = command.CreateParameter();
+            pmtDate.Direction = ParameterDirection.Input;
+            pmtDate.Value = (object)toDate ?? DBNull.Value;
+            pmtDate.ParameterName = "tDate";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmbranchID);
+            command.Parameters.Add(pmfDate);
+            command.Parameters.Add(pmtDate);
+            command.Parameters.Add(pmuserName);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
         #region StockVerificationReport
         public static (List<dynamic>, List<dynamic>, List<dynamic>) GetStockVerificationReportDataList(string branchCode, string UserID, DateTime fromDate, DateTime toDate)
         {
@@ -968,7 +1025,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
-
+        
         #region CommonMethods
         public static DataSet getDataFromDataBase(List<parametersClass> dbParametersList, string procedureName)
         {

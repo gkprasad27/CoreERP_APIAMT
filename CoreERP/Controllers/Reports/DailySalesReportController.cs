@@ -33,5 +33,23 @@ namespace CoreERP.Controllers.Reports
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpGet("GetDailySalesReport")]
+        public async Task<IActionResult> GetDailySalesReport(string branchCode, string userName, DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                var DailySalesList = await Task.FromResult(ReportsHelperClass.GetDailySalesReportData(branchCode, userName, fromDate, toDate));
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.dailySalesList = DailySalesList.Item1;
+                expdoObj.headerList = DailySalesList.Item2;
+                expdoObj.footerList = DailySalesList.Item3;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

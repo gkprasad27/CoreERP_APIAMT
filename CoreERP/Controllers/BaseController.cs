@@ -16,8 +16,8 @@ namespace CoreERP.Controllers
 
         public BaseController()
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            UserBranches = identity.Claims.Where(x => x.Type == "BRANCHES").FirstOrDefault().Value.Split(",").ToList();
+            //var identity = HttpContext.User.Identity as ClaimsIdentity;
+            //UserBranches = identity.Claims.Where(x => x.Type == "BRANCHES").FirstOrDefault().Value.Split(",").ToList();
         }
     }
 }
