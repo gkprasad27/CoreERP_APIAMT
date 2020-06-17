@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblStockTransferMaster
     {
-        public decimal? StockTransferMasterId { get; set; }
+        public decimal StockTransferMasterId { get; set; }
         public string StockTransferNo { get; set; }
         public DateTime? StockTransferDate { get; set; }
         public string FromBranchCode { get; set; }

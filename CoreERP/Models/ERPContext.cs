@@ -716,6 +716,14 @@ namespace CoreERP.Models
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Session1)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Session2)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Skip)
                     .HasMaxLength(5)
                     .IsFixedLength();
@@ -7665,7 +7673,7 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Product");
 
-                entity.HasIndex(e => new { e.ProductName, e.ProductCode, e.HsnNo })
+                entity.HasIndex(e => new { e.ProductCode, e.ProductName, e.HsnNo })
                     .HasName("NonClusteredIndex-20181226-173757");
 
                 entity.Property(e => e.ProductId)

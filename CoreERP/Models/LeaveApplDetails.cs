@@ -38,5 +38,7 @@ namespace CoreERP.Models
         public string RejectedName { get; set; }
         public double? CountofLeaves { get; set; }
         public string ChkAcceptReject { get; set; }
+        public string Session1 { get; set; }
+        public string Session2 { get; set; }
     }
 }

@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblOperatorStockIssuesDetail
     {
-        public decimal? OperatorStockIssueDetailId { get; set; }
+        public decimal OperatorStockIssueDetailId { get; set; }
         public decimal? OperatorStockIssueId { get; set; }
         public string IssueNo { get; set; }
         public DateTime? IssueDate { get; set; }

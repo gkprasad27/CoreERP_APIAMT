@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblPurchaseInvoice
     {
-        public decimal? PurchaseInvId { get; set; }
+        public decimal PurchaseInvId { get; set; }
         public string BranchCode { get; set; }
         public string BranchName { get; set; }
         public string VoucherNo { get; set; }

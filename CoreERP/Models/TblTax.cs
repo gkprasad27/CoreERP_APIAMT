@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblTax
     {
-        public decimal? TaxId { get; set; }
+        public decimal TaxId { get; set; }
         public string TaxName { get; set; }
         public string ApplicableOn { get; set; }
         public decimal? Rate { get; set; }
