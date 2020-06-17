@@ -15,7 +15,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblEmployee> repo = new Repository<TblEmployee>();
-                return repo.TblEmployee.ToList();
+                return repo.TblEmployee.OrderBy(x => x.EmployeeCode).ToList();
             }
             catch { throw; }
         }
