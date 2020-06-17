@@ -11,17 +11,17 @@ using Microsoft.Extensions.Logging;
 
 namespace CoreERP.Controllers.Selfservice
 {
-  [ApiController]
-  [Route("api/Selfservice/PermissionRequest")]
-  public class PermissionRequestController : ControllerBase
-  {
+    [ApiController]
+    [Route("api/Selfservice/PermissionRequest")]
+    public class PermissionRequestController : ControllerBase
+    {
         [HttpGet("GetEmployeesList")]
         public IActionResult GetEmployeesList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.EmployeeList = LeaveRequestHelper.GetEmployeesList().Select(x => new { ID = x.Code, TEXT = x.Name });
+                expando.EmployeeList = LeaveRequestHelper.GetEmployeesList().Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

@@ -5,9 +5,9 @@ namespace CoreERP.Models
 {
     public partial class LeaveApplDetails
     {
+        public int Id { get; set; }
         public string EmpCode { get; set; }
         public string EmpName { get; set; }
-        public int Sno { get; set; }
         public DateTime? ApplDate { get; set; }
         public string LeaveCode { get; set; }
         public DateTime? LeaveFrom { get; set; }
@@ -38,5 +38,7 @@ namespace CoreERP.Models
         public string RejectedName { get; set; }
         public double? CountofLeaves { get; set; }
         public string ChkAcceptReject { get; set; }
+        public string Session1 { get; set; }
+        public string Session2 { get; set; }
     }
 }

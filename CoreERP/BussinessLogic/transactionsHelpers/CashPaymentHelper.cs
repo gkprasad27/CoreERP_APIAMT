@@ -407,7 +407,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
                     var _accountLedger = GetAccountLedgersCode(cashPaymentMaster.FromLedgerCode).ToArray().FirstOrDefault();
                     var _cashpayAccountLedger = GetAccountLedgerList().Where(x => x.LedgerId == 175).FirstOrDefault();
-                    var _vouchertType = GetVoucherTypeList(34).ToArray().FirstOrDefault();
+                    var _vouchertType = GetVoucherTypeList(33).ToArray().FirstOrDefault();
 
                     #region Add voucher master record
                     var _voucherMaster = AddVoucherMaster(repo, cashPaymentMaster, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);

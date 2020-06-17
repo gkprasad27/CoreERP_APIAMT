@@ -7,6 +7,7 @@ using CoreERP.BussinessLogic.SalesHelper;
 using CoreERP.Helpers.SharedModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace CoreERP.Controllers.Sales
 {
@@ -14,6 +15,11 @@ namespace CoreERP.Controllers.Sales
     [ApiController]
     public class SalesReturnController : BaseController
     {
+        private readonly IConfiguration _configuration;
+        public SalesReturnController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         [HttpGet("GenerateSalesReturnInvNo/{branchCode}")]
         public async Task<IActionResult> GetSateteList(string branchCode)
         {
@@ -122,7 +128,7 @@ namespace CoreERP.Controllers.Sales
 
 
                     string errorMessage = string.Empty;
-                    var _invoiceMasterReturn = new SalesReturnHelper().RegisterInvoiceReturns(invoiceReturnNo, Convert.ToDecimal(invoiceMasterID), out errorMessage);
+                    var _invoiceMasterReturn = new SalesReturnHelper().RegisterInvoiceReturns(_configuration,invoiceReturnNo, Convert.ToDecimal(invoiceMasterID), out errorMessage);
                     if (_invoiceMasterReturn != null)
                     {
                         dynamic expando = new ExpandoObject();

@@ -1,6 +1,7 @@
 ﻿using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 {
     public class SalesReturnHelper
     {
-        public string GenerateSalesReturnInvoiceNo(string branchCode,out string errorMessage)
+        public string GenerateSalesReturnInvoiceNo(string branchCode, out string errorMessage)
         {
             try
             {
@@ -51,7 +52,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         }
 
         #region Search sals return records
-        public List<TblInvoiceMasterReturn> GetInvoiceMasterReturns(string branchCode,SearchCriteria searchCriteria)
+        public List<TblInvoiceMasterReturn> GetInvoiceMasterReturns(string branchCode, SearchCriteria searchCriteria)
         {
             try
             {
@@ -119,7 +120,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-       
+
         public TblInvoiceMaster GetInvoiceMaster(decimal invoiceMasterId)
         {
             try
@@ -127,7 +128,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using Repository<TblInvoiceMaster> repo = new Repository<TblInvoiceMaster>();
                 return repo.TblInvoiceMaster.Where(x => x.InvoiceMasterId == invoiceMasterId).FirstOrDefault();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -147,7 +148,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         #endregion
 
         #region Add Sales return records
-        public TblInvoiceMasterReturn RegisterInvoiceReturns(string invoiceReturnNo, decimal invoiceMasterId, out string errorMessage)
+        public TblInvoiceMasterReturn RegisterInvoiceReturns(IConfiguration configuration, string invoiceReturnNo, decimal invoiceMasterId, out string errorMessage)
         {
             try
             {
@@ -264,15 +265,15 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 {
                                     _qty = invdtl.FQty;
                                 }
-                                AddStockInformation(repo, invoiceMasterReturn, _branch, _product, _qty, invdtl.Rate);
+                                AddStockInformation(configuration, repo, invoiceMasterReturn, _branch, _product, _qty, invdtl.Rate);
 
                                 AddAccountLedgerTransactions(repo, _voucherDetail, invoice.InvoiceDate);
                                 #endregion
                             }
 
                             _accountLedger = _invoiceHelper.GetAccountLedgersByCode(invoice.LedgerCode);
-                            var voucherDtl = AddVoucherDetails(repo, invoiceMasterReturn, _branch, _voucherMaster, _accountLedger, invoice.GrandTotal, "Debit");
-                            AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
+                            var voucherDtl = AddVoucherDetails(repo, invoiceMasterReturn, _branch, _voucherMaster, _accountLedger, invoice.GrandTotal, "Credit", false);
+                            AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate, true);
 
                             //CHech weather igs or sg ,cg st
                             var _stateWiseGsts = _invoiceHelper.GetStateWiseGsts(invoice.StateCode).FirstOrDefault();
@@ -280,7 +281,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             {
                                 //Add IGST record
                                 var _accAL = _invoiceHelper.GetAccountLedgersByCode("243");
-                                voucherDtl = AddVoucherDetails(repo, invoiceMasterReturn, _branch, _voucherMaster, _accAL, invoice.TotalCgst, "Credit");
+                                voucherDtl = AddVoucherDetails(repo, invoiceMasterReturn, _branch, _voucherMaster, _accAL, invoice.TotalCgst, "Debit");
                                 AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
 
                             }
@@ -288,12 +289,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             {
                                 // sgst
                                 var _accAL = _invoiceHelper.GetAccountLedgersByCode("240");
-                                voucherDtl = AddVoucherDetails(repo, invoiceMasterReturn, _branch, _voucherMaster, _accAL, invoice.TotalCgst, "Credit", true);
+                                voucherDtl = AddVoucherDetails(repo, invoiceMasterReturn, _branch, _voucherMaster, _accAL, invoice.TotalCgst, "Debit", true);
                                 AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
 
                                 // sgst
                                 _accAL = _invoiceHelper.GetAccountLedgersByCode("241");
-                                voucherDtl = AddVoucherDetails(repo, invoiceMasterReturn, _branch, _voucherMaster, _accAL, invoice.TotalSgst, "Credit", true);
+                                voucherDtl = AddVoucherDetails(repo, invoiceMasterReturn, _branch, _voucherMaster, _accAL, invoice.TotalSgst, "Debit", true);
                                 AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
 
                             }
@@ -344,7 +345,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     ServerDate = DateTime.Now,
                     UserId = invoiceReturn.UserId,
                     UserName = invoiceReturn.UserName,
-                    EmployeeId = -1
+                    EmployeeId = invoiceReturn.EmployeeId,
+                    ShiftId = invoiceReturn.ShiftId
                 };
 
                 context.TblVoucherMaster.Add(_voucherMaster);
@@ -352,7 +354,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 {
                     return _voucherMaster;
                 }
-               
+
                 return null;
             }
             catch (Exception ex)
@@ -375,7 +377,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 if (isFromInvoiceDetials)
                 {
 
-                    _voucherDetail.FromLedgerId = _accountLedger.LedgerId;
+                    _voucherDetail.FromLedgerId = _accountLedger.LedgerId ;
                     _voucherDetail.FromLedgerCode = _accountLedger.LedgerCode;
                     _voucherDetail.FromLedgerName = _accountLedger.LedgerName;
                 }
@@ -386,9 +388,20 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 _voucherDetail.ToLedgerName = invoiceReturn.LedgerName;
                 _voucherDetail.Amount = totalAmount;  // wihtout tax
                 _voucherDetail.TransactionType = transactionType; /*_accountLedger.CrOrDr;*/
-                _voucherDetail.CostCenter = _accountLedger.BranchCode;
+                _voucherDetail.CostCenter = _voucherDetail.BranchCode;
                 _voucherDetail.ServerDate = DateTime.Now;
+
                 _voucherDetail.Narration = $"Sales Return Invoice {_accountLedger.LedgerName} A /c: {_voucherDetail.TransactionType}";
+
+
+                //check is  null value is there 
+                if (_voucherDetail.FromLedgerId == null)
+                {
+                    _voucherDetail.FromLedgerId = -1;                    
+                    _voucherDetail.FromLedgerCode = string.Empty;
+                    _voucherDetail.FromLedgerName = string.Empty;
+                }
+
 
                 context.TblVoucherDetail.Add(_voucherDetail);
                 if (context.SaveChanges() > 0)
@@ -403,16 +416,38 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-        public TblStockInformation AddStockInformation(ERPContext context, TblInvoiceMasterReturn invoiceReturn, TblBranch _branch, TblProduct _product, decimal? qty, decimal? rate)
+        public TblStockInformation AddStockInformation(IConfiguration configuration, ERPContext context, TblInvoiceMasterReturn invoiceReturn, TblBranch _branch, TblProduct _product, decimal? qty, decimal? rate)
         {
             try
             {
-                //using(ERPContext context=new ERPContext())
-                //{
+                string BranchCode = string.Empty, _ChildBranches = string.Empty;
+                decimal BranchId = 0;
+
+                string _productCodes = configuration.GetSection("ProductCods").Value;
+                if (!string.IsNullOrEmpty(_productCodes))
+                {
+                    if (!_productCodes.ToUpper().Contains(_product.ProductCode.ToUpper()))
+                    {
+                        _ChildBranches = configuration.GetSection("ChildBranches:" + _branch.BranchCode).Value;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(_ChildBranches))
+                {
+                    var branch = new InvoiceHelper().GetBranches(_ChildBranches).FirstOrDefault();
+                    BranchId = branch.BranchId;
+                    BranchCode = branch.BranchCode;
+                }
+                else
+                {
+                    BranchId = _branch.BranchId;
+                    BranchCode = _branch.BranchCode;
+                }
+
                 var _stockInformation = new TblStockInformation
                 {
-                    BranchId = _branch.BranchId,
-                    BranchCode = _branch.BranchCode,
+                    BranchId = BranchId,
+                    BranchCode = BranchCode,
                     ShiftId = invoiceReturn.ShiftId,
                     VoucherNo = invoiceReturn.VoucherNo,
                     VoucherTypeId = invoiceReturn.VoucherTypeId,
@@ -437,7 +472,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-        public TblAccountLedgerTransactions AddAccountLedgerTransactions(ERPContext context, TblVoucherDetail _voucherDetail, DateTime? invoiceDate)
+        public TblAccountLedgerTransactions AddAccountLedgerTransactions(ERPContext context, TblVoucherDetail _voucherDetail, DateTime? invoiceDate, bool isFromvalue = false)
         {
             try
             {
@@ -445,9 +480,20 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 //{
                 var _accountLedgerTransactions = new TblAccountLedgerTransactions();
                 _accountLedgerTransactions.VoucherDetailId = _voucherDetail.VoucherDetailId;
-                _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
-                _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
-                _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
+
+                if (isFromvalue)
+                {
+                    _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
+                    _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
+                    _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
+                }
+                else
+                {
+                    _accountLedgerTransactions.LedgerId = _voucherDetail.FromLedgerId;
+                    _accountLedgerTransactions.LedgerCode = _voucherDetail.FromLedgerCode;
+                    _accountLedgerTransactions.LedgerName = _voucherDetail.FromLedgerName;
+                }
+
                 _accountLedgerTransactions.BranchId = _voucherDetail.BranchId;
                 _accountLedgerTransactions.BranchCode = _voucherDetail.BranchCode;
                 _accountLedgerTransactions.BranchName = _voucherDetail.BranchName;

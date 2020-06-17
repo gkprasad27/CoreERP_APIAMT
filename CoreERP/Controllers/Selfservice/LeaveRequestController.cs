@@ -8,6 +8,7 @@ using CoreERP.BussinessLogic.SelfserviceHelpers;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers.Selfservice
 {
@@ -15,92 +16,123 @@ namespace CoreERP.Controllers.Selfservice
     [Route("api/Selfservice/LeaveRequest")]
     public class LeaveRequestController : ControllerBase
     {
-        //[HttpGet("GetEmployeesList")]
-        //public async Task<IActionResult> GetEmployeesList()
-        //{
-        //    try
-        //    {
-        //        dynamic expando = new ExpandoObject();
-        //        expando.EmployeeList = LeaveRequestHelper.GetEmployeesList().Select(x => new { ID = x.Code, TEXT = x.Name });
-        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
 
-        //[HttpGet("GetLeavetpesList")]
-        //public async Task<IActionResult> GetLeavetpesList()
-        //{
-        //    try
-        //    {
-        //        var leavetypeslist = LeaveRequestHelper.GetListOfleavetypes();
-        //        if (leavetypeslist.Count > 0)
-        //        {
-        //            dynamic expdoObj = new ExpandoObject();
-        //            expdoObj.leavetypesList = leavetypeslist;
-        //            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-        //        }
-        //        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
+        [HttpGet("GetLeavetpesList/{code}")]
+        public async Task<IActionResult> GetLeavetpesList(string code)
+        {
 
-        //[HttpGet("GetLeaveApplDetailsList")]
-        //public async Task<IActionResult> GetLeaveApplDetailsList()
-        //{
-        //    try
-        //    {
-        //        dynamic expando = new ExpandoObject();
-        //        expando.LeaveApplDetailsList = LeaveRequestHelper.GetLeaveApplDetailsList().ToList();
-        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
-        //[HttpGet("GetNoDays/{fromdate}/{todate}")]
-        //public async Task<IActionResult> GetNoDays(string fromdate, string todate)
-        //{
-        //    try
-        //    {
-        //        var noofdays = LeaveRequestHelper.GetNoDays(fromdate, todate);
-        //        if (noofdays != null)
-        //        {
-        //            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = noofdays });
-        //        }
-        //        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
+            if (string.IsNullOrEmpty(code))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
 
-        //[HttpPost("RegisterLeaveapplying")]
-        //public async Task<IActionResult> RegisterLeaveapplying([FromBody]LeaveApplDetails leaveApplDetails)
-        //{
-        //    if (leaveApplDetails == null)
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
-        //    try
-        //    {
-        //        string errorMessge = string.Empty;
+            try
+            {
+                string errorMessage = string.Empty;
+                dynamic expando = new ExpandoObject();
+                expando.leavetypesList = new LeaveRequestHelper().GetListOfleavetypes(code, out errorMessage);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
-        //        LeaveApplDetails result = LeaveRequestHelper.RegisterLeaveApplDetails(leaveApplDetails, out errorMessge);
-        //        if (result != null)
-        //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+        [HttpGet("GetLeaveApplDetailsList/{code}")]
+        public async Task<IActionResult> GetLeaveApplDetailsList(string code)
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.LeaveApplDetailsList = LeaveRequestHelper.GetLeaveApplDetailsList(code).ToList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessge });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
+        [HttpPost("GetEmployeeCode")]
+        public IActionResult GetEmployeeCode([FromBody]JObject objData)
+        {
+            if (objData == null)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
+            try
+            {
+                string Code = objData["Code"].ToString();
+                dynamic expando = new ExpandoObject();
+                expando.Empcodes = new LeaveRequestHelper().GetEmpcodes(Code, null).OrderBy(x => x.EmployeeCode?.Length).Take(50).Select(p => new { ID = p.EmployeeCode, TEXT = p.EmployeeCode, Name = p.EmployeeName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+
+        [HttpGet("GetEmpName/{Code}")]
+        public async Task<IActionResult> GetEmpName(string Code)
+        {
+            if (string.IsNullOrEmpty(Code))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+
+            try
+            {
+                string errorMessage = string.Empty;
+                dynamic expando = new ExpandoObject();
+                expando.empname = new LeaveRequestHelper().GetEmpName(Code, out errorMessage);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("RegisterLeaveapplying")]
+        public async Task<IActionResult> RegisterLeaveapplying([FromBody]LeaveApplDetails leaveApplDetails)
+        {
+            if (leaveApplDetails == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
+            try
+            {
+                string errorMessge = string.Empty;
+
+                LeaveApplDetails result = LeaveRequestHelper.RegisterLeaveApplDetails(leaveApplDetails, null, out errorMessge);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessge });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+
+        [HttpPut("UpdateLeaveapplying")]
+        public IActionResult UpdateLeaveapplying([FromBody]LeaveApplDetails leaveApplDetails)
+        {
+            if (leaveApplDetails == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
+            try
+            {
+                string errorMessge = string.Empty;
+
+                LeaveApplDetails result = LeaveRequestHelper.UpdateLeaveapplying(leaveApplDetails, out errorMessge);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessge });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

@@ -10,48 +10,54 @@ using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers.Selfservice
 {
-  [ApiController]
-  [Route("api/Selfservice/LeaveApproval")]
-  public class LeaveApprovalController : ControllerBase
-  {
+    [ApiController]
+    [Route("api/Selfservice/LeaveApproval")]
+    public class LeaveApprovalController : ControllerBase
+    {
 
-        //[HttpGet("GetLeaveApplDetailsList")]
-        //public async Task<IActionResult> GetLeaveApplDetailsList()
-        //{
-        //    try
-        //    {
-        //        dynamic expando = new ExpandoObject();
-        //        expando.LeaveApplDetailsList = LeaveApprovalHelper.GetLeaveApplDetailsList().ToList();
-        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
+        [HttpGet("GetLeaveApplDetailsList/{code}")]
+        public async Task<IActionResult> GetLeaveApplDetailsList(string code)
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.LeaveApplDetailsList = LeaveApprovalHelper.GetLeaveApplDetailsList(code).ToList();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
-        //[HttpPost("RegisterLeaveApprovalDetails")]
-        //public async Task<IActionResult> RegisterLeaveApprovalDetails([FromBody]LeaveApplDetails[] leaveapp)
-        //{
+        [HttpPost("RegisterLeaveApprovalDetails")]
+        public async Task<IActionResult> RegisterLeaveApprovalDetails([FromBody]JObject objData)
+        {
+            APIResponse apiResponse = null;
+            if (objData == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var code = objData["code"].ToString();
+                var _stockissueHdr = objData["StockissueHdr"].ToObject<LeaveApplDetails>();
+                //ToObject<TblEmployee>();
+                var _stockissueDtl = objData["StockissueDtl"].ToObject<LeaveApplDetails[]>();
 
-        //    if (leaveapp == null || leaveapp?.Length == 0)
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(leaveapp)} cannot be null" });
-        //    try
-        //    {
-        //        var result = LeaveApprovalHelper.RegisterLeaveApprovalDetails(leaveapp);
-        //        if (result.Count > 0)
-        //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                var result = new LeaveApprovalHelper().RegisterLeaveApprovalDetails(code, _stockissueHdr, _stockissueDtl.ToList());
 
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
+                apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                return Ok(apiResponse);
+                //return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
 
     }

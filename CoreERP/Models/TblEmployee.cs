@@ -42,5 +42,9 @@ namespace CoreERP.Models
         public string Extra2 { get; set; }
         public decimal? DefaultPackageId { get; set; }
         public string AadharNumber { get; set; }
+        public string RecomendedBy { get; set; }
+        public string RecomendedId { get; set; }
+        public string ReportedBy { get; set; }
+        public string ApprovedBy { get; set; }
     }
 }

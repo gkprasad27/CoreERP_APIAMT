@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblAccountLedger
     {
-        public decimal LedgerId { get; set; }
+        public decimal? LedgerId { get; set; }
         public string LedgerCode { get; set; }
         public decimal? AccountGroupId { get; set; }
         public string LedgerName { get; set; }

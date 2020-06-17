@@ -876,6 +876,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 _voucherDetail.BranchId = _branch.BranchId;
                 _voucherDetail.BranchCode = invoice.BranchCode;
                 _voucherDetail.BranchName = invoice.BranchName;
+               
+                _voucherDetail.Amount = totalAmount;  // wihtout tax
+                _voucherDetail.TransactionType = transactionType; /*_accountLedger.CrOrDr;*/
+                _voucherDetail.CostCenter = _voucherDetail.BranchCode;
+                _voucherDetail.ServerDate = DateTime.Now;
+                _voucherDetail.Narration = $"Sales Invoice {_accountLedger.LedgerName} A /c: {_voucherDetail.TransactionType}";
+
+
                 if (isFromInvoiceDetials)
                 {
                     _voucherDetail.FromLedgerId = invoice.LedgerId;
@@ -887,11 +895,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 _voucherDetail.ToLedgerId = _accountLedger.LedgerId;
                 _voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
                 _voucherDetail.ToLedgerName = _accountLedger.LedgerName;
-                _voucherDetail.Amount = totalAmount;  // wihtout tax
-                _voucherDetail.TransactionType = transactionType; /*_accountLedger.CrOrDr;*/
-                _voucherDetail.CostCenter = _accountLedger.BranchCode;
-                _voucherDetail.ServerDate = DateTime.Now;
-                _voucherDetail.Narration = $"Sales Invoice {_accountLedger.LedgerName} A /c: {_voucherDetail.TransactionType}";
 
                 context.TblVoucherDetail.Add(_voucherDetail);
                 if (context.SaveChanges() > 0)

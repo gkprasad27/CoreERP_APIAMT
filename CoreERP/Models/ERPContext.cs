@@ -23,6 +23,9 @@ namespace CoreERP.Models
         public virtual DbSet<FourCoulmnRoundOff> FourCoulmnRoundOff { get; set; }
         public virtual DbSet<GlaccGroup> GlaccGroup { get; set; }
         public virtual DbSet<Health559> Health559 { get; set; }
+        public virtual DbSet<LeaveApplDetails> LeaveApplDetails { get; set; }
+        public virtual DbSet<LeaveBalanceMaster> LeaveBalanceMaster { get; set; }
+        public virtual DbSet<LeaveTypes> LeaveTypes { get; set; }
         public virtual DbSet<MenuAccesses> MenuAccesses { get; set; }
         public virtual DbSet<Menus> Menus { get; set; }
         public virtual DbSet<RebateSus558> RebateSus558 { get; set; }
@@ -468,6 +471,196 @@ namespace CoreERP.Models
                 entity.Property(e => e.PartyName)
                     .HasColumnName("party_name")
                     .HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<LeaveApplDetails>(entity =>
+            {
+                entity.ToTable("Leave_Appl_Details");
+
+                entity.Property(e => e.AccDate)
+                    .HasColumnName("Acc_Date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.AcceptedRemarks)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AccptedId)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApplDate)
+                    .HasColumnName("Appl_Date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ApprDate)
+                    .HasColumnName("appr_date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ApproveName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApprovedId)
+                    .HasColumnName("ApprovedID")
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AuthDate)
+                    .HasColumnName("auth_date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.AuthorizedId)
+                    .HasColumnName("AuthorizedID")
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AuthorizedStatus)
+                    .HasColumnName("Authorized_status")
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ChkAcceptReject)
+                    .HasColumnName("chkAcceptReject")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.CompanyCode)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CompanyName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EmpCode)
+                    .IsRequired()
+                    .HasColumnName("Emp_Code")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.EmpName)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Formno)
+                    .HasColumnName("FORMNO")
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.LeaveCode)
+                    .HasColumnName("Leave_Code")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LeaveDays).HasColumnName("Leave_Days");
+
+                entity.Property(e => e.LeaveFrom)
+                    .HasColumnName("Leave_From")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.LeaveRemarks)
+                    .HasColumnName("Leave_Remarks")
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LeaveTo)
+                    .HasColumnName("Leave_To")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.Lopdays).HasColumnName("LOPdays");
+
+                entity.Property(e => e.Reason)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Recomendedby)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RejectedId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RejectedName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportId)
+                    .HasColumnName("ReportID")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Session1)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Session2)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Skip)
+                    .HasMaxLength(5)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Trmno)
+                    .HasColumnName("TRMNO")
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+            });
+
+            modelBuilder.Entity<LeaveBalanceMaster>(entity =>
+            {
+                entity.HasKey(e => new { e.EmpCode, e.Year, e.LeaveCode });
+
+                entity.Property(e => e.EmpCode).HasMaxLength(50);
+
+                entity.Property(e => e.Year)
+                    .HasMaxLength(4)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LeaveCode).HasMaxLength(50);
+
+                entity.Property(e => e.CompCode).HasMaxLength(50);
+
+                entity.Property(e => e.Opbal).HasColumnName("OPBAL");
+
+                entity.Property(e => e.TimeStamp).HasColumnType("datetime");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("UserID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<LeaveTypes>(entity =>
+            {
+                entity.HasKey(e => e.LeaveCode);
+
+                entity.Property(e => e.LeaveCode).HasMaxLength(40);
+
+                entity.Property(e => e.CompanyCode).HasMaxLength(40);
+
+                entity.Property(e => e.CompanyName).HasMaxLength(40);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .HasMaxLength(14);
+
+                entity.Property(e => e.LeaveMaxLimit).HasMaxLength(40);
+
+                entity.Property(e => e.LeaveName).HasMaxLength(40);
             });
 
             modelBuilder.Entity<MenuAccesses>(entity =>
