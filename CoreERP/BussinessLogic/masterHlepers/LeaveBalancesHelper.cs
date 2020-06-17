@@ -8,7 +8,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class LeaveBalancesHelper
     {
-        public  List<LeaveBalanceMaster> GetLeaveOpeningBalancesList()
+        public List<LeaveBalanceMaster> GetLeaveOpeningBalancesList()
         {
             try
             {
@@ -19,9 +19,30 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch { throw; }
         }
+        ////Leave type assign onload to dropdown code
+        public List<LeaveTypes> GetListOfleavetypes(string code, out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            try
+            {
+                using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
+                {
+
+                    var ProjectsGridData = (from pm in repo.LeaveTypes
+                                                //join rm in repo.LeaveBalanceMaster on pm.LeaveCode equals rm.LeaveCode
+                                            where pm.CompanyCode == code
+                                            select new LeaveTypes
+                                            {
+                                                LeaveCode = pm.LeaveCode + "-" + pm.LeaveName
+                                            });
+                    return ProjectsGridData.ToList();
+                }
+            }
+            catch { throw; }
+        }
 
 
-        public  LeaveBalanceMaster Register(LeaveBalanceMaster lbm)
+        public LeaveBalanceMaster Register(LeaveBalanceMaster lbm)
         {
             try
             {
@@ -50,19 +71,19 @@ namespace CoreERP.BussinessLogic.masterHlepers
         //    catch { throw; }
         //}
 
-        public  List<LeaveBalanceMaster> GetList(string Code)
+        public List<LeaveBalanceMaster> GetList(string Code)
         {
             try
             {
-                                using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
-                               return repo.LeaveBalanceMaster
-                .Where(x => x.EmpCode == Code)
-                .ToList();
+                using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
+                return repo.LeaveBalanceMaster
+ .Where(x => x.EmpCode == Code)
+ .ToList();
                 //return null;
             }
             catch { throw; }
         }
-        public  LeaveBalanceMaster Update(LeaveBalanceMaster lbm)
+        public LeaveBalanceMaster Update(LeaveBalanceMaster lbm)
         {
             try
             {
@@ -75,8 +96,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch { throw; }
         }
 
-        public  LeaveBalanceMaster Delete(string code)
-        
+        public LeaveBalanceMaster Delete(string code)
+
         {
             try
             {

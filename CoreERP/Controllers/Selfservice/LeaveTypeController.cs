@@ -37,8 +37,9 @@ namespace CoreERP.Controllers.Selfservice
         }
 
 
-        [HttpPost("RegisterLeaveType")]
-        public IActionResult RegisterLeaveType([FromBody]LeaveTypes ltype)
+
+        [HttpPost("RegisterLeaveType/{Code}")]
+        public IActionResult RegisterLeaveType([FromBody]LeaveTypes ltype, string Code)
         {
             if (ltype == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(ltype)} cannot be null" });
@@ -48,7 +49,7 @@ namespace CoreERP.Controllers.Selfservice
                 if (LeaveTypeHelper.GetList(ltype.LeaveCode).Count() > 0)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"Code {ltype.LeaveCode} is already exists ,please use different code" });
 
-                var result = LeaveTypeHelper.Register(ltype);
+                var result = LeaveTypeHelper.Register(ltype, Code);
                 APIResponse apiResponse;
                 if (result != null)
                 {
@@ -68,16 +69,16 @@ namespace CoreERP.Controllers.Selfservice
         }
 
 
-
-        [HttpPut("UpdateLeaveType")]
-        public IActionResult UpdateLeaveType([FromBody] LeaveTypes ltype)
+        [HttpPut("UpdateLeaveType/{Code}")]
+        //[HttpPut("UpdateLeaveType")]
+        public IActionResult UpdateLeaveType([FromBody] LeaveTypes ltype, string code)
         {
             try
             {
                 if (ltype == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(ltype)} cannot be null" });
 
-                var result = LeaveTypeHelper.Update(ltype);
+                var result = LeaveTypeHelper.Update(ltype, code);
                 APIResponse apiResponse;
                 if (result != null)
                 {

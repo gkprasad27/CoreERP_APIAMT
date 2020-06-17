@@ -35,9 +35,6 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                         {
                             LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode && x.ReportId == code &&
                                (x.Status == "Applied" || x.Status == "Cancelled")).ToList();
-                            //LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode &&
-                            //x.ReportId == code).Where(x => x.Status.Trim() == "Applied" || x.Status.Trim() == "Cancelled").ToList();
-                            //repo.LeaveApplDetails.AsEnumerable().Where(x => x.EmpCode == item.EmployeeCode && x.ReportId == code).Where(x => x.Status.Trim() == "Applied" || x.Status.Trim() == "Cancelled").ToList();
                             if (LeaveAplyDetails.Count != 0)
                             {
                                 foreach (var query in LeaveAplyDetails)
@@ -45,7 +42,6 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                                     LeaveAply.Add(query);
                                 }
                             }
-                            //return LeaveAply.ToList();
                         }
                         foreach (var item in empList1)
                         {
@@ -68,21 +64,16 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                             {
                                 if (item.ApprovedBy == code)
                                 {
-                                    LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode && x.ApprovedId == code
-                                    && x.Status == "Partially Approved" || x.Status == "Partially Cancelled Approved").ToList();
+                                    LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode &&
+                                    x.ApprovedId == code
+                                    && x.Status == "Partially Approved" || x.Status == "Applied" || x.Status == "Partially Cancelled Approved").ToList();
                                 }
-                                if (LeaveAplyDetails.Count == 0)
+
+                                if (item.ReportedBy == code)
                                 {
-                                    LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.ApprovedId == code
-                                    && x.Status == "Partially Approved" || x.Status == "Partially Cancelled Approved").ToList();
-                                }
-                                else
                                     LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode && x.ReportId == code
                                    && x.Status == "Applied" || x.Status == "Partially Cancelled Approved").ToList();
-                                //LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode && x.ReportId == code)
-                                //.Where(x => x.Status == "Applied" || x.Status == "Partially Cancelled Approved").ToList();
-
-                                //repo.LeaveApplDetails.Where(x=>x.EmpCode== item.EmployeeCode/*&&(x.Status== "Partially Approved" *//*|| x.Status== "Partially Cancelled Approved"*/).ToList();
+                                }
                                 //repo.LeaveApplDetails.AsEnumerable().Where(x => x.EmpCode == item.EmployeeCode && (x.Status.Trim() == "Partially Approved" || x.Status.Trim() == "Partially Cancelled Approved")).ToList();
                                 if (LeaveAplyDetails.Count != 0)
                                 {

@@ -147,6 +147,25 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetTaxList/{taxStructureCode}")]
+        public IActionResult GetTaxList(int taxStructureCode)
+        {
+            if (taxStructureCode == 0)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.TaxList = new ProductHelper().GetTaxList(taxStructureCode).Select(x => new { x.Cgst, x.Sgst, x.Igst, x.TotalGst, x.TotalPercentageGst });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetTaxStructure/{taxGroupCode}")]
         public IActionResult GetTaxStructure(string taxGroupCode)
         {

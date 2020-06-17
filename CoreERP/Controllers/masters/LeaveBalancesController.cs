@@ -33,6 +33,26 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetLeavetpeList/{code}")]
+        public async Task<IActionResult> GetLeavetpeList(string code)
+        {
+
+            if (string.IsNullOrEmpty(code))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+
+            try
+            {
+                string errorMessage = string.Empty;
+                dynamic expando = new ExpandoObject();
+                expando.leavetypesList = new LeaveBalancesHelper().GetListOfleavetypes(code, out errorMessage);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPost("RegisterLeaveBalancesList")]
         public IActionResult RegisterLeaveBalancesList([FromBody]LeaveBalanceMaster lbm)
         {

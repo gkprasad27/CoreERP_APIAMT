@@ -64,12 +64,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch { throw; }
         }
 
-        public static LeaveTypes Register(LeaveTypes leavetype)
+        public static LeaveTypes Register(LeaveTypes leavetype, string code)
         {
             try
             {
                 using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
                 {
+                    leavetype.CompanyCode = code;
                     repo.LeaveTypes.Add(leavetype);
                     if (repo.SaveChanges() > 0)
                         return leavetype;
@@ -80,12 +81,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch { throw; }
         }
 
-        public static LeaveTypes Update(LeaveTypes leavetype)
+        public static LeaveTypes Update(LeaveTypes leavetype, string code)
         {
             try
             {
                 using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
                 {
+                    leavetype.CompanyCode = code;
                     repo.LeaveTypes.Update(leavetype);
                     if (repo.SaveChanges() > 0)
                         return leavetype;

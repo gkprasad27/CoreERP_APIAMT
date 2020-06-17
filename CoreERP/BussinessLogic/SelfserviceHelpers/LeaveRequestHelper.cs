@@ -20,12 +20,6 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
             {
                 using Repository<TblEmployee> repo = new Repository<TblEmployee>();
                 return repo.TblEmployee.ToList();
-                //IList<Employees> empList = new List<Employees>() {
-                //new Employees(){ Code="1", Name="Bill",Active="Y"}
-                //new Employees(){ Code="2", Name="Steve",Active="Y"},
-                //new Employees(){ Code="3", Name="Ram",Active="Y"},
-                //new Employees(){ Code="4", Name="Moin",Active="Y"}
-                //return empList.ToList();
             }
             catch { throw; }
         }
@@ -196,6 +190,8 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                 }
                 using (Repository<LeaveApplDetails> repo = new Repository<LeaveApplDetails>())
                 {
+                    //Leave_Appl_Details requisition = new Leave_Appl_Details();
+                    //requisition = db.Leave_Appl_Details.Where(x => x.Sno == leaveRequest.Sno).FirstOrDefault();
                     var LeaveAplysdata = repo.LeaveApplDetails.Where(x => x.Sno == leaveApplDetails.Sno).FirstOrDefault();
                     if (leaveApplDetails.Sno > 0)
                     {
@@ -204,17 +200,20 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                             string[] stringSeparators = new string[] { "-" };
                             var result = LeaveAplysdata.LeaveCode.Split(stringSeparators, StringSplitOptions.None);
                             var code = result[0];
-                            leaveApplDetails.CountofLeaves = Convert.ToInt32(LeaveAplysdata.LeaveDays);
+                            //leaveApplDetails.CountofLeaves = Convert.ToInt32(LeaveAplysdata.LeaveDays);
+                            leaveApplDetails.CountofLeaves = LeaveAplysdata.LeaveDays;
                             leaveApplDetails.AcceptedRemarks = code;
                         }
                         else
                         {
-                            leaveApplDetails.LeaveDays = Convert.ToDouble(leaveApplDetails.LeaveDays);
+                            LeaveAplysdata.LeaveDays = Convert.ToDouble(leaveApplDetails.LeaveDays);
                         }
                         repo.Entry(LeaveAplysdata).State = EntityState.Detached;
                         //LeaveAplysdata.CountofLeaves = Convert.ToInt32(LeaveAplysdata.LeaveDays);
                         leaveApplDetails.Status = "Applied";
                         leaveApplDetails.ApplDate = DateTime.Now;
+                        //repo.Entry(LeaveAplysdata).State = EntityState.Modified;
+                        //repo.LeaveApplDetails.Update(LeaveAplysdata);
                         repo.Entry(leaveApplDetails).State = EntityState.Modified;
                         repo.LeaveApplDetails.Update(leaveApplDetails);
 
@@ -293,17 +292,6 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                                             });
                     return ProjectsGridData.ToList();
                 }
-
-                //var list = (from u in repo.LeaveTypes
-                //                join c in repo.LeaveBalanceMaster on u.LeaveCode equals c.LeaveCode
-                //                where c.EmpCode == "005"
-                //                select new
-                //                { 
-                //                    u.LeaveCode + '-' + c.Balance
-                //                }).ToList();
-
-                //    return repo.LeaveBalanceMaster.ToList();
-                //}
             }
             catch { throw; }
         }
