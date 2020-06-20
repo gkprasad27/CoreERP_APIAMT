@@ -225,6 +225,37 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             }
             else return (null, null, null);
         }
+
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetDefaultShiftReportDataTableList1(string userName, string userID, string branchCode, string shiftId, DateTime fromDate, DateTime toDate, int reportID)
+        {
+            if (shiftId == "null")
+            {
+                shiftId = null;
+            }
+            DataSet dsResult = GetShiftViewReportDataTable(userName, userID, branchCode, shiftId, fromDate, toDate, reportID);
+            //List<parametersClass> dbParametersList = new List<parametersClass>();
+            //DataSet dsResult = getDataFromDataBase(dbParametersList, "Usp_ShifViewReport");
+            List<dynamic> shiftViewLists = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    shiftViewLists = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (shiftViewLists, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
         #endregion        
         #region EmployeeRegisterReport
         public static List<dynamic> GetEmployeeRegisterReportList(string userID)
@@ -418,6 +449,10 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         #region VehicalReport
         public static (List<dynamic>, List<dynamic>, List<dynamic>) GetVehicalReportDataList(string userID, string vehicleRegNo, DateTime fromDate, DateTime toDate)
         {
+            if (vehicleRegNo == "null")
+            {
+                vehicleRegNo = null;
+            }
             DataSet dsResult = GetVehicalReportDataSet(userID, vehicleRegNo, fromDate, toDate);
             List<dynamic> vehicalValue = null;
             List<dynamic> headerList = null;

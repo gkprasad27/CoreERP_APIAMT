@@ -25,16 +25,17 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                     List<TblEmployee> report = new List<TblEmployee>();
                     List<LeaveApplDetails> LeaveAplyDetails = new List<LeaveApplDetails>();
                     List<LeaveApplDetails> LeaveAply = new List<LeaveApplDetails>();
-
+                    List<TblEmployee> empList = new List<TblEmployee>();
                     using (Repository<LeaveApplDetails> repo = new Repository<LeaveApplDetails>())
                     {
-                        //List<TblEmployee> empList = repo.TblEmployee.ToList();
-                        List<TblEmployee> empList1 = repo.TblEmployee.ToList();
                         List<TblEmployee> empLists = new List<TblEmployee>();
-                        foreach (var item in empList1)
+                        report = repo.TblEmployee.Where(x => x.ReportedBy == "").ToList();
+                        empList = repo.TblEmployee.Where(x => x.ReportedBy == code).ToList();
+                        empLists = repo.TblEmployee.Where(x => x.ApprovedBy == code).ToList();
+
+                        foreach (var item in empList)
                         {
-                            LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode && x.ReportId == code &&
-                               (x.Status == "Applied" || x.Status == "Cancelled")).ToList();
+                            LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode && x.ReportId == code).Where(x => x.Status.Trim() == "Applied" || x.Status.Trim() == "Cancelled").ToList();
                             if (LeaveAplyDetails.Count != 0)
                             {
                                 foreach (var query in LeaveAplyDetails)
@@ -43,14 +44,13 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                                 }
                             }
                         }
-                        foreach (var item in empList1)
+                        foreach (var item in empLists)
                         {
                             if (item.ReportedBy == null || item.ReportedBy == "")
                             {
-                                LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode
-                                && x.ApprovedId == code).Where(x => (x.Status.Trim() == "Applied"
-                                || x.Status.Trim() == "Partially Approved") || (x.Status.Trim() == "Cancelled"
-                                || x.Status.Trim() == "Partially Cancelled Approved")).ToList();
+                                LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode && x.ApprovedId == code)
+                                    .Where(x => (x.Status.Trim() == "Applied" || x.Status.Trim() == "Partially Approved")
+                                || (x.Status.Trim() == "Cancelled" || x.Status.Trim() == "Partially Cancelled Approved")).ToList();
                                 if (LeaveAplyDetails.Count != 0)
                                 {
                                     foreach (var query in LeaveAplyDetails)
@@ -58,23 +58,11 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                                         LeaveAply.Add(query);
                                     }
                                 }
-                                return LeaveAply.Distinct().ToList();
                             }
                             else
                             {
-                                if (item.ApprovedBy == code)
-                                {
-                                    LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode &&
-                                    x.ApprovedId == code
-                                    && x.Status == "Partially Approved" || x.Status == "Applied" || x.Status == "Partially Cancelled Approved").ToList();
-                                }
-
-                                if (item.ReportedBy == code)
-                                {
-                                    LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode && x.ReportId == code
-                                   && x.Status == "Applied" || x.Status == "Partially Cancelled Approved").ToList();
-                                }
-                                //repo.LeaveApplDetails.AsEnumerable().Where(x => x.EmpCode == item.EmployeeCode && (x.Status.Trim() == "Partially Approved" || x.Status.Trim() == "Partially Cancelled Approved")).ToList();
+                                LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode &&
+                                (x.Status.Trim() == "Partially Approved" || x.Status.Trim() == "Partially Cancelled Approved")).ToList();
                                 if (LeaveAplyDetails.Count != 0)
                                 {
                                     foreach (var query in LeaveAplyDetails)
@@ -82,9 +70,67 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                                         LeaveAply.Add(query);
                                     }
                                 }
-                                return LeaveAply.Distinct().ToList();
                             }
                         }
+
+                        //List<TblEmployee> empList = repo.TblEmployee.ToList();
+                        //List<TblEmployee> empList1 = repo.TblEmployee.ToList();
+                        //List<TblEmployee> empLists = new List<TblEmployee>();
+                        //foreach (var item in empList1)
+                        //{
+                        //    LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode 
+                        //      && x.ReportId == code&&
+                        //       (x.Status == "Applied" || x.Status == "Cancelled")).ToList();
+                        //    if (LeaveAplyDetails.Count != 0)
+                        //    {
+                        //        foreach (var query in LeaveAplyDetails)
+                        //        {
+                        //            LeaveAply.Add(query);
+                        //        }
+                        //    }
+                        //}
+                        //foreach (var item in empList1)
+                        //{
+                        //    if (item.ReportedBy == null || item.ReportedBy == "" && item.ApprovedBy == code)
+                        //    {
+                        //        LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode
+                        //        && x.ApprovedId == code).Where(x => (x.Status.Trim() == "Applied" 
+                        //        || x.Status.Trim() == "Partially Approved") || (x.Status.Trim() == "Cancelled" 
+                        //        || x.Status.Trim() == "Partially Cancelled Approved")).ToList();
+                        //        if (LeaveAplyDetails.Count != 0)
+                        //        {
+                        //            foreach (var query in LeaveAplyDetails)
+                        //            {
+                        //                LeaveAply.Add(query);
+                        //            }
+                        //        }
+                        //        return LeaveAply.Distinct().ToList();
+                        //    }
+                        //    else
+                        //    {
+                        //        if(item.ApprovedBy==code && item.ReportedBy !=null)
+                        //        {
+                        //            LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode &&
+                        //            x.ApprovedId == code
+                        //            && x.Status == "Partially Approved"|| x.Status == "Partially Cancelled Approved").ToList();
+                        //        }
+
+                        //        if (item.ReportedBy == code)
+                        //        {
+                        //            LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode && x.ReportId == code
+                        //           && x.Status == "Applied" || x.Status == "Partially Cancelled Approved").ToList();
+                        //        }
+                        //        //repo.LeaveApplDetails.AsEnumerable().Where(x => x.EmpCode == item.EmployeeCode && (x.Status.Trim() == "Partially Approved" || x.Status.Trim() == "Partially Cancelled Approved")).ToList();
+                        //        if (LeaveAplyDetails.Count != 0)
+                        //        {
+                        //            foreach (var query in LeaveAplyDetails)
+                        //            {
+                        //                LeaveAply.Add(query);
+                        //            }
+                        //        }
+                        //        return LeaveAply.Distinct().ToList();
+                        //    }
+                        //}
                         return LeaveAply.Distinct().ToList();
                         // return repo.LeaveApplDetails.AsEnumerable().Where(m => m.Status == "Applied").ToList();
                     }
@@ -162,7 +208,7 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                                 {
                                     string[] stringSeparators = new string[] { "-" };
                                     var result = leaveapro.LeaveCode.Split(stringSeparators, StringSplitOptions.None);
-                                    var code1 = result[0];
+                                    var code1 = result[0]/* + "-" +result[1]*/;
                                     ScopeRepository scopeRepository = new ScopeRepository();
                                     // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
                                     using DbCommand command = scopeRepository.CreateCommand();

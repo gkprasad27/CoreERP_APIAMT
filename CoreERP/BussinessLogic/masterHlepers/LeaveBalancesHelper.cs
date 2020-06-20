@@ -14,8 +14,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
                 return repo.LeaveBalanceMaster.ToList();
-
-                //return null;
             }
             catch { throw; }
         }
@@ -33,7 +31,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
                                             where pm.CompanyCode == code
                                             select new LeaveTypes
                                             {
-                                                LeaveCode = pm.LeaveCode + "-" + pm.LeaveName
+                                                LeaveCode = pm.LeaveCode
+                                                //+ "-" + pm.LeaveName
                                             });
                     return ProjectsGridData.ToList();
                 }
@@ -42,11 +41,18 @@ namespace CoreERP.BussinessLogic.masterHlepers
         }
 
 
-        public LeaveBalanceMaster Register(LeaveBalanceMaster lbm)
+        public LeaveBalanceMaster Register(LeaveBalanceMaster lbm, string name, string compcode)
         {
             try
             {
+                string[] stringSeparators = new string[] { "-" };
+                var result = lbm.LeaveCode.Split(stringSeparators, StringSplitOptions.None);
+                var code1 = result[0];
                 using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
+                lbm.LeaveCode = code1;
+                lbm.CompCode = compcode;
+                lbm.UserId = name;
+                lbm.TimeStamp = DateTime.Now;
                 repo.LeaveBalanceMaster.Add(lbm);
                 if (repo.SaveChanges() > 0)
                     return lbm;
@@ -55,21 +61,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch { throw; }
         }
-
-        //public  LeaveBalanceMaster Register(LeaveBalanceMaster lbm)
-        //{
-        //    try
-        //    {
-        //        using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
-        //         //lbm.Active = "Y";
-        //        repo.LeaveBalanceMaster.Add(lbm);
-        //        if (repo.SaveChanges() > 0)
-        //           return lbm;
-
-        //        //return null;
-        //    }
-        //    catch { throw; }
-        //}
 
         public List<LeaveBalanceMaster> GetList(string Code)
         {
@@ -83,11 +74,18 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch { throw; }
         }
-        public LeaveBalanceMaster Update(LeaveBalanceMaster lbm)
+        public LeaveBalanceMaster Update(LeaveBalanceMaster lbm, string name, string compcode)
         {
             try
             {
+                string[] stringSeparators = new string[] { "-" };
+                var result = lbm.LeaveCode.Split(stringSeparators, StringSplitOptions.None);
+                var code1 = result[0];
                 using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
+                lbm.LeaveCode = code1;
+                lbm.CompCode = compcode;
+                lbm.UserId = name;
+                lbm.TimeStamp = DateTime.Now;
                 repo.LeaveBalanceMaster.Update(lbm);
                 if (repo.SaveChanges() > 0)
                     return lbm;
