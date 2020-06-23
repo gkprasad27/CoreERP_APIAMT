@@ -51,6 +51,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
                 lbm.LeaveCode = code1;
                 lbm.CompCode = compcode;
+                lbm.Used = 0;
                 lbm.UserId = name;
                 lbm.TimeStamp = DateTime.Now;
                 repo.LeaveBalanceMaster.Add(lbm);
@@ -84,6 +85,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using Repository<LeaveBalanceMaster> repo = new Repository<LeaveBalanceMaster>();
                 lbm.LeaveCode = code1;
                 lbm.CompCode = compcode;
+                lbm.Used = 0;
                 lbm.UserId = name;
                 lbm.TimeStamp = DateTime.Now;
                 repo.LeaveBalanceMaster.Update(lbm);

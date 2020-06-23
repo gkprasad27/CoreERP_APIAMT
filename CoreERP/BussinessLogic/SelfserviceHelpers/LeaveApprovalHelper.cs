@@ -72,67 +72,8 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                                 }
                             }
                         }
-
-                        //List<TblEmployee> empList = repo.TblEmployee.ToList();
-                        //List<TblEmployee> empList1 = repo.TblEmployee.ToList();
-                        //List<TblEmployee> empLists = new List<TblEmployee>();
-                        //foreach (var item in empList1)
-                        //{
-                        //    LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode 
-                        //      && x.ReportId == code&&
-                        //       (x.Status == "Applied" || x.Status == "Cancelled")).ToList();
-                        //    if (LeaveAplyDetails.Count != 0)
-                        //    {
-                        //        foreach (var query in LeaveAplyDetails)
-                        //        {
-                        //            LeaveAply.Add(query);
-                        //        }
-                        //    }
-                        //}
-                        //foreach (var item in empList1)
-                        //{
-                        //    if (item.ReportedBy == null || item.ReportedBy == "" && item.ApprovedBy == code)
-                        //    {
-                        //        LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode
-                        //        && x.ApprovedId == code).Where(x => (x.Status.Trim() == "Applied" 
-                        //        || x.Status.Trim() == "Partially Approved") || (x.Status.Trim() == "Cancelled" 
-                        //        || x.Status.Trim() == "Partially Cancelled Approved")).ToList();
-                        //        if (LeaveAplyDetails.Count != 0)
-                        //        {
-                        //            foreach (var query in LeaveAplyDetails)
-                        //            {
-                        //                LeaveAply.Add(query);
-                        //            }
-                        //        }
-                        //        return LeaveAply.Distinct().ToList();
-                        //    }
-                        //    else
-                        //    {
-                        //        if(item.ApprovedBy==code && item.ReportedBy !=null)
-                        //        {
-                        //            LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode &&
-                        //            x.ApprovedId == code
-                        //            && x.Status == "Partially Approved"|| x.Status == "Partially Cancelled Approved").ToList();
-                        //        }
-
-                        //        if (item.ReportedBy == code)
-                        //        {
-                        //            LeaveAplyDetails = context.LeaveApplDetails.Where(x => x.EmpCode == item.EmployeeCode && x.ReportId == code
-                        //           && x.Status == "Applied" || x.Status == "Partially Cancelled Approved").ToList();
-                        //        }
-                        //        //repo.LeaveApplDetails.AsEnumerable().Where(x => x.EmpCode == item.EmployeeCode && (x.Status.Trim() == "Partially Approved" || x.Status.Trim() == "Partially Cancelled Approved")).ToList();
-                        //        if (LeaveAplyDetails.Count != 0)
-                        //        {
-                        //            foreach (var query in LeaveAplyDetails)
-                        //            {
-                        //                LeaveAply.Add(query);
-                        //            }
-                        //        }
-                        //        return LeaveAply.Distinct().ToList();
-                        //    }
-                        //}
+                        
                         return LeaveAply.Distinct().ToList();
-                        // return repo.LeaveApplDetails.AsEnumerable().Where(m => m.Status == "Applied").ToList();
                     }
                 }
                 catch { throw; }
