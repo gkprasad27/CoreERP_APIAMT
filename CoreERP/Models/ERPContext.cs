@@ -17,6 +17,7 @@ namespace CoreERP.Models
         public virtual DbSet<ApplyOddata> ApplyOddata { get; set; }
         public virtual DbSet<CashInOutFlow1> CashInOutFlow1 { get; set; }
         public virtual DbSet<ComponentMaster> ComponentMaster { get; set; }
+        public virtual DbSet<ConfigurationTable> ConfigurationTable { get; set; }
         public virtual DbSet<CostCenters> CostCenters { get; set; }
         public virtual DbSet<Countries> Countries { get; set; }
         public virtual DbSet<Ctcbreakup> Ctcbreakup { get; set; }
@@ -450,6 +451,23 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.SpecificMonth)
                     .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<ConfigurationTable>(entity =>
+            {
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.ConfigurationType)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Value)
+                    .IsRequired()
+                    .HasMaxLength(20)
                     .IsUnicode(false);
             });
 

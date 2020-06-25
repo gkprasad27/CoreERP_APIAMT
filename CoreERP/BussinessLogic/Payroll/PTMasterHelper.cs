@@ -12,10 +12,8 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                //using Repository<Ptmaster> repo = new Repository<Ptmaster>();
-                //return repo.Ptmaster.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
-
-                return null;
+                using Repository<Ptmaster> repo = new Repository<Ptmaster>();
+                return repo.Ptmaster.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
             }
             catch { throw; }
         }
@@ -37,11 +35,11 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                //using Repository<Ptmaster> repo = new Repository<Ptmaster>();
-                //ptMaster.Active = "Y";
-                //repo.Ptmaster.Add(ptMaster);
-                //if (repo.SaveChanges() > 0)
-                //    return ptMaster;
+                using Repository<Ptmaster> repo = new Repository<Ptmaster>();
+                ptMaster.Active = "Y";
+                repo.Ptmaster.Add(ptMaster);
+                if (repo.SaveChanges() > 0)
+                    return ptMaster;
 
                 return null;
             }
@@ -52,10 +50,10 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                //using Repository<Ptmaster> repo = new Repository<Ptmaster>();
-                //repo.Ptmaster.Update(ptMaster);
-                //if (repo.SaveChanges() > 0)
-                //    return ptMaster;
+                using Repository<Ptmaster> repo = new Repository<Ptmaster>();
+                repo.Ptmaster.Update(ptMaster);
+                if (repo.SaveChanges() > 0)
+                    return ptMaster;
 
                 return null;
             }
@@ -66,12 +64,12 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                //using Repository<Ptmaster> repo = new Repository<Ptmaster>();
-                //var pt = repo.Ptmaster.Where(x => x.Ptslab == code).FirstOrDefault();
-                //pt.Active = "N";
-                //repo.Ptmaster.Update(pt);
-                //if (repo.SaveChanges() > 0)
-                //    return pt;
+                using Repository<Ptmaster> repo = new Repository<Ptmaster>();
+                var pt = repo.Ptmaster.Where(x => x.Id == Convert.ToInt32(code)).FirstOrDefault();
+                pt.Active = "N";
+                repo.Ptmaster.Update(pt);
+                if (repo.SaveChanges() > 0)
+                    return pt;
 
                 return null;
             }
