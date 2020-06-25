@@ -24,10 +24,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<CostCenters> repo = new Repository<CostCenters>();
-                return repo.CostCenters
-.AsEnumerable()
-.Where(c => c.Code == code)
-.Count() > 0;
+                return repo.CostCenters.AsEnumerable().Where(c => c.Code == code).Count() > 0;
             }
             catch { throw; }
         }

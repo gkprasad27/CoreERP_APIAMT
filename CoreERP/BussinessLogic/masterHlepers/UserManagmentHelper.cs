@@ -129,7 +129,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
 
                 using Repository<Erpuser> _repo = new Repository<Erpuser>();
                 var menuAccLst = _repo.MenuAccesses
-//.Where(m => m.RoleId == userRole)
+.Where(m => m.RoleId == "administrator")
 .OrderByDescending(x => x.AddDate)
 .FirstOrDefault()
 .Ext4.Split(',')
