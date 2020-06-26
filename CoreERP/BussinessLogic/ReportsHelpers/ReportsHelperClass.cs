@@ -1060,7 +1060,174 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
-        
+        #region ProductPriceList
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetProductPriceListReportDataList(string userName, string branchCode, DateTime fromDate, DateTime toDate, int reportType)
+        {
+            if (branchCode == "null")
+            {
+                branchCode = null;
+            }
+            DataSet dsResult = GetProductPriceListReportDataTable(userName, branchCode, fromDate, toDate, reportType);
+            List<dynamic> productPriceList = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    productPriceList = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (productPriceList, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
+
+        public static DataSet GetProductPriceListReportDataTable(string userName, string branchCode, DateTime fromDate, DateTime toDate, int reportType)
+        {
+            string procedureName = "";
+            List<parametersClass> dbParametersList = new List<parametersClass>();
+            parametersClass parameters = new parametersClass();
+            if (reportType == 1)
+            {
+
+                parameters = new parametersClass
+                {
+                    paramName = "userName",
+                    paramValue = userName
+                };
+                dbParametersList.Add(parameters);
+
+                parameters = new parametersClass
+                {
+                    paramName = "branchCode",
+                    paramValue = branchCode
+                };
+                dbParametersList.Add(parameters);
+
+                parameters = new parametersClass
+                {
+                    paramName = "fromDate",
+                    paramValue = fromDate
+                };
+                dbParametersList.Add(parameters);
+
+                parameters = new parametersClass
+                {
+                    paramName = "toDate",
+                    paramValue = toDate
+                };
+                dbParametersList.Add(parameters);
+
+                parameters = new parametersClass
+                {
+                    paramName = "ReportType"
+                };
+            }
+            else
+            {
+                parameters = new parametersClass
+                {
+                    paramName = "userName",
+                    paramValue = userName
+                };
+                dbParametersList.Add(parameters);
+
+                parameters = new parametersClass
+                {
+                    paramName = "branchCode",
+                    paramValue = branchCode
+                };
+                dbParametersList.Add(parameters);
+
+                parameters = new parametersClass
+                {
+                    paramName = "fromDate",
+                    paramValue = fromDate
+                };
+                dbParametersList.Add(parameters);
+
+                parameters = new parametersClass
+                {
+                    paramName = "toDate",
+                    paramValue = toDate
+                };
+                dbParametersList.Add(parameters);
+
+                parameters = new parametersClass
+                {
+                    paramName = "ReportType"
+                };
+            }
+            if (reportType == 1)
+                procedureName = "Usp_ProductPriceListAllBranchReport";
+            else if (reportType == 2)
+                procedureName = "Usp_ProductPriceListByBranchReport";
+            return getDataFromDataBase(dbParametersList, procedureName);
+        }
+
+        #endregion
+        #region Receipts And Payment Detailed Report
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetReceiptsAndPyamentDetailedReportDataList(string userId, DateTime fromDate, DateTime toDate)
+        {
+            DataSet dsResult = GetReceiptsAndPyamentDetailedReportDataSet(userId, fromDate, toDate);
+            List<dynamic> receiptsAndPaymentDetailed = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    receiptsAndPaymentDetailed = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (receiptsAndPaymentDetailed, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
+        public static DataSet GetReceiptsAndPyamentDetailedReportDataSet(string userId, DateTime fromDate, DateTime toDate)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_ReceiptPaymentDetailedReport";
+            #region Parameters
+            DbParameter pmuserName = command.CreateParameter();
+            pmuserName.Direction = ParameterDirection.Input;
+            pmuserName.Value = (object)userId ?? DBNull.Value;
+            pmuserName.ParameterName = "userId";
+            DbParameter pmfDate = command.CreateParameter();
+            pmfDate.Direction = ParameterDirection.Input;
+            pmfDate.Value = (object)fromDate ?? DBNull.Value;
+            pmfDate.ParameterName = "fromDate";
+            DbParameter pmtDate = command.CreateParameter();
+            pmtDate.Direction = ParameterDirection.Input;
+            pmtDate.Value = (object)toDate ?? DBNull.Value;
+            pmtDate.ParameterName = "toDate";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmfDate);
+            command.Parameters.Add(pmtDate);
+            command.Parameters.Add(pmuserName);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
+        #endregion
+
         #region CommonMethods
         public static DataSet getDataFromDataBase(List<parametersClass> dbParametersList, string procedureName)
         {
