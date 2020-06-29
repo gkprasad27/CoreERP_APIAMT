@@ -121,6 +121,26 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetNatureList")]
+        public async Task<IActionResult> GetNatureList()
+        {
+            try
+            {
+                var natureList = PartnerCreationHelper.GetNatureList();
+                if (natureList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.partnerCreationList = natureList.Select(n => new { ID = n, Text = n });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Nature Value not configured." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
         //[HttpGet("GetNatureList")]
         //public async Task<IActionResult> GetNatureList()
         //{
@@ -130,7 +150,47 @@ namespace CoreERP.Controllers
         //        if (natureList.Count > 0)
         //        {
         //            dynamic expando = new ExpandoObject();
-        //            expando.partnerCreationList = natureList.Select(n=>new {ID=n,Text=n });
+        //            expando.partnerCreationList = natureList.Select(n => new { ID = n, Text = n });
+        //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //        }
+        //        else
+        //            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Nature Value not configured." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}     
+        //[HttpGet("GetNatureList")]
+        //public async Task<IActionResult> GetNatureList()
+        //{
+        //    try
+        //    {
+        //        var natureList = PartnerCreationHelper.GetNatureList();
+        //        if (natureList.Count > 0)
+        //        {
+        //            dynamic expando = new ExpandoObject();
+        //            expando.partnerCreationList = natureList.Select(n => new { ID = n, Text = n });
+        //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //        }
+        //        else
+        //            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Nature Value not configured." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //} 
+        //[HttpGet("GetNatureList")]
+        //public async Task<IActionResult> GetNatureList()
+        //{
+        //    try
+        //    {
+        //        var natureList = PartnerCreationHelper.GetNatureList();
+        //        if (natureList.Count > 0)
+        //        {
+        //            dynamic expando = new ExpandoObject();
+        //            expando.partnerCreationList = natureList.Select(n => new { ID = n, Text = n });
         //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
         //        }
         //        else
@@ -163,26 +223,26 @@ namespace CoreERP.Controllers
             }
         }
 
-        //[HttpGet("GetPartnerTypes")]
-        //public async Task<IActionResult> GetPartnerTypes()
-        //{
-        //    try
-        //    {
-        //        var partnerTypeList = PartnerCreationHelper.GetPartnerTypes();
-        //        if (partnerTypeList.Count > 0)
-        //        {
-        //            dynamic expando = new ExpandoObject();
-        //            expando.partnerTypeList = partnerTypeList.Select(n => new { ID = n.Code, Text = n.Description });
-        //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-        //        }
-        //        else
-        //            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
+        [HttpGet("GetPartnerTypes")]
+        public async Task<IActionResult> GetPartnerTypes()
+        {
+            try
+            {
+                var partnerTypeList = PartnerCreationHelper.GetPartnerTypes();
+                if (partnerTypeList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.partnerTypeList = partnerTypeList.Select(n => new { ID = n.Code, Text = n.Description });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
         [HttpGet("GetBranchesList")]
         public IActionResult GetBranchesList()

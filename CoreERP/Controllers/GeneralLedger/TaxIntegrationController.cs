@@ -13,8 +13,8 @@ namespace CoreERP.Controllers
     [Route("api/gl/TaxIntegration")]
     public class TaxIntegrationController : ControllerBase
     {
-        [HttpPost("RegisterTaxIntegration")]
-        public IActionResult RegisterTaxIntegration([FromBody]TaxIntegration taxintegration)
+        [HttpPost("RegisterTaxIntegration/{bcode}/{ccode}")]
+        public IActionResult RegisterTaxIntegration([FromBody]TaxIntegration taxintegration, string bcode, string ccode)
         {
             if (taxintegration == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
@@ -23,7 +23,7 @@ namespace CoreERP.Controllers
                 if (GLHelper.GetTaxIntegrationList(taxintegration.TaxCode).Count > 0)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Tax Code ={taxintegration.TaxCode} alredy exists." });
 
-                TaxIntegration result = GLHelper.RegisterTaxIntegration(taxintegration);
+                TaxIntegration result = GLHelper.RegisterTaxIntegration(taxintegration, bcode, ccode);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
@@ -130,14 +130,14 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateTaxIntegration")]
-        public IActionResult UpdateTaxIntegration( [FromBody] TaxIntegration taxintegration)
+        public IActionResult UpdateTaxIntegration([FromBody] TaxIntegration taxintegration, string bcode, string ccode)
         {
             if (taxintegration == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(taxintegration)} cannot be null" });
 
             try
             {
-                TaxIntegration result = GLHelper.UpdateTaxIntegration(taxintegration);
+                TaxIntegration result = GLHelper.UpdateTaxIntegration(taxintegration, bcode, ccode);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
@@ -182,4 +182,4 @@ namespace CoreERP.Controllers
         //}*/
     }
 }
-       
+

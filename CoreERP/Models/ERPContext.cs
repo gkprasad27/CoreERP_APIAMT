@@ -14,7 +14,10 @@ namespace CoreERP.Models
             : base(options)
         {
         }
+        public virtual DbSet<AccountingClass> AccountingClass { get; set; }
         public virtual DbSet<ApplyOddata> ApplyOddata { get; set; }
+        public virtual DbSet<AsignmentAcctoAccClass> AsignmentAcctoAccClass { get; set; }
+        public virtual DbSet<AsignmentCashAccBranch> AsignmentCashAccBranch { get; set; }
         public virtual DbSet<CashInOutFlow1> CashInOutFlow1 { get; set; }
         public virtual DbSet<ComponentMaster> ComponentMaster { get; set; }
         public virtual DbSet<ConfigurationTable> ConfigurationTable { get; set; }
@@ -23,15 +26,22 @@ namespace CoreERP.Models
         public virtual DbSet<Ctcbreakup> Ctcbreakup { get; set; }
         public virtual DbSet<DividentTest> DividentTest { get; set; }
         public virtual DbSet<Divisions> Divisions { get; set; }
+        public virtual DbSet<EmployeeInBranches> EmployeeInBranches { get; set; }
+        public virtual DbSet<ErpConfiguration> ErpConfiguration { get; set; }
         public virtual DbSet<Erpuser> Erpuser { get; set; }
         public virtual DbSet<FourCoulmnRoundOff> FourCoulmnRoundOff { get; set; }
         public virtual DbSet<GlaccGroup> GlaccGroup { get; set; }
+        public virtual DbSet<Glaccounts> Glaccounts { get; set; }
         public virtual DbSet<Health559> Health559 { get; set; }
         public virtual DbSet<LeaveApplDetails> LeaveApplDetails { get; set; }
         public virtual DbSet<LeaveBalanceMaster> LeaveBalanceMaster { get; set; }
         public virtual DbSet<LeaveTypes> LeaveTypes { get; set; }
+        public virtual DbSet<MatTranTypes> MatTranTypes { get; set; }
         public virtual DbSet<MenuAccesses> MenuAccesses { get; set; }
         public virtual DbSet<Menus> Menus { get; set; }
+        public virtual DbSet<NoSeries> NoSeries { get; set; }
+        public virtual DbSet<PartnerCreation> PartnerCreation { get; set; }
+        public virtual DbSet<PartnerType> PartnerType { get; set; }
         public virtual DbSet<PayrollCycle> PayrollCycle { get; set; }
         public virtual DbSet<Pfmaster> Pfmaster { get; set; }
         public virtual DbSet<ProfitCenters> ProfitCenters { get; set; }
@@ -47,6 +57,8 @@ namespace CoreERP.Models
         public virtual DbSet<States> States { get; set; }
         public virtual DbSet<StructureComponents> StructureComponents { get; set; }
         public virtual DbSet<StructureCreation> StructureCreation { get; set; }
+        public virtual DbSet<TaxIntegration> TaxIntegration { get; set; }
+        public virtual DbSet<TaxMasters> TaxMasters { get; set; }
         public virtual DbSet<TblAccountGroup> TblAccountGroup { get; set; }
         public virtual DbSet<TblAccountGroupToCopy> TblAccountGroupToCopy { get; set; }
         public virtual DbSet<TblAccountLedger> TblAccountLedger { get; set; }
@@ -267,6 +279,28 @@ namespace CoreERP.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AccountingClass>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.Property(e => e.Code).HasMaxLength(20);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(20);
+
+                entity.Property(e => e.Ext2).HasMaxLength(20);
+
+                entity.Property(e => e.Type).HasMaxLength(10);
+            });
+
             modelBuilder.Entity<ApplyOddata>(entity =>
             {
                 entity.HasKey(e => e.Sno);
@@ -402,6 +436,62 @@ namespace CoreERP.Models
                     .HasColumnName("Visiting_PlacePurpus")
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AsignmentAcctoAccClass>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.Property(e => e.Code).HasMaxLength(20);
+
+                entity.Property(e => e.AccClass).HasMaxLength(50);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Ext1).HasMaxLength(50);
+
+                entity.Property(e => e.Ext2).HasMaxLength(50);
+
+                entity.Property(e => e.InventoryAcc).HasMaxLength(50);
+
+                entity.Property(e => e.PurchaseAcc).HasMaxLength(50);
+
+                entity.Property(e => e.SaleAcc).HasMaxLength(50);
+
+                entity.Property(e => e.TransactionType).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<AsignmentCashAccBranch>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.Property(e => e.Code).HasMaxLength(20);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.BankGlacc)
+                    .HasColumnName("BankGLAcc")
+                    .HasMaxLength(8);
+
+                entity.Property(e => e.BranchCode).HasMaxLength(30);
+
+                entity.Property(e => e.CashGlacc)
+                    .HasColumnName("CashGLAcc")
+                    .HasMaxLength(8);
+
+                entity.Property(e => e.Ext1).HasMaxLength(20);
+
+                entity.Property(e => e.Ext2).HasMaxLength(20);
             });
 
             modelBuilder.Entity<CashInOutFlow1>(entity =>
@@ -678,6 +768,64 @@ namespace CoreERP.Models
                 entity.Property(e => e.ResponsiblePerson).HasMaxLength(40);
             });
 
+            modelBuilder.Entity<EmployeeInBranches>(entity =>
+            {
+                entity.HasKey(e => e.SeqId)
+                    .HasName("PK_EmployeeInBranches_1");
+
+                entity.Property(e => e.SeqId).HasColumnName("SeqID");
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.BranchCode)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.EmpCode)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.EmpName).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(50);
+
+                entity.Property(e => e.Ext2).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<ErpConfiguration>(entity =>
+            {
+                entity.HasKey(e => e.SequenceId);
+
+                entity.ToTable("ERP_Configuration");
+
+                entity.Property(e => e.Active)
+                    .IsRequired()
+                    .HasMaxLength(2)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.KeyName)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Module)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Screen)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Values).IsUnicode(false);
+            });
+
             modelBuilder.Entity<Erpuser>(entity =>
             {
                 entity.HasKey(e => e.SeqId);
@@ -747,6 +895,45 @@ namespace CoreERP.Models
                 entity.Property(e => e.GroupName).HasMaxLength(50);
 
                 entity.Property(e => e.NumberRange).HasMaxLength(40);
+            });
+
+            modelBuilder.Entity<Glaccounts>(entity =>
+            {
+                entity.HasKey(e => e.Glcode);
+
+                entity.ToTable("GLAccounts");
+
+                entity.Property(e => e.Glcode)
+                    .HasColumnName("GLCode")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.AccGroup).HasMaxLength(4);
+
+                entity.Property(e => e.AccountNumber).HasMaxLength(60);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasDefaultValueSql("('Y')");
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.BalanceType).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(20);
+
+                entity.Property(e => e.Ext2).HasMaxLength(20);
+
+                entity.Property(e => e.GlaccountName)
+                    .HasColumnName("GLAccountName")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Nactureofaccount).HasMaxLength(40);
+
+                entity.Property(e => e.OpeningBalance).HasMaxLength(50);
+
+                entity.Property(e => e.StatementType).HasMaxLength(4);
             });
 
             modelBuilder.Entity<Health559>(entity =>
@@ -959,6 +1146,43 @@ namespace CoreERP.Models
                 entity.Property(e => e.LeaveName).HasMaxLength(40);
             });
 
+            modelBuilder.Entity<MatTranTypes>(entity =>
+            {
+                entity.HasKey(e => e.SeqId)
+                    .HasName("PK_Mat_Tran_Types_1");
+
+                entity.ToTable("Mat_Tran_Types");
+
+                entity.Property(e => e.SeqId).HasColumnName("SeqID");
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Code).HasMaxLength(20);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.DrCrIndicator).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(20);
+
+                entity.Property(e => e.Ext2).HasMaxLength(20);
+
+                entity.Property(e => e.Ext3).HasMaxLength(50);
+
+                entity.Property(e => e.Ext4).HasMaxLength(50);
+
+                entity.Property(e => e.NoSeries).HasMaxLength(50);
+
+                entity.Property(e => e.TransactionType).HasMaxLength(50);
+
+                entity.Property(e => e.Type).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<MenuAccesses>(entity =>
             {
                 entity.HasNoKey();
@@ -1030,6 +1254,136 @@ namespace CoreERP.Models
                 entity.Property(e => e.Route)
                     .HasColumnName("route")
                     .HasMaxLength(500);
+            });
+
+            modelBuilder.Entity<NoSeries>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.Property(e => e.Code).HasMaxLength(20);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.BranchCode).HasMaxLength(50);
+
+                entity.Property(e => e.CompCode).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(20);
+
+                entity.Property(e => e.Ext2).HasMaxLength(20);
+
+                entity.Property(e => e.NoType).HasMaxLength(20);
+
+                entity.Property(e => e.NumberSeries).HasMaxLength(50);
+
+                entity.Property(e => e.PartnerType).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<PartnerCreation>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.Property(e => e.Code).HasMaxLength(20);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
+                entity.Property(e => e.Address1).HasMaxLength(400);
+
+                entity.Property(e => e.Address2).HasMaxLength(40);
+
+                entity.Property(e => e.Address3).HasMaxLength(40);
+
+                entity.Property(e => e.Address4).HasMaxLength(40);
+
+                entity.Property(e => e.Balance).HasMaxLength(50);
+
+                entity.Property(e => e.BalanceType).HasMaxLength(50);
+
+                entity.Property(e => e.BranchCode).HasMaxLength(20);
+
+                entity.Property(e => e.City).HasMaxLength(100);
+
+                entity.Property(e => e.CompCode).HasMaxLength(20);
+
+                entity.Property(e => e.ContactPerson).HasMaxLength(20);
+
+                entity.Property(e => e.Country).HasMaxLength(30);
+
+                entity.Property(e => e.EditDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
+
+                entity.Property(e => e.Email).HasMaxLength(100);
+
+                entity.Property(e => e.Ext1).HasMaxLength(20);
+
+                entity.Property(e => e.Ext2).HasMaxLength(20);
+
+                entity.Property(e => e.Ext3).HasMaxLength(50);
+
+                entity.Property(e => e.Ext4).HasMaxLength(50);
+
+                entity.Property(e => e.Ext5).HasMaxLength(50);
+
+                entity.Property(e => e.GlcontrolAcc)
+                    .HasColumnName("GLControlAcc")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Gstno)
+                    .HasColumnName("GSTNo")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.JoinDate).HasColumnType("date");
+
+                entity.Property(e => e.Nacture).HasMaxLength(50);
+
+                entity.Property(e => e.Name).HasMaxLength(100);
+
+                entity.Property(e => e.Partnertype).HasMaxLength(50);
+
+                entity.Property(e => e.Phone1)
+                    .HasColumnName("Phone_1")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.Phone2)
+                    .HasColumnName("Phone_2")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.PinCode).HasMaxLength(10);
+
+                entity.Property(e => e.State).HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<PartnerType>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.Property(e => e.Code).HasMaxLength(20);
+
+                entity.Property(e => e.AccountType).HasMaxLength(50);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(20);
+
+                entity.Property(e => e.Ext2).HasMaxLength(20);
             });
 
             modelBuilder.Entity<PayrollCycle>(entity =>
@@ -1636,6 +1990,87 @@ namespace CoreERP.Models
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TaxIntegration>(entity =>
+            {
+                entity.HasKey(e => e.TaxCode);
+
+                entity.Property(e => e.TaxCode).HasMaxLength(20);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.BranchCode).HasMaxLength(20);
+
+                entity.Property(e => e.Cgst)
+                    .HasColumnName("CGST")
+                    .HasMaxLength(30);
+
+                entity.Property(e => e.CompanyCode).HasMaxLength(20);
+
+                entity.Property(e => e.Description).HasMaxLength(30);
+
+                entity.Property(e => e.Ext1).HasMaxLength(20);
+
+                entity.Property(e => e.Ext2).HasMaxLength(20);
+
+                entity.Property(e => e.Igst)
+                    .HasColumnName("IGST")
+                    .HasMaxLength(30);
+
+                entity.Property(e => e.Sgst)
+                    .HasColumnName("SGST")
+                    .HasMaxLength(30);
+
+                entity.Property(e => e.Ugst)
+                    .HasColumnName("UGST")
+                    .HasMaxLength(30);
+            });
+
+            modelBuilder.Entity<TaxMasters>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.Property(e => e.Code).HasMaxLength(30);
+
+                entity.Property(e => e.Active).HasMaxLength(50);
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.BaseAmountInPerCentage).HasColumnType("decimal(18, 3)");
+
+                entity.Property(e => e.BaseAmountIncludingTax)
+                    .IsRequired()
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.Cgst)
+                    .HasColumnName("CGST")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(20);
+
+                entity.Property(e => e.Ext2).HasMaxLength(20);
+
+                entity.Property(e => e.Igst)
+                    .HasColumnName("IGST")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Sgst)
+                    .HasColumnName("SGST")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TaxType).HasMaxLength(20);
+
+                entity.Property(e => e.Ugst)
+                    .HasColumnName("UGST")
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblAccountGroup>(entity =>
