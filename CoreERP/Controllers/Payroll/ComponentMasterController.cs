@@ -40,7 +40,7 @@ namespace CoreERP.Controllers.Payroll
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ConfigurationList = "check code in  api side"; //ComponentMasterHelper.GetConfigurationList().Select(x => new { ID = x.Value, TEXT = x.ConfigurationType });
+                expando.ConfigurationList = ComponentMasterHelper.GetConfigurationList().Select(x => new { ID = x.Value, TEXT = x.ConfigurationType });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -49,8 +49,8 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpPost("RegisterComponent")]
-        public IActionResult RegisterComponent([FromBody]ComponentMaster componentMaster)
+        [HttpPost("RegisterComponent/{code}")]
+        public IActionResult RegisterComponent([FromBody]ComponentMaster componentMaster, string code)
         {
 
             if (componentMaster == null)
@@ -63,7 +63,7 @@ namespace CoreERP.Controllers.Payroll
                 try
                 {
                     APIResponse apiResponse = null;
-                    var result = ComponentMasterHelper.Register(componentMaster);
+                    var result = ComponentMasterHelper.Register(componentMaster, code);
                     if (result != null)
                     {
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -82,8 +82,8 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpPut("UpdateComponent")]
-        public IActionResult UpdateComponent([FromBody] ComponentMaster componentMaster)
+        [HttpPut("UpdateComponent/{code}")]
+        public IActionResult UpdateComponent([FromBody] ComponentMaster componentMaster, string code)
         {
 
             if (componentMaster == null)
@@ -92,7 +92,8 @@ namespace CoreERP.Controllers.Payroll
             {
                 APIResponse apiResponse = null;
 
-                ComponentMaster result = ComponentMasterHelper.Update(componentMaster);
+                ComponentMaster result = ComponentMasterHelper.Update(componentMaster, code
+                    );
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

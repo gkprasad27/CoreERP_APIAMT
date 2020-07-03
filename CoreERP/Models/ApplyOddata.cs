@@ -35,12 +35,9 @@ namespace CoreERP.Models
         public string ReportName { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public double? NoOfDays { get; set; }
         public string RejectedId { get; set; }
         public string RejectedName { get; set; }
+        public double? NoOfDays { get; set; }
         public string Department { get; set; }
-        public string CompanyGroupCode { get; set; }
-        public string CompanyGroupName { get; set; }
-        public string Active { get; set; }
     }
 }

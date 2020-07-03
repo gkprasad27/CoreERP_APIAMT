@@ -92,6 +92,30 @@ namespace CoreERP.Controllers.Selfservice
             }
         }
 
+        [HttpPost("Getnoofdayscount")]
+        public IActionResult Getnoofdayscount([FromBody]JObject objData)
+        {
+            if (objData == null)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
+            try
+            {
+                string date1 = objData["Code"].ToString();
+                string date2 = objData["date2"].ToString();
+                string session1 = objData["session1"].ToString();
+                string session2 = objData["session2"].ToString();
+                var serviceResult = LeaveRequestHelper.Getnoofdayscount(date1, date2, session1, session2);
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.days = serviceResult;
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expdoObj });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPost("RegisterLeaveapplying")]
         public async Task<IActionResult> RegisterLeaveapplying([FromBody]LeaveApplDetails leaveApplDetails)
         {

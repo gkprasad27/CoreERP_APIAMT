@@ -259,17 +259,18 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                                 if (purReturnInv.Qty != null)
                                 {
-                                    if (purReturnInv.Qty > 0 && _qty == null)
-                                        _qty = purReturnInv.Qty;
+
+                                    _qty = purReturnInv.Qty;
                                 }
 
                                 if (purReturnInv.FQty != null)
                                 {
-                                    if (purReturnInv.FQty > 0 && _qty == null)
-                                        _qty = purReturnInv.FQty;
+                                    if (_qty != null)
+                                        _qty += purReturnInv.FQty;
+                                    else
+                                        _qty += purReturnInv.FQty;
                                 }
                                 AddStockInformation(context, purchaseReturn, _branch, _product, _qty, purReturnInv.Rate);
-
                                 AddAccountLedgerTransactions(context, _voucherDetail, purchaseReturn.PurchaseReturnInvDate);
                                 #endregion
                             }

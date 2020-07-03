@@ -12,8 +12,6 @@ namespace CoreERP.Controllers
     [Route("api/masters/CostCenter")]
     public class CostCenterMasterController : ControllerBase
     {
-
-
         [HttpGet("GetCostCenterList")]
         public IActionResult GetCostCenterList()
         {

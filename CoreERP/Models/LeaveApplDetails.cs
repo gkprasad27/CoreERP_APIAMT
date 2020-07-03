@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class LeaveApplDetails
     {
-        public int Id { get; set; }
+        public int? Sno { get; set; }
         public string EmpCode { get; set; }
         public string EmpName { get; set; }
         public DateTime? ApplDate { get; set; }

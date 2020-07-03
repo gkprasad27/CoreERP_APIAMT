@@ -33,8 +33,28 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpPost("RegisterLeaveBalancesList")]
-        public IActionResult RegisterLeaveBalancesList([FromBody]LeaveBalanceMaster lbm)
+        [HttpGet("GetLeavetpeList/{code}")]
+        public async Task<IActionResult> GetLeavetpeList(string code)
+        {
+
+            if (string.IsNullOrEmpty(code))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+
+            try
+            {
+                string errorMessage = string.Empty;
+                dynamic expando = new ExpandoObject();
+                expando.leavetypesList = new LeaveBalancesHelper().GetListOfleavetypes(code, out errorMessage);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("RegisterLeaveBalancesList/{name}/{compcode}")]
+        public IActionResult RegisterLeaveBalancesList([FromBody]LeaveBalanceMaster lbm, string name, string compcode)
         {
             if (lbm == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -44,7 +64,7 @@ namespace CoreERP.Controllers.masters
                 if (new LeaveBalancesHelper().GetList(lbm.LeaveCode).Count() > 0)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"LeaveCode Code {nameof(lbm.LeaveCode)} is already exists ,Please Use Different Code " });
 
-                var result = new LeaveBalancesHelper().Register(lbm);
+                var result = new LeaveBalancesHelper().Register(lbm, name, compcode);
                 APIResponse apiResponse;
                 if (result != null)
                 {
@@ -65,15 +85,15 @@ namespace CoreERP.Controllers.masters
         }
 
 
-        [HttpPut("UpdateLeaveBalancesList")]
-        public IActionResult UpdateLeaveBalancesList([FromBody] LeaveBalanceMaster lbm)
+        [HttpPut("UpdateLeaveBalancesList/{name}/{compcode}")]
+        public IActionResult UpdateLeaveBalancesList([FromBody] LeaveBalanceMaster lbm, string name, string compcode)
         {
             if (lbm == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(lbm)} cannot be null" });
 
             try
             {
-                var rs = new LeaveBalancesHelper().Update(lbm);
+                var rs = new LeaveBalancesHelper().Update(lbm, name, compcode);
                 APIResponse apiResponse;
                 if (rs != null)
                 {

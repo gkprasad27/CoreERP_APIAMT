@@ -9,7 +9,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class EmployeeHelper
     {
-      
+
         public static List<TblEmployee> GetEmployes()
         {
             try
@@ -77,7 +77,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblEmployee> repo = new Repository<TblEmployee>();
-                var emp = repo.TblEmployee.Where(e => e.EmployeeId ==Convert.ToDecimal(empCode)).FirstOrDefault();
+                var emp = repo.TblEmployee.Where(e => e.EmployeeId == Convert.ToDecimal(empCode)).FirstOrDefault();
                 emp.IsActive = false;
                 repo.TblEmployee.Update(emp);
                 if (repo.SaveChanges() > 0)
@@ -94,13 +94,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                //                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
-                //                return repo.EmployeeInBranches.AsEnumerable()
-                //.Where(x => x.EmpCode == (empCode ?? x.EmpCode)
-                //&& x.BranchCode == (branchCode ?? x.BranchCode)
-                //&& x.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
-                //).ToList();
-                return null;
+                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                return repo.EmployeeInBranches.AsEnumerable()
+.Where(x => x.EmpCode == (empCode ?? x.EmpCode)
+&& x.BranchCode == (branchCode ?? x.BranchCode)
+&& x.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+).ToList();
+                //return null;
             }
             catch { throw; }
         }
@@ -112,20 +112,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
                 empbr.Active = "Y";
-
-                //var lastrecord = repo.EmployeeInBranches.Select(x => x).OrderByDescending(emp => emp.Ext1).FirstOrDefault();
-                //if (lastrecord != null)
-                //{
-                //    empbr.Ext1 = (int.Parse(lastrecord.Ext1) + 1).ToString();
-                //}
-                //else
-                //{
-                //    empbr.Ext1 = "1";
-                //}
-
-                //repo.EmployeeInBranches.Add(empbr);
-                //if (repo.SaveChanges() > 0)
-                //    return empbr;
+                empbr.AddDate = DateTime.Now;
+                repo.EmployeeInBranches.Add(empbr);
+                if (repo.SaveChanges() > 0)
+                    return empbr;
 
                 return null;
             }
@@ -137,10 +127,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                //using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
-                //repo.EmployeeInBranches.Update(empbr);
-                //if (repo.SaveChanges() > 0)
-                //    return empbr;
+                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                repo.EmployeeInBranches.Update(empbr);
+                if (repo.SaveChanges() > 0)
+                    return empbr;
 
                 return null;
             }
@@ -152,12 +142,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                //using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
-                //var emp = repo.EmployeeInBranches.Where(e => e.EmpCode == empCode).FirstOrDefault();
-                //emp.Active = "N";
-                //repo.EmployeeInBranches.Remove(emp);
-                //if (repo.SaveChanges() > 0)
-                //    return emp;
+                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                var emp = repo.EmployeeInBranches.Where(e => e.SeqId == Convert.ToInt32(empCode)).FirstOrDefault();
+                emp.Active = "N";
+                repo.EmployeeInBranches.Remove(emp);
+                if (repo.SaveChanges() > 0)
+                    return emp;
 
                 return null;
             }

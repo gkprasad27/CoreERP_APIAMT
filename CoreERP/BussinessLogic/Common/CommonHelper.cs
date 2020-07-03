@@ -70,18 +70,19 @@ namespace CoreERP.BussinessLogic.Common
             repo.TblSuffixPrefix.Update(_suffixPrefix);
             repo.SaveChanges();
         }
-        //public static string GetConfigurationValue(string module,string screenName,string keyName)
-        //{
-        //    using(Repository<ErpConfiguration> context=new Repository<ErpConfiguration>())
-        //    {
-        //        return context.ErpConfiguration.AsEnumerable()
-        //                      .Where(ep=> ep.Active.Equals("Y",StringComparison.OrdinalIgnoreCase)
-        //                              &&  ep.Module.Equals(module)
-        //                              &&  ep.Screen.Equals(screenName)
-        //                              &&  ep.KeyName.Equals(keyName)
-        //                      ).First().Values;
-        //    }
-        //}
+        public static string GetConfigurationValue(string module, string screenName, string keyName)
+        {
+            using (Repository<ErpConfiguration> context = new Repository<ErpConfiguration>())
+            {
+                //return null;
+                return context.ErpConfiguration.AsEnumerable()
+                              .Where(ep => ep.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)
+                                      && ep.Module.Equals(module)
+                                      && ep.Screen.Equals(screenName)
+                                      && ep.KeyName.Equals(keyName)
+                              ).First().Values;
+            }
+        }
         public static int? AutonGenerateNo(string branchCode, int rangeStart, int rangeEnds,out string errorMessage)
         {
             try

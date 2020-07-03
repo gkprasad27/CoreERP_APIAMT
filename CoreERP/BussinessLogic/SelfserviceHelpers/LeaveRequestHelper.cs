@@ -20,12 +20,6 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
             {
                 using Repository<TblEmployee> repo = new Repository<TblEmployee>();
                 return repo.TblEmployee.ToList();
-                //IList<Employees> empList = new List<Employees>() {
-                //new Employees(){ Code="1", Name="Bill",Active="Y"}
-                //new Employees(){ Code="2", Name="Steve",Active="Y"},
-                //new Employees(){ Code="3", Name="Ram",Active="Y"},
-                //new Employees(){ Code="4", Name="Moin",Active="Y"}
-                //return empList.ToList();
             }
             catch { throw; }
         }
@@ -60,7 +54,58 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
             }
         }
 
-        //Getting Names
+
+        public static decimal Getnoofdayscount(string Code, string day2, string session1, string session2)
+        {
+            string date = Code;
+            string date2 = day2;
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "usp_tm_applyleavedatesunday";
+
+            #region Parameters
+            DbParameter leavefrom = command.CreateParameter();
+            leavefrom.Direction = ParameterDirection.Input;
+            leavefrom.Value = (object)date ?? DBNull.Value;
+            leavefrom.ParameterName = "leavefrom";
+
+            DbParameter leaveto = command.CreateParameter();
+            leaveto.Direction = ParameterDirection.Input;
+            leaveto.Value = (object)date2 ?? DBNull.Value;
+            leaveto.ParameterName = "leaveto";
+
+            DbParameter fromday = command.CreateParameter();
+            fromday.Direction = ParameterDirection.Input;
+            fromday.Value = (object)session1 ?? DBNull.Value;
+            fromday.ParameterName = "fromday";
+
+            DbParameter today = command.CreateParameter();
+            today.Direction = ParameterDirection.Input;
+            today.Value = (object)session2 ?? DBNull.Value;
+            today.ParameterName = "today";
+
+            DbParameter CntNoOfDays = command.CreateParameter();
+            CntNoOfDays.Direction = ParameterDirection.Output;
+            CntNoOfDays.Size = 50;
+            CntNoOfDays.ParameterName = "CntNoOfDays";
+
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(leavefrom);
+            command.Parameters.Add(leaveto);
+            command.Parameters.Add(fromday);
+            command.Parameters.Add(today);
+            command.Parameters.Add(CntNoOfDays);
+
+            scopeRepository.ExecuteParamerizedCommand(command);
+            if (CntNoOfDays.Value != DBNull.Value || CntNoOfDays != null)
+                return Convert.ToDecimal(CntNoOfDays.Value);
+            else return 0;
+
+        }
+
         public string GetEmpName(string Code, out string errorMessage)
         {
             try
@@ -86,7 +131,13 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
             {
                 using (Repository<LeaveApplDetails> repo = new Repository<LeaveApplDetails>())
                 {
-                    return repo.LeaveApplDetails.Where(x => x.EmpCode == code).ToList();
+                    if (code.ToLower() == "admin")
+                    {
+                        return repo.LeaveApplDetails.ToList();
+
+                    }
+                    else
+                        return repo.LeaveApplDetails.Where(x => x.EmpCode == code).ToList();
                 }
             }
             catch { throw; }
@@ -133,9 +184,13 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                 using (Repository<LeaveApplDetails> repo = new Repository<LeaveApplDetails>())
                 {
                     List<LeaveApplDetails> LeaveAply = new List<LeaveApplDetails>();
+                    string[] stringSeparators = new string[] { "-" };
+                    var result = leaveApplDetails.LeaveCode.Split(stringSeparators, StringSplitOptions.None);
+                    var code1 = result[0]/* + "-" +result[1]*/;
                     var empdata = repo.TblEmployee.Where(x => x.EmployeeCode == leaveApplDetails.EmpCode).FirstOrDefault();
-                    var LeaveAplysdata = repo.LeaveApplDetails.Where(x => x.Id == leaveApplDetails.Id).FirstOrDefault();
+                    var LeaveAplysdata = repo.LeaveApplDetails.Where(x => x.Sno == leaveApplDetails.Sno).FirstOrDefault();
                     leaveApplDetails.Status = "Applied";
+                    leaveApplDetails.LeaveCode = code1;
                     leaveApplDetails.ApplDate = DateTime.Now;
                     leaveApplDetails.CompanyCode = "6";
                     leaveApplDetails.ReportId = empdata.ReportedBy;
@@ -198,14 +253,15 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                 {
                     //Leave_Appl_Details requisition = new Leave_Appl_Details();
                     //requisition = db.Leave_Appl_Details.Where(x => x.Sno == leaveRequest.Sno).FirstOrDefault();
-                    var LeaveAplysdata = repo.LeaveApplDetails.Where(x => x.Id == leaveApplDetails.Id).FirstOrDefault();
-                    if (leaveApplDetails.Id > 0)
+                    var LeaveAplysdata = repo.LeaveApplDetails.Where(x => x.Sno == leaveApplDetails.Sno).FirstOrDefault();
+                    if (leaveApplDetails.Sno > 0)
                     {
+                        string[] stringSeparators = new string[] { "-" };
+                        var result = leaveApplDetails.LeaveCode.Split(stringSeparators, StringSplitOptions.None);
+                        var code = result[0];
                         if (LeaveAplysdata.Status == "Approved")
                         {
-                            string[] stringSeparators = new string[] { "-" };
-                            var result = LeaveAplysdata.LeaveCode.Split(stringSeparators, StringSplitOptions.None);
-                            var code = result[0];
+
                             //leaveApplDetails.CountofLeaves = Convert.ToInt32(LeaveAplysdata.LeaveDays);
                             leaveApplDetails.CountofLeaves = LeaveAplysdata.LeaveDays;
                             leaveApplDetails.AcceptedRemarks = code;
@@ -218,6 +274,7 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                         //LeaveAplysdata.CountofLeaves = Convert.ToInt32(LeaveAplysdata.LeaveDays);
                         leaveApplDetails.Status = "Applied";
                         leaveApplDetails.ApplDate = DateTime.Now;
+                        leaveApplDetails.LeaveCode = code;
                         //repo.Entry(LeaveAplysdata).State = EntityState.Modified;
                         //repo.LeaveApplDetails.Update(LeaveAplysdata);
                         repo.Entry(leaveApplDetails).State = EntityState.Modified;
@@ -290,25 +347,14 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                 {
 
                     var ProjectsGridData = (from pm in repo.LeaveTypes
-                                            join rm in repo.LeaveBalanceMaster on pm.LeaveCode equals rm.LeaveCode
+                                            join rm in repo.LeaveBalanceMaster on pm.LeaveCode /*+ "-" + pm.LeaveName*/ equals rm.LeaveCode
                                             where rm.EmpCode == code
                                             select new LeaveBalanceMaster
                                             {
-                                                EmpCode = pm.LeaveCode + "-" + rm.Balance
+                                                EmpCode = pm.LeaveCode/* + "-" + pm.LeaveName*/ + "-" + rm.Balance
                                             });
                     return ProjectsGridData.ToList();
                 }
-
-                //var list = (from u in repo.LeaveTypes
-                //                join c in repo.LeaveBalanceMaster on u.LeaveCode equals c.LeaveCode
-                //                where c.EmpCode == "005"
-                //                select new
-                //                { 
-                //                    u.LeaveCode + '-' + c.Balance
-                //                }).ToList();
-
-                //    return repo.LeaveBalanceMaster.ToList();
-                //}
             }
             catch { throw; }
         }

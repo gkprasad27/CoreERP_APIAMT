@@ -49,8 +49,8 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpPost("RegisterPF")]
-        public IActionResult RegisterPF([FromBody]Pfmaster pf)
+        [HttpPost("RegisterPF/{code}")]
+        public IActionResult RegisterPF([FromBody]Pfmaster pf, string code)
         {
 
             if (pf == null)
@@ -63,7 +63,7 @@ namespace CoreERP.Controllers.Payroll
                 try
                 {
                     APIResponse apiResponse = null;
-                    var result = PFMasterHelper.Register(pf);
+                    var result = PFMasterHelper.Register(pf, code);
                     if (result != null)
                     {
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
@@ -82,8 +82,8 @@ namespace CoreERP.Controllers.Payroll
             }
         }
 
-        [HttpPut("UpdatePF")]
-        public IActionResult UpdatePF([FromBody] Pfmaster pf)
+        [HttpPut("UpdatePF/{code}")]
+        public IActionResult UpdatePF([FromBody] Pfmaster pf, string code)
         {
 
             if (pf == null)
@@ -92,7 +92,7 @@ namespace CoreERP.Controllers.Payroll
             {
                 APIResponse apiResponse = null;
 
-                Pfmaster result = PFMasterHelper.Update(pf);
+                Pfmaster result = PFMasterHelper.Update(pf, code);
                 if (result != null)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };

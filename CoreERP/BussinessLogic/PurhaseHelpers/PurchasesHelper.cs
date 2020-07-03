@@ -200,7 +200,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 {
                     return _repo.TblTanks.AsEnumerable()
                                 .Where(t => t.BranchCode == branchCode
-                                        && t.TankNo.Contains(tankNo))
+                                        && t.TankNo.Contains(tankNo)
+                                        && t.IsWorking == 1)
                                 .GroupBy(x => x.TankNo)
                                 .Select(grp=> grp.FirstOrDefault())
                                 .ToList();
@@ -297,9 +298,27 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
                                 _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure.PurchaseAccount).FirstOrDefault();
 
+                                _qty = null;
+                               
+
+                                if (purInv.Qty != null)
+                                {
+                                    _qty = purInv.Qty;
+                                }
+
+                                if (purInv.FQty != null)
+                                {
+                                    if (_qty != null)
+                                        _qty += purInv.FQty;
+                                    else
+                                        _qty += purInv.FQty;
+                                }
+
+                                //get product stock
+                               
 
                                 #region InvioceDetail
-                                
+
                                 purInv.BatchNo = DateTime.Now.ToShortDateString().Replace('-', '/')+purchaseInvoice.PurchaseInvNo+purInv.ProductCode;
                                 purInv.EmployeeId = purchaseInvoice.EmployeeId;
                                 purInv.PurchaseDate = purchaseInvoice.PurchaseInvDate;
@@ -323,29 +342,10 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 #endregion
 
                                 #region Add stock transaction  and Account Ledger Transaction
-
-                                _qty = null;
-                                if (purInv.TotalLiters != null)
-                                {
-                                    if (purInv.TotalLiters > 0)
-                                        _qty = purInv.TotalLiters;
-                                }
-                                
-                                if (purInv.Qty != null)
-                                {
-                                    if (purInv.Qty > 0 && _qty== null)
-                                        _qty = purInv.Qty;
-                                }
-                                
-                                if (purInv.FQty != null)
-                                {
-                                    if (purInv.FQty > 0 && _qty == null)
-                                        _qty = purInv.FQty;
-                                }
-
+                                if (purInv.TotalLiters != null && purInv.TotalLiters > 0)
+                                    _qty = purInv.TotalLiters;
                                 AddStockInformation(context, purchaseInvoice, _branch, _product, _qty, purInv.Rate);
-
-                                AddAccountLedgerTransactions(context, _voucherDetail, purchaseInvoice.PurchaseInvDate);
+                                AddAccountLedgerTransactions(context, _voucherDetail, purchaseInvoice.PurchaseInvDate,false);
                                 #endregion
                             }
 
@@ -532,7 +532,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-        private TblAccountLedgerTransactions AddAccountLedgerTransactions(ERPContext context, TblVoucherDetail _voucherDetail, DateTime? invoiceDate)
+        private TblAccountLedgerTransactions AddAccountLedgerTransactions(ERPContext context, TblVoucherDetail _voucherDetail, DateTime? invoiceDate,bool isFromDtl=true)
         {
             try
             {
@@ -540,9 +540,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 //{
                 var _accountLedgerTransactions = new TblAccountLedgerTransactions();
                 _accountLedgerTransactions.VoucherDetailId = _voucherDetail.VoucherDetailId;
-                _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
-                _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
-                _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
+               
                 _accountLedgerTransactions.BranchId = _voucherDetail.BranchId;
                 _accountLedgerTransactions.BranchCode = _voucherDetail.BranchCode;
                 _accountLedgerTransactions.BranchName = _voucherDetail.BranchName;
@@ -559,6 +557,20 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 {
                     _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
                     _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
+                }
+
+
+                if (isFromDtl)
+                {
+                    _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
+                    _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
+                    _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
+                }
+                else
+                {
+                    _accountLedgerTransactions.LedgerId = _voucherDetail.FromLedgerId;
+                    _accountLedgerTransactions.LedgerCode = _voucherDetail.FromLedgerCode;
+                    _accountLedgerTransactions.LedgerName = _voucherDetail.FromLedgerName;
                 }
 
                 context.TblAccountLedgerTransactions.Add(_accountLedgerTransactions);

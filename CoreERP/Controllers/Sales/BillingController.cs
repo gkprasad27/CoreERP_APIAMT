@@ -42,14 +42,14 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetPupms/{pumpNo}/{branchCode}")]
-        public IActionResult GetPupms(string pumpNo, string branchCode)
+        [HttpGet("GetPupms/{pumpNo}/{branchCode}/{productCode?}")]
+        public IActionResult GetPupms(string pumpNo, string branchCode,string productCode)
         {
             try
             {
                 string errorMessage = string.Empty;
 
-                var pumpsList = new InvoiceHelper().GetPumps(pumpNo, branchCode);
+                var pumpsList = new InvoiceHelper().GetPumps(pumpNo, branchCode, productCode);
 
                 dynamic expando = new ExpandoObject();
                 expando.PumpsList = pumpsList.OrderBy(x=>x.PumpNo).Select(x => new { ID = x.PumpId, TEXT = x.PumpNo });

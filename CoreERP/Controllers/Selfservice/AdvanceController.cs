@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -12,10 +12,9 @@ using Microsoft.Extensions.Logging;
 namespace CoreERP.Controllers.Selfservice
 {
     [ApiController]
-    [Route("api/Selfservice/Applyod")]
-    public class ApplyodController : ControllerBase
+    [Route("api/Selfservice/Advance")]
+    public class AdvanceController : ControllerBase
     {
-
         [HttpGet("GetEmployeesList")]
         public async Task<IActionResult> GetEmployeesList()
         {
@@ -31,13 +30,13 @@ namespace CoreERP.Controllers.Selfservice
             }
         }
 
-        [HttpGet("GetApplyodDetailsList/{code}")]
-        public async Task<IActionResult> GetApplyodDetailsList(string code)
+        [HttpGet("GetApplyAdvanceDetailsList/{code}")]
+        public async Task<IActionResult> GetApplyAdvanceDetailsList(string code)
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.ApplyodDetailsList = ApplyodHelper.GetApplyodDetailsList(code).ToList();
+                expando.ApplyAdvanceDetailsList = AdvanceHelper.GetApplyAdvanceDetailsList(code).ToList();
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -46,16 +45,16 @@ namespace CoreERP.Controllers.Selfservice
             }
         }
 
-        [HttpPost("RegisterApplyOddataDetails")]
-        public async Task<IActionResult> RegisterApplyOddataDetails([FromBody]ApplyOddata applyOddata)
+        [HttpPost("RegisterApplyAdvancedataDetails")]
+        public async Task<IActionResult> RegisterApplyAdvancedataDetails([FromBody]TblAdvance advancedata)
         {
-            if (applyOddata == null)
+            if (advancedata == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
             try
             {
                 string errorMessge = string.Empty;
 
-                ApplyOddata result = ApplyodHelper.RegisterApplyOddataDetails(applyOddata, null, out errorMessge);
+                TblAdvance result = AdvanceHelper.RegisterApplyAdvancedataDetails(advancedata, null, out errorMessge);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
@@ -67,20 +66,41 @@ namespace CoreERP.Controllers.Selfservice
             }
         }
 
-        [HttpPut("UpdateApplyod")]
-        public IActionResult UpdateApplyod([FromBody]ApplyOddata applyOddata)
+        [HttpPut("UpdateAdvancedataDetails")]
+        public IActionResult UpdateAdvancedataDetails([FromBody]TblAdvance applyadvancedata)
         {
-            if (applyOddata == null)
+            if (applyadvancedata == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
             try
             {
                 string errorMessge = string.Empty;
 
-                ApplyOddata result = ApplyodHelper.UpdateapplyOddata(applyOddata, out errorMessge);
+                TblAdvance result = AdvanceHelper.UpdateapplyAdvancedata(applyadvancedata, out errorMessge);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessge });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetAdvancedataDetailslist")]
+        public IActionResult GetAdvancedataDetailslist()
+        {
+            try
+            {
+                var advanceList = AdvanceHelper.GetAdvanceTypes();
+                if (advanceList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.advancesList = advanceList.Select(n => new { ID = n.AdvanceTypeId, Text = n.AdvanceTypeName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {

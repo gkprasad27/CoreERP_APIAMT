@@ -92,14 +92,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
 
         }
-        public List<TblPumps> GetPumps(string pumpNo,string branchCode)
+        public List<TblPumps> GetPumps(string pumpNo,string branchCode,string productCode)
         {
             try
             {
-                using(Repository<TblPumps> repo=new Repository<TblPumps>())
+                productCode = productCode?.ToLower();
+                using (Repository<TblPumps> repo=new Repository<TblPumps>())
                 {
                     return repo.TblPumps
-                                .Where(p=> p.BranchCode == branchCode && p.PumpNo.ToString().Contains(pumpNo))
+                                .Where(p=> p.BranchCode == branchCode 
+                                        && p.PumpNo.ToString().Contains(pumpNo)
+                                        && p.ProductCode.ToLower() == (productCode ?? p.ProductCode.ToLower()))
                                 .ToList();
                 }
             }
@@ -736,6 +739,24 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 #endregion
 
                                 #region InvioceDetail
+                                _qty = null;
+                                if (invdtl.Qty != null)
+                                {
+                                    _qty = invdtl.Qty;
+                                }
+                                else
+                                {
+                                    if (_qty != null)
+                                        _qty += invdtl.FQty;
+                                    else
+                                        _qty = invdtl.FQty;
+                                }
+                                //get product avilable qty
+                                var stocInfoList = repo.TblStockInformation
+                                                   .Where(stock => stock.ProductCode == invdtl.ProductCode && stock.BranchCode == invoice.BranchCode);
+                                invdtl.AvailStock = stocInfoList.Sum(x => x.InwardQty) - stocInfoList.Sum(x => x.OutwardQty);
+                                invdtl.AvailStock -= _qty;
+
                                 invdtl.EmployeeId = invoice.EmployeeId;
                                 invdtl.InvoiceMasterId = invoice.InvoiceMasterId;
                                 invdtl.VoucherNo = invoice.VoucherNo;
@@ -756,15 +777,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 #endregion
 
                                 #region Add stock transaction  and Account Ledger Transaction
-                                _qty = null;
-                                if (invdtl.Qty != null)
-                                {
-                                    _qty = invdtl.Qty;
-                                }
-                                else
-                                {
-                                    _qty = invdtl.FQty;
-                                }
                                 AddStockInformation(configuration, repo, invoice, _branch, _product, _qty, invdtl.Rate);
                                 //same as vd
                                 AddAccountLedgerTransactions(repo, _voucherDetail, invoice.InvoiceDate);

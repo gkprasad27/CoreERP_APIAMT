@@ -34,8 +34,8 @@ namespace CoreERP.Models
         public int? TotalShares { get; set; }
         public DateTime? CreatedDate { get; set; }
         public int IsActive { get; set; }
-        public DateTime? Dob { get; set; }
         public string AadharNumber { get; set; }
+        public DateTime? Dob { get; set; }
         public string GiftIssued { get; set; }
         public byte[] Photo { get; set; }
         public DateTime? GiftIssuedDate { get; set; }

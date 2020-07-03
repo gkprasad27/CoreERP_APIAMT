@@ -237,6 +237,24 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 #endregion
 
                                 #region InvioceDetail
+                                _qty = null;
+                                if (invdtl.Qty != null)
+                                {
+                                    _qty = invdtl.Qty;
+                                }
+                                else
+                                {
+                                    if (_qty != null)
+                                        _qty += invdtl.FQty;
+                                    else
+                                        _qty = invdtl.FQty;
+                                }
+                                //get product avilable qty
+                                var stocInfoList = repo.TblStockInformation
+                                                  .Where(stock => stock.ProductCode == invdtl.ProductCode && stock.BranchCode == invoice.BranchCode);
+                                invdtl.AvailStock = stocInfoList.Sum(x => x.InwardQty) - stocInfoList.Sum(x => x.OutwardQty);
+                                invdtl.AvailStock += _qty;
+
                                 invdtl.EmployeeId = invoiceMasterReturn.EmployeeId;
                                 invdtl.InvoiceMasterReturnId = invoiceMasterReturn.InvoiceMasterReturnId;
                                 invdtl.InvoiceReturnNo = invoiceMasterReturn.InvoiceReturnNo;
@@ -256,15 +274,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 #endregion
 
                                 #region Add stock transaction  and Account Ledger Transaction
-                                _qty = null;
-                                if (invdtl.Qty != null)
-                                {
-                                    _qty = invdtl.Qty;
-                                }
-                                else
-                                {
-                                    _qty = invdtl.FQty;
-                                }
+                               
                                 AddStockInformation(configuration, repo, invoiceMasterReturn, _branch, _product, _qty, invdtl.Rate);
 
                                 AddAccountLedgerTransactions(repo, _voucherDetail, invoice.InvoiceDate);

@@ -117,6 +117,22 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch { throw; }
         }
 
+        public List<TblTaxStructure> GetTaxList(int taxStructureCode = 0)
+        {
+            try
+            {
+                using Repository<TblTaxStructure> repo = new Repository<TblTaxStructure>();
+                if (taxStructureCode == 0)
+                {
+                    return repo.TblTaxStructure.AsEnumerable().ToList();
+                }
+                else
+                {
+                    return repo.TblTaxStructure.AsEnumerable().Where(tax => tax.TaxStructureCode == taxStructureCode).ToList();
+                }
+            }
+            catch { throw; }
+        }
         public TblProduct Register(TblProduct product)
         {
             try

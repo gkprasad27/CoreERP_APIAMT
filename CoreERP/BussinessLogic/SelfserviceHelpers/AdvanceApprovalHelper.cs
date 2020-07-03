@@ -1,4 +1,4 @@
-using CoreERP.DataAccess;
+﻿using CoreERP.DataAccess;
 using CoreERP.Models;
 using Microsoft.Data.SqlClient;
 using System;
@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.SelfserviceHelpers
 {
-    public class OdApprovalHelper
+    public class AdvanceApprovalHelper
     {
-        public static List<ApplyOddata> GetOdApplDetailsList(string code)
+        public static List<TblAdvance> GetAdvanceApplDetailsList(string code)
         {
             using (ERPContext context = new ERPContext())
             {
@@ -19,10 +19,10 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                 try
                 {
                     List<TblEmployee> report = new List<TblEmployee>();
-                    List<ApplyOddata> OdAplyDetails = new List<ApplyOddata>();
-                    List<ApplyOddata> OdAply = new List<ApplyOddata>();
+                    List<TblAdvance> AdvanceAplyDetails = new List<TblAdvance>();
+                    List<TblAdvance> OdAply = new List<TblAdvance>();
                     List<TblEmployee> empList = new List<TblEmployee>();
-                    using (Repository<LeaveApplDetails> repo = new Repository<LeaveApplDetails>())
+                    using (Repository<TblAdvance> repo = new Repository<TblAdvance>())
                     {
                         List<TblEmployee> empLists = new List<TblEmployee>();
                         report = repo.TblEmployee.Where(x => x.ReportedBy == "").ToList();
@@ -31,10 +31,10 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
 
                         foreach (var item in empList)
                         {
-                            OdAplyDetails = context.ApplyOddata.Where(x => x.EmpCode == item.EmployeeCode && x.ReportId == code).Where(x => x.Status.Trim() == "Applied" || x.Status.Trim() == "Cancelled").ToList();
-                            if (OdAplyDetails.Count != 0)
+                            AdvanceAplyDetails = context.TblAdvance.Where(x => x.EmployeeId == item.EmployeeCode && x.RecommendedBy == code).Where(x => x.Status.Trim() == "Applied" || x.Status.Trim() == "Cancelled").ToList();
+                            if (AdvanceAplyDetails.Count != 0)
                             {
-                                foreach (var query in OdAplyDetails)
+                                foreach (var query in AdvanceAplyDetails)
                                 {
                                     OdAply.Add(query);
                                 }
@@ -44,12 +44,12 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                         {
                             if (item.ReportedBy == null || item.ReportedBy == "")
                             {
-                                OdAplyDetails = context.ApplyOddata.Where(x => x.EmpCode == item.EmployeeCode && x.ApprovedId == code)
+                                AdvanceAplyDetails = context.TblAdvance.Where(x => x.EmployeeId == item.EmployeeCode && x.ApprovedBy == code)
                                     .Where(x => (x.Status.Trim() == "Applied" || x.Status.Trim() == "Partially Approved")
                                 || (x.Status.Trim() == "Cancelled" || x.Status.Trim() == "Partially Cancelled Approved")).ToList();
-                                if (OdAplyDetails.Count != 0)
+                                if (AdvanceAplyDetails.Count != 0)
                                 {
-                                    foreach (var query in OdAplyDetails)
+                                    foreach (var query in AdvanceAplyDetails)
                                     {
                                         OdAply.Add(query);
                                     }
@@ -57,11 +57,11 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                             }
                             else
                             {
-                                OdAplyDetails = context.ApplyOddata.Where(x => x.EmpCode == item.EmployeeCode &&
+                                AdvanceAplyDetails = context.TblAdvance.Where(x => x.EmployeeId == item.EmployeeCode &&
                                 (x.Status.Trim() == "Partially Approved" || x.Status.Trim() == "Partially Cancelled Approved")).ToList();
-                                if (OdAplyDetails.Count != 0)
+                                if (AdvanceAplyDetails.Count != 0)
                                 {
-                                    foreach (var query in OdAplyDetails)
+                                    foreach (var query in AdvanceAplyDetails)
                                     {
                                         OdAply.Add(query);
                                     }
@@ -78,57 +78,58 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
             }
         }
 
-        public static List<ApplyOddata> GetOdApplDetailsList()
+        public static List<TblAdvance> GetAdvanceApplDetailsList()
         {
             try
             {
-                using (Repository<ApplyOddata> repo = new Repository<ApplyOddata>())
+                using (Repository<TblAdvance> repo = new Repository<TblAdvance>())
                 {
-                    return repo.ApplyOddata.AsEnumerable().ToList();
+                    return repo.TblAdvance.AsEnumerable().ToList();
                 }
             }
             catch { throw; }
         }
 
-        public List<ApplyOddata> RegisterLeaveApprovalDetails(string code, ApplyOddata lop, List<ApplyOddata> applyod)
+
+        public List<TblAdvance> RegisterAdvanceApprovalDetails(string code, ApplyOddata lop, List<TblAdvance> advance)
         {
             try
             {
-                using (Repository<ApplyOddata> repo = new Repository<ApplyOddata>())
+                using (Repository<TblAdvance> repo = new Repository<TblAdvance>())
                 {
                     string ApproveStatus = null;
-                    foreach (var item in applyod)
+                    foreach (var item in advance)
                     {
 
-                        var leaveapro = OdApprovalHelper.GetOdApplDetailsList().Where(x => x.Sno == item.Sno).FirstOrDefault();
+                        var leaveapro = AdvanceApprovalHelper.GetAdvanceApplDetailsList().Where(x => x.Id == item.Id).FirstOrDefault();
                         if (lop.ApprBy == "Accept")
                         {
-                            if (leaveapro.ReportId != null && leaveapro.Status == "Applied" && leaveapro.ReportId != "")
+                            if (leaveapro.RecommendedBy != null && leaveapro.Status == "Applied" && leaveapro.RecommendedBy != "")
                             {
                                 leaveapro.Status = "Partially Approved";
                             }
-                            if (leaveapro.ReportId != null && leaveapro.Status == "Cancelled" && leaveapro.ReportId != "")
+                            if (leaveapro.RecommendedBy != null && leaveapro.Status == "Cancelled" && leaveapro.RecommendedBy != "")
                             {
                                 leaveapro.Status = "Partially Cancelled Approved";
                             }
                             else
                             {
-                                if ((leaveapro.Status == "Partially Approved" || leaveapro.Status == "Applied") && leaveapro.ApprovedId == code)
+                                if ((leaveapro.Status == "Partially Approved" || leaveapro.Status == "Applied") && leaveapro.ApprovedBy == code)
                                 {
 
                                     leaveapro.Status = "Approved";
                                     ApproveStatus = leaveapro.Status;
                                 }
-                                if ((leaveapro.Status == "Partially Cancelled Approved" || leaveapro.Status == "Cancelled") && leaveapro.ApprovedId == "RAJA")
+                                if ((leaveapro.Status == "Partially Cancelled Approved" || leaveapro.Status == "Cancelled") && leaveapro.ApprovedBy == "RAJA")
                                 {
 
                                     leaveapro.Status = "Cancelled";
                                     ApproveStatus = leaveapro.Status;
                                 }
-                                if (leaveapro.ApprovedId == code && (leaveapro.Status == "Applied" || ApproveStatus == "Approved" || ApproveStatus == "Cancelled"))
+                                if (leaveapro.ApprovedBy == code && (leaveapro.Status == "Applied" || ApproveStatus == "Approved" || ApproveStatus == "Cancelled"))
                                 {
-                                    leaveapro.ApprovedId = code;
-                                    leaveapro.ApproveName = repo.TblEmployee.Where(x => x.EmployeeCode == leaveapro.ApprovedId).SingleOrDefault()?.EmployeeName;
+                                    leaveapro.ApprovedBy = code;
+                                    //leaveapro.ApproveName = repo.TblEmployee.Where(x => x.EmployeeCode == leaveapro.ApprovedId).SingleOrDefault()?.EmployeeName;
 
                                 }
 
@@ -151,21 +152,19 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
 
                         {
                             leaveapro.Status = "Rejected";
-                            leaveapro.RejectedId = code;
-                            leaveapro.RejectedName = repo.TblEmployee.Where(x => x.EmployeeCode == code).SingleOrDefault()?.EmployeeName;
+                            //leaveapro.RejectedId = code;
+                           // leaveapro.RejectedName = repo.TblEmployee.Where(x => x.EmployeeCode == code).SingleOrDefault()?.EmployeeName;
 
                         }
-                        repo.ApplyOddata.Update(leaveapro);
+                        repo.TblAdvance.Update(leaveapro);
                     }
 
                     if (repo.SaveChanges() > 0)
-                        return applyod.ToList();
-                    return applyod.ToList(); ;
+                        return advance.ToList();
+                    return advance.ToList(); ;
                 }
             }
             catch { throw; }
         }
-
     }
-
 }
