@@ -104,7 +104,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<LeaveTypes> repo = new Repository<LeaveTypes>())
                 {
-                    var ltype = repo.LeaveTypes.Where(x => x.Id == Convert.ToInt32(code)).FirstOrDefault();
+                    var ltype = repo.LeaveTypes.Where(x => x.LeaveCode == code).FirstOrDefault();
                     repo.LeaveTypes.Remove(ltype);
                     if (repo.SaveChanges() > 0)
                         return ltype;

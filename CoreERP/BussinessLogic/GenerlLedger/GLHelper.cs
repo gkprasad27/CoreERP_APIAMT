@@ -537,7 +537,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
                 return repo.TaxIntegration.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                return null;
+                //return null;
             }
             catch (Exception ex) { throw ex; }
         }
@@ -548,7 +548,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
                 return repo.TaxIntegration.AsEnumerable().Where(m => m.TaxCode == taxCode).ToList();
 
-                return null;
+                // return null;
             }
             catch (Exception ex) { throw ex; }
         }
@@ -599,8 +599,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
-      
-        
         #endregion
         public static List<TblCompany> GetCompanies()
         {
@@ -684,7 +682,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using Repository<TaxMasters> repo = new Repository<TaxMasters>();
                 return repo.TaxMasters.AsEnumerable().Where(x => x.Active == "Y").ToList();
 
-                return null;
+                //return null;
 
             }
             catch { throw; }
