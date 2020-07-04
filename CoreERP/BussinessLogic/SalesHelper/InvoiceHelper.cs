@@ -662,8 +662,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 }
 
 
-                userNew = new UserManagmentHelper().GetUserNew(invoice.UserId);
-                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(invoice.UserId, null));
+                userNew = new UserManagmentHelper().GetUserNew(Convert.ToDecimal(invoice.UserId));
+                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(Convert.ToDecimal(invoice.UserId), null));
                
                 invoice.EmployeeId = userNew?.EmployeeId ?? -1;
                 invoice.IsSalesReturned = false;
