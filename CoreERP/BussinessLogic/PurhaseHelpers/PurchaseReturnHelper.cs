@@ -251,11 +251,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                                 #region Add stock transaction  and Account Ledger Transaction
                                 _qty = null;
-                                if (purReturnInv.TotalLiters != null)
-                                {
-                                    if (purReturnInv.TotalLiters > 0)
-                                        _qty = purReturnInv.TotalLiters;
-                                }
+                               
 
                                 if (purReturnInv.Qty != null)
                                 {
@@ -269,6 +265,12 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                         _qty += purReturnInv.FQty;
                                     else
                                         _qty += purReturnInv.FQty;
+                                }
+
+                                if (purReturnInv.TotalLiters != null)
+                                {
+                                    if (purReturnInv.TotalLiters > 0)
+                                        _qty = purReturnInv.TotalLiters;
                                 }
                                 AddStockInformation(context, purchaseReturn, _branch, _product, _qty, purReturnInv.Rate);
                                 AddAccountLedgerTransactions(context, _voucherDetail, purchaseReturn.PurchaseReturnInvDate);
@@ -372,13 +374,13 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                 if (isFromInvoiceDetials)
                 {
-                    _voucherDetail.FromLedgerId = _accountLedger.LedgerId;
-                    _voucherDetail.FromLedgerCode = _accountLedger.LedgerCode;
-                    _voucherDetail.FromLedgerName = _accountLedger.LedgerName;
+                    _voucherDetail.ToLedgerId = _accountLedger.LedgerId;
+                    _voucherDetail.ToLedgerCode = _accountLedger.LedgerCode;
+                    _voucherDetail.ToLedgerName = _accountLedger.LedgerName;
 
-                    _voucherDetail.ToLedgerId = purchaseReturn.LedgerId;
-                    _voucherDetail.ToLedgerCode = purchaseReturn.LedgerCode;
-                    _voucherDetail.ToLedgerName = purchaseReturn.LedgerName;
+                    _voucherDetail.FromLedgerId = purchaseReturn.LedgerId;
+                    _voucherDetail.FromLedgerCode = purchaseReturn.LedgerCode;
+                    _voucherDetail.FromLedgerName = purchaseReturn.LedgerName;
 
                 }
                 else
@@ -442,7 +444,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 throw ex;
             }
         }
-        private TblAccountLedgerTransactions AddAccountLedgerTransactions(ERPContext context, TblVoucherDetail _voucherDetail, DateTime? invoiceDate)
+        private TblAccountLedgerTransactions AddAccountLedgerTransactions(ERPContext context, TblVoucherDetail _voucherDetail, DateTime? invoiceDate,bool isFromLedger=false)
         {
             try
             {
@@ -450,9 +452,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 //{
                 var _accountLedgerTransactions = new TblAccountLedgerTransactions();
                 _accountLedgerTransactions.VoucherDetailId = _voucherDetail.VoucherDetailId;
-                _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
-                _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
-                _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
+               
                 _accountLedgerTransactions.BranchId = _voucherDetail.BranchId;
                 _accountLedgerTransactions.BranchCode = _voucherDetail.BranchCode;
                 _accountLedgerTransactions.BranchName = _voucherDetail.BranchName;
@@ -471,6 +471,19 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                     _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
                 }
 
+
+                if (isFromLedger)
+                {
+                    _accountLedgerTransactions.LedgerId = _voucherDetail.FromLedgerId;
+                    _accountLedgerTransactions.LedgerCode = _voucherDetail.FromLedgerCode;
+                    _accountLedgerTransactions.LedgerName = _voucherDetail.FromLedgerName;
+                }
+                else
+                {
+                    _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
+                    _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
+                    _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
+                }
                 context.TblAccountLedgerTransactions.Add(_accountLedgerTransactions);
                 if (context.SaveChanges() > 0)
                     return _accountLedgerTransactions;
