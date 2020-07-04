@@ -64,16 +64,6 @@ namespace CoreERP.Controllers.Reports
                     }
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 }
-
-                //if (serviceResult.Item1 != null && serviceResult.Item1.Count > 0)
-                //{
-                //    dynamic expdoObj = new ExpandoObject();
-                //    expdoObj.shiftViewList = serviceResult.Item1;
-                //    expdoObj.headerList = serviceResult.Item2;
-                //    expdoObj.footerList = serviceResult.Item3;
-                //    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                //}
-                //return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {

@@ -72,7 +72,7 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
                                 }
                             }
                         }
-
+                        
                         return LeaveAply.Distinct().ToList();
                     }
                 }

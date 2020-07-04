@@ -140,19 +140,19 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 };
                 dbParametersList.Add(parameters);
 
-                parameters = new parametersClass
-                {
-                    paramName = "fromDate",
-                    paramValue = fromDate
-                };
-                dbParametersList.Add(parameters);
+                //parameters = new parametersClass
+                //{
+                //    paramName = "fromDate",
+                //    paramValue = fromDate
+                //};
+                //dbParametersList.Add(parameters);
 
-                parameters = new parametersClass
-                {
-                    paramName = "toDate",
-                    paramValue = toDate
-                };
-                dbParametersList.Add(parameters);
+                //parameters = new parametersClass
+                //{
+                //    paramName = "toDate",
+                //    paramValue = toDate
+                //};
+                //dbParametersList.Add(parameters);
             }
             else if (reportID == 3 || reportID == 6)
             {
@@ -595,7 +595,6 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             }
             else return (null, null, null);
         }
-
         public static DataSet GetSalesGSTReportDataSet(string userId, DateTime fromDate, DateTime toDate)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
@@ -1062,14 +1061,14 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 branchCode = null;
             }
             DataSet dsResult = GetProductPriceListReportDataTable(userName, branchCode, fromDate, toDate, reportType);
-            List<dynamic> saleValue = null;
+            List<dynamic> productPriceList = null;
             List<dynamic> headerList = null;
             List<dynamic> footerList = null;
             if (dsResult != null)
             {
                 if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
                 {
-                    saleValue = ToDynamic(dsResult.Tables[0]);
+                    productPriceList = ToDynamic(dsResult.Tables[0]);
                 }
                 if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
                 {
@@ -1079,7 +1078,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 {
                     footerList = ToDynamic(dsResult.Tables[2]);
                 }
-                return (saleValue, headerList, footerList);
+                return (productPriceList, headerList, footerList);
             }
             else return (null, null, null);
         }
@@ -1221,8 +1220,6 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
-
-
         #region Receipts And Payment Summary Report
         public static (List<dynamic>, List<dynamic>, List<dynamic>) GetReceiptsAndPaymentSummaryReportDataList(string userId, DateTime fromDate, DateTime toDate)
         {
@@ -1387,6 +1384,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
+
 
         #region CommonMethods
         public static DataSet getDataFromDataBase(List<parametersClass> dbParametersList, string procedureName)
