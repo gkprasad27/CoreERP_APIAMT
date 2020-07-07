@@ -26,6 +26,7 @@ namespace CoreERP.Models
         public virtual DbSet<CostCenters> CostCenters { get; set; }
         public virtual DbSet<Countries> Countries { get; set; }
         public virtual DbSet<Ctcbreakup> Ctcbreakup { get; set; }
+        public virtual DbSet<Department> Department { get; set; }
         public virtual DbSet<DividentTest> DividentTest { get; set; }
         public virtual DbSet<Divisions> Divisions { get; set; }
         public virtual DbSet<EmployeeInBranches> EmployeeInBranches { get; set; }
@@ -38,7 +39,6 @@ namespace CoreERP.Models
         public virtual DbSet<LeaveApplDetails> LeaveApplDetails { get; set; }
         public virtual DbSet<LeaveBalanceMaster> LeaveBalanceMaster { get; set; }
         public virtual DbSet<LeaveTypes> LeaveTypes { get; set; }
-        public virtual DbSet<LeaveTypesss> LeaveTypesss { get; set; }
         public virtual DbSet<MatTranTypes> MatTranTypes { get; set; }
         public virtual DbSet<MenuAccesses> MenuAccesses { get; set; }
         public virtual DbSet<Menus> Menus { get; set; }
@@ -62,7 +62,6 @@ namespace CoreERP.Models
         public virtual DbSet<States> States { get; set; }
         public virtual DbSet<StructureComponents> StructureComponents { get; set; }
         public virtual DbSet<StructureCreation> StructureCreation { get; set; }
-        public virtual DbSet<Table1> Table1 { get; set; }
         public virtual DbSet<TaxIntegration> TaxIntegration { get; set; }
         public virtual DbSet<TaxMasters> TaxMasters { get; set; }
         public virtual DbSet<TblAccountGroup> TblAccountGroup { get; set; }
@@ -776,6 +775,37 @@ namespace CoreERP.Models
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<Department>(entity =>
+            {
+                entity.HasKey(e => new { e.Id, e.DepartmentId, e.CompanyCode });
+
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.DepartmentId).HasMaxLength(15);
+
+                entity.Property(e => e.CompanyCode).HasMaxLength(8);
+
+                entity.Property(e => e.CompanyDesc).HasMaxLength(100);
+
+                entity.Property(e => e.CompanyGroupCode).HasMaxLength(10);
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.DepartmentName)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ResponsiblePersonCode).HasMaxLength(10);
+
+                entity.Property(e => e.ResponsiblePersonDesc)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<DividentTest>(entity =>
             {
                 entity.HasNoKey();
@@ -1191,28 +1221,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.CompanyName).HasMaxLength(40);
 
                 entity.Property(e => e.LeaveCode).HasMaxLength(8);
-
-                entity.Property(e => e.LeaveMaxLimit).HasMaxLength(40);
-
-                entity.Property(e => e.LeaveMinLimit).HasMaxLength(40);
-
-                entity.Property(e => e.LeaveName).HasMaxLength(40);
-            });
-
-            modelBuilder.Entity<LeaveTypesss>(entity =>
-            {
-                entity.HasKey(e => e.LeaveCode)
-                    .HasName("PK_LeaveTypes");
-
-                entity.Property(e => e.LeaveCode).HasMaxLength(40);
-
-                entity.Property(e => e.CompanyCode).HasMaxLength(40);
-
-                entity.Property(e => e.CompanyName).HasMaxLength(40);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .HasMaxLength(14);
 
                 entity.Property(e => e.LeaveMaxLimit).HasMaxLength(40);
 
@@ -2251,21 +2259,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.StructureName)
                     .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<Table1>(entity =>
-            {
-                entity.ToTable("Table_1");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AdvanceTypeId)
-                    .HasMaxLength(10)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.AdvanceTypeName)
                     .HasMaxLength(50)
                     .IsUnicode(false);
             });

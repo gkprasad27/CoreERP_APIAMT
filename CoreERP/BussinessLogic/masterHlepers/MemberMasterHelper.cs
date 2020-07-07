@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.Models;
 using CoreERP.Helpers.SharedModels;
+using Microsoft.Extensions.Configuration;
+using CoreERP.BussinessLogic.Common;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
@@ -49,9 +51,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using (Repository<TblMemberMaster> _repo = new Repository<TblMemberMaster>())
                 {
                     return _repo.TblMemberMaster
-                                 .Where(m =>m.MemberCode.ToString().Contains((searchCriteria.InvoiceNo == null ? m.MemberCode.ToString() : searchCriteria.InvoiceNo))
+                                 .Where(m => m.MemberCode.ToString().Contains((searchCriteria.InvoiceNo == null ? m.MemberCode.ToString() : searchCriteria.InvoiceNo))
                                           && m.MemberName.ToLower().Contains((searchCriteria.Name ?? m.MemberName).ToLower()))
-                                 .OrderBy(m=>m.MemberCode).ToList();
+                                 .OrderBy(m => m.MemberCode).ToList();
                 }
             }
             catch (Exception ex)
@@ -59,7 +61,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
-     
+
         #region Vechile
         public List<TblVehicle> GetVehicles(decimal? memberCode)
         {
@@ -120,14 +122,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     return _repo.TblPassbookStatus.ToList();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
         }
         #endregion
-        
-        public  List<TblTitle> GetTitles()
+
+        public List<TblTitle> GetTitles()
         {
             try
             {
@@ -136,7 +138,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     return _repo.TblTitle.ToList();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -185,22 +187,22 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
-        public bool IsVechileNoExists(decimal? membercode,string vehicleRegNo)
+        public bool IsVechileNoExists(decimal? membercode, string vehicleRegNo)
         {
             try
             {
-                using(Repository<TblVehicle> _repo=new Repository<TblVehicle>())
+                using (Repository<TblVehicle> _repo = new Repository<TblVehicle>())
                 {
                     return _repo.TblVehicle.Where(v => v.MemberCode == membercode && v.VehicleRegNo == vehicleRegNo).Count() > 0;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
         }
         #region Registration
-        public TblMemberMaster AddMemberMaster(TblMemberMaster memberMaster,List<TblVehicle> vehicles,out string errorMessage)
+        public TblMemberMaster AddMemberMaster(TblMemberMaster memberMaster, List<TblVehicle> vehicles, out string errorMessage)
         {
             try
             {
@@ -212,13 +214,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     return null;
                 }
 
-                using(ERPContext context=new ERPContext())
+                using (ERPContext context = new ERPContext())
                 {
-                    using(var dbTransaction = context.Database.BeginTransaction())
+                    using (var dbTransaction = context.Database.BeginTransaction())
                     {
                         try
                         {
-                            var _memberMaster=AddMemberMaster(context, memberMaster);
+                            var _memberMaster = AddMemberMaster(context, memberMaster);
                             if (_memberMaster == null)
                             {
                                 errorMessage = "Rgistration failed.";
@@ -234,7 +236,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                             //    }
                             //}
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             dbTransaction.Rollback();
                             throw ex;
@@ -245,12 +247,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public TblVehicle AddVehicles(decimal? memberCode,TblVehicle vehicle,out string errorMessage)
+        public TblVehicle AddVehicles(decimal? memberCode, TblVehicle vehicle, out string errorMessage)
         {
             try
             {
@@ -267,17 +269,17 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     return null;
                 }
 
-                if(IsVechileNoExists(memberCode, vehicle.VehicleRegNo))
+                if (IsVechileNoExists(memberCode, vehicle.VehicleRegNo))
                 {
                     errorMessage = $"vehicle no :{vehicle.VehicleRegNo} is exists for member code :{memberCode}";
                     return null;
                 }
 
-                using (ERPContext context=new ERPContext())
+                using (ERPContext context = new ERPContext())
                 {
-                    var _member = context.TblMemberMaster.Where(x=> x.MemberCode == memberCode).FirstOrDefault();
+                    var _member = context.TblMemberMaster.Where(x => x.MemberCode == memberCode).FirstOrDefault();
 
-                   var _vechile= AddVechicle(context,_member, vehicle);
+                    var _vechile = AddVechicle(context, _member, vehicle);
 
                     if (_vechile == null)
                     {
@@ -288,12 +290,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     return _vechile;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
         }
-        private TblMemberMaster AddMemberMaster(ERPContext context,TblMemberMaster memberMaster)
+        private TblMemberMaster AddMemberMaster(ERPContext context, TblMemberMaster memberMaster)
         {
             try
             {
@@ -341,7 +343,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     return null;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -368,5 +370,108 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
+
+        #region Gift Master
+
+        public List<TblProduct> GetGiftProducts(IConfiguration configuration)
+        {
+            try
+            {
+                decimal _productgroup = Convert.ToDecimal(configuration.GetSection($"{ConfigurationENUM.MemberMaster.ToString()}:{ConfigurationENUM.GiftProductGroup}").Value);
+                return new ProductHelper().GetProductList().Where(p => p.ProductGroupCode == _productgroup).ToList();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<TblGiftMaster> GetTblGifts(TblGiftMaster giftMaster)
+        {
+            try
+            {
+                using (Repository<TblGiftMaster> _repo = new Repository<TblGiftMaster>())
+                {
+                    return _repo.TblGiftMaster
+                                .Where(g => g.MemberCode == giftMaster.MemberCode
+                                       && g.Status.Value)
+                                .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        private bool IsGiftExists(TblGiftMaster giftMaster)
+        {
+            try
+            {
+                using (Repository<TblGiftMaster> _repo = new Repository<TblGiftMaster>())
+                {
+                    return _repo.TblGiftMaster
+                                  .Where(gif => gif.MemberCode == giftMaster.MemberCode
+                                             && gif.Year == DateTime.Now.Year)
+                                  .Count() > 0;
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public TblGiftMaster AddGift(TblGiftMaster giftMaster,out string errorMsg)
+        {
+            try
+            {
+                errorMsg = string.Empty;
+
+                if (IsGiftExists(giftMaster))
+                {
+                    errorMsg = "Gift exists for member code" + giftMaster.MemberCode;
+                    return null;
+                }
+                
+                giftMaster.Status = true;
+                giftMaster.Year = DateTime.Now.Year;
+                giftMaster.AddDate = DateTime.Now;
+
+                using (Repository<TblGiftMaster> _repo=new Repository<TblGiftMaster>())
+                {
+                    _repo.TblGiftMaster.Add(giftMaster);
+                    if (_repo.SaveChanges() > 0)
+                        return giftMaster;
+
+                    return null;
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public TblGiftMaster UpdateGift(TblGiftMaster giftMaster, out string errorMsg)
+        {
+            try
+            {
+                errorMsg = string.Empty;
+
+                giftMaster.EditDate = DateTime.Now;
+
+                using (Repository<TblGiftMaster> _repo = new Repository<TblGiftMaster>())
+                {
+                    _repo.TblGiftMaster.Update(giftMaster);
+                    if (_repo.SaveChanges() > 0)
+                        return giftMaster;
+
+                    errorMsg = "Updation failed for gift";
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
     }
 }
