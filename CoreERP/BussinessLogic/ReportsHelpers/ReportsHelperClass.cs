@@ -190,6 +190,22 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 dbParametersList.Add(parameters);
                 procedureName = "Usp_ShiftWiseFleetOrHDFCreport";
             }
+            else if (reportID == 7)
+            {
+                parameters = new parametersClass
+                {
+                    paramName = "userName",
+                    paramValue = userID
+                };
+                dbParametersList.Add(parameters);
+
+                parameters = new parametersClass
+                {
+                    paramName = "shiftId",
+                    paramValue = shiftId
+                };
+                dbParametersList.Add(parameters);
+            }
             if (reportID == 1)
                 procedureName = "Usp_ShifViewReport";
             else if (reportID == 2)
@@ -198,6 +214,8 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 procedureName = "Usp_StockReportByShift";
             else if (reportID == 6)
                 procedureName = "Usp_DailySalesReportByShift";
+            else if (reportID == 7)
+                procedureName = "Usp_ShiftSaleValueReport";
             return getDataFromDataBase(dbParametersList, procedureName);
         }
         public static (List<dynamic>, List<dynamic>, List<dynamic>) GetDefaultShiftReportDataTableList()

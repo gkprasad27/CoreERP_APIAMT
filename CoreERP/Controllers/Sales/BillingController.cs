@@ -20,7 +20,7 @@ namespace CoreERP.Controllers
         {
             _configuration = configuration;
         }
-        ////to get the invoice Master data while page load
+       
         [HttpPost("GetInvoiceDetails/{branchCode}")]
         public IActionResult GetInvoiceDetails([FromBody]SearchCriteria searchCriteria,string branchCode)
         {
