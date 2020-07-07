@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class VehicleRequisition
     {
-        public int Sno { get; set; }
+        public int? Sno { get; set; }
         public string EmpCode { get; set; }
         public DateTime ApplDate { get; set; }
         public DateTime? FromDate { get; set; }
@@ -39,6 +39,5 @@ namespace CoreERP.Models
         public string RejectedId { get; set; }
         public string CompanyGroupCode { get; set; }
         public string CompanyGroupName { get; set; }
-        public string Active { get; set; }
     }
 }

@@ -8,6 +8,7 @@ using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers.masters
@@ -16,6 +17,11 @@ namespace CoreERP.Controllers.masters
     [ApiController]
     public class MemberMasterController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
+        public MemberMasterController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         [HttpGet("GeMemberCode")]
         public async Task<IActionResult> GeneratePurchaseReturnInvNo()
         {
@@ -535,5 +541,156 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        #region Gift master
+        [HttpGet("GetProducts")]
+        public async Task<IActionResult> GetProducts()
+        {
+            var result = await Task.Run(() =>
+            {
+                string errorMessage = string.Empty;
+                List<TblProduct> _products = null;
+                try
+                {
+                    _products = new MemberMasterHelper().GetGiftProducts(_configuration);
+
+                    if (_products == null && _products.Count() > 0)
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Gift product found." });
+
+                    dynamic expando = new ExpandoObject();
+                    expando.GiftProduct = _products.Select(p=>new { id=p.ProductCode ,name=p.ProductName});
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Empty;
+
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
+        }
+       
+        [HttpGet("GetGifts/{memberCode}")]
+        public async Task<IActionResult> GetGifts(string memberCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                string errorMessage = string.Empty;
+                List<TblGiftMaster> _gifts = null;
+                try
+                {
+                    TblGiftMaster gift = new TblGiftMaster();
+                    gift.MemberCode = memberCode;
+                    _gifts = new MemberMasterHelper().GetTblGifts(gift);
+
+                    if (_gifts == null && _gifts.Count() > 0)
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Gifts found for user"+ memberCode });
+
+                    dynamic expando = new ExpandoObject();
+                    expando.Gifts = _gifts;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Empty;
+
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
+        }
+
+        [HttpPost("AddGifts")]
+        public async Task<IActionResult> AddGifts([FromBody] TblGiftMaster gift)
+        {
+            var result = await Task.Run(() =>
+            {
+                string errorMessage = string.Empty;
+                try
+                {
+                    TblGiftMaster _gift = new MemberMasterHelper().AddGift(gift, out errorMessage);
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
+                    }
+
+                    dynamic expando = new ExpandoObject();
+                    expando.Gift = _gift;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Empty;
+
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
+        }
+
+        [HttpPost("UpdateGift")]
+        public async Task<IActionResult> UpdateGift([FromBody] TblGiftMaster gift)
+        {
+            var result = await Task.Run(() =>
+            {
+                string errorMessage = string.Empty;
+                try
+                {
+                    TblGiftMaster _gift = new MemberMasterHelper().UpdateGift(gift, out errorMessage);
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
+                    }
+
+                    dynamic expando = new ExpandoObject();
+                    expando.Gift = _gift;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Empty;
+
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
+        }
+        #endregion
     }
 }

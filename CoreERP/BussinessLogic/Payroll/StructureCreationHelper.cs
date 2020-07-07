@@ -13,9 +13,9 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                //using Repository<StructureCreation> repo = new Repository<StructureCreation>();
-                //return repo.StructureCreation.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
-                return null;
+                using Repository<StructureCreation> repo = new Repository<StructureCreation>();
+                return repo.StructureCreation.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+                //return null;
             }
             catch { throw; }
         }
