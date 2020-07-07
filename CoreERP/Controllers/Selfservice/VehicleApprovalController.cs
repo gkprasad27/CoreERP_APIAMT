@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
@@ -14,18 +14,17 @@ using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers.Selfservice
 {
-  [ApiController]
-  [Route("api/Selfservice/PermissionApproval")]
-  public class PermissionApprovalController : ControllerBase
-  {
-        [HttpGet("GetPermissionApprovalApplDetailsList/{code}")]
-        public IActionResult GetPermissionApprovalDetailsList(string code)
+    [ApiController]
+    [Route("api/Selfservice/VehicleApproval")]
+    public class VehicleApprovalController : ControllerBase
+    {
+        [HttpGet("GetVehicleApprovalApplDetailsList/{code}")]
+        public async Task<IActionResult> GetVehicleApprovalApplDetailsList(string code)
         {
-            
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.PermissionApprovalApplDetailsList = PermissionApprovalHelper.GetApplyPermissionRequestDetailsList(code).ToList();
+                expando.VehicleApprovalApplDetailsList = VehicleApprovalHelper.GetVehicleApprovalApplDetailsList(code).ToList();
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -34,9 +33,8 @@ namespace CoreERP.Controllers.Selfservice
             }
         }
 
-
-        [HttpPost("RegisterPermissionApprovalDetails")]
-        public async Task<IActionResult> RegisterPermissionApprovalDetails([FromBody]JObject objData)
+        [HttpPost("RegisterVehicleApprovalDetails")]
+        public async Task<IActionResult> RegisterVehicleApprovalDetails([FromBody]JObject objData)
         {
             APIResponse apiResponse = null;
             if (objData == null)
@@ -46,9 +44,9 @@ namespace CoreERP.Controllers.Selfservice
                 var code = objData["code"].ToString();
                 var _stockissueHdr = objData["StockissueHdr"].ToObject<ApplyOddata>();
                 //ToObject<TblEmployee>();
-                var _stockissueDtl = objData["StockissueDtl"].ToObject<PermissionRequest[]>();
+                var _stockissueDtl = objData["StockissueDtl"].ToObject<VehicleRequisition[]>();
 
-                var result = new PermissionApprovalHelper().RegisterPermissionApprovalDetails(code, _stockissueHdr, _stockissueDtl.ToList());
+                var result = new VehicleApprovalHelper().RegisterVehicleApprovalDetails(code, _stockissueHdr, _stockissueDtl.ToList());
 
                 apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 return Ok(apiResponse);
@@ -58,6 +56,7 @@ namespace CoreERP.Controllers.Selfservice
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
 
     }
 }
