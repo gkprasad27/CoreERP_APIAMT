@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -11,17 +11,17 @@ using Microsoft.Extensions.Logging;
 
 namespace CoreERP.Controllers.Selfservice
 {
-  [ApiController]
-  [Route("api/Selfservice/PermissionRequest")]
-  public class PermissionRequestController : ControllerBase
-  {
-        [HttpGet("GetEmployeesList")]
-        public IActionResult GetEmployeesList()
+    [ApiController]
+    [Route("api/Selfservice/VehicleRequesition")]
+    public class VehicleRequesitionController : ControllerBase
+    {
+        [HttpGet("GetApplyVehicleRequesitionDetailsList/{code}")]
+        public async Task<IActionResult> GetApplyVehicleRequesitionDetailsList(string code)
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.EmployeeList = LeaveRequestHelper.GetEmployeesList().Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
+                expando.vhclrqsnDetailsList = VehicleRequesitionHelper.GetApplyVehicleRequesitionDetailsList(code).ToList();
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -30,50 +30,37 @@ namespace CoreERP.Controllers.Selfservice
             }
         }
 
-        [HttpGet("GetPermissionApplDetailsList/{code}")]
-        public IActionResult GetPermissionApplDetailsList(string code)
+        [HttpPost("RegisterApplyVehicleRequesitiondataDetails")]
+        public async Task<IActionResult> RegisterApplyVehicleRequesitiondataDetails([FromBody]VehicleRequisition vehicle)
         {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.PermissionApplDetailsList = PermissionRequestHelper.GetPermissionApplDetailsList(code).ToList();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpPost("RegisterPermissionapplying")]
-        public IActionResult RegisterPermissionapplying([FromBody]PermissionRequest permissionRequest)
-        {
-            if (permissionRequest == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
-            try
-            {
-                PermissionRequest result = PermissionRequestHelper.RegisterPermissionApplDetails(permissionRequest);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpPut("UpdatePermissionapplying")]
-        public IActionResult UpdatePermissionapplying([FromBody]PermissionRequest permissionRequest)
-        {
-            if (permissionRequest == null)
+            if (vehicle == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
             try
             {
                 string errorMessge = string.Empty;
 
-                PermissionRequest result = PermissionRequestHelper.UpdatePermissionapplying(permissionRequest, out errorMessge);
+                VehicleRequisition result = VehicleRequesitionHelper.RegisterApplyVehicleRequesitiondataDetails(vehicle, null, out errorMessge);
+                if (result != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessge });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPut("UpdateApplyVehicleRequesition")]
+        public IActionResult UpdateApplyVehicleRequesition([FromBody]VehicleRequisition vehicle)
+        {
+            if (vehicle == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
+            try
+            {
+                string errorMessge = string.Empty;
+
+                VehicleRequisition result = VehicleRequesitionHelper.UpdateapplyVehicleRequesitiondata(vehicle, out errorMessge);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
