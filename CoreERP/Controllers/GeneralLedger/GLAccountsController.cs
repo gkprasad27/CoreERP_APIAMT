@@ -98,20 +98,20 @@ namespace CoreERP.Controllers.GL
         }
 
 
-        [HttpGet("GetAccountGroupList")]
-        public IActionResult GetAccountGroupList()
-        {
-            try
-            {
-                dynamic expnado = new ExpandoObject();
-                expnado.GLUnderSubGroupList = GLHelper.GetGLUnderSubGroupList().Select(x => new { ID = x.UnderSubGroupCode, TEXT = x.UnderSubGroupName });
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expnado });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //[HttpGet("GetAccountGroupList")]
+        //public IActionResult GetAccountGroupList()
+        //{
+        //    try
+        //    {
+        //        dynamic expnado = new ExpandoObject();
+        //        expnado.GLUnderSubGroupList = new GLHelper.GetGLUnderSubGroupList().Select(x => new { ID = x.UnderSubGroupCode, TEXT = x.UnderSubGroupName });
+        //        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expnado });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         [HttpGet("GetNaturesOfAcountsList")]
         public IActionResult GetNaturesOfAcountsList()
