@@ -4,7 +4,6 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.GenerlLedger
@@ -219,36 +218,38 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         #endregion
 
         #region Tbl Account Group
-       
-
-        public List<TblAccountGroup> GetTblAccountGroupList([Optional] string GLGroup)
+        public static List<GlaccUnderSubGroup> GetGLUnderSubGroupList()
         {
             try
             {
-                if (string.IsNullOrEmpty(GLGroup))
-                {
-                    using Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>();
-                    return repo.TblAccountGroup.AsEnumerable().ToList();
-                }
-                else
-                {
-                    using Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>();
-                    return repo.TblAccountGroup.AsEnumerable().Where(x => x.Nature == GLGroup).ToList();
-                }
+                //using Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>();
+                //return repo.GlaccUnderSubGroup.AsEnumerable().Where(glundersub => glundersub.Active == "Y").ToList();
+                return null;
             }
             catch { throw; }
         }
-        public  List<TblAccountGroup> GetGLUnderSubGroupList([Optional] int underSubGroupCode)
+
+        public List<TblAccountGroup> GetTblAccountGroupList()
         {
             try
             {
                 using Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>();
-                return repo.TblAccountGroup.AsEnumerable().Where(x => x.GroupUnder == underSubGroupCode).ToList();
+                return repo.TblAccountGroup.AsEnumerable().ToList();
+            }
+            catch { throw; }
+        }
+        public static List<GlaccUnderSubGroup> GetGLUnderSubGroupList(string underSubGroupCode)
+        {
+            try
+            {
+                return null;
+                //using Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>();
+                //return repo.GlaccUnderSubGroup.AsEnumerable().Where(glundersub => glundersub.UnderSubGroupCode == underSubGroupCode).ToList();
             }
             catch { throw; }
         }
 
-        public static TblAccountGroup RegisterUnderSubGroup(GlaccUnderSubGroup glUnderSubGroup)
+        public static GlaccUnderSubGroup RegisterUnderSubGroup(GlaccUnderSubGroup glUnderSubGroup)
         {
             try
             {
@@ -278,15 +279,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 else
                     tblAccGroup.AccountGroupId = 1;
 
-                if (tblAccGroup.GroupUnder == null)
-                {
-                    using Repository<GlaccGroup> groupname = new Repository<GlaccGroup>();
-                    var glAccGroup = groupname.GlaccGroup.Where(a => a.GroupName == tblAccGroup.Nature).FirstOrDefault();
-
-                    tblAccGroup.GroupUnder =Convert.ToDecimal(glAccGroup.GroupCode);
-                }
                 tblAccGroup.ExtraDate = DateTime.Now;
-                tblAccGroup.IsDefault = false;               
+                tblAccGroup.IsDefault = false;
                 repo.TblAccountGroup.Add(tblAccGroup);
                 if (repo.SaveChanges() > 0)
                     return tblAccGroup;
