@@ -12,9 +12,11 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<ComponentMaster> repo = new Repository<ComponentMaster>();
-                return repo.ComponentMaster.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
-                //return null;
+                using (Repository<ComponentMaster> repo = new Repository<ComponentMaster>())
+                {
+                    return repo.ComponentMaster.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+                   // return null;
+                }
             }
             catch { throw; }
         }
@@ -23,10 +25,12 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<ComponentMaster> repo = new Repository<ComponentMaster>();
-                return repo.ComponentMaster.AsEnumerable()
-.Where(x => x.ComponentCode.ToLower().Contains(compCode))
-.FirstOrDefault();
+                using (Repository<ComponentMaster> repo = new Repository<ComponentMaster>())
+                {
+                    return repo.ComponentMaster.AsEnumerable()
+                                               .Where(x => x.ComponentCode.ToLower().Contains(compCode))
+                                               .FirstOrDefault();
+                }
                 //return null;
             }
             catch { throw; }
@@ -36,12 +40,14 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<ComponentMaster> repo = new Repository<ComponentMaster>();
-                componentMaster.Active = "Y";
-                componentMaster.CompanyCode = code;
-                repo.ComponentMaster.Add(componentMaster);
-                if (repo.SaveChanges() > 0)
-                    return componentMaster;
+                using (Repository<ComponentMaster> repo = new Repository<ComponentMaster>())
+                {
+                    componentMaster.Active = "Y";
+                    componentMaster.CompanyCode = code;
+                    repo.ComponentMaster.Add(componentMaster);
+                    if (repo.SaveChanges() > 0)
+                        return componentMaster;
+                }
 
                 return null;
             }
@@ -52,13 +58,15 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<ComponentMaster> repo = new Repository<ComponentMaster>();
-                componentMaster.CompanyCode = code;
-                repo.ComponentMaster.Update(componentMaster);
-                if (repo.SaveChanges() > 0)
-                    return componentMaster;
+                using (Repository<ComponentMaster> repo = new Repository<ComponentMaster>())
+                {
+                    componentMaster.CompanyCode = code;
+                    repo.ComponentMaster.Update(componentMaster);
+                    if (repo.SaveChanges() > 0)
+                        return componentMaster;
 
-                return null;
+                    return null;
+                }
             }
             catch { throw; }
         }
@@ -67,14 +75,16 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<ComponentMaster> repo = new Repository<ComponentMaster>();
-                var comp = repo.ComponentMaster.Where(x => x.ComponentCode == code).FirstOrDefault();
-                comp.Active = "N";
-                repo.ComponentMaster.Update(comp);
-                if (repo.SaveChanges() > 0)
-                    return comp;
+                using (Repository<ComponentMaster> repo = new Repository<ComponentMaster>())
+                {
+                    var comp = repo.ComponentMaster.Where(x => x.ComponentCode == code).FirstOrDefault();
+                    comp.Active = "N";
+                    repo.ComponentMaster.Update(comp);
+                    if (repo.SaveChanges() > 0)
+                        return comp;
 
-                return null;
+                    return null;
+                }
             }
             catch { throw; }
         }
@@ -86,6 +96,7 @@ namespace CoreERP.BussinessLogic.Payroll
                 using (Repository<ConfigurationTable> repo = new Repository<ConfigurationTable>())
                 {
                     return repo.ConfigurationTable.AsEnumerable().Where(m => m.Active == "Y").ToList();
+                    // return null;
                 }
             }
             catch (Exception ex) { throw ex; }
