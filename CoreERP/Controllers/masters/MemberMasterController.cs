@@ -22,8 +22,10 @@ namespace CoreERP.Controllers.masters
         {
             _configuration = configuration;
         }
+
+        #region Vehicle and member
         [HttpGet("GeMemberCode")]
-        public async Task<IActionResult> GeneratePurchaseReturnInvNo()
+        public async Task<IActionResult> GeMemberCode()
         {
             var result = await Task.Run(() =>
             {
@@ -540,7 +542,8 @@ namespace CoreERP.Controllers.masters
             });
             return result;
         }
-
+        #endregion
+        
         #region Gift master
         [HttpGet("GetProducts")]
         public async Task<IActionResult> GetProducts()
@@ -557,7 +560,7 @@ namespace CoreERP.Controllers.masters
                         return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Gift product found." });
 
                     dynamic expando = new ExpandoObject();
-                    expando.GiftProduct = _products.Select(p=>new { id=p.ProductCode ,name=p.ProductName});
+                    expando.GiftProduct = _products.Select(p=>new { id=p.ProductCode ,text=p.ProductName});
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
