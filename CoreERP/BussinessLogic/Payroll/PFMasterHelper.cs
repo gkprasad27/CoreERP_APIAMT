@@ -22,8 +22,10 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<ComponentMaster> repo = new Repository<ComponentMaster>();
-                return repo.ComponentMaster.AsEnumerable().Where(m => m.Active == "Y").ToList();
+                using (Repository<ComponentMaster> repo = new Repository<ComponentMaster>())
+                {
+                    return repo.ComponentMaster.AsEnumerable().Where(m => m.Active == "Y").ToList();
+                }
                 //return null;
             }
             catch (Exception ex) { throw ex; }
@@ -32,11 +34,13 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                //                using Repository<Pfmaster> repo = new Repository<Pfmaster>();
-                //                return repo.Pfmaster.AsEnumerable()
-                //.Where(x => x.PftypeName.Equals(PFCode))
-                //.FirstOrDefault();
-                return null;
+                using (Repository<Pfmaster> repo = new Repository<Pfmaster>())
+                {
+                    return repo.Pfmaster.AsEnumerable()
+                               .Where(x => x.PftypeName.Equals(PFCode))
+                               .FirstOrDefault();
+                }
+                //return null;
             }
             catch { throw; }
         }
@@ -45,14 +49,16 @@ namespace CoreERP.BussinessLogic.Payroll
         {
             try
             {
-                using Repository<Pfmaster> repo = new Repository<Pfmaster>();
-                pfMaster.CompanyCode = code;
-                pfMaster.ComponentName = GetComponentsList().Where(x => x.ComponentCode == pfMaster.ComponentCode).SingleOrDefault()?.ComponentName;
-                pfMaster.Active = "Y";
-                repo.Pfmaster.Add(pfMaster);
-                if (repo.SaveChanges() > 0)
-                    return pfMaster;
-                return null;
+                using (Repository<Pfmaster> repo = new Repository<Pfmaster>())
+                {
+                    pfMaster.CompanyCode = code;
+                    pfMaster.ComponentName = GetComponentsList().Where(x => x.ComponentCode == pfMaster.ComponentCode).SingleOrDefault()?.ComponentName;
+                    pfMaster.Active = "Y";
+                    repo.Pfmaster.Add(pfMaster);
+                    if (repo.SaveChanges() > 0)
+                        return pfMaster;
+                    return null;
+                }
             }
             catch { throw; }
         }
