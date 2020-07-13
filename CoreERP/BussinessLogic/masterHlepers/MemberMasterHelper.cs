@@ -430,7 +430,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     errorMsg = "Gift exists for member code" + giftMaster.MemberCode;
                     return null;
                 }
-                
+             
                 giftMaster.Status = true;
                 giftMaster.Year = DateTime.Now.Year;
                 giftMaster.AddDate = DateTime.Now;
@@ -439,7 +439,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 {
                     _repo.TblGiftMaster.Add(giftMaster);
                     if (_repo.SaveChanges() > 0)
+                    {
+                        TblMemberMaster memberMaster = this.GetMemberMasters(new SearchCriteria() { InvoiceNo = giftMaster.MemberCode }).FirstOrDefault();
+                        memberMaster.GiftIssued = "Yes";
+                        this.UpdateMemberMaster(memberMaster);
+
                         return giftMaster;
+                    }
 
                     return null;
                 }

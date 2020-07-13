@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoreERP.Controllers
@@ -27,8 +28,11 @@ namespace CoreERP.Controllers
                     if (user != null)
                     {
                         var _branch = UserManagmentHelper.GetBranchesByUser(user.SeqId);
-                        var shiftId = new UserManagmentHelper().GetShiftId(user.SeqId, _branch.FirstOrDefault());
-                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = user });
+                       // var shiftId = new UserManagmentHelper().GetShiftId(user.SeqId, _branch.FirstOrDefault());
+                        dynamic expando = new ExpandoObject();
+                        expando.User = user;
+                        expando.Token= new BussinessLogic.Authentication.TokenGenerator().GenerateToken(user, _branch);
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
 
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
@@ -40,7 +44,8 @@ namespace CoreERP.Controllers
             });
             return result;
         }
-        //get branches
+        
+       // [Authorize]
         [HttpGet("GetBranchesForUser/{seqid}")]
         public async Task<IActionResult> GetBranchesForUser(string seqid)
         {
@@ -131,6 +136,58 @@ namespace CoreERP.Controllers
                     }
 
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
+        }
+
+       // [Authorize]
+        [HttpGet("ShiftStart/{userId}/{branchCode}")]
+        public async Task<IActionResult> ShiftStart(string userId,string branchCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    string errorMessage = string.Empty;
+                    var result = new UserManagmentHelper().StartShift(Convert.ToDecimal(userId), branchCode);
+                    if (result != null)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.ShiftId = result.ShiftId;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Fialed to generate shift id." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
+        }
+
+       // [Authorize]
+        [HttpGet("ShiftTerminate/{shiftId}")]
+        public async Task<IActionResult> ShiftTerminate(string shiftId)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    string errorMessage = string.Empty;
+                    var result = new UserManagmentHelper().EndShift(Convert.ToDecimal(shiftId));
+                    if (result)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Shift terminated successfully...." });
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Fialed to terminate the shift." });
                 }
                 catch (Exception ex)
                 {

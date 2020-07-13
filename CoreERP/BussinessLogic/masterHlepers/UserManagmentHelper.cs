@@ -304,7 +304,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using (Repository<TblShift> _repo = new Repository<TblShift>())
                 {
                     _shift = _repo.TblShift
-                                  .Where(s=> s.ShiftId == shiftId)
+                                  .Where(s => s.ShiftId == shiftId)
                                   .FirstOrDefault();
 
                     _shift.OutTime = DateTime.Now;
@@ -312,10 +312,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     _shift.Narration = "Shift Logged Out";
 
                     _repo.TblShift.Update(_shift);
-                    _repo.SaveChanges();
-
-                    return true;
+                    if (_repo.SaveChanges() > 0)
+                        return true;
                 }
+
+                return false;
             }
             catch(Exception ex)
             {
