@@ -261,10 +261,10 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                                 if (purReturnInv.FQty != null)
                                 {
-                                    if (_qty != null)
-                                        _qty += purReturnInv.FQty;
-                                    else
-                                        _qty += purReturnInv.FQty;
+                                    //if (_qty != null)
+                                    //    _qty += purReturnInv.FQty;
+                                    //else
+                                        _qty = purReturnInv.FQty;
                                 }
 
                                 if (purReturnInv.TotalLiters != null)
