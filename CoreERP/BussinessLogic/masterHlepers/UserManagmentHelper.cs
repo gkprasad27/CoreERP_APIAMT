@@ -260,6 +260,70 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 return "-1";
             }
         }
+
+
+        public TblShift StartShift(decimal userId, string branchCode)
+        {
+            try
+            {
+                var _branch = BrancheHelper.GetBranches().Where(b => b.BranchCode == branchCode).FirstOrDefault();
+
+                TblShift _shift = new TblShift
+                {
+                    UserId = userId,
+                    Narration = "Shift in Progress.",
+                    Status = 0,
+                    EmployeeId = -1,
+                    BranchId = _branch?.BranchId,
+                    BranchCode = _branch?.BranchCode,
+                    BranchName = _branch?.BranchName,
+                    InTime = DateTime.Now,
+                    OutTime = DateTime.Now
+                };
+
+                using (Repository<TblShift> _repo = new Repository<TblShift>())
+                {
+
+                    _repo.TblShift.Add(_shift);
+                    _repo.SaveChanges();
+                }
+
+                return _shift;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool EndShift(decimal shiftId)
+        {
+            try
+            {
+                TblShift _shift = null;
+                using (Repository<TblShift> _repo = new Repository<TblShift>())
+                {
+                    _shift = _repo.TblShift
+                                  .Where(s => s.ShiftId == shiftId)
+                                  .FirstOrDefault();
+
+                    _shift.OutTime = DateTime.Now;
+                    _shift.Status = 1;
+                    _shift.Narration = "Shift Logged Out";
+
+                    _repo.TblShift.Update(_shift);
+                    if (_repo.SaveChanges() > 0)
+                        return true;
+                }
+
+                return false;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public void LogoutShiftId(decimal userId, string branchCode,out string errorMessage)
         {
             try
