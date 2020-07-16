@@ -331,6 +331,12 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 purInv.EmployeeId = -1;
                                 purInv.ServerDateTime = DateTime.Now;
                                 purInv.ShiftId = shifId;
+                                purInv.TotalAmount = purchaseInvoice.TotalAmount;
+                                purInv.Cgst = purchaseInvoice.TotalCgst;
+                                purInv.Sgst = purchaseInvoice.TotalSgst;
+                                purInv.Igst = purchaseInvoice.TotalIgst;
+                                purInv.TotalGst = purchaseInvoice.TotaltaxAmount;
+                                purInv.GrossAmount = purchaseInvoice.GrandTotal;
                                 context.TblPurchaseInvoiceDetail.Add(purInv);
                                 context.SaveChanges();
 
