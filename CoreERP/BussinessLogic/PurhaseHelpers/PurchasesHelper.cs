@@ -402,7 +402,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _voucherMaster.BranchName = branch.BranchName;
                 _voucherMaster.VoucherDate = purchaseinvoice.PurchaseInvDate;
                 _voucherMaster.VoucherTypeIdMain = voucherTypeId;
-                _voucherMaster.VoucherTypeIdSub = 35;
+                _voucherMaster.VoucherTypeIdSub = 36;
                 _voucherMaster.VoucherNo = purchaseinvoice.PurchaseInvNo;
                 _voucherMaster.Amount = purchaseinvoice.GrandTotal;
                 _voucherMaster.PaymentType = paymentType;//accountLedger.CrOrD
