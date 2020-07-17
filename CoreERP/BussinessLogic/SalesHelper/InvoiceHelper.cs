@@ -102,7 +102,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     return repo.TblPumps
                                 .Where(p=> p.BranchCode == branchCode 
                                         && p.PumpNo.ToString().Contains(pumpNo)
-                                        && p.ProductCode.ToLower() == (productCode ?? p.ProductCode.ToLower()))
+                                        && p.ProductCode.ToLower() == (productCode ?? p.ProductCode.ToLower())
+                                        && p.IsWorking == 1)
                                 .ToList();
                 }
             }

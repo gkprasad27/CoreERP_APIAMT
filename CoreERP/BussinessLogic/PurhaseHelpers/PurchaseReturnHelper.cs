@@ -252,11 +252,20 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 #region Add stock transaction  and Account Ledger Transaction
                                 _qty = null;
                                
+
                                 if (purReturnInv.Qty != null)
+                                {
+
                                     _qty = purReturnInv.Qty;
+                                }
 
                                 if (purReturnInv.FQty != null)
+                                {
+                                    //if (_qty != null)
+                                    //    _qty += purReturnInv.FQty;
+                                    //else
                                         _qty = purReturnInv.FQty;
+                                }
 
                                 if (purReturnInv.TotalLiters != null)
                                 {
@@ -317,12 +326,13 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
         {
             try
             {
+                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(purchaseReturn.UserId, null));
                 var _voucherMaster = new TblVoucherMaster();
                 _voucherMaster.BranchCode = purchaseReturn.BranchCode;
                 _voucherMaster.BranchName = branch.BranchName;
                 _voucherMaster.VoucherDate = purchaseReturn.PurchaseInvDate;
                 _voucherMaster.VoucherTypeIdMain = voucherTypeId;
-                _voucherMaster.VoucherTypeIdSub = 35;
+                _voucherMaster.VoucherTypeIdSub = 41;
                 _voucherMaster.VoucherNo = purchaseReturn.PurchaseReturnInvNo;
                 _voucherMaster.Amount = purchaseReturn.GrandTotal;
                 _voucherMaster.PaymentType = paymentType;//accountLedger.CrOrD
@@ -331,6 +341,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _voucherMaster.UserId = purchaseReturn.UserId;
                 _voucherMaster.UserName = purchaseReturn.UserName;
                 _voucherMaster.EmployeeId = -1;
+                _voucherMaster.ShiftId = shifId;
 
                 context.TblVoucherMaster.Add(_voucherMaster);
                 if (context.SaveChanges() > 0)

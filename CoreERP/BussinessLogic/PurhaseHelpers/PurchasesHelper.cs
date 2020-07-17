@@ -308,10 +308,10 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                                 if (purInv.FQty != null)
                                 {
-                                    if (_qty != null)
-                                        _qty += purInv.FQty;
-                                    else
-                                        _qty += purInv.FQty;
+                                    //if (_qty != null)
+                                    //    _qty += purInv.FQty;
+                                    //else
+                                        _qty = purInv.FQty;
                                 }
 
                                 //get product stock
@@ -331,6 +331,12 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 purInv.EmployeeId = -1;
                                 purInv.ServerDateTime = DateTime.Now;
                                 purInv.ShiftId = shifId;
+                                purInv.TotalAmount = purchaseInvoice.TotalAmount;
+                                purInv.Cgst = purchaseInvoice.TotalCgst;
+                                purInv.Sgst = purchaseInvoice.TotalSgst;
+                                purInv.Igst = purchaseInvoice.TotalIgst;
+                                purInv.TotalGst = purchaseInvoice.TotaltaxAmount;
+                                purInv.GrossAmount = purchaseInvoice.GrandTotal;
                                 context.TblPurchaseInvoiceDetail.Add(purInv);
                                 context.SaveChanges();
 
@@ -351,7 +357,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                             _accountLedger = GetAccountLedgers(purchaseInvoice.LedgerCode);
                             _accountLedger.CrOrDr = "Credit";
-                            var voucherDetail=AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purchaseInvoice.TotalAmount, false);
+                            var voucherDetail=AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, _voucherMaster.Amount, false);
                             AddAccountLedgerTransactions(context, voucherDetail, purchaseInvoice.PurchaseInvDate);
 
                             //CHech weather igs or sg ,cg st
@@ -359,7 +365,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             if (_stateWiseGsts.Igst == 1)
                             {
                                 //Add IGST record
-                                var _accAL = GetAccountLedgers("243");
+                                var _accAL = GetAccountLedgers("244");
                                 _accAL.CrOrDr= "Debit";
                                var voucherDetailIGST= AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalIgst, false);
                                 AddAccountLedgerTransactions(context, voucherDetailIGST, purchaseInvoice.PurchaseInvDate);
@@ -367,12 +373,12 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             else
                             {
                                 // cgst
-                                var _accAL = GetAccountLedgers("240");
+                                var _accAL = GetAccountLedgers("246");
                                 _accAL.CrOrDr = "Debit";
                                 var voucherDetailCGST = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalCgst, false);
                                 AddAccountLedgerTransactions(context, voucherDetailCGST, purchaseInvoice.PurchaseInvDate);
                                 // sgst
-                                _accAL = GetAccountLedgers("241");
+                                _accAL = GetAccountLedgers("245");
                                 _accAL.CrOrDr = "Debit";
                                 var voucherDetailSGST = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalSgst, false);
                                 AddAccountLedgerTransactions(context, voucherDetailSGST, purchaseInvoice.PurchaseInvDate);
@@ -402,7 +408,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 _voucherMaster.BranchName = branch.BranchName;
                 _voucherMaster.VoucherDate = purchaseinvoice.PurchaseInvDate;
                 _voucherMaster.VoucherTypeIdMain = voucherTypeId;
-                _voucherMaster.VoucherTypeIdSub = 35;
+                _voucherMaster.VoucherTypeIdSub = 36;
                 _voucherMaster.VoucherNo = purchaseinvoice.PurchaseInvNo;
                 _voucherMaster.Amount = purchaseinvoice.GrandTotal;
                 _voucherMaster.PaymentType = paymentType;//accountLedger.CrOrD
