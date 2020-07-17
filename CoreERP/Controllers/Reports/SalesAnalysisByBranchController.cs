@@ -19,6 +19,12 @@ namespace CoreERP.Controllers.Reports
         {
             try
             {
+                if (fromDate == Convert.ToDateTime("01-01-0001 00:00:00") && toDate == Convert.ToDateTime("01-01-0001 00:00:00"))
+                {
+                    fromDate = DateTime.Now;
+                    toDate = DateTime.Now;
+                    // return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
                 var serviceResult = await Task.FromResult(ReportsHelperClass.GetSalesAnalysisByBranchReportDataList(branchCode,fromDate,toDate,userID));
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.SalesAnalysisByBranchrList = serviceResult.Item1;

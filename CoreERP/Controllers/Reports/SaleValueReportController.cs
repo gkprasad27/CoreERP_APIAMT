@@ -20,6 +20,13 @@ namespace CoreERP.Controllers.Reports
         {
             try
             {
+                //Date = { 01 - 01 - 0001 00:00:00}
+                if (fromDate ==Convert.ToDateTime("01-01-0001 00:00:00")&& toDate == Convert.ToDateTime("01-01-0001 00:00:00"))
+                {
+                    fromDate = DateTime.Now;
+                    toDate = DateTime.Now;
+                    // return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
                 var serviceResult = await Task.FromResult(ReportsHelperClass.GetSaleValueReportDataList(userID, branchCode,fromDate,toDate));
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.savleValueList = serviceResult.Item1;

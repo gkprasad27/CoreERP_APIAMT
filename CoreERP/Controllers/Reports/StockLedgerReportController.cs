@@ -20,6 +20,11 @@ namespace CoreERP.Controllers.Reports
         {
             try
             {
+                if (fromDate == Convert.ToDateTime("01-01-0001 00:00:00") && toDate == Convert.ToDateTime("01-01-0001 00:00:00"))
+                {
+                    fromDate = DateTime.Now;
+                    toDate = DateTime.Now;
+                }
                 var serviceResult = await Task.FromResult(ReportsHelperClass.GetStockLedgerReportDataList(branchCode, productCode,fromDate,toDate,UserID));
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.StockLedgerList = serviceResult.Item1;
