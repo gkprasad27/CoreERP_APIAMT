@@ -259,13 +259,13 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                     _qty = purReturnInv.Qty;
                                 }
 
-                                if (purReturnInv.FQty != null)
-                                {
-                                    //if (_qty != null)
-                                    //    _qty += purReturnInv.FQty;
-                                    //else
-                                        _qty = purReturnInv.FQty;
-                                }
+                                //if (purReturnInv.FQty != null)
+                                //{
+                                //    //if (_qty != null)
+                                //    //    _qty += purReturnInv.FQty;
+                                //    //else
+                                //        _qty = purReturnInv.FQty;
+                                //}
 
                                 if (purReturnInv.TotalLiters != null)
                                 {
@@ -286,7 +286,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             if (_stateWiseGsts.Igst == 1)
                             {
                                 //Add IGST record
-                                var _accAL = GetAccountLedgers("243");
+                                var _accAL = GetAccountLedgers("244");
                                 _accAL.CrOrDr = "Credit";
                                 var voucherDetailIGST = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalIgst, false);
                                 AddAccountLedgerTransactions(context, voucherDetailIGST, purchaseInvoice.PurchaseInvDate);
@@ -294,12 +294,12 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             else
                             {
                                 //CGST
-                                var _accAL = GetAccountLedgers("240");
+                                var _accAL = GetAccountLedgers("246");
                                 _accAL.CrOrDr = "Credit";
                                 var voucherDetailCGST = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalCgst, false);
                                 AddAccountLedgerTransactions(context, voucherDetailCGST, purchaseInvoice.PurchaseInvDate);
                                 // sgst
-                                _accAL = GetAccountLedgers("241");
+                                _accAL = GetAccountLedgers("245");
                                 _accAL.CrOrDr = "Credit";
                                 var voucherDetailSGST = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accAL, purchaseReturn.TotalSgst, false);
                                 AddAccountLedgerTransactions(context, voucherDetailSGST, purchaseInvoice.PurchaseInvDate);

@@ -373,6 +373,22 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
+        public List<TblPumps> GetPumpID(int pumpNo,string branchCode)
+        {
+            try
+            {
+                using (Repository<TblPumps> repo = new Repository<TblPumps>())
+                {
+                        return repo.TblPumps
+                                   .Where(p => p.PumpNo==pumpNo && p.BranchCode==branchCode)
+                                   .ToList();
+                    }
+                }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public List<TblProduct> GetProducts(string productCode)
         {
             try
@@ -671,6 +687,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 invoice.IsManualEntry = false;
                 TblTaxStructure _taxStructure = null;
                 TblProduct _product = null;
+                TblPumps _pumpId = null;
                 using (ERPContext repo = new ERPContext())
                 {
                     using (var dbTransaction = repo.Database.BeginTransaction())
@@ -723,7 +740,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 _product = GetProducts(invdtl.ProductCode).FirstOrDefault();
                                 _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
                                 _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure?.SalesAccount).FirstOrDefault();
-
+                                _pumpId = GetPumpID(Convert.ToInt32(invdtl.PumpNo),invoice.BranchCode).FirstOrDefault();
+                                invdtl.PumpId = Convert.ToInt32(_pumpId.PumpId);
                                 #region Add voucher Details
                                 decimal? _amountWithoutTax= invdtl.GrossAmount;
                                 if(invdtl.Cgst > 0 && invdtl.Sgst > 0)
