@@ -252,20 +252,11 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 #region Add stock transaction  and Account Ledger Transaction
                                 _qty = null;
                                
-
                                 if (purReturnInv.Qty != null)
-                                {
-
                                     _qty = purReturnInv.Qty;
-                                }
 
                                 if (purReturnInv.FQty != null)
-                                {
-                                    if (_qty != null)
-                                        _qty += purReturnInv.FQty;
-                                    else
-                                        _qty += purReturnInv.FQty;
-                                }
+                                        _qty = purReturnInv.FQty;
 
                                 if (purReturnInv.TotalLiters != null)
                                 {
