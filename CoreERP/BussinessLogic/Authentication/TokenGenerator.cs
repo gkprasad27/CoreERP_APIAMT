@@ -12,6 +12,12 @@ using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.Authentication
 {
+    public enum CalimsKeys
+    {
+        UserId,
+        UserName,
+        BRANCHES
+    }
     public class TokenGenerator
     {
         public static readonly  string Key= "COREERPSECURITYKEY";
@@ -24,11 +30,12 @@ namespace CoreERP.BussinessLogic.Authentication
             {
                 var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Key));
                 var signCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
+                
                 var claims = new[]
                 {
-                    new Claim("UserName",user.UserName),
-                    new Claim("BRANCHES",String.Join(",",branchCodes))
+                    new Claim(Convert.ToString(CalimsKeys.UserId),user.SeqId.ToString()),
+                    new Claim(Convert.ToString(CalimsKeys.UserName),user.UserName),
+                    new Claim(Convert.ToString(CalimsKeys.BRANCHES),String.Join(",",branchCodes))
                 };
 
                 var token = new JwtSecurityToken(
