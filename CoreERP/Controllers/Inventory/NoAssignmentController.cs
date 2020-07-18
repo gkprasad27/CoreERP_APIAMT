@@ -108,7 +108,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CompanysList = CompaniesHelper.GetListOfCompanies().Select(comp => new { ID = comp.CompanyId, TEXT = comp.CompanyName });
+                expando.CompanysList = CompaniesHelper.GetListOfCompanies().Select(comp => new { ID = comp.CompanyCode, TEXT = comp.CompanyName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

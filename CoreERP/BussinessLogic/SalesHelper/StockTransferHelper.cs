@@ -214,7 +214,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(Convert.ToDecimal(stockTransferMaster.UserId ?? 0), null));
+                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(Convert.ToDecimal(stockTransferMaster.UserId), null));
                 var _user = new UserManagmentHelper().GetEmployeeID(stockTransferMaster.UserName);
 
                 using ERPContext context = new ERPContext();
@@ -268,7 +268,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                stockTransferDetail.StockTransferDetailId = null;
+                stockTransferDetail.StockTransferDetailId = 0;
                 stockTransferDetail.StockTransferMasterId = stockTransferMaster.StockTransferMasterId;
                 stockTransferDetail.StockTransferDetailsDate = stockTransferMaster.StockTransferDate;
                 context.TblStockTransferDetail.Add(stockTransferDetail);

@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblCompany
     {
-        public decimal Id { get; set; }
+        public int Id { get; set; }
         public string CompanyCode { get; set; }
         public string CompanyName { get; set; }
         public string ShortName { get; set; }

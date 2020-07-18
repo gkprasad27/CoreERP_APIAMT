@@ -274,7 +274,7 @@ namespace CoreERP.Controllers
                 if (companiesList.Count > 0)
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.companiesList = companiesList.Select(n => new { ID = n.CompanyId, Text = n.CompanyName });
+                    expando.companiesList = companiesList.Select(n => new { ID = n.CompanyCode, Text = n.CompanyName });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 else

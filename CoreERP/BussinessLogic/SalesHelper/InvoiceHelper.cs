@@ -746,9 +746,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 invdtl.EmployeeId = invoice.EmployeeId;
                                 invdtl.ServerDateTime = DateTime.Now;
                                 invdtl.ShiftId = shifId;
-                                invdtl.PumpId = invdtl.PumpId ?? 0;
-                                invdtl.PumpNo = invdtl.PumpNo ?? 0;
-                                invdtl.SlipNo = invdtl.SlipNo ?? 0;
+                                invdtl.PumpId = invdtl.PumpId;
+                                invdtl.PumpNo = invdtl.PumpNo;
+                                invdtl.SlipNo = invdtl.SlipNo;
 
                                 repo.TblInvoiceDetail.Add(invdtl);
                                 repo.SaveChanges();

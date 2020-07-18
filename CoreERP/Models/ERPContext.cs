@@ -140,6 +140,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblInvoiceReturnDetail> TblInvoiceReturnDetail { get; set; }
         public virtual DbSet<TblJournalVoucherDetails> TblJournalVoucherDetails { get; set; }
         public virtual DbSet<TblJournalVoucherMaster> TblJournalVoucherMaster { get; set; }
+        public virtual DbSet<TblLanguage> TblLanguage { get; set; }
         public virtual DbSet<TblLedgerPosting> TblLedgerPosting { get; set; }
         public virtual DbSet<TblLogin> TblLogin { get; set; }
         public virtual DbSet<TblMaster> TblMaster { get; set; }
@@ -194,6 +195,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblRebateType> TblRebateType { get; set; }
         public virtual DbSet<TblReceiptDetails> TblReceiptDetails { get; set; }
         public virtual DbSet<TblReceiptMaster> TblReceiptMaster { get; set; }
+        public virtual DbSet<TblRegion> TblRegion { get; set; }
         public virtual DbSet<TblRejectionInDetails> TblRejectionInDetails { get; set; }
         public virtual DbSet<TblRejectionInMaster> TblRejectionInMaster { get; set; }
         public virtual DbSet<TblRejectionOutDetails> TblRejectionOutDetails { get; set; }
@@ -773,15 +775,17 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<Countries>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.HasKey(e => e.CountryCode);
 
-                entity.Property(e => e.CountryCode)
-                    .IsRequired()
-                    .HasMaxLength(2);
+                entity.Property(e => e.CountryCode).HasMaxLength(5);
 
                 entity.Property(e => e.CountryName)
                     .IsRequired()
-                    .HasMaxLength(250);
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<Ctcbreakup>(entity =>
@@ -2355,27 +2359,26 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<States>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.HasKey(e => new { e.Id, e.StateCode })
+                    .HasName("PK__States__3214EC274DC085B6");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.StateCode).HasMaxLength(5);
 
                 entity.Property(e => e.CountryCode)
                     .IsRequired()
-                    .HasMaxLength(2);
-
-                entity.Property(e => e.CountryId).HasColumnName("CountryID");
+                    .HasMaxLength(5);
 
                 entity.Property(e => e.CountryName)
                     .IsRequired()
-                    .HasMaxLength(250);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.StateName)
                     .IsRequired()
-                    .HasMaxLength(250);
-
-                entity.HasOne(d => d.Country)
-                    .WithMany(p => p.States)
-                    .HasForeignKey(d => d.CountryId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("States_Countries_fk");
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<StructureComponents>(entity =>
@@ -4268,7 +4271,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("numeric(18, 0)")
                     .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Image).HasColumnType("image");
@@ -6828,6 +6830,21 @@ namespace CoreERP.Models
                 entity.Property(e => e.VoucherNo)
                     .HasColumnName("voucherNo")
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblLanguage>(entity =>
+            {
+                entity.HasKey(e => e.LanguageCode);
+
+                entity.ToTable("tbl_Language");
+
+                entity.Property(e => e.LanguageCode).HasMaxLength(5);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.LanguageName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblLedgerPosting>(entity =>
@@ -10280,6 +10297,21 @@ namespace CoreERP.Models
                     .HasColumnType("numeric(18, 0)");
             });
 
+            modelBuilder.Entity<TblRegion>(entity =>
+            {
+                entity.HasKey(e => e.RegionCode);
+
+                entity.ToTable("tbl_Region");
+
+                entity.Property(e => e.RegionCode).HasMaxLength(5);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.RegionName).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<TblRejectionInDetails>(entity =>
             {
                 entity.HasKey(e => e.RejectionInDetailsId)
@@ -12588,12 +12620,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.StateName)
                     .IsRequired()
                     .HasMaxLength(250);
-
-                entity.HasOne(d => d.State)
-                    .WithOne(p => p.TblStateWiseGst)
-                    .HasForeignKey<TblStateWiseGst>(d => d.StateId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("StateWiseGst_StateID_fk");
             });
 
             modelBuilder.Entity<TblStockEntry>(entity =>

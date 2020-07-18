@@ -45,8 +45,8 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(company)} cannot be null" });
             else
             {
-                if (CompaniesHelper.GetCompanies(Convert.ToInt32(company.CompanyId))!=null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + company.CompanyId + " is already Exists,Please Use Another Code" });
+                if (CompaniesHelper.GetCompanies(company.CompanyCode)!=null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + company.CompanyCode + " is already Exists,Please Use Another Code" });
 
                 try
                  {
@@ -99,7 +99,7 @@ namespace CoreERP.Controllers
 
 
         [HttpDelete("DeleteCompany/{code}")]
-        public IActionResult DeleteCompany(int code)
+        public IActionResult DeleteCompany(string code)
         {
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });

@@ -13,7 +13,5 @@ namespace CoreERP.Models
         public int Sgst { get; set; }
         public int Igst { get; set; }
         public int IsDefault { get; set; }
-
-        public virtual States State { get; set; }
     }
 }

@@ -57,7 +57,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CompaniesList = GLHelper.GetCompanies().Select(x => new { ID = x.CompanyId, TEXT = x.CompanyName });
+                expando.CompaniesList = GLHelper.GetCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.CompanyName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

@@ -244,9 +244,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 invdtl.StateCode = invoiceMasterReturn.StateCode;
                                 invdtl.ShiftId = invoiceMasterReturn.ShiftId;
                                 invdtl.UserId = invoiceMasterReturn.UserId;
-                                invdtl.PumpId = invdtl.PumpId ?? 0;
-                                invdtl.PumpNo = invdtl.PumpNo ?? 0;
-                                invdtl.SlipNo = invdtl.SlipNo ?? 0;
+                                invdtl.PumpId = invdtl.PumpId;
+                                invdtl.PumpNo = invdtl.PumpNo;
+                                invdtl.SlipNo = invdtl.SlipNo;
                                 invdtl.ServerDateTime = DateTime.Now;
 
                                 repo.TblInvoiceReturnDetail.Add(invdtl);

@@ -20,12 +20,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         }
 
 
-        public static TblCompany GetCompanies(int compCode)
+        public static TblCompany GetCompanies(string compCode)
         {
             try
             {
                 using Repository<TblCompany> repo = new Repository<TblCompany>();
-                return repo.TblCompany.Where(x => x.CompanyId == compCode).FirstOrDefault();
+                return repo.TblCompany.Where(x => x.CompanyCode == compCode).FirstOrDefault();
             }
             catch { throw; }
         }
@@ -61,12 +61,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch { throw; }
         }
 
-        public static TblCompany DeleteCompanies(decimal  code)
+        public static TblCompany DeleteCompanies(string  code)
         {
             try
             {
                 using Repository<TblCompany> repo = new Repository<TblCompany>();
-                var comp = repo.TblCompany.Where(x => x.CompanyId == code).FirstOrDefault();
+                var comp = repo.TblCompany.Where(x => x.CompanyCode == code).FirstOrDefault();
                 repo.TblCompany.Remove(comp);
                 if (repo.SaveChanges() > 0)
                     return comp;
