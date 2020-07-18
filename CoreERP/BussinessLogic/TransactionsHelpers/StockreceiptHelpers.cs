@@ -24,16 +24,16 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             catch { throw; }
         }
 
-        public string Getbranchcodes(string codes)
+        public string Getbranchcodes(int codes)
         {
             try
             {
                 string name = null;
                 using (Repository<TblBranch> repo = new Repository<TblBranch>())
                 {
-                    var code = repo.TblBranch.Where(x => x.BranchCode == (codes)).FirstOrDefault();
+                    var code = repo.TblBranch.Where(x => x.BranchCode == Convert.ToString(codes)).FirstOrDefault();
                     var data= repo.TblBranch
-                          .Where(x => (x.SubBranchof == Convert.ToDecimal(codes)))
+                          .Where(x => (x.SubBranchof == codes))
                           .ToList();
                     foreach (var item in data)
                     {
@@ -299,7 +299,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                             stockinformation.BranchCode = Convert.ToString(i);
                             var _branchcode = GetBranches(Convert.ToString(i)).ToArray().FirstOrDefault();
                             //(stockreceipt.FromBranchCode)==null ? stockreceipt.FromBranchCode : ext;
-                            stockinformation.BranchId = _branchcode.BranchId;
+                            stockinformation.BranchId = _branchcode.Id;
 
                             if (shifId == 0)
                             {

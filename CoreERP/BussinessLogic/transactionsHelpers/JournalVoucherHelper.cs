@@ -256,7 +256,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 var ledgerName = GetAccountLedgerList().Where(al => al.LedgerCode == ledgerCode).FirstOrDefault();
                 _voucherDetail.VoucherMasterId = _voucherMaster.VoucherMasterId;
                 _voucherDetail.VoucherDetailDate = _voucherMaster.VoucherDate;
-                _voucherDetail.BranchId = _branch.BranchId;
+                _voucherDetail.BranchId = _branch.Id;
                 _voucherDetail.BranchCode = journalVoucherMaster.BranchCode;
                 _voucherDetail.BranchName = journalVoucherMaster.BranchName;
                 if (isFromCashDetials == true)
@@ -412,7 +412,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
                     journalVoucherMaster.JournalVchNo = _voucherMaster.VoucherMasterId.ToString();
                     journalVoucherMaster.ServerDate = DateTime.Now;
-                    journalVoucherMaster.BranchId = _branch.BranchId;
+                    journalVoucherMaster.BranchId = _branch.Id;
                     journalVoucherMaster.BranchName = _branch.BranchName;
                     journalVoucherMaster.FromLedgerId = _cashpayAccountLedger.LedgerId;
                     journalVoucherMaster.FromLedgerName = _cashpayAccountLedger.LedgerName;

@@ -116,7 +116,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
         //    catch { throw; }
         //}
 
-        public string Getbranchcode(string codes)
+        public string Getbranchcode(int codes)
         {
             try
             {
@@ -124,7 +124,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 using (Repository<TblBranch> repo = new Repository<TblBranch>())
                 {
                     //var code = repo.TblBranch.Where(x => x.SubBranchof == (codes)).FirstOrDefault();
-                    string strName = repo.TblBranch.Where(x => x.SubBranchof == Convert.ToDecimal(codes)).SingleOrDefault()?.BranchCode;
+                    string strName = repo.TblBranch.Where(x => x.SubBranchof == codes).SingleOrDefault()?.BranchCode;
                     return strName;
                 }
             }
@@ -370,7 +370,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                             stockinformation.BranchCode = Convert.ToString(i);
                             var _branchcode = GetBranches(Convert.ToString(i)).ToArray().FirstOrDefault();
                             //(stockreceipt.FromBranchCode)==null ? stockreceipt.FromBranchCode : ext;
-                            stockinformation.BranchId = _branchcode.BranchId;
+                            stockinformation.BranchId = _branchcode.Id;
 
                             if (shifId == 0)
                             {

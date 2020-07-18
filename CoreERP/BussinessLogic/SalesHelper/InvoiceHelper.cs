@@ -873,7 +873,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 var _voucherDetail = new TblVoucherDetail();
                 _voucherDetail.VoucherMasterId = _voucherMaster.VoucherMasterId;
                 _voucherDetail.VoucherDetailDate = _voucherMaster.VoucherDate;
-                _voucherDetail.BranchId = _branch.BranchId;
+                _voucherDetail.BranchId = _branch.Id;
                 _voucherDetail.BranchCode = invoice.BranchCode;
                 _voucherDetail.BranchName = invoice.BranchName;
                 if (isFromInvoiceDetials)
@@ -925,12 +925,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 if (!string.IsNullOrEmpty(_ChildBranches))
                 {
                     var branch = GetBranches(_ChildBranches).FirstOrDefault();
-                    _stockInformation.BranchId = branch.BranchId;
+                    _stockInformation.BranchId = branch.Id;
                     _stockInformation.BranchCode = branch.BranchCode;
                 }
                 else
                 {
-                    _stockInformation.BranchId = _branch.BranchId;
+                    _stockInformation.BranchId = _branch.Id;
                     _stockInformation.BranchCode = _branch.BranchCode;
                 }
                 _stockInformation.ShiftId = invoice.ShiftId;

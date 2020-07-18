@@ -47,7 +47,7 @@ namespace CoreERP.Controllers.Transactions
         }
 
         [HttpGet("GetbranchesnosList/{branchcode}")]
-        public async Task<IActionResult> GetbranchesnosList(string branchcode)
+        public async Task<IActionResult> GetbranchesnosList(int branchcode)
         {
             try
             {

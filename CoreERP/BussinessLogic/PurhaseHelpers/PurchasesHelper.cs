@@ -436,7 +436,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 var _voucherDetail = new TblVoucherDetail();
                 _voucherDetail.VoucherMasterId = _voucherMaster.VoucherMasterId;
                 _voucherDetail.VoucherDetailDate = _voucherMaster.VoucherDate;
-                _voucherDetail.BranchId = _branch.BranchId;
+                _voucherDetail.BranchId = _branch.Id;
                 _voucherDetail.CostCenter = _voucherDetail.BranchCode = invoice.BranchCode;
                 _voucherDetail.BranchName = invoice.BranchName;
                 _voucherDetail.Amount = productRate;
@@ -489,7 +489,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 //{
                 var _stockInformation = new TblStockInformation();
 
-                _stockInformation.BranchId = _branch.BranchId;
+                _stockInformation.BranchId = _branch.Id;
                 _stockInformation.BranchCode = _branch.BranchCode;
                 _stockInformation.ShiftId = invoice.ShiftId;
                 _stockInformation.VoucherNo = invoice.VoucherNo;

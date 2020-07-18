@@ -295,7 +295,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
 
                     oilConversionMaster.VoucherTypeId = _voucherMaster.VoucherMasterId;
                     oilConversionMaster.ServerDate = DateTime.Now;
-                    oilConversionMaster.BranchId = _branch.BranchId;
+                    oilConversionMaster.BranchId = _branch.Id;
                     oilConversionMaster.BranchName = _branch.BranchName;
                     oilConversionMaster.EmployeeId = _voucherMaster.EmployeeId;
                     oilConversionMaster.ShiftId = shifId;
