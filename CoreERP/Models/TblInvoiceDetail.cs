@@ -22,11 +22,11 @@ namespace CoreERP.Models
         public decimal? Rate { get; set; }
         public decimal ProductGroupId { get; set; }
         public decimal ProductGroupCode { get; set; }
-        public int? PumpId { get; set; }
-        public decimal? PumpNo { get; set; }
+        public int PumpId { get; set; }
+        public decimal PumpNo { get; set; }
         public decimal Qty { get; set; }
         public decimal FQty { get; set; }
-        public decimal? SlipNo { get; set; }
+        public decimal SlipNo { get; set; }
         public decimal UnitId { get; set; }
         public string UnitName { get; set; }
         public decimal? Discount { get; set; }

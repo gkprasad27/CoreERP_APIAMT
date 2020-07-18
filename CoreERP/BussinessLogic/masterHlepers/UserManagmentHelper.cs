@@ -125,15 +125,18 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
+                List<string> menuAccLst = null;
                 List<ExpandoObject> menusbyRole = new List<ExpandoObject>();
 
                 using Repository<Erpuser> _repo = new Repository<Erpuser>();
-                var menuAccLst = _repo.MenuAccesses
-.Where(m => m.RoleId == "administrator")
-.OrderByDescending(x => x.AddDate)
-.FirstOrDefault()
-.Ext4.Split(',')
-.ToList();
+               // {
+                     menuAccLst = _repo.MenuAccesses
+                                        .Where(m => m.RoleId == "administrator")
+                                        .OrderByDescending(x => x.AddDate)
+                                        .FirstOrDefault()
+                                        .Ext4.Split(',')
+                                        .ToList();
+               // }
                 var menuList = _repo.Menus
                                     .Where(x => menuAccLst.Contains(x.Code.ToString()))
                                     .ToList();

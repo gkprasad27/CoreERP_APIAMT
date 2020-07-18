@@ -12,6 +12,5 @@ namespace CoreERP.Models
         public string LeaveMinLimit { get; set; }
         public string LeaveMaxLimit { get; set; }
         public string LeaveName { get; set; }
-        
     }
 }

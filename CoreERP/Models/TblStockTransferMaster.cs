@@ -13,7 +13,7 @@ namespace CoreERP.Models
         public string ToBranchCode { get; set; }
         public string ToBranchName { get; set; }
         public decimal? ShiftId { get; set; }
-        public decimal? UserId { get; set; }
+        public decimal UserId { get; set; }
         public string UserName { get; set; }
         public decimal? EmployeeId { get; set; }
         public string Narration { get; set; }

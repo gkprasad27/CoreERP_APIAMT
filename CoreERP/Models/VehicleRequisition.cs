@@ -39,6 +39,5 @@ namespace CoreERP.Models
         public string RejectedId { get; set; }
         public string CompanyGroupCode { get; set; }
         public string CompanyGroupName { get; set; }
-        public string Active { get; set; }
     }
 }

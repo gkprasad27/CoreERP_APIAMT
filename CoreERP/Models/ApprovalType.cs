@@ -5,17 +5,15 @@ namespace CoreERP.Models
 {
     public partial class ApprovalType
     {
-        public int ApprovalId { get; set; }
-        public string ApprovalScreen { get; set; }
-        public string RecommendedBy { get; set; }
+        public int Id { get; set; }
+        public string ApprovalType1 { get; set; }
+        public string ImmediateReporting { get; set; }
+        public string ReportingTo { get; set; }
         public string ApprovedBy { get; set; }
-        public string CompanyCode { get; set; }
-        public string BranchCode { get; set; }
-        public string Ext1 { get; set; }
-        public string Ext2 { get; set; }
-        public string Ext3 { get; set; }
-        public string Ext4 { get; set; }
-        public string Active { get; set; }
-        public DateTime? AddDate { get; set; }
+        public string Company { get; set; }
+        public string Department { get; set; }
+        public string CompanyName { get; set; }
+        public string DepartmentName { get; set; }
+        public string ApproveName { get; set; }
     }
 }

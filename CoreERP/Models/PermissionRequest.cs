@@ -24,8 +24,7 @@ namespace CoreERP.Models
         public string RejectReason { get; set; }
         public string Purpose { get; set; }
         public string Department { get; set; }
-        public string PermissionType { get; set; }
-        public string CompanyGroupCode { get; set; }
-        public string CompanyGroupName { get; set; }
+        public DateTime? Fromdate { get; set; }
+        public DateTime? Todate { get; set; }
     }
 }

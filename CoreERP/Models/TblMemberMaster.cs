@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblMemberMaster
     {
-        public decimal? MemberId { get; set; }
+        public decimal MemberId { get; set; }
         public decimal? MemberCode { get; set; }
         public string Title { get; set; }
         public string MemberName { get; set; }
