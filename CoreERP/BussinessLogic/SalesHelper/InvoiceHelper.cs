@@ -740,8 +740,11 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 _product = GetProducts(invdtl.ProductCode).FirstOrDefault();
                                 _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
                                 _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure?.SalesAccount).FirstOrDefault();
-                                _pumpId = GetPumpID(Convert.ToInt32(invdtl.PumpNo),invoice.BranchCode).FirstOrDefault();
-                                invdtl.PumpId = Convert.ToInt32(_pumpId.PumpId);
+                                if (invdtl.PumpNo != null)
+                                {
+                                    _pumpId = GetPumpID(Convert.ToInt32(invdtl.PumpNo), invoice.BranchCode).FirstOrDefault();
+                                    invdtl.PumpId = Convert.ToInt32(_pumpId.PumpId);
+                                }
                                 #region Add voucher Details
                                 decimal? _amountWithoutTax= invdtl.GrossAmount;
                                 if(invdtl.Cgst > 0 && invdtl.Sgst > 0)
