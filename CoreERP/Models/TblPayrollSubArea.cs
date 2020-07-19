@@ -10,5 +10,7 @@ namespace CoreERP.Models
         public string Name { get; set; }
         public string PayrollArea { get; set; }
         public string Ext1 { get; set; }
+
+        public virtual TblPayrollArea PayrollAreaNavigation { get; set; }
     }
 }

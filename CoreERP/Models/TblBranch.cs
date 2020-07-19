@@ -10,7 +10,7 @@ namespace CoreERP.Models
         public string BranchName { get; set; }
         public string CompanyCode { get; set; }
         public int? IsMainBranch { get; set; }
-        public int SubBranchof { get; set; }
+        public int? SubBranchof { get; set; }
         public byte[] BranchImage { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
@@ -27,5 +27,14 @@ namespace CoreERP.Models
         public string Tanno { get; set; }
         public string Ext { get; set; }
         public string Ext1 { get; set; }
+        public string Language { get; set; }
+        public string Currency { get; set; }
+        public string ResponsiblePerson { get; set; }
+
+        public virtual Countries CountryNavigation { get; set; }
+        public virtual TblCurrency CurrencyNavigation { get; set; }
+        public virtual TblLanguage LanguageNavigation { get; set; }
+        public virtual TblRegion RegionNavigation { get; set; }
+        public virtual States StateNavigation { get; set; }
     }
 }
