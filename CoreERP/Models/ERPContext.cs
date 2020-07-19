@@ -41,6 +41,8 @@ namespace CoreERP.Models
         public virtual DbSet<LeaveApplDetails> LeaveApplDetails { get; set; }
         public virtual DbSet<LeaveBalanceMaster> LeaveBalanceMaster { get; set; }
         public virtual DbSet<LeaveTypes> LeaveTypes { get; set; }
+        public virtual DbSet<Ledger> Ledger { get; set; }
+        public virtual DbSet<LedgerType> LedgerType { get; set; }
         public virtual DbSet<MatTranTypes> MatTranTypes { get; set; }
         public virtual DbSet<MenuAccesses> MenuAccesses { get; set; }
         public virtual DbSet<Menus> Menus { get; set; }
@@ -1314,6 +1316,32 @@ namespace CoreERP.Models
                 entity.Property(e => e.LeaveMinLimit).HasMaxLength(40);
 
                 entity.Property(e => e.LeaveName).HasMaxLength(40);
+            });
+
+            modelBuilder.Entity<Ledger>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Ext).HasMaxLength(50);
+
+                entity.Property(e => e.LedgerType).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<LedgerType>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Ext).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(50);
             });
 
             modelBuilder.Entity<MatTranTypes>(entity =>
