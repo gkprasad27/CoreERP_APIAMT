@@ -85,6 +85,13 @@ namespace CoreERP.Models
         public virtual DbSet<TblAdvancePayment> TblAdvancePayment { get; set; }
         public virtual DbSet<TblAdvanceType> TblAdvanceType { get; set; }
         public virtual DbSet<TblArea> TblArea { get; set; }
+        public virtual DbSet<TblAssetAccountkey> TblAssetAccountkey { get; set; }
+        public virtual DbSet<TblAssetBlock> TblAssetBlock { get; set; }
+        public virtual DbSet<TblAssetClass> TblAssetClass { get; set; }
+        public virtual DbSet<TblAssetNumberRange> TblAssetNumberRange { get; set; }
+        public virtual DbSet<TblAssetTransactiontype> TblAssetTransactiontype { get; set; }
+        public virtual DbSet<TblAssignAccountkeytoAsset> TblAssignAccountkeytoAsset { get; set; }
+        public virtual DbSet<TblAssignAssetClasstoBlockAsset> TblAssignAssetClasstoBlockAsset { get; set; }
         public virtual DbSet<TblAssignTaxacctoTaxcode> TblAssignTaxacctoTaxcode { get; set; }
         public virtual DbSet<TblAssignmentVoucherSeriestoVoucherType> TblAssignmentVoucherSeriestoVoucherType { get; set; }
         public virtual DbSet<TblAssiignChartAcctoCompanyCode> TblAssiignChartAcctoCompanyCode { get; set; }
@@ -126,6 +133,8 @@ namespace CoreERP.Models
         public virtual DbSet<TblDebitNoteMaster> TblDebitNoteMaster { get; set; }
         public virtual DbSet<TblDeliveryNoteDetails> TblDeliveryNoteDetails { get; set; }
         public virtual DbSet<TblDeliveryNoteMaster> TblDeliveryNoteMaster { get; set; }
+        public virtual DbSet<TblDepreciation> TblDepreciation { get; set; }
+        public virtual DbSet<TblDepreciationAreas> TblDepreciationAreas { get; set; }
         public virtual DbSet<TblDesignation> TblDesignation { get; set; }
         public virtual DbSet<TblDetails> TblDetails { get; set; }
         public virtual DbSet<TblDetailsCopy> TblDetailsCopy { get; set; }
@@ -3343,6 +3352,167 @@ namespace CoreERP.Models
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<TblAssetAccountkey>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_AssetAccountkey");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.AccumulatedGl)
+                    .HasColumnName("AccumulatedGL")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.AcquisitionsGl)
+                    .HasColumnName("AcquisitionsGL")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.Auggl)
+                    .HasColumnName("AUGGL")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.DepreciationGl)
+                    .HasColumnName("DepreciationGL")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.GainOnSaleGl)
+                    .HasColumnName("GainOnSaleGL")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.LossOnSaleGl)
+                    .HasColumnName("LossOnSaleGL")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.SalesRevenueGl)
+                    .HasColumnName("SalesRevenueGL")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.ScrappingGl)
+                    .HasColumnName("ScrappingGL")
+                    .HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblAssetBlock>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_AssetBlock");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.DepreciationKey).HasMaxLength(5);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Ext)
+                    .HasColumnName("ext")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<TblAssetClass>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_AssetClass");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.AssetLowValue).HasMaxLength(5);
+
+                entity.Property(e => e.ClassType).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.LowValueAssetClass).HasMaxLength(5);
+
+                entity.Property(e => e.NumberRange).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblAssetNumberRange>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_AssetNumberRange");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.FromRange).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.NonNumeric).HasMaxLength(5);
+
+                entity.Property(e => e.ToRange).HasColumnType("numeric(18, 0)");
+            });
+
+            modelBuilder.Entity<TblAssetTransactiontype>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_AssetTransactiontype");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<TblAssignAccountkeytoAsset>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_AssignAccountkeytoAsset");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.AccountKey).HasMaxLength(5);
+
+                entity.Property(e => e.AssetClass).HasMaxLength(5);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<TblAssignAssetClasstoBlockAsset>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_AssignAssetClasstoBlockAsset");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.AssetBlock).HasMaxLength(5);
+
+                entity.Property(e => e.AssetClass).HasMaxLength(5);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+            });
+
             modelBuilder.Entity<TblAssignTaxacctoTaxcode>(entity =>
             {
                 entity.HasKey(e => e.Code);
@@ -5458,6 +5628,56 @@ namespace CoreERP.Models
                 entity.Property(e => e.VoucherTypeId)
                     .HasColumnName("voucherTypeId")
                     .HasColumnType("numeric(18, 0)");
+            });
+
+            modelBuilder.Entity<TblDepreciation>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_Depreciation");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.DepreciationDuringLife).HasMaxLength(5);
+
+                entity.Property(e => e.DepreciationMethod).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Ext).HasMaxLength(50);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.MaxDepreciation).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.PurchaseWithin).HasColumnType("date");
+
+                entity.Property(e => e.RatePercentage).HasMaxLength(5);
+
+                entity.Property(e => e.Upto).HasColumnType("date");
+            });
+
+            modelBuilder.Entity<TblDepreciationAreas>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_DepreciationAreas");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.DepreciationType).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Ext)
+                    .HasColumnName("ext")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<TblDesignation>(entity =>
