@@ -6,6 +6,7 @@ namespace CoreERP.Models
     public partial class Menus
     {
         public int Code { get; set; }
+        public string OperationCode { get; set; }
         public string Description { get; set; }
         public int? MenuOrder { get; set; }
         public string ParentId { get; set; }
