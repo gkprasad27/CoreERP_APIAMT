@@ -14,7 +14,7 @@ namespace CoreERP.Controllers.Reports
     public class AccountLedgerReportController : ControllerBase
     {
         [HttpGet("GetAccountLedgerReportData")]
-        public async Task<IActionResult> GetAccountLedgerReportData(string UserID,string ledgerCode, DateTime fromDate, DateTime toDate)
+        public async Task<IActionResult> GetAccountLedgerReportData(string UserID,string ledgerCode, DateTime fromDate, DateTime toDate,string branchCode)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace CoreERP.Controllers.Reports
                     toDate = DateTime.Now;
                     // return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                var serviceResult =await Task.FromResult(ReportsHelperClass.GetAccountLedgerReportDataList(UserID,ledgerCode, fromDate,toDate));
+                var serviceResult =await Task.FromResult(ReportsHelperClass.GetAccountLedgerReportDataList(UserID,ledgerCode, fromDate,toDate,branchCode));
                 if (serviceResult.Item1 != null && serviceResult.Item1.Count>0)
                 {
                     dynamic expdoObj = new ExpandoObject();
