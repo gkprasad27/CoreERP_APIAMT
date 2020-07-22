@@ -17,13 +17,16 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
             {
                 using (Repository<TblAdvance> repo = new Repository<TblAdvance>())
                 {
-                    if (code.ToLower() == "admin")
-                    {
-                        return repo.TblAdvance.ToList();
+                    //if (code.ToLower() == "admin")
+                    //{
+                    //    //return repo.TblAdvance.ToList();
 
-                    }
-                    else
-                        return repo.TblAdvance.Where(x => x.EmployeeId == code).ToList();
+
+                    //}
+                    //else
+                    //    return repo.TblAdvance.Where(x => x.EmployeeId == code).ToList();
+
+                    return null;
                 }
             }
             catch { throw; }
@@ -34,20 +37,20 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
             try
             {
                 errorMessage = string.Empty;
-                using (Repository<TblAdvance> repo = new Repository<TblAdvance>())
-                {
-                    var empdata = repo.TblEmployee.Where(x => x.EmployeeCode == advance.EmployeeId).FirstOrDefault();
-                    advance.Status = "Applied";
-                    advance.ApplyDate = DateTime.Now;
-                    advance.RecommendedBy = empdata.ReportedBy;
+                //using (Repository<TblAdvance> repo = new Repository<TblAdvance>())
+                //{
+                //    var empdata = repo.TblEmployee.Where(x => x.EmployeeCode == advance.EmployeeId).FirstOrDefault();
+                //    advance.Status = "Applied";
+                //    advance.ApplyDate = DateTime.Now;
+                //    advance.RecommendedBy = empdata.ReportedBy;
                     //advance.ReportName = repo.TblEmployee.Where(x => x.EmployeeCode == advance.RecommendedBy).SingleOrDefault()?.EmployeeName;
-                    advance.ApprovedBy = empdata.ApprovedBy;
+                 //   advance.ApprovedBy = empdata.ApprovedBy;
                     //advance.ApproveName = repo.TblEmployee.Where(x => x.EmployeeCode == advance.ApprovedBy).SingleOrDefault()?.EmployeeName;
-                    repo.TblAdvance.Add(advance);
-                    if (repo.SaveChanges() > 0)
-                        return advance;
+                    //repo.TblAdvance.Add(advance);
+                    //if (repo.SaveChanges() > 0)
+                    //    return advance;
                     return null;
-                }
+                //}
             }
             catch { throw; }
         }
@@ -65,21 +68,21 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
 
                 using (Repository<TblAdvance> repo = new Repository<TblAdvance>())
                 {
-                    var OdAplysdata = repo.TblAdvance.Where(x => x.Id == advance.Id).FirstOrDefault();
-                    if (OdAplysdata.Id > 0)
-                    {
-                        repo.Entry(OdAplysdata).State = EntityState.Detached;
-                        advance.Status = "Applied";
-                        advance.ApplyDate = DateTime.Now;
-                        repo.Entry(advance).State = EntityState.Modified;
-                        repo.TblAdvance.Update(advance);
+                    //var OdAplysdata = repo.TblAdvance.Where(x => x.Id == advance.Id).FirstOrDefault();
+                    //if (OdAplysdata.Id > 0)
+                    //{
+                    //    repo.Entry(OdAplysdata).State = EntityState.Detached;
+                    //    advance.Status = "Applied";
+                    //    advance.ApplyDate = DateTime.Now;
+                    //    repo.Entry(advance).State = EntityState.Modified;
+                    //    repo.TblAdvance.Update(advance);
 
-                        if (repo.SaveChanges() > 0)
-                            return advance;
-                        else
-                            errorMessage = "Registration failed.";
-                        return null;
-                    }
+                    //    if (repo.SaveChanges() > 0)
+                    //        return advance;
+                    //    else
+                    //        errorMessage = "Registration failed.";
+                      //  return null;
+                   // }
 
                 }
                 return advance;
@@ -94,7 +97,9 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
             try
             {
                 using Repository<TblAdvanceType> repo = new Repository<TblAdvanceType>();
-                return repo.TblAdvanceType.ToList();
+                //return repo.TblAdvanceType.ToList();
+
+                return null;
             }
             catch { throw; }
         }

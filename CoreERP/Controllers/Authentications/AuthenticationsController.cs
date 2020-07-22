@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,14 +71,15 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("getMenu/{roleName}")]
-        public async Task<IActionResult> GetMenus()
+        [HttpGet("getMenu/{roleId}")]
+        public async Task<IActionResult> GetMenus(string roleId)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var result = UserManagmentHelper.GetScreensListByUserRole();
+                   // var result = UserManagmentHelper.GetScreensListByUserRole(userName);
+                    var result = UserManagmentHelper.GetMenusForRole(roleId);
                     if (result != null)
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
@@ -91,22 +93,19 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetMenuList")]
-        public async Task<IActionResult> GetMenuList()
+        #region Menu Access
+        [HttpGet("getMenuList/{roleId}/{parentId}")]
+        public async Task<IActionResult> GetMenusList(string roleId,string parentId)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var result = new UserManagmentHelper().GetMenus();
+                    var result = new UserManagmentHelper().GetMenus(parentId, roleId);
                     if (result != null)
-                    {
-                        dynamic expando = new ExpandoObject();
-                        expando.MenusList = result;
-                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                    }
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found." });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found for user." });
                 }
                 catch (Exception ex)
                 {
@@ -115,6 +114,73 @@ namespace CoreERP.Controllers
             });
             return result;
         }
+
+        [HttpPost("GiveAccess/{roleId}")]
+        public async Task<IActionResult> GetMenusList(string roleId,[FromBody] List<MenuAccesses> menuAccesses)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                   new UserManagmentHelper().GiveAcces(menuAccesses, roleId);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Menu Access provided sccessfully." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("getRoles")]
+        public async Task<IActionResult> GetRoles()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var result = new UserManagmentHelper().GetRoles();
+                    if (result != null)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.Roles = result.Select(r => new { ID = r.RoleId, TEXT = r.Role });
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  roles configured." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("getParentMenu")]
+        public async Task<IActionResult> GetParentMenu()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var result = new UserManagmentHelper().GetParentMenus();
+                    if (result != null)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.ParentMenus = result.Select(r => new { ID = r.OperationCode, TEXT = r.Description });
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Parent menu found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
+        }
+        #endregion
 
         [HttpGet("logout/{userId}")]
         public async Task<IActionResult> GetMenuList(string userId)
@@ -127,9 +193,9 @@ namespace CoreERP.Controllers
                     var result = new UserManagmentHelper().GetErpuser(Convert.ToDecimal(userId));
                     if (result != null)
                     {
-                        var _branch = UserManagmentHelper.GetBranchesByUser(Convert.ToDecimal(userId));
-                        foreach (var br in _branch)
-                            new UserManagmentHelper().LogoutShiftId(Convert.ToDecimal(userId), br, out errorMessage);
+                        //var _branch = UserManagmentHelper.GetBranchesByUser(Convert.ToDecimal(userId));
+                        //foreach (var br in _branch)
+                        //    new UserManagmentHelper().LogoutShiftId(Convert.ToDecimal(userId), br, out errorMessage);
 
 
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Log out successfully." });

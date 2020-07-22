@@ -69,7 +69,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblDesignation> repo = new Repository<TblDesignation>();
-                var designation = repo.TblDesignation.Where(x => x.DesignationId ==Convert.ToInt32(desigCode)).FirstOrDefault();
+                var designation = repo.TblDesignation.Where(x => x.DesignationId == Convert.ToDecimal(desigCode)).FirstOrDefault();
                 repo.TblDesignation.Remove(designation);
                 if (repo.SaveChanges() > 0)
                     return designation;

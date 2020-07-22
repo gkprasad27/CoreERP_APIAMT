@@ -20,6 +20,10 @@ namespace CoreERP.Models
         public virtual DbSet<ApprovalType> ApprovalType { get; set; }
         public virtual DbSet<AsignmentAcctoAccClass> AsignmentAcctoAccClass { get; set; }
         public virtual DbSet<AsignmentCashAccBranch> AsignmentCashAccBranch { get; set; }
+        public virtual DbSet<AttendanceData> AttendanceData { get; set; }
+        public virtual DbSet<AttendanceDataold> AttendanceDataold { get; set; }
+        public virtual DbSet<Brand> Brand { get; set; }
+        public virtual DbSet<BrandModel> BrandModel { get; set; }
         public virtual DbSet<CashInOutFlow1> CashInOutFlow1 { get; set; }
         public virtual DbSet<ComponentMaster> ComponentMaster { get; set; }
         public virtual DbSet<ConfigurationTable> ConfigurationTable { get; set; }
@@ -42,7 +46,7 @@ namespace CoreERP.Models
         public virtual DbSet<MatTranTypes> MatTranTypes { get; set; }
         public virtual DbSet<MenuAccesses> MenuAccesses { get; set; }
         public virtual DbSet<Menus> Menus { get; set; }
-        public virtual DbSet<MissingPunch> MissingPunch { get; set; }
+        public virtual DbSet<NoAssignment> NoAssignment { get; set; }
         public virtual DbSet<NoSeries> NoSeries { get; set; }
         public virtual DbSet<PartnerCreation> PartnerCreation { get; set; }
         public virtual DbSet<PartnerType> PartnerType { get; set; }
@@ -51,6 +55,8 @@ namespace CoreERP.Models
         public virtual DbSet<Pfmaster> Pfmaster { get; set; }
         public virtual DbSet<ProfitCenters> ProfitCenters { get; set; }
         public virtual DbSet<Ptmaster> Ptmaster { get; set; }
+        public virtual DbSet<PurchaseRequisitionMaster> PurchaseRequisitionMaster { get; set; }
+        public virtual DbSet<PurchaseRequisitiondetails> PurchaseRequisitiondetails { get; set; }
         public virtual DbSet<RebateSus558> RebateSus558 { get; set; }
         public virtual DbSet<Roundtest> Roundtest { get; set; }
         public virtual DbSet<SalaryEarnDedn> SalaryEarnDedn { get; set; }
@@ -72,9 +78,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblAccountType> TblAccountType { get; set; }
         public virtual DbSet<TblAdditionalCost> TblAdditionalCost { get; set; }
         public virtual DbSet<TblAdditionalShareTransfer> TblAdditionalShareTransfer { get; set; }
-        public virtual DbSet<TblAdvance> TblAdvance { get; set; }
         public virtual DbSet<TblAdvancePayment> TblAdvancePayment { get; set; }
-        public virtual DbSet<TblAdvanceType> TblAdvanceType { get; set; }
         public virtual DbSet<TblArea> TblArea { get; set; }
         public virtual DbSet<TblBankPaymentDetails> TblBankPaymentDetails { get; set; }
         public virtual DbSet<TblBankPaymentMaster> TblBankPaymentMaster { get; set; }
@@ -83,7 +87,6 @@ namespace CoreERP.Models
         public virtual DbSet<TblBankReconciliation> TblBankReconciliation { get; set; }
         public virtual DbSet<TblBarcodeSettings> TblBarcodeSettings { get; set; }
         public virtual DbSet<TblBatch> TblBatch { get; set; }
-        public virtual DbSet<TblBiometric> TblBiometric { get; set; }
         public virtual DbSet<TblBom> TblBom { get; set; }
         public virtual DbSet<TblBonusDeduction> TblBonusDeduction { get; set; }
         public virtual DbSet<TblBranch> TblBranch { get; set; }
@@ -196,6 +199,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblRole> TblRole { get; set; }
         public virtual DbSet<TblRolePrivilegeForm> TblRolePrivilegeForm { get; set; }
         public virtual DbSet<TblRolePrivilegeMenu> TblRolePrivilegeMenu { get; set; }
+        public virtual DbSet<TblRoles> TblRoles { get; set; }
         public virtual DbSet<TblRoute> TblRoute { get; set; }
         public virtual DbSet<TblSalaryPackage> TblSalaryPackage { get; set; }
         public virtual DbSet<TblSalaryPackageDetails> TblSalaryPackageDetails { get; set; }
@@ -266,7 +270,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblVoucherType> TblVoucherType { get; set; }
         public virtual DbSet<TblVoucherTypeTax> TblVoucherTypeTax { get; set; }
         public virtual DbSet<TblVoucherTypeToCopy> TblVoucherTypeToCopy { get; set; }
-        public virtual DbSet<TblVoucherTypess> TblVoucherTypess { get; set; }
+        public virtual DbSet<TblVoucherTypes> TblVoucherTypes { get; set; }
         public virtual DbSet<Temp> Temp { get; set; }
         public virtual DbSet<Temp1> Temp1 { get; set; }
         public virtual DbSet<Temp81> Temp81 { get; set; }
@@ -285,7 +289,7 @@ namespace CoreERP.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=183.82.48.82;Database=ERP; User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
+                optionsBuilder.UseSqlServer("Server=183.82.48.82;Database=ERP_Vjwd; User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
             }
         }
 
@@ -544,6 +548,139 @@ namespace CoreERP.Models
                 entity.Property(e => e.Ext1).HasMaxLength(20);
 
                 entity.Property(e => e.Ext2).HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<AttendanceData>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.Property(e => e.DateTimeStamp).HasColumnType("datetime");
+
+                entity.Property(e => e.DeviceAddress)
+                    .HasMaxLength(2)
+                    .IsFixedLength();
+
+                entity.Property(e => e.EmpCode).HasMaxLength(50);
+
+                entity.Property(e => e.EmployeeName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.InAndOut)
+                    .HasMaxLength(2)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Ouname)
+                    .IsRequired()
+                    .HasColumnName("OUName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PullStatus).HasMaxLength(50);
+
+                entity.Property(e => e.TerminalId)
+                    .HasMaxLength(16)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AttendanceDataold>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.Property(e => e.DateTimeStamp).HasColumnType("datetime");
+
+                entity.Property(e => e.EmpCode).HasMaxLength(50);
+
+                entity.Property(e => e.InAndOut)
+                    .HasMaxLength(2)
+                    .IsFixedLength();
+
+                entity.Property(e => e.PullStatus).HasMaxLength(50);
+
+                entity.Property(e => e.TerminalId)
+                    .HasMaxLength(16)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Brand>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.Property(e => e.Code).HasMaxLength(20);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.BrandName).HasMaxLength(100);
+
+                entity.Property(e => e.CompCode).HasMaxLength(50);
+
+                entity.Property(e => e.CustomerCare).HasMaxLength(100);
+
+                entity.Property(e => e.Ext1).HasMaxLength(50);
+
+                entity.Property(e => e.Ext2).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<BrandModel>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.Property(e => e.Code).HasMaxLength(20);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.BrandCode).HasMaxLength(50);
+
+                entity.Property(e => e.BrandName).HasMaxLength(50);
+
+                entity.Property(e => e.ClosingStock).HasMaxLength(50);
+
+                entity.Property(e => e.CompName).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(50);
+
+                entity.Property(e => e.Ext2).HasMaxLength(50);
+
+                entity.Property(e => e.Ext3).HasMaxLength(50);
+
+                entity.Property(e => e.Ext4).HasMaxLength(50);
+
+                entity.Property(e => e.Ext5).HasMaxLength(50);
+
+                entity.Property(e => e.Ext6).HasMaxLength(50);
+
+                entity.Property(e => e.Hsncode)
+                    .HasColumnName("HSNCode")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.InputTaxCode).HasMaxLength(50);
+
+                entity.Property(e => e.ItemCode).HasMaxLength(50);
+
+                entity.Property(e => e.MaterialGroupCode).HasMaxLength(50);
+
+                entity.Property(e => e.ModelName).HasMaxLength(50);
+
+                entity.Property(e => e.OutputTaxCode).HasMaxLength(50);
+
+                entity.Property(e => e.Rate).HasMaxLength(50);
+
+                entity.Property(e => e.Size).HasMaxLength(50);
             });
 
             modelBuilder.Entity<CashInOutFlow1>(entity =>
@@ -1220,7 +1357,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.CompanyName).HasMaxLength(40);
 
-                entity.Property(e => e.LeaveCode).HasMaxLength(8);
+                entity.Property(e => e.LeaveCode).HasMaxLength(40);
 
                 entity.Property(e => e.LeaveMaxLimit).HasMaxLength(40);
 
@@ -1268,7 +1405,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<MenuAccesses>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.MenuId);
+
+                entity.Property(e => e.MenuId).HasColumnName("MenuID");
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
@@ -1281,15 +1420,21 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.BranchCode).HasMaxLength(50);
 
+                entity.Property(e => e.CanAdd).HasColumnName("canAdd");
+
+                entity.Property(e => e.CanDelete).HasColumnName("canDelete");
+
+                entity.Property(e => e.CanEdit).HasColumnName("canEdit");
+
+                entity.Property(e => e.CanView).HasColumnName("canView");
+
                 entity.Property(e => e.CompCode).HasMaxLength(50);
 
                 entity.Property(e => e.Ext1).HasMaxLength(20);
 
                 entity.Property(e => e.Ext2).HasMaxLength(20);
 
-                entity.Property(e => e.MenuId)
-                    .HasColumnName("MenuID")
-                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.OperationCode).HasMaxLength(10);
 
                 entity.Property(e => e.RoleId)
                     .IsRequired()
@@ -1302,8 +1447,6 @@ namespace CoreERP.Models
             modelBuilder.Entity<Menus>(entity =>
             {
                 entity.HasKey(e => e.Code);
-
-                entity.Property(e => e.Code).ValueGeneratedNever();
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
@@ -1332,6 +1475,8 @@ namespace CoreERP.Models
                     .IsUnicode(false)
                     .IsFixedLength();
 
+                entity.Property(e => e.OperationCode).HasMaxLength(50);
+
                 entity.Property(e => e.ParentId)
                     .HasColumnName("ParentID")
                     .HasMaxLength(20);
@@ -1341,106 +1486,32 @@ namespace CoreERP.Models
                     .HasMaxLength(500);
             });
 
-            modelBuilder.Entity<MissingPunch>(entity =>
+            modelBuilder.Entity<NoAssignment>(entity =>
             {
-                entity.HasKey(e => e.Sno)
-                    .HasName("PK_MissingPunchs_1");
+                entity.HasKey(e => e.Code);
 
-                entity.Property(e => e.AccDate)
-                    .HasColumnName("Acc_Date")
-                    .HasColumnType("datetime");
+                entity.Property(e => e.Code).HasMaxLength(20);
 
-                entity.Property(e => e.AcceptedRemarks)
-                    .HasMaxLength(500)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.AccptedId)
-                    .HasMaxLength(15)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ApplDate)
-                    .HasColumnName("Appl_Date")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.ApprDate)
-                    .HasColumnName("appr_date")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.ApproveName)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ApprovedId)
-                    .HasColumnName("ApprovedID")
-                    .HasMaxLength(30)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.AuthDate)
-                    .HasColumnName("auth_date")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.AuthorizedId)
-                    .HasColumnName("AuthorizedID")
-                    .HasMaxLength(15)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.AuthorizedStatus)
-                    .HasColumnName("Authorized_status")
-                    .HasMaxLength(15)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.CompanyCode)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.CompanyGroupCode)
-                    .HasMaxLength(8)
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
                     .IsFixedLength();
 
-                entity.Property(e => e.CompanyGroupName)
-                    .HasMaxLength(100)
-                    .IsFixedLength();
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
 
-                entity.Property(e => e.CompanyName)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.CompanyCode).HasMaxLength(20);
 
-                entity.Property(e => e.EmpCode)
-                    .IsRequired()
-                    .HasColumnName("Emp_Code")
-                    .HasMaxLength(10)
-                    .IsFixedLength();
+                entity.Property(e => e.Description).HasMaxLength(50);
 
-                entity.Property(e => e.EmpName)
-                    .HasMaxLength(200)
-                    .IsUnicode(false);
+                entity.Property(e => e.Ext1).HasMaxLength(20);
 
-                entity.Property(e => e.MissingDate).HasColumnType("date");
+                entity.Property(e => e.Ext2).HasMaxLength(20);
 
-                entity.Property(e => e.Reason)
-                    .HasMaxLength(500)
-                    .IsUnicode(false);
+                entity.Property(e => e.MaterialGroup).HasMaxLength(50);
 
-                entity.Property(e => e.RejectedId)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.NoType).HasMaxLength(30);
 
-                entity.Property(e => e.RejectedName)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ReportId)
-                    .HasColumnName("ReportID")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ReportName)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Status)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.NumberInterval).HasMaxLength(30);
             });
 
             modelBuilder.Entity<NoSeries>(entity =>
@@ -1836,6 +1907,68 @@ namespace CoreERP.Models
                 entity.Property(e => e.Year)
                     .HasMaxLength(4)
                     .IsFixedLength();
+            });
+
+            modelBuilder.Entity<PurchaseRequisitionMaster>(entity =>
+            {
+                entity.Property(e => e.Branch)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Company)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RequisitionDate).HasColumnType("datetime");
+
+                entity.Property(e => e.RequisitionNo)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<PurchaseRequisitiondetails>(entity =>
+            {
+                entity.HasKey(e => e.RequisitionDetailId)
+                    .HasName("PK__PurchaseRequisitiondetails");
+
+                entity.Property(e => e.RequisitionDetailId)
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.ApprovedQty).IsUnicode(false);
+
+                entity.Property(e => e.AvailbleQtyinBranch).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.AvailbleQtyinGowdown).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductCode)
+                    .HasColumnName("productCode")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProductId)
+                    .HasColumnName("productId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProductName)
+                    .HasColumnName("productName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Purchasereqisitionid)
+                    .HasColumnName("purchasereqisitionid")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Qty)
+                    .HasColumnName("qty")
+                    .HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<RebateSus558>(entity =>
@@ -2661,9 +2794,6 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_AccountLedgerTransactions");
 
-                entity.HasIndex(e => new { e.LedgerCode, e.VoucherDetailId, e.DebitAmount, e.CreditAmount })
-                    .HasName("NonClusteredAccountLedgerTransCols");
-
                 entity.Property(e => e.LedgerTransactionId)
                     .HasColumnName("ledgerTransactionId")
                     .HasColumnType("numeric(18, 0)")
@@ -2852,47 +2982,6 @@ namespace CoreERP.Models
                     .HasColumnType("datetime");
             });
 
-            modelBuilder.Entity<TblAdvance>(entity =>
-            {
-                entity.ToTable("tbl_Advance");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AdvanceAmount).HasColumnType("decimal(18, 0)");
-
-                entity.Property(e => e.AdvanceType)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ApplyDate).HasColumnType("datetime");
-
-                entity.Property(e => e.ApproveDate).HasColumnType("datetime");
-
-                entity.Property(e => e.ApprovedBy)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Balance).HasColumnType("decimal(18, 0)");
-
-                entity.Property(e => e.DeductedAmount).HasColumnType("decimal(18, 0)");
-
-                entity.Property(e => e.EmployeeId)
-                    .HasMaxLength(10)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Reason)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.RecommendedBy)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Status)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            });
-
             modelBuilder.Entity<TblAdvancePayment>(entity =>
             {
                 entity.HasKey(e => e.AdvancePaymentId)
@@ -2968,19 +3057,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.VoucherTypeId)
                     .HasColumnName("voucherTypeId")
                     .HasColumnType("numeric(18, 0)");
-            });
-
-            modelBuilder.Entity<TblAdvanceType>(entity =>
-            {
-                entity.ToTable("tbl_AdvanceType");
-
-                entity.Property(e => e.AdvanceTypeId)
-                    .HasMaxLength(10)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.AdvanceTypeName)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<TblArea>(entity =>
@@ -3450,45 +3526,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.ProductId)
                     .HasColumnName("productId")
                     .HasColumnType("numeric(18, 0)");
-            });
-
-            modelBuilder.Entity<TblBiometric>(entity =>
-            {
-                entity.ToTable("tbl_Biometric");
-
-                entity.Property(e => e.AttendanceDateTime).HasColumnType("datetime");
-
-                entity.Property(e => e.AttendanceId)
-                    .HasColumnName("AttendanceID")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.CreatedBy)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
-
-                entity.Property(e => e.DeviceId)
-                    .HasColumnName("DeviceID")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.EmployeeCode).IsUnicode(false);
-
-                entity.Property(e => e.EmployeeId)
-                    .HasColumnName("EmployeeID")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.InOutMode)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Latitude).IsUnicode(false);
-
-                entity.Property(e => e.Longitude).IsUnicode(false);
-
-                entity.Property(e => e.SyncDateTime).HasColumnType("datetime");
-
-                entity.Property(e => e.WorkCode).HasColumnType("numeric(18, 0)");
             });
 
             modelBuilder.Entity<TblBom>(entity =>
@@ -6010,12 +6047,6 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_InvoiceMaster");
 
-                entity.HasIndex(e => e.InvoiceMasterId)
-                    .HasName("NonClusteredInvoiceMasterIndex2");
-
-                entity.HasIndex(e => new { e.VoucherNo, e.InvoiceNo, e.LedgerName, e.LedgerCode, e.BranchCode, e.GrandTotal, e.InvoiceDate, e.InvoiceMasterId })
-                    .HasName("NonClusteredInvoiceMasterIndex1");
-
                 entity.Property(e => e.InvoiceMasterId)
                     .HasColumnName("invoiceMasterId")
                     .HasColumnType("numeric(18, 0)")
@@ -6063,7 +6094,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.InvoiceNo)
                     .HasColumnName("invoiceNo")
-                    .HasColumnType("varchar(max)");
+                    .IsUnicode(false);
 
                 entity.Property(e => e.IsManualEntry)
                     .HasColumnName("isManualEntry")
@@ -6083,7 +6114,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.LedgerName)
                     .HasColumnName("ledgerName")
-                    .HasColumnType("varchar(max)");
+                    .IsUnicode(false);
 
                 entity.Property(e => e.ManualInvoiceNo).IsUnicode(false);
 
@@ -6174,7 +6205,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.VoucherNo)
                     .HasColumnName("voucherNo")
-                    .HasColumnType("varchar(max)");
+                    .IsUnicode(false);
 
                 entity.Property(e => e.VoucherTypeId)
                     .HasColumnName("voucherTypeId")
@@ -10537,6 +10568,25 @@ namespace CoreERP.Models
                     .HasColumnType("numeric(18, 0)");
             });
 
+            modelBuilder.Entity<TblRoles>(entity =>
+            {
+                entity.HasKey(e => e.RoleCode);
+
+                entity.ToTable("tbl_Roles");
+
+                entity.Property(e => e.RoleCode).HasMaxLength(5);
+
+                entity.Property(e => e.Ext).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(50);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.RoleName).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<TblRoute>(entity =>
             {
                 entity.HasKey(e => e.RouteId);
@@ -14226,9 +14276,6 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_VoucherDetail");
 
-                entity.HasIndex(e => new { e.Narration, e.VoucherMasterId })
-                    .HasName("NonClusteredVoucherDetailCols");
-
                 entity.Property(e => e.VoucherDetailId)
                     .HasColumnName("voucherDetailId")
                     .HasColumnType("numeric(18, 0)")
@@ -14268,7 +14315,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Narration)
                     .HasColumnName("narration")
-                    .HasColumnType("varchar(max)");
+                    .IsUnicode(false);
 
                 entity.Property(e => e.ServerDate)
                     .HasColumnName("serverDate")
@@ -14545,12 +14592,12 @@ namespace CoreERP.Models
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<TblVoucherTypess>(entity =>
+            modelBuilder.Entity<TblVoucherTypes>(entity =>
             {
                 entity.HasKey(e => e.VoucherTypeId)
                     .HasName("PK__tbl_VoucherTypes");
 
-                entity.ToTable("tbl_VoucherTypess");
+                entity.ToTable("tbl_VoucherTypes");
 
                 entity.Property(e => e.VoucherTypeId)
                     .HasColumnName("voucherTypeId")
