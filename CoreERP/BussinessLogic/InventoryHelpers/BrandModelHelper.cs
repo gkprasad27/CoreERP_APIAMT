@@ -12,94 +12,120 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
     public class BrandModelHelpers
     {
 
-        //public static BrandModel RegisterBrandModel(BrandModel brandModel)
-        //{
-        //    try
-        //    {
-        //        using (Repository<BrandModel> repo = new Repository<BrandModel>())
-        //        {
-        //            var record = repo.BrandModel.OrderByDescending(x => x.AddDate).FirstOrDefault();
-        //            if (record != null)
-        //            {
-        //                brandModel.Code = CommonHelper.IncreaseCode(record.Code);
-        //            }
-        //            else
-        //                brandModel.Code = "1";
+        public static BrandModel RegisterBrandModel(BrandModel brandModel)
+        {
+            try
+            {
+                using Repository<BrandModel> repo = new Repository<BrandModel>();
+                brandModel.Active = "Y";
+                brandModel.AddDate = DateTime.Now;
+                repo.BrandModel.Add(brandModel);
+                if (repo.SaveChanges() > 0)
+                    return brandModel;
 
-        //            brandModel.Active = "Y";
-        //            repo.BrandModel.Add(brandModel);
-        //            if (repo.SaveChanges() > 0)
-        //                return brandModel;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            //try
+            //{
+            //    using (Repository<BrandModel> repo = new Repository<BrandModel>())
+            //    {
+            //        var record = repo.BrandModel.OrderByDescending(x => x.AddDate).FirstOrDefault();
+            //        if (record != null)
+            //        {
+            //            brandModel.Code = CommonHelper.IncreaseCode(record.Code);
+            //        }
+            //        else
+            //            brandModel.Code = "1";
 
-        //            return null;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
-        //public static List<BrandModel> GetBrandModelList()
-        //{
-        //    try
-        //    {
-        //        using (Repository<BrandModel> repo = new Repository<BrandModel>())
-        //        {
-        //            return repo.BrandModel.Select(x => x).ToList();
-        //        }
-        //    }
-        //    catch { throw; }
-        //}
+            //        brandModel.Active = "Y";
+            //        repo.BrandModel.Add(brandModel);
+            //        if (repo.SaveChanges() > 0)
+            //            return brandModel;
 
-        //public static BrandModel GetBrandModelList(string modelCode)
-        //{
-        //    try
-        //    {
-        //        using (Repository<BrandModel> repo = new Repository<BrandModel>())
-        //        {
-        //            return repo.BrandModel.Where(x => x.Code == modelCode).FirstOrDefault();
-        //        }
-        //    }
-        //    catch { throw; }
-        //}
-        //public static BrandModel UpdateBrandModelClass(BrandModel brandModel)
-        //{
-        //    try
-        //    {
-        //        using (Repository<BrandModel> repo = new Repository<BrandModel>())
-        //        {
-        //            repo.BrandModel.Update(brandModel);
-        //            if (repo.SaveChanges() > 0)
-        //                return brandModel;
+            //        return null;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw ex;
+            //}
+        }
+        public static List<BrandModel> GetList(string Code)
+        {
+            try
+            {
+                using Repository<BrandModel> repo = new Repository<BrandModel>();
+                return repo.BrandModel
+.Where(x => x.BrandName == Code)
+.ToList();
+            }
+            catch { throw; }
+        }
+        public static List<BrandModel> GetBrandModelList()
+        {
+            try
+            {
+                using (Repository<BrandModel> repo = new Repository<BrandModel>())
+                {
+                    return repo.BrandModel.Select(x => x).ToList();
+                }
+            }
+            catch { throw; }
+        }
 
-        //            return null;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
-        //public static BrandModel DeleteBrandModelClass(string code)
-        //{
-        //    try
-        //    {
-        //        using (Repository<BrandModel> repo = new Repository<BrandModel>())
-        //        {
-        //            var brandModel = repo.BrandModel.Where(x => x.Code == code).FirstOrDefault();
-        //            brandModel.Active = "N";
-        //            repo.BrandModel.Update(brandModel);
-        //            if (repo.SaveChanges() > 0)
-        //                return brandModel;
+        public static BrandModel GetBrandModelList(string modelCode)
+        {
+            try
+            {
+                using (Repository<BrandModel> repo = new Repository<BrandModel>())
+                {
+                    return repo.BrandModel.Where(x => x.Code == modelCode).FirstOrDefault();
+                }
+            }
+            catch { throw; }
+        }
+        public static BrandModel UpdateBrandModelClass(BrandModel brandModel)
+        {
+            try
+            {
+                using (Repository<BrandModel> repo = new Repository<BrandModel>())
+                {
+                    repo.BrandModel.Update(brandModel);
+                    if (repo.SaveChanges() > 0)
+                        return brandModel;
 
-        //            return null;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public static BrandModel DeleteBrandModelClass(string code)
+        {
+            try
+            {
+                using (Repository<BrandModel> repo = new Repository<BrandModel>())
+                {
+                    var brandModel = repo.BrandModel.Where(x => x.Code == code).FirstOrDefault();
+                    brandModel.Active = "N";
+                    repo.BrandModel.Update(brandModel);
+                    if (repo.SaveChanges() > 0)
+                        return brandModel;
+
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public static List<TblCompany> GetCompanies()
         {
             try

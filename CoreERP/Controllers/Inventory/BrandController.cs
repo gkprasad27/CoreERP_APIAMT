@@ -21,6 +21,9 @@ namespace CoreERP.Controllers
         {
             try
             {
+                if (BrandHelpers.GetList(brand.Code).Count() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"brand Code {nameof(brand.Code)} is already exists ,Please Use Different Code " });
+
                 Brand result = BrandHelpers.RegisterBrand(brand);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
@@ -59,7 +62,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GetBrandCompaniesList = BrandHelpers.GetCompaniesList().Select(x => new { ID = x.CompanyCode, TEXT = x.Name });
+                expando.GetBrandCompaniesList = BrandHelpers.GetCompaniesList().Select(x => new { ID = x.CompanyId, TEXT = x.CompanyName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

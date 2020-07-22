@@ -16,25 +16,20 @@ namespace CoreERP.Controllers
     public class AccountingClassController : ControllerBase
     {
 
-        [HttpPost("RegisterAccountingClass")]
-        public IActionResult RegisterAccountingClass([FromBody]AccountingClass accountingClass)
-        {
-            if (accountingClass == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(accountingClass)} can not be null" });
 
+        [HttpPost("RegisterAccountingClass")]
+        public IActionResult RegisterAccountingClass([FromBody]AccountingClass accountingClas)
+        {
             try
             {
-                string errorMsg = string.Empty;
-                var result = AccountClassHelper.RegisterAccountingClass(accountingClass, out errorMsg);
+                if (AccountClassHelper.GetList(accountingClas.Code).Count() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"accountingClas Code {nameof(accountingClas.Code)} is already exists ,Please Use Different Code " });
+
+                AccountingClass result = AccountClassHelper.RegisterAccountingClass(accountingClas);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-                else
-                {
-                    if (string.IsNullOrEmpty(errorMsg))
-                        errorMsg = " Registration Failed";
 
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMsg });
-                }
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
             }
             catch (Exception ex)
             {
@@ -42,12 +37,14 @@ namespace CoreERP.Controllers
             }
         }
 
+
         [HttpGet("GetAllAccountingClass")]
         [Produces(typeof(List<AccountingClass>))]
         public IActionResult GetAllAccountingClass()
         {
             try
             {
+
                 var accountingClassList = AccountClassHelper.GetAccountingClassList();
                 if (accountingClassList.Count > 0)
                 {
