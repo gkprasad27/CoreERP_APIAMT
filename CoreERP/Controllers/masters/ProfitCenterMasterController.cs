@@ -96,7 +96,7 @@ namespace CoreERP.Controllers
                 if (string.IsNullOrWhiteSpace(code))
                     return BadRequest($"{nameof(code)} cannot be null");
 
-                var result = ProfitCenterHelper.DeleteProfitCenter(Convert.ToInt32(code));
+                var result = ProfitCenterHelper.DeleteProfitCenter(code);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 

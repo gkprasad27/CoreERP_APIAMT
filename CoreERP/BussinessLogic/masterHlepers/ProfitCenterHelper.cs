@@ -28,6 +28,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using (Repository<ProfitCenters> repo = new Repository<ProfitCenters>())
                 {
                     profitCenter.Active = "Y";
+                   // profitCenter.AddDate = DateTime.Now;
                     repo.ProfitCenters.Add(profitCenter);
                     if (repo.SaveChanges() > 0)
                         return profitCenter;
@@ -52,15 +53,15 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch { throw; }
         }
-        public static ProfitCenters DeleteProfitCenter(int seqID)
+        public static ProfitCenters DeleteProfitCenter(string seqID)
         {
             try
             {
                 using (Repository<ProfitCenters> repo = new Repository<ProfitCenters>())
                 {
-                    var prftcntr = repo.ProfitCenters.Where(p => p.Id == seqID).FirstOrDefault();
-                    prftcntr.Active = "N";
-                    repo.ProfitCenters.Update(prftcntr);
+                    var prftcntr = repo.ProfitCenters.Where(p => p.Code == seqID).FirstOrDefault();
+                    //prftcntr.Active = "N";
+                    repo.ProfitCenters.Remove(prftcntr);
                     if (repo.SaveChanges() > 0)
                         return prftcntr;
 

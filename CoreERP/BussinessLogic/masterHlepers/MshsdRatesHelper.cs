@@ -92,7 +92,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     }
                     var _branch = GetBranches(mshsdrates.BranchCode).ToArray().FirstOrDefault();
                     var _product = GetProduct(mshsdrates.ProductCode).ToArray().FirstOrDefault();
-                    mshsdrates.BranchCode = _branch.BranchCode;
+                    //mshsdrates.BranchId = _branch.BranchId;
                     mshsdrates.BranchName = _branch.BranchName;
                     mshsdrates.ProductId = _product.ProductId;
                     mshsdrates.ProductName = _product.ProductName;

@@ -46,10 +46,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblPumps> repo = new Repository<TblPumps>();
-                string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo))?.TankId);
+                string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo)&&obj.BranchCode==pumps.BranchCode)?.TankId);
                 pumps.TankId = int.Parse(name);
-                pumps.BranchId = Convert.ToInt32(pumps.BranchCode);
-                pumps.ProductId = Convert.ToInt32(pumps.ProductCode);
+                //pumps.BranchId = Convert.ToInt32(pumps.BranchCode);
+                //pumps.ProductId = Convert.ToInt32(pumps.ProductCode);
                 repo.TblPumps.Update(pumps);
                 if (repo.SaveChanges() > 0)
                     return pumps;

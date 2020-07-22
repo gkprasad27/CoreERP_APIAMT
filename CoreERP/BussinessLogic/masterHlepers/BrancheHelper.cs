@@ -95,10 +95,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<TblBranch> repo = new Repository<TblBranch>())
                 {
-                    var bobj = GetBranches(code);
-                    repo.TblBranch.Update(bobj);
+                    var brnch = repo.TblBranch.Where(x => x.BranchCode == code).FirstOrDefault();
+                    repo.TblBranch.Remove(brnch);
                     if (repo.SaveChanges() > 0)
-                        return bobj;
+                        return brnch;
 
                     return null;
                 }

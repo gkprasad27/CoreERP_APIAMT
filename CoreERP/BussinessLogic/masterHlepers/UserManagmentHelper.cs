@@ -223,7 +223,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                         Narration = "Shift in Progress.",
                         Status = 0,
                         EmployeeId = -1,
-                        BranchId = _branch?.Id,
+                        //BranchId = _branch?.BranchId,
                         BranchCode = _branch?.BranchCode,
                         BranchName = _branch?.BranchName,
                         InTime = DateTime.Now,

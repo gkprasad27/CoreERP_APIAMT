@@ -16,6 +16,82 @@ namespace CoreERP.Controllers
     public class CompanyController : ControllerBase
     {
 
+
+        [HttpGet("GetStatesList")]
+        public IActionResult GetStatesList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.StatesList = CompaniesHelper.GetStatesList().Select(x => new { ID = x.StateCode, TEXT = x.StateName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        
+
+        [HttpGet("GetCurrencyList")]
+        public IActionResult GetCurrencyList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.CurrencyList = CompaniesHelper.GetCurrencyList().Select(x => new { ID = x.CurrencySymbol, TEXT = x.CurrencyName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetLanguageList")]
+        public IActionResult GetLanguageList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.LanguageList = CompaniesHelper.GetLanguageList().Select(x => new { ID = x.LanguageCode, TEXT = x.LanguageName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        [HttpGet("GetRegionList")]
+        public IActionResult GetRegionList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.RegionList = CompaniesHelper.GetRegionListList().Select(x => new { ID = x.RegionCode, TEXT = x.RegionName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetCountrysList")]
+        public IActionResult GetCountrysList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.CountryList = CompaniesHelper.GetCountryList().Select(x => new { ID = x.CountryCode, TEXT = x.CountryName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetCompanysList")]
         public IActionResult GetCompanysList()
         {
@@ -26,6 +102,26 @@ namespace CoreERP.Controllers
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.companiesList = companiesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetEmployeesList")]
+        public IActionResult GetEmployeesList()
+        {
+            try
+            {
+                var empList = CompaniesHelper.GetListOfEmployes();
+                if (empList.Count > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.emplist = empList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
