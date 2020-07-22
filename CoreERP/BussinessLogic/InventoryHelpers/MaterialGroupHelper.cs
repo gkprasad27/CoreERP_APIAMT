@@ -15,15 +15,6 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             try
             {
                 using Repository<TblProductGroup> repo = new Repository<TblProductGroup>();
-                var record = repo.TblProductGroup.OrderByDescending(x => x.GroupId).FirstOrDefault();
-
-                if (record != null)
-                {
-                    materialGroup.GroupId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.GroupId.ToString()));
-                }
-                else
-                    materialGroup.GroupId = 1;
-
                 materialGroup.ExtraDate = DateTime.Now;
                 repo.TblProductGroup.Add(materialGroup);
                 if (repo.SaveChanges() > 0)
@@ -35,13 +26,26 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             {
                 throw ex;
             }
+            
+        }
+        public static List<TblProductGroup> GetList(decimal Code)
+        {
+            try
+            {
+                using Repository<TblProductGroup> repo = new Repository<TblProductGroup>();
+                return repo.TblProductGroup
+.Where(x => x.GroupCode ==Convert.ToDecimal(Code))
+.ToList();
+                //return null;
+            }
+            catch { throw; }
         }
         public static List<TblProductGroup> GetMaterialGroupList()
         {
             try
             {
                 using Repository<TblProductGroup> repo = new Repository<TblProductGroup>();
-                return repo.TblProductGroup.Select(x => x).OrderByDescending(x => x.GroupId).ToList();
+                return repo.TblProductGroup.ToList();
 
                 //return null;
             }
@@ -85,10 +89,10 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                //using Repository<AccountingClass> repo = new Repository<AccountingClass>();
-                //return repo.AccountingClass.AsEnumerable().Where(x => x.Active.Equals("Y")).ToList();
+                using Repository<AccountingClass> repo = new Repository<AccountingClass>();
+                return repo.AccountingClass.AsEnumerable().Where(x => x.Active.Equals("Y")).ToList();
 
-                return null;
+                //return null;
             }
             catch { throw; }
         }

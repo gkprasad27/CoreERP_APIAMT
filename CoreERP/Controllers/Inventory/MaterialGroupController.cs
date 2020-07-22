@@ -24,6 +24,9 @@ namespace CoreERP.Controllers
 
             try
             {
+                if (MaterialGroupHelper.GetList( materialGroup.GroupId).Count > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $" code={materialGroup.GroupId} Already exists." });
+
                 TblProductGroup result = MaterialGroupHelper.RegisterMaterialGroup(materialGroup);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });

@@ -10,14 +10,13 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
 {
     public class BrandHelpers
     {
-        public static List<Companies> GetCompaniesList()
+        public static List<TblCompany> GetCompaniesList()
         {
             try
             {
-                //using Repository<Companies> repo = new Repository<Companies>();
-                //return repo.Companies.Where(m => m.Active == "Y").ToList();
-
-                return null;
+                using Repository<TblCompany> repo = new Repository<TblCompany>();
+                return repo.TblCompany.Select(x => x).ToList();
+                //return null;
             }
             catch (Exception ex) { throw ex; }
         }
@@ -25,21 +24,12 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                //using Repository<Brand> repo = new Repository<Brand>();
-                //brand.Active = "Y";
-                //brand.AddDate = DateTime.Now;
-
-                //var record = repo.Brand.OrderByDescending(x => x.AddDate).FirstOrDefault();
-                //if (record == null)
-                //    brand.Code = "1";
-                //else
-                //{
-                //    brand.Code = CommonHelper.IncreaseCode(record.Code);
-                //}
-
-                //repo.Brand.Add(brand);
-                //if (repo.SaveChanges() > 0)
-                //    return brand;
+                using Repository<Brand> repo = new Repository<Brand>();
+                brand.Active = "Y";
+                brand.AddDate = DateTime.Now;
+                repo.Brand.Add(brand);
+                if (repo.SaveChanges() > 0)
+                    return brand;
 
                 return null;
             }
@@ -48,13 +38,26 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
                 throw ex;
             }
         }
+        public static List<Brand> GetList(string Code)
+        {
+            try
+            {
+                using Repository<Brand> repo = new Repository<Brand>();
+                return repo.Brand
+.Where(x => x.Code == Code)
+.ToList();
+                //return null;
+            }
+            catch { throw; }
+        }
+
         public static List<Brand> GetBrands()
         {
             try
             {
-                //using Repository<Brand> repo = new Repository<Brand>();
-                //return repo.Brand.AsEnumerable().Where(x => x.Active == "Y").ToList();
-                return null;
+                using Repository<Brand> repo = new Repository<Brand>();
+                return repo.Brand.AsEnumerable().Where(x => x.Active == "Y").ToList();
+               // return null;
             }
             catch
             {
@@ -65,10 +68,10 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                //using Repository<Brand> repo = new Repository<Brand>();
-                //repo.Brand.Update(brand);
-                //if (repo.SaveChanges() > 0)
-                //    return brand;
+                using Repository<Brand> repo = new Repository<Brand>();
+                repo.Brand.Update(brand);
+                if (repo.SaveChanges() > 0)
+                    return brand;
 
                 return null;
             }
@@ -81,12 +84,12 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                //using Repository<Brand> repo = new Repository<Brand>();
-                //var brand = repo.Brand.Where(x => x.Code == code).FirstOrDefault();
-                //brand.Active = "N";
-                //repo.Brand.Remove(brand);
-                //if (repo.SaveChanges() > 0)
-                //    return brand;
+                using Repository<Brand> repo = new Repository<Brand>();
+                var brand = repo.Brand.Where(x => x.Code == code).FirstOrDefault();
+                brand.Active = "N";
+                repo.Brand.Remove(brand);
+                if (repo.SaveChanges() > 0)
+                    return brand;
 
                 return null;
             }
