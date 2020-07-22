@@ -197,6 +197,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                                   join m in _repo.Menus on ma.OperationCode equals m.OperationCode
                                  where ma.RoleId == roleId
                                     && ma.Access == 1
+                                    && ma.Active == true
                                   select m); ;
 
                     var parentIDs = result.Select(m => m.ParentId).Distinct();
@@ -291,13 +292,29 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 List<Menus> _menus = null;
-               // List<string> _oprCodes = null;
-                List<MenuAccesses> _menusaccess = new List<MenuAccesses>();
                 MenuAccesses menuAccesses = null;
+                List<MenuAccesses> _menusaccess = new List<MenuAccesses>();
+               
                 using (Repository<Menus> _repo = new Repository<Menus>())
                 {
-                    _menusaccess = _repo.MenuAccesses.Where(m => m.RoleId == roleId).ToList();
+                    _menusaccess = (from ma in _repo.MenuAccesses
+                                    join m in _repo.Menus on ma.OperationCode equals m.OperationCode
+                                   where ma.RoleId == roleId
+                                      && m.ParentId== parentId
+                                   select ma).ToList();
                     _menus = _repo.Menus.Where(m => m.ParentId == parentId).ToList();
+                }
+
+
+                foreach(MenuAccesses ma in _menusaccess)
+                {
+                    if (string.IsNullOrEmpty(ma.Ext4))
+                        ma.Ext4 = _menus.Where(m => m.OperationCode == ma.OperationCode).FirstOrDefault()?.Description;
+
+                    if (ma.Active == null)
+                        ma.Active = false;
+
+                   
                 }
 
                 foreach (Menus m in _menus)
@@ -305,15 +322,18 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     if (m.OperationCode == m.ParentId)
                         continue;
 
-                    if (_menusaccess.Where(ma => ma.Ext4 == m.OperationCode).Count() > 0)
+                    if (_menusaccess.Where(ma => ma.OperationCode == m.OperationCode).Count() > 0)
                         continue;
-                   
                     else
                     {
                         menuAccesses = new MenuAccesses();
                         menuAccesses.OperationCode = m.OperationCode;
                         menuAccesses.Ext4 = m.Description;
-                        menuAccesses.Active =null;
+                        menuAccesses.Active = null;
+                        menuAccesses.CanAdd = false;
+                        menuAccesses.CanEdit = false;
+                        menuAccesses.CanDelete = false;
+                        menuAccesses.CanView = true;
 
                         _menusaccess.Add(menuAccesses);
                     }
@@ -334,6 +354,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 var  _role = GetRole(Convert.ToDecimal(roleId));
                 foreach(MenuAccesses ma in menus)
                 {
+                    if (ma.Active ==true )
+                        ma.Access = 1;
+                    else 
+                      ma.Access = 0;
+
+                    ma.CanView = true;
 
                     if (ma.MenuId == null)
                     {
