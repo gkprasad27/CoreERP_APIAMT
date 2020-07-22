@@ -774,9 +774,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                         _qty = invdtl.FQty;
                                 }
                                 //get product avilable qty
-                                var stocInfoList = repo.TblStockInformation
-                                                   .Where(stock => stock.ProductCode == invdtl.ProductCode && stock.BranchCode == invoice.BranchCode);
-                                invdtl.AvailStock = stocInfoList.Sum(x => x.InwardQty) - stocInfoList.Sum(x => x.OutwardQty);
+                                //var stocInfoList = repo.TblStockInformation
+                                //                   .Where(stock => stock.ProductCode == invdtl.ProductCode && stock.BranchCode == invoice.BranchCode);
+                                //invdtl.AvailStock = stocInfoList.Sum(x => x.InwardQty) - stocInfoList.Sum(x => x.OutwardQty);
                                 invdtl.AvailStock -= _qty;
 
                                 invdtl.EmployeeId = invoice.EmployeeId;
