@@ -1409,11 +1409,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.MenuId).HasColumnName("MenuID");
 
-                entity.Property(e => e.Active)
-                    .HasMaxLength(1)
-                    .IsUnicode(false)
-                    .IsFixedLength();
-
                 entity.Property(e => e.AddDate)
                     .HasColumnName("addDate")
                     .HasColumnType("datetime");
