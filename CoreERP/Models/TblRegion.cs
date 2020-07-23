@@ -18,6 +18,8 @@ namespace CoreERP.Models
         public int Id { get; set; }
         public string RegionCode { get; set; }
         public string RegionName { get; set; }
+        public string Country { get; set; }
+        public string Ext { get; set; }
 
         public virtual ICollection<ProfitCenters> ProfitCenters { get; set; }
         public virtual ICollection<SalesDepartment> SalesDepartment { get; set; }

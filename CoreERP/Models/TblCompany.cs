@@ -27,9 +27,9 @@ namespace CoreERP.Models
         public string Panno { get; set; }
         public string Gstno { get; set; }
         public string Tanno { get; set; }
+        public string HouseNo { get; set; }
+        public string Location { get; set; }
         public string Ext { get; set; }
-        public string Ext1 { get; set; }
-        public string Ext2 { get; set; }
 
         public virtual Countries CountryNavigation { get; set; }
         public virtual TblCurrency CurrencyNavigation { get; set; }

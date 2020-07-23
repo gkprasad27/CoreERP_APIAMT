@@ -16,7 +16,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<PartnerType> repo = new Repository<PartnerType>())
                 {
-                    return repo.PartnerType.AsEnumerable().Where(p => p.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+                    return repo.PartnerType.AsEnumerable().ToList();
                 }
             }
             catch { throw; }
@@ -27,7 +27,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<PartnerType> repo = new Repository<PartnerType>())
                 {
-                    partnerType.Active = "Y";
+                    //partnerType.Active = "Y";
                     repo.PartnerType.Add(partnerType);
                     if (repo.SaveChanges() > 0)
                         return partnerType;
@@ -59,7 +59,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using (Repository<PartnerType> repo = new Repository<PartnerType>())
                 {
                     var prttyp = repo.PartnerType.Where(p => p.Code == partnerTypeCode).FirstOrDefault();
-                    prttyp.Active = "N";
+                   // prttyp.Active = "N";
                     repo.PartnerType.Update(prttyp);
                     if (repo.SaveChanges() > 0)
                         return prttyp;

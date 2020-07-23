@@ -19,7 +19,7 @@ namespace CoreERP.Models
         public string StateCode { get; set; }
         public string StateName { get; set; }
         public string CountryCode { get; set; }
-        public string CountryName { get; set; }
+        public string Language { get; set; }
 
         public virtual ICollection<ProfitCenters> ProfitCenters { get; set; }
         public virtual ICollection<SalesDepartment> SalesDepartment { get; set; }

@@ -14,6 +14,11 @@ namespace CoreERP.Models
         public decimal? MaxDepreciation { get; set; }
         public DateTime? Upto { get; set; }
         public string DepreciationDuringLife { get; set; }
-        public string Ext { get; set; }
+        public string Upto1 { get; set; }
+        public string Upto2 { get; set; }
+        public string Upto3 { get; set; }
+        public string Upto4 { get; set; }
+        public string Upto5 { get; set; }
+        public string Upto6 { get; set; }
     }
 }

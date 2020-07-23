@@ -20,7 +20,7 @@ namespace CoreERP.Models
         public string Email { get; set; }
         public string Panno { get; set; }
         public string Gstno { get; set; }
-        public string Ext1 { get; set; }
+        public string Location { get; set; }
         public string Ext { get; set; }
         public string Currency { get; set; }
         public string Language { get; set; }

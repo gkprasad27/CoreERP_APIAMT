@@ -18,6 +18,13 @@ namespace CoreERP.Models
         public int Id { get; set; }
         public string CountryCode { get; set; }
         public string CountryName { get; set; }
+        public string Language { get; set; }
+        public string Currency { get; set; }
+        public string Currency1 { get; set; }
+        public string Currency2 { get; set; }
+        public string DateFormat { get; set; }
+        public string DecimalFormat { get; set; }
+        public string TimeFormat { get; set; }
 
         public virtual ICollection<ProfitCenters> ProfitCenters { get; set; }
         public virtual ICollection<SalesDepartment> SalesDepartment { get; set; }

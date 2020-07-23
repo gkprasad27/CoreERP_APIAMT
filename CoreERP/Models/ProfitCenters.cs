@@ -23,8 +23,8 @@ namespace CoreERP.Models
         public string ResponsiblePerson { get; set; }
         public string Active { get; set; }
         public string Email { get; set; }
+        public string Location { get; set; }
         public string Ext { get; set; }
-        public string Ext1 { get; set; }
 
         public virtual Countries CountryNavigation { get; set; }
         public virtual TblCurrency CurrencyNavigation { get; set; }

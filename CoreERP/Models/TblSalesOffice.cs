@@ -16,7 +16,7 @@ namespace CoreERP.Models
         public string Address2 { get; set; }
         public string Mobile { get; set; }
         public string Email { get; set; }
-        public string Ext1 { get; set; }
+        public string Phone { get; set; }
         public string Currency { get; set; }
         public string Language { get; set; }
         public string ResponsiblePerson { get; set; }
