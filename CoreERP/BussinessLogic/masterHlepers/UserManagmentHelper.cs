@@ -113,75 +113,304 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Menus> repo = new Repository<Menus>();
-                return repo.Menus.ToList();
+                using (Repository<Menus> repo = new Repository<Menus>())
+                {
+                    return repo.Menus.ToList();
+                }
             }
             catch(Exception ex)
             {
                 throw ex;
             }
         }
-        public static List<ExpandoObject> GetScreensListByUserRole()
+        public static List<ExpandoObject> GetScreensListByUserRole(string userName)
         {
             try
             {
-                List<string> menuAccLst = null;
                 List<ExpandoObject> menusbyRole = new List<ExpandoObject>();
 
-                using Repository<Erpuser> _repo = new Repository<Erpuser>();
-               // {
-                     menuAccLst = _repo.MenuAccesses
-                                        .Where(m => m.RoleId == "administrator")
-                                        .OrderByDescending(x => x.AddDate)
-                                        .FirstOrDefault()
-                                        .Ext4.Split(',')
-                                        .ToList();
-               // }
-                var menuList = _repo.Menus
-                                    .Where(x => menuAccLst.Contains(x.Code.ToString()))
-                                    .ToList();
-                var parentIDs = menuList.Where(x => x.ParentId != null).Select(x => x.ParentId).Distinct();
-
-                foreach (var pid in parentIDs)
+                using (ERPContext _repo = new ERPContext())
                 {
-                    //find child menus by using parent id
-                    List<Menus> menulst = _repo.Menus
-                                          .Where(x => x.ParentId == pid)
-                                          .ToList();
-                    // create Array structure for UI to show menus
-                    if (menulst.Count() > 0)
+                    var _MenuAccesses = _repo.MenuAccesses.Where(m => m.Ext1.Trim() == userName.Trim()).FirstOrDefault();
+                    List<string> menuAccLst = _MenuAccesses.Ext4.Split(',').ToList();
+                    var parentIDs = _repo.Menus
+                                         .Where(x => menuAccLst.Contains(x.OperationCode) 
+                                                  && x.Active == "Y" 
+                                                  && x.IsMasterScreen == "Y")
+                                         .Select(m=> m.OperationCode).Distinct().ToList();
+
+                    foreach (var pid in parentIDs)
                     {
-                        List<ExpandoObject> childList = new List<ExpandoObject>();
-                        Menus mobj = menuList.Where(m => m.Code.ToString() == pid).FirstOrDefault();
-
-                        // this is for to Add headers of Parent
-                        foreach (Menus m in menulst)
+                        //find childs menus by using parent id
+                        List<Menus> menulst = _repo.Menus
+                                              .Where(x => x.ParentId == pid 
+                                               && x.Active =="Y")
+                                              .ToList();
+                       
+                        // create Array structure for UI to show menus
+                        if (menulst.Count() > 0)
                         {
-                            dynamic expandoChild = new ExpandoObject();
-                            expandoChild.displayName = m.DisplayName;
-                            expandoChild.iconName = m.IconName;
-                            expandoChild.route = m.Route;
+                            List<ExpandoObject> childList = new List<ExpandoObject>();
 
-                            if (!m.IsMasterScreen.Equals("Y", StringComparison.OrdinalIgnoreCase))
-                                childList.Add(expandoChild);
+                            // Add childs in list
+                            foreach (Menus m in menulst)
+                            {
+                                dynamic expandoChild = new ExpandoObject();
+                                expandoChild.displayName = m.DisplayName;
+                                expandoChild.iconName = m.IconName;
+                                expandoChild.route = m.Route;
+
+                                if (!m.IsMasterScreen.Equals("Y", StringComparison.OrdinalIgnoreCase))
+                                    childList.Add(expandoChild);
+                            }
+
+                            // parent Name along with its child menus
+                            Menus mobj = _repo.Menus.Where(m => m.OperationCode == pid).FirstOrDefault();
+                            dynamic expandoObj = new ExpandoObject();
+                            expandoObj.displayName = mobj.DisplayName;
+                            expandoObj.iconName = mobj.IconName;
+                            expandoObj.route = mobj.Route;
+                            expandoObj.children = childList;
+
+                            menusbyRole.Add(expandoObj);
                         }
 
-                        // parent Name along with its child menus
-                        dynamic expandoObj = new ExpandoObject();
-                        expandoObj.displayName = mobj.DisplayName;
-                        expandoObj.iconName = mobj.IconName;
-                        expandoObj.route = mobj.Route;
-                        expandoObj.children = childList;
-
-                        menusbyRole.Add(expandoObj);
                     }
-
                 }
-
                 return menusbyRole;
             }
             catch (Exception ex) { throw ex; }
         }
+
+        #region Menus
+
+        public static List<ExpandoObject> GetMenusForRole(string roleId)
+        {
+            try
+            {
+                List<ExpandoObject> menusbyRole = new List<ExpandoObject>();
+
+                using (ERPContext _repo = new ERPContext())
+                {
+
+                    var result = (from ma in _repo.MenuAccesses
+                                  join m in _repo.Menus on ma.OperationCode equals m.OperationCode
+                                 where ma.RoleId == roleId
+                                    && ma.Access == 1
+                                    && ma.Active == true
+                                  select m); ;
+
+                    var parentIDs = result.Select(m => m.ParentId).Distinct();
+
+                    foreach (var pid in parentIDs)
+                    {
+                        //find childs menus by using parent id
+                        List<Menus> menulst = result.Where(x => x.ParentId == pid && x.Active == "Y").ToList();
+
+                        // create Array structure for UI to show menus
+                        if (menulst.Count() > 0)
+                        {
+                            List<ExpandoObject> childList = new List<ExpandoObject>();
+
+                            // Add childs in list
+                            foreach (Menus m in menulst)
+                            {
+                                dynamic expandoChild = new ExpandoObject();
+                                expandoChild.displayName = m.DisplayName;
+                                expandoChild.iconName = m.IconName;
+                                expandoChild.route = m.Route;
+
+                                if (!m.IsMasterScreen.Equals("Y", StringComparison.OrdinalIgnoreCase))
+                                    childList.Add(expandoChild);
+                            }
+
+                            // parent Name along with its child menus
+                            Menus mobj = _repo.Menus.Where(m => m.OperationCode == pid).FirstOrDefault();
+                            dynamic expandoObj = new ExpandoObject();
+                            expandoObj.displayName = mobj.DisplayName;
+                            expandoObj.iconName = mobj.IconName;
+                            expandoObj.route = mobj.Route;
+                            expandoObj.children = childList;
+
+                            menusbyRole.Add(expandoObj);
+                        }
+
+                    }
+                }
+                return menusbyRole;
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
+        public TblRole GetRole(decimal roleId)
+        {
+            try
+            {
+                using(Repository<TblRole> _repo=new Repository<TblRole>())
+                {
+                    return _repo.TblRole.Where(r => r.RoleId == roleId).FirstOrDefault();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<TblRole> GetRoles()
+        {
+            try
+            {
+                using (Repository<TblRole> _repo = new Repository<TblRole>())
+                {
+                    return _repo.TblRole.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<Menus> GetParentMenus()
+        {
+            try
+            {
+                using (Repository<Menus> _repo = new Repository<Menus>())
+                {
+                    return _repo.Menus.Where(x => x.IsMasterScreen == "Y").ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+       
+        public List<MenuAccesses> GetMenus(string parentId, string roleId)
+        {
+            try
+            {
+                List<Menus> _menus = null;
+                MenuAccesses menuAccesses = null;
+                List<MenuAccesses> _menusaccess = new List<MenuAccesses>();
+               
+                using (Repository<Menus> _repo = new Repository<Menus>())
+                {
+                    _menusaccess = (from ma in _repo.MenuAccesses
+                                    join m in _repo.Menus on ma.OperationCode equals m.OperationCode
+                                   where ma.RoleId == roleId
+                                      && m.ParentId== parentId
+                                   select ma).ToList();
+                    _menus = _repo.Menus.Where(m => m.ParentId == parentId).ToList();
+                }
+
+
+                foreach(MenuAccesses ma in _menusaccess)
+                {
+                    if (string.IsNullOrEmpty(ma.Ext4))
+                        ma.Ext4 = _menus.Where(m => m.OperationCode == ma.OperationCode).FirstOrDefault()?.Description;
+
+                    if (ma.Active == null)
+                        ma.Active = false;
+
+                   
+                }
+
+                foreach (Menus m in _menus)
+                {
+                    if (m.OperationCode == m.ParentId)
+                        continue;
+
+                    if (_menusaccess.Where(ma => ma.OperationCode == m.OperationCode).Count() > 0)
+                        continue;
+                    else
+                    {
+                        menuAccesses = new MenuAccesses();
+                        menuAccesses.OperationCode = m.OperationCode;
+                        menuAccesses.Ext4 = m.Description;
+                        menuAccesses.Active = null;
+                        menuAccesses.CanAdd = false;
+                        menuAccesses.CanEdit = false;
+                        menuAccesses.CanDelete = false;
+                        menuAccesses.CanView = true;
+
+                        _menusaccess.Add(menuAccesses);
+                    }
+                }
+
+                return _menusaccess;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void GiveAcces(List<MenuAccesses> menus,string roleId)
+        {
+            try
+            {
+                var  _role = GetRole(Convert.ToDecimal(roleId));
+                foreach(MenuAccesses ma in menus)
+                {
+                    if (ma.Active ==true )
+                        ma.Access = 1;
+                    else 
+                      ma.Access = 0;
+
+                    ma.CanView = true;
+
+                    if (ma.MenuId == null)
+                    {
+                        ma.RoleId = Convert.ToString(_role.RoleId);
+                        AddMenuAccess(ma);
+                    }
+                    else
+                        UpdateMenuAccess(ma);
+                }
+               
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private bool AddMenuAccess(MenuAccesses menuAccesses)
+        {
+            try
+            {
+                using (Repository<MenuAccesses> _repo = new Repository<MenuAccesses>())
+                {
+                    _repo.MenuAccesses.Add(menuAccesses);
+                    return _repo.SaveChanges() > 0;
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private bool UpdateMenuAccess(MenuAccesses menuAccesses)
+        {
+            try
+            {
+                using (Repository<MenuAccesses> _repo = new Repository<MenuAccesses>())
+                {
+                    _repo.MenuAccesses.Update(menuAccesses);
+                    return _repo.SaveChanges() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
+
+        #region Shift master
         private bool IsShiftIdExists(decimal userID,string branchCode)
         {
             try
@@ -223,7 +452,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                         Narration = "Shift in Progress.",
                         Status = 0,
                         EmployeeId = -1,
-                        //BranchId = _branch?.BranchId,
+                        BranchId = Convert.ToDecimal(_branch.BranchCode),
                         BranchCode = _branch?.BranchCode,
                         BranchName = _branch?.BranchName,
                         InTime = DateTime.Now,
@@ -263,6 +492,70 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 return "-1";
             }
         }
+
+
+        public TblShift StartShift(decimal userId, string branchCode)
+        {
+            try
+            {
+                var _branch = BrancheHelper.GetBranches().Where(b => b.BranchCode == branchCode).FirstOrDefault();
+
+                TblShift _shift = new TblShift
+                {
+                    UserId = userId,
+                    Narration = "Shift in Progress.",
+                    Status = 0,
+                    EmployeeId = -1,
+                    BranchId = Convert.ToDecimal(_branch.BranchCode),
+                    BranchCode = _branch?.BranchCode,
+                    BranchName = _branch?.BranchName,
+                    InTime = DateTime.Now,
+                    OutTime = DateTime.Now
+                };
+
+                using (Repository<TblShift> _repo = new Repository<TblShift>())
+                {
+
+                    _repo.TblShift.Add(_shift);
+                    _repo.SaveChanges();
+                }
+
+                return _shift;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool EndShift(decimal shiftId)
+        {
+            try
+            {
+                TblShift _shift = null;
+                using (Repository<TblShift> _repo = new Repository<TblShift>())
+                {
+                    _shift = _repo.TblShift
+                                  .Where(s => s.ShiftId == shiftId)
+                                  .FirstOrDefault();
+
+                    _shift.OutTime = DateTime.Now;
+                    _shift.Status = 1;
+                    _shift.Narration = "Shift Logged Out";
+
+                    _repo.TblShift.Update(_shift);
+                    if (_repo.SaveChanges() > 0)
+                        return true;
+                }
+
+                return false;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public void LogoutShiftId(decimal userId, string branchCode,out string errorMessage)
         {
             try
@@ -295,7 +588,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
-
+        #endregion
         public TblUserNew GetUserNew(decimal userId)
         {
             try

@@ -6,6 +6,7 @@ namespace CoreERP.Models
     public partial class MenuAccesses
     {
         public int MenuId { get; set; }
+        public string OperationCode { get; set; }
         public string CompCode { get; set; }
         public string BranchCode { get; set; }
         public string RoleId { get; set; }
@@ -14,7 +15,11 @@ namespace CoreERP.Models
         public string UserId { get; set; }
         public string Ext4 { get; set; }
         public int? Access { get; set; }
-        public string Active { get; set; }
+        public bool? Active { get; set; }
         public DateTime? AddDate { get; set; }
+        public bool? CanAdd { get; set; }
+        public bool? CanEdit { get; set; }
+        public bool? CanDelete { get; set; }
+        public bool? CanView { get; set; }
     }
 }
