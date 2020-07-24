@@ -432,7 +432,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 }
              
                 giftMaster.Status = true;
-                giftMaster.Year = DateTime.Now.Year;
+                //giftMaster.Year = DateTime.Now.Year;
                 giftMaster.AddDate = DateTime.Now;
 
                 using (Repository<TblGiftMaster> _repo=new Repository<TblGiftMaster>())
