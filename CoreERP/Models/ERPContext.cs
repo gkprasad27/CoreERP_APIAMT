@@ -167,6 +167,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblFunctionalDepartment> TblFunctionalDepartment { get; set; }
         public virtual DbSet<TblGiftMaster> TblGiftMaster { get; set; }
         public virtual DbSet<TblGodown> TblGodown { get; set; }
+        public virtual DbSet<TblHideTableColumns> TblHideTableColumns { get; set; }
         public virtual DbSet<TblHoliday> TblHoliday { get; set; }
         public virtual DbSet<TblHsnsac> TblHsnsac { get; set; }
         public virtual DbSet<TblIncomeTypes> TblIncomeTypes { get; set; }
@@ -7157,6 +7158,25 @@ namespace CoreERP.Models
                 entity.Property(e => e.Narration)
                     .HasColumnName("narration")
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblHideTableColumns>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("tbl_HideTableColumns");
+
+                entity.Property(e => e.AliasName).HasMaxLength(50);
+
+                entity.Property(e => e.ColumnName).HasMaxLength(50);
+
+                entity.Property(e => e.Company).HasMaxLength(50);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.TableName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblHoliday>(entity =>
@@ -15784,17 +15804,13 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblStorageLocation>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("tbl_StorageLocation");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Code).HasMaxLength(5);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
