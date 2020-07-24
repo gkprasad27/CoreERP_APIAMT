@@ -72,7 +72,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
             return user;
 
         }
-
         public Erpuser GetErpuser(decimal seqiId)
         {
             try
@@ -109,81 +108,26 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
-        public List<Menus> GetMenus()
+     
+      
+        #region Menus
+        public MenuAccesses GetMenuAccesses(string operationCode,string roleId)
         {
             try
             {
-                using (Repository<Menus> repo = new Repository<Menus>())
+                using(Repository<MenuAccesses> _repo=new Repository<MenuAccesses>())
                 {
-                    return repo.Menus.ToList();
+                   return _repo.MenuAccesses
+                               .Where(ma => ma.OperationCode == operationCode && ma.RoleId == roleId)
+                               .FirstOrDefault();
                 }
             }
             catch(Exception ex)
             {
                 throw ex;
             }
+
         }
-        public static List<ExpandoObject> GetScreensListByUserRole(string userName)
-        {
-            try
-            {
-                List<ExpandoObject> menusbyRole = new List<ExpandoObject>();
-
-                using (ERPContext _repo = new ERPContext())
-                {
-                    var _MenuAccesses = _repo.MenuAccesses.Where(m => m.Ext1.Trim() == userName.Trim()).FirstOrDefault();
-                    List<string> menuAccLst = _MenuAccesses.Ext4.Split(',').ToList();
-                    var parentIDs = _repo.Menus
-                                         .Where(x => menuAccLst.Contains(x.OperationCode) 
-                                                  && x.Active == "Y" 
-                                                  && x.IsMasterScreen == "Y")
-                                         .Select(m=> m.OperationCode).Distinct().ToList();
-
-                    foreach (var pid in parentIDs)
-                    {
-                        //find childs menus by using parent id
-                        List<Menus> menulst = _repo.Menus
-                                              .Where(x => x.ParentId == pid 
-                                               && x.Active =="Y")
-                                              .ToList();
-                       
-                        // create Array structure for UI to show menus
-                        if (menulst.Count() > 0)
-                        {
-                            List<ExpandoObject> childList = new List<ExpandoObject>();
-
-                            // Add childs in list
-                            foreach (Menus m in menulst)
-                            {
-                                dynamic expandoChild = new ExpandoObject();
-                                expandoChild.displayName = m.DisplayName;
-                                expandoChild.iconName = m.IconName;
-                                expandoChild.route = m.Route;
-
-                                if (!m.IsMasterScreen.Equals("Y", StringComparison.OrdinalIgnoreCase))
-                                    childList.Add(expandoChild);
-                            }
-
-                            // parent Name along with its child menus
-                            Menus mobj = _repo.Menus.Where(m => m.OperationCode == pid).FirstOrDefault();
-                            dynamic expandoObj = new ExpandoObject();
-                            expandoObj.displayName = mobj.DisplayName;
-                            expandoObj.iconName = mobj.IconName;
-                            expandoObj.route = mobj.Route;
-                            expandoObj.children = childList;
-
-                            menusbyRole.Add(expandoObj);
-                        }
-
-                    }
-                }
-                return menusbyRole;
-            }
-            catch (Exception ex) { throw ex; }
-        }
-
-        #region Menus
-
         public static List<ExpandoObject> GetMenusForRole(string roleId)
         {
             try
@@ -411,89 +355,28 @@ namespace CoreERP.BussinessLogic.masterHlepers
         #endregion
 
         #region Shift master
-        private bool IsShiftIdExists(decimal userID,string branchCode)
-        {
-            try
-            {
-                using Repository<TblShift> _repo = new Repository<TblShift>();
-                var _shift = _repo.TblShift
-.Where(x => x.UserId == userID
-&& x.BranchCode == branchCode)
-.ToList();
-                // DateTime.Parse(x.InTime.Value.ToShortDateString()) == DateTime.Parse((DateTime.Today).ToShortDateString())
-                var result = _shift.Where(x => DateTime.Parse(x.InTime.Value.ToShortDateString()) == DateTime.Parse((DateTime.Today).ToShortDateString())).Count() > 0;
-
-                return result;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-        public string GetShiftId(decimal userId,string branchCode)
+        public string GetShiftId(decimal userId, string branchCode)
         {
             try
             {
                 TblShift _shift = null;
-               
-                if (string.IsNullOrEmpty(branchCode))
+
+                using (Repository<TblShift> _repo = new Repository<TblShift>())
                 {
-                    var branches = GetBranchesByUser(userId);
-                    branchCode = branches.FirstOrDefault();
+                    _shift = _repo.TblShift.Where(s => s.UserId == userId && s.Status == 0).FirstOrDefault();
                 }
 
-                if (!IsShiftIdExists(userId, branchCode)) 
+                if(_shift == null)
                 {
-                    var _branch = BrancheHelper.GetBranches().Where(b => b.BranchCode == branchCode).FirstOrDefault();
-
-                    _shift = new TblShift
-                    {
-                        UserId = userId,
-                        Narration = "Shift in Progress.",
-                        Status = 0,
-                        EmployeeId = -1,
-                        BranchId = _branch?.BranchId,
-                        BranchCode = _branch?.BranchCode,
-                        BranchName = _branch?.BranchName,
-                        InTime = DateTime.Now,
-                        OutTime = DateTime.Now
-                    };
-
-                    using (Repository<TblShift> _repo = new Repository<TblShift>())
-                    {
-                        _repo.TblShift.Add(_shift);
-                        _repo.SaveChanges();
-                    }
+                    throw new Exception("Please start your shift.");
                 }
-                else
-                {
-                    //if user entry exists for today
-                    using Repository<TblShift> _repo = new Repository<TblShift>();
-                    _shift = _repo.TblShift
-.AsEnumerable()
-.Where(x => DateTime.Parse(x.InTime.Value.ToShortDateString()) == DateTime.Parse((DateTime.Today).ToShortDateString())
-&& x.UserId == userId
-&& x.BranchCode == branchCode)
-.FirstOrDefault();
-
-                    _shift.OutTime = DateTime.Now;
-                    _shift.Status = 0;
-                    _shift.Narration = "Shift in Progress.";
-
-                    _repo.TblShift.Update(_shift);
-                    _repo.SaveChanges();
-                }
-
                 return _shift.ShiftId.ToString();
             }
-            catch (Exception )
+            catch (Exception ex)
             {
-                //throw Exception;
-                return "-1";
+                throw ex;
             }
         }
-
-
         public TblShift StartShift(decimal userId, string branchCode)
         {
             try
@@ -527,7 +410,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
-
         public bool EndShift(decimal shiftId)
         {
             try
@@ -555,39 +437,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
-
-        public void LogoutShiftId(decimal userId, string branchCode,out string errorMessage)
-        {
-            try
-            {
-                errorMessage = string.Empty;
-
-                if (IsShiftIdExists(userId, branchCode))
-                {
-                    using Repository<TblShift> _repo = new Repository<TblShift>();
-                    var _shift = _repo.TblShift
-.Where(x => x.UserId == userId
-&& x.BranchCode == branchCode)
-.OrderByDescending(s => s.InTime)
-.FirstOrDefault();
-
-                    _shift.OutTime = DateTime.Now;
-                    _shift.Status = 1;
-                    _shift.Narration = "Shift Logged Out";
-
-                    _repo.TblShift.Update(_shift);
-                    _repo.SaveChanges();
-                }
-                else
-                {
-                    errorMessage = $"No Shift created for user  {userId} and branch Code {branchCode}";
-                }
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
         #endregion
         public TblUserNew GetUserNew(decimal userId)
         {
@@ -605,25 +454,3 @@ namespace CoreERP.BussinessLogic.masterHlepers
         }
     }
 }
- //{
- //     displayName: 'dashboard',
- //     iconName: 'recent_actors',
- //     route: 'dashboard',
- //     children: [
- //       {
- //         displayName: 'table',
- //         iconName: 'group',
- //         route: 'dashboard/table'
- //       },
- //       {
- //         displayName: 'Sessions',
- //         iconName: 'speaker_notes',
- //         route: 'devfestfl/sessions'
- //       },
- //       {
- //         displayName: 'Feedback',
- //         iconName: 'feedback',
- //         route: 'devfestfl/feedback'
- //       }
- //     ]
- //   }

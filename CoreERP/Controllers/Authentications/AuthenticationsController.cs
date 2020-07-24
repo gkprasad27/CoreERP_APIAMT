@@ -180,6 +180,29 @@ namespace CoreERP.Controllers
             });
             return result;
         }
+
+        [HttpGet("GetScreenPermisions/{operationCode}/{roleId}")]
+        public async Task<IActionResult> GetScreenPermisions(string operationCode,string roleId)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var result = new UserManagmentHelper().GetMenuAccesses(operationCode, roleId);
+                    if (result != null)
+                    {
+                        
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                    }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"No Permissions found for Menu - {operationCode}." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
+        }
         #endregion
 
         [HttpGet("logout/{userId}")]
@@ -189,19 +212,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    string errorMessage = string.Empty;
-                    var result = new UserManagmentHelper().GetErpuser(Convert.ToDecimal(userId));
-                    if (result != null)
-                    {
-                        //var _branch = UserManagmentHelper.GetBranchesByUser(Convert.ToDecimal(userId));
-                        //foreach (var br in _branch)
-                        //    new UserManagmentHelper().LogoutShiftId(Convert.ToDecimal(userId), br, out errorMessage);
-
-
-                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Log out successfully." });
-                    }
-
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found." });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Log out successfully." });
                 }
                 catch (Exception ex)
                 {
