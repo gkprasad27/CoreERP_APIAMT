@@ -1519,7 +1519,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<MenuAccesses>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.MenuId);
+
+                entity.Property(e => e.MenuId).HasColumnName("MenuID");
 
                 entity.Property(e => e.AddDate)
                     .HasColumnName("addDate")
@@ -1532,10 +1534,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Ext1).HasMaxLength(20);
 
                 entity.Property(e => e.Ext2).HasMaxLength(20);
-
-                entity.Property(e => e.MenuId)
-                    .HasColumnName("MenuID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.OperationCode).HasMaxLength(50);
 
