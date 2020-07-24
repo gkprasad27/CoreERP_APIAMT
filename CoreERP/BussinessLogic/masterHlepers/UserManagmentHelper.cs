@@ -361,7 +361,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
 
                     ma.CanView = true;
 
-                    if (ma.MenuId == null)
+                    if (ma.MenuId == 0)
                     {
                         ma.RoleId = Convert.ToString(_role.RoleId);
                         AddMenuAccess(ma);
