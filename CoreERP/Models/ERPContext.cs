@@ -152,6 +152,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblDetails> TblDetails { get; set; }
         public virtual DbSet<TblDetailsCopy> TblDetailsCopy { get; set; }
         public virtual DbSet<TblDistributionChannel> TblDistributionChannel { get; set; }
+        public virtual DbSet<TblDynamicPages> TblDynamicPages { get; set; }
         public virtual DbSet<TblEmployee> TblEmployee { get; set; }
         public virtual DbSet<TblEmployeeAttendance> TblEmployeeAttendance { get; set; }
         public virtual DbSet<TblEmployeeGroup> TblEmployeeGroup { get; set; }
@@ -6476,6 +6477,43 @@ namespace CoreERP.Models
                     .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblDynamicPages>(entity =>
+            {
+                entity.HasKey(e => e.FormName);
+
+                entity.ToTable("tbl_DynamicPages");
+
+                entity.Property(e => e.FormName).HasMaxLength(50);
+
+                entity.Property(e => e.Component).HasMaxLength(50);
+
+                entity.Property(e => e.DeleteUrl)
+                    .HasColumnName("DeleteURL")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Ext).HasMaxLength(50);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.ListName).HasMaxLength(50);
+
+                entity.Property(e => e.PrimaryKey).HasMaxLength(50);
+
+                entity.Property(e => e.RegisterUrl)
+                    .HasColumnName("RegisterURL")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.UpdateUrl)
+                    .HasColumnName("UpdateURL")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Url)
+                    .HasColumnName("URL")
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblEmployee>(entity =>
