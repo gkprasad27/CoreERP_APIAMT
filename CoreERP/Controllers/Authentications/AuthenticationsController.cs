@@ -78,7 +78,6 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                   // var result = UserManagmentHelper.GetScreensListByUserRole(userName);
                     var result = UserManagmentHelper.GetMenusForRole(roleId);
                     if (result != null)
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });

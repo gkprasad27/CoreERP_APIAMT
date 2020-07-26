@@ -189,6 +189,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 List<ExpandoObject> menusbyRole = new List<ExpandoObject>();
+                List<Menus> _subChilds = null;
+                List<string> subHeader = new List<string>();
 
                 using (ERPContext _repo = new ERPContext())
                 {
@@ -207,32 +209,52 @@ namespace CoreERP.BussinessLogic.masterHlepers
                         //find childs menus by using parent id
                         List<Menus> menulst = result.Where(x => x.ParentId == pid && x.Active == "Y").ToList();
 
-                        // create Array structure for UI to show menus
                         if (menulst.Count() > 0)
                         {
                             List<ExpandoObject> childList = new List<ExpandoObject>();
+                            List<ExpandoObject> subchildList = new List<ExpandoObject>();
 
-                            // Add childs in list
                             foreach (Menus m in menulst)
                             {
+                                //chk weather child is parent for other or not
+                                _subChilds = _repo.Menus.Where(ms => ms.ParentId == m.OperationCode).ToList();
+
+                                if(_subChilds.Count() > 0)
+                                {
+                                    subHeader.Add(m.OperationCode);
+                                    foreach (Menus subm in _subChilds)
+                                    {
+                                        dynamic subChild = new ExpandoObject();
+                                        subChild.displayName = subm.DisplayName;
+                                        subChild.iconName = subm.IconName;
+                                        subChild.route = subm.Route;
+                                        subchildList.Add(subChild);
+                                    }
+                                }
+
                                 dynamic expandoChild = new ExpandoObject();
                                 expandoChild.displayName = m.DisplayName;
                                 expandoChild.iconName = m.IconName;
                                 expandoChild.route = m.Route;
+                                if(_subChilds.Count() > 0)
+                                    expandoChild.children = subchildList;
 
                                 if (!m.IsMasterScreen.Equals("Y", StringComparison.OrdinalIgnoreCase))
                                     childList.Add(expandoChild);
                             }
 
-                            // parent Name along with its child menus
-                            Menus mobj = _repo.Menus.Where(m => m.OperationCode == pid).FirstOrDefault();
-                            dynamic expandoObj = new ExpandoObject();
-                            expandoObj.displayName = mobj.DisplayName;
-                            expandoObj.iconName = mobj.IconName;
-                            expandoObj.route = mobj.Route;
-                            expandoObj.children = childList;
+                            if (!subHeader.Contains(pid))
+                            {
+                                // parent Name along with its child menus
+                                Menus mobj = _repo.Menus.Where(m => m.OperationCode == pid).FirstOrDefault();
+                                dynamic expandoObj = new ExpandoObject();
+                                expandoObj.displayName = mobj.DisplayName;
+                                expandoObj.iconName = mobj.IconName;
+                                expandoObj.route = mobj.Route;
+                                expandoObj.children = childList;
 
-                            menusbyRole.Add(expandoObj);
+                                menusbyRole.Add(expandoObj);
+                            }
                         }
 
                     }
@@ -601,6 +623,22 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch(Exception ex)
             {
                 return null;
+            }
+        }
+
+        public TblDynamicPages GetDynamicPages(string componentName)
+        {
+            try
+            {
+                componentName = componentName.Trim().ToLower();
+                using (Repository<TblDynamicPages> _repo=new Repository<TblDynamicPages>())
+                {
+                  return  _repo.TblDynamicPages.Where(d => d.FormName.Trim().ToLower() == componentName).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }

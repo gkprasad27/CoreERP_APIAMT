@@ -14,46 +14,7 @@ namespace CoreERP.Controllers.Authentications
     [ApiController]
     public class SettingsController : ControllerBase
     {
-        [HttpGet("GetScreenNames")]
-        public async Task<IActionResult> GetScreenNames()
-        {
-
-            var result = await Task.Run(() =>
-              {                  
-                  try
-                  {
-                      var menusList = new SettingsHelper().GetMenusList();
-                      if (menusList.Count > 0)
-                      {
-                          dynamic expando = new ExpandoObject();
-                          expando.ScreenNames = menusList.Select(m => new { ID = m.Code, TEXT = m.DisplayName });
-
-                          return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                      }
-                      else
-                      {
-                          return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Screen Found" });
-                      }
-                  }
-                  catch (Exception ex)
-                  {
-                      string message = string.Empty;
-
-                      if (ex.InnerException == null)
-                      {
-                          message = ex.Message;
-                      }
-                      else
-                      {
-                          message = ex.InnerException.Message;
-                      }
-
-                      return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
-                  }
-
-              });
-            return result;
-        }
+        
 
         [HttpGet("GetParentMenuNames")]
         public async Task<IActionResult> GetParentMenuNames()
@@ -61,33 +22,33 @@ namespace CoreERP.Controllers.Authentications
             var result = await Task.Run(() =>
             {
                 try
-            {
-                var menusList = new SettingsHelper().GetMenusList();
-                if (menusList.Count > 0)
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.ScreenNames = menusList.Select(m => new { ID = m.Code, TEXT = m.DisplayName });
+                    var menusList = new SettingsHelper().GetMenusList();
+                    if (menusList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.ScreenNames = menusList.Select(m => new { ID = m.Code, TEXT = m.DisplayName });
 
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Screen Found" });
                 }
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Screen Found" });
-            }
-            catch (Exception ex)
-            {
-                string message = string.Empty;
-
-                if (ex.InnerException == null)
+                catch (Exception ex)
                 {
-                    message = ex.Message;
-                }
-                else
-                {
-                    message = ex.InnerException.Message;
-                }
+                    string message = string.Empty;
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
-            }
+                    if (ex.InnerException == null)
+                    {
+                        message = ex.Message;
+                    }
+                    else
+                    {
+                        message = ex.InnerException.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
             });
             return result;
         }
@@ -98,27 +59,59 @@ namespace CoreERP.Controllers.Authentications
             var result = await Task.Run(() =>
             {
                 try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.ScreenNames = UserManagmentHelper.GetErpusers().Select(m => new { ID = m.SeqId, TEXT = m.UserName });
-
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                string message = string.Empty;
-
-                if (ex.InnerException == null)
                 {
-                    message = ex.Message;
-                }
-                else
-                {
-                    message = ex.InnerException.Message;
-                }
+                    dynamic expando = new ExpandoObject();
+                    expando.ScreenNames = UserManagmentHelper.GetErpusers().Select(m => new { ID = m.SeqId, TEXT = m.UserName });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Empty;
+
+                    if (ex.InnerException == null)
+                    {
+                        message = ex.Message;
+                    }
+                    else
+                    {
+                        message = ex.InnerException.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetComponentInfo/{componentName}")]
+        public async Task<IActionResult> GetComponentInfo(string componentName)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var result = new UserManagmentHelper().GetDynamicPages(componentName);
+                    if (result != null)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Component not configured." });
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Empty;
+
+                    if (ex.InnerException == null)
+                    {
+                        message = ex.Message;
+                    }
+                    else
+                    {
+                        message = ex.InnerException.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
             });
             return result;
         }
