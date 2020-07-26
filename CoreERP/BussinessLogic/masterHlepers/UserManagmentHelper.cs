@@ -123,65 +123,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
-        public static List<ExpandoObject> GetScreensListByUserRole(string userName)
-        {
-            try
-            {
-                List<ExpandoObject> menusbyRole = new List<ExpandoObject>();
-
-                using (ERPContext _repo = new ERPContext())
-                {
-                    var _MenuAccesses = _repo.MenuAccesses.Where(m => m.Ext1.Trim() == userName.Trim()).FirstOrDefault();
-                    List<string> menuAccLst = _MenuAccesses.Ext4.Split(',').ToList();
-                    var parentIDs = _repo.Menus
-                                         .Where(x => menuAccLst.Contains(x.OperationCode) 
-                                                  && x.Active == "Y" 
-                                                  && x.IsMasterScreen == "Y")
-                                         .Select(m=> m.OperationCode).Distinct().ToList();
-
-                    foreach (var pid in parentIDs)
-                    {
-                        //find childs menus by using parent id
-                        List<Menus> menulst = _repo.Menus
-                                              .Where(x => x.ParentId == pid 
-                                               && x.Active =="Y")
-                                              .ToList();
-                       
-                        // create Array structure for UI to show menus
-                        if (menulst.Count() > 0)
-                        {
-                            List<ExpandoObject> childList = new List<ExpandoObject>();
-
-                            // Add childs in list
-                            foreach (Menus m in menulst)
-                            {
-                                dynamic expandoChild = new ExpandoObject();
-                                expandoChild.displayName = m.DisplayName;
-                                expandoChild.iconName = m.IconName;
-                                expandoChild.route = m.Route;
-
-                                if (!m.IsMasterScreen.Equals("Y", StringComparison.OrdinalIgnoreCase))
-                                    childList.Add(expandoChild);
-                            }
-
-                            // parent Name along with its child menus
-                            Menus mobj = _repo.Menus.Where(m => m.OperationCode == pid).FirstOrDefault();
-                            dynamic expandoObj = new ExpandoObject();
-                            expandoObj.displayName = mobj.DisplayName;
-                            expandoObj.iconName = mobj.IconName;
-                            expandoObj.route = mobj.Route;
-                            expandoObj.children = childList;
-
-                            menusbyRole.Add(expandoObj);
-                        }
-
-                    }
-                }
-                return menusbyRole;
-            }
-            catch (Exception ex) { throw ex; }
-        }
-
+      
         #region Menus
 
         public static List<ExpandoObject> GetMenusForRole(string roleId)
@@ -212,15 +154,17 @@ namespace CoreERP.BussinessLogic.masterHlepers
                         if (menulst.Count() > 0)
                         {
                             List<ExpandoObject> childList = new List<ExpandoObject>();
-                            List<ExpandoObject> subchildList = new List<ExpandoObject>();
+                            List<ExpandoObject> subchildList = null;
 
                             foreach (Menus m in menulst)
                             {
                                 //chk weather child is parent for other or not
+                                _subChilds = new List<Menus>();
                                 _subChilds = _repo.Menus.Where(ms => ms.ParentId == m.OperationCode).ToList();
 
                                 if(_subChilds.Count() > 0)
                                 {
+                                    subchildList = new List<ExpandoObject>();
                                     subHeader.Add(m.OperationCode);
                                     foreach (Menus subm in _subChilds)
                                     {
@@ -236,7 +180,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                                 expandoChild.displayName = m.DisplayName;
                                 expandoChild.iconName = m.IconName;
                                 expandoChild.route = m.Route;
-                                if(_subChilds.Count() > 0)
+                                //if(_subChilds.Count() > 0)
                                     expandoChild.children = subchildList;
 
                                 if (!m.IsMasterScreen.Equals("Y", StringComparison.OrdinalIgnoreCase))
