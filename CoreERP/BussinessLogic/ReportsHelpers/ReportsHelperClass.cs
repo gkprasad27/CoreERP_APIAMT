@@ -1510,7 +1510,64 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             return getDataFromDataBase(dbParametersList, procedureName);
         }
         #endregion
-
+        #region MeterReading Report
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetMeterReadingReportDataList(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        {
+            DataSet dsResult = GetMeterReadingReportDataTable(userID, branchCode, fromDate, toDate);
+            List<dynamic> meterReading = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    meterReading = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (meterReading, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
+        public static DataSet GetMeterReadingReportDataTable(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_24HrMeterReading";
+            #region Parameters
+            DbParameter UserID = command.CreateParameter();
+            UserID.Direction = ParameterDirection.Input;
+            UserID.Value = (object)userID ?? DBNull.Value;
+            UserID.ParameterName = "userName";
+            DbParameter dbpBranchCode = command.CreateParameter();
+            dbpBranchCode.Direction = ParameterDirection.Input;
+            dbpBranchCode.Value = (object)branchCode ?? DBNull.Value;
+            dbpBranchCode.ParameterName = "branchCode";
+            DbParameter pmFromDate = command.CreateParameter();
+            pmFromDate.Direction = ParameterDirection.Input;
+            pmFromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmFromDate.ParameterName = "fDate";
+            DbParameter pmToDate = command.CreateParameter();
+            pmToDate.Direction = ParameterDirection.Input;
+            pmToDate.Value = (object)toDate ?? DBNull.Value;
+            pmToDate.ParameterName = "tDate";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(UserID);
+            command.Parameters.Add(dbpBranchCode);
+            command.Parameters.Add(pmFromDate);
+            command.Parameters.Add(pmToDate);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
+        #endregion
         #region CommonMethods
         public static DataSet getDataFromDataBase(List<parametersClass> dbParametersList, string procedureName)
         {
