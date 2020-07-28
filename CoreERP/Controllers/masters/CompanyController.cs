@@ -12,10 +12,10 @@ namespace CoreERP.Controllers
 {
 
     [ApiController]
-    [Route("api/masters/Company")]
+    [Route("api/Company")]
     public class CompanyController : ControllerBase
     {
-
+        
 
         [HttpGet("GetStatesList")]
         public IActionResult GetStatesList()
@@ -132,7 +132,7 @@ namespace CoreERP.Controllers
             }
         }
 
-
+       
         [HttpPost("RegisterCompany")]
         public IActionResult RegisterCompany([FromBody]TblCompany company)
         {
@@ -165,8 +165,8 @@ namespace CoreERP.Controllers
                 }
             }
         }
-
-        [HttpPut("UpdateCompany")]
+        
+       [HttpPut("UpdateCompany")]
         public IActionResult UpdateCompany([FromBody] TblCompany company)
         {
 
@@ -192,7 +192,7 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
+        
 
         [HttpDelete("DeleteCompany/{code}")]
         public IActionResult DeleteCompany(string code)

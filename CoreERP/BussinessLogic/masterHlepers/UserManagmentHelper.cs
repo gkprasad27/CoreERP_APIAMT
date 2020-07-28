@@ -132,6 +132,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 List<ExpandoObject> menusbyRole = new List<ExpandoObject>();
                 List<Menus> _subChilds = null;
+                List<Menus> _subChilds1 = null;
                 List<string> subHeader = new List<string>();
 
                 using (ERPContext _repo = new ERPContext())
@@ -155,6 +156,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                         {
                             List<ExpandoObject> childList = new List<ExpandoObject>();
                             List<ExpandoObject> subchildList = null;
+                            List<ExpandoObject> subchildList1 = null;
 
                             foreach (Menus m in menulst)
                             {
@@ -168,10 +170,26 @@ namespace CoreERP.BussinessLogic.masterHlepers
                                     subHeader.Add(m.OperationCode);
                                     foreach (Menus subm in _subChilds)
                                     {
+                                       _subChilds1= _repo.Menus.Where(ms => ms.ParentId == subm.OperationCode).ToList();
+                                        //dept 3
+                                        if(_subChilds1.Count > 0)
+                                        {
+                                            subchildList1 = new List<ExpandoObject>();
+                                            foreach (Menus subm1 in _subChilds1)
+                                            {
+                                                dynamic subChild1 = new ExpandoObject();
+                                                subChild1.displayName = subm.DisplayName;
+                                                subChild1.iconName = subm.IconName;
+                                                subChild1.route = subm.Route;
+
+                                                subchildList1.Add(subChild1);
+                                            }
+                                        }
                                         dynamic subChild = new ExpandoObject();
                                         subChild.displayName = subm.DisplayName;
                                         subChild.iconName = subm.IconName;
                                         subChild.route = subm.Route;
+                                        subChild.children = subchildList1;
                                         subchildList.Add(subChild);
                                     }
                                 }
@@ -585,27 +603,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
+
+
+       
     }
 }
- //{
- //     displayName: 'dashboard',
- //     iconName: 'recent_actors',
- //     route: 'dashboard',
- //     children: [
- //       {
- //         displayName: 'table',
- //         iconName: 'group',
- //         route: 'dashboard/table'
- //       },
- //       {
- //         displayName: 'Sessions',
- //         iconName: 'speaker_notes',
- //         route: 'devfestfl/sessions'
- //       },
- //       {
- //         displayName: 'Feedback',
- //         iconName: 'feedback',
- //         route: 'devfestfl/feedback'
- //       }
- //     ]
- //   }

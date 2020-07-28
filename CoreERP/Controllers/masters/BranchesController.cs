@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/masters/Branches")]
+    [Route("api/Branches")]
     public class BranchesController : ControllerBase
     {
      
