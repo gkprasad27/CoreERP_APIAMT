@@ -331,12 +331,25 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 purInv.EmployeeId = -1;
                                 purInv.ServerDateTime = DateTime.Now;
                                 purInv.ShiftId = shifId;
-                                purInv.TotalAmount = purchaseInvoice.TotalAmount;
-                                purInv.Cgst = purchaseInvoice.TotalCgst;
-                                purInv.Sgst = purchaseInvoice.TotalSgst;
-                                purInv.Igst = purchaseInvoice.TotalIgst;
-                                purInv.TotalGst = purchaseInvoice.TotaltaxAmount;
-                                purInv.GrossAmount = purchaseInvoice.GrandTotal;
+                                if (purInv.Qty == null)
+                                {
+                                    purInv.Rate = 0;
+                                    purInv.TotalAmount = 0;
+                                    purInv.Cgst = 0;
+                                    purInv.Sgst = 0;
+                                    purInv.Igst = 0;
+                                    purInv.TotalGst = 0;
+                                    purInv.GrossAmount = 0;
+                                }
+                                else
+                                {
+                                    purInv.TotalAmount = purInv.GrossAmount;
+                                    purInv.Igst = purchaseInvoice.TotalIgst;
+                                    purInv.TotalGst = purInv.TotalAmount*18/100;
+                                    purInv.Cgst = purInv.TotalGst / 2;
+                                    purInv.Sgst = purInv.TotalGst / 2;
+                                    purInv.GrossAmount = purInv.TotalAmount+purInv.TotalGst;
+                                }
                                 context.TblPurchaseInvoiceDetail.Add(purInv);
                                 context.SaveChanges();
 
@@ -344,7 +357,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                                 #region Add voucher Details
                                 _accountLedger.CrOrDr = "Debit";
-                                var _voucherDetail = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purInv.GrossAmount);
+                                var _voucherDetail = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purInv.TotalAmount);
                                 #endregion
 
                                 #region Add stock transaction  and Account Ledger Transaction

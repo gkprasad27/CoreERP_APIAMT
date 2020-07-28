@@ -246,7 +246,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                                 #region Add voucher Details
                                 _accountLedger.CrOrDr = "Credit";
-                                var _voucherDetail = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, purReturnInv.GrossAmount);
+                                var _voucherDetail = AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, purReturnInv.TotalAmount);
                                 #endregion
 
                                 #region Add stock transaction  and Account Ledger Transaction
@@ -279,7 +279,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                             _accountLedger = GetAccountLedgers(purchaseReturn.LedgerCode);
                             _accountLedger.CrOrDr = "Debit";
-                            var voucherDetail= AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, purchaseReturn.TotalAmount, false);
+                            var voucherDetail= AddVoucherDetails(context, purchaseReturn, _branch, _voucherMaster, _accountLedger, _voucherMaster.Amount, false);
                             AddAccountLedgerTransactions(context, voucherDetail, purchaseInvoice.PurchaseInvDate);
                             //CHech weather igs or sg ,cg st
                             var _stateWiseGsts = GetStateWiseGsts(purchaseReturn.StateCode).FirstOrDefault();
