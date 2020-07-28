@@ -178,9 +178,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
                                             foreach (Menus subm1 in _subChilds1)
                                             {
                                                 dynamic subChild1 = new ExpandoObject();
-                                                subChild1.displayName = subm.DisplayName;
-                                                subChild1.iconName = subm.IconName;
-                                                subChild1.route = subm.Route;
+                                                subChild1.displayName = subm1.DisplayName;
+                                                subChild1.iconName = subm1.IconName;
+                                                subChild1.route = subm1.Route;
 
                                                 subchildList1.Add(subChild1);
                                             }
