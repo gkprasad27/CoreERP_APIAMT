@@ -12,7 +12,7 @@ using System.Dynamic;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/Inventory/Sizes")]
+    [Route("api/Sizes")]
     public class SizesController : ControllerBase
     {
         [HttpPost("RegisterSizes")]

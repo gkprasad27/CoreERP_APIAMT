@@ -11,7 +11,7 @@ using System.Dynamic;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/masters/Segment")]
+    [Route("api/Segment")]
     public class SegmentMasterController : ControllerBase
     {
 

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/masters/Language")]
+    [Route("api/Language")]
     public class LanguageController : ControllerBase
     {
         [HttpPost("RegisterLanguage")]
