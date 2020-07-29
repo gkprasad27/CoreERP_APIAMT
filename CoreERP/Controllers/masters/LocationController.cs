@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/masters/Location")]
+    [Route("api/Location")]
     public class LocationController : ControllerBase
     {
         [HttpPost("RegisterLocation")]

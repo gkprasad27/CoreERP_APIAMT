@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/masters/StorageLocation")]
+    [Route("api/StorageLocation")]
     public class StorageLocationController : ControllerBase
     {
         [HttpPost("RegisterStorageLocation")]

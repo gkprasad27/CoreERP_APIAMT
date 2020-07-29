@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/masters/FunctionalDepartment")]
+    [Route("api/FunctionalDepartment")]
     public class FunctionalDepartmentController : ControllerBase
     {
         [HttpPost("RegisterFunctionalDepartment")]
