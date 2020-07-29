@@ -107,13 +107,13 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             }
         }
 
-        public List<TblPumps> GetPump(decimal pumpNo= 0)
+        public List<TblPumps> GetPump(string branchCode,decimal pumpNo= 0)
         {
             try
             {
                 using (Repository<TblPumps> repo = new Repository<TblPumps>())
                 {
-                    return repo.TblPumps.AsEnumerable().Where(b => b.PumpNo == pumpNo).ToList();
+                    return repo.TblPumps.AsEnumerable().Where(b => b.PumpNo == pumpNo&& b.BranchCode==branchCode).ToList();
                 }
             }
             catch (Exception ex)
@@ -145,7 +145,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 using (Repository<TblMeterReading> repo = new Repository<TblMeterReading>())
                 {
                     var _branch = GetBranches(meterReading.BranchCode).ToArray().FirstOrDefault();
-                    var _pump = GetPump(meterReading.PumpNo).ToArray().FirstOrDefault();
+                    var _pump = GetPump(meterReading.BranchCode,meterReading.PumpNo).ToArray().FirstOrDefault();
                     meterReading.BranchId = _branch.BranchId;
                     meterReading.BranchName = _branch.BranchName;
                     meterReading.PumpId = _pump.PumpId;

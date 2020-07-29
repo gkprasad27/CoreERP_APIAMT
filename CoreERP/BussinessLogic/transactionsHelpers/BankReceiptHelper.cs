@@ -285,21 +285,6 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 _voucherDetail.BranchName = bankReceiptMaster.BranchName;
                 if (isFromCashDetials == true)
                 {
-                    _voucherDetail.FromLedgerId = bankReceiptMaster.BankLedgerId;
-                    _voucherDetail.FromLedgerCode = bankReceiptMaster.BankLedgerCode;
-                    _voucherDetail.FromLedgerName = bankReceiptMaster.BankLedgerName;
-                    _voucherDetail.ToLedgerId = ledgerName.LedgerId;
-                    _voucherDetail.ToLedgerCode = ledgerCode;
-                    _voucherDetail.ToLedgerName = ledgerName.LedgerName;
-                    _voucherDetail.Amount = productRate;
-                    _voucherDetail.TransactionType = "Credit";
-                    _voucherDetail.CostCenter = bankReceiptMaster.BranchCode;
-                    _voucherDetail.ServerDate = DateTime.Now;
-                    _voucherDetail.Narration = "Bank Receipt Detail";
-                }
-                //To ledger  clarifiaction on selecion of product
-                else
-                {
                     _voucherDetail.FromLedgerId = ledgerName.LedgerId;
                     _voucherDetail.FromLedgerCode = ledgerCode;
                     _voucherDetail.FromLedgerName = ledgerName.LedgerName;
@@ -311,8 +296,21 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _voucherDetail.CostCenter = bankReceiptMaster.BranchCode;
                     _voucherDetail.ServerDate = DateTime.Now;
                     _voucherDetail.Narration = "Bank Receipt Detail";
-
-
+                }
+                //To ledger  clarifiaction on selecion of product
+                else
+                {
+                    _voucherDetail.FromLedgerId = bankReceiptMaster.BankLedgerId;
+                    _voucherDetail.FromLedgerCode = bankReceiptMaster.BankLedgerCode;
+                    _voucherDetail.FromLedgerName = bankReceiptMaster.BankLedgerName;
+                    _voucherDetail.ToLedgerId = ledgerName.LedgerId;
+                    _voucherDetail.ToLedgerCode = ledgerCode;
+                    _voucherDetail.ToLedgerName = ledgerName.LedgerName;
+                    _voucherDetail.Amount = productRate;
+                    _voucherDetail.TransactionType = "Credit";
+                    _voucherDetail.CostCenter = bankReceiptMaster.BranchCode;
+                    _voucherDetail.ServerDate = DateTime.Now;
+                    _voucherDetail.Narration = "Bank Receipt Detail";
                 }
 
                 context.TblVoucherDetail.Add(_voucherDetail);
@@ -367,9 +365,9 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 if (isdebit == true)
                 {
                     _accountLedgerTransactions.VoucherDetailId = _voucherDetail.VoucherDetailId;
-                    _accountLedgerTransactions.LedgerId = _voucherDetail.ToLedgerId;
-                    _accountLedgerTransactions.LedgerCode = _voucherDetail.ToLedgerCode;
-                    _accountLedgerTransactions.LedgerName = _voucherDetail.ToLedgerName;
+                    _accountLedgerTransactions.LedgerId = bankReceiptMaster.BankLedgerId;
+                    _accountLedgerTransactions.LedgerCode = bankReceiptMaster.BankLedgerCode;
+                    _accountLedgerTransactions.LedgerName = bankReceiptMaster.BankLedgerName;
                     _accountLedgerTransactions.TransactionType = "Debit";
                     _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
                     _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
@@ -377,15 +375,13 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 else
                 {
                     _accountLedgerTransactions.VoucherDetailId = _voucherDetail.VoucherDetailId;
-                    _accountLedgerTransactions.LedgerId = bankReceiptMaster.BankLedgerId;
-                    _accountLedgerTransactions.LedgerCode = bankReceiptMaster.BankLedgerCode;
-                    _accountLedgerTransactions.LedgerName = bankReceiptMaster.BankLedgerName;
+                    _accountLedgerTransactions.LedgerId = _voucherDetail.FromLedgerId;
+                    _accountLedgerTransactions.LedgerCode = _voucherDetail.FromLedgerCode;
+                    _accountLedgerTransactions.LedgerName = _voucherDetail.FromLedgerName;
                     _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
                     _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
                     _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
                 }
-               
-
                 context.TblAccountLedgerTransactions.Add(_accountLedgerTransactions);
                 if (context.SaveChanges() > 0)
                     return _accountLedgerTransactions;
