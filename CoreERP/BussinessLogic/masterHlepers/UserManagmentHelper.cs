@@ -123,7 +123,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
-      
+
         #region Menus
 
         public static List<ExpandoObject> GetMenusForRole(string roleId)
@@ -135,95 +135,123 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 List<Menus> _subChilds1 = null;
                 List<string> subHeader = new List<string>();
 
-                using (ERPContext _repo = new ERPContext())
+                var result = GetAuthentixatedMenus(roleId);
+                var parentIDs = result.Select(m => m.ParentId).Distinct();
+
+                foreach (var pid in parentIDs)
                 {
+                    //find childs menus by using parent id
+                    List<Menus> menulst = GetAuthentixatedMenus(roleId, pid);
 
-                    var result = (from ma in _repo.MenuAccesses
-                                  join m in _repo.Menus on ma.OperationCode equals m.OperationCode
-                                 where ma.RoleId == roleId
-                                    && ma.Access == 1
-                                    && ma.Active == true
-                                  select m); ;
-
-                    var parentIDs = result.Select(m => m.ParentId).Distinct();
-
-                    foreach (var pid in parentIDs)
+                    if (menulst.Count() > 0)
                     {
-                        //find childs menus by using parent id
-                        List<Menus> menulst = result.Where(x => x.ParentId == pid && x.Active == "Y").ToList();
+                        List<ExpandoObject> childList = new List<ExpandoObject>();
+                        List<ExpandoObject> subchildList = null;
+                        List<ExpandoObject> subchildList1 = null;
 
-                        if (menulst.Count() > 0)
+                        foreach (Menus m in menulst)
                         {
-                            List<ExpandoObject> childList = new List<ExpandoObject>();
-                            List<ExpandoObject> subchildList = null;
-                            List<ExpandoObject> subchildList1 = null;
+                            if (m.IsMasterScreen.Equals("Y", StringComparison.OrdinalIgnoreCase))
+                                continue;
 
-                            foreach (Menus m in menulst)
+                            //chk weather child is parent for other or not
+                            _subChilds = new List<Menus>();
+                            _subChilds = GetAuthentixatedMenus(roleId, m.OperationCode);
+
+                            if (_subChilds.Count() > 0)
                             {
-                                //chk weather child is parent for other or not
-                                _subChilds = new List<Menus>();
-                                _subChilds = _repo.Menus.Where(ms => ms.ParentId == m.OperationCode).ToList();
-
-                                if(_subChilds.Count() > 0)
+                                subchildList = new List<ExpandoObject>();
+                                subHeader.Add(m.OperationCode);
+                                foreach (Menus subm in _subChilds)
                                 {
-                                    subchildList = new List<ExpandoObject>();
-                                    subHeader.Add(m.OperationCode);
-                                    foreach (Menus subm in _subChilds)
+                                    #region Depth 3
+                                    _subChilds1 = GetAuthentixatedMenus(roleId, subm.OperationCode);
+                                    if (_subChilds1.Count > 0)
                                     {
-                                       _subChilds1= _repo.Menus.Where(ms => ms.ParentId == subm.OperationCode).ToList();
-                                        //dept 3
-                                        if(_subChilds1.Count > 0)
+                                        subchildList1 = new List<ExpandoObject>();
+                                        foreach (Menus subm1 in _subChilds1)
                                         {
-                                            subchildList1 = new List<ExpandoObject>();
-                                            foreach (Menus subm1 in _subChilds1)
-                                            {
-                                                dynamic subChild1 = new ExpandoObject();
-                                                subChild1.displayName = subm1.DisplayName;
-                                                subChild1.iconName = subm1.IconName;
-                                                subChild1.route = subm1.Route;
-
-                                                subchildList1.Add(subChild1);
-                                            }
+                                            dynamic subChild1 = GetMenustructureObj(subm1, null);
+                                            subchildList1.Add(subChild1);
                                         }
-                                        dynamic subChild = new ExpandoObject();
-                                        subChild.displayName = subm.DisplayName;
-                                        subChild.iconName = subm.IconName;
-                                        subChild.route = subm.Route;
-                                        subChild.children = subchildList1;
-                                        subchildList.Add(subChild);
                                     }
+                                    #endregion
+                                    dynamic subChild = GetMenustructureObj(subm, subchildList1);
+                                    subchildList.Add(subChild);
                                 }
-
-                                dynamic expandoChild = new ExpandoObject();
-                                expandoChild.displayName = m.DisplayName;
-                                expandoChild.iconName = m.IconName;
-                                expandoChild.route = m.Route;
-                                //if(_subChilds.Count() > 0)
-                                    expandoChild.children = subchildList;
-
-                                if (!m.IsMasterScreen.Equals("Y", StringComparison.OrdinalIgnoreCase))
-                                    childList.Add(expandoChild);
                             }
-
-                            if (!subHeader.Contains(pid))
-                            {
-                                // parent Name along with its child menus
-                                Menus mobj = _repo.Menus.Where(m => m.OperationCode == pid).FirstOrDefault();
-                                dynamic expandoObj = new ExpandoObject();
-                                expandoObj.displayName = mobj.DisplayName;
-                                expandoObj.iconName = mobj.IconName;
-                                expandoObj.route = mobj.Route;
-                                expandoObj.children = childList;
-
-                                menusbyRole.Add(expandoObj);
-                            }
+                            dynamic expandoChild = GetMenustructureObj(m, subchildList);
+                            childList.Add(expandoChild);
                         }
 
+                        if (!subHeader.Contains(pid))
+                        {
+                            // parent Name along with its child menus
+                            Menus mobj = GetMenu(pid);
+                            dynamic expandoObj = GetMenustructureObj(mobj, childList);
+
+                            menusbyRole.Add(expandoObj);
+                        }
                     }
                 }
                 return menusbyRole;
             }
             catch (Exception ex) { throw ex; }
+        }
+
+
+        private static List<Menus> GetAuthentixatedMenus(string roleId ,string parentId=null)
+        {
+            try
+            {
+                using(ERPContext _repo=new ERPContext())
+                {
+                    return (from ma in _repo.MenuAccesses
+                            join m in _repo.Menus on ma.OperationCode equals m.OperationCode
+                            where ma.RoleId == roleId  && ma.Access == 1 && ma.Active == true
+                              && m.ParentId == (parentId ?? m.ParentId)
+                            select m).ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private static ExpandoObject GetMenustructureObj(Menus m, List<ExpandoObject> childerns)
+        {
+            try
+            {
+                dynamic expandoObj = new ExpandoObject();
+                expandoObj.displayName = m.DisplayName;
+                expandoObj.iconName = m.IconName;
+                expandoObj.route = m.Route;
+
+                if (childerns != null && childerns.Count() > 0)
+                    expandoObj.children = childerns;
+
+                return expandoObj;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static Menus GetMenu(string operationCode)
+        {
+            try
+            {
+                using (Repository<Menus> _repo = new Repository<Menus>())
+                {
+                    return _repo.Menus.Where(m => m.OperationCode == operationCode).FirstOrDefault();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public TblRole GetRole(decimal roleId)
