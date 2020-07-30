@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers.GeneralLedger
 {
     [ApiController]
-    [Route("api/gl/TaxTransaction")]
+    [Route("api/TaxTransaction")]
     public class TaxTransactionController : ControllerBase
     {
         [HttpPost("RegisterTaxTransaction")]

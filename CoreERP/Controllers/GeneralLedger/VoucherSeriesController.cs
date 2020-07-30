@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace CoreERP.Controllers.GeneralLedger
 {
     [ApiController]
-    [Route("api/gl/VoucherSeries")]
+    [Route("api/VoucherSeries")]
     public class VoucherSeriesController : ControllerBase
     {
         [HttpPost("RegisterVoucherSeries")]

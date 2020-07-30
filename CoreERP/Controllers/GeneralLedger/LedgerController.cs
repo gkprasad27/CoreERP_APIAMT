@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace CoreERP.Controllers.GeneralLedger
 {
     [ApiController]
-    [Route("api/gl/Ledger")]
+    [Route("api/Ledger")]
     public class LedgerController : ControllerBase
     {
         [HttpPost("RegisterLedger")]

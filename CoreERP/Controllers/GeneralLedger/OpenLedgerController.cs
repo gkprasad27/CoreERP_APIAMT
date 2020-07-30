@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers.GL
 {
     [ApiController]
-    [Route("api/gl/OpenLedger")]
+    [Route("api/OpenLedger")]
     public class OpenLedgerController : ControllerBase
     {
         [HttpPost("RegisterOpenLedger")]

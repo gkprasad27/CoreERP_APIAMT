@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/gl/TaxTypes")]
+    [Route("api/TaxTypes")]
     public class TaxTypesController : ControllerBase
     {
         [HttpPost("RegisterTaxTypes")]

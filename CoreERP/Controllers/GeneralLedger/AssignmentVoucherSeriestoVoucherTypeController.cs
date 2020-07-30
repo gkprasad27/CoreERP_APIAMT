@@ -12,7 +12,7 @@ namespace CoreERP.Controllers.GeneralLedger
 {
 
     [ApiController]
-    [Route("api/gl/AssignmentVoucherSeriestoVoucherType")]
+    [Route("api/AssignmentVoucherSeriestoVoucherType")]
     public class AssignmentVoucherSeriestoVoucherTypeController : ControllerBase
     {
         [HttpPost("RegisterAssignmentVoucherSeriestoVoucherType")]
