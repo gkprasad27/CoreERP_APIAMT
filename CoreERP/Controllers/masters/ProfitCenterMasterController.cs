@@ -13,7 +13,7 @@ using System.Dynamic;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/masters/ProfitCenter")]
+    [Route("api/ProfitCenter")]
     public class ProfitCenterMasterController : ControllerBase
     {
 

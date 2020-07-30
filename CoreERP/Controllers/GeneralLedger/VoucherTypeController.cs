@@ -66,20 +66,6 @@ namespace CoreERP.Controllers.GL
             }
         }
 
-        //[HttpGet("GetVoucherClassList")]
-        //public async Task<IActionResult> GetVoucherClassList()
-        //{
-        //    try
-        //    {
-        //        dynamic expando = new ExpandoObject();
-        //        expando.VoucherClassList = GLHelper.GetVoucherClassList().Select(x => new { ID = x.VoucherCode, TEXT = x.Ext2 });
-        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
 
         [HttpPost("RegisterVoucherTypes")]
         public IActionResult RegisterVoucherTypes([FromBody]VoucherTypes vouhertype)

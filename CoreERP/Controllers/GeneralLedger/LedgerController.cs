@@ -1,31 +1,31 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
-using CoreERP.Models;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-namespace CoreERP.Controllers.masters
+namespace CoreERP.Controllers.GeneralLedger
 {
     [ApiController]
-    [Route("api/Location")]
-    public class LocationController : ControllerBase
+    [Route("api/Ledger")]
+    public class LedgerController : ControllerBase
     {
-        [HttpPost("RegisterLocation")]
-        public IActionResult RegisterLocation([FromBody]TblLocation location)
+        [HttpPost("RegisterLedger")]
+        public IActionResult RegisterLedger([FromBody]Ledger ledger)
         {
-            if (location == null)
+            if (ledger == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-                if (LocationHelper.GetList(location.LocationId).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"location Code {nameof(location.LocationId)} is already exists ,Please Use Different Code " });
+                if (LedgerHelper.GetList(ledger.Code).Count() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Ledger Code {nameof(ledger.Code)} is already exists ,Please Use Different Code " });
 
-                var result = LocationHelper.Register(location);
+                var result = LedgerHelper.Register(ledger);
                 APIResponse apiResponse;
                 if (result != null)
                 {
@@ -45,16 +45,16 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetLocationList")]
-        public IActionResult GetLocationList()
+        [HttpGet("GetLedgerList")]
+        public IActionResult GetLedgerList()
         {
             try
             {
-                var locationList = LocationHelper.GetList();
-                if (locationList.Count() > 0)
+                var ledgerList = LedgerHelper.GetList();
+                if (ledgerList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.locationList = locationList;
+                    expdoObj.ledgerList = ledgerList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
@@ -68,36 +68,15 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetPlantList")]
-        public IActionResult GetPlantList()
+        [HttpPut("UpdateLedger")]
+        public IActionResult UpdateLedger([FromBody] Ledger ledger)
         {
-            try
-            {
-                var plantList = LocationHelper.GetPlants();
-                if (plantList.Count() > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.plantsList = plantList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpPut("UpdateLocation")]
-        public IActionResult UpdateLocation([FromBody] TblLocation loc)
-        {
-            if (loc == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(loc)} cannot be null" });
+            if (ledger == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(ledger)} cannot be null" });
 
             try
             {
-                var rs = LocationHelper.Update(loc);
+                var rs = LedgerHelper.Update(ledger);
                 APIResponse apiResponse;
                 if (rs != null)
                 {
@@ -116,15 +95,15 @@ namespace CoreERP.Controllers.masters
         }
 
 
-        [HttpDelete("DeleteLocation/{code}")]
-        public IActionResult DeleteLocationByID(string code)
+        [HttpDelete("DeletLedger/{code}")]
+        public IActionResult DeletLedgerByID(string code)
         {
             try
             {
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = LocationHelper.Delete(code);
+                var rs = LedgerHelper.Delete(code);
                 APIResponse apiResponse;
                 if (rs != null)
                 {

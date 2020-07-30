@@ -530,68 +530,58 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         #endregion
 
-        #region TaxIntegration
-        public static List<TaxIntegration> GetTaxIntegrationList()
+        #region TblTaxtypes
+        public static List<TblTaxtypes> GetTblTaxtypesList()
         {
             try
             {
-                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
-                return repo.TaxIntegration.AsEnumerable().Where(m => m.Active == "Y").ToList();
-                //return null;
+                using Repository<TblTaxtypes> repo = new Repository<TblTaxtypes>();
+                return repo.TblTaxtypes.ToList();
             }
             catch (Exception ex) { throw ex; }
         }
-        public static List<TaxIntegration> GetTaxIntegrationList(string taxCode)
+        public static List<TblTaxtypes> GetTblTaxtypesList(string taxCode)
         {
             try
             {
-                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
-                return repo.TaxIntegration.AsEnumerable().Where(m => m.TaxCode == taxCode).ToList();
-
-                // return null;
+                using Repository<TblTaxtypes> repo = new Repository<TblTaxtypes>();
+                return repo.TblTaxtypes.AsEnumerable().Where(m => m.TaxKey == taxCode).ToList();
             }
             catch (Exception ex) { throw ex; }
         }
-        public static TaxIntegration RegisterTaxIntegration(TaxIntegration taxintegration, string bcode, string ccode)
+        public static TblTaxtypes RegisterTblTaxtypes(TblTaxtypes taxtypes)
         {
             try
             {
-                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
-                taxintegration.BranchCode = bcode;
-                taxintegration.CompanyCode = ccode;
-                taxintegration.Active = "Y";
-                taxintegration.AddDate = DateTime.Now;
-                repo.TaxIntegration.Add(taxintegration);
+                using Repository<TblTaxtypes> repo = new Repository<TblTaxtypes>();
+                repo.TblTaxtypes.Add(taxtypes);
                 if (repo.SaveChanges() > 0)
-                    return taxintegration;
+                    return taxtypes;
+                
+                return null;
+            }
+            catch { throw; }
+        }
+        public static TblTaxtypes UpdateTblTaxtypes(TblTaxtypes taxtypes)
+        {
+            try
+            {
+                using Repository<TblTaxtypes> repo = new Repository<TblTaxtypes>();
+                repo.TblTaxtypes.Update(taxtypes);
+                if (repo.SaveChanges() > 0)
+                    return taxtypes;
 
                 return null;
             }
             catch { throw; }
         }
-        public static TaxIntegration UpdateTaxIntegration(TaxIntegration taxintegration, string bcode, string ccode)
+        public static TblTaxtypes DeleteTblTaxtypes(string taxCode)
         {
             try
             {
-                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
-                taxintegration.BranchCode = bcode;
-                taxintegration.CompanyCode = ccode;
-                repo.TaxIntegration.Update(taxintegration);
-                if (repo.SaveChanges() > 0)
-                    return taxintegration;
-
-                return null;
-            }
-            catch { throw; }
-        }
-        public static TaxIntegration DeleteTaxIntegration(string taxCode)
-        {
-            try
-            {
-                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
-                var taxInteCode = repo.TaxIntegration.Where(a => a.TaxCode == taxCode).FirstOrDefault();
-                taxInteCode.Active = "N";
-                repo.TaxIntegration.Update(taxInteCode);
+                using Repository<TblTaxtypes> repo = new Repository<TblTaxtypes>();
+                var taxInteCode = repo.TblTaxtypes.Where(a => a.TaxKey == taxCode).FirstOrDefault();
+                repo.TblTaxtypes.Remove(taxInteCode);
                 if (repo.SaveChanges() > 0)
                     return taxInteCode;
 
@@ -698,64 +688,60 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             catch { throw; }
         }
 
-        #region Asignment Acc to Acc Class
-        public static List<AsignmentAcctoAccClass> GetAsignAccToAccClas()
+        #region openledger
+        public static List<TblOpenLedger> GetList()
         {
             try
             {
-                using Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>();
-                return repo.AsignmentAcctoAccClass.AsEnumerable().Where(a => a.Active == "Y").ToList();
-
-                //return null;
+                using Repository<TblOpenLedger> repo = new Repository<TblOpenLedger>();
+                return repo.TblOpenLedger.ToList();
             }
             catch { throw; }
         }
-        public static AsignmentAcctoAccClass RegisterAccToAccClass(AsignmentAcctoAccClass assignAcctoAcc)
+        public static List<TblOpenLedger> GetList(string code)
         {
             try
             {
-                using Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>();
-                var record = repo.AsignmentAcctoAccClass.OrderByDescending(x => x.AddDate).FirstOrDefault();
-                if (record != null)
-                {
-                    assignAcctoAcc.Code = CommonHelper.IncreaseCode(record.Code);
-                }
-                else
-                    assignAcctoAcc.Code = "1";
-
-                assignAcctoAcc.Active = "Y";
-                assignAcctoAcc.AddDate = DateTime.Now;
-                repo.AsignmentAcctoAccClass.Add(assignAcctoAcc);
+                using Repository<TblOpenLedger> repo = new Repository<TblOpenLedger>();
+                return repo.TblOpenLedger.Where(x=>x.LedgerKey==code).ToList();
+            }
+            catch { throw; }
+        }
+        public static TblOpenLedger Register(TblOpenLedger openledger)
+        {
+            try
+            {
+                using Repository<TblOpenLedger> repo = new Repository<TblOpenLedger>();
+                repo.TblOpenLedger.Add(openledger);
                 if (repo.SaveChanges() > 0)
-                    return assignAcctoAcc;
+                    return openledger;
 
                 return null;
             }
             catch { throw; }
         }
-        public static AsignmentAcctoAccClass UpdateAccToAccClass(AsignmentAcctoAccClass assignAcctoAcc)
+        public static TblOpenLedger Update(TblOpenLedger openLedger)
         {
             try
             {
-                using Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>();
-                repo.AsignmentAcctoAccClass.Update(assignAcctoAcc);
+                using Repository<TblOpenLedger> repo = new Repository<TblOpenLedger>();
+                repo.TblOpenLedger.Update(openLedger);
                 if (repo.SaveChanges() > 0)
-                    return assignAcctoAcc;
+                    return openLedger;
 
                 return null;
             }
             catch { throw; }
         }
-        public static AsignmentAcctoAccClass DeleteAccToAccClass(string assignAcctoAccCode)
+        public static TblOpenLedger DeleteOpenLedger(string Code)
         {
             try
             {
-                using Repository<AsignmentAcctoAccClass> repo = new Repository<AsignmentAcctoAccClass>();
-                var asignAccToAccClass = repo.AsignmentAcctoAccClass.Where(a => a.Code == assignAcctoAccCode).FirstOrDefault();
-                asignAccToAccClass.Active = "N";
-                repo.AsignmentAcctoAccClass.Update(asignAccToAccClass);
+                using Repository<TblOpenLedger> repo = new Repository<TblOpenLedger>();
+                var code = repo.TblOpenLedger.Where(a =>a.LedgerKey == Code).FirstOrDefault();
+                repo.TblOpenLedger.Remove(code);
                 if (repo.SaveChanges() > 0)
-                    return asignAccToAccClass;
+                    return code;
 
                 return null;
             }
@@ -802,9 +788,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                //using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                //return repo.VoucherTypes.AsEnumerable().Where(v => v.Active == "Y").ToList();
-                return null;
+               using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+              return repo.VoucherTypes.AsEnumerable().Where(v => v.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -812,10 +797,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                //using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                //return repo.VoucherTypes.AsEnumerable().Where(v => v.VoucherCode == voucherCode).ToList();
+               using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+               return repo.VoucherTypes.AsEnumerable().Where(v => v.VoucherCode == voucherCode).ToList();
 
-                return null;
             }
             catch { throw; }
         }
@@ -823,20 +807,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                //using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                //var record = repo.VoucherTypes.OrderByDescending(v => v.AddDate).FirstOrDefault();
-                //if (record != null)
-                //{
-                //    voucherTypes.VoucherCode = CommonHelper.IncreaseCode(record.VoucherCode);
-                //}
-                //else
-                //    voucherTypes.VoucherCode = "1";
-
-                //voucherTypes.Active = "Y";
-                //voucherTypes.AddDate = DateTime.Now;
-                //repo.VoucherTypes.Add(voucherTypes);
-                //if (repo.SaveChanges() > 0)
-                //    return voucherTypes;
+                using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+                voucherTypes.Active = "Y";
+                voucherTypes.AddDate = DateTime.Now;
+                repo.VoucherTypes.Add(voucherTypes);
+                if (repo.SaveChanges() > 0)
+                    return voucherTypes;
 
                 return null;
             }
@@ -846,10 +822,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                //using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                //repo.VoucherTypes.Update(voucherTypes);
-                //if (repo.SaveChanges() > 0)
-                //    return voucherTypes;
+                using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+                repo.VoucherTypes.Update(voucherTypes);
+                if (repo.SaveChanges() > 0)
+                    return voucherTypes;
 
                 return null;
             }
@@ -859,12 +835,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                //using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                //var voucherType = repo.VoucherTypes.Where(v => v.VoucherCode == voucherTypeCode).FirstOrDefault();
-                //voucherType.Active = "N";
-                //repo.VoucherTypes.Remove(voucherType);
-                //if (repo.SaveChanges() > 0)
-                //    return voucherType;
+                using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+                var voucherType = repo.VoucherTypes.Where(v => v.VoucherCode == voucherTypeCode).FirstOrDefault();
+                voucherType.Active = "N";
+                repo.VoucherTypes.Remove(voucherType);
+                if (repo.SaveChanges() > 0)
+                    return voucherType;
 
                 return null;
             }

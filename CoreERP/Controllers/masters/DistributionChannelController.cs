@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/masters/DistributionChannel")]
+    [Route("api/DistributionChannel")]
     public class DistributionChannelController : ControllerBase
     {
         [HttpPost("RegisterDistributionChannel")]

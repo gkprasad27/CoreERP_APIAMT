@@ -9,7 +9,7 @@ using System;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/masters/CostCenter")]
+    [Route("api/CostCenter")]
     public class CostCenterMasterController : ControllerBase
     {
         [HttpGet("GetCostCenterList")]

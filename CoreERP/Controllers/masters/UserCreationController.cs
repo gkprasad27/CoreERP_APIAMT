@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/masters/UserCreation")]
+    [Route("api/UserCreation")]
     public class UserCreationController : ControllerBase
     {
         [HttpPost("RegisterUserCreation")]

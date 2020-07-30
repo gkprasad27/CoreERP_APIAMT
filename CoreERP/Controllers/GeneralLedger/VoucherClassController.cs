@@ -1,31 +1,31 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
-using CoreERP.Models;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-namespace CoreERP.Controllers.masters
+namespace CoreERP.Controllers.GeneralLedger
 {
     [ApiController]
-    [Route("api/Location")]
-    public class LocationController : ControllerBase
+    [Route("api/VoucherClass")]
+    public class VoucherClassController : ControllerBase
     {
-        [HttpPost("RegisterLocation")]
-        public IActionResult RegisterLocation([FromBody]TblLocation location)
+        [HttpPost("RegisterVoucherClass")]
+        public IActionResult RegisterVoucherClass([FromBody]VoucherClass vcclass)
         {
-            if (location == null)
+            if (vcclass == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-                if (LocationHelper.GetList(location.LocationId).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"location Code {nameof(location.LocationId)} is already exists ,Please Use Different Code " });
+                if (VoucherClassHelper.GetList(vcclass.VoucherCode).Count() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"VocherClass Code {nameof(vcclass.VoucherCode)} is already exists ,Please Use Different Code " });
 
-                var result = LocationHelper.Register(location);
+                var result = VoucherClassHelper.Register(vcclass);
                 APIResponse apiResponse;
                 if (result != null)
                 {
@@ -45,16 +45,16 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetLocationList")]
-        public IActionResult GetLocationList()
+        [HttpGet("GetVoucherClassList")]
+        public IActionResult GetVoucherClassList()
         {
             try
             {
-                var locationList = LocationHelper.GetList();
-                if (locationList.Count() > 0)
+                var vcclassList = VoucherClassHelper.GetList();
+                if (vcclassList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.locationList = locationList;
+                    expdoObj.vcList = vcclassList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
@@ -68,36 +68,15 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetPlantList")]
-        public IActionResult GetPlantList()
+        [HttpPut("UpdateVoucherClass")]
+        public IActionResult UpdateVoucherClass([FromBody] VoucherClass vcclass)
         {
-            try
-            {
-                var plantList = LocationHelper.GetPlants();
-                if (plantList.Count() > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.plantsList = plantList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpPut("UpdateLocation")]
-        public IActionResult UpdateLocation([FromBody] TblLocation loc)
-        {
-            if (loc == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(loc)} cannot be null" });
+            if (vcclass == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(vcclass)} cannot be null" });
 
             try
             {
-                var rs = LocationHelper.Update(loc);
+                var rs = VoucherClassHelper.Update(vcclass);
                 APIResponse apiResponse;
                 if (rs != null)
                 {
@@ -116,15 +95,15 @@ namespace CoreERP.Controllers.masters
         }
 
 
-        [HttpDelete("DeleteLocation/{code}")]
-        public IActionResult DeleteLocationByID(string code)
+        [HttpDelete("DeleteVoucherClass/{code}")]
+        public IActionResult DeleteVoucherClassByID(string code)
         {
             try
             {
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = LocationHelper.Delete(code);
+                var rs = VoucherClassHelper.Delete(code);
                 APIResponse apiResponse;
                 if (rs != null)
                 {

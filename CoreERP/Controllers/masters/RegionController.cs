@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/masters/Region")]
+    [Route("api/Region")]
     public class RegionController : ControllerBase
     {
         [HttpPost("RegisterRegion")]

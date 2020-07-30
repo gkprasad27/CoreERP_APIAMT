@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/masters/Currency")]
+    [Route("api/Currency")]
     public class CurrencyController : ControllerBase
     {
         [HttpPost("RegisterCurrency")]

@@ -94,18 +94,17 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             }
             catch { throw; }
         }
-        public static List<TaxIntegration> GetTaxIntegrationList()
-        {
-            try
-            {
-                // taxintegration = (from taxingr in _unitOfWork.TaxIntegration.GetAll() where taxingr.TaxCode != null select taxingr),
-                using Repository<Purchase> repo = new Repository<Purchase>();
-                return GLHelper.GetTaxIntegrationList()
-.Where(t => t.TaxCode != null)
-.ToList();
-            }
-            catch { throw; }
-        }
+        //public static List<TaxIntegration> GetTaxIntegrationList()
+        //{
+        //    try
+        //    {
+        //        // taxintegration = (from taxingr in _unitOfWork.TaxIntegration.GetAll() where taxingr.TaxCode != null select taxingr),
+        //        using Repository<Purchase> repo = new Repository<Purchase>();
+        //        return GLHelper.GetTblTaxtypesList()
+        //                .Where(t => t.TaxKey != null).ToList();
+        //    }
+        //    catch { throw; }
+        //}
         //public static List<BrandModel> GetModelList()
         //{
         //    try

@@ -12,7 +12,7 @@ namespace CoreERP.Controllers
 {
 
     [ApiController]
-    [Route("api/masters/Division")]
+    [Route("api/Division")]
     public class DivisionController : ControllerBase
     {
         [HttpPost("RegisterDivision")]

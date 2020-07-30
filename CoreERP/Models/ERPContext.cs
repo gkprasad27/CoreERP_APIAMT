@@ -16277,9 +16277,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
+                //entity.Property(e => e.Id)
+                //    .HasColumnName("ID")
+                //    .ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<TblTaxtypes>(entity =>
