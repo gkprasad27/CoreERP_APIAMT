@@ -378,7 +378,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _accountLedgerTransactions.LedgerId = _voucherDetail.FromLedgerId;
                     _accountLedgerTransactions.LedgerCode = _voucherDetail.FromLedgerCode;
                     _accountLedgerTransactions.LedgerName = _voucherDetail.FromLedgerName;
-                    _accountLedgerTransactions.TransactionType = _voucherDetail.TransactionType;
+                    _accountLedgerTransactions.TransactionType = "Credit";
                     _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
                     _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
                 }
