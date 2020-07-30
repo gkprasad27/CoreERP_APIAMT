@@ -288,12 +288,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<Menus> _repo = new Repository<Menus>())
+                List<string> parentIds = new List<string>();
+                using (ERPContext _repo = new ERPContext())
                 {
-                    return _repo.Menus.Where(x => x.IsMasterScreen == "Y").ToList();
+                    parentIds = _repo.Menus.Select(m => m.ParentId).Distinct().ToList();
+                    return _repo.Menus.Where(m => parentIds.Contains(m.OperationCode)).ToList();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }

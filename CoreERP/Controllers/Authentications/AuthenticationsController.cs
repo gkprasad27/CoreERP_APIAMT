@@ -167,7 +167,7 @@ namespace CoreERP.Controllers
                     if (result != null)
                     {
                         dynamic expando = new ExpandoObject();
-                        expando.ParentMenus = result.Select(r => new { ID = r.OperationCode, TEXT = r.Description });
+                        expando.ParentMenus = result.Select(r => new { ID = r.OperationCode, TEXT = r.Description }).OrderBy(x=> x.TEXT);
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Parent menu found." });
