@@ -5,7 +5,6 @@ namespace CoreERP.Models
 {
     public partial class TblIncomeTypes
     {
-        public int Id { get; set; }
         public string Code { get; set; }
         public string Desctiption { get; set; }
         public string SectionCode { get; set; }

@@ -707,10 +707,10 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             invoice.IsSalesReturned = false;
 
                             #region Add voucher master record
-                            var _voucherMaster = AddVoucherMaster(repo, invoice, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
+                            //var _voucherMaster = AddVoucherMaster(repo, invoice, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
                             #endregion
 
-                            invoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
+                            //invoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
                             repo.TblInvoiceMaster.Add(invoice);
                             repo.SaveChanges();
 
@@ -732,7 +732,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 }
 
                                 _amountWithoutTax = Math.Round(Convert.ToDecimal(_amountWithoutTax), 2, MidpointRounding.ToEven);
-                                var _voucherDetail = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, _amountWithoutTax, "Credit");
+                                //var _voucherDetail = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, _amountWithoutTax, "Credit");
                                 #endregion
 
                                 #region InvioceDetail
@@ -767,34 +767,34 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 }
                                 AddStockInformation(configuration, repo, invoice, _branch, _product, _qty, invdtl.Rate);
                                 //same as vd
-                                AddAccountLedgerTransactions(repo, _voucherDetail, invoice.InvoiceDate);
+                                //AddAccountLedgerTransactions(repo, _voucherDetail, invoice.InvoiceDate);
                                 #endregion
                             }
 
                             _accountLedger = GetAccountLedgersByCode(invoice.LedgerCode);
-                            var voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, invoice.GrandTotal, "Debit", false);
-                            AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
+                            //var voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, invoice.GrandTotal, "Debit", false);
+                            //AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
                             //check weather igs or sg ,cg st
                             var _stateWiseGsts = GetStateWiseGsts(invoice.StateCode).FirstOrDefault();
                             if (_stateWiseGsts.Igst == 1)
                             {
                                 //Add IGST record
                                 var _accAL = GetAccountLedgersByCode("243");
-                                voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalIgst, "Credit", false);
-                                AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
+                                //voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalIgst, "Credit", false);
+                                //AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
 
                             }
                             else
                             {
                                 // cgst
                                 var _accAL = GetAccountLedgersByCode("240");
-                                voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalCgst, "Credit", false);
-                                AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
+                                //voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalCgst, "Credit", false);
+                                //AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
 
                                 // sgst
                                 _accAL = GetAccountLedgersByCode("241");
-                                voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalSgst, "Credit", false);
-                                AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
+                                //voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalSgst, "Credit", false);
+                                //AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
                             }
 
                             dbTransaction.Commit();
@@ -819,7 +819,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 using (Repository<TblVoucherType> repo = new Repository<TblVoucherType>())
                 {
-                    return repo.TblVoucherType.Where(v => v.VoucherTypeId == voucherTypeId).ToList();
+                    //return repo.TblVoucherType.Where(v => v.VoucherTypeId == voucherTypeId).ToList();
+                    return null;
                 }
             }
             catch (Exception ex)

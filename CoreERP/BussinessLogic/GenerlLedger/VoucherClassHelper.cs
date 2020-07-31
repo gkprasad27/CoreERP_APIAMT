@@ -13,9 +13,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             try
             {
                 using Repository<VoucherClass> repo = new Repository<VoucherClass>();
-                return repo.VoucherClass
-                           .Where(x => x.VoucherCode == code)
-                           .ToList();
+                //return repo.VoucherClass
+                //           .Where(x => x.VoucherCode == code)
+                //           .ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -25,7 +26,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             try
             {
                 using Repository<VoucherClass> repo = new Repository<VoucherClass>();
-                return repo.VoucherClass.ToList();
+                //return repo.VoucherClass.ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -37,7 +39,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using Repository<VoucherClass> repo = new Repository<VoucherClass>();
                 vcclass.Active = "Y";
                 vcclass.AddDate = DateTime.Now;
-                repo.VoucherClass.Add(vcclass);
+                //repo.VoucherClass.Add(vcclass);
                 if (repo.SaveChanges() > 0)
                     return vcclass;
 
@@ -56,7 +58,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using Repository<VoucherClass> repo = new Repository<VoucherClass>();
                 vcclass.Active = "Y";
                 vcclass.AddDate = DateTime.Now;
-                repo.VoucherClass.Update(vcclass);
+                //repo.VoucherClass.Update(vcclass);
                 if (repo.SaveChanges() > 0)
                     return vcclass;
 
@@ -73,10 +75,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             try
             {
                 using Repository<VoucherClass> repo = new Repository<VoucherClass>();
-                var taxcode = repo.VoucherClass.Where(x => x.VoucherCode == Code).FirstOrDefault();
-                repo.VoucherClass.Remove(taxcode);
-                if (repo.SaveChanges() > 0)
-                    return taxcode;
+                //var taxcode = repo.VoucherClass.Where(x => x.VoucherCode == Code).FirstOrDefault();
+                //repo.VoucherClass.Remove(taxcode);
+                //if (repo.SaveChanges() > 0)
+                    //return taxcode;
 
                 return null;
             }

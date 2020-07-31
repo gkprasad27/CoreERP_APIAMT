@@ -163,7 +163,8 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             try
             {
                 using Repository<TblVoucherType> repo = new Repository<TblVoucherType>();
-                return repo.TblVoucherType.Where(v => v.VoucherTypeId == voucherTypeId).ToList();
+                //return repo.TblVoucherType.Where(v => v.VoucherTypeId == voucherTypeId).ToList();
+                return null;
             }
             catch (Exception ex)
             {
@@ -410,18 +411,18 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     var _vouchertType = GetVoucherTypeList(34).ToArray().FirstOrDefault();
 
                     #region Add voucher master record
-                    var _voucherMaster = AddVoucherMaster(repo, cashPaymentMaster, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
+                    //var _voucherMaster = AddVoucherMaster(repo, cashPaymentMaster, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
                     #endregion
 
 
-                    cashPaymentMaster.CashPaymentVchNo = _voucherMaster.VoucherMasterId.ToString();
+                    //cashPaymentMaster.CashPaymentVchNo = _voucherMaster.VoucherMasterId.ToString();
                     cashPaymentMaster.ServerDate = DateTime.Now;
                     //cashPaymentMaster.BranchId = _branch.Id;
                     cashPaymentMaster.BranchName = _branch.BranchName;
                     cashPaymentMaster.FromLedgerId = _cashpayAccountLedger.LedgerId;
                     cashPaymentMaster.FromLedgerName = _cashpayAccountLedger.LedgerName;
                     cashPaymentMaster.FromLedgerCode = _cashpayAccountLedger.LedgerCode;
-                    cashPaymentMaster.EmployeeId = _voucherMaster.EmployeeId;
+                    //cashPaymentMaster.EmployeeId = _voucherMaster.EmployeeId;
                     cashPaymentMaster.ShiftId = shifId;
                     repo.TblCashPaymentMaster.Add(cashPaymentMaster);
                     repo.SaveChanges();
@@ -442,17 +443,17 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                         #endregion
 
                         #region Add voucher Details
-                        var _voucherDetail = AddVoucherDetails(repo, cashPaymentMaster, _branch, _voucherMaster, _accountLedger, cashDtl.Amount, cashDtl.ToLedgerId, cashDtl.ToLedgerCode);
+                        //var _voucherDetail = AddVoucherDetails(repo, cashPaymentMaster, _branch, _voucherMaster, _accountLedger, cashDtl.Amount, cashDtl.ToLedgerId, cashDtl.ToLedgerCode);
 
                         #endregion
 
                         #region Add Account Ledger Transaction
 
-                        AddAccountLedgerTransactions(repo, cashPaymentMaster, _voucherDetail, cashPaymentMaster.CashPaymentDate);
+                        //AddAccountLedgerTransactions(repo, cashPaymentMaster, _voucherDetail, cashPaymentMaster.CashPaymentDate);
                         #endregion
                         _accountLedger = GetAccountLedgers(cashPaymentMaster.FromLedgerCode).ToArray().FirstOrDefault();
-                        AddVoucherDetails(repo, cashPaymentMaster, _branch, _voucherMaster, _accountLedger, cashDtl.Amount, cashDtl.ToLedgerId, cashDtl.ToLedgerCode, false);
-                        AddAccountLedgerTransactions(repo, cashPaymentMaster, _voucherDetail, cashPaymentMaster.CashPaymentDate, true);
+                        //AddVoucherDetails(repo, cashPaymentMaster, _branch, _voucherMaster, _accountLedger, cashDtl.Amount, cashDtl.ToLedgerId, cashDtl.ToLedgerCode, false);
+                        //AddAccountLedgerTransactions(repo, cashPaymentMaster, _voucherDetail, cashPaymentMaster.CashPaymentDate, true);
                     }
 
                     //_accountLedger = GetAccountLedgers(cashReceiptMaster.FromLedgerCode).ToArray().FirstOrDefault();

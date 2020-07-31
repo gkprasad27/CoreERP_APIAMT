@@ -5,7 +5,6 @@ namespace CoreERP.Models
 {
     public partial class TblTaxRates
     {
-        public int Id { get; set; }
         public string TaxRateCode { get; set; }
         public string Description { get; set; }
         public string TaxType { get; set; }

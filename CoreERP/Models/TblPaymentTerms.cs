@@ -5,7 +5,6 @@ namespace CoreERP.Models
 {
     public partial class TblPaymentTerms
     {
-        public int Id { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }
         public int? Term1Days { get; set; }

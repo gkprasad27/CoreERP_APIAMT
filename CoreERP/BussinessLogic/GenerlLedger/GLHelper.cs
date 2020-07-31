@@ -788,8 +788,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-               using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-              return repo.VoucherTypes.AsEnumerable().Where(v => v.Active == "Y").ToList();
+                // using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+                //return repo.VoucherTypes.AsEnumerable().Where(v => v.Active == "Y").ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -797,9 +798,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-               using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-               return repo.VoucherTypes.AsEnumerable().Where(v => v.VoucherCode == voucherCode).ToList();
-
+                //using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
+                //return repo.VoucherTypes.AsEnumerable().Where(v => v.VoucherCode == voucherCode).ToList();
+                return null;
             }
             catch { throw; }
         }
@@ -810,7 +811,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
                 voucherTypes.Active = "Y";
                 voucherTypes.AddDate = DateTime.Now;
-                repo.VoucherTypes.Add(voucherTypes);
+                //repo.VoucherTypes.Add(voucherTypes);
                 if (repo.SaveChanges() > 0)
                     return voucherTypes;
 
@@ -823,7 +824,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             try
             {
                 using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                repo.VoucherTypes.Update(voucherTypes);
+                //repo.VoucherTypes.Update(voucherTypes);
                 if (repo.SaveChanges() > 0)
                     return voucherTypes;
 
@@ -836,11 +837,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             try
             {
                 using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                var voucherType = repo.VoucherTypes.Where(v => v.VoucherCode == voucherTypeCode).FirstOrDefault();
-                voucherType.Active = "N";
-                repo.VoucherTypes.Remove(voucherType);
-                if (repo.SaveChanges() > 0)
-                    return voucherType;
+                //var voucherType = repo.VoucherTypes.Where(v => v.VoucherCode == voucherTypeCode).FirstOrDefault();
+                //voucherType.Active = "N";
+                //repo.VoucherTypes.Remove(voucherType);
+                //if (repo.SaveChanges() > 0)
+                //    return voucherType;
 
                 return null;
             }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace CoreERP.Models
 {
-    public partial class TblAssetTransactiontype
+    public partial class TblVoucherclass
     {
-        public string Code { get; set; }
+        public string VoucherKey { get; set; }
         public string Description { get; set; }
     }
 }

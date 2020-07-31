@@ -219,7 +219,8 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             {
                 using (Repository<TblVoucherType> repo = new Repository<TblVoucherType>())
                 {
-                    return repo.TblVoucherType.Where(v => v.VoucherTypeId == voucherTypeId).ToList();
+                    //return repo.TblVoucherType.Where(v => v.VoucherTypeId == voucherTypeId).ToList();
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -283,11 +284,11 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             purchaseInvoice.IsPurchaseReturned = false;
 
                             #region Add voucher master record
-                            var _voucherMaster = AddVoucherMaster(context, purchaseInvoice, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
+                            //var _voucherMaster = AddVoucherMaster(context, purchaseInvoice, _branch, _vouchertType.VoucherTypeId, _accountLedger.CrOrDr);
                             #endregion
 
                            
-                            purchaseInvoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
+                            //purchaseInvoice.VoucherNo = _voucherMaster.VoucherMasterId.ToString();
                             context.TblPurchaseInvoice.Add(purchaseInvoice);
                             context.SaveChanges();
 
@@ -319,7 +320,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                                 #region Add voucher Details
                                 _accountLedger.CrOrDr = "Debit";
-                                var _voucherDetail = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purInv.GrossAmount);
+                                //var _voucherDetail = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purInv.GrossAmount);
                                 #endregion
 
                                 #region Add stock transaction  and Account Ledger Transaction
@@ -345,14 +346,14 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                                 AddStockInformation(context, purchaseInvoice, _branch, _product, _qty, purInv.Rate);
 
-                                AddAccountLedgerTransactions(context, _voucherDetail, purchaseInvoice.PurchaseInvDate);
+                                //AddAccountLedgerTransactions(context, _voucherDetail, purchaseInvoice.PurchaseInvDate);
                                 #endregion
                             }
 
                             _accountLedger = GetAccountLedgers(purchaseInvoice.LedgerCode);
                             _accountLedger.CrOrDr = "Credit";
-                            var voucherDetail=AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purchaseInvoice.TotalAmount, false);
-                            AddAccountLedgerTransactions(context, voucherDetail, purchaseInvoice.PurchaseInvDate);
+                            //var voucherDetail=AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accountLedger, purchaseInvoice.TotalAmount, false);
+                            //AddAccountLedgerTransactions(context, voucherDetail, purchaseInvoice.PurchaseInvDate);
 
                             //CHech weather igs or sg ,cg st
                             var _stateWiseGsts = GetStateWiseGsts(purchaseInvoice.StateCode).FirstOrDefault();
@@ -361,21 +362,21 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 //Add IGST record
                                 var _accAL = GetAccountLedgers("243");
                                 _accAL.CrOrDr= "Debit";
-                               var voucherDetailIGST= AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalIgst, false);
-                                AddAccountLedgerTransactions(context, voucherDetailIGST, purchaseInvoice.PurchaseInvDate);
+                               //var voucherDetailIGST= AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalIgst, false);
+                                //AddAccountLedgerTransactions(context, voucherDetailIGST, purchaseInvoice.PurchaseInvDate);
                             }
                             else
                             {
                                 // cgst
                                 var _accAL = GetAccountLedgers("240");
                                 _accAL.CrOrDr = "Debit";
-                                var voucherDetailCGST = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalCgst, false);
-                                AddAccountLedgerTransactions(context, voucherDetailCGST, purchaseInvoice.PurchaseInvDate);
+                                //var voucherDetailCGST = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalCgst, false);
+                                //AddAccountLedgerTransactions(context, voucherDetailCGST, purchaseInvoice.PurchaseInvDate);
                                 // sgst
                                 _accAL = GetAccountLedgers("241");
                                 _accAL.CrOrDr = "Debit";
-                                var voucherDetailSGST = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalSgst, false);
-                                AddAccountLedgerTransactions(context, voucherDetailSGST, purchaseInvoice.PurchaseInvDate);
+                                //var voucherDetailSGST = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalSgst, false);
+                                //AddAccountLedgerTransactions(context, voucherDetailSGST, purchaseInvoice.PurchaseInvDate);
                             }
                             dbTransaction.Commit();
                             return true;

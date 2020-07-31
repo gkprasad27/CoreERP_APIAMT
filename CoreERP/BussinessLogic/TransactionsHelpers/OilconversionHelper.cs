@@ -210,7 +210,8 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
             try
             {
                 using Repository<TblVoucherType> repo = new Repository<TblVoucherType>();
-                return repo.TblVoucherType.Where(v => v.VoucherTypeId == voucherTypeId).ToList();
+                //return repo.TblVoucherType.Where(v => v.VoucherTypeId == voucherTypeId).ToList();
+                return null;
             }
             catch (Exception ex)
             {
@@ -290,14 +291,14 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                 try
                 {
                     #region Add voucher master record
-                    var _voucherMaster = AddVoucherMaster(context, oilConversionMaster, _branch, _vouchertType.VoucherTypeId);
+                    //var _voucherMaster = AddVoucherMaster(context, oilConversionMaster, _branch, _vouchertType.VoucherTypeId);
                     #endregion
 
-                    oilConversionMaster.VoucherTypeId = _voucherMaster.VoucherMasterId;
+                    //oilConversionMaster.VoucherTypeId = _voucherMaster.VoucherMasterId;
                     oilConversionMaster.ServerDate = DateTime.Now;
                     //oilConversionMaster.BranchId = _branch.Id;
                     oilConversionMaster.BranchName = _branch.BranchName;
-                    oilConversionMaster.EmployeeId = _voucherMaster.EmployeeId;
+                    //oilConversionMaster.EmployeeId = _voucherMaster.EmployeeId;
                     oilConversionMaster.ShiftId = shifId;
                     context.TblOilConversionMaster.Add(oilConversionMaster);
                     context.SaveChanges();
