@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace CoreERP.Controllers.GL
 {
     [ApiController]
-    [Route("api/gl/VoucherType")]
+    [Route("api/VoucherType")]
     public class VoucherTypeController : ControllerBase
     {
 
