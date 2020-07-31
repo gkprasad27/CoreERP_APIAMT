@@ -46,7 +46,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.StatesList = new StateWiseGstHelper().GetStatesList().Select(x => new { ID = x.Id, TEXT = x.StateName });
+                    expando.StatesList = new StateWiseGstHelper().GetStatesList().Select(x => new { ID = x.StateCode, TEXT = x.StateName });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)

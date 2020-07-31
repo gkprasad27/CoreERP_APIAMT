@@ -28,7 +28,6 @@ namespace CoreERP.Models
 
         public virtual Countries CountryNavigation { get; set; }
         public virtual TblCurrency CurrencyNavigation { get; set; }
-        public virtual TblLanguage LanguageNavigation { get; set; }
         public virtual TblRegion RegionNavigation { get; set; }
         public virtual States StateNavigation { get; set; }
     }

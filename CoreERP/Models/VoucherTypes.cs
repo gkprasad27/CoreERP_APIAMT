@@ -17,5 +17,7 @@ namespace CoreERP.Models
         public string VoucherType { get; set; }
         public string Active { get; set; }
         public DateTime? AddDate { get; set; }
+        public string VoucherClass { get; set; }
+        public string PrintText { get; set; }
     }
 }

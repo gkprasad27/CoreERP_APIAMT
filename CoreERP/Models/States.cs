@@ -15,7 +15,6 @@ namespace CoreERP.Models
             TblSalesOffice = new HashSet<TblSalesOffice>();
         }
 
-        public int Id { get; set; }
         public string StateCode { get; set; }
         public string StateName { get; set; }
         public string CountryCode { get; set; }

@@ -363,7 +363,7 @@ namespace CoreERP.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=183.82.48.82;Database=ERP; User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
+                optionsBuilder.UseSqlServer("Server=183.82.48.82;Database=ERP;User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
             }
         }
 
@@ -861,10 +861,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.DateFormat).HasMaxLength(50);
 
                 entity.Property(e => e.DecimalFormat).HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Language).HasMaxLength(5);
 
@@ -1551,8 +1547,6 @@ namespace CoreERP.Models
             {
                 entity.HasKey(e => e.Code);
 
-                entity.Property(e => e.Code).ValueGeneratedNever();
-
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
                     .IsUnicode(false)
@@ -2069,11 +2063,6 @@ namespace CoreERP.Models
                     .HasForeignKey(d => d.Currency)
                     .HasConstraintName("FK__ProfitCen__Curre__57FE9E23");
 
-                entity.HasOne(d => d.LanguageNavigation)
-                    .WithMany(p => p.ProfitCenters)
-                    .HasForeignKey(d => d.Language)
-                    .HasConstraintName("FK__ProfitCen__Langu__542E0D3F");
-
                 entity.HasOne(d => d.RegionNavigation)
                     .WithMany(p => p.ProfitCenters)
                     .HasForeignKey(d => d.Region)
@@ -2362,11 +2351,6 @@ namespace CoreERP.Models
                     .HasForeignKey(d => d.Currency)
                     .HasConstraintName("FK__SalesDepa__Curre__664CBD7A");
 
-                entity.HasOne(d => d.LanguageNavigation)
-                    .WithMany(p => p.SalesDepartment)
-                    .HasForeignKey(d => d.Language)
-                    .HasConstraintName("FK__SalesDepa__Langu__627C2C96");
-
                 entity.HasOne(d => d.RegionNavigation)
                     .WithMany(p => p.SalesDepartment)
                     .HasForeignKey(d => d.Region)
@@ -2610,10 +2594,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.CountryCode)
                     .IsRequired()
                     .HasMaxLength(5);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Language)
                     .IsRequired()
@@ -4590,11 +4570,6 @@ namespace CoreERP.Models
                     .HasForeignKey(d => d.Currency)
                     .HasConstraintName("FK__tbl_Branc__Curre__5CC35340");
 
-                entity.HasOne(d => d.LanguageNavigation)
-                    .WithMany(p => p.TblBranch)
-                    .HasForeignKey(d => d.Language)
-                    .HasConstraintName("FK__tbl_Branc__Langu__58F2C25C");
-
                 entity.HasOne(d => d.RegionNavigation)
                     .WithMany(p => p.TblBranch)
                     .HasForeignKey(d => d.Region)
@@ -5311,11 +5286,6 @@ namespace CoreERP.Models
                     .HasForeignKey(d => d.Currency)
                     .HasConstraintName("FK__tbl_Compa__Curre__5339E906");
 
-                entity.HasOne(d => d.LanguageNavigation)
-                    .WithMany(p => p.TblCompany)
-                    .HasForeignKey(d => d.Language)
-                    .HasConstraintName("FK__tbl_Compa__Langu__47C8365A");
-
                 entity.HasOne(d => d.RegionNavigation)
                     .WithMany(p => p.TblCompany)
                     .HasForeignKey(d => d.Region)
@@ -5634,12 +5604,7 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Currency");
 
-                entity.Property(e => e.CurrencySymbol).HasMaxLength(5);
-
-                entity.Property(e => e.CurrencyId)
-                    .HasColumnName("currencyId")
-                    .HasColumnType("numeric(18, 0)")
-                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.CurrencySymbol).HasMaxLength(5);                
 
                 entity.Property(e => e.CurrencyName).IsUnicode(false);
 
@@ -6487,11 +6452,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.FormName).HasMaxLength(50);
 
-                entity.Property(e => e.Component).HasMaxLength(50);
+                entity.Property(e => e.Component).HasMaxLength(100);
 
                 entity.Property(e => e.DeleteUrl)
                     .HasColumnName("DeleteURL")
-                    .HasMaxLength(50);
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
 
@@ -6505,15 +6470,15 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.RegisterUrl)
                     .HasColumnName("RegisterURL")
-                    .HasMaxLength(50);
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.UpdateUrl)
                     .HasColumnName("UpdateURL")
-                    .HasMaxLength(50);
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.Url)
                     .HasColumnName("URL")
-                    .HasMaxLength(50);
+                    .HasMaxLength(100);
             });
 
             modelBuilder.Entity<TblEmployee>(entity =>
@@ -8407,10 +8372,6 @@ namespace CoreERP.Models
                 entity.ToTable("tbl_Language");
 
                 entity.Property(e => e.LanguageCode).HasMaxLength(5);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.LanguageName).HasMaxLength(50);
             });
@@ -10824,11 +10785,6 @@ namespace CoreERP.Models
                     .HasForeignKey(d => d.Currency)
                     .HasConstraintName("FK__tbl_Plant__Curre__6188085D");
 
-                entity.HasOne(d => d.LanguageNavigation)
-                    .WithMany(p => p.TblPlant)
-                    .HasForeignKey(d => d.Language)
-                    .HasConstraintName("FK__tbl_Plant__Langu__5DB77779");
-
                 entity.HasOne(d => d.RegionNavigation)
                     .WithMany(p => p.TblPlant)
                     .HasForeignKey(d => d.Region)
@@ -12504,10 +12460,6 @@ namespace CoreERP.Models
                     .HasColumnName("ext")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.RegionName).HasMaxLength(50);
             });
 
@@ -13813,11 +13765,6 @@ namespace CoreERP.Models
                     .HasForeignKey(d => d.Currency)
                     .HasConstraintName("FK__tbl_Sales__Curre__6B117297");
 
-                entity.HasOne(d => d.LanguageNavigation)
-                    .WithMany(p => p.TblSalesOffice)
-                    .HasForeignKey(d => d.Language)
-                    .HasConstraintName("FK__tbl_Sales__Langu__6740E1B3");
-
                 entity.HasOne(d => d.RegionNavigation)
                     .WithMany(p => p.TblSalesOffice)
                     .HasForeignKey(d => d.Region)
@@ -14798,16 +14745,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.SizeId)
                     .HasColumnName("sizeId")
-                    .HasColumnType("numeric(18, 0)")
-                    .ValueGeneratedOnAdd();
+                    .HasMaxLength(5);
 
                 entity.Property(e => e.Extra1)
                     .HasColumnName("extra1")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Extra2)
-                    .HasColumnName("extra2")
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.ExtraDate)
                     .HasColumnName("extraDate")
@@ -14815,11 +14757,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Narration)
                     .HasColumnName("narration")
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Size)
                     .HasColumnName("size")
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblStandardRate>(entity =>
@@ -16277,9 +16219,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
-                //entity.Property(e => e.Id)
-                //    .HasColumnName("ID")
-                //    .ValueGeneratedOnAdd();
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<TblTaxtypes>(entity =>
@@ -16373,21 +16315,13 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblTransactions>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.Code);
 
                 entity.ToTable("Tbl_Transactions");
 
+                entity.Property(e => e.Code).HasMaxLength(5);
+
                 entity.Property(e => e.Description).HasMaxLength(50);
-
-                entity.Property(e => e.Ext).HasMaxLength(50);
-
-                entity.Property(e => e.Ext1).HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.TaxTransCode).HasMaxLength(5);
             });
 
             modelBuilder.Entity<TblUnit>(entity =>
@@ -17610,7 +17544,15 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Prefix).HasMaxLength(50);
 
+                entity.Property(e => e.PrintText)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Transaction).HasMaxLength(50);
+
+                entity.Property(e => e.VoucherClass)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.VoucherType).HasMaxLength(50);
             });

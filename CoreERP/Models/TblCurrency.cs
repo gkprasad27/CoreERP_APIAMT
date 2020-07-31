@@ -15,7 +15,6 @@ namespace CoreERP.Models
             TblSalesOffice = new HashSet<TblSalesOffice>();
         }
 
-        public decimal CurrencyId { get; set; }
         public string CurrencySymbol { get; set; }
         public string CurrencyName { get; set; }
         public string SubunitName { get; set; }
