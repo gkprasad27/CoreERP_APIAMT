@@ -15,7 +15,7 @@ namespace CoreERP.Controllers
     [Route("api/Company")]
     public class CompanyController : ControllerBase
     {
-        
+
 
         [HttpGet("GetStatesList")]
         public IActionResult GetStatesList()

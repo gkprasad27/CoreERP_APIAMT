@@ -10,32 +10,15 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
 {
     public class SizesHelper
     {
-        public static Sizes RegisterSizes(Sizes sizes,out string errMsg)
+        public static Sizes RegisterSizes(Sizes sizes)
         {
             try
             {
-                errMsg = string.Empty;
-
                 using Repository<Sizes> repo = new Repository<Sizes>();
-                //var record = repo.Sizes.OrderByDescending(x => x.AddDate).FirstOrDefault();
-
-                //if (record !=null)
-                //{
-                //    sizes.Code = CommonHelper.IncreaseCode(record.Code);
-                //}
-                //else
-                //    sizes.Code = "1";
-                if (GetSizesList(sizes.Code).Count > 0)
-                {
-                    errMsg = "Code Already Exists.";
-                    return null;
-                }
-
-                //sizes.Active = "Y";
-                //sizes.AddDate = DateTime.Now;
-                //repo.Sizes.Add(sizes);
-                //if (repo.SaveChanges() > 0)
-                //    return sizes;
+                sizes.AddDate = DateTime.Now;
+                repo.Sizes.Add(sizes);
+                if (repo.SaveChanges() > 0)
+                    return sizes;
 
                 return null;
             }
@@ -48,10 +31,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                //using Repository<Sizes> repo = new Repository<Sizes>();
-                //return repo.Sizes.Where(x => x.Active == "Y").ToList();
-
-                return null;
+                using Repository<Sizes> repo = new Repository<Sizes>();
+                return repo.Sizes.Where(x => x.Active == "Y").ToList();
             }
             catch { throw; }
         }
@@ -60,10 +41,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                //using Repository<Sizes> repo = new Repository<Sizes>();
-                //return repo.Sizes.Where(x => x.Code == code).ToList();
-
-                return null;
+                using Repository<Sizes> repo = new Repository<Sizes>();
+                return repo.Sizes.Where(x => x.Code == code).ToList();
             }
             catch { throw; }
         }
@@ -71,13 +50,12 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                //using Repository<Sizes> repo = new Repository<Sizes>();
-                //if (sizes.AddDate == null)
-                //    sizes.AddDate = DateTime.Now;
-
-                //repo.Sizes.Update(sizes);
-                //if (repo.SaveChanges() > 0)
-                //    return sizes;
+                using Repository<Sizes> repo = new Repository<Sizes>();
+                if (sizes.AddDate == null)
+                    sizes.AddDate = DateTime.Now;
+                    repo.Sizes.Update(sizes);
+                if (repo.SaveChanges() > 0)
+                    return sizes;
 
                 return null;
             }
@@ -90,12 +68,12 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                //using Repository<Sizes> repo = new Repository<Sizes>();
-                //var accountClass = repo.Sizes.Where(x => x.Code == code).FirstOrDefault();
-                //accountClass.Active = "N";
-                //repo.Sizes.Update(accountClass);
-                //if (repo.SaveChanges() > 0)
-                //    return accountClass;
+                using Repository<Sizes> repo = new Repository<Sizes>();
+                var accountClass = repo.Sizes.Where(x => x.Code == code).FirstOrDefault();
+                accountClass.Active = "N";
+                repo.Sizes.Update(accountClass);
+                if (repo.SaveChanges() > 0)
+                    return accountClass;
 
                 return null;
             }

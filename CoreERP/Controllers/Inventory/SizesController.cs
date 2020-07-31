@@ -16,31 +16,36 @@ namespace CoreERP.Controllers
     public class SizesController : ControllerBase
     {
         [HttpPost("RegisterSizes")]
-        public IActionResult RegisterSizes([FromBody]Sizes size)
+        public IActionResult RegisterSizes([FromBody]Sizes sizes)
         {
-            if (size == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(size)} can not be null" });
+            if (sizes == null)
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-                string errorMasg = string.Empty;
+                if (SizesHelper.GetSizesList(sizes.Code).Count() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"sizes Code {nameof(sizes.Code)} is already exists ,Please Use Different Code " });
 
-                var result = SizesHelper.RegisterSizes(size, out errorMasg);
+                var result = SizesHelper.RegisterSizes(sizes);
+                APIResponse apiResponse;
                 if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
                 else
                 {
-                    if (string.IsNullOrEmpty(errorMasg))
-                        errorMasg = " Registration Failed";
-
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMasg });
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
                 }
+
+                return Ok(apiResponse);
+
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
 
         [HttpGet("GetAllSizes")]
         [Produces(typeof(List<Sizes>))]

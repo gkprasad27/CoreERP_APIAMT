@@ -146,7 +146,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 {
                     var _branch = GetBranches(meterReading.BranchCode).ToArray().FirstOrDefault();
                     var _pump = GetPump(meterReading.PumpNo).ToArray().FirstOrDefault();
-                    meterReading.BranchId = _branch.Id;
+                    //meterReading.BranchId = _branch.Id;
                     meterReading.BranchName = _branch.BranchName;
                     meterReading.PumpId = _pump.PumpId;
                     repo.TblMeterReading.Add(meterReading);

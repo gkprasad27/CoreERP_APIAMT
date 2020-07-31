@@ -369,7 +369,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 var _voucherDetail = new TblVoucherDetail();
                 _voucherDetail.VoucherMasterId = _voucherMaster.VoucherMasterId;
                 _voucherDetail.VoucherDetailDate = _voucherMaster.VoucherDate;
-                _voucherDetail.BranchId = _branch.Id;
+                //_voucherDetail.BranchId = _branch.Id;
                 _voucherDetail.BranchCode = invoiceReturn.BranchCode;
                 _voucherDetail.BranchName = invoiceReturn.BranchName;
                 if (isFromInvoiceDetials)
@@ -411,7 +411,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 //{
                 var _stockInformation = new TblStockInformation
                 {
-                    BranchId = _branch.Id,
+                    //BranchId = _branch.Id,
                     BranchCode = _branch.BranchCode,
                     ShiftId = invoiceReturn.ShiftId,
                     VoucherNo = invoiceReturn.VoucherNo,

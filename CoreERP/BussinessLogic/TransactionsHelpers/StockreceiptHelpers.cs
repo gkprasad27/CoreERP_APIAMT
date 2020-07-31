@@ -299,7 +299,7 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                             stockinformation.BranchCode = Convert.ToString(i);
                             var _branchcode = GetBranches(Convert.ToString(i)).ToArray().FirstOrDefault();
                             //(stockreceipt.FromBranchCode)==null ? stockreceipt.FromBranchCode : ext;
-                            stockinformation.BranchId = _branchcode.Id;
+                            //stockinformation.BranchId = _branchcode.Id;
 
                             if (shifId == 0)
                             {

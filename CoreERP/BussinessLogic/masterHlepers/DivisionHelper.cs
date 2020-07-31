@@ -74,8 +74,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using Repository<Divisions> repo = new Repository<Divisions>();
                 var division = repo.Divisions.Where(x => x.Code == divisionCode).FirstOrDefault();
-                division.Active = "N";
-                repo.Divisions.Update(division);
+                repo.Divisions.Remove(division);
                 if (repo.SaveChanges() > 0)
                     return division;
 
