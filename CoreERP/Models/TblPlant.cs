@@ -5,7 +5,6 @@ namespace CoreERP.Models
 {
     public partial class TblPlant
     {
-        public int Id { get; set; }
         public string PlantCode { get; set; }
         public string Plantname { get; set; }
         public string City { get; set; }

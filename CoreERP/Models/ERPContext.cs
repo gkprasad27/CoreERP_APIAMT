@@ -1021,10 +1021,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ext1).HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.ResponsiblePerson).HasMaxLength(40);
             });
 
@@ -2027,10 +2023,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.Language).HasMaxLength(5);
 
                 entity.Property(e => e.Location).HasMaxLength(50);
@@ -2310,10 +2302,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Gstno)
                     .HasColumnName("GSTNo")
                     .HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Language).HasMaxLength(5);
 
@@ -4522,10 +4510,6 @@ namespace CoreERP.Models
                     .HasColumnName("GSTNo")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.IsMainBranch)
                     .HasColumnName("isMainBranch")
                     .HasDefaultValueSql("((0))");
@@ -5240,10 +5224,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.HouseNo).HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.Image).HasColumnType("image");
 
                 entity.Property(e => e.Language).HasMaxLength(5);
@@ -5604,7 +5584,7 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Currency");
 
-                entity.Property(e => e.CurrencySymbol).HasMaxLength(5);                
+                entity.Property(e => e.CurrencySymbol).HasMaxLength(5);
 
                 entity.Property(e => e.CurrencyName).IsUnicode(false);
 
@@ -6437,10 +6417,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ext1).HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -7095,10 +7071,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.ResponsiblePerson).HasMaxLength(5);
             });
@@ -8459,10 +8431,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.Plant).HasMaxLength(5);
             });
 
@@ -8566,10 +8534,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Code).HasMaxLength(5);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
@@ -10747,10 +10711,6 @@ namespace CoreERP.Models
                     .HasColumnName("GSTNo")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.Language).HasMaxLength(5);
 
                 entity.Property(e => e.Location).HasMaxLength(50);
@@ -11420,10 +11380,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<TblPurchaseInvoice>(entity =>
@@ -13581,10 +13537,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Code).HasMaxLength(5);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -13736,10 +13688,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Currency).HasMaxLength(5);
 
                 entity.Property(e => e.Email).HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Language).HasMaxLength(5);
 
@@ -15784,9 +15732,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblStorageLocation>(entity =>
             {
-                entity.ToTable("tbl_StorageLocation");
+                entity.HasKey(e => e.Code);
 
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.ToTable("tbl_StorageLocation");
 
                 entity.Property(e => e.Code).HasMaxLength(5);
 
