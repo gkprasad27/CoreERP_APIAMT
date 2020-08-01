@@ -15,15 +15,15 @@ namespace CoreERP.Controllers.GeneralLedger
     public class VoucherClassController : ControllerBase
     {
         [HttpPost("RegisterVoucherClass")]
-        public IActionResult RegisterVoucherClass([FromBody]VoucherClass vcclass)
+        public IActionResult RegisterVoucherClass([FromBody]TblVoucherclass vcclass)
         {
             if (vcclass == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-                if (VoucherClassHelper.GetList(vcclass.VoucherCode).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"VocherClass Code {nameof(vcclass.VoucherCode)} is already exists ,Please Use Different Code " });
+                if (VoucherClassHelper.GetList(vcclass.VoucherKey).Count() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"VocherClass Code {nameof(vcclass.VoucherKey)} is already exists ,Please Use Different Code " });
 
                 var result = VoucherClassHelper.Register(vcclass);
                 APIResponse apiResponse;
@@ -69,7 +69,7 @@ namespace CoreERP.Controllers.GeneralLedger
         }
 
         [HttpPut("UpdateVoucherClass")]
-        public IActionResult UpdateVoucherClass([FromBody] VoucherClass vcclass)
+        public IActionResult UpdateVoucherClass([FromBody] TblVoucherclass vcclass)
         {
             if (vcclass == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(vcclass)} cannot be null" });

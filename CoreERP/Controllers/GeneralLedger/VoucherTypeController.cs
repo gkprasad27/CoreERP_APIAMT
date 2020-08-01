@@ -68,16 +68,16 @@ namespace CoreERP.Controllers.GL
 
 
         [HttpPost("RegisterVoucherTypes")]
-        public IActionResult RegisterVoucherTypes([FromBody]VoucherTypes vouhertype)
+        public IActionResult RegisterVoucherTypes([FromBody]TblVoucherType vouhertype)
         {
             if (vouhertype == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
             try
             {
-                if (GLHelper.GetVoucherTypeList(vouhertype.VoucherCode).Count > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Voucher Code ={vouhertype.VoucherCode} alredy exists." });
+                if (GLHelper.GetVoucherTypeList(vouhertype.VoucherTypeId).Count > 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Voucher Code ={vouhertype.VoucherTypeId} alredy exists." });
 
-                VoucherTypes result = GLHelper.RegisterVoucherType(vouhertype);
+                TblVoucherType result = GLHelper.RegisterVoucherType(vouhertype);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
@@ -91,14 +91,14 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpPut("UpdateVoucherTypes")]
-        public IActionResult UpdateVoucherTypes([FromBody] VoucherTypes vouchertype)
+        public IActionResult UpdateVoucherTypes([FromBody] TblVoucherType vouchertype)
         {
             if (vouchertype == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Request cannot be null" });
 
             try
             {
-                VoucherTypes result = GLHelper.UpdateVoucherType(vouchertype);
+                TblVoucherType result = GLHelper.UpdateVoucherType(vouchertype);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
@@ -119,7 +119,7 @@ namespace CoreERP.Controllers.GL
 
             try
             {
-                VoucherTypes result = GLHelper.DeleteVoucherType(code);
+                TblVoucherType result = GLHelper.DeleteVoucherType(code);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 

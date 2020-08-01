@@ -784,34 +784,30 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         //}
 
         #region Voucher Type
-        public static List<VoucherTypes> GetVoucherTypeList()
+        public static List<TblVoucherType> GetVoucherTypeList()
         {
             try
             {
-                // using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                //return repo.VoucherTypes.AsEnumerable().Where(v => v.Active == "Y").ToList();
-                return null;
+                using Repository<TblVoucherType> repo = new Repository<TblVoucherType>();
+                return repo.TblVoucherType.ToList();
             }
             catch { throw; }
         }
-        public static List<VoucherTypes> GetVoucherTypeList(string voucherCode)
+        public static List<TblVoucherType> GetVoucherTypeList(string voucherCode)
         {
             try
             {
-                //using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                //return repo.VoucherTypes.AsEnumerable().Where(v => v.VoucherCode == voucherCode).ToList();
-                return null;
+                using Repository<TblVoucherType> repo = new Repository<TblVoucherType>();
+                return repo.TblVoucherType.AsEnumerable().Where(v => v.VoucherTypeId == voucherCode).ToList();
             }
             catch { throw; }
         }
-        public static VoucherTypes RegisterVoucherType(VoucherTypes voucherTypes)
+        public static TblVoucherType RegisterVoucherType(TblVoucherType voucherTypes)
         {
             try
             {
-                using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                voucherTypes.Active = "Y";
-                voucherTypes.AddDate = DateTime.Now;
-                //repo.VoucherTypes.Add(voucherTypes);
+                using Repository<TblVoucherType> repo = new Repository<TblVoucherType>();
+                repo.TblVoucherType.Add(voucherTypes);
                 if (repo.SaveChanges() > 0)
                     return voucherTypes;
 
@@ -819,12 +815,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
-        public static VoucherTypes UpdateVoucherType(VoucherTypes voucherTypes)
+        public static TblVoucherType UpdateVoucherType(TblVoucherType voucherTypes)
         {
             try
             {
-                using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                //repo.VoucherTypes.Update(voucherTypes);
+                using Repository<TblVoucherType> repo = new Repository<TblVoucherType>();
+                repo.TblVoucherType.Update(voucherTypes);
                 if (repo.SaveChanges() > 0)
                     return voucherTypes;
 
@@ -832,16 +828,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
-        public static VoucherTypes DeleteVoucherType(string voucherTypeCode)
+        public static TblVoucherType DeleteVoucherType(string voucherTypeCode)
         {
             try
             {
-                using Repository<VoucherTypes> repo = new Repository<VoucherTypes>();
-                //var voucherType = repo.VoucherTypes.Where(v => v.VoucherCode == voucherTypeCode).FirstOrDefault();
-                //voucherType.Active = "N";
-                //repo.VoucherTypes.Remove(voucherType);
-                //if (repo.SaveChanges() > 0)
-                //    return voucherType;
+                using Repository<TblVoucherType> repo = new Repository<TblVoucherType>();
+                var voucherType = repo.TblVoucherType.Where(v => v.VoucherTypeId == voucherTypeCode).FirstOrDefault();
+                repo.TblVoucherType.Remove(voucherType);
+                if (repo.SaveChanges() > 0)
+                    return voucherType;
 
                 return null;
             }
