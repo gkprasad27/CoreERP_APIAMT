@@ -363,7 +363,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
 
                 using (Repository<TblShift> _repo = new Repository<TblShift>())
                 {
-                    _shift = _repo.TblShift.Where(s => s.UserId == userId && s.Status == 0).FirstOrDefault();
+                    _shift = _repo.TblShift.Where(s => s.UserId == userId && s.Status == 0).OrderByDescending(s=>s.ShiftId).FirstOrDefault();
                 }
 
                 if(_shift == null)
