@@ -60,7 +60,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblUnit> repo = new Repository<TblUnit>();
-                var unitno = repo.TblUnit.Where(x => x.UnitId == Convert.ToInt32(Code)).FirstOrDefault();
+                var unitno = repo.TblUnit.Where(x => x.UnitId == Code).FirstOrDefault();
                 repo.TblUnit.Remove(unitno);
                 if (repo.SaveChanges() > 0)
                     return unitno;

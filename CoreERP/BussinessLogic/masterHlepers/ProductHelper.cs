@@ -152,7 +152,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     var _product = GetProductGroupList().Where(x=>x.GroupCode==product.ProductGroupCode).ToArray().FirstOrDefault();
                     var _productpacking = GetProductPackingList().Where(x => x.PackingCode == product.PackingCode).ToArray().FirstOrDefault();
                     var _taxgroup = GetTaxGroup().Where(x => x.TaxGroupCode == product.TaxGroupCode).ToArray().FirstOrDefault();
-                    var _unit = GetUnitList().Where(x => x.UnitId == product.UnitId).FirstOrDefault();
+                    var _unit = GetUnitList().Where(x => (x.UnitId == Convert.ToString(product.UnitId))).FirstOrDefault();
                     var _taxstructure = GetTaxStructure().Where(x => x.TaxStructureCode == product.TaxStructureCode).ToArray().FirstOrDefault();
                     var _taxapplicable = GetTaxApplicableList().Where(x => x.Id == product.TaxapplicableOnId).ToArray().FirstOrDefault();
                     product.PackingId = _productpacking.PackingId;
@@ -184,7 +184,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 var _product = GetProductGroupList().Where(x => x.GroupCode == product.ProductGroupCode).ToArray().FirstOrDefault();
                 var _productpacking = GetProductPackingList().Where(x => x.PackingCode == product.PackingCode).ToArray().FirstOrDefault();
                 var _taxgroup = GetTaxGroup().Where(x => x.TaxGroupCode == product.TaxGroupCode).ToArray().FirstOrDefault();
-                var _unit = GetUnitList().Where(x => x.UnitId == product.UnitId).FirstOrDefault();
+                var _unit = GetUnitList().Where(x => x.UnitId == Convert.ToString(product.UnitId)).FirstOrDefault();
                 var _taxstructure = GetTaxStructure().Where(x => x.TaxStructureCode == product.TaxStructureCode).ToArray().FirstOrDefault();
                 var _taxapplicable = GetTaxApplicableList().Where(x => x.Id == product.TaxapplicableOnId).ToArray().FirstOrDefault();
                 product.PackingId = _productpacking.PackingId;

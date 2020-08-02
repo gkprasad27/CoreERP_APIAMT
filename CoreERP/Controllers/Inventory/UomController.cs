@@ -1,41 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using CoreERP.BussinessLogic.InventoryHelpers;
+﻿using CoreERP.BussinessLogic.InventoryHelpers;
 using CoreERP.Models;
-using CoreERP.DataAccess;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/Sizes")]
-    public class SizesController : ControllerBase
+    [Route("api/UOM")]
+    public class UomController : ControllerBase
     {
         [HttpPost("RegisterSizes")]
-        public IActionResult RegisterSizes([FromBody]Sizes sizes)
+        public IActionResult RegisterSizes([FromBody] TblUnit uoms)
         {
-            if (sizes == null)
+            if (uoms == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-                if (SizesHelper.GetSizesList(sizes.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"sizes Code {nameof(sizes.Code)} is already exists ,Please Use Different Code " });
+                if (UomHelper.GetSizesList(uoms.UnitId).Count() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"sizes Code {nameof(uoms.UnitId)} is already exists ,Please Use Different Code " });
 
-                var result = SizesHelper.RegisterSizes(sizes);
+                var result = UomHelper.RegisterSizes(uoms);
                 APIResponse apiResponse;
                 if (result != null)
-                {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -48,12 +41,12 @@ namespace CoreERP.Controllers
 
 
         [HttpGet("GetAllSizes")]
-        [Produces(typeof(List<Sizes>))]
+        [Produces(typeof(List<TblUnit>))]
         public IActionResult GetAllSizes()
         {
             try
             {
-                var sizesList = SizesHelper.GetSizesList();
+                var sizesList = UomHelper.GetSizesList();
                 if (sizesList.Count > 0)
                 {
                     dynamic expando = new ExpandoObject();
@@ -70,15 +63,15 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateSize")]
-        [Produces(typeof(Sizes))]
-        public IActionResult UpdateSize([FromBody] Sizes sizes)
+        [Produces(typeof(TblUnit))]
+        public IActionResult UpdateSize([FromBody] TblUnit uoms)
         {
-            if (sizes == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(sizes)} cannot be null" });
+            if (uoms == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(uoms)} cannot be null" });
 
             try
             {
-                var result = SizesHelper.UpdateSizes(sizes);
+                var result = UomHelper.UpdateSizes(uoms);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 
@@ -91,7 +84,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteSize/{code}")]
-        [Produces(typeof(Sizes))]
+        [Produces(typeof(TblUnit))]
         public IActionResult DeleteSize(string code)
         {
 
@@ -100,7 +93,7 @@ namespace CoreERP.Controllers
 
             try
             {
-                var result = SizesHelper.DeleteSizes(code);
+                var result = UomHelper.DeleteSizes(code);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 

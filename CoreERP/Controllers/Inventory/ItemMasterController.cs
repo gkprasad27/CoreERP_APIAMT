@@ -114,7 +114,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.sizesList = SizesHelper.GetSizesList();
+                expando.sizesList = UomHelper.GetSizesList();
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

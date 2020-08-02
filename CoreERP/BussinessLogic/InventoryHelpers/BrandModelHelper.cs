@@ -112,7 +112,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                return SizesHelper.GetSizesList();
+                // return UomHelper.GetSizesList();
+                return null;
             }
             catch { throw; }
         }

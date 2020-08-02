@@ -5522,23 +5522,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.CurrencySymbol).HasMaxLength(5);
 
-                entity.Property(e => e.CurrencyName).IsUnicode(false);
-
-                entity.Property(e => e.DateTime).HasColumnType("datetime");
-
-                entity.Property(e => e.Extra1)
-                    .HasColumnName("extra1")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Extra2)
-                    .HasColumnName("extra2")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.IsDefault).HasColumnName("isDefault");
-
-                entity.Property(e => e.Narration).IsUnicode(false);
-
-                entity.Property(e => e.SubunitName).IsUnicode(false);
+                entity.Property(e => e.CurrencyName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblCurrencyToCopy>(entity =>
@@ -16166,34 +16150,17 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.UnitId)
                     .HasColumnName("unitId")
-                    .HasColumnType("numeric(18, 0)")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.Extra1)
-                    .HasColumnName("extra1")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Extra2)
-                    .HasColumnName("extra2")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ExtraDate)
-                    .HasColumnName("extraDate")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.FormalName)
-                    .HasColumnName("formalName")
-                    .IsUnicode(false);
+                    .HasMaxLength(5);
 
                 entity.Property(e => e.Narration)
                     .HasColumnName("narration")
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.NoOfDecimalplaces).HasColumnName("noOfDecimalplaces");
 
                 entity.Property(e => e.UnitName)
                     .HasColumnName("unitName")
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblUnitConvertion>(entity =>
