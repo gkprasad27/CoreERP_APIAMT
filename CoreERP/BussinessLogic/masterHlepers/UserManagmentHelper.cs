@@ -188,9 +188,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
                         {
                             // parent Name along with its child menus
                             Menus mobj = GetMenu(pid);
-                            dynamic expandoObj = GetMenustructureObj(mobj, childList);
+                            if (mobj.IsMasterScreen.ToUpper() == "Y")
+                            {
+                                dynamic expandoObj = GetMenustructureObj(mobj, childList);
 
-                            menusbyRole.Add(expandoObj);
+                                menusbyRole.Add(expandoObj);
+                            }
                         }
                     }
                 }
