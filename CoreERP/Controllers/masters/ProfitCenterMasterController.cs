@@ -24,16 +24,16 @@ namespace CoreERP.Controllers
             try
             {
                 var profitCenterList = ProfitCenterHelper.GetProfitCenterList();
-                if (profitCenterList.Count > 0)
-                {
+                //if (profitCenterList.Count > 0)
+                //{
                     dynamic expando = new ExpandoObject();
                     expando.profitCenterList = profitCenterList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-                else
-                {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
+                //}
+                //else
+                //{
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                //}
             }
             catch (Exception e)
             {

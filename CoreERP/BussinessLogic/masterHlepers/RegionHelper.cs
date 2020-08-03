@@ -3,28 +3,25 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class RegionHelper
     {
-        public static List<TblRegion> GetList(string region)
+        public static IEnumerable<TblRegion> GetList(string region)
         {
             try
             {
-                using Repository<TblRegion> repo = new Repository<TblRegion>();
-                return repo.TblRegion.Where(x => x.RegionCode == region).ToList();
+                return Repository<TblRegion>.Instance.Where(x => x.RegionCode == region);
             }
             catch { throw; }
         }
 
-        public static List<TblRegion> GetList()
+        public static IEnumerable<TblRegion> GetList()
         {
             try
             {
-                using Repository<TblRegion> repo = new Repository<TblRegion>();
-                return repo.TblRegion.ToList();
+                return Repository<TblRegion>.Instance.GetAll().OrderBy(x => x.RegionCode);
             }
             catch { throw; }
         }
@@ -33,9 +30,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblRegion> repo = new Repository<TblRegion>();
-                repo.TblRegion.Add(region);
-                if (repo.SaveChanges() > 0)
+                Repository<TblRegion>.Instance.Add(region);
+                if (Repository<TblRegion>.Instance.SaveChanges() > 0)
                     return region;
 
                 return null;
@@ -50,9 +46,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblRegion> repo = new Repository<TblRegion>();
-                repo.TblRegion.Update(region);
-                if (repo.SaveChanges() > 0)
+                Repository<TblRegion>.Instance.Update(region);
+                if (Repository<TblRegion>.Instance.SaveChanges() > 0)
                     return region;
 
                 return null;
@@ -67,11 +62,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblRegion> repo = new Repository<TblRegion>();
-                var rcode = repo.TblRegion.Where(x => x.RegionCode == rcodes).FirstOrDefault();
-                repo.TblRegion.Remove(rcode);
-                if (repo.SaveChanges() > 0)
-                    return rcode;
+                var code = Repository<TblRegion>.Instance.GetSingleOrDefault(x => x.RegionCode == rcodes);
+                Repository<TblRegion>.Instance.Remove(code);
+                if (Repository<TblRegion>.Instance.SaveChanges() > 0)
+                    return code;
 
                 return null;
             }

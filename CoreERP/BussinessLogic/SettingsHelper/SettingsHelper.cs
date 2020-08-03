@@ -3,19 +3,17 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.SettingsHelper
 {
     public class SettingsHelper
     {
 
-        public List<Menus> GetMenusList()
+        public IEnumerable<Menus> GetMenusList()
         {
             try
             {
-                using Repository<Menus> repo = new Repository<Menus>();
-                return repo.Menus.ToList();
+                return Repository<Menus>.Instance.GetAll().OrderBy(x => x.Code);
             }
             catch(Exception ex)
             {
@@ -24,12 +22,11 @@ namespace CoreERP.BussinessLogic.SettingsHelper
         }
 
 
-        public List<Menus> GetParentMenusList()
+        public IEnumerable<Menus> GetParentMenusList()
         {
             try
             {
-                using Repository<Menus> repo = new Repository<Menus>();
-                return repo.Menus.Where(m => m.Code.ToString() == m.ParentId).ToList();
+               return Repository<Menus>.Instance.Where(m => m.Code.ToString() == m.ParentId);
             }
             catch (Exception ex)
             {

@@ -8,22 +8,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 {
     public class TaxTransactionHelper
     {
-        public static List<TblTaxtransactions> GetList(string code)
+        public static IEnumerable<TblTaxtransactions> GetList(string code)
         {
             try
             {
-                using Repository<TblTaxtransactions> repo = new Repository<TblTaxtransactions>();
-               return repo.TblTaxtransactions.Where(x => x.Code == code).ToList();
+                return Repository<TblTaxtransactions>.Instance.Where(x => x.Code == code);
             }
             catch { throw; }
         }
 
-        public static List<TblTaxtransactions> GetList()
+        public static IEnumerable<TblTaxtransactions> GetList()
         {
             try
             {
-                using Repository<TblTaxtransactions> repo = new Repository<TblTaxtransactions>();
-                return repo.TblTaxtransactions.ToList();
+                return Repository<TblTaxtransactions>.Instance.GetAll().OrderBy(x => x.Code);
             }
             catch { throw; }
         }
@@ -32,9 +30,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using Repository<TblTaxtransactions> repo = new Repository<TblTaxtransactions>();
-                repo.TblTaxtransactions.Add(transaction);
-                if (repo.SaveChanges() > 0)
+                Repository<TblTaxtransactions>.Instance.Add(transaction);
+                if (Repository<TblTaxtransactions>.Instance.SaveChanges() > 0)
                     return transaction;
 
                 return null;
@@ -49,9 +46,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using Repository<TblTaxtransactions> repo = new Repository<TblTaxtransactions>();
-                repo.TblTaxtransactions.Update(transaction);
-                if (repo.SaveChanges() > 0)
+                Repository<TblTaxtransactions>.Instance.Update(transaction);
+                if (Repository<TblTaxtransactions>.Instance.SaveChanges() > 0)
                     return transaction;
 
                 return null;
@@ -66,11 +62,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using Repository<TblTaxtransactions> repo = new Repository<TblTaxtransactions>();
-                var code = repo.TblTaxtransactions.Where(x => x.Code == Code).FirstOrDefault();
-                repo.TblTaxtransactions.Remove(code);
-                if (repo.SaveChanges() > 0)
-                    return code;
+                var ccode = Repository<TblTaxtransactions>.Instance.GetSingleOrDefault(x => x.Code == Code);
+                Repository<TblTaxtransactions>.Instance.Remove(ccode);
+                if (Repository<TblTaxtransactions>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

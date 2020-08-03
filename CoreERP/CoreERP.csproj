@@ -15,9 +15,6 @@
     <Compile Remove="Controllers\masters\menuAccessController.cs" />
     <Compile Remove="Controllers\masters\MenusController.cs" />
     <Compile Remove="Controllers\masters\VoucherClassController.cs" />
-    <Compile Remove="Controllers\purchase\InventoryController.cs" />
-    <Compile Remove="Controllers\purchase\OpeningBalanceController.cs" />
-    <Compile Remove="Controllers\purchase\purchaseRequisitionsController.cs" />
   </ItemGroup>
 
   <ItemGroup>

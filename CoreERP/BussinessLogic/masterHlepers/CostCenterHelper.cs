@@ -1,42 +1,37 @@
 using CoreERP.DataAccess;
 using CoreERP.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class CostCenterHelper
     {
-        public static List<CostCenters> GetCostCenterList()
+        public static IEnumerable<CostCenters> GetCostCenterList()
         {
             try
             {
-                using Repository<CostCenters> repo = new Repository<CostCenters>();
-                return repo.CostCenters.AsEnumerable().Where(c => c.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
+                return Repository<CostCenters>.Instance.GetAll().OrderBy(x => x.Code);
             }
             catch { throw; }
         }
 
-        public static bool IsCodeExists(string code)
-        {
-            try
-            {
-                using Repository<CostCenters> repo = new Repository<CostCenters>();
-                return repo.CostCenters.AsEnumerable().Where(c => c.Code == code).Count() > 0;
-            }
-            catch { throw; }
-        }
+        //public static bool IsCodeExists(string code)
+        //{
+        //    try
+        //    {
+        //        using Repository<CostCenters> repo = new Repository<CostCenters>();
+        //        return repo.CostCenters.AsEnumerable().Where(c => c.Code == code).Count() > 0;
+        //    }
+        //    catch { throw; }
+        //}
 
         public static CostCenters RegisterCostCenter(CostCenters costCenter)
         {
             try
             {
-                using Repository<CostCenters> repo = new Repository<CostCenters>();
-                costCenter.Active = "Y";
-                repo.CostCenters.Add(costCenter);
-                if (repo.SaveChanges() > 0)
+                Repository<CostCenters>.Instance.Add(costCenter);
+                if (Repository<CostCenters>.Instance.SaveChanges() > 0)
                     return costCenter;
 
                 return null;
@@ -50,9 +45,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<CostCenters> repo = new Repository<CostCenters>();
-                repo.CostCenters.Update(costCenters);
-                if (repo.SaveChanges() > 0)
+                Repository<CostCenters>.Instance.Update(costCenters);
+                if (Repository<CostCenters>.Instance.SaveChanges() > 0)
                     return costCenters;
 
                 return null;
@@ -66,12 +60,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<CostCenters> repo = new Repository<CostCenters>();
-                var costcntr = repo.CostCenters.Where(c => c.Code == costCenterCode).FirstOrDefault();
-                costcntr.Active = "N";
-                repo.CostCenters.Update(costcntr);
-                if (repo.SaveChanges() > 0)
-                    return costcntr;
+                var ccode = Repository<CostCenters>.Instance.GetSingleOrDefault(x => x.Code == costCenterCode);
+                Repository<CostCenters>.Instance.Remove(ccode);
+                if (Repository<CostCenters>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

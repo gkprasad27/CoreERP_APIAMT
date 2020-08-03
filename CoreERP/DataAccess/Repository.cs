@@ -9,28 +9,33 @@ using System.Threading.Tasks;
 
 namespace CoreERP.DataAccess
 {
-    public class Repository<TEntity> : ERPContext, IRepository<TEntity> where TEntity : class
+    public class Repository<TEntity> : IRepository<TEntity>where TEntity : class
     {
-        protected readonly ERPContext _context;
-        protected readonly DbSet<TEntity> _entities;
-       
-        public Repository()
+        private static readonly ERPContext _context;
+        private static readonly DbSet<TEntity> _entities;
+
+        public static Repository<TEntity> Instance { get; } = new Repository<TEntity>();
+
+        static Repository()
         {
-            _context =new ERPContext();
+            _context = new ERPContext();
             _context.Database.SetCommandTimeout(240);
             _entities = _context.Set<TEntity>();
-
-
         }
 
         public virtual void Add(TEntity entity)
-        {
+        {            
             _entities.Add(entity);
         }
 
         public virtual void AddRange(IEnumerable<TEntity> entities)
         {
             _entities.AddRange(entities);
+        }
+
+        public virtual int SaveChanges()
+        {
+            return _context.SaveChanges();
         }
 
         public virtual void Update(TEntity entity)
@@ -58,9 +63,9 @@ namespace CoreERP.DataAccess
             return _entities.Count();
         }
 
-        public virtual IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
-        {
-            return _entities.Where(predicate);
+        public virtual IEnumerable<TEntity> Where(Expression<Func<TEntity, bool>> predicate)
+        {            
+            return _entities.Where(predicate).AsNoTracking();
         }
 
         public virtual TEntity GetSingleOrDefault(Expression<Func<TEntity, bool>> predicate)
@@ -75,7 +80,7 @@ namespace CoreERP.DataAccess
 
         public virtual IEnumerable<TEntity> GetAll()
         {
-            return _entities.ToList();
+            return _entities.AsNoTracking();
         }
     }
 }

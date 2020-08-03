@@ -8,22 +8,20 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class StorageLocationHelper
     {
-        public static List<TblStorageLocation> GetList(string stloc)
+        public static IEnumerable<TblStorageLocation> GetList(string stloc)
         {
             try
             {
-                using Repository<TblStorageLocation> repo = new Repository<TblStorageLocation>();
-                return repo.TblStorageLocation.Where(x => x.Code == stloc).ToList();
+                return Repository<TblStorageLocation>.Instance.Where(x => x.Code == stloc);
             }
             catch { throw; }
         }
 
-        public static List<TblStorageLocation> GetList()
+        public static IEnumerable<TblStorageLocation> GetList()
         {
             try
             {
-                using Repository<TblStorageLocation> repo = new Repository<TblStorageLocation>();
-                return repo.TblStorageLocation.ToList();
+                return Repository<TblStorageLocation>.Instance.GetAll().OrderBy(x => x.Code);
             }
             catch { throw; }
         }
@@ -32,9 +30,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblStorageLocation> repo = new Repository<TblStorageLocation>();
-                repo.TblStorageLocation.Add(stloc);
-                if (repo.SaveChanges() > 0)
+                Repository<TblStorageLocation>.Instance.Add(stloc);
+                if (Repository<TblStorageLocation>.Instance.SaveChanges() > 0)
                     return stloc;
 
                 return null;
@@ -49,9 +46,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblStorageLocation> repo = new Repository<TblStorageLocation>();
-                repo.TblStorageLocation.Update(stloc);
-                if (repo.SaveChanges() > 0)
+                Repository<TblStorageLocation>.Instance.Update(stloc);
+                if (Repository<TblStorageLocation>.Instance.SaveChanges() > 0)
                     return stloc;
 
                 return null;
@@ -66,11 +62,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblStorageLocation> repo = new Repository<TblStorageLocation>();
-                var stloccodes = repo.TblStorageLocation.Where(x => x.Code == stloccode).FirstOrDefault();
-                repo.TblStorageLocation.Remove(stloccodes);
-                if (repo.SaveChanges() > 0)
-                    return stloccodes;
+                var ccode = Repository<TblStorageLocation>.Instance.GetSingleOrDefault(x => x.Code == stloccode);
+                Repository<TblStorageLocation>.Instance.Remove(ccode);
+                if (Repository<TblStorageLocation>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

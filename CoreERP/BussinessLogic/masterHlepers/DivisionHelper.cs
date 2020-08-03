@@ -3,33 +3,26 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class DivisionHelper
     {
 
-        public static List<Divisions> GetList(string divisionCode)
+        public static IEnumerable<Divisions> GetList(string divisionCode)
         {
             try
             {
-                using Repository<Divisions> repo = new Repository<Divisions>();
-                return repo.Divisions
-.Where(x => x.Code == divisionCode)
-.ToList();
-                //return null;
+                return Repository<Divisions>.Instance.Where(x => x.Code == divisionCode);
             }
             catch { throw; }
         }
 
-        public static List<Divisions> GetList()
+        public static IEnumerable<Divisions> GetList()
         {
             try
             {
-                using Repository<Divisions> repo = new Repository<Divisions>();
-                return repo.Divisions.ToList();
-                //return null;
+                return Repository<Divisions>.Instance.GetAll().OrderBy(x => x.Code);
             }
             catch { throw; }
         }
@@ -38,9 +31,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Divisions> repo = new Repository<Divisions>();
-                repo.Divisions.Add(divisions);
-                if (repo.SaveChanges() > 0)
+                Repository<Divisions>.Instance.Add(divisions);
+                if (Repository<Divisions>.Instance.SaveChanges() > 0)
                     return divisions;
 
                 return null;
@@ -55,9 +47,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Divisions> repo = new Repository<Divisions>();
-                repo.Divisions.Update(division);
-                if (repo.SaveChanges() > 0)
+                Repository<Divisions>.Instance.Update(division);
+                if (Repository<Divisions>.Instance.SaveChanges() > 0)
                     return division;
 
                 return null;
@@ -72,11 +63,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Divisions> repo = new Repository<Divisions>();
-                var division = repo.Divisions.Where(x => x.Code == divisionCode).FirstOrDefault();
-                repo.Divisions.Remove(division);
-                if (repo.SaveChanges() > 0)
-                    return division;
+                var ccode = Repository<Divisions>.Instance.GetSingleOrDefault(x => x.Code == divisionCode);
+                Repository<Divisions>.Instance.Remove(ccode);
+                if (Repository<Divisions>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

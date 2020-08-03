@@ -8,22 +8,20 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class PlantHelper
     {
-        public static List<TblPlant> GetList(string plant)
+        public static IEnumerable<TblPlant> GetList(string plant)
         {
             try
             {
-                using Repository<TblPlant> repo = new Repository<TblPlant>();
-                return repo.TblPlant.Where(x => x.PlantCode == plant).ToList();
+                return Repository<TblPlant>.Instance.Where(x => x.PlantCode == plant);
             }
             catch { throw; }
         }
 
-        public static List<TblPlant> GetList()
+        public static IEnumerable<TblPlant> GetList()
         {
             try
             {
-                using Repository<TblPlant> repo = new Repository<TblPlant>();
-                return repo.TblPlant.ToList();
+                return Repository<TblPlant>.Instance.GetAll().OrderBy(x => x.PlantCode);
             }
             catch { throw; }
         }
@@ -32,9 +30,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblPlant> repo = new Repository<TblPlant>();
-                repo.TblPlant.Add(plant);
-                if (repo.SaveChanges() > 0)
+                Repository<TblPlant>.Instance.Add(plant);
+                if (Repository<TblPlant>.Instance.SaveChanges() > 0)
                     return plant;
 
                 return null;
@@ -49,9 +46,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblPlant> repo = new Repository<TblPlant>();
-                repo.TblPlant.Update(plant);
-                if (repo.SaveChanges() > 0)
+                Repository<TblPlant>.Instance.Update(plant);
+                if (Repository<TblPlant>.Instance.SaveChanges() > 0)
                     return plant;
 
                 return null;
@@ -66,11 +62,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblPlant> repo = new Repository<TblPlant>();
-                var plantcodes = repo.TblPlant.Where(x => x.PlantCode == code).FirstOrDefault();
-                repo.TblPlant.Remove(plantcodes);
-                if (repo.SaveChanges() > 0)
-                    return plantcodes;
+                var ccode = Repository<TblPlant>.Instance.GetSingleOrDefault(x => x.PlantCode == code);
+                Repository<TblPlant>.Instance.Remove(ccode);
+                if (Repository<TblPlant>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

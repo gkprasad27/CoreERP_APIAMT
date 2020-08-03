@@ -8,22 +8,20 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class DistributionChannelHelper
     {
-        public static List<TblDistributionChannel> GetList(string dbchanel)
+        public static IEnumerable<TblDistributionChannel> GetList(string dbchanel)
         {
             try
             {
-                using Repository<TblDistributionChannel> repo = new Repository<TblDistributionChannel>();
-                return repo.TblDistributionChannel.Where(x => x.Code == dbchanel).ToList();
+                return Repository<TblDistributionChannel>.Instance.Where(x => x.Code == dbchanel);
             }
             catch { throw; }
         }
 
-        public static List<TblDistributionChannel> GetList()
+        public static IEnumerable<TblDistributionChannel> GetList()
         {
             try
             {
-                using Repository<TblDistributionChannel> repo = new Repository<TblDistributionChannel>();
-                return repo.TblDistributionChannel.ToList();
+                return Repository<TblDistributionChannel>.Instance.GetAll().OrderBy(x => x.Code);
             }
             catch { throw; }
         }
@@ -32,9 +30,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblDistributionChannel> repo = new Repository<TblDistributionChannel>();
-                repo.TblDistributionChannel.Add(dbchanel);
-                if (repo.SaveChanges() > 0)
+                Repository<TblDistributionChannel>.Instance.Add(dbchanel);
+                if (Repository<TblDistributionChannel>.Instance.SaveChanges() > 0)
                     return dbchanel;
 
                 return null;
@@ -49,9 +46,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblDistributionChannel> repo = new Repository<TblDistributionChannel>();
-                repo.TblDistributionChannel.Update(dbchanel);
-                if (repo.SaveChanges() > 0)
+                Repository<TblDistributionChannel>.Instance.Update(dbchanel);
+                if (Repository<TblDistributionChannel>.Instance.SaveChanges() > 0)
                     return dbchanel;
 
                 return null;
@@ -66,11 +62,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblDistributionChannel> repo = new Repository<TblDistributionChannel>();
-                var dccodes = repo.TblDistributionChannel.Where(x => x.Code == dccode).FirstOrDefault();
-                repo.TblDistributionChannel.Remove(dccodes);
-                if (repo.SaveChanges() > 0)
-                    return dccodes;
+                var ccode = Repository<TblDistributionChannel>.Instance.GetSingleOrDefault(x => x.Code == dccode);
+                Repository<TblDistributionChannel>.Instance.Remove(ccode);
+                if (Repository<TblDistributionChannel>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

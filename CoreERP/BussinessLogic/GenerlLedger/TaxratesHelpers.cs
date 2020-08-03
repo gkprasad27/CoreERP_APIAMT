@@ -3,30 +3,25 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class TaxratesHelpers
     {
-        public List<TblTaxRates> GetList(string code)
+        public IEnumerable<TblTaxRates> GetList(string code)
         {
             try
             {
-                using Repository<TblTaxRates> repo = new Repository<TblTaxRates>();
-                return repo.TblTaxRates
-                           .Where(x => x.TaxRateCode== code)
-                           .ToList();
+                return Repository<TblTaxRates>.Instance.Where(x => x.TaxRateCode == code);
             }
             catch { throw; }
         }
 
-        public  List<TblTaxRates> GetList()
+        public  IEnumerable<TblTaxRates> GetList()
         {
             try
             {
-                using Repository<TblTaxRates> repo = new Repository<TblTaxRates>();
-                return repo.TblTaxRates.ToList();
+                return Repository<TblTaxRates>.Instance.GetAll().OrderBy(x => x.TaxRateCode);
             }
             catch { throw; }
         }
@@ -35,9 +30,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblTaxRates> repo = new Repository<TblTaxRates>();
-                repo.TblTaxRates.Add(taxrates);
-                if (repo.SaveChanges() > 0)
+                Repository<TblTaxRates>.Instance.Add(taxrates);
+                if (Repository<TblTaxRates>.Instance.SaveChanges() > 0)
                     return taxrates;
 
                 return null;
@@ -52,9 +46,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblTaxRates> repo = new Repository<TblTaxRates>();
-                repo.TblTaxRates.Update(taxrates);
-                if (repo.SaveChanges() > 0)
+                Repository<TblTaxRates>.Instance.Update(taxrates);
+                if (Repository<TblTaxRates>.Instance.SaveChanges() > 0)
                     return taxrates;
 
                 return null;
@@ -69,11 +62,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblTaxRates> repo = new Repository<TblTaxRates>();
-                var taxcode = repo.TblTaxRates.Where(x => x.TaxRateCode ==Code).FirstOrDefault();
-                repo.TblTaxRates.Remove(taxcode);
-                if (repo.SaveChanges() > 0)
-                    return taxcode;
+                var rcode = Repository<TblTaxRates>.Instance.GetSingleOrDefault(x => x.TaxRateCode == Code);
+                Repository<TblTaxRates>.Instance.Remove(rcode);
+                if (Repository<TblTaxRates>.Instance.SaveChanges() > 0)
+                    return rcode;
 
                 return null;
             }

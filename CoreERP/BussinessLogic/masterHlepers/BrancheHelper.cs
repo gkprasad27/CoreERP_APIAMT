@@ -1,61 +1,44 @@
 ﻿using CoreERP.DataAccess;
 using CoreERP.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class BrancheHelper
     {
-        public static List<TblBranch> GetBranches()
+        public static IEnumerable<TblBranch> GetBranches()
         {
             try
             {
-                using Repository<TblBranch> repo = new Repository<TblBranch>();
-                return repo.TblBranch.ToList();
+                return Repository<TblBranch>.Instance.GetAll().OrderBy(x => x.BranchCode);
             }
             catch { throw; }
         }
 
 
-        public static TblBranch GetBranches(string code)
+        public static IEnumerable<TblBranch> GetBranches(string code)
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    return repo.TblBranch.AsEnumerable()
-                               .Where(b => b.BranchCode == code).FirstOrDefault();
-                }
+                return Repository<TblBranch>.Instance.Where(x => x.BranchCode == code);
             }
             catch { throw; }
         }
-        public static List<TblBranch> GetBranchesLikeSearch(string branchCode, string branchName)
+        public static IEnumerable<TblBranch> GetBranchesLikeSearch(string branchCode, string branchName)
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    return repo.TblBranch.AsEnumerable()
-                    .Where(b => b.BranchCode.Contains(branchCode ?? b.BranchCode)
-                             && b.BranchName.Contains(branchName ?? b.BranchName)
-                    ).ToList();
-                }
+              return Repository<TblBranch>.Instance.Where(b => b.BranchCode.Contains(branchCode ?? b.BranchCode)
+                                                            && b.BranchName.Contains(branchName ?? b.BranchName));
             }
             catch { throw; }
         }
-        public static List<TblBranch> SearchBranch(string branchCode)
+        public static IEnumerable<TblBranch> SearchBranch(string branchCode)
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    return repo.TblBranch.AsEnumerable()
-                      .Where(b => b.BranchCode == branchCode)
-                      .ToList();
-                }
+                return Repository<TblBranch>.Instance.Where(x => x.BranchCode == branchCode);
             }
             catch { throw; }
         }
@@ -63,14 +46,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    repo.TblBranch.Add(branches);
-                    if (repo.SaveChanges() > 0)
-                        return branches;
+                Repository<TblBranch>.Instance.Add(branches);
+                if (Repository<TblBranch>.Instance.SaveChanges() > 0)
+                    return branches;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -78,14 +58,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    repo.TblBranch.Update(branches);
-                    if (repo.SaveChanges() > 0)
-                        return branches;
+                Repository<TblBranch>.Instance.Update(branches);
+                if (Repository<TblBranch>.Instance.SaveChanges() > 0)
+                    return branches;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }
@@ -93,15 +70,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    var brnch = repo.TblBranch.Where(x => x.BranchCode == code).FirstOrDefault();
-                    repo.TblBranch.Remove(brnch);
-                    if (repo.SaveChanges() > 0)
-                        return brnch;
+                var ccode = Repository<TblBranch>.Instance.GetSingleOrDefault(x => x.BranchCode == code);
+                Repository<TblBranch>.Instance.Remove(ccode);
+                if (Repository<TblBranch>.Instance.SaveChanges() > 0)
+                    return ccode;
 
-                    return null;
-                }
+                return null;
             }
             catch { throw; }
         }

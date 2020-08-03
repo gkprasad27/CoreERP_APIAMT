@@ -21,14 +21,14 @@ namespace CoreERP.Controllers.GL
             try
             {
                 var vouchertypeList = GLHelper.GetVoucherTypeList();
-                if (vouchertypeList.Count > 0)
-                {
+                //if (vouchertypeList.Count > 0)
+                //{
                     dynamic expando = new ExpandoObject();
                     expando.GLSubCodeList = vouchertypeList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                //}
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                //return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -74,8 +74,8 @@ namespace CoreERP.Controllers.GL
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
             try
             {
-                if (GLHelper.GetVoucherTypeList(vouhertype.VoucherTypeId).Count > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Voucher Code ={vouhertype.VoucherTypeId} alredy exists." });
+                //if (GLHelper.GetVoucherTypeList(vouhertype.VoucherTypeId).Count > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Voucher Code ={vouhertype.VoucherTypeId} alredy exists." });
 
                 TblVoucherType result = GLHelper.RegisterVoucherType(vouhertype);
                 if (result != null)

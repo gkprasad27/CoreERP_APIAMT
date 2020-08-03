@@ -3,28 +3,25 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class LanguageHelper
     {
-        public static List<TblLanguage> GetList(string language)
+        public static IEnumerable<TblLanguage> GetList(string language)
         {
             try
             {
-                using Repository<TblLanguage> repo = new Repository<TblLanguage>();
-                return repo.TblLanguage.Where(x => x.LanguageCode == language).ToList();
+                return Repository<TblLanguage>.Instance.Where(x => x.LanguageCode == language);
             }
             catch { throw; }
         }
 
-        public static List<TblLanguage> GetList()
+        public static IEnumerable<TblLanguage> GetList()
         {
             try
             {
-                using Repository<TblLanguage> repo = new Repository<TblLanguage>();
-                return repo.TblLanguage.ToList();
+                return Repository<TblLanguage>.Instance.GetAll().OrderBy(x => x.LanguageCode);
             }
             catch { throw; }
         }
@@ -32,10 +29,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
         public static TblLanguage Register(TblLanguage language)
         {
             try
-            {
-                using Repository<TblLanguage> repo = new Repository<TblLanguage>();
-                repo.TblLanguage.Add(language);
-                if (repo.SaveChanges() > 0)
+            { 
+                Repository<TblLanguage>.Instance.Add(language);
+                if (Repository<TblLanguage>.Instance.SaveChanges() > 0)
                     return language;
 
                 return null;
@@ -50,9 +46,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblLanguage> repo = new Repository<TblLanguage>();
-                repo.TblLanguage.Update(language);
-                if (repo.SaveChanges() > 0)
+                Repository<TblLanguage>.Instance.Update(language);
+                if (Repository<TblLanguage>.Instance.SaveChanges() > 0)
                     return language;
 
                 return null;
@@ -67,12 +62,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblLanguage> repo = new Repository<TblLanguage>();
-                var rcode = repo.TblLanguage.Where(x => x.LanguageCode == rcodes).FirstOrDefault();
-                repo.TblLanguage.Remove(rcode);
-                if (repo.SaveChanges() > 0)
+                 
+                var rcode = Repository<TblLanguage>.Instance.GetSingleOrDefault(x => x.LanguageCode == rcodes);
+                Repository<TblLanguage>.Instance.Remove(rcode);
+                if (Repository<TblLanguage>.Instance.SaveChanges() > 0)
                     return rcode;
-
                 return null;
             }
             catch (Exception ex)

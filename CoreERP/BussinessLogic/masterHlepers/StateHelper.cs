@@ -3,28 +3,25 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class StateHelper
     {
-        public static List<States> GetList(string statecode)
+        public static IEnumerable<States> GetList(string statecode)
         {
             try
             {
-                using Repository<States> repo = new Repository<States>();
-                return repo.States.Where(x => x.StateCode == statecode).ToList();
+                return Repository<States>.Instance.Where(x => x.StateCode == statecode);
             }
             catch { throw; }
         }
 
-        public static List<States> GetList()
+        public static IEnumerable<States> GetList()
         {
             try
             {
-                using Repository<States> repo = new Repository<States>();
-                return repo.States.ToList();
+                return Repository<States>.Instance.GetAll().OrderBy(x => x.StateCode);
             }
             catch { throw; }
         }
@@ -33,9 +30,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<States> repo = new Repository<States>();
-                repo.States.Add(state);
-                if (repo.SaveChanges() > 0)
+                Repository<States>.Instance.Add(state);
+                if (Repository<States>.Instance.SaveChanges() > 0)
                     return state;
 
                 return null;
@@ -50,11 +46,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<States> repo = new Repository<States>();
-                repo.States.Update(state);
-                if (repo.SaveChanges() > 0)
+                Repository<States>.Instance.Update(state);
+                if (Repository<States>.Instance.SaveChanges() > 0)
                     return state;
-
+                
                 return null;
             }
             catch (Exception ex)
@@ -67,11 +62,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<States> repo = new Repository<States>();
-                var scode = repo.States.Where(x => x.StateCode == statecode).FirstOrDefault();
-                repo.States.Remove(scode);
-                if (repo.SaveChanges() > 0)
-                    return scode;
+                var ccode = Repository<States>.Instance.GetSingleOrDefault(x => x.StateCode == statecode);
+                Repository<States>.Instance.Remove(ccode);
+                if (Repository<States>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

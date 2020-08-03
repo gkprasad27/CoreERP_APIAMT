@@ -8,24 +8,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 {
     public class LedgerHelper
     {
-        public  static List<Ledger> GetList(string code)
+        public  static IEnumerable<Ledger> GetList(string code)
         {
             try
             {
-                using Repository<Ledger> repo = new Repository<Ledger>();
-                return repo.Ledger
-                           .Where(x => x.Code == code)
-                           .ToList();
+                return Repository<Ledger>.Instance.Where(x => x.Code == code);
             }
             catch { throw; }
         }
 
-        public static List<Ledger> GetList()
+        public static IEnumerable<Ledger> GetList()
         {
             try
             {
-                using Repository<Ledger> repo = new Repository<Ledger>();
-                return repo.Ledger.ToList();
+             return Repository<Ledger>.Instance.GetAll().OrderBy(x => x.Code);
             }
             catch { throw; }
         }
@@ -34,9 +30,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using Repository<Ledger> repo = new Repository<Ledger>();
-                repo.Ledger.Add(ledger);
-                if (repo.SaveChanges() > 0)
+                Repository<Ledger>.Instance.Add(ledger);
+                if (Repository<Ledger>.Instance.SaveChanges() > 0)
                     return ledger;
 
                 return null;
@@ -51,9 +46,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using Repository<Ledger> repo = new Repository<Ledger>();
-                repo.Ledger.Update(ledger);
-                if (repo.SaveChanges() > 0)
+                    Repository<Ledger>.Instance.Update(ledger);
+                if (Repository<Ledger>.Instance.SaveChanges() > 0)
                     return ledger;
 
                 return null;
@@ -68,11 +62,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using Repository<Ledger> repo = new Repository<Ledger>();
-                var code = repo.Ledger.Where(x => x.Code == Code).FirstOrDefault();
-                repo.Ledger.Remove(code);
-                if (repo.SaveChanges() > 0)
-                    return code;
+                var rcode = Repository<Ledger>.Instance.GetSingleOrDefault(x => x.Code == Code);
+                Repository<Ledger>.Instance.Remove(rcode);
+                if (Repository<Ledger>.Instance.SaveChanges() > 0)
+                    return rcode;
 
                 return null;
             }

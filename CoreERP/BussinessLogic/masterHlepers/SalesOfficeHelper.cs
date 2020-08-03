@@ -9,22 +9,20 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class SalesOfficeHelper
     {
-        public static List<TblSalesOffice> GetList(string salesofc)
+        public static IEnumerable<TblSalesOffice> GetList(string salesofc)
         {
             try
             {
-                using Repository<TblSalesOffice> repo = new Repository<TblSalesOffice>();
-                return repo.TblSalesOffice.Where(x => x.Code == salesofc).ToList();
+                return Repository<TblSalesOffice>.Instance.Where(x => x.Code == salesofc);
             }
             catch { throw; }
         }
 
-        public static List<TblSalesOffice> GetList()
+        public static IEnumerable<TblSalesOffice> GetList()
         {
             try
             {
-                using Repository<TblSalesOffice> repo = new Repository<TblSalesOffice>();
-                return repo.TblSalesOffice.ToList();
+                return Repository<TblSalesOffice>.Instance.GetAll().OrderBy(x => x.Code);
             }
             catch { throw; }
         }
@@ -33,9 +31,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblSalesOffice> repo = new Repository<TblSalesOffice>();
-                repo.TblSalesOffice.Add(salesofc);
-                if (repo.SaveChanges() > 0)
+                Repository<TblSalesOffice>.Instance.Add(salesofc);
+                if (Repository<TblSalesOffice>.Instance.SaveChanges() > 0)
                     return salesofc;
 
                 return null;
@@ -50,9 +47,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblSalesOffice> repo = new Repository<TblSalesOffice>();
-                repo.TblSalesOffice.Update(salesofc);
-                if (repo.SaveChanges() > 0)
+                Repository<TblSalesOffice>.Instance.Update(salesofc);
+                if (Repository<TblSalesOffice>.Instance.SaveChanges() > 0)
                     return salesofc;
 
                 return null;
@@ -67,11 +63,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblSalesOffice> repo = new Repository<TblSalesOffice>();
-                var sfccodes = repo.TblSalesOffice.Where(x => x.Code == sfcode).FirstOrDefault();
-                repo.TblSalesOffice.Remove(sfccodes);
-                if (repo.SaveChanges() > 0)
-                    return sfccodes;
+                var ccode = Repository<TblSalesOffice>.Instance.GetSingleOrDefault(x => x.Code == sfcode);
+                Repository<TblSalesOffice>.Instance.Remove(ccode);
+                if (Repository<TblSalesOffice>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.Models;
-using CoreERP.DataAccess;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Dynamic;
 
 namespace CoreERP.Controllers
@@ -22,14 +18,14 @@ namespace CoreERP.Controllers
             try
             {
                 var segmentList = SegmentHelper.GetSegmentList();
-                if (segmentList.Count > 0)
-                {
+                //if (segmentList.Count > 0)
+                //{
                     dynamic expando = new ExpandoObject();
                     expando.segmentList = segmentList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-                else
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                //}
+                //else
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -44,8 +40,8 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(segment)} cannot be null" });
             try
             {
-                if (SegmentHelper.IsSegmentIDExists(segment.Id))
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"ID={segment.Id} Already Exists." });
+                //if (SegmentHelper.IsSegmentIDExists(segment.Id))
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"ID={segment.Id} Already Exists." });
 
                 var result = SegmentHelper.RegisterSegment(segment);
                 if (result != null)

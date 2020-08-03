@@ -20,8 +20,8 @@ namespace CoreERP.Controllers.GL
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
             try
             {
-                if (GLHelper.GetList(opnldgr.LedgerKey).Count > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Ledger Code ={opnldgr.LedgerKey} alredy exists." });
+                //if (GLHelper.GetList(opnldgr.LedgerKey).Count > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Ledger Code ={opnldgr.LedgerKey} alredy exists." });
 
                 TblOpenLedger result = GLHelper.Register(opnldgr);
                 if (result != null)
@@ -41,14 +41,14 @@ namespace CoreERP.Controllers.GL
             try
             {
                 var openledgerList = GLHelper.GetList();
-                if (openledgerList.Count > 0)
-                {
+                //if (openledgerList.Count > 0)
+                //{
                     dynamic expando = new ExpandoObject();
                     expando.OpenLedgerList = openledgerList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                //}
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                //return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {

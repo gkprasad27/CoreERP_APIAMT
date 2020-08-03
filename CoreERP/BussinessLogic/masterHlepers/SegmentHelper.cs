@@ -8,37 +8,33 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class SegmentHelper
     {
-        public static List<Segment> GetSegmentList()
+        public static IEnumerable<Segment> GetSegmentList()
         {
             try
             {
-                using Repository<Segment> repo = new Repository<Segment>();
-                return repo.Segment.AsEnumerable().Where(s => s.Active.Equals("Y", StringComparison.OrdinalIgnoreCase)).ToList();
-                //return null;
+                return Repository<Segment>.Instance.GetAll().OrderBy(x => x.SeqId);
             }
             catch { throw; }
         }
 
-        public static bool IsSegmentIDExists(string ID)
-        {
-            try
-            {
-                using Repository<Segment> repo = new Repository<Segment>();
-                return repo.Segment.AsEnumerable().Where(s => s.Id == ID).Count() > 0;
+        //public static bool IsSegmentIDExists(string ID)
+        //{
+        //    try
+        //    {
+        //        using Repository<Segment> repo = new Repository<Segment>();
+        //        return repo.Segment.AsEnumerable().Where(s => s.Id == ID).Count() > 0;
 
-                // return false;
-            }
-            catch { throw; }
-        }
+        //        // return false;
+        //    }
+        //    catch { throw; }
+        //}
 
         public static Segment RegisterSegment(Segment segment)
         {
             try
             {
-                using Repository<Segment> repo = new Repository<Segment>();
-                segment.Active = "Y";
-                repo.Segment.Add(segment);
-                if (repo.SaveChanges() > 0)
+                Repository<Segment>.Instance.Add(segment);
+                if (Repository<Segment>.Instance.SaveChanges() > 0)
                     return segment;
 
                 return null;
@@ -50,9 +46,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Segment> repo = new Repository<Segment>();
-                repo.Segment.Update(segment);
-                if (repo.SaveChanges() > 0)
+                Repository<Segment>.Instance.Update(segment);
+                if (Repository<Segment>.Instance.SaveChanges() > 0)
                     return segment;
 
                 return null;
@@ -65,12 +60,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Segment> repo = new Repository<Segment>();
-                var segment = repo.Segment.Where(s => s.SeqId == seqID).FirstOrDefault();
-                segment.Active = "N";
-                repo.Segment.Update(segment);
-                if (repo.SaveChanges() > 0)
-                    return segment;
+                var ccode = Repository<Segment>.Instance.GetSingleOrDefault(x => x.SeqId == seqID);
+                Repository<Segment>.Instance.Remove(ccode);
+                if (Repository<Segment>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

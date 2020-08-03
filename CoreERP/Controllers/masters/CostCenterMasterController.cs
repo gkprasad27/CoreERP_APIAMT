@@ -1,10 +1,8 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.Models;
-using System.Dynamic;
-using CoreERP.DataAccess;
+using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
@@ -18,14 +16,14 @@ namespace CoreERP.Controllers
             try
             {
                 var costcenterList = CostCenterHelper.GetCostCenterList();
-                if (costcenterList.Count > 0)
-                {
+                //if (costcenterList.Count > 0)
+                //{
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.costcenterList = costcenterList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found" });
+                //}
+                //else
+                //    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found" });
             }
             catch (Exception ex)
             {
@@ -41,8 +39,8 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(costCenter)} cannot be null" });
             try
             {
-                if (CostCenterHelper.IsCodeExists(costCenter.Code))
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"Code ={costCenter.Code} Already Exists." });
+                //if (CostCenterHelper.IsCodeExists(costCenter.Code))
+                //    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"Code ={costCenter.Code} Already Exists." });
 
                 var result = CostCenterHelper.RegisterCostCenter(costCenter);
                 APIResponse apiResponse;

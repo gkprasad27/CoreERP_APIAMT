@@ -3,28 +3,25 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class CountryHelper
     {
-        public static List<Countries> GetList(string countrycode)
+        public static IEnumerable<Countries> GetList(string countrycode)
         {
             try
             {
-                using Repository<Countries> repo = new Repository<Countries>();
-                return repo.Countries.Where(x => x.CountryCode == countrycode).ToList();
+                return Repository<Countries>.Instance.Where(x => x.CountryCode == countrycode);
             }
             catch { throw; }
         }
 
-        public static List<Countries> GetList()
+        public static IEnumerable<Countries> GetList()
         {
             try
             {
-                using Repository<Countries> repo = new Repository<Countries>();
-                return repo.Countries.ToList();
+                return Repository<Countries>.Instance.GetAll().OrderBy(x => x.CountryCode);
             }
             catch { throw; }
         }
@@ -33,9 +30,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Countries> repo = new Repository<Countries>();
-                repo.Countries.Add(country);
-                if (repo.SaveChanges() > 0)
+                Repository<Countries>.Instance.Add(country);
+                if (Repository<Countries>.Instance.SaveChanges() > 0)
                     return country;
 
                 return null;
@@ -50,9 +46,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Countries> repo = new Repository<Countries>();
-                repo.Countries.Update(country);
-                if (repo.SaveChanges() > 0)
+                Repository<Countries>.Instance.Update(country);
+                if (Repository<Countries>.Instance.SaveChanges() > 0)
                     return country;
 
                 return null;
@@ -67,10 +62,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Countries> repo = new Repository<Countries>();
-                var ccode = repo.Countries.Where(x => x.CountryCode == countrycode).FirstOrDefault();
-                repo.Countries.Remove(ccode);
-                if (repo.SaveChanges() > 0)
+                var ccode = Repository<Countries>.Instance.GetSingleOrDefault(x => x.CountryCode == countrycode);
+                Repository<Countries>.Instance.Remove(ccode);
+                if (Repository<Countries>.Instance.SaveChanges() > 0)
                     return ccode;
 
                 return null;

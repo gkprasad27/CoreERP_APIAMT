@@ -1,88 +1,78 @@
 ﻿using CoreERP.DataAccess;
 using CoreERP.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class CompaniesHelper
     {
-        public  static List<TblCompany> GetListOfCompanies()
+        public  static IEnumerable<TblCompany> GetListOfCompanies()
         {
             try
             {
-                using Repository<TblCompany> repo = new Repository<TblCompany>();
-                return repo.TblCompany.ToList();
+                return Repository<TblCompany>.Instance.GetAll().OrderBy(x => x.CompanyCode);
             }
             catch { throw; }
         }
-        public static List<TblEmployee> GetListOfEmployes()
+        public static IEnumerable<TblEmployee> GetListOfEmployes()
         {
             try
             {
-                using Repository<TblEmployee> repo = new Repository<TblEmployee>();
-                return repo.TblEmployee.ToList();
+                return Repository<TblEmployee>.Instance.GetAll().OrderBy(x => x.EmployeeCode);
             }
             catch { throw; }
         }
 
-        public static List<States> GetStatesList()
+        public static IEnumerable<States> GetStatesList()
         {
             try
             {
-                using Repository<States> repo = new Repository<States>();
-                return repo.States.ToList();
+                return Repository<States>.Instance.GetAll().OrderBy(x => x.StateCode);
             }
             catch { throw; }
         }
-        public static List<TblLanguage> GetLanguageList()
+        public static IEnumerable<TblLanguage> GetLanguageList()
         {
             try
             {
-                using Repository<TblLanguage> repo = new Repository<TblLanguage>();
-                return repo.TblLanguage.ToList();
+                return Repository<TblLanguage>.Instance.GetAll().OrderBy(x => x.LanguageCode);
             }
             catch { throw; }
         }
         
-        public static List<TblCurrency> GetCurrencyList()
+        public static IEnumerable<TblCurrency> GetCurrencyList()
         {
             try
             {
-                using Repository<TblCurrency> repo = new Repository<TblCurrency>();
-                return repo.TblCurrency.ToList();
+                return Repository<TblCurrency>.Instance.GetAll().OrderBy(x => x.CurrencySymbol);
             }
             catch { throw; }
         }
 
-        public static List<TblRegion> GetRegionListList()
+        public static IEnumerable<TblRegion> GetRegionListList()
         {
             try
             {
-                using Repository<TblRegion> repo = new Repository<TblRegion>();
-                return repo.TblRegion.ToList();
+                return Repository<TblRegion>.Instance.GetAll().OrderBy(x => x.RegionCode);
             }
             catch { throw; }
         }
 
-        public static List<Countries> GetCountryList()
+        public static IEnumerable<Countries> GetCountryList()
         {
             try
             {
-                using Repository<Countries> repo = new Repository<Countries>();
-                return repo.Countries.ToList();
+                return Repository<Countries>.Instance.GetAll().OrderBy(x => x.CountryCode);
             }
             catch { throw; }
         }
 
-        public static TblCompany GetCompanies(string compCode)
+        public static IEnumerable <TblCompany> GetCompanies(string compCode)
         {
             try
             {
-                using Repository<TblCompany> repo = new Repository<TblCompany>();
-                return repo.TblCompany.Where(x => x.CompanyCode == compCode).FirstOrDefault();
+               return Repository<TblCompany>.Instance.Where(x => x.CompanyCode == compCode);
             }
             catch { throw; }
         }
@@ -92,10 +82,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblCompany> repo = new Repository<TblCompany>();
-               // companies.Active = "Y";
-                repo.TblCompany.Add(companies);
-                if (repo.SaveChanges() > 0)
+                Repository<TblCompany>.Instance.Add(companies);
+                if (Repository<TblCompany>.Instance.SaveChanges() > 0)
                     return companies;
 
                 return null;
@@ -108,9 +96,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblCompany> repo = new Repository<TblCompany>();
-                repo.TblCompany.Update(companies);
-                if (repo.SaveChanges() > 0)
+                Repository<TblCompany>.Instance.Update(companies);
+                if (Repository<TblCompany>.Instance.SaveChanges() > 0)
                     return companies;
 
                 return null;
@@ -122,11 +109,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblCompany> repo = new Repository<TblCompany>();
-                var comp = repo.TblCompany.Where(x => x.CompanyCode ==code).FirstOrDefault();
-                repo.TblCompany.Remove(comp);
-                if (repo.SaveChanges() > 0)
-                    return comp;
+                var ccode = Repository<TblCompany>.Instance.GetSingleOrDefault(x => x.CompanyCode == code);
+                Repository<TblCompany>.Instance.Remove(ccode);
+                if (Repository<TblCompany>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

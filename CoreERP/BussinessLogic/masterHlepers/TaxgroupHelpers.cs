@@ -3,30 +3,25 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class TaxgroupHelpers
     {
-        public List<TblTaxGroup> GetList(string code)
+        public IEnumerable<TblTaxGroup> GetList(string code)
         {
             try
             {
-                using Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>();
-                return repo.TblTaxGroup
-                           .Where(x => x.TaxGroupCode == code)
-                           .ToList();
+                return Repository<TblTaxGroup>.Instance.Where(x => x.TaxGroupCode == code);
             }
             catch { throw; }
         }
 
-        public  List<TblTaxGroup> GetList()
+        public  IEnumerable<TblTaxGroup> GetList()
         {
             try
             {
-                using Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>();
-                return repo.TblTaxGroup.ToList();
+                return Repository<TblTaxGroup>.Instance.GetAll().OrderBy(x => x.TaxGroupCode);
             }
             catch { throw; }
         }
@@ -35,12 +30,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>();
-                string name = Convert.ToString(repo.TblProductGroup.SingleOrDefault(obj => obj.GroupName == Convert.ToString(taxgroup.ProductGroupName))?.GroupCode);
-                taxgroup.ProductGroupId = int.Parse(name);
-                taxgroup.ProductGroupCode = int.Parse(name);
-                repo.TblTaxGroup.Add(taxgroup);
-                if (repo.SaveChanges() > 0)
+                Repository<TblTaxGroup>.Instance.Add(taxgroup);
+                if (Repository<TblTaxGroup>.Instance.SaveChanges() > 0)
                     return taxgroup;
 
                 return null;
@@ -55,12 +46,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>();
-                string name = Convert.ToString(repo.TblProductGroup.SingleOrDefault(obj => obj.GroupName == Convert.ToString(taxgroup.ProductGroupName))?.GroupCode);
-                taxgroup.ProductGroupId = int.Parse(name);
-                taxgroup.ProductGroupCode = int.Parse(name);
-                repo.TblTaxGroup.Update(taxgroup);
-                if (repo.SaveChanges() > 0)
+                Repository<TblTaxGroup>.Instance.Update(taxgroup);
+                if (Repository<TblTaxGroup>.Instance.SaveChanges() > 0)
                     return taxgroup;
 
                 return null;
@@ -75,11 +62,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblTaxGroup> repo = new Repository<TblTaxGroup>();
-                var taxcode = repo.TblTaxGroup.Where(x => x.TaxGroupId == Convert.ToInt32(Code)).FirstOrDefault();
-                repo.TblTaxGroup.Remove(taxcode);
-                if (repo.SaveChanges() > 0)
-                    return taxcode;
+                var ccode = Repository<TblTaxGroup>.Instance.GetSingleOrDefault(x => x.TaxGroupCode == Code);
+                Repository<TblTaxGroup>.Instance.Remove(ccode);
+                if (Repository<TblTaxGroup>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }
@@ -89,12 +75,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
-        public  List<TblProductGroup> GetProductGroups()
+        public  IEnumerable<TblProductGroup> GetProductGroups()
         {
             try
             {
-                using Repository<TblProductGroup> repo = new Repository<TblProductGroup>();
-                return repo.TblProductGroup.ToList();
+                return Repository<TblProductGroup>.Instance.GetAll().OrderBy(x => x.GroupCode);
             }
             catch { throw; }
         }

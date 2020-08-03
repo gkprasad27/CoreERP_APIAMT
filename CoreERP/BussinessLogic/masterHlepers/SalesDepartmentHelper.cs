@@ -8,22 +8,21 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class SalesDepartmentHelper
     {
-        public static List<SalesDepartment> GetList(string sdept)
+        public static IEnumerable<SalesDepartment> GetList(string sdept)
         {
             try
             {
-                using Repository<SalesDepartment> repo = new Repository<SalesDepartment>();
-                return repo.SalesDepartment.Where(x => x.DepartmentCode == sdept).ToList();
+                return Repository<SalesDepartment>.Instance.Where(x => x.DepartmentCode == sdept);
+
             }
             catch { throw; }
         }
 
-        public static List<SalesDepartment> GetList()
+        public static IEnumerable<SalesDepartment> GetList()
         {
             try
             {
-                using Repository<SalesDepartment> repo = new Repository<SalesDepartment>();
-                return repo.SalesDepartment.ToList();
+                return Repository<SalesDepartment>.Instance.GetAll().OrderBy(x => x.DepartmentCode);
             }
             catch { throw; }
         }
@@ -32,9 +31,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<SalesDepartment> repo = new Repository<SalesDepartment>();
-                repo.SalesDepartment.Add(sdept);
-                if (repo.SaveChanges() > 0)
+                Repository<SalesDepartment>.Instance.Add(sdept);
+                if (Repository<SalesDepartment>.Instance.SaveChanges() > 0)
                     return sdept;
 
                 return null;
@@ -49,9 +47,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<SalesDepartment> repo = new Repository<SalesDepartment>();
-                repo.SalesDepartment.Update(sdept);
-                if (repo.SaveChanges() > 0)
+                Repository<SalesDepartment>.Instance.Update(sdept);
+                if (Repository<SalesDepartment>.Instance.SaveChanges() > 0)
                     return sdept;
 
                 return null;
@@ -66,11 +63,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<SalesDepartment> repo = new Repository<SalesDepartment>();
-                var scodes = repo.SalesDepartment.Where(x => x.DepartmentCode == code).FirstOrDefault();
-                repo.SalesDepartment.Remove(scodes);
-                if (repo.SaveChanges() > 0)
-                    return scodes;
+                var ccode = Repository<SalesDepartment>.Instance.GetSingleOrDefault(x => x.DepartmentCode == code);
+                Repository<SalesDepartment>.Instance.Remove(ccode);
+                if (Repository<SalesDepartment>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

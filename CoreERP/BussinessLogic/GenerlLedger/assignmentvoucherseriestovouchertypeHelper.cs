@@ -8,24 +8,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 {
     public class assignmentvoucherseriestovouchertypeHelper
     {
-        public static List<TblAssignmentVoucherSeriestoVoucherType> GetList(string code)
+        public static IEnumerable<TblAssignmentVoucherSeriestoVoucherType> GetList(string code)
         {
             try
             {
-                using Repository<TblAssignmentVoucherSeriestoVoucherType> repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>();
-                return repo.TblAssignmentVoucherSeriestoVoucherType
-                           .Where(x => x.Code == code)
-                           .ToList();
+                return Repository<TblAssignmentVoucherSeriestoVoucherType>.Instance.Where(x => x.Code == code);
             }
             catch { throw; }
         }
 
-        public static List<TblAssignmentVoucherSeriestoVoucherType> GetList()
+        public static IEnumerable<TblAssignmentVoucherSeriestoVoucherType> GetList()
         {
             try
             {
-                using Repository<TblAssignmentVoucherSeriestoVoucherType> repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>();
-                return repo.TblAssignmentVoucherSeriestoVoucherType.ToList();
+                return Repository<TblAssignmentVoucherSeriestoVoucherType>.Instance.GetAll().OrderBy(x => x.Code);
             }
             catch { throw; }
         }
@@ -34,9 +30,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using Repository<TblAssignmentVoucherSeriestoVoucherType> repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>();
-                repo.TblAssignmentVoucherSeriestoVoucherType.Add(asvtype);
-                if (repo.SaveChanges() > 0)
+                Repository<TblAssignmentVoucherSeriestoVoucherType>.Instance.Add(asvtype);
+                if (Repository<TblAssignmentVoucherSeriestoVoucherType>.Instance.SaveChanges() > 0)
                     return asvtype;
 
                 return null;
@@ -51,9 +46,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using Repository<TblAssignmentVoucherSeriestoVoucherType> repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>();
-                repo.TblAssignmentVoucherSeriestoVoucherType.Update(asvtype);
-                if (repo.SaveChanges() > 0)
+                Repository<TblAssignmentVoucherSeriestoVoucherType>.Instance.Update(asvtype);
+                if (Repository<TblAssignmentVoucherSeriestoVoucherType>.Instance.SaveChanges() > 0)
                     return asvtype;
 
                 return null;
@@ -68,11 +62,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using Repository<TblAssignmentVoucherSeriestoVoucherType> repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>();
-                var code = repo.TblAssignmentVoucherSeriestoVoucherType.Where(x => x.Code == Code).FirstOrDefault();
-                repo.TblAssignmentVoucherSeriestoVoucherType.Remove(code);
-                if (repo.SaveChanges() > 0)
-                    return code;
+                var ccode = Repository<TblAssignmentVoucherSeriestoVoucherType>.Instance.GetSingleOrDefault(x => x.Code == Code);
+                Repository<TblAssignmentVoucherSeriestoVoucherType>.Instance.Remove(ccode);
+                if (Repository<TblAssignmentVoucherSeriestoVoucherType>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

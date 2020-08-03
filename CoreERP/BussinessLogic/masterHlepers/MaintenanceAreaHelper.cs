@@ -8,22 +8,20 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class MaintenanceAreaHelper
     {
-        public static List<TblMaintenancearea> GetList(string marea)
+        public static IEnumerable<TblMaintenancearea> GetList(string marea)
         {
             try
             {
-                using Repository<TblMaintenancearea> repo = new Repository<TblMaintenancearea>();
-                return repo.TblMaintenancearea.Where(x => x.Code == marea).ToList();
+                return Repository<TblMaintenancearea>.Instance.Where(x => x.Code == marea);
             }
             catch { throw; }
         }
 
-        public static List<TblMaintenancearea> GetList()
+        public static IEnumerable<TblMaintenancearea> GetList()
         {
             try
             {
-                using Repository<TblMaintenancearea> repo = new Repository<TblMaintenancearea>();
-                return repo.TblMaintenancearea.ToList();
+                return Repository<TblMaintenancearea>.Instance.GetAll().OrderBy(x => x.Code);
             }
             catch { throw; }
         }
@@ -32,9 +30,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblMaintenancearea> repo = new Repository<TblMaintenancearea>();
-                repo.TblMaintenancearea.Add(marea);
-                if (repo.SaveChanges() > 0)
+                Repository<TblMaintenancearea>.Instance.Add(marea);
+                if (Repository<TblMaintenancearea>.Instance.SaveChanges() > 0)
                     return marea;
 
                 return null;
@@ -49,9 +46,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblMaintenancearea> repo = new Repository<TblMaintenancearea>();
-                repo.TblMaintenancearea.Update(marea);
-                if (repo.SaveChanges() > 0)
+                Repository<TblMaintenancearea>.Instance.Update(marea);
+                if (Repository<TblMaintenancearea>.Instance.SaveChanges() > 0)
                     return marea;
 
                 return null;
@@ -66,11 +62,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblMaintenancearea> repo = new Repository<TblMaintenancearea>();
-                var mareacodes = repo.TblMaintenancearea.Where(x => x.Code == mareacode).FirstOrDefault();
-                repo.TblMaintenancearea.Remove(mareacodes);
-                if (repo.SaveChanges() > 0)
-                    return mareacodes;
+                var ccode = Repository<TblMaintenancearea>.Instance.GetSingleOrDefault(x => x.Code == mareacode);
+                Repository<TblMaintenancearea>.Instance.Remove(ccode);
+                if (Repository<TblMaintenancearea>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

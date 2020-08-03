@@ -8,24 +8,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 {
     public class VoucherSeriesHelper
     {
-        public static List<TblVoucherSeries> GetList(string code)
+        public static IEnumerable<TblVoucherSeries> GetList(string code)
         {
             try
             {
-                using Repository<TblVoucherSeries> repo = new Repository<TblVoucherSeries>();
-                return repo.TblVoucherSeries
-                           .Where(x => x.VoucherSeriesKey == code)
-                           .ToList();
+                return Repository<TblVoucherSeries>.Instance.Where(x => x.VoucherSeriesKey == code);
             }
             catch { throw; }
         }
 
-        public static List<TblVoucherSeries> GetList()
+        public static IEnumerable<TblVoucherSeries> GetList()
         {
             try
             {
-                using Repository<TblVoucherSeries> repo = new Repository<TblVoucherSeries>();
-                return repo.TblVoucherSeries.ToList();
+                return Repository<TblVoucherSeries>.Instance.GetAll().OrderBy(x => x.VoucherSeriesKey);
             }
             catch { throw; }
         }
@@ -34,9 +30,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using Repository<TblVoucherSeries> repo = new Repository<TblVoucherSeries>();
-                repo.TblVoucherSeries.Add(vcclass);
-                if (repo.SaveChanges() > 0)
+                Repository<TblVoucherSeries>.Instance.Add(vcclass);
+                if (Repository<TblVoucherSeries>.Instance.SaveChanges() > 0)
                     return vcclass;
 
                 return null;
@@ -51,9 +46,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using Repository<TblVoucherSeries> repo = new Repository<TblVoucherSeries>();
-                repo.TblVoucherSeries.Update(vcclass);
-                if (repo.SaveChanges() > 0)
+                Repository<TblVoucherSeries>.Instance.Update(vcclass);
+                if (Repository<TblVoucherSeries>.Instance.SaveChanges() > 0)
                     return vcclass;
 
                 return null;
@@ -68,11 +62,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                using Repository<TblVoucherSeries> repo = new Repository<TblVoucherSeries>();
-                var taxcode = repo.TblVoucherSeries.Where(x => x.VoucherSeriesKey == Code).FirstOrDefault();
-                repo.TblVoucherSeries.Remove(taxcode);
-                if (repo.SaveChanges() > 0)
-                    return taxcode;
+                var ccode = Repository<TblVoucherSeries>.Instance.GetSingleOrDefault(x => x.VoucherSeriesKey == Code);
+                Repository<TblVoucherSeries>.Instance.Remove(ccode);
+                if (Repository<TblVoucherSeries>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

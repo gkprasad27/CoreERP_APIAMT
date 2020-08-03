@@ -12,9 +12,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using Repository<TblUnit> repo = new Repository<TblUnit>();
-                repo.TblUnit.Add(uom);
-                if (repo.SaveChanges() > 0)
+                Repository<TblUnit>.Instance.Add(uom);
+                if (Repository<TblUnit>.Instance.SaveChanges() > 0)
                     return uom;
 
                 return null;
@@ -25,22 +24,20 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
             }
 
         }
-        public static List<TblUnit> GetSizesList()
+        public static IEnumerable<TblUnit> GetSizesList()
         {
             try
             {
-                using Repository<TblUnit> repo = new Repository<TblUnit>();
-                return repo.TblUnit.OrderBy(x => x.UnitId).ToList();
+                return Repository<TblUnit>.Instance.GetAll().OrderBy(x => x.UnitId);
             }
             catch { throw; }
         }
 
-        public static List<TblUnit> GetSizesList(string code)
+        public static IEnumerable<TblUnit> GetSizesList(string code)
         {
             try
             {
-                using Repository<TblUnit> repo = new Repository<TblUnit>();
-                return repo.TblUnit.Where(x => x.UnitId == code).ToList();
+                return Repository<TblUnit>.Instance.Where(x => x.UnitId == code);
             }
             catch { throw; }
         }
@@ -48,9 +45,8 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using Repository<TblUnit> repo = new Repository<TblUnit>();
-                repo.TblUnit.Update(uoms);
-                if (repo.SaveChanges() > 0)
+                Repository<TblUnit>.Instance.Update(uoms);
+                if (Repository<TblUnit>.Instance.SaveChanges() > 0)
                     return uoms;
 
                 return null;
@@ -64,11 +60,10 @@ namespace CoreERP.BussinessLogic.InventoryHelpers
         {
             try
             {
-                using Repository<TblUnit> repo = new Repository<TblUnit>();
-                var UOM = repo.TblUnit.Where(x => x.UnitId == code).FirstOrDefault();
-                repo.TblUnit.Update(UOM);
-                if (repo.SaveChanges() > 0)
-                    return UOM;
+                var ccode = Repository<TblUnit>.Instance.GetSingleOrDefault(x => x.UnitId == code);
+                Repository<TblUnit>.Instance.Remove(ccode);
+                if (Repository<TblUnit>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

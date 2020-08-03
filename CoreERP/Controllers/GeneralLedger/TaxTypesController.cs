@@ -20,8 +20,8 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
             try
             {
-                if (GLHelper.GetTblTaxtypesList(taxtype.TaxKey).Count > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Tax Code ={taxtype.TaxKey} alredy exists." });
+                //if (GLHelper.GetTblTaxtypesList(taxtype.TaxKey).Count > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Tax Code ={taxtype.TaxKey} alredy exists." });
 
                 TblTaxtypes result = GLHelper.RegisterTblTaxtypes(taxtype);
                 if (result != null)
@@ -41,14 +41,14 @@ namespace CoreERP.Controllers
             try
             {
                 var taxtypesList = GLHelper.GetTblTaxtypesList();
-                if (taxtypesList.Count > 0)
-                {
+                //if (taxtypesList.Count > 0)
+                //{
                     dynamic expando = new ExpandoObject();
                     expando.TaxtypesList = taxtypesList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                //}
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                //return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {

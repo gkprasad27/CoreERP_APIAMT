@@ -3,28 +3,25 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class CurrencyHelper
     {
-        public static List<TblCurrency> GetList(string currency)
+        public static IEnumerable<TblCurrency> GetList(string currency)
         {
             try
             {
-                using Repository<TblCurrency> repo = new Repository<TblCurrency>();
-                return repo.TblCurrency.Where(x => x.CurrencySymbol == currency).ToList();
+                return Repository<TblCurrency>.Instance.Where(x => x.CurrencySymbol == currency);
             }
             catch { throw; }
         }
 
-        public static List<TblCurrency> GetList()
+        public static IEnumerable<TblCurrency> GetList()
         {
             try
             {
-                using Repository<TblCurrency> repo = new Repository<TblCurrency>();
-                return repo.TblCurrency.ToList();
+                return Repository<TblCurrency>.Instance.GetAll().OrderBy(x=>x.CurrencySymbol);
             }
             catch { throw; }
         }
@@ -33,9 +30,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblCurrency> repo = new Repository<TblCurrency>();
-                repo.TblCurrency.Add(currency);
-                if (repo.SaveChanges() > 0)
+                Repository<TblCurrency>.Instance.Add(currency);                
+                if (Repository<TblCurrency>.Instance.SaveChanges() > 0)
                     return currency;
 
                 return null;
@@ -49,10 +45,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
         public static TblCurrency Update(TblCurrency currency)
         {
             try
-            {
-                using Repository<TblCurrency> repo = new Repository<TblCurrency>();
-                repo.TblCurrency.Update(currency);
-                if (repo.SaveChanges() > 0)
+            {   
+                Repository<TblCurrency>.Instance.Update(currency);
+                if (Repository<TblCurrency>.Instance.SaveChanges() > 0)
                     return currency;
 
                 return null;
@@ -67,10 +62,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblCurrency> repo = new Repository<TblCurrency>();
-                var ccode = repo.TblCurrency.Where(x => x.CurrencySymbol == ccodes).FirstOrDefault();
-                repo.TblCurrency.Remove(ccode);
-                if (repo.SaveChanges() > 0)
+                
+                var ccode = Repository<TblCurrency>.Instance.GetSingleOrDefault( x => x.CurrencySymbol == ccodes);
+                Repository<TblCurrency>.Instance.Remove(ccode);
+                if (Repository<TblCurrency>.Instance.SaveChanges() > 0)
                     return ccode;
 
                 return null;

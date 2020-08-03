@@ -8,22 +8,20 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class SalesGroupHelper
     {
-        public static List<TblSalesGroup> GetList(string salesgrp)
+        public static IEnumerable<TblSalesGroup> GetList(string salesgrp)
         {
             try
             {
-                using Repository<TblSalesGroup> repo = new Repository<TblSalesGroup>();
-                return repo.TblSalesGroup.Where(x => x.Code == salesgrp).ToList();
+                return Repository<TblSalesGroup>.Instance.Where(x => x.Code == salesgrp);
             }
             catch { throw; }
         }
 
-        public static List<TblSalesGroup> GetList()
+        public static IEnumerable<TblSalesGroup> GetList()
         {
             try
             {
-                using Repository<TblSalesGroup> repo = new Repository<TblSalesGroup>();
-                return repo.TblSalesGroup.ToList();
+                return Repository<TblSalesGroup>.Instance.GetAll().OrderBy(x => x.Code);
             }
             catch { throw; }
         }
@@ -32,9 +30,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblSalesGroup> repo = new Repository<TblSalesGroup>();
-                repo.TblSalesGroup.Add(salesgrp);
-                if (repo.SaveChanges() > 0)
+                Repository<TblSalesGroup>.Instance.Add(salesgrp);
+                if (Repository<TblSalesGroup>.Instance.SaveChanges() > 0)
                     return salesgrp;
 
                 return null;
@@ -49,10 +46,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblSalesGroup> repo = new Repository<TblSalesGroup>();
-                repo.TblSalesGroup.Update(salesogrp);
-                if (repo.SaveChanges() > 0)
+                Repository<TblSalesGroup>.Instance.Update(salesogrp);
+                if (Repository<TblSalesGroup>.Instance.SaveChanges() > 0)
                     return salesogrp;
+
 
                 return null;
             }
@@ -66,11 +63,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblSalesGroup> repo = new Repository<TblSalesGroup>();
-                var sgccodes = repo.TblSalesGroup.Where(x => x.Code == sgcode).FirstOrDefault();
-                repo.TblSalesGroup.Remove(sgccodes);
-                if (repo.SaveChanges() > 0)
-                    return sgccodes;
+                var ccode = Repository<TblSalesGroup>.Instance.GetSingleOrDefault(x => x.Code == sgcode);
+                Repository<TblSalesGroup>.Instance.Remove(ccode);
+                if (Repository<TblSalesGroup>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

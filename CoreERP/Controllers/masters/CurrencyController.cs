@@ -1,12 +1,9 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -28,13 +25,9 @@ namespace CoreERP.Controllers.masters
                 var result = CurrencyHelper.Register(currency);
                 APIResponse apiResponse;
                 if (result != null)
-                {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -58,9 +51,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -79,13 +70,10 @@ namespace CoreERP.Controllers.masters
                 var rs = CurrencyHelper.Update(currency);
                 APIResponse apiResponse;
                 if (rs != null)
-                {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -106,13 +94,10 @@ namespace CoreERP.Controllers.masters
                 var rs = CurrencyHelper.Delete(code);
                 APIResponse apiResponse;
                 if (rs != null)
-                {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)

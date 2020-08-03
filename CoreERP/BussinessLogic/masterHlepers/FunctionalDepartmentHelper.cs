@@ -1,5 +1,4 @@
-﻿using System;
-using CoreERP.DataAccess;
+﻿using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -9,22 +8,20 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class FunctionalDepartmentHelper
     {
-        public static List<TblFunctionalDepartment> GetList(string fdept)
+        public static IEnumerable<TblFunctionalDepartment> GetList(string fdept)
         {
             try
             {
-                using Repository<TblFunctionalDepartment> repo = new Repository<TblFunctionalDepartment>();
-                return repo.TblFunctionalDepartment.Where(x => x.Code == fdept).ToList();
+                return Repository<TblFunctionalDepartment>.Instance.Where(x => x.Code == fdept);
             }
             catch { throw; }
         }
 
-        public static List<TblFunctionalDepartment> GetList()
+        public static IEnumerable<TblFunctionalDepartment> GetList()
         {
             try
             {
-                using Repository<TblFunctionalDepartment> repo = new Repository<TblFunctionalDepartment>();
-                return repo.TblFunctionalDepartment.ToList();
+                return Repository<TblFunctionalDepartment>.Instance.GetAll().OrderBy(x => x.Code);
             }
             catch { throw; }
         }
@@ -33,9 +30,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblFunctionalDepartment> repo = new Repository<TblFunctionalDepartment>();
-                repo.TblFunctionalDepartment.Add(fdept);
-                if (repo.SaveChanges() > 0)
+                Repository<TblFunctionalDepartment>.Instance.Add(fdept);
+                if (Repository<TblFunctionalDepartment>.Instance.SaveChanges() > 0)
                     return fdept;
 
                 return null;
@@ -50,9 +46,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblFunctionalDepartment> repo = new Repository<TblFunctionalDepartment>();
-                repo.TblFunctionalDepartment.Update(fdept);
-                if (repo.SaveChanges() > 0)
+                Repository<TblFunctionalDepartment>.Instance.Update(fdept);
+                if (Repository<TblFunctionalDepartment>.Instance.SaveChanges() > 0)
                     return fdept;
 
                 return null;
@@ -67,11 +62,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblFunctionalDepartment> repo = new Repository<TblFunctionalDepartment>();
-                var fdcodes = repo.TblFunctionalDepartment.Where(x => x.Code == code).FirstOrDefault();
-                repo.TblFunctionalDepartment.Remove(fdcodes);
-                if (repo.SaveChanges() > 0)
-                    return fdcodes;
+                var ccode = Repository<TblFunctionalDepartment>.Instance.GetSingleOrDefault(x => x.Code == code);
+                Repository<TblFunctionalDepartment>.Instance.Remove(ccode);
+                if (Repository<TblFunctionalDepartment>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

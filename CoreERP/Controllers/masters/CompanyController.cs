@@ -98,13 +98,13 @@ namespace CoreERP.Controllers
             try
             {
                 var companiesList = CompaniesHelper.GetListOfCompanies();
-                if (companiesList.Count > 0)
-                {
+                //if (companiesList.Count > 0)
+                //{
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.companiesList = companiesList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                //}
+                //return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -118,13 +118,13 @@ namespace CoreERP.Controllers
             try
             {
                 var empList = CompaniesHelper.GetListOfEmployes();
-                if (empList.Count > 0)
-                {
+                //if (empList.Count > 0)
+                //{
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.emplist = empList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                //}
+                //return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {

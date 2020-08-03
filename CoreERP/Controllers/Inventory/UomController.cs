@@ -47,14 +47,14 @@ namespace CoreERP.Controllers
             try
             {
                 var sizesList = UomHelper.GetSizesList();
-                if (sizesList.Count > 0)
-                {
+                //if (sizesList.Count > 0)
+                //{
                     dynamic expando = new ExpandoObject();
                     expando.sizesList = sizesList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-                else
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                //}
+                //else
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
