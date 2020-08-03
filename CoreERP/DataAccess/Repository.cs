@@ -65,7 +65,7 @@ namespace CoreERP.DataAccess
 
         public virtual IEnumerable<TEntity> Where(Expression<Func<TEntity, bool>> predicate)
         {            
-            return _entities.Where(predicate).AsNoTracking();
+            return _entities.Where(predicate);
         }
 
         public virtual TEntity GetSingleOrDefault(Expression<Func<TEntity, bool>> predicate)
@@ -80,7 +80,7 @@ namespace CoreERP.DataAccess
 
         public virtual IEnumerable<TEntity> GetAll()
         {
-            return _entities.AsNoTracking();
+            return _entities;
         }
     }
 }

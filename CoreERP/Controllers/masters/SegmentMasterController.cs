@@ -85,7 +85,7 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(ID)}can not be null" });
             try
             {
-                var result = SegmentHelper.DeleteSegment(Convert.ToInt32(ID));
+                var result = SegmentHelper.DeleteSegment(ID);
                 if (result != null)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
 

@@ -12,7 +12,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                return Repository<Segment>.Instance.GetAll().OrderBy(x => x.SeqId);
+                return Repository<Segment>.Instance.GetAll().OrderBy(x => x.Id);
             }
             catch { throw; }
         }
@@ -56,11 +56,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
         }
 
 
-        public static Segment DeleteSegment(int seqID)
+        public static Segment DeleteSegment(string seqID)
         {
             try
             {
-                var ccode = Repository<Segment>.Instance.GetSingleOrDefault(x => x.SeqId == seqID);
+                var ccode = Repository<Segment>.Instance.GetSingleOrDefault(x => x.Id == seqID);
                 Repository<Segment>.Instance.Remove(ccode);
                 if (Repository<Segment>.Instance.SaveChanges() > 0)
                     return ccode;

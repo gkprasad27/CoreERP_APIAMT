@@ -2342,22 +2342,16 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<Segment>(entity =>
             {
-                entity.HasKey(e => e.SeqId);
-
-                entity.Property(e => e.SeqId).HasColumnName("seqID");
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
                     .IsUnicode(false)
                     .IsFixedLength()
                     .HasDefaultValueSql("('Y')");
-
-                entity.Property(e => e.AddDate).HasColumnType("datetime");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(40)

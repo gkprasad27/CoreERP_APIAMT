@@ -141,8 +141,8 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(company)} cannot be null" });
             else
             {
-                if (CompaniesHelper.GetCompanies(company.CompanyCode)!=null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + company.CompanyCode + " is already Exists,Please Use Another Code" });
+                //if (CompaniesHelper.GetCompanies(company.CompanyCode)!=null)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + company.CompanyCode + " is already Exists,Please Use Another Code" });
 
                 try
                  {
