@@ -16849,6 +16849,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.VoucherKey).HasMaxLength(5);
 
                 entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.VoucherNature).HasMaxLength(50);
             });
 
             modelBuilder.Entity<VehicleDummy>(entity =>
