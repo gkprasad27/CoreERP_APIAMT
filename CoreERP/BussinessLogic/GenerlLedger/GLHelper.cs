@@ -730,11 +730,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
-        public static TblOpenLedger DeleteOpenLedger(string Code)
+        public static TblOpenLedger DeleteOpenLedger(int Code)
         {
             try
             {
-                var ccode = Repository<TblOpenLedger>.Instance.GetSingleOrDefault(x => x.LedgerKey == Code);
+                var ccode = Repository<TblOpenLedger>.Instance.GetSingleOrDefault(x => x.Id == Code);
                 Repository<TblOpenLedger>.Instance.Remove(ccode);
                 if (Repository<TblOpenLedger>.Instance.SaveChanges() > 0)
                     return ccode;

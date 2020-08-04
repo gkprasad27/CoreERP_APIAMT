@@ -79,10 +79,10 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpDelete("DeleteOpenLedgerList/{code}")]
-        public IActionResult DeleteOpenLedgerList(string code)
+        public IActionResult DeleteOpenLedgerList(int code)
         {
-            if (string.IsNullOrWhiteSpace(code))
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)} cannot be null" });
+            //if (string.IsNullOrWhiteSpace(code))
+            //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try
             {

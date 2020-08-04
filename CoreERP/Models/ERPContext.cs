@@ -9250,20 +9250,20 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblOpenLedger>(entity =>
             {
-                entity.HasKey(e => e.LedgerKey)
-                    .HasName("PK_tbl_OenLedger");
-
                 entity.ToTable("tbl_OpenLedger");
 
-                entity.Property(e => e.LedgerKey)
-                    .HasMaxLength(5)
-                    .IsUnicode(false);
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.AccountingYear).HasMaxLength(5);
 
                 entity.Property(e => e.FinancialYearEndTo).HasColumnType("date");
 
                 entity.Property(e => e.FinancialYearStartFrom).HasColumnType("date");
+
+                entity.Property(e => e.LedgerKey)
+                    .IsRequired()
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<TblOpeningBalance>(entity =>
