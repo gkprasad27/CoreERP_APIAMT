@@ -1,39 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreERP.BussinessLogic.GenerlLedger;
+﻿using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Dynamic;
+using System.Linq;
 
-namespace CoreERP.Controllers.GeneralLedger
+namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/AssignTaxacctoTaxcode")]
-    public class AssignTaxacctoTaxcodeController : ControllerBase
+    [Route("api/HsnSac")]
+    public class HsnSacController : ControllerBase
     {
-        [HttpPost("RegisterAssignTaxacctoTaxcode")]
-        public IActionResult RegisterAssignTaxacctoTaxcode([FromBody]TblAssignTaxacctoTaxcode taxcode)
+        [HttpPost("RegisterHsnSac")]
+        public IActionResult RegisterHsnSac([FromBody]TblHsnsac hsnsac)
         {
-            if (taxcode == null)
+            if (hsnsac == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-                if (AssignTaxacctoTaxcodeHelper.GetList(taxcode.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Ledger Code {nameof(taxcode.Code)} is already exists ,Please Use Different Code " });
+                if (HsnsacHelper.GetList(hsnsac.Code).Count() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"language Code {nameof(hsnsac.Code)} is already exists ,Please Use Different Code " });
 
-                var result = AssignTaxacctoTaxcodeHelper.Register(taxcode);
+                var result = HsnsacHelper.Register(hsnsac);
                 APIResponse apiResponse;
                 if (result != null)
-                {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -44,22 +38,20 @@ namespace CoreERP.Controllers.GeneralLedger
             }
         }
 
-        [HttpGet("GetAssignTaxacctoTaxcodeList")]
-        public IActionResult GetAssignTaxacctoTaxcodeList()
+        [HttpGet("GetHsnSacList")]
+        public IActionResult GetHsnSacList()
         {
             try
             {
-                var taxcodeList = AssignTaxacctoTaxcodeHelper.GetList();
-                if (taxcodeList.Count() > 0)
+                var hsnsacList = HsnsacHelper.GetList();
+                if (hsnsacList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.taxcodesList = taxcodeList;
+                    expdoObj.hsnsacList = hsnsacList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -67,24 +59,21 @@ namespace CoreERP.Controllers.GeneralLedger
             }
         }
 
-        [HttpPut("UpdateAssignTaxacctoTaxcode")]
-        public IActionResult UpdateAssignTaxacctoTaxcode([FromBody] TblAssignTaxacctoTaxcode taxcode)
+        [HttpPut("UpdateHsnSac")]
+        public IActionResult UpdateHsnSac([FromBody] TblHsnsac code)
         {
-            if (taxcode == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(taxcode)} cannot be null" });
+            if (code == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try
             {
-                var rs = AssignTaxacctoTaxcodeHelper.Update(taxcode);
+                var rs = HsnsacHelper.Update(code);
                 APIResponse apiResponse;
                 if (rs != null)
-                {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -94,24 +83,21 @@ namespace CoreERP.Controllers.GeneralLedger
         }
 
 
-        [HttpDelete("DeletAssignTaxacctoTaxcode/{code}")]
-        public IActionResult DeletAssignTaxacctoTaxcodeByID(string code)
+        [HttpDelete("DeleteHsnSac/{code}")]
+        public IActionResult DeleteHsnSacByID(string code)
         {
             try
             {
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = AssignTaxacctoTaxcodeHelper.Delete(code);
+                var rs = HsnsacHelper.Delete(code);
                 APIResponse apiResponse;
                 if (rs != null)
-                {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)

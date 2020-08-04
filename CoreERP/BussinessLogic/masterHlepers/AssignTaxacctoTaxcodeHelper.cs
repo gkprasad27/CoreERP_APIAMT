@@ -47,7 +47,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             try
             {
                 Repository<TblAssignTaxacctoTaxcode>.Instance.Update(taxcode);
-                if (Repository<TblAssignTaxacctoTaxcode>.Instance.SaveChanges() > 0)
+                if (Repository<TblAssignTaxacctoTaxcode>.Instance.SaveChanges()> 0)
                     return taxcode;
 
                 return null;
