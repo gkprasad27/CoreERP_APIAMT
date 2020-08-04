@@ -410,7 +410,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 {
                     return _repo.TblGiftMaster
                                   .Where(gif => gif.MemberCode == giftMaster.MemberCode
-                                             && gif.Year == DateTime.Now.Year)
+                                             && gif.Year == giftMaster.Year)
                                   .Count() > 0;
                 }
             }
