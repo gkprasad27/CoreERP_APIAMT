@@ -1568,6 +1568,79 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
+        #region Closing Balance Report
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetClosingBalanceReportDataList(DateTime fromDate, DateTime toDate, string userID, string fromLedgerCode, string toLedgerCode,int ClosingreportType)
+        {
+            DataSet dsResult = GetClosingBalanceReportDataSet(fromDate, toDate, userID, fromLedgerCode, toLedgerCode, ClosingreportType);
+            List<dynamic> closingBalance = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    closingBalance = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (closingBalance, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
+        public static DataSet GetClosingBalanceReportDataSet(DateTime fromDate, DateTime toDate, string userID, string fromLedgerCode, string toLedgerCode,int ClosingreportType)
+        {
+            string procedureName = "";
+            List<parametersClass> dbParametersList = new List<parametersClass>();
+            parametersClass parameters = new parametersClass();
+            if (ClosingreportType == 1 || ClosingreportType == 2 || ClosingreportType == 3)
+            {
+                parameters = new parametersClass
+                {
+                    paramName = "fDate",
+                    paramValue = fromDate
+                };
+                dbParametersList.Add(parameters);
+                parameters = new parametersClass
+                {
+                    paramName = "tDate",
+                    paramValue = toDate
+                };
+                dbParametersList.Add(parameters);
+                parameters = new parametersClass
+                {
+                    paramName = "fromLedgerCode",
+                    paramValue = fromLedgerCode
+                };
+                dbParametersList.Add(parameters);
+                parameters = new parametersClass
+                {
+                    paramName = "toLedgerCode",
+                    paramValue = toLedgerCode
+                };
+                dbParametersList.Add(parameters);
+                parameters = new parametersClass
+                {
+                    paramName = "userName",
+                    paramValue = userID
+                };
+                dbParametersList.Add(parameters);
+
+            }
+            if (ClosingreportType == 1)
+                procedureName = "Usp_ClosingBalanceCreditsReport";
+            else if (ClosingreportType == 2)
+                procedureName = "Usp_ClosingBalanceDebitsReport";
+            else if (ClosingreportType == 3)
+                procedureName = "Usp_ClosingBalanceReport";
+            return getDataFromDataBase(dbParametersList, procedureName);
+        }
+        #endregion
         #region CommonMethods
         public static DataSet getDataFromDataBase(List<parametersClass> dbParametersList, string procedureName)
         {
