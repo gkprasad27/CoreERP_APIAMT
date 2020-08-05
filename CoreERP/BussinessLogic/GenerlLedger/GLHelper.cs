@@ -260,13 +260,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                var record = Repository<TblAccountGroup>.Instance.GetAll().OrderByDescending(x => x.ExtraDate).FirstOrDefault();
-                if (record != null)
-                {
-                    tblAccGroup.AccountGroupId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.AccountGroupId.ToString()));
-                }
-                else
-                    tblAccGroup.AccountGroupId = 1;
+                //var record = Repository<TblAccountGroup>.Instance.GetAll().OrderByDescending(x => x.ExtraDate).FirstOrDefault();
+                //if (record != null)
+                //{
+                //    tblAccGroup.AccountGroupId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.AccountGroupId.ToString()));
+                //}
+                //else
+                //    tblAccGroup.AccountGroupId = 1;
 
                 tblAccGroup.ExtraDate = DateTime.Now;
                 tblAccGroup.IsDefault = false;
