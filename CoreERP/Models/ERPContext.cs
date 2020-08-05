@@ -1176,20 +1176,20 @@ namespace CoreERP.Models
 
                 entity.ToTable("GLAccGroup");
 
-                entity.Property(e => e.GroupCode).HasMaxLength(20);
+                entity.Property(e => e.GroupCode).HasMaxLength(5);
 
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
                     .IsUnicode(false)
                     .IsFixedLength();
 
-                entity.Property(e => e.Ext1).HasMaxLength(20);
-
-                entity.Property(e => e.Ext2).HasMaxLength(20);
-
                 entity.Property(e => e.GroupName).HasMaxLength(50);
 
-                entity.Property(e => e.NumberRange).HasMaxLength(40);
+                entity.Property(e => e.GroupType).HasMaxLength(50);
+
+                entity.Property(e => e.NumberRangeFrom).HasMaxLength(10);
+
+                entity.Property(e => e.NumberRangeTo).HasMaxLength(10);
             });
 
             modelBuilder.Entity<Glaccounts>(entity =>

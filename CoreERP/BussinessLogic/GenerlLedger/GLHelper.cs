@@ -4,6 +4,7 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.GenerlLedger
@@ -11,25 +12,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
     public class GLHelper
     {
 
-        //public static List<GlaccGroup> GetGLAccountGroupList(string accountGroupCode = null)
-        //{
-        //    try
-        //    {
-        //        using Repository<Glaccounts> repo = new Repository<Glaccounts>();
-        //        if (string.IsNullOrEmpty(accountGroupCode))
-        //            return repo.GlaccGroup.AsEnumerable().Where(glacc => glacc.Active == "Y").ToList();
-        //        else
-        //        {
-        //            return repo.GlaccGroup
-        //                       .AsEnumerable()
-        //                      .Where(glacc => glacc.Active == "Y"
-        //                                  && glacc.GroupCode == accountGroupCode
-        //                            )
-        //                      .ToList();
-        //        }
-        //    }
-        //    catch { throw; }
-        //}
+        public static IEnumerable<GlaccGroup> GetGLAccountGroupList(string accountGroupCode = null)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(accountGroupCode))
+                    return Repository<GlaccGroup>.Instance.GetAll().OrderBy(x => x.GroupCode);
+                else
+                    return   Repository<GlaccGroup>.Instance.Where(x => x.GroupCode == accountGroupCode);
+            }
+            catch { throw; }
+        }
         //public static List<MatTranTypes> GetMatTranTypesList()
         //{
         //    try
@@ -79,49 +72,43 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         //}
 
         #region Account Group
-        //public static GlaccGroup RegisterAccountsGroup(GlaccGroup glAccGroup)
-        //{
-        //    try
-        //    {
-        //        using Repository<GlaccGroup> repo = new Repository<GlaccGroup>();
-        //        glAccGroup.Active = "Y";
-        //        //  glAccGroup.AddDate = DateTime.Now;
-        //        repo.GlaccGroup.Add(glAccGroup);
-        //        if (repo.SaveChanges() > 0)
-        //            return glAccGroup;
+        public static GlaccGroup RegisterAccountsGroup(GlaccGroup glAccGroup)
+        {
+            try
+            {
+                Repository<GlaccGroup>.Instance.Add(glAccGroup);
+                if (Repository<GlaccGroup>.Instance.SaveChanges() > 0)
+                    return glAccGroup;
 
-        //        return null;
-        //    }
-        //    catch { throw; }
-        //}
-        //public static GlaccGroup UpdateAccountsGroup(GlaccGroup glAccGroup)
-        //{
-        //    try
-        //    {
-        //        using Repository<GlaccGroup> repo = new Repository<GlaccGroup>();
-        //        repo.GlaccGroup.Update(glAccGroup);
-        //        if (repo.SaveChanges() > 0)
-        //            return glAccGroup;
+                return null;
+            }
+            catch { throw; }
+        }
+        public static GlaccGroup UpdateAccountsGroup(GlaccGroup glAccGroup)
+        {
+            try
+            {
+                Repository<GlaccGroup>.Instance.Update(glAccGroup);
+                if (Repository<GlaccGroup>.Instance.SaveChanges() > 0)
+                    return glAccGroup;
 
-        //        return null;
-        //    }
-        //    catch { throw; }
-        //}
-        //public static GlaccGroup DeleteAccountsGroup(string glAccGroupCode)
-        //{
-        //    try
-        //    {
-        //        using Repository<GlaccGroup> repo = new Repository<GlaccGroup>();
-        //        var glAccGroup = repo.GlaccGroup.Where(a => a.GroupCode == glAccGroupCode).FirstOrDefault();
-        //        glAccGroup.Active = "N";
-        //        repo.GlaccGroup.Update(glAccGroup);
-        //        if (repo.SaveChanges() > 0)
-        //            return glAccGroup;
+                return null;
+            }
+            catch { throw; }
+        }
+        public static GlaccGroup DeleteAccountsGroup(string glAccGroupCode)
+        {
+            try
+            {
+                var ccode = Repository<GlaccGroup>.Instance.GetSingleOrDefault(x => x.GroupCode == glAccGroupCode);
+                Repository<GlaccGroup>.Instance.Remove(ccode);
+                if (Repository<GlaccGroup>.Instance.SaveChanges() > 0)
+                    return ccode;
 
-        //        return null;
-        //    }
-        //    catch { throw; }
-        //}
+                return null;
+            }
+            catch { throw; }
+        }
 
         #endregion
 
@@ -218,26 +205,30 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         #endregion
 
         #region Tbl Account Group
-        //public static List<GlaccUnderSubGroup> GetGLUnderSubGroupList()
-        //{
-        //    try
-        //    {
-        //        //using Repository<GlaccUnderSubGroup> repo = new Repository<GlaccUnderSubGroup>();
-        //        //return repo.GlaccUnderSubGroup.AsEnumerable().Where(glundersub => glundersub.Active == "Y").ToList();
-        //        return null;
-        //    }
-        //    catch { throw; }
-        //}
+        public IEnumerable<TblAccountGroup> GetGLUnderSubGroupList([Optional] int underSubGroupCode)
+        {
+            try
+            {
+                return Repository<TblAccountGroup>.Instance.Where(x => x.GroupUnder == underSubGroupCode);
+            }
+            catch { throw; }
+        }
 
-        //public List<TblAccountGroup> GetTblAccountGroupList()
-        //{
-        //    try
-        //    {
-        //        using Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>();
-        //        return repo.TblAccountGroup.AsEnumerable().ToList();
-        //    }
-        //    catch { throw; }
-        //}
+        public IEnumerable<TblAccountGroup> GetTblAccountGroupList([Optional] string GLGroup)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(GLGroup))
+                {
+                    return Repository<TblAccountGroup>.Instance.GetAll().OrderBy(x => x.Nature);
+                }
+                else
+                {
+                    return Repository<TblAccountGroup>.Instance.Where(x => x.Nature == GLGroup);
+                }
+            }
+            catch { throw; }
+        }
         //public static List<GlaccUnderSubGroup> GetGLUnderSubGroupList(string underSubGroupCode)
         //{
         //    try
@@ -265,46 +256,43 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         //    catch { throw; }
         //}
 
-        //public TblAccountGroup RegisterTblAccGroup(TblAccountGroup tblAccGroup)
-        //{
-        //    try
-        //    {
-        //        using Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>();
-        //        var record = repo.TblAccountGroup.OrderByDescending(x => x.ExtraDate).FirstOrDefault();
+        public TblAccountGroup RegisterTblAccGroup(TblAccountGroup tblAccGroup)
+        {
+            try
+            {
+                var record = Repository<TblAccountGroup>.Instance.GetAll().OrderByDescending(x => x.ExtraDate).FirstOrDefault();
+                if (record != null)
+                {
+                    tblAccGroup.AccountGroupId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.AccountGroupId.ToString()));
+                }
+                else
+                    tblAccGroup.AccountGroupId = 1;
 
-        //        if (record != null)
-        //        {
-        //            tblAccGroup.AccountGroupId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.AccountGroupId.ToString()));
-        //        }
-        //        else
-        //            tblAccGroup.AccountGroupId = 1;
+                tblAccGroup.ExtraDate = DateTime.Now;
+                tblAccGroup.IsDefault = false;
+                Repository<TblAccountGroup>.Instance.Add(tblAccGroup);
+                if (Repository<TblAccountGroup>.Instance.SaveChanges() > 0)
+                    return tblAccGroup;
 
-        //        tblAccGroup.ExtraDate = DateTime.Now;
-        //        tblAccGroup.IsDefault = false;
-        //        repo.TblAccountGroup.Add(tblAccGroup);
-        //        if (repo.SaveChanges() > 0)
-        //            return tblAccGroup;
+                return null;
+            }
+            catch { throw; }
+        }
 
-        //        return null;
-        //    }
-        //    catch { throw; }
-        //}
+        public TblAccountGroup UpdateTblAccountGroup(TblAccountGroup tblAccGrp)
+        {
+            try
+            {
+                tblAccGrp.ExtraDate = DateTime.Now;
+                tblAccGrp.IsDefault = false;
+                Repository<TblAccountGroup>.Instance.Update(tblAccGrp);
+                if (Repository<TblAccountGroup>.Instance.SaveChanges() > 0)
+                    return tblAccGrp;
 
-        //public TblAccountGroup UpdateTblAccountGroup(TblAccountGroup tblAccGrp)
-        //{
-        //    try
-        //    {
-        //        using Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>();
-        //        tblAccGrp.ExtraDate = DateTime.Now;
-        //        tblAccGrp.IsDefault = false;
-        //        repo.TblAccountGroup.Update(tblAccGrp);
-        //        if (repo.SaveChanges() > 0)
-        //            return tblAccGrp;
-
-        //        return null;
-        //    }
-        //    catch { throw; }
-        //}
+                return null;
+            }
+            catch { throw; }
+        }
         //public static GlaccUnderSubGroup UpdateUnderSubGroup(GlaccUnderSubGroup glUnderSubGroup)
         //{
         //    try
@@ -334,23 +322,21 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         //    catch { throw; }
         //}
 
-        //public TblAccountGroup DeleteTblAccountGroup(int code)
-        //{
-        //    try
-        //    {
-        //        using Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>();
-        //        var tblAccGrp = repo.TblAccountGroup.Where(x => x.AccountGroupId == code).FirstOrDefault();
-        //        repo.TblAccountGroup.Remove(tblAccGrp);
-        //        if (repo.SaveChanges() > 0)
-        //            return tblAccGrp;
-
-        //        return null;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+        public TblAccountGroup DeleteTblAccountGroup(int code)
+        {
+            try
+            {
+                var ccode = Repository<TblAccountGroup>.Instance.GetSingleOrDefault(x => x.AccountGroupId == code);
+                Repository<TblAccountGroup>.Instance.Remove(ccode);
+                if (Repository<TblAccountGroup>.Instance.SaveChanges() > 0)
+                    return ccode;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
 
         #region  GLAccounts
