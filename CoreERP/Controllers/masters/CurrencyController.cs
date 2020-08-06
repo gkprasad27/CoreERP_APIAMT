@@ -1,4 +1,4 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,8 +9,14 @@ namespace CoreERP.Controllers.masters
 {
     [ApiController]
     [Route("api/Currency")]
-    public class CurrencyController : ControllerBase
+    public class CurrencyController : Controller
     {
+        private readonly IRepository<TblCurrency> _currencyRepository;
+        public CurrencyController(IRepository<TblCurrency> currencyRepository)
+        {
+            _currencyRepository = currencyRepository;
+        }
+
         [HttpPost("RegisterCurrency")]
         public IActionResult RegisterCurrency([FromBody]TblCurrency currency)
         {
@@ -19,13 +25,12 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (CurrencyHelper.GetList(currency.CurrencySymbol).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"currency Code {nameof(currency.CurrencySymbol)} is already exists ,Please Use Different Code " });
-
-                var result = CurrencyHelper.Register(currency);
+                //if (CurrencyHelper.GetList(currency.CurrencySymbol).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"currency Code {nameof(currency.CurrencySymbol)} is already exists ,Please Use Different Code " });
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _currencyRepository.Add(currency);
+                if (_currencyRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = currency };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,7 +48,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var currencyList = CurrencyHelper.GetList();
+                var currencyList = _currencyRepository.GetAll();
                 if (currencyList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -67,10 +72,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = CurrencyHelper.Update(currency);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _currencyRepository.Update(currency);
+                if (_currencyRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = currency };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -82,19 +87,18 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteCurrency/{code}")]
         public IActionResult DeleteCurrencyByID(string code)
         {
             try
             {
-                if (code == null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
-
-                var rs = CurrencyHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                if (code == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
+                var record = _currencyRepository.GetSingleOrDefault(x => x.CurrencySymbol.Equals(code));
+                _currencyRepository.Remove(record);
+                if (_currencyRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

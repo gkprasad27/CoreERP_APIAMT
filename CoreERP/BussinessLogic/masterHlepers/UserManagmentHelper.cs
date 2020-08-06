@@ -441,7 +441,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
 
                 if (!IsShiftIdExists(userId, branchCode)) 
                 {
-                    var _branch = BrancheHelper.GetBranches().Where(b => b.BranchCode == branchCode).FirstOrDefault();
+                    //var _branch = BrancheHelper.GetBranches().Where(b => b.BranchCode == branchCode).FirstOrDefault();
 
                     _shift = new TblShift
                     {
@@ -449,9 +449,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
                         Narration = "Shift in Progress.",
                         Status = 0,
                         EmployeeId = -1,
-                        BranchId = Convert.ToDecimal(_branch.BranchCode),
-                        BranchCode = _branch?.BranchCode,
-                        BranchName = _branch?.BranchName,
+                        //BranchId = Convert.ToDecimal(_branch.BranchCode),
+                        //BranchCode = _branch?.BranchCode,
+                        //BranchName = _branch?.BranchName,
                         InTime = DateTime.Now,
                         OutTime = DateTime.Now
                     };

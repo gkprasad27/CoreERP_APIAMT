@@ -23,5 +23,7 @@ namespace CoreERP.DataAccess.Repositories
         TEntity GetSingleOrDefault(Expression<Func<TEntity, bool>> predicate);
         TEntity Get(int id);
         IEnumerable<TEntity> GetAll();
+
+        int SaveChanges();
     }
 }

@@ -14,8 +14,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             get
             {
-                if (_repo == null)
-                    _repo = new Repository<Interpretation>();
+                //if (_repo == null)
+                //    _repo = new Repository<Interpretation>();
                 return _repo;
             }
         }

@@ -1,14 +1,10 @@
+using CoreERP.DataAccess.Repositories;
+using CoreERP.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
-using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.Models;
-using CoreERP.DataAccess;
-using System.Dynamic;
 
 namespace CoreERP.Controllers
 {
@@ -16,24 +12,26 @@ namespace CoreERP.Controllers
     [Route("api/ProfitCenter")]
     public class ProfitCenterMasterController : ControllerBase
     {
-
+        private readonly IRepository<ProfitCenters> _pcRepository;
+        public ProfitCenterMasterController(IRepository<ProfitCenters> pcRepository)
+        {
+            _pcRepository = pcRepository;
+        }
 
         [HttpGet("GetProfitCenterList")]
         public async Task<IActionResult> GetProfitCenterList()
         {
             try
             {
-                var profitCenterList = ProfitCenterHelper.GetProfitCenterList();
-                //if (profitCenterList.Count > 0)
-                //{
+                var profitCenterList = _pcRepository.GetAll();
+                if (profitCenterList.Count() > 0)
+                {
                     dynamic expando = new ExpandoObject();
                     expando.profitCenterList = profitCenterList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                //}
-                //else
-                //{
-                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                //}
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception e)
             {
@@ -41,9 +39,8 @@ namespace CoreERP.Controllers
             }
         }
 
-
         [HttpPost("RegisterProfitCenters")]
-        public async Task<IActionResult> RegisterProfitCenters([FromBody]ProfitCenters profitCenter)
+        public async Task<IActionResult> RegisterProfitCenters([FromBody] ProfitCenters profitCenter)
         {
 
             if (profitCenter == null)
@@ -51,11 +48,12 @@ namespace CoreERP.Controllers
 
             try
             {
-                var result = ProfitCenterHelper.RegisteProfitCenter(profitCenter);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
+                APIResponse apiResponse;
+                _pcRepository.Add(profitCenter);
+                if (_pcRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = profitCenter });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
             }
             catch (Exception ex)
             {
@@ -63,7 +61,6 @@ namespace CoreERP.Controllers
             }
 
         }
-
 
         [HttpPut("UpdateProfitCenters")]
         public async Task<IActionResult> UpdateProfitCenters(string code, [FromBody] ProfitCenters profitCenter)
@@ -73,11 +70,12 @@ namespace CoreERP.Controllers
             try
             {
 
-                var result = ProfitCenterHelper.UpdateProfitCenter(profitCenter);
-                if (result != null)
+                APIResponse apiResponse;
+                _pcRepository.Update(profitCenter);
+                if (_pcRepository.SaveChanges() > 0)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = profitCenter });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Updation Failed" });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = " Updation Failed" });
             }
             catch (Exception ex)
             {
@@ -96,11 +94,12 @@ namespace CoreERP.Controllers
                 if (string.IsNullOrWhiteSpace(code))
                     return BadRequest($"{nameof(code)} cannot be null");
 
-                var result = ProfitCenterHelper.DeleteProfitCenter(code);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
+                var record = _pcRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _pcRepository.Remove(record);
+                if (_pcRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = record });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
             }
             catch (Exception ex)
             {

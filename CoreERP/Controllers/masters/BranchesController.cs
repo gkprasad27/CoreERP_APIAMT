@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CoreERP.DataAccess.Repositories;
+using CoreERP.Models;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
-using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
-using CoreERP.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CoreERP.Controllers
 {
@@ -15,7 +12,34 @@ namespace CoreERP.Controllers
     [Route("api/Branches")]
     public class BranchesController : ControllerBase
     {
-     
+        private readonly IRepository<TblBranch> _branchRepository;
+        private readonly IRepository<TblCompany> _companyRepository;
+        public BranchesController(IRepository<TblBranch> branchRepository, IRepository<TblCompany> companyRepository)
+        {
+            _branchRepository = branchRepository;
+            _companyRepository = companyRepository;
+        }
+
+        [HttpGet("GetAllCompanys")]
+        public async Task<IActionResult> GetAllCompanys()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var companiesList = _companyRepository.GetAll();
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.companiesList = companiesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
         {
@@ -23,7 +47,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var branchesList = BrancheHelper.GetBranches();
+                    var branchesList = _branchRepository.GetAll();
                     if (branchesList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -39,49 +63,25 @@ namespace CoreERP.Controllers
                 }
             });
             return result;
-        }
-
-        [HttpGet("GetAllCompanys")]
-        public async Task<IActionResult> GetAllCompanys()
-        {
-            var result = await Task.Run(() =>
-            {
-                try
-                {
-                    var companiesList = CompaniesHelper.GetListOfCompanies();
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.companiesList = companiesList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                catch (Exception ex)
-                {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-                }
-            });
-            return result;
-        }
+        }       
 
         [HttpPost("RegisterBranch")]
         public async Task<IActionResult> RegisterBranch([FromBody]TblBranch branch)
         {
-            APIResponse apiResponse = null;
+            APIResponse apiResponse ;
             if (branch == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(branch)} cannot be null" });
             else
             {
-                if (BrancheHelper.SearchBranch(branch.BranchCode).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Branch Code {nameof(branch.BranchCode)} is already Present ,Please Use Different Code" });
+                //if (BrancheHelper.SearchBranch(branch.BranchCode).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Branch Code {nameof(branch.BranchCode)} is already Present ,Please Use Different Code" });
                 try
                 {
-                    var result = BrancheHelper.Register(branch);
-                    if (result != null)
-                    {
-                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                    }
+                    _branchRepository.Add(branch);
+                    if (_branchRepository.SaveChanges() > 0)
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = branch };
                     else
-                    {
                         apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                    }
 
                     return Ok(apiResponse);
                 }
@@ -102,15 +102,12 @@ namespace CoreERP.Controllers
 
             try
             {
-                var result = BrancheHelper.Update(branch);
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _branchRepository.Update(branch);
+                if (_branchRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = branch };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -128,15 +125,13 @@ namespace CoreERP.Controllers
 
             try
             {
-                var result = BrancheHelper.Delete(code);
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                var record = _branchRepository.GetSingleOrDefault(x => x.BranchCode.Equals(code));
+                _branchRepository.Remove(record);
+                if (_branchRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)

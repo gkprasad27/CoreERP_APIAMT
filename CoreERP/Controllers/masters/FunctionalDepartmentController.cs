@@ -1,5 +1,6 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,6 +15,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/FunctionalDepartment")]
     public class FunctionalDepartmentController : ControllerBase
     {
+        private readonly IRepository<TblFunctionalDepartment> _fdRepository;
+        public FunctionalDepartmentController(IRepository<TblFunctionalDepartment> fdRepository)
+        {
+            _fdRepository = fdRepository;
+        }
+
         [HttpPost("RegisterFunctionalDepartment")]
         public IActionResult RegisterFunctionalDepartment([FromBody]TblFunctionalDepartment fdept)
         {
@@ -22,19 +29,15 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (FunctionalDepartmentHelper.GetList(fdept.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"FunctionalDepartment Code {nameof(fdept.Code)} is already exists ,Please Use Different Code " });
+                //if (FunctionalDepartmentHelper.GetList(fdept.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"FunctionalDepartment Code {nameof(fdept.Code)} is already exists ,Please Use Different Code " });
 
-                var result = FunctionalDepartmentHelper.Register(fdept);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _fdRepository.Add(fdept);
+                if (_fdRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = fdept };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -50,7 +53,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var fdeptList = FunctionalDepartmentHelper.GetList();
+                var fdeptList = _fdRepository.GetAll();
                 if (fdeptList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -76,16 +79,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = FunctionalDepartmentHelper.Update(fdept);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _fdRepository.Update(fdept);
+                if (_fdRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = fdept };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -93,7 +93,6 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteFunctionalDepartment/{code}")]
         public IActionResult DeleteFunctionalDepartmentByID(string code)
@@ -103,16 +102,14 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = FunctionalDepartmentHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _fdRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _fdRepository.Remove(record);
+                if (_fdRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)

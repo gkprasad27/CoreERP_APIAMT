@@ -1,12 +1,9 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -14,6 +11,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/State")]
     public class StateController : ControllerBase
     {
+        private readonly IRepository<States> _stateRepository;
+        public StateController(IRepository<States> stateRepository)
+        {
+            _stateRepository = stateRepository;
+        }
+
         [HttpPost("RegisterState")]
         public IActionResult RegisterState([FromBody]States state)
         {
@@ -22,19 +25,15 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (StateHelper.GetList(state.StateCode).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"state Code {nameof(state.StateCode)} is already exists ,Please Use Different Code " });
+                //if (StateHelper.GetList(state.StateCode).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"state Code {nameof(state.StateCode)} is already exists ,Please Use Different Code " });
 
-                var result = StateHelper.Register(state);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _stateRepository.Add(state);
+                if (_stateRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = state };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -50,7 +49,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var stateList = StateHelper.GetList();
+                var stateList = _stateRepository.GetAll();
                 if (stateList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -58,9 +57,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -76,16 +73,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = StateHelper.Update(state);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _stateRepository.Update(state);
+                if (_stateRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = state };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -93,7 +87,6 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteState/{code}")]
         public IActionResult DeleteStateByID(string code)
@@ -103,16 +96,14 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = StateHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _stateRepository.GetSingleOrDefault(x => x.StateCode.Equals(code));
+                _stateRepository.Remove(record);
+                if (_stateRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)

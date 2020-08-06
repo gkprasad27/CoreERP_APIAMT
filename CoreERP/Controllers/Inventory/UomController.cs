@@ -1,4 +1,4 @@
-﻿using CoreERP.BussinessLogic.InventoryHelpers;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,6 +12,12 @@ namespace CoreERP.Controllers
     [Route("api/UOM")]
     public class UomController : ControllerBase
     {
+        private readonly IRepository<TblUnit> _uomRepository;
+        public UomController(IRepository<TblUnit> uomRepository)
+        {
+            _uomRepository = uomRepository;
+        }
+
         [HttpPost("RegisterSizes")]
         public IActionResult RegisterSizes([FromBody] TblUnit uoms)
         {
@@ -20,13 +26,13 @@ namespace CoreERP.Controllers
 
             try
             {
-                if (UomHelper.GetSizesList(uoms.UnitId).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"sizes Code {nameof(uoms.UnitId)} is already exists ,Please Use Different Code " });
+                //if (UomHelper.GetSizesList(uoms.UnitId).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"sizes Code {nameof(uoms.UnitId)} is already exists ,Please Use Different Code " });
 
-                var result = UomHelper.RegisterSizes(uoms);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _uomRepository.Add(uoms);
+                if (_uomRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = uoms };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -39,22 +45,21 @@ namespace CoreERP.Controllers
             }
         }
 
-
         [HttpGet("GetAllSizes")]
         [Produces(typeof(List<TblUnit>))]
         public IActionResult GetAllSizes()
         {
             try
             {
-                var sizesList = UomHelper.GetSizesList();
-                //if (sizesList.Count > 0)
-                //{
+                var sizesList = _uomRepository.GetAll();
+                if (sizesList.Count() > 0)
+                {
                     dynamic expando = new ExpandoObject();
                     expando.sizesList = sizesList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                //}
-                //else
-                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -71,11 +76,12 @@ namespace CoreERP.Controllers
 
             try
             {
-                var result = UomHelper.UpdateSizes(uoms);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
+                APIResponse apiResponse;
+                _uomRepository.Update(uoms);
+                if (_uomRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = uoms });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed" });
             }
             catch (Exception ex)
             {
@@ -93,11 +99,13 @@ namespace CoreERP.Controllers
 
             try
             {
-                var result = UomHelper.DeleteSizes(code);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
+                APIResponse apiResponse;
+                var record = _uomRepository.GetSingleOrDefault(x => x.UnitId.Equals(code));
+                _uomRepository.Remove(record);
+                if (_uomRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = record });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed" });
             }
             catch (Exception ex)
             {

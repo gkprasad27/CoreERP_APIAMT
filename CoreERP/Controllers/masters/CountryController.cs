@@ -1,12 +1,9 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -14,6 +11,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/Country")]
     public class CountryController : ControllerBase
     {
+        private readonly IRepository<Countries> _countryRepository;
+        public CountryController(IRepository<Countries> countryRepository)
+        {
+            _countryRepository = countryRepository;
+        }
+
         [HttpPost("RegisterCountry")]
         public IActionResult RegisterCountry([FromBody]Countries country)
         {
@@ -22,19 +25,15 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (CountryHelper.GetList(country.CountryCode).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"country Code {nameof(country.CountryCode)} is already exists ,Please Use Different Code " });
+                //if (CountryHelper.GetList(country.CountryCode).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"country Code {nameof(country.CountryCode)} is already exists ,Please Use Different Code " });
 
-                var result = CountryHelper.Register(country);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _countryRepository.Add(country);
+                if (_countryRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = country };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -50,7 +49,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var countryList = CountryHelper.GetList();
+                var countryList = _countryRepository.GetAll();
                 if (countryList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -58,9 +57,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -76,16 +73,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = CountryHelper.Update(country);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _countryRepository.Update(country);
+                if (_countryRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = country };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -93,7 +87,6 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteCountry/{code}")]
         public IActionResult DeleteCountryByID(string code)
@@ -103,16 +96,14 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = CountryHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _countryRepository.GetSingleOrDefault(x => x.CountryCode.Equals(code));
+                _countryRepository.Remove(record);
+                if (_countryRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)

@@ -9,28 +9,35 @@ using System.Threading.Tasks;
 
 namespace CoreERP.DataAccess
 {
-    public class Repository<TEntity> : IRepository<TEntity>where TEntity : class
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, new()
     {
-        private static readonly ERPContext _context;
-        private static readonly DbSet<TEntity> _entities;
+        private readonly ERPContext _context;
+        private readonly DbSet<TEntity> _entities;
 
-        public static Repository<TEntity> Instance { get; } = new Repository<TEntity>();
+        public static Repository<TEntity> Instance = new Repository<TEntity>();
 
-        static Repository()
+        public Repository()
         {
             _context = new ERPContext();
-            _context.Database.SetCommandTimeout(240);
+            _entities = _context.Set<TEntity>();
+        }
+
+        public Repository(ERPContext context)
+        {
+            _context = new ERPContext();
             _entities = _context.Set<TEntity>();
         }
 
         public virtual void Add(TEntity entity)
-        {            
+        {
             _entities.Add(entity);
         }
 
         public virtual void AddRange(IEnumerable<TEntity> entities)
         {
+            //Helper.PreAddProcess()
             _entities.AddRange(entities);
+            //Helper.PostAddProcess()
         }
 
         public virtual int SaveChanges()
@@ -40,6 +47,7 @@ namespace CoreERP.DataAccess
 
         public virtual void Update(TEntity entity)
         {
+            _context.Entry(entity).State = EntityState.Modified;
             _entities.Update(entity);
         }
 
@@ -64,7 +72,7 @@ namespace CoreERP.DataAccess
         }
 
         public virtual IEnumerable<TEntity> Where(Expression<Func<TEntity, bool>> predicate)
-        {            
+        {
             return _entities.Where(predicate);
         }
 

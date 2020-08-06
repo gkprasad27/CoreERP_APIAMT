@@ -1,4 +1,4 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,28 +9,32 @@ namespace CoreERP.Controllers.masters
 {
     [ApiController]
     [Route("api/Language")]
-    public class LanguageController : ControllerBase
+    public class LanguageController : Controller
     {
+        private readonly IRepository<TblLanguage> _languageRepository;
+        public LanguageController(IRepository<TblLanguage> languageRepository)
+        {
+            _languageRepository = languageRepository;
+        }
+
         [HttpPost("RegisterLanguage")]
-        public IActionResult RegisterLanguage([FromBody]TblLanguage language)
+        public IActionResult RegisterLanguage([FromBody] TblLanguage language)
         {
             if (language == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(language)} cannot be null" });
 
             try
             {
-                if (LanguageHelper.GetList(language.LanguageCode).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"language Code {nameof(language.LanguageCode)} is already exists ,Please Use Different Code " });
-
-                var result = LanguageHelper.Register(language);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                //if (LanguageHelper.GetList(language.LanguageCode).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"language Code {nameof(language.LanguageCode)} is already exists ,Please Use Different Code " });
+                _languageRepository.Add(language);
+                if (_languageRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = language };
                 else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Recored Added Failed." };
+                
                 return Ok(apiResponse);
-
             }
             catch (Exception ex)
             {
@@ -43,7 +47,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var languageList = LanguageHelper.GetList();
+                var languageList = _languageRepository.GetAll(); //LanguageHelper.GetList();
                 if (languageList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -66,14 +70,14 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(language)} cannot be null" });
 
             try
-            {
-                var rs = LanguageHelper.Update(language);
+            {   
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _languageRepository.Update(language);
+                if (_languageRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = language };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -82,19 +86,18 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteLanguage/{code}")]
         public IActionResult DeleteLanguageByID(string code)
         {
             try
             {
-                if (code == null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
-
-                var rs = LanguageHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                if (code == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
+                var record = _languageRepository.GetSingleOrDefault( x => x.LanguageCode.Equals(code));
+                _languageRepository.Remove(record);
+                if(_languageRepository.SaveChanges() > 0)                
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };                
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

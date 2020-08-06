@@ -355,7 +355,7 @@ namespace CoreERP.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=183.82.48.82;Database=ERP;User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
             }
         }
@@ -2563,13 +2563,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.StateCode).HasMaxLength(5);
 
-                entity.Property(e => e.CountryCode)
-                    .IsRequired()
-                    .HasMaxLength(5);
+                entity.Property(e => e.CountryCode).HasMaxLength(5);
 
-                entity.Property(e => e.Language)
-                    .IsRequired()
-                    .HasMaxLength(5);
+                entity.Property(e => e.Language).HasMaxLength(5);
 
                 entity.Property(e => e.StateName)
                     .IsRequired()
@@ -10159,9 +10155,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Code).HasMaxLength(5);
 
-                entity.Property(e => e.Description).HasMaxLength(50);
-
-                entity.Property(e => e.Ext).HasMaxLength(50);
+                entity.Property(e => e.Narration).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblPaymentType>(entity =>
@@ -12293,13 +12287,13 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.RegionCode).HasMaxLength(5);
 
-                entity.Property(e => e.Country).HasMaxLength(5);
+                entity.Property(e => e.Country).HasMaxLength(50);
 
                 entity.Property(e => e.Ext)
                     .HasColumnName("ext")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.RegionName).HasMaxLength(50);
+                entity.Property(e => e.RegionName).HasMaxLength(5);
             });
 
             modelBuilder.Entity<TblRejectionInDetails>(entity =>
