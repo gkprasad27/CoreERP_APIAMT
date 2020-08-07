@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/AssetBlock")]
     public class AssetBlockController : ControllerBase
     {
+        private readonly IRepository<TblAssetBlock> _abRepository;
+        public AssetBlockController(IRepository<TblAssetBlock> abpRepository)
+        {
+            _abRepository = abpRepository;
+        }
+
         [HttpPost("RegisterAssetBlock")]
         public IActionResult RegisterAssetBlock([FromBody]TblAssetBlock assetblk)
         {
@@ -19,13 +26,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (AssetBlockHelper.GetList(assetblk.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Depreciationareas Code {nameof(assetblk.Code)} is already exists ,Please Use Different Code " });
+                //if (AssetBlockHelper.GetList(assetblk.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Depreciationareas Code {nameof(assetblk.Code)} is already exists ,Please Use Different Code " });
 
-                var result = AssetBlockHelper.Register(assetblk);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _abRepository.Add(assetblk);
+                if (_abRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assetblk };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var assetblockList = AssetBlockHelper.GetList();
+                var assetblockList = _abRepository.GetAll();
                 if (assetblockList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -67,10 +74,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = AssetBlockHelper.Update(assetblock);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _abRepository.Update(assetblock);
+                if (_abRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assetblock };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -82,7 +89,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteAssetBlock/{code}")]
         public IActionResult DeleteAssetBlockbyID(string code)
         {
@@ -91,10 +97,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = AssetBlockHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _abRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _abRepository.Remove(record);
+                if (_abRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

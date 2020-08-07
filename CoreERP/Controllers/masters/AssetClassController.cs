@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/AssetClass")]
     public class AssetClassController : ControllerBase
     {
+        private readonly IRepository<TblAssetClass> _acRepository;
+        public AssetClassController(IRepository<TblAssetClass> acpRepository)
+        {
+            _acRepository = acpRepository;
+        }
+
         [HttpPost("RegisterAssetClass")]
         public IActionResult RegisterAssetClass([FromBody]TblAssetClass asset)
         {
@@ -19,13 +26,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (AssetClassHelper.GetList(asset.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Depreciationareas Code {nameof(asset.Code)} is already exists ,Please Use Different Code " });
+                //if (AssetClassHelper.GetList(asset.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Depreciationareas Code {nameof(asset.Code)} is already exists ,Please Use Different Code " });
 
-                var result = AssetClassHelper.Register(asset);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _acRepository.Add(asset);
+                if (_acRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = asset };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var assetList = AssetClassHelper.GetList();
+                var assetList = _acRepository.GetAll();
                 if (assetList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -67,10 +74,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = AssetClassHelper.Update(asset);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _acRepository.Update(asset);
+                if (_acRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = asset };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -82,7 +89,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteAssetClass/{code}")]
         public IActionResult DeleteAssetClassbyID(string code)
         {
@@ -91,10 +97,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = AssetClassHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _acRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _acRepository.Remove(record);
+                if (_acRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

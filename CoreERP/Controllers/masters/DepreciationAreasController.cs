@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/DepreciationAreas")]
     public class DepreciationAreasController : ControllerBase
     {
+        private readonly IRepository<TblDepreciationAreas> _depRepository;
+        public DepreciationAreasController(IRepository<TblDepreciationAreas> depRepository)
+        {
+            _depRepository = depRepository;
+        }
+
         [HttpPost("RegisterDepreciationAreas")]
         public IActionResult RegisterDepreciationAreas([FromBody]TblDepreciationAreas dpareas)
         {
@@ -19,13 +26,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (DepreciationareasHelper.GetList(dpareas.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Depreciationareas Code {nameof(dpareas.Code)} is already exists ,Please Use Different Code " });
+                //if (DepreciationareasHelper.GetList(dpareas.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Depreciationareas Code {nameof(dpareas.Code)} is already exists ,Please Use Different Code " });
 
-                var result = DepreciationareasHelper.Register(dpareas);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _depRepository.Add(dpareas);
+                if (_depRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = dpareas };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var dpareaList = DepreciationareasHelper.GetList();
+                var dpareaList = _depRepository.GetAll();
                 if (dpareaList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -67,10 +74,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = DepreciationareasHelper.Update(dpareas);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _depRepository.Update(dpareas);
+                if (_depRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = dpareas };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -82,7 +89,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteDepreciationAreas/{code}")]
         public IActionResult DeleteDepreciationAreasbyID(string code)
         {
@@ -91,10 +97,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = DepreciationareasHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _depRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _depRepository.Remove(record);
+                if (_depRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

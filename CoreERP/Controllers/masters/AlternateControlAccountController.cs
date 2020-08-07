@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/AlternateControlAccount")]
     public class AlternateControlAccountController : ControllerBase
     {
+        private readonly IRepository<TblAlternateControlAccTrans> _alterRepository;
+        public AlternateControlAccountController(IRepository<TblAlternateControlAccTrans> alterRepository)
+        {
+            _alterRepository = alterRepository;
+        }
+
         [HttpPost("RegisterAlternateControlAccountt")]
         public IActionResult RegisterAlternateControlAccount([FromBody]TblAlternateControlAccTrans alacunt)
         {
@@ -19,13 +26,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (AlternateControlAccountHelper.GetList(alacunt.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"AlternateControlAccount Code {nameof(alacunt.Code)} is already exists ,Please Use Different Code " });
+                //if (AlternateControlAccountHelper.GetList(alacunt.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"AlternateControlAccount Code {nameof(alacunt.Code)} is already exists ,Please Use Different Code " });
 
-                var result = AlternateControlAccountHelper.Register(alacunt);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _alterRepository.Add(alacunt);
+                if (_alterRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = alacunt };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var alacuntList = AlternateControlAccountHelper.GetList();
+                var alacuntList = _alterRepository.GetAll();
                 if (alacuntList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -67,10 +74,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = AlternateControlAccountHelper.Update(alacunt);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _alterRepository.Update(alacunt);
+                if (_alterRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = alacunt };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -82,7 +89,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteAlternateControlAccount/{code}")]
         public IActionResult DeleteAlternateControlAccountbyID(string code)
         {
@@ -91,10 +97,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = AlternateControlAccountHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _alterRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _alterRepository.Remove(record);
+                if (_alterRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

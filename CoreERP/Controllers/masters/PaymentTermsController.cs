@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/PaymentTerms")]
     public class PaymentTermsController : ControllerBase
     {
+        private readonly IRepository<TblPaymentTerms> _ptRepository;
+        public PaymentTermsController(IRepository<TblPaymentTerms> ptRepository)
+        {
+            _ptRepository = ptRepository;
+        }
+
         [HttpPost("RegisterPaymentTerms")]
         public IActionResult RegisterPaymentTerms([FromBody]TblPaymentTerms paymentterms)
         {
@@ -19,13 +26,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (PaymentHelper.GetList(paymentterms.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Payment Code {nameof(paymentterms.Code)} is already exists ,Please Use Different Code " });
+                //if (PaymentHelper.GetList(paymentterms.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Payment Code {nameof(paymentterms.Code)} is already exists ,Please Use Different Code " });
 
-                var result = PaymentHelper.Register(paymentterms);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _ptRepository.Add(paymentterms);
+                if (_ptRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = paymentterms };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var ptermsList = PaymentHelper.GetList();
+                var ptermsList = _ptRepository.GetAll();
                 if (ptermsList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -67,10 +74,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = PaymentHelper.Update(paymentterms);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _ptRepository.Update(paymentterms);
+                if (_ptRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = paymentterms };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -82,7 +89,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeletePaymentTerms/{code}")]
         public IActionResult DeletePaymentTermsbyID(string code)
         {
@@ -91,10 +97,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = PaymentHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _ptRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _ptRepository.Remove(record);
+                if (_ptRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

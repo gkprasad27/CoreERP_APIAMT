@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/Assignment")]
     public class AssignmentController : ControllerBase
     {
+        private readonly IRepository<TblAssignment> _assignRepository;
+        public AssignmentController(IRepository<TblAssignment> assignRepository)
+        {
+            _assignRepository = assignRepository;
+        }
+
         [HttpPost("RegisterAssignment")]
         public IActionResult RegisterAssignment([FromBody]TblAssignment assignment)
         {
@@ -19,13 +26,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (AssignmentHelpercs.GetList(assignment.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Assignment Code {nameof(assignment.Code)} is already exists ,Please Use Different Code " });
+                //if (AssignmentHelpercs.GetList(assignment.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Assignment Code {nameof(assignment.Code)} is already exists ,Please Use Different Code " });
 
-                var result = AssignmentHelpercs.Register(assignment);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _assignRepository.Add(assignment);
+                if (_assignRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assignment };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var asnmList = AssignmentHelpercs.GetList();
+                var asnmList = _assignRepository.GetAll();
                 if (asnmList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -67,10 +74,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = AssignmentHelpercs.Update(assignment);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _assignRepository.Update(assignment);
+                if (_assignRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assignment };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -82,7 +89,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteAssignment/{code}")]
         public IActionResult DeleteAssignmentbyID(string code)
         {
@@ -91,10 +97,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = AssignmentHelpercs.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _assignRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _assignRepository.Remove(record);
+                if (_assignRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

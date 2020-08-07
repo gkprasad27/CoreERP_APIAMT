@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/PartnerType")]
     public class PartnerTypeController : ControllerBase
     {
+        private readonly IRepository<PartnerType> _ptRepository;
+        public PartnerTypeController(IRepository<PartnerType> ptRepository)
+        {
+            _ptRepository = ptRepository;
+        }
+
         [HttpPost("RegisterPartnerType")]
         public IActionResult RegisterPartnerType([FromBody]PartnerType ptype)
         {
@@ -19,13 +26,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (partnertypeHelper.GetList(ptype.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Assignmentofcoatocompcode Code {nameof(ptype.Code)} is already exists ,Please Use Different Code " });
+                //if (partnertypeHelper.GetList(ptype.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Assignmentofcoatocompcode Code {nameof(ptype.Code)} is already exists ,Please Use Different Code " });
 
-                var result = partnertypeHelper.Register(ptype);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _ptRepository.Add(ptype);
+                if (_ptRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = ptype };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var ptypeList = partnertypeHelper.GetList();
+                var ptypeList = _ptRepository.GetAll();
                 if (ptypeList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -67,10 +74,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = partnertypeHelper.Update(ptype);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _ptRepository.Update(ptype);
+                if (_ptRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = ptype };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -82,7 +89,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeletePartnerType/{code}")]
         public IActionResult DeletePartnerTypebyID(string code)
         {
@@ -91,10 +97,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = partnertypeHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _ptRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _ptRepository.Remove(record);
+                if (_ptRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 
