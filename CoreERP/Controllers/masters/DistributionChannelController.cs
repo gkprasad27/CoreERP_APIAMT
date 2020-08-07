@@ -1,12 +1,10 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -14,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/DistributionChannel")]
     public class DistributionChannelController : ControllerBase
     {
+        private readonly IRepository<TblDistributionChannel> _dcRepository;
+        public DistributionChannelController(IRepository<TblDistributionChannel> dcRepository)
+        {
+            _dcRepository = dcRepository;
+        }
+
         [HttpPost("RegisterDistributionChannel")]
         public IActionResult RegisterDistributionChannel([FromBody]TblDistributionChannel dchannel)
         {
@@ -22,19 +26,15 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (DistributionChannelHelper.GetList(dchannel.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"DistributionChannel Code {nameof(dchannel.Code)} is already exists ,Please Use Different Code " });
+                //if (DistributionChannelHelper.GetList(dchannel.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"DistributionChannel Code {nameof(dchannel.Code)} is already exists ,Please Use Different Code " });
 
-                var result = DistributionChannelHelper.Register(dchannel);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _dcRepository.Add(dchannel);
+                if (_dcRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = dchannel };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var dchannelList = DistributionChannelHelper.GetList();
+                var dchannelList = _dcRepository.GetAll();
                 if (dchannelList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -58,9 +58,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -76,16 +74,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = DistributionChannelHelper.Update(dcchannel);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _dcRepository.Update(dcchannel);
+                if (_dcRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = dcchannel };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -93,7 +88,6 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteDistributionChannel/{code}")]
         public IActionResult DeleteDistributionChannelByID(string code)
@@ -103,16 +97,14 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = DistributionChannelHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _dcRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _dcRepository.Remove(record);
+                if (_dcRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)

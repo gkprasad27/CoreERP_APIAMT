@@ -1,5 +1,4 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,30 +8,24 @@ using System.Linq;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/SalesGroup")]
-    public class SalesGroupController : ControllerBase
+    [Route("api/AssetBlock")]
+    public class AssetBlockController : ControllerBase
     {
-        private readonly IRepository<TblSalesGroup> _sgRepository;
-        public SalesGroupController(IRepository<TblSalesGroup> sgRepository)
+        [HttpPost("RegisterAssetBlock")]
+        public IActionResult RegisterAssetBlock([FromBody]TblAssetBlock assetblk)
         {
-            _sgRepository = sgRepository;
-        }
-
-        [HttpPost("RegisterSalesGroup")]
-        public IActionResult RegisterSalesGroup([FromBody]TblSalesGroup slgrp)
-        {
-            if (slgrp == null)
+            if (assetblk == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-                //if (SalesGroupHelper.GetList(slgrp.Code).Count() > 0)
-                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"salesoffice Code {nameof(slgrp.Code)} is already exists ,Please Use Different Code " });
+                if (AssetBlockHelper.GetList(assetblk.Code).Count() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Depreciationareas Code {nameof(assetblk.Code)} is already exists ,Please Use Different Code " });
 
+                var result = AssetBlockHelper.Register(assetblk);
                 APIResponse apiResponse;
-                _sgRepository.Add(slgrp);
-                if (_sgRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = slgrp };
+                if (result != null)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -45,16 +38,16 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetSalesGroupList")]
-        public IActionResult GetSalesGroupList()
+        [HttpGet("GetAssetBlockList")]
+        public IActionResult GetAssetBlockList()
         {
             try
             {
-                var salesgrplList = _sgRepository.GetAll();
-                if (salesgrplList.Count() > 0)
+                var assetblockList = AssetBlockHelper.GetList();
+                if (assetblockList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.salesgroupList = salesgrplList;
+                    expdoObj.assetblockList = assetblockList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
@@ -66,21 +59,21 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpPut("UpdateSalesGroup")]
-        public IActionResult UpdateSalesGroup([FromBody] TblSalesGroup slgrp)
+        [HttpPut("UpdateAssetBlock")]
+        public IActionResult UpdateAssetBlock([FromBody] TblAssetBlock assetblock)
         {
-            if (slgrp == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(slgrp)} cannot be null" });
+            if (assetblock == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(assetblock)} cannot be null" });
 
             try
             {
+                var rs = AssetBlockHelper.Update(assetblock);
                 APIResponse apiResponse;
-                _sgRepository.Update(slgrp);
-                if (_sgRepository != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = slgrp };
+                if (rs != null)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -89,22 +82,22 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpDelete("DeleteSalesGroup/{code}")]
-        public IActionResult DeleteSalesGroupByID(string code)
+
+        [HttpDelete("DeleteAssetBlock/{code}")]
+        public IActionResult DeleteAssetBlockbyID(string code)
         {
             try
             {
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
+                var rs = AssetBlockHelper.Delete(code);
                 APIResponse apiResponse;
-                var record = _sgRepository.GetSingleOrDefault(x => x.Code.Equals(code));
-                _sgRepository.Remove(record);
-                if (_sgRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
+                if (rs != null)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
