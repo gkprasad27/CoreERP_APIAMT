@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreERP.BussinessLogic.GenerlLedger;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers.GeneralLedger
 {
@@ -13,8 +11,14 @@ namespace CoreERP.Controllers.GeneralLedger
     [Route("api/TaxTransaction")]
     public class TaxTransactionController : ControllerBase
     {
+        private readonly IRepository<TblTaxtransactions> _ttranRepository;
+        public TaxTransactionController(IRepository<TblTaxtransactions> ttranRepository)
+        {
+            _ttranRepository = ttranRepository;
+        }
+
         [HttpPost("RegisterTaxTransaction")]
-        public IActionResult RegisterTaxTransaction([FromBody]TblTaxtransactions taxtransaction)
+        public IActionResult RegisterTaxTransaction([FromBody] TblTaxtransactions taxtransaction)
         {
             if (taxtransaction == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
@@ -23,11 +27,12 @@ namespace CoreERP.Controllers.GeneralLedger
                 //if (TaxTransactionHelper.GetList(taxtransaction.Code).Count > 0)
                 //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Tax Code ={taxtransaction.Code} alredy exists." });
 
-                TblTaxtransactions result = TaxTransactionHelper.Register(taxtransaction);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+                APIResponse apiResponse;
+                _ttranRepository.Add(taxtransaction);
+                if (_ttranRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = taxtransaction });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }
             catch (Exception ex)
             {
@@ -40,15 +45,15 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                var taxtransactionList = TaxTransactionHelper.GetList();
-                //if (taxtransactionList.Count > 0)
-                //{
+                var taxtransactionList = _ttranRepository.GetAll();
+                if (taxtransactionList.Count() > 0)
+                {
                     dynamic expando = new ExpandoObject();
                     expando.TaxtransactionList = taxtransactionList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                //}
-
-                //return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -56,7 +61,6 @@ namespace CoreERP.Controllers.GeneralLedger
             }
 
         }
-
 
         [HttpPut("UpdateTaxTransaction")]
         public IActionResult UpdateTaxTransaction([FromBody] TblTaxtransactions transaction)
@@ -66,11 +70,12 @@ namespace CoreERP.Controllers.GeneralLedger
 
             try
             {
-                TblTaxtransactions result = TaxTransactionHelper.Update(transaction);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
+                APIResponse apiResponse;
+                _ttranRepository.Update(transaction);
+                if (_ttranRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = transaction });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
             }
             catch (Exception ex)
             {
@@ -86,11 +91,13 @@ namespace CoreERP.Controllers.GeneralLedger
 
             try
             {
-                TblTaxtransactions result = TaxTransactionHelper.Delete(code);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
+                APIResponse apiResponse;
+                var record = _ttranRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _ttranRepository.Remove(record);
+                if (_ttranRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = record });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
             }
             catch (Exception ex)
             {

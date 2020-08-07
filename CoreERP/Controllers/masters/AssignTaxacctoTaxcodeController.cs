@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreERP.BussinessLogic.GenerlLedger;
+﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers.GeneralLedger
 {
@@ -13,6 +12,12 @@ namespace CoreERP.Controllers.GeneralLedger
     [Route("api/AssignTaxacctoTaxcode")]
     public class AssignTaxacctoTaxcodeController : ControllerBase
     {
+        private readonly IRepository<TblAssignTaxacctoTaxcode> _assitrateRepository;
+        public AssignTaxacctoTaxcodeController(IRepository<TblAssignTaxacctoTaxcode> assitrateRepository)
+        {
+            _assitrateRepository = assitrateRepository;
+        }
+
         [HttpPost("RegisterAssignTaxacctoTaxcode")]
         public IActionResult RegisterAssignTaxacctoTaxcode([FromBody]TblAssignTaxacctoTaxcode taxcode)
         {
@@ -21,19 +26,15 @@ namespace CoreERP.Controllers.GeneralLedger
 
             try
             {
-                if (AssignTaxacctoTaxcodeHelper.GetList(taxcode.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Ledger Code {nameof(taxcode.Code)} is already exists ,Please Use Different Code " });
+                //if (AssignTaxacctoTaxcodeHelper.GetList(taxcode.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Ledger Code {nameof(taxcode.Code)} is already exists ,Please Use Different Code " });
 
-                var result = AssignTaxacctoTaxcodeHelper.Register(taxcode);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _assitrateRepository.Add(taxcode);
+                if (_assitrateRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = taxcode };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -49,7 +50,7 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                var taxcodeList = AssignTaxacctoTaxcodeHelper.GetList();
+                var taxcodeList = _assitrateRepository.GetAll();
                 if (taxcodeList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -57,9 +58,7 @@ namespace CoreERP.Controllers.GeneralLedger
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -75,16 +74,13 @@ namespace CoreERP.Controllers.GeneralLedger
 
             try
             {
-                var rs = AssignTaxacctoTaxcodeHelper.Update(taxcode);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _assitrateRepository.Update(taxcode);
+                if (_assitrateRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = taxcode };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -92,7 +88,6 @@ namespace CoreERP.Controllers.GeneralLedger
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeletAssignTaxacctoTaxcode/{code}")]
         public IActionResult DeletAssignTaxacctoTaxcodeByID(string code)
@@ -102,16 +97,14 @@ namespace CoreERP.Controllers.GeneralLedger
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = AssignTaxacctoTaxcodeHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _assitrateRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _assitrateRepository.Remove(record);
+                if (_assitrateRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)

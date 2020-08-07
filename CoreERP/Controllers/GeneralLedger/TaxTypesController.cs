@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreERP.BussinessLogic.GenerlLedger;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers
 {
@@ -13,8 +11,14 @@ namespace CoreERP.Controllers
     [Route("api/TaxTypes")]
     public class TaxTypesController : ControllerBase
     {
+        private readonly IRepository<TblTaxtypes> _ttRepository;
+        public TaxTypesController(IRepository<TblTaxtypes> ttRepository)
+        {
+            _ttRepository = ttRepository;
+        }
+
         [HttpPost("RegisterTaxTypes")]
-        public IActionResult RegisterTaxTypes([FromBody]TblTaxtypes taxtype)
+        public IActionResult RegisterTaxTypes([FromBody] TblTaxtypes taxtype)
         {
             if (taxtype == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
@@ -23,11 +27,12 @@ namespace CoreERP.Controllers
                 //if (GLHelper.GetTblTaxtypesList(taxtype.TaxKey).Count > 0)
                 //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Tax Code ={taxtype.TaxKey} alredy exists." });
 
-                TblTaxtypes result = GLHelper.RegisterTblTaxtypes(taxtype);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+                APIResponse apiResponse;
+                _ttRepository.Add(taxtype);
+                if (_ttRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = taxtype });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }
             catch (Exception ex)
             {
@@ -40,23 +45,22 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var taxtypesList = GLHelper.GetTblTaxtypesList();
-                //if (taxtypesList.Count > 0)
-                //{
+                var taxtypesList = _ttRepository.GetAll();
+                if (taxtypesList.Count() > 0)
+                {
                     dynamic expando = new ExpandoObject();
                     expando.TaxtypesList = taxtypesList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                //}
-
-                //return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-            
+
         }
-       
 
         [HttpPut("UpdateTaxTypes")]
         public IActionResult UpdateTaxTypes([FromBody] TblTaxtypes taxtypes)
@@ -66,11 +70,12 @@ namespace CoreERP.Controllers
 
             try
             {
-                TblTaxtypes result = GLHelper.UpdateTblTaxtypes(taxtypes);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
+                APIResponse apiResponse;
+                _ttRepository.Update(taxtypes);
+                if (_ttRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = taxtypes });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
             }
             catch (Exception ex)
             {
@@ -86,10 +91,12 @@ namespace CoreERP.Controllers
 
             try
             {
-                TblTaxtypes result = GLHelper.DeleteTblTaxtypes(code);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
+                APIResponse apiResponse;
+                var record = _ttRepository.GetSingleOrDefault(x => x.TaxKey.Equals(code));
+                _ttRepository.Remove(record);
+                if (_ttRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = record });
+                else
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
             }
             catch (Exception ex)
@@ -97,7 +104,7 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-       
+
     }
 }
 

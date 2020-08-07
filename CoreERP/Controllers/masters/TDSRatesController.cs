@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,11 @@ namespace CoreERP.Controllers.masters
     [Route("api/TDSRates")]
     public class TDSRatesController : ControllerBase
     {
+        private readonly IRepository<TblTdsRates> _trateRepository;
+        public TDSRatesController(IRepository<TblTdsRates> trateRepository)
+        {
+            _trateRepository = trateRepository;
+        }
 
         [HttpPost("RegisterTDSRates")]
         public IActionResult RegisterTDSRates([FromBody]TblTdsRates tdsrates)
@@ -20,13 +26,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (tdsratesHelper.GetList(tdsrates.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Incometype Code {nameof(tdsrates.Code)} is already exists ,Please Use Different Code " });
+                //if (tdsratesHelper.GetList(tdsrates.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Incometype Code {nameof(tdsrates.Code)} is already exists ,Please Use Different Code " });
 
-                var result = tdsratesHelper.Register(tdsrates);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _trateRepository.Add(tdsrates);
+                if (_trateRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = tdsrates };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -44,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var tdsratesList = tdsratesHelper.GetList();
+                var tdsratesList = _trateRepository.GetAll();
                 if (tdsratesList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -68,10 +74,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = tdsratesHelper.Update(tdsrates);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _trateRepository.Update(tdsrates);
+                if (_trateRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = tdsrates };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -83,7 +89,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteTDSRates/{code}")]
         public IActionResult DeleteTDSRatesByID(string code)
         {
@@ -92,10 +97,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = tdsratesHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _trateRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _trateRepository.Remove(record);
+                if (_trateRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

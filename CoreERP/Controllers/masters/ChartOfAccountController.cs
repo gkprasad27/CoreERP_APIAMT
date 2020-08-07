@@ -1,18 +1,22 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Dynamic;
 using System.Linq;
 
-
 namespace CoreERP.Controllers.masters
 {
-
     [ApiController]
     [Route("api/ChartOfAccount")]
     public class ChartOfAccountController : ControllerBase
     {
+        private readonly IRepository<TblChartAccount> _caRepository;
+        public ChartOfAccountController(IRepository<TblChartAccount> caRepository)
+        {
+            _caRepository = caRepository;
+        }
+
         [HttpPost("RegisterChartOfAccount")]
         public IActionResult RegisterChartOfAccount([FromBody]TblChartAccount coa)
         {
@@ -21,13 +25,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (ChartofaccountHelper.GetList(coa.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Chartofaccount Code {nameof(coa.Code)} is already exists ,Please Use Different Code " });
+                //if (ChartofaccountHelper.GetList(coa.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Chartofaccount Code {nameof(coa.Code)} is already exists ,Please Use Different Code " });
 
-                var result = ChartofaccountHelper.Register(coa);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _caRepository.Add(coa);
+                if (_caRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = coa };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -45,7 +49,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var coaList = ChartofaccountHelper.GetList();
+                var coaList = _caRepository.GetAll();
                 if (coaList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -69,10 +73,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = ChartofaccountHelper.Update(coa);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _caRepository.Update(coa);
+                if (_caRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = coa };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -84,7 +88,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteChartOfAccount/{code}")]
         public IActionResult DeleteChartOfAccountID(string code)
         {
@@ -93,10 +96,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = ChartofaccountHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _caRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _caRepository.Remove(record);
+                if (_caRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

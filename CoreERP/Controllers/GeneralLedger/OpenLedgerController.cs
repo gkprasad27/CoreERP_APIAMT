@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreERP.BussinessLogic.GenerlLedger;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers.GL
 {
@@ -13,8 +11,14 @@ namespace CoreERP.Controllers.GL
     [Route("api/OpenLedger")]
     public class OpenLedgerController : ControllerBase
     {
+        private readonly IRepository<TblOpenLedger> _olRepository;
+        public OpenLedgerController(IRepository<TblOpenLedger> olRepository)
+        {
+            _olRepository = olRepository;
+        }
+
         [HttpPost("RegisterOpenLedger")]
-        public IActionResult RegisterOpenLedger([FromBody]TblOpenLedger opnldgr)
+        public IActionResult RegisterOpenLedger([FromBody] TblOpenLedger opnldgr)
         {
             if (opnldgr == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
@@ -23,11 +27,12 @@ namespace CoreERP.Controllers.GL
                 //if (GLHelper.GetList(opnldgr.LedgerKey).Count > 0)
                 //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Ledger Code ={opnldgr.LedgerKey} alredy exists." });
 
-                TblOpenLedger result = GLHelper.Register(opnldgr);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+                APIResponse apiResponse;
+                _olRepository.Add(opnldgr);
+                if (_olRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = opnldgr });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }
             catch (Exception ex)
             {
@@ -40,15 +45,15 @@ namespace CoreERP.Controllers.GL
         {
             try
             {
-                var openledgerList = GLHelper.GetList();
-                //if (openledgerList.Count > 0)
-                //{
+                var openledgerList = _olRepository.GetAll();
+                if (openledgerList.Count() > 0)
+                {
                     dynamic expando = new ExpandoObject();
                     expando.OpenLedgerList = openledgerList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                //}
-
-                //return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -56,7 +61,6 @@ namespace CoreERP.Controllers.GL
             }
 
         }
-
 
         [HttpPut("UpdateOpenLedgerList")]
         public IActionResult UpdateOpenLedgerList([FromBody] TblOpenLedger ledger)
@@ -66,11 +70,12 @@ namespace CoreERP.Controllers.GL
 
             try
             {
-                TblOpenLedger result = GLHelper.Update(ledger);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
+                APIResponse apiResponse;
+                _olRepository.Update(ledger);
+                if (_olRepository != null)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = ledger });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
             }
             catch (Exception ex)
             {
@@ -86,11 +91,13 @@ namespace CoreERP.Controllers.GL
 
             try
             {
-                TblOpenLedger result = GLHelper.DeleteOpenLedger(code);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
+                APIResponse apiResponse;
+                var record = _olRepository.GetSingleOrDefault(x => x.Id.Equals(code));
+                _olRepository.Remove(record);
+                if (_olRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = record });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
             }
             catch (Exception ex)
             {

@@ -1,12 +1,10 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -14,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/StorageLocation")]
     public class StorageLocationController : ControllerBase
     {
+        private readonly IRepository<TblStorageLocation> _slRepository;
+        public StorageLocationController(IRepository<TblStorageLocation> slRepository)
+        {
+            _slRepository = slRepository;
+        }
+
         [HttpPost("RegisterStorageLocation")]
         public IActionResult RegisterStorageLocation([FromBody]TblStorageLocation stloc)
         {
@@ -22,19 +26,15 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (StorageLocationHelper.GetList(stloc.Code).Count() > 0)
-                    //return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"StorageLocation Code {nameof(stloc.Code)} is already exists ,Please Use Different Code " });
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"StorageLocation Code {nameof(stloc.Code)} is already exists ,Please Use Different Code " });
-                var result = StorageLocationHelper.Register(stloc);
+                //if (StorageLocationHelper.GetList(stloc.Code).Count() > 0)
+                //    //return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"StorageLocation Code {nameof(stloc.Code)} is already exists ,Please Use Different Code " });
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"StorageLocation Code {nameof(stloc.Code)} is already exists ,Please Use Different Code " });
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _slRepository.Add(stloc);
+                if (_slRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = stloc };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var stlocList = StorageLocationHelper.GetList();
+                var stlocList = _slRepository.GetAll();
                 if (stlocList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -58,9 +58,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -76,16 +74,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = StorageLocationHelper.Update(stloc);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _slRepository.Update(stloc);
+                if (_slRepository != null)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = stloc };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -93,7 +88,6 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteStorageLocation/{code}")]
         public IActionResult DeleteStorageLocationByID(string code)
@@ -103,16 +97,14 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = StorageLocationHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _slRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _slRepository.Remove(record);
+                if (_slRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)

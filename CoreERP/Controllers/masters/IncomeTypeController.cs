@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/IncomeType")]
     public class IncomeTypeController : ControllerBase
     {
+        private readonly IRepository<TblIncomeTypes> _incomeRepository;
+        public IncomeTypeController(IRepository<TblIncomeTypes> incomeRepository)
+        {
+            _incomeRepository = incomeRepository;
+        }
+
         [HttpPost("RegisterIncomeType")]
         public IActionResult RegisterIncomeType([FromBody]TblIncomeTypes incmtype)
         {
@@ -19,13 +26,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (IncometypesHelper.GetList(incmtype.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Incometype Code {nameof(incmtype.Code)} is already exists ,Please Use Different Code " });
+                //if (IncometypesHelper.GetList(incmtype.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Incometype Code {nameof(incmtype.Code)} is already exists ,Please Use Different Code " });
 
-                var result = IncometypesHelper.Register(incmtype);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _incomeRepository.Add(incmtype);
+                if (_incomeRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = incmtype };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var incmtypeList = IncometypesHelper.GetList();
+                var incmtypeList = _incomeRepository.GetAll();
                 if (incmtypeList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -67,10 +74,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = IncometypesHelper.Update(incmtype);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _incomeRepository.Update(incmtype);
+                if (_incomeRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = incmtype };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -82,7 +89,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteIncomeType/{code}")]
         public IActionResult DeleteIncomeTypeByID(string code)
         {
@@ -91,10 +97,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = IncometypesHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _incomeRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _incomeRepository.Remove(record);
+                if (_incomeRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

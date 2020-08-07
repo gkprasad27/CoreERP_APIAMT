@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/AssiignChartAcctoCompanyCode")]
     public class AssiignChartAcctoCompanyCodeController : ControllerBase
     {
+        private readonly IRepository<TblAssignchartaccttoCompanycode> _acaRepository;
+        public AssiignChartAcctoCompanyCodeController(IRepository<TblAssignchartaccttoCompanycode> acaRepository)
+        {
+            _acaRepository = acaRepository;
+        }
+
         [HttpPost("RegisterAssiignChartAcctoCompanyCode")]
         public IActionResult RegisterAssiignChartAcctoCompanyCode([FromBody]TblAssignchartaccttoCompanycode coa)
         {
@@ -19,13 +26,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (AssignmentofcoatocompcodeHelper.GetList(coa.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Assignmentofcoatocompcode Code {nameof(coa.Code)} is already exists ,Please Use Different Code " });
+                //if (AssignmentofcoatocompcodeHelper.GetList(coa.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Assignmentofcoatocompcode Code {nameof(coa.Code)} is already exists ,Please Use Different Code " });
 
-                var result = AssignmentofcoatocompcodeHelper.Register(coa);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _acaRepository.Add(coa);
+                if (_acaRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = coa };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var coaList = AssignmentofcoatocompcodeHelper.GetList();
+                var coaList = _acaRepository.GetAll();
                 if (coaList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -67,10 +74,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = AssignmentofcoatocompcodeHelper.Update(coa);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _acaRepository.Update(coa);
+                if (_acaRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = coa };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -82,7 +89,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteAssiignChartAcctoCompanyCode/{code}")]
         public IActionResult DeleteAssiignChartAcctoCompanyCodebyID(string code)
         {
@@ -91,10 +97,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = AssignmentofcoatocompcodeHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _acaRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _acaRepository.Remove(record);
+                if (_acaRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

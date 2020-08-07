@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/TDStype")]
     public class TDStypeController : ControllerBase
     {
+        private readonly IRepository<TblTdstypes> _tdstypeRepository;
+        public TDStypeController(IRepository<TblTdstypes> tdstypeRepository)
+        {
+            _tdstypeRepository = tdstypeRepository;
+        }
+
         [HttpPost("RegisterTDStype")]
         public IActionResult RegisterTDStype([FromBody]TblTdstypes tds)
         {
@@ -19,13 +26,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (TdsTypeHelper.GetList(tds.TdsCode).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"tds Code {nameof(tds.TdsCode)} is already exists ,Please Use Different Code " });
+                //if (TdsTypeHelper.GetList(tds.TdsCode).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"tds Code {nameof(tds.TdsCode)} is already exists ,Please Use Different Code " });
 
-                var result = TdsTypeHelper.Register(tds);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _tdstypeRepository.Add(tds);
+                if (_tdstypeRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = tds };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var tdsList = TdsTypeHelper.GetList();
+                var tdsList = _tdstypeRepository.GetAll();
                 if (tdsList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -67,10 +74,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = TdsTypeHelper.Update(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _tdstypeRepository.Update(code);
+                if (_tdstypeRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = code };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -82,7 +89,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteTDStype/{code}")]
         public IActionResult DeleteTDStypeByID(string code)
         {
@@ -91,10 +97,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = TdsTypeHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _tdstypeRepository.GetSingleOrDefault(x => x.TdsCode.Equals(code));
+                _tdstypeRepository.Remove(record);
+                if (_tdstypeRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

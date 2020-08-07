@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreERP.BussinessLogic.GenerlLedger;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers.GeneralLedger
 {
@@ -14,6 +11,12 @@ namespace CoreERP.Controllers.GeneralLedger
     [Route("api/Ledger")]
     public class LedgerController : ControllerBase
     {
+        private readonly IRepository<Ledger> _ledgerRepository;
+        public LedgerController(IRepository<Ledger> ledgerRepository)
+        {
+            _ledgerRepository = ledgerRepository;
+        }
+
         [HttpPost("RegisterLedger")]
         public IActionResult RegisterLedger([FromBody]Ledger ledger)
         {
@@ -22,19 +25,15 @@ namespace CoreERP.Controllers.GeneralLedger
 
             try
             {
-                if (LedgerHelper.GetList(ledger.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Ledger Code {nameof(ledger.Code)} is already exists ,Please Use Different Code " });
+                //if (LedgerHelper.GetList(ledger.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Ledger Code {nameof(ledger.Code)} is already exists ,Please Use Different Code " });
 
-                var result = LedgerHelper.Register(ledger);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _ledgerRepository.Add(ledger);
+                if (_ledgerRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = ledger };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -50,7 +49,7 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                var ledgerList = LedgerHelper.GetList();
+                var ledgerList = _ledgerRepository.GetAll();
                 if (ledgerList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -58,9 +57,7 @@ namespace CoreERP.Controllers.GeneralLedger
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -76,16 +73,13 @@ namespace CoreERP.Controllers.GeneralLedger
 
             try
             {
-                var rs = LedgerHelper.Update(ledger);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _ledgerRepository.Update(ledger);
+                if (_ledgerRepository != null)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = ledger };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -93,7 +87,6 @@ namespace CoreERP.Controllers.GeneralLedger
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeletLedger/{code}")]
         public IActionResult DeletLedgerByID(string code)
@@ -103,16 +96,14 @@ namespace CoreERP.Controllers.GeneralLedger
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = LedgerHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _ledgerRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _ledgerRepository.Remove(record);
+                if (_ledgerRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)

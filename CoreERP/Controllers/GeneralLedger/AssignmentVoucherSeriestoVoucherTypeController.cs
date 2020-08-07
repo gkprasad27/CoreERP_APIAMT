@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreERP.BussinessLogic.GenerlLedger;
+﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers.GeneralLedger
 {
@@ -15,6 +13,12 @@ namespace CoreERP.Controllers.GeneralLedger
     [Route("api/AssignmentVoucherSeriestoVoucherType")]
     public class AssignmentVoucherSeriestoVoucherTypeController : ControllerBase
     {
+        private readonly IRepository<TblAssignmentVoucherSeriestoVoucherType> _vsvtRepository;
+        public AssignmentVoucherSeriestoVoucherTypeController(IRepository<TblAssignmentVoucherSeriestoVoucherType> vsvtRepository)
+        {
+            _vsvtRepository = vsvtRepository;
+        }
+
         [HttpPost("RegisterAssignmentVoucherSeriestoVoucherType")]
         public IActionResult RegisterAssignmentVoucherSeriestoVoucherType([FromBody]TblAssignmentVoucherSeriestoVoucherType avsvtype)
         {
@@ -23,19 +27,15 @@ namespace CoreERP.Controllers.GeneralLedger
 
             try
             {
-                if (assignmentvoucherseriestovouchertypeHelper.GetList(avsvtype.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"assignmentvoucherseriestovouchertype Code {nameof(avsvtype.Code)} is already exists ,Please Use Different Code " });
+                //if (assignmentvoucherseriestovouchertypeHelper.GetList(avsvtype.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"assignmentvoucherseriestovouchertype Code {nameof(avsvtype.Code)} is already exists ,Please Use Different Code " });
 
-                var result = assignmentvoucherseriestovouchertypeHelper.Register(avsvtype);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _vsvtRepository.Add(avsvtype);
+                if (_vsvtRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = avsvtype };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -51,7 +51,7 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                var avsvList = assignmentvoucherseriestovouchertypeHelper.GetList();
+                var avsvList = _vsvtRepository.GetAll();
                 if (avsvList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -59,9 +59,7 @@ namespace CoreERP.Controllers.GeneralLedger
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -77,16 +75,13 @@ namespace CoreERP.Controllers.GeneralLedger
 
             try
             {
-                var rs = assignmentvoucherseriestovouchertypeHelper.Update(avsvtype);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _vsvtRepository.Update(avsvtype);
+                if (_vsvtRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = avsvtype };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -94,7 +89,6 @@ namespace CoreERP.Controllers.GeneralLedger
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteAssignmentVoucherSeriestoVoucherType/{code}")]
         public IActionResult DeleteAssignmentVoucherSeriestoVoucherTypeByID(string code)
@@ -104,16 +98,14 @@ namespace CoreERP.Controllers.GeneralLedger
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = assignmentvoucherseriestovouchertypeHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _vsvtRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _vsvtRepository.Remove(record);
+                if (_vsvtRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)

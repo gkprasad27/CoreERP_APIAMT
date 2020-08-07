@@ -19,8 +19,8 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblRegion> _regionRepository;
         private readonly IRepository<Countries> _countryRepository;
         private readonly IRepository<TblEmployee> _employeeRepository;
-        public CompanyController(IRepository<TblCompany> companyRepository,IRepository<States> stateRepository,IRepository<TblCurrency>currencyRepository,IRepository<TblLanguage>languageRepository,
-                                 IRepository<TblRegion>regionRepository,IRepository<Countries>countryRepository,IRepository<TblEmployee>employeeRepository  )
+        public CompanyController(IRepository<TblCompany> companyRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
+                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository)
         {
             _companyRepository = companyRepository;
             _stateRepository = stateRepository;
@@ -112,13 +112,14 @@ namespace CoreERP.Controllers
             try
             {
                 var empList = _employeeRepository.GetAll();
-                //if (empList.Count > 0)
-                //{
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.emplist = empList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                //}
-                //return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                if (empList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.emplist = empList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -160,7 +161,7 @@ namespace CoreERP.Controllers
 
                 try
                 {
-                    APIResponse apiResponse ;
+                    APIResponse apiResponse;
                     _companyRepository.Add(company);
                     if (_companyRepository.SaveChanges() > 0)
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = company };
@@ -184,14 +185,14 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(company)} cannot be null" });
             try
             {
-                APIResponse apiResponse ;
+                APIResponse apiResponse;
 
                 _companyRepository.Update(company);
                 if (_companyRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = company };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-               
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -215,7 +216,7 @@ namespace CoreERP.Controllers
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)

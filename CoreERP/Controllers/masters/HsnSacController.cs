@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/HsnSac")]
     public class HsnSacController : ControllerBase
     {
+        private readonly IRepository<TblHsnsac> _hsnRepository;
+        public HsnSacController(IRepository<TblHsnsac> hsnRepository)
+        {
+            _hsnRepository = hsnRepository;
+        }
+
         [HttpPost("RegisterHsnSac")]
         public IActionResult RegisterHsnSac([FromBody]TblHsnsac hsnsac)
         {
@@ -19,13 +26,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (HsnsacHelper.GetList(hsnsac.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"language Code {nameof(hsnsac.Code)} is already exists ,Please Use Different Code " });
+                //if (HsnsacHelper.GetList(hsnsac.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"language Code {nameof(hsnsac.Code)} is already exists ,Please Use Different Code " });
 
-                var result = HsnsacHelper.Register(hsnsac);
                 APIResponse apiResponse;
-                if (result != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                _hsnRepository.Add(hsnsac);
+                if (_hsnRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = hsnsac };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var hsnsacList = HsnsacHelper.GetList();
+                var hsnsacList = _hsnRepository.GetAll();
                 if (hsnsacList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -67,10 +74,10 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = HsnsacHelper.Update(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                _hsnRepository.Update(code);
+                if (_hsnRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = code };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -82,7 +89,6 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-
         [HttpDelete("DeleteHsnSac/{code}")]
         public IActionResult DeleteHsnSacByID(string code)
         {
@@ -91,10 +97,11 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = HsnsacHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
+                var record = _hsnRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _hsnRepository.Remove(record);
+                if (_hsnRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

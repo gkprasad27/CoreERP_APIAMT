@@ -95,6 +95,7 @@ namespace CoreERP.Controllers.masters
                 APIResponse apiResponse;
                 if (code == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
+
                 var record = _currencyRepository.GetSingleOrDefault(x => x.CurrencySymbol.Equals(code));
                 _currencyRepository.Remove(record);
                 if (_currencyRepository.SaveChanges() > 0)

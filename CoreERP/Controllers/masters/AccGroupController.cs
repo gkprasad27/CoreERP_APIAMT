@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CoreERP.DataAccess.Repositories;
+using CoreERP.Models;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using CoreERP.Models;
-using CoreERP.BussinessLogic.GenerlLedger;
-using System.Dynamic;
 
 namespace CoreERP.Controllers.GL
 {
@@ -13,29 +12,36 @@ namespace CoreERP.Controllers.GL
     [Route("api/AccGroup")]
     public class AccGroupController : ControllerBase
     {
+        private readonly IRepository<GlaccGroup> _glagRepository;
+        public AccGroupController(IRepository<GlaccGroup> glagRepository)
+        {
+            _glagRepository = glagRepository;
+        }
+
         [HttpPost("RegisterGlaccGroup")]
-        public async Task<IActionResult> RegisterGlaccGroup([FromBody]GlaccGroup accGroup)
+        public async Task<IActionResult> RegisterGlaccGroup([FromBody] GlaccGroup accGroup)
         {
             var result = await Task.Run(() =>
             {
                 if (accGroup == null)
-                return Ok(new APIResponse() {status=APIStatus.FAIL.ToString(),response= $"{nameof(accGroup)} cannot be null" });
-            try
-            {
-                if (GLHelper.GetGLAccountGroupList().Where(x => x.GroupCode == accGroup.GroupCode).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Code {accGroup.GroupCode} is already exists"});
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(accGroup)} cannot be null" });
+                try
+                {
+                    //if (GLHelper.GetGLAccountGroupList().Where(x => x.GroupCode == accGroup.GroupCode).Count() > 0)
+                    //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Code {accGroup.GroupCode} is already exists"});
 
-                GlaccGroup result = GLHelper.RegisterAccountsGroup(accGroup);
-                if (result !=null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                    APIResponse apiResponse;
+                    _glagRepository.Add(accGroup);
+                    if (_glagRepository.SaveChanges() > 0)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = accGroup });
+                    else
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed" });
-
-            }
-            catch(Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
             });
             return result;
         }
@@ -43,20 +49,20 @@ namespace CoreERP.Controllers.GL
         [HttpGet("GetAccountGroupList")]
         public IActionResult GetAccountGroupList()
         {
-            
-           try
+
+            try
             {
-                var glAccountGroupList = GLHelper.GetGLAccountGroupList();
-                if (glAccountGroupList !=null)
+                var glAccountGroupList = _glagRepository.GetAll();
+                if (glAccountGroupList != null)
                 {
                     dynamic expando = new ExpandoObject();
                     expando.GLAccountGroupList = glAccountGroupList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
@@ -72,11 +78,12 @@ namespace CoreERP.Controllers.GL
 
                 try
                 {
-                    GlaccGroup result = GLHelper.UpdateAccountsGroup(accGroup);
-                    if (result != null)
-                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
+                    APIResponse apiResponse;
+                    _glagRepository.Update(accGroup);
+                    if (_glagRepository.SaveChanges() > 0)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = accGroup });
+                    else
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
                 }
                 catch (Exception ex)
                 {
@@ -85,7 +92,6 @@ namespace CoreERP.Controllers.GL
             });
             return result;
         }
-
 
         [HttpDelete("DeleteAccountGroup/{code}")]
         public async Task<IActionResult> DeleteAccountGroup(string code)
@@ -97,9 +103,11 @@ namespace CoreERP.Controllers.GL
 
                 try
                 {
-                    GlaccGroup result = GLHelper.DeleteAccountsGroup(code);
-                    if (result != null)
-                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                    APIResponse apiResponse;
+                    var record = _glagRepository.GetSingleOrDefault(x => x.GroupCode.Equals(code));
+                    _glagRepository.Remove(record);
+                    if (_glagRepository.SaveChanges() > 0)
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = record });
 
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "DeletionFailed." });
                 }

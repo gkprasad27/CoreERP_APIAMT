@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
-using CoreERP.BussinessLogic.GenerlLedger;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Dynamic;
 using System.Linq;
 
@@ -12,20 +12,30 @@ namespace CoreERP.Controllers.GL
     [Route("api/GLAccUnderSubGroup")]
     public class GLAccUnderSubGroupController : ControllerBase
     {
-        
+        private readonly IRepository<TblAccountGroup> _glaugRepository;
+        public GLAccUnderSubGroupController(IRepository<TblAccountGroup> glaugRepository)
+        {
+            _glaugRepository = glaugRepository;
+        }
+
         [HttpPost("RegisterTblAccGroup")]
-        public IActionResult RegisterTblAccGroup([FromBody]TblAccountGroup tblAccGrp)
+        public IActionResult RegisterTblAccGroup([FromBody] TblAccountGroup tblAccGrp)
         {
             if (tblAccGrp == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(tblAccGrp)} can not be null" });
 
             try
             {
-                TblAccountGroup result = new GLHelper().RegisterTblAccGroup(tblAccGrp);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                APIResponse apiResponse;
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+                tblAccGrp.ExtraDate = DateTime.Now;
+                tblAccGrp.IsDefault = false;
+
+                _glaugRepository.Add(tblAccGrp);
+                if (_glaugRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = tblAccGrp });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
 
             }
             catch (Exception ex)
@@ -42,9 +52,13 @@ namespace CoreERP.Controllers.GL
 
             try
             {
-                TblAccountGroup result = new GLHelper().UpdateTblAccountGroup(tblAccGrp);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                tblAccGrp.ExtraDate = DateTime.Now;
+                tblAccGrp.IsDefault = false;
+
+                APIResponse apiResponse;
+                _glaugRepository.Update(tblAccGrp);
+                if (_glaugRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = tblAccGrp });
 
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
             }
@@ -63,11 +77,13 @@ namespace CoreERP.Controllers.GL
 
             try
             {
-                TblAccountGroup result = new GLHelper().DeleteTblAccountGroup(code);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
+                APIResponse apiResponse;
+                var record = _glaugRepository.GetSingleOrDefault(x => x.AccountGroupId.Equals(code));
+                _glaugRepository.Remove(record);
+                if (_glaugRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = record });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
             }
             catch (Exception ex)
             {
@@ -103,7 +119,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 var tblAccountGroupList = new GLHelper().GetTblAccountGroupList();
-                if (tblAccountGroupList !=null)
+                if (tblAccountGroupList != null)
                 {
                     dynamic expando = new ExpandoObject();
                     expando.tblAccountGroupList = tblAccountGroupList;
@@ -151,7 +167,7 @@ namespace CoreERP.Controllers.GL
         [HttpGet("GetAccountGrouplist/{glaccGroupCode}")]
         public IActionResult GetAccountSubGrouplist(int glaccGroupCode)
         {
-            
+
             try
             {
                 dynamic expando = new ExpandoObject();

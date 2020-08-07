@@ -19,7 +19,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (string.IsNullOrEmpty(accountGroupCode))
                     return Repository<GlaccGroup>.Instance.GetAll().OrderBy(x => x.GroupCode);
                 else
-                    return   Repository<GlaccGroup>.Instance.Where(x => x.GroupCode == accountGroupCode);
+                    return Repository<GlaccGroup>.Instance.Where(x => x.GroupCode == accountGroupCode);
             }
             catch { throw; }
         }
@@ -72,43 +72,43 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         //}
 
         #region Account Group
-        public static GlaccGroup RegisterAccountsGroup(GlaccGroup glAccGroup)
-        {
-            try
-            {
-                Repository<GlaccGroup>.Instance.Add(glAccGroup);
-                if (Repository<GlaccGroup>.Instance.SaveChanges() > 0)
-                    return glAccGroup;
+        //public static GlaccGroup RegisterAccountsGroup(GlaccGroup glAccGroup)
+        //{
+        //    try
+        //    {
+        //        Repository<GlaccGroup>.Instance.Add(glAccGroup);
+        //        if (Repository<GlaccGroup>.Instance.SaveChanges() > 0)
+        //            return glAccGroup;
 
-                return null;
-            }
-            catch { throw; }
-        }
-        public static GlaccGroup UpdateAccountsGroup(GlaccGroup glAccGroup)
-        {
-            try
-            {
-                Repository<GlaccGroup>.Instance.Update(glAccGroup);
-                if (Repository<GlaccGroup>.Instance.SaveChanges() > 0)
-                    return glAccGroup;
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
+        //public static GlaccGroup UpdateAccountsGroup(GlaccGroup glAccGroup)
+        //{
+        //    try
+        //    {
+        //        Repository<GlaccGroup>.Instance.Update(glAccGroup);
+        //        if (Repository<GlaccGroup>.Instance.SaveChanges() > 0)
+        //            return glAccGroup;
 
-                return null;
-            }
-            catch { throw; }
-        }
-        public static GlaccGroup DeleteAccountsGroup(string glAccGroupCode)
-        {
-            try
-            {
-                var ccode = Repository<GlaccGroup>.Instance.GetSingleOrDefault(x => x.GroupCode == glAccGroupCode);
-                Repository<GlaccGroup>.Instance.Remove(ccode);
-                if (Repository<GlaccGroup>.Instance.SaveChanges() > 0)
-                    return ccode;
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
+        //public static GlaccGroup DeleteAccountsGroup(string glAccGroupCode)
+        //{
+        //    try
+        //    {
+        //        var ccode = Repository<GlaccGroup>.Instance.GetSingleOrDefault(x => x.GroupCode == glAccGroupCode);
+        //        Repository<GlaccGroup>.Instance.Remove(ccode);
+        //        if (Repository<GlaccGroup>.Instance.SaveChanges() > 0)
+        //            return ccode;
 
-                return null;
-            }
-            catch { throw; }
-        }
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
 
         #endregion
 
@@ -256,43 +256,43 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         //    catch { throw; }
         //}
 
-        public TblAccountGroup RegisterTblAccGroup(TblAccountGroup tblAccGroup)
-        {
-            try
-            {
-                //var record = Repository<TblAccountGroup>.Instance.GetAll().OrderByDescending(x => x.ExtraDate).FirstOrDefault();
-                //if (record != null)
-                //{
-                //    tblAccGroup.AccountGroupId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.AccountGroupId.ToString()));
-                //}
-                //else
-                //    tblAccGroup.AccountGroupId = 1;
+        //public TblAccountGroup RegisterTblAccGroup(TblAccountGroup tblAccGroup)
+        //{
+        //    try
+        //    {
+        //        //var record = Repository<TblAccountGroup>.Instance.GetAll().OrderByDescending(x => x.ExtraDate).FirstOrDefault();
+        //        //if (record != null)
+        //        //{
+        //        //    tblAccGroup.AccountGroupId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.AccountGroupId.ToString()));
+        //        //}
+        //        //else
+        //        //    tblAccGroup.AccountGroupId = 1;
 
-                tblAccGroup.ExtraDate = DateTime.Now;
-                tblAccGroup.IsDefault = false;
-                Repository<TblAccountGroup>.Instance.Add(tblAccGroup);
-                if (Repository<TblAccountGroup>.Instance.SaveChanges() > 0)
-                    return tblAccGroup;
+        //        tblAccGroup.ExtraDate = DateTime.Now;
+        //        tblAccGroup.IsDefault = false;
+        //        Repository<TblAccountGroup>.Instance.Add(tblAccGroup);
+        //        if (Repository<TblAccountGroup>.Instance.SaveChanges() > 0)
+        //            return tblAccGroup;
 
-                return null;
-            }
-            catch { throw; }
-        }
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
 
-        public TblAccountGroup UpdateTblAccountGroup(TblAccountGroup tblAccGrp)
-        {
-            try
-            {
-                tblAccGrp.ExtraDate = DateTime.Now;
-                tblAccGrp.IsDefault = false;
-                Repository<TblAccountGroup>.Instance.Update(tblAccGrp);
-                if (Repository<TblAccountGroup>.Instance.SaveChanges() > 0)
-                    return tblAccGrp;
+        //public TblAccountGroup UpdateTblAccountGroup(TblAccountGroup tblAccGrp)
+        //{
+        //    try
+        //    {
+        //        tblAccGrp.ExtraDate = DateTime.Now;
+        //        tblAccGrp.IsDefault = false;
+        //        Repository<TblAccountGroup>.Instance.Update(tblAccGrp);
+        //        if (Repository<TblAccountGroup>.Instance.SaveChanges() > 0)
+        //            return tblAccGrp;
 
-                return null;
-            }
-            catch { throw; }
-        }
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
         //public static GlaccUnderSubGroup UpdateUnderSubGroup(GlaccUnderSubGroup glUnderSubGroup)
         //{
         //    try
@@ -322,21 +322,21 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         //    catch { throw; }
         //}
 
-        public TblAccountGroup DeleteTblAccountGroup(int code)
-        {
-            try
-            {
-                var ccode = Repository<TblAccountGroup>.Instance.GetSingleOrDefault(x => x.AccountGroupId == code);
-                Repository<TblAccountGroup>.Instance.Remove(ccode);
-                if (Repository<TblAccountGroup>.Instance.SaveChanges() > 0)
-                    return ccode;
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //public TblAccountGroup DeleteTblAccountGroup(int code)
+        //{
+        //    try
+        //    {
+        //        var ccode = Repository<TblAccountGroup>.Instance.GetSingleOrDefault(x => x.AccountGroupId == code);
+        //        Repository<TblAccountGroup>.Instance.Remove(ccode);
+        //        if (Repository<TblAccountGroup>.Instance.SaveChanges() > 0)
+        //            return ccode;
+        //        return null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
         #endregion
 
         #region  GLAccounts
@@ -517,14 +517,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         #endregion
 
         #region TblTaxtypes
-        public static IEnumerable<TblTaxtypes> GetTblTaxtypesList()
-        {
-            try
-            {
-                return Repository<TblTaxtypes>.Instance.GetAll().OrderBy(x => x.TaxKey);
-            }
-            catch (Exception ex) { throw ex; }
-        }
+        //public static IEnumerable<TblTaxtypes> GetTblTaxtypesList()
+        //{
+        //    try
+        //    {
+        //        return Repository<TblTaxtypes>.Instance.GetAll().OrderBy(x => x.TaxKey);
+        //    }
+        //    catch (Exception ex) { throw ex; }
+        //}
         public static IEnumerable<TblTaxtypes> GetTblTaxtypesList(string taxCode)
         {
             try
@@ -533,60 +533,60 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch (Exception ex) { throw ex; }
         }
-        public static TblTaxtypes RegisterTblTaxtypes(TblTaxtypes taxtypes)
-        {
-            try
-            {
-                Repository<TblTaxtypes>.Instance.Add(taxtypes);
-                if (Repository<TblTaxtypes>.Instance.SaveChanges() > 0)
-                    return taxtypes;
+        //public static TblTaxtypes RegisterTblTaxtypes(TblTaxtypes taxtypes)
+        //{
+        //    try
+        //    {
+        //        Repository<TblTaxtypes>.Instance.Add(taxtypes);
+        //        if (Repository<TblTaxtypes>.Instance.SaveChanges() > 0)
+        //            return taxtypes;
 
-                return null;
-            }
-            catch { throw; }
-        }
-        public static TblTaxtypes UpdateTblTaxtypes(TblTaxtypes taxtypes)
-        {
-            try
-            {
-                Repository<TblTaxtypes>.Instance.Update(taxtypes);
-                if (Repository<TblTaxtypes>.Instance.SaveChanges() > 0)
-                    return taxtypes;
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
+        //public static TblTaxtypes UpdateTblTaxtypes(TblTaxtypes taxtypes)
+        //{
+        //    try
+        //    {
+        //        Repository<TblTaxtypes>.Instance.Update(taxtypes);
+        //        if (Repository<TblTaxtypes>.Instance.SaveChanges() > 0)
+        //            return taxtypes;
 
-                return null;
-            }
-            catch { throw; }
-        }
-        public static TblTaxtypes DeleteTblTaxtypes(string taxCode)
-        {
-            try
-            {
-                var ccode = Repository<TblTaxtypes>.Instance.GetSingleOrDefault(x => x.TaxKey == taxCode);
-                Repository<TblTaxtypes>.Instance.Remove(ccode);
-                if (Repository<TblTaxtypes>.Instance.SaveChanges() > 0)
-                    return ccode;
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
+        //public static TblTaxtypes DeleteTblTaxtypes(string taxCode)
+        //{
+        //    try
+        //    {
+        //        var ccode = Repository<TblTaxtypes>.Instance.GetSingleOrDefault(x => x.TaxKey == taxCode);
+        //        Repository<TblTaxtypes>.Instance.Remove(ccode);
+        //        if (Repository<TblTaxtypes>.Instance.SaveChanges() > 0)
+        //            return ccode;
 
-                return null;
-            }
-            catch { throw; }
-        }
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
         #endregion
-        public static IEnumerable<TblCompany> GetCompanies()
-        {
-            try
-            {
-                return Repository<TblCompany>.Instance.GetAll().OrderBy(x => x.CompanyCode);
-            }
-            catch { throw; }
-        }
-        public static IEnumerable<TblBranch> GetBranches()
-        {
-            try
-            {
-                return Repository<TblBranch>.Instance.GetAll().OrderBy(x => x.BranchCode);
-            }
-            catch { throw; }
-        }
+        //public static IEnumerable<TblCompany> GetCompanies()
+        //{
+        //    try
+        //    {
+        //        return Repository<TblCompany>.Instance.GetAll().OrderBy(x => x.CompanyCode);
+        //    }
+        //    catch { throw; }
+        //}
+        //public static IEnumerable<TblBranch> GetBranches()
+        //{
+        //    try
+        //    {
+        //        return Repository<TblBranch>.Instance.GetAll().OrderBy(x => x.BranchCode);
+        //    }
+        //    catch { throw; }
+        //}
         //public static List<Glaccounts> GetTaxAccounts()
         //{
         //    try
@@ -676,14 +676,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         //}
 
         #region openledger
-        public static IEnumerable<TblOpenLedger> GetList()
-        {
-            try
-            {
-                return Repository<TblOpenLedger>.Instance.GetAll().OrderBy(x => x.LedgerKey);
-            }
-            catch { throw; }
-        }
+        //public static IEnumerable<TblOpenLedger> GetList()
+        //{
+        //    try
+        //    {
+        //        return Repository<TblOpenLedger>.Instance.GetAll().OrderBy(x => x.LedgerKey);
+        //    }
+        //    catch { throw; }
+        //}
         public static IEnumerable<TblOpenLedger> GetList(string code)
         {
             try
@@ -692,43 +692,43 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
-        public static TblOpenLedger Register(TblOpenLedger openledger)
-        {
-            try
-            {
-                Repository<TblOpenLedger>.Instance.Add(openledger);
-                if (Repository<TblOpenLedger>.Instance.SaveChanges() > 0)
-                    return openledger;
+        //public static TblOpenLedger Register(TblOpenLedger openledger)
+        //{
+        //    try
+        //    {
+        //        Repository<TblOpenLedger>.Instance.Add(openledger);
+        //        if (Repository<TblOpenLedger>.Instance.SaveChanges() > 0)
+        //            return openledger;
 
-                return null;
-            }
-            catch { throw; }
-        }
-        public static TblOpenLedger Update(TblOpenLedger openLedger)
-        {
-            try
-            {
-                Repository<TblOpenLedger>.Instance.Update(openLedger);
-                if (Repository<TblOpenLedger>.Instance.SaveChanges() > 0)
-                    return openLedger;
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
+        //public static TblOpenLedger Update(TblOpenLedger openLedger)
+        //{
+        //    try
+        //    {
+        //        Repository<TblOpenLedger>.Instance.Update(openLedger);
+        //        if (Repository<TblOpenLedger>.Instance.SaveChanges() > 0)
+        //            return openLedger;
 
-                return null;
-            }
-            catch { throw; }
-        }
-        public static TblOpenLedger DeleteOpenLedger(int Code)
-        {
-            try
-            {
-                var ccode = Repository<TblOpenLedger>.Instance.GetSingleOrDefault(x => x.Id == Code);
-                Repository<TblOpenLedger>.Instance.Remove(ccode);
-                if (Repository<TblOpenLedger>.Instance.SaveChanges() > 0)
-                    return ccode;
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
+        //public static TblOpenLedger DeleteOpenLedger(int Code)
+        //{
+        //    try
+        //    {
+        //        var ccode = Repository<TblOpenLedger>.Instance.GetSingleOrDefault(x => x.Id == Code);
+        //        Repository<TblOpenLedger>.Instance.Remove(ccode);
+        //        if (Repository<TblOpenLedger>.Instance.SaveChanges() > 0)
+        //            return ccode;
 
-                return null;
-            }
-            catch { throw; }
-        }
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
 
         #endregion
         //public static List<AccountingClass> GetAccountingClass()
@@ -766,14 +766,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         //}
 
         #region Voucher Type
-        public static IEnumerable<TblVoucherType> GetVoucherTypeList()
-        {
-            try
-            {
-                return Repository<TblVoucherType>.Instance.GetAll().OrderBy(x => x.VoucherTypeId);
-            }
-            catch { throw; }
-        }
+        //public static IEnumerable<TblVoucherType> GetVoucherTypeList()
+        //{
+        //    try
+        //    {
+        //        return Repository<TblVoucherType>.Instance.GetAll().OrderBy(x => x.VoucherTypeId);
+        //    }
+        //    catch { throw; }
+        //}
         public static IEnumerable<TblVoucherType> GetVoucherTypeList(string voucherCode)
         {
             try
@@ -782,43 +782,43 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             catch { throw; }
         }
-        public static TblVoucherType RegisterVoucherType(TblVoucherType voucherTypes)
-        {
-            try
-            {
-                Repository<TblVoucherType>.Instance.Add(voucherTypes);
-                if (Repository<TblVoucherType>.Instance.SaveChanges() > 0)
-                    return voucherTypes;
+        //public static TblVoucherType RegisterVoucherType(TblVoucherType voucherTypes)
+        //{
+        //    try
+        //    {
+        //        Repository<TblVoucherType>.Instance.Add(voucherTypes);
+        //        if (Repository<TblVoucherType>.Instance.SaveChanges() > 0)
+        //            return voucherTypes;
 
-                return null;
-            }
-            catch { throw; }
-        }
-        public static TblVoucherType UpdateVoucherType(TblVoucherType voucherTypes)
-        {
-            try
-            {
-                Repository<TblVoucherType>.Instance.Update(voucherTypes);
-                if (Repository<TblVoucherType>.Instance.SaveChanges() > 0)
-                    return voucherTypes;
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
+        //public static TblVoucherType UpdateVoucherType(TblVoucherType voucherTypes)
+        //{
+        //    try
+        //    {
+        //        Repository<TblVoucherType>.Instance.Update(voucherTypes);
+        //        if (Repository<TblVoucherType>.Instance.SaveChanges() > 0)
+        //            return voucherTypes;
 
-                return null;
-            }
-            catch { throw; }
-        }
-        public static TblVoucherType DeleteVoucherType(string voucherTypeCode)
-        {
-            try
-            {
-                var ccode = Repository<TblVoucherType>.Instance.GetSingleOrDefault(x => x.VoucherTypeId == voucherTypeCode);
-                Repository<TblVoucherType>.Instance.Remove(ccode);
-                if (Repository<TblVoucherType>.Instance.SaveChanges() > 0)
-                    return ccode;
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
+        //public static TblVoucherType DeleteVoucherType(string voucherTypeCode)
+        //{
+        //    try
+        //    {
+        //        var ccode = Repository<TblVoucherType>.Instance.GetSingleOrDefault(x => x.VoucherTypeId == voucherTypeCode);
+        //        Repository<TblVoucherType>.Instance.Remove(ccode);
+        //        if (Repository<TblVoucherType>.Instance.SaveChanges() > 0)
+        //            return ccode;
 
-                return null;
-            }
-            catch { throw; }
-        }
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
         #endregion
 
         #region Account Ledger

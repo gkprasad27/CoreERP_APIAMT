@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreERP.BussinessLogic.GenerlLedger;
+﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers.GeneralLedger
 {
@@ -14,6 +12,12 @@ namespace CoreERP.Controllers.GeneralLedger
     [Route("api/VoucherClass")]
     public class VoucherClassController : ControllerBase
     {
+        private readonly IRepository<TblVoucherclass> _vcRepository;
+        public VoucherClassController(IRepository<TblVoucherclass> vcRepository)
+        {
+            _vcRepository = vcRepository;
+        }
+
         [HttpPost("RegisterVoucherClass")]
         public IActionResult RegisterVoucherClass([FromBody]TblVoucherclass vcclass)
         {
@@ -22,19 +26,15 @@ namespace CoreERP.Controllers.GeneralLedger
 
             try
             {
-                if (VoucherClassHelper.GetList(vcclass.VoucherKey).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"VocherClass Code {nameof(vcclass.VoucherKey)} is already exists ,Please Use Different Code " });
+                //if (VoucherClassHelper.GetList(vcclass.VoucherKey).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"VocherClass Code {nameof(vcclass.VoucherKey)} is already exists ,Please Use Different Code " });
 
-                var result = VoucherClassHelper.Register(vcclass);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _vcRepository.Add(vcclass);
+                if (_vcRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = vcclass };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                var vcclassList = VoucherClassHelper.GetList();
+                var vcclassList = _vcRepository.GetAll();
                 if (vcclassList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -58,9 +58,7 @@ namespace CoreERP.Controllers.GeneralLedger
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -76,16 +74,13 @@ namespace CoreERP.Controllers.GeneralLedger
 
             try
             {
-                var rs = VoucherClassHelper.Update(vcclass);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _vcRepository.Update(vcclass);
+                if (_vcRepository != null)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = vcclass };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -93,7 +88,6 @@ namespace CoreERP.Controllers.GeneralLedger
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteVoucherClass/{code}")]
         public IActionResult DeleteVoucherClassByID(string code)
@@ -103,16 +97,14 @@ namespace CoreERP.Controllers.GeneralLedger
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = VoucherClassHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _vcRepository.GetSingleOrDefault(x => x.VoucherKey.Equals(code));
+                _vcRepository.Remove(record);
+                if (_vcRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
