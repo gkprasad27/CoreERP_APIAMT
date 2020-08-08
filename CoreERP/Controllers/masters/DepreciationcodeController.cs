@@ -91,7 +91,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpDelete("DeleteDepreciationcode{code}")]
+        [HttpDelete("DeleteDepreciationcode/{code}")]
         public async Task<IActionResult> DeleteDepreciationcode(string code)
         {
             APIResponse apiResponse = null;

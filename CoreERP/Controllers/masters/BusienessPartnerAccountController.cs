@@ -9,26 +9,26 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/BankMaster")]
-    public class BankMasterController : ControllerBase
+    [Route("api/BusienessPartnerAccount")]
+    public class BusienessPartnerAccountController : ControllerBase
     {
-        private readonly IRepository<TblBankMaster> _bankMasterRepository;
-        public BankMasterController(IRepository<TblBankMaster> bankMasterRepository)
+        private readonly IRepository<TblBusinessPartnerAccount> _businessPartnerAccountRepository;
+        public BusienessPartnerAccountController(IRepository<TblBusinessPartnerAccount> businessPartnerAccountRepository)
         {
-            _bankMasterRepository = bankMasterRepository;
+            _businessPartnerAccountRepository = businessPartnerAccountRepository;
         }
-        [HttpGet("GetBankMasterList")]
-        public async Task<IActionResult> GetBankMasterList()
+        [HttpGet("GetBusienessPartnerAccountList")]
+        public async Task<IActionResult> GetBusienessPartnerAccountList()
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var bankList = _bankMasterRepository.GetAll();
-                    if (bankList.Count() > 0)
+                    var bpaList = _businessPartnerAccountRepository.GetAll();
+                    if (bpaList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
-                        expdoObj.bankList = bankList;
+                        expdoObj.bpaList = bpaList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
                     else
@@ -42,19 +42,19 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpPost("RegisterBankMaster")]
-        public async Task<IActionResult> RegisterBankMaster([FromBody]TblBankMaster bank)
+        [HttpPost("RegisterBusienessPartnerAccount")]
+        public async Task<IActionResult> RegisterBusienessPartnerAccount([FromBody]TblBusinessPartnerAccount bpa)
         {
             APIResponse apiResponse;
-            if (bank == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(bank)} cannot be null" });
+            if (bpa == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(bpa)} cannot be null" });
             else
             {
                 try
                 {
-                    _bankMasterRepository.Add(bank);
-                    if (_bankMasterRepository.SaveChanges() > 0)
-                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bank };
+                    _businessPartnerAccountRepository.Add(bpa);
+                    if (_businessPartnerAccountRepository.SaveChanges() > 0)
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bpa };
                     else
                         apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -68,18 +68,18 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpPut("UpdateBankMaster")]
-        public async Task<IActionResult> UpdateBankMaster([FromBody] TblBankMaster bank)
+        [HttpPut("UpdateBusienessPartnerAccount")]
+        public async Task<IActionResult> UpdateBusienessPartnerAccount([FromBody] TblBusinessPartnerAccount bpa)
         {
             APIResponse apiResponse = null;
-            if (bank == null)
+            if (bpa == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
 
             try
             {
-                _bankMasterRepository.Update(bank);
-                if (_bankMasterRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bank };
+                _businessPartnerAccountRepository.Update(bpa);
+                if (_businessPartnerAccountRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bpa };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -91,8 +91,8 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpDelete("DeleteBankMaster/{code}")]
-        public async Task<IActionResult> DeleteBankMaster(string code)
+        [HttpDelete("DeleteBusienessPartnerAccount/{code}")]
+        public async Task<IActionResult> DeleteBusienessPartnerAccount(string code)
         {
             APIResponse apiResponse = null;
             if (code == null)
@@ -100,9 +100,9 @@ namespace CoreERP.Controllers
 
             try
             {
-                var record = _bankMasterRepository.GetSingleOrDefault(x => x.BankCode.Equals(code));
-                _bankMasterRepository.Remove(record);
-                if (_bankMasterRepository.SaveChanges() > 0)
+                var record = _businessPartnerAccountRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _businessPartnerAccountRepository.Remove(record);
+                if (_businessPartnerAccountRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
@@ -114,6 +114,5 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
     }
 }

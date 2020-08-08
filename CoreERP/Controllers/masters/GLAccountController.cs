@@ -9,26 +9,26 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/BankMaster")]
-    public class BankMasterController : ControllerBase
+    [Route("api/GLAccount")]
+    public class GLAccountController : ControllerBase
     {
-        private readonly IRepository<TblBankMaster> _bankMasterRepository;
-        public BankMasterController(IRepository<TblBankMaster> bankMasterRepository)
+        private readonly IRepository<Glaccounts> _glaccountsRepository;
+        public GLAccountController(IRepository<Glaccounts> glaccountsRepository)
         {
-            _bankMasterRepository = bankMasterRepository;
+            _glaccountsRepository = glaccountsRepository;
         }
-        [HttpGet("GetBankMasterList")]
-        public async Task<IActionResult> GetBankMasterList()
+        [HttpGet("GetGLAccountList")]
+        public async Task<IActionResult> GetGLAccountList()
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var bankList = _bankMasterRepository.GetAll();
-                    if (bankList.Count() > 0)
+                    var glList = _glaccountsRepository.GetAll();
+                    if (glList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
-                        expdoObj.bankList = bankList;
+                        expdoObj.glList = glList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
                     else
@@ -42,19 +42,19 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpPost("RegisterBankMaster")]
-        public async Task<IActionResult> RegisterBankMaster([FromBody]TblBankMaster bank)
+        [HttpPost("RegisterGLAccount")]
+        public async Task<IActionResult> RegisterGLAccount([FromBody]Glaccounts glacunts)
         {
             APIResponse apiResponse;
-            if (bank == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(bank)} cannot be null" });
+            if (glacunts == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(glacunts)} cannot be null" });
             else
             {
                 try
                 {
-                    _bankMasterRepository.Add(bank);
-                    if (_bankMasterRepository.SaveChanges() > 0)
-                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bank };
+                    _glaccountsRepository.Add(glacunts);
+                    if (_glaccountsRepository.SaveChanges() > 0)
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = glacunts };
                     else
                         apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -68,18 +68,18 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpPut("UpdateBankMaster")]
-        public async Task<IActionResult> UpdateBankMaster([FromBody] TblBankMaster bank)
+        [HttpPut("UpdateGLAccount")]
+        public async Task<IActionResult> UpdateGLAccount([FromBody] Glaccounts glacunts)
         {
             APIResponse apiResponse = null;
-            if (bank == null)
+            if (glacunts == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
 
             try
             {
-                _bankMasterRepository.Update(bank);
-                if (_bankMasterRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bank };
+                _glaccountsRepository.Update(glacunts);
+                if (_glaccountsRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = glacunts };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -91,8 +91,8 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpDelete("DeleteBankMaster/{code}")]
-        public async Task<IActionResult> DeleteBankMaster(string code)
+        [HttpDelete("DeleteGLAccount/{code}")]
+        public async Task<IActionResult> DeleteGLAccount(string code)
         {
             APIResponse apiResponse = null;
             if (code == null)
@@ -100,9 +100,9 @@ namespace CoreERP.Controllers
 
             try
             {
-                var record = _bankMasterRepository.GetSingleOrDefault(x => x.BankCode.Equals(code));
-                _bankMasterRepository.Remove(record);
-                if (_bankMasterRepository.SaveChanges() > 0)
+                var record = _glaccountsRepository.GetSingleOrDefault(x => x.AccountNumber.Equals(code));
+                _glaccountsRepository.Remove(record);
+                if (_glaccountsRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
@@ -114,6 +114,5 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
     }
 }

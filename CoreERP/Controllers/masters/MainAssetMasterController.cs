@@ -9,26 +9,26 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/BankMaster")]
-    public class BankMasterController : ControllerBase
+    [Route("api/MainAssetMaster")]
+    public class MainAssetMasterController : ControllerBase
     {
-        private readonly IRepository<TblBankMaster> _bankMasterRepository;
-        public BankMasterController(IRepository<TblBankMaster> bankMasterRepository)
+        private readonly IRepository<TblMainAssetMaster> _mainAssetMasterRepository;
+        public MainAssetMasterController(IRepository<TblMainAssetMaster> mainAssetMasterRepository)
         {
-            _bankMasterRepository = bankMasterRepository;
+            _mainAssetMasterRepository = mainAssetMasterRepository;
         }
-        [HttpGet("GetBankMasterList")]
-        public async Task<IActionResult> GetBankMasterList()
+        [HttpGet("GetMainAssetMasterList")]
+        public async Task<IActionResult> GetMainAssetMasterList()
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var bankList = _bankMasterRepository.GetAll();
-                    if (bankList.Count() > 0)
+                    var mamList = _mainAssetMasterRepository.GetAll();
+                    if (mamList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
-                        expdoObj.bankList = bankList;
+                        expdoObj.mamList = mamList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
                     else
@@ -42,19 +42,19 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpPost("RegisterBankMaster")]
-        public async Task<IActionResult> RegisterBankMaster([FromBody]TblBankMaster bank)
+        [HttpPost("RegisterMainAssetMaster")]
+        public async Task<IActionResult> RegisterMainAssetMaster([FromBody]TblMainAssetMaster mam)
         {
             APIResponse apiResponse;
-            if (bank == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(bank)} cannot be null" });
+            if (mam == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(mam)} cannot be null" });
             else
             {
                 try
                 {
-                    _bankMasterRepository.Add(bank);
-                    if (_bankMasterRepository.SaveChanges() > 0)
-                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bank };
+                    _mainAssetMasterRepository.Add(mam);
+                    if (_mainAssetMasterRepository.SaveChanges() > 0)
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = mam };
                     else
                         apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -68,18 +68,18 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpPut("UpdateBankMaster")]
-        public async Task<IActionResult> UpdateBankMaster([FromBody] TblBankMaster bank)
+        [HttpPut("UpdateMainAssetMaster")]
+        public async Task<IActionResult> UpdateMainAssetMaster([FromBody] TblMainAssetMaster mam)
         {
             APIResponse apiResponse = null;
-            if (bank == null)
+            if (mam == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
 
             try
             {
-                _bankMasterRepository.Update(bank);
-                if (_bankMasterRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bank };
+                _mainAssetMasterRepository.Update(mam);
+                if (_mainAssetMasterRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = mam };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -91,8 +91,8 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpDelete("DeleteBankMaster/{code}")]
-        public async Task<IActionResult> DeleteBankMaster(string code)
+        [HttpDelete("DeleteMainAssetMaster/{code}")]
+        public async Task<IActionResult> DeleteMainAssetMaster(string code)
         {
             APIResponse apiResponse = null;
             if (code == null)
@@ -100,9 +100,9 @@ namespace CoreERP.Controllers
 
             try
             {
-                var record = _bankMasterRepository.GetSingleOrDefault(x => x.BankCode.Equals(code));
-                _bankMasterRepository.Remove(record);
-                if (_bankMasterRepository.SaveChanges() > 0)
+                var record = _mainAssetMasterRepository.GetSingleOrDefault(x => x.Id.Equals(code));
+                _mainAssetMasterRepository.Remove(record);
+                if (_mainAssetMasterRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
@@ -114,6 +114,5 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
     }
 }
