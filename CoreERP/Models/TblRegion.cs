@@ -20,6 +20,7 @@ namespace CoreERP.Models
         public string Country { get; set; }
         public string Ext { get; set; }
 
+        public virtual Countries CountryNavigation { get; set; }
         public virtual ICollection<ProfitCenters> ProfitCenters { get; set; }
         public virtual ICollection<SalesDepartment> SalesDepartment { get; set; }
         public virtual ICollection<TblBranch> TblBranch { get; set; }

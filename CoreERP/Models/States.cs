@@ -20,6 +20,8 @@ namespace CoreERP.Models
         public string CountryCode { get; set; }
         public string Language { get; set; }
 
+        public virtual Countries CountryCodeNavigation { get; set; }
+        public virtual TblLanguage LanguageNavigation { get; set; }
         public virtual ICollection<ProfitCenters> ProfitCenters { get; set; }
         public virtual ICollection<SalesDepartment> SalesDepartment { get; set; }
         public virtual ICollection<TblBranch> TblBranch { get; set; }

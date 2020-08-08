@@ -858,6 +858,16 @@ namespace CoreERP.Models
                 entity.Property(e => e.Language).HasMaxLength(5);
 
                 entity.Property(e => e.TimeFormat).HasMaxLength(50);
+
+                entity.HasOne(d => d.CurrencyNavigation)
+                    .WithMany(p => p.Countries)
+                    .HasForeignKey(d => d.Currency)
+                    .HasConstraintName("FK__Countries__Curre__22B6AD3C");
+
+                entity.HasOne(d => d.LanguageNavigation)
+                    .WithMany(p => p.Countries)
+                    .HasForeignKey(d => d.Language)
+                    .HasConstraintName("FK__Countries__Langu__21C28903");
             });
 
             modelBuilder.Entity<Ctcbreakup>(entity =>
@@ -2576,6 +2586,16 @@ namespace CoreERP.Models
                 entity.Property(e => e.StateName)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.HasOne(d => d.CountryCodeNavigation)
+                    .WithMany(p => p.States)
+                    .HasForeignKey(d => d.CountryCode)
+                    .HasConstraintName("FK__States__CountryC__2E285FE8");
+
+                entity.HasOne(d => d.LanguageNavigation)
+                    .WithMany(p => p.States)
+                    .HasForeignKey(d => d.Language)
+                    .HasConstraintName("FK__States__Language__2D343BAF");
             });
 
             modelBuilder.Entity<StructureComponents>(entity =>
@@ -12283,13 +12303,18 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.RegionCode).HasMaxLength(5);
 
-                entity.Property(e => e.Country).HasMaxLength(50);
+                entity.Property(e => e.Country).HasMaxLength(5);
 
                 entity.Property(e => e.Ext)
                     .HasColumnName("ext")
                     .HasMaxLength(50);
 
                 entity.Property(e => e.RegionName).HasMaxLength(5);
+
+                entity.HasOne(d => d.CountryNavigation)
+                    .WithMany(p => p.TblRegion)
+                    .HasForeignKey(d => d.Country)
+                    .HasConstraintName("FK__tbl_Regio__Count__2C401776");
             });
 
             modelBuilder.Entity<TblRejectionInDetails>(entity =>
