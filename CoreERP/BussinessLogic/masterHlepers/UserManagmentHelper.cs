@@ -219,7 +219,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 dynamic expandoObj = new ExpandoObject();
                 expandoObj.displayName = m.DisplayName;
-                expandoObj.iconName = m.ScreenType;
+                expandoObj.screenType = m.ScreenType;
                 expandoObj.route = m.Route;
 
                 if (childerns != null && childerns.Count() > 0)
