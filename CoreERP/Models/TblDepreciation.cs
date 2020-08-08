@@ -9,15 +9,14 @@ namespace CoreERP.Models
         public string Description { get; set; }
         public string DepreciationMethod { get; set; }
         public DateTime? PurchaseWithin { get; set; }
-        public string RatePercentage { get; set; }
-        public decimal? MaxDepreciation { get; set; }
-        public DateTime? Upto { get; set; }
+        public int? RatePercentage { get; set; }
+        public decimal? MaxDepreciationAmount { get; set; }
+        public DateTime? UptoDate { get; set; }
         public string DepreciationDuringLife { get; set; }
-        public string Upto1 { get; set; }
-        public string Upto2 { get; set; }
-        public string Upto3 { get; set; }
-        public string Upto4 { get; set; }
-        public string Upto5 { get; set; }
-        public string Upto6 { get; set; }
+        public decimal? MaxDepreciationRate { get; set; }
+        public int? Upto { get; set; }
+        public int? NoofYears { get; set; }
+        public int? NoofMonths { get; set; }
+        public decimal? Rate { get; set; }
     }
 }

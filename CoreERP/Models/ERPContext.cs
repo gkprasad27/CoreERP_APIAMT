@@ -1194,41 +1194,49 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<Glaccounts>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.AccountNumber)
+                    .HasName("PK_GLAccounts_1");
 
                 entity.ToTable("GLAccounts");
 
-                entity.Property(e => e.AccGroup).HasMaxLength(4);
+                entity.Property(e => e.AccountNumber).HasMaxLength(20);
 
-                entity.Property(e => e.AccountNumber).HasMaxLength(60);
+                entity.Property(e => e.AccGroup).HasMaxLength(5);
 
-                entity.Property(e => e.Active)
-                    .HasMaxLength(1)
-                    .IsUnicode(false)
-                    .IsFixedLength();
+                entity.Property(e => e.BankKey).HasMaxLength(50);
 
-                entity.Property(e => e.AddDate).HasColumnType("datetime");
+                entity.Property(e => e.ChartAccount)
+                    .IsRequired()
+                    .HasMaxLength(10);
 
-                entity.Property(e => e.BalanceType).HasMaxLength(50);
+                entity.Property(e => e.ClearingAccount).HasMaxLength(40);
 
-                entity.Property(e => e.Ext1).HasMaxLength(20);
+                entity.Property(e => e.Company).HasMaxLength(5);
 
-                entity.Property(e => e.Ext2).HasMaxLength(20);
+                entity.Property(e => e.ConsolidatedAccount).HasMaxLength(50);
+
+                entity.Property(e => e.ControlAccount).HasMaxLength(50);
+
+                entity.Property(e => e.CostElementCategory).HasMaxLength(50);
+
+                entity.Property(e => e.Currency).HasMaxLength(2);
 
                 entity.Property(e => e.GlaccountName)
                     .HasColumnName("GLAccountName")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.Glcode)
-                    .IsRequired()
-                    .HasColumnName("GLCode")
-                    .HasMaxLength(20);
+                entity.Property(e => e.LegacyGl)
+                    .HasColumnName("LegacyGL")
+                    .HasMaxLength(50);
 
-                entity.Property(e => e.Nactureofaccount).HasMaxLength(40);
+                entity.Property(e => e.NoPostingAllowed)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
 
-                entity.Property(e => e.OpeningBalance).HasMaxLength(50);
+                entity.Property(e => e.RelevantCashFlow).HasMaxLength(50);
 
-                entity.Property(e => e.StatementType).HasMaxLength(4);
+                entity.Property(e => e.TaxCategory).HasMaxLength(20);
             });
 
             modelBuilder.Entity<Health559>(entity =>
@@ -1548,15 +1556,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.DisplayName)
                     .HasColumnName("displayName")
-                    .HasMaxLength(500);
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.Ext1)
                     .HasColumnName("ext1")
                     .HasMaxLength(50);
-
-                entity.Property(e => e.IconName)
-                    .HasColumnName("iconName")
-                    .HasMaxLength(500);
 
                 entity.Property(e => e.IsMasterScreen)
                     .HasColumnName("isMasterScreen")
@@ -1572,7 +1576,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Route)
                     .HasColumnName("route")
-                    .HasMaxLength(500);
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.ScreenType).HasMaxLength(100);
             });
 
             modelBuilder.Entity<MissingPunch>(entity =>
@@ -6065,25 +6071,15 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
-                entity.Property(e => e.MaxDepreciation).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.MaxDepreciationAmount).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.MaxDepreciationRate).HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.PurchaseWithin).HasColumnType("date");
 
-                entity.Property(e => e.RatePercentage).HasMaxLength(5);
+                entity.Property(e => e.Rate).HasColumnType("numeric(18, 0)");
 
-                entity.Property(e => e.Upto).HasColumnType("date");
-
-                entity.Property(e => e.Upto1).HasMaxLength(50);
-
-                entity.Property(e => e.Upto2).HasMaxLength(50);
-
-                entity.Property(e => e.Upto3).HasMaxLength(50);
-
-                entity.Property(e => e.Upto4).HasMaxLength(50);
-
-                entity.Property(e => e.Upto5).HasMaxLength(50);
-
-                entity.Property(e => e.Upto6).HasMaxLength(50);
+                entity.Property(e => e.UptoDate).HasColumnType("date");
             });
 
             modelBuilder.Entity<TblDepreciationAreas>(entity =>
