@@ -14,7 +14,7 @@ namespace CoreERP.Models
         public DateTime? UptoDate { get; set; }
         public string DepreciationDuringLife { get; set; }
         public decimal? MaxDepreciationRate { get; set; }
-        public int? Upto { get; set; }
+        public string Upto { get; set; }
         public int? NoofYears { get; set; }
         public int? NoofMonths { get; set; }
         public decimal? Rate { get; set; }

@@ -2061,6 +2061,11 @@ namespace CoreERP.Models
                     .HasForeignKey(d => d.Currency)
                     .HasConstraintName("FK__ProfitCen__Curre__57FE9E23");
 
+                entity.HasOne(d => d.LanguageNavigation)
+                    .WithMany(p => p.ProfitCenters)
+                    .HasForeignKey(d => d.Language)
+                    .HasConstraintName("FK__ProfitCen__Langu__34D55D77");
+
                 entity.HasOne(d => d.RegionNavigation)
                     .WithMany(p => p.ProfitCenters)
                     .HasForeignKey(d => d.Region)
@@ -4500,6 +4505,11 @@ namespace CoreERP.Models
                     .HasColumnName("TANNo")
                     .HasMaxLength(50);
 
+                entity.HasOne(d => d.CompanyCodeNavigation)
+                    .WithMany(p => p.TblBranch)
+                    .HasForeignKey(d => d.CompanyCode)
+                    .HasConstraintName("FK__tbl_Branc__Compa__5A06E226");
+
                 entity.HasOne(d => d.CountryNavigation)
                     .WithMany(p => p.TblBranch)
                     .HasForeignKey(d => d.Country)
@@ -5218,15 +5228,10 @@ namespace CoreERP.Models
                     .HasForeignKey(d => d.Currency)
                     .HasConstraintName("FK__tbl_Compa__Curre__5339E906");
 
-                entity.HasOne(d => d.RegionNavigation)
+                entity.HasOne(d => d.LanguageNavigation)
                     .WithMany(p => p.TblCompany)
-                    .HasForeignKey(d => d.Region)
-                    .HasConstraintName("FK__tbl_Compa__Regio__4B98C73E");
-
-                entity.HasOne(d => d.StateNavigation)
-                    .WithMany(p => p.TblCompany)
-                    .HasForeignKey(d => d.State)
-                    .HasConstraintName("FK__tbl_Compa__State__4AA4A305");
+                    .HasForeignKey(d => d.Language)
+                    .HasConstraintName("FK__tbl_Compa__Langu__33E1393E");
             });
 
             modelBuilder.Entity<TblCompanyPath>(entity =>
@@ -6098,6 +6103,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.PurchaseWithin).HasColumnType("date");
 
                 entity.Property(e => e.Rate).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Upto).HasMaxLength(50);
 
                 entity.Property(e => e.UptoDate).HasColumnType("date");
             });
@@ -10594,9 +10601,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.PlantCode).HasMaxLength(5);
 
-                entity.Property(e => e.Address1).HasMaxLength(5);
+                entity.Property(e => e.Address1).HasMaxLength(50);
 
-                entity.Property(e => e.Address2).HasMaxLength(5);
+                entity.Property(e => e.Address2).HasMaxLength(50);
 
                 entity.Property(e => e.City).HasMaxLength(50);
 
@@ -10645,6 +10652,11 @@ namespace CoreERP.Models
                     .WithMany(p => p.TblPlant)
                     .HasForeignKey(d => d.Currency)
                     .HasConstraintName("FK__tbl_Plant__Curre__6188085D");
+
+                entity.HasOne(d => d.LanguageNavigation)
+                    .WithMany(p => p.TblPlant)
+                    .HasForeignKey(d => d.Language)
+                    .HasConstraintName("FK__tbl_Plant__Langu__5AFB065F");
 
                 entity.HasOne(d => d.RegionNavigation)
                     .WithMany(p => p.TblPlant)
@@ -13610,6 +13622,11 @@ namespace CoreERP.Models
                     .WithMany(p => p.TblSalesOffice)
                     .HasForeignKey(d => d.Currency)
                     .HasConstraintName("FK__tbl_Sales__Curre__6B117297");
+
+                entity.HasOne(d => d.LanguageNavigation)
+                    .WithMany(p => p.TblSalesOffice)
+                    .HasForeignKey(d => d.Language)
+                    .HasConstraintName("FK__tbl_Sales__Langu__629C2827");
 
                 entity.HasOne(d => d.RegionNavigation)
                     .WithMany(p => p.TblSalesOffice)
