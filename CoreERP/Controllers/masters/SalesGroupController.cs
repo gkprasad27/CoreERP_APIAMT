@@ -76,7 +76,7 @@ namespace CoreERP.Controllers.masters
             {
                 APIResponse apiResponse;
                 _sgRepository.Update(slgrp);
-                if (_sgRepository != null)
+                if (_sgRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = slgrp };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };

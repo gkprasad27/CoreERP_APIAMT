@@ -75,7 +75,7 @@ namespace CoreERP.Controllers.GeneralLedger
             {
                 APIResponse apiResponse;
                 _ledgerRepository.Update(ledger);
-                if (_ledgerRepository != null)
+                if (_ledgerRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = ledger };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };

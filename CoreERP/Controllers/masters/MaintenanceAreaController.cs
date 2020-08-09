@@ -76,7 +76,7 @@ namespace CoreERP.Controllers.masters
             {
                 APIResponse apiResponse;
                 _maRepository.Update(marea);
-                if (_maRepository != null)
+                if (_maRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = marea };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };

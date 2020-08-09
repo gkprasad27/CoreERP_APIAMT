@@ -51,7 +51,7 @@ namespace CoreERP.Controllers.GeneralLedger
             try
             {
                 var vcclassList = _vcRepository.GetAll();
-                if (vcclassList.Count() > 0)
+                if (_vcRepository.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.vcList = vcclassList;
@@ -76,7 +76,7 @@ namespace CoreERP.Controllers.GeneralLedger
             {
                 APIResponse apiResponse;
                 _vcRepository.Update(vcclass);
-                if (_vcRepository != null)
+                if (_vcRepository.SaveChanges()>0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = vcclass };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };

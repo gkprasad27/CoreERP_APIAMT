@@ -91,7 +91,7 @@ namespace CoreERP.Controllers.GeneralLedger
         }
 
         [HttpDelete("DeleteAssignmentVoucherSeriestoVoucherType/{code}")]
-        public IActionResult DeleteAssignmentVoucherSeriestoVoucherTypeByID(string code)
+        public IActionResult DeleteAssignmentVoucherSeriestoVoucherTypeByID(int code)
         {
             try
             {

@@ -72,7 +72,7 @@ namespace CoreERP.Controllers.GL
             {
                 APIResponse apiResponse;
                 _olRepository.Update(ledger);
-                if (_olRepository != null)
+                if (_olRepository.SaveChanges() > 0)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = ledger });
                 else
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });

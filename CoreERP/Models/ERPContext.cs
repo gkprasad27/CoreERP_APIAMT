@@ -1470,7 +1470,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
 
-                entity.Property(e => e.LedgerType).HasMaxLength(5);
+                entity.Property(e => e.LedgerType).HasMaxLength(50);
             });
 
             modelBuilder.Entity<LedgerType>(entity =>
@@ -3789,8 +3789,6 @@ namespace CoreERP.Models
                 entity.HasKey(e => e.Code);
 
                 entity.ToTable("tbl_AssignmentVoucherSeriestoVoucherType");
-
-                entity.Property(e => e.Code).HasMaxLength(5);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
 
@@ -10833,21 +10831,15 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Posting");
 
-                entity.Property(e => e.Code).HasMaxLength(5);
+                entity.Property(e => e.Branch).HasMaxLength(5);
 
-                entity.Property(e => e.Date).HasColumnType("date");
-
-                entity.Property(e => e.Description).HasMaxLength(50);
-
-                entity.Property(e => e.Ext)
-                    .HasColumnName("ext")
-                    .HasMaxLength(50);
+                entity.Property(e => e.Company).HasMaxLength(5);
 
                 entity.Property(e => e.Glaccount)
                     .HasColumnName("GLAccount")
                     .HasMaxLength(5);
 
-                entity.Property(e => e.IncomeType).HasMaxLength(5);
+                entity.Property(e => e.Plant).HasMaxLength(5);
 
                 entity.Property(e => e.Tdsrate)
                     .HasColumnName("TDSRate")
@@ -15958,6 +15950,8 @@ namespace CoreERP.Models
                     .HasColumnName("CGST")
                     .HasColumnType("decimal(18, 0)");
 
+                entity.Property(e => e.CompositeCess).HasColumnType("decimal(18, 0)");
+
                 entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.Property(e => e.Igst)
@@ -15972,7 +15966,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.TaxTransaction).HasMaxLength(5);
 
-                entity.Property(e => e.TaxType).HasMaxLength(5);
+                entity.Property(e => e.TaxType).HasMaxLength(50);
 
                 entity.Property(e => e.Ugst)
                     .HasColumnName("UGST")

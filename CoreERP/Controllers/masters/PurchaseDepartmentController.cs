@@ -75,7 +75,7 @@ namespace CoreERP.Controllers.masters
             {
                 APIResponse apiResponse;
                 _pdRepository.Update(prdept);
-                if (_pdRepository != null)
+                if (_pdRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = prdept };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };

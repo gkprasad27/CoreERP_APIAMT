@@ -107,7 +107,7 @@ namespace CoreERP.Controllers.GL
             {
                 APIResponse apiResponse;
                 _vtRepository.Update(vouchertype);
-                if (_vtRepository != null)
+                if (_vtRepository.SaveChanges()>0)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = vouchertype });
                 else
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
