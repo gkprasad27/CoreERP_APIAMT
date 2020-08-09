@@ -12,17 +12,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
     public class GLHelper
     {
 
-        public static IEnumerable<GlaccGroup> GetGLAccountGroupList(string accountGroupCode = null)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(accountGroupCode))
-                    return Repository<GlaccGroup>.Instance.GetAll().OrderBy(x => x.GroupCode);
-                else
-                    return Repository<GlaccGroup>.Instance.Where(x => x.GroupCode == accountGroupCode);
-            }
-            catch { throw; }
-        }
+        //public static IEnumerable<GlaccGroup> GetGLAccountGroupList(string accountGroupCode = null)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(accountGroupCode))
+        //            return Repository<GlaccGroup>.Instance.GetAll().OrderBy(x => x.GroupCode);
+        //        else
+        //            return Repository<GlaccGroup>.Instance.Where(x => x.GroupCode == accountGroupCode);
+        //    }
+        //    catch { throw; }
+        //}
         //public static List<MatTranTypes> GetMatTranTypesList()
         //{
         //    try
@@ -205,30 +205,30 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         #endregion
 
         #region Tbl Account Group
-        public IEnumerable<TblAccountGroup> GetGLUnderSubGroupList([Optional] int underSubGroupCode)
-        {
-            try
-            {
-                return Repository<TblAccountGroup>.Instance.Where(x => x.GroupUnder == underSubGroupCode);
-            }
-            catch { throw; }
-        }
+        //public IEnumerable<TblAccountGroup> GetGLUnderSubGroupList([Optional] int underSubGroupCode)
+        //{
+        //    try
+        //    {
+        //        return Repository<TblAccountGroup>.Instance.Where(x => x.GroupUnder == underSubGroupCode);
+        //    }
+        //    catch { throw; }
+        //}
 
-        public IEnumerable<TblAccountGroup> GetTblAccountGroupList([Optional] string GLGroup)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(GLGroup))
-                {
-                    return Repository<TblAccountGroup>.Instance.GetAll().OrderBy(x => x.Nature);
-                }
-                else
-                {
-                    return Repository<TblAccountGroup>.Instance.Where(x => x.Nature == GLGroup);
-                }
-            }
-            catch { throw; }
-        }
+        //public IEnumerable<TblAccountGroup> GetTblAccountGroupList([Optional] string GLGroup)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(GLGroup))
+        //        {
+        //            return Repository<TblAccountGroup>.Instance.GetAll().OrderBy(x => x.Nature);
+        //        }
+        //        else
+        //        {
+        //            return Repository<TblAccountGroup>.Instance.Where(x => x.Nature == GLGroup);
+        //        }
+        //    }
+        //    catch { throw; }
+        //}
         //public static List<GlaccUnderSubGroup> GetGLUnderSubGroupList(string underSubGroupCode)
         //{
         //    try

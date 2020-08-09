@@ -1,5 +1,4 @@
-﻿using CoreERP.BussinessLogic.GenerlLedger;
-using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,9 +12,11 @@ namespace CoreERP.Controllers.GL
     public class GLAccUnderSubGroupController : ControllerBase
     {
         private readonly IRepository<TblAccountGroup> _glaugRepository;
-        public GLAccUnderSubGroupController(IRepository<TblAccountGroup> glaugRepository)
+        private readonly IRepository<GlaccGroup> _glgroupRepository;
+        public GLAccUnderSubGroupController(IRepository<TblAccountGroup> glaugRepository,IRepository<GlaccGroup>glgroupRepository)
         {
             _glaugRepository = glaugRepository;
+            _glgroupRepository = glgroupRepository;
         }
 
         [HttpPost("RegisterTblAccGroup")]
@@ -98,9 +99,15 @@ namespace CoreERP.Controllers.GL
             {
                 try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.GetAccountNamelist = new GLHelper().GetGLUnderSubGroupList(undersubgroup).Select(a => new { ID = a.AccountGroupId, TEXT = a.AccountGroupName });
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    var GetAccountNamelist = _glaugRepository.Where(x=>x.GroupUnder== undersubgroup);
+                    if (GetAccountNamelist.Count() > 0)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.GetAccountNamelist = GetAccountNamelist;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
                 }
                 catch (Exception ex)
                 {
@@ -118,15 +125,16 @@ namespace CoreERP.Controllers.GL
         {
             try
             {
-                var tblAccountGroupList = new GLHelper().GetTblAccountGroupList();
-                if (tblAccountGroupList != null)
+                
+                var tblAccountGroupList = _glaugRepository.GetAll().OrderBy(x=>x.AccountGroupId);
+                if (tblAccountGroupList.Count() > 0)
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.tblAccountGroupList = tblAccountGroupList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.tblAccountGroupList = tblAccountGroupList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
             }
             catch (Exception ex)
             {
@@ -139,9 +147,16 @@ namespace CoreERP.Controllers.GL
         {
             try
             {
-                dynamic expando = new ExpandoObject();
-                expando.GLAccGroupList = GLHelper.GetGLAccountGroupList().Select(a => new { ID = a.GroupCode, TEXT = a.GroupName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                
+                var GLAccGroupList = _glgroupRepository.GetAll().OrderBy(x => x.GroupCode);
+                if (GLAccGroupList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.GLAccGroupList = GLAccGroupList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
             }
             catch (Exception ex)
             {
@@ -154,9 +169,16 @@ namespace CoreERP.Controllers.GL
         {
             try
             {
-                dynamic expando = new ExpandoObject();
-                expando.GetAccountNamelist = new GLHelper().GetTblAccountGroupList(nature).Select(a => new { ID = a.AccountGroupId, TEXT = a.AccountGroupName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+              
+                var GetAccountNamelist = _glaugRepository.Where(x => x.Nature == nature);
+                if (GetAccountNamelist.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.GetAccountNamelist = GetAccountNamelist;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
             }
             catch (Exception ex)
             {
@@ -170,9 +192,16 @@ namespace CoreERP.Controllers.GL
 
             try
             {
-                dynamic expando = new ExpandoObject();
-                expando.GetAccountSubGrouplist = new GLHelper().GetGLUnderSubGroupList(glaccGroupCode).Select(a => new { ID = a.AccountGroupId, TEXT = a.AccountGroupName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+               
+                var GetAccountSubGrouplist = _glaugRepository.Where(x => x.GroupUnder == glaccGroupCode);
+                if (GetAccountSubGrouplist.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.GetAccountSubGrouplist = GetAccountSubGrouplist;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
             }
             catch (Exception ex)
             {
