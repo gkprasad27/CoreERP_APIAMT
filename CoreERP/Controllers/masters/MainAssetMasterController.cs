@@ -100,7 +100,7 @@ namespace CoreERP.Controllers
 
             try
             {
-                var record = _mainAssetMasterRepository.GetSingleOrDefault(x => x.Id.Equals(code));
+                var record = _mainAssetMasterRepository.GetSingleOrDefault(x => x.AssetNumber.Equals(code));
                 _mainAssetMasterRepository.Remove(record);
                 if (_mainAssetMasterRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };

@@ -325,6 +325,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblUserNew> TblUserNew { get; set; }
         public virtual DbSet<TblUserProductBranch> TblUserProductBranch { get; set; }
         public virtual DbSet<TblUserRolePrivilege> TblUserRolePrivilege { get; set; }
+        public virtual DbSet<TblUserTest> TblUserTest { get; set; }
         public virtual DbSet<TblVchType> TblVchType { get; set; }
         public virtual DbSet<TblVehicle> TblVehicle { get; set; }
         public virtual DbSet<TblVehicleType> TblVehicleType { get; set; }
@@ -4490,10 +4491,6 @@ namespace CoreERP.Models
                     .HasColumnName("GSTNO")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.Ifsccode)
                     .HasColumnName("IFSCCode")
                     .HasMaxLength(15);
@@ -8194,10 +8191,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ext1).HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.Location).HasMaxLength(50);
 
                 entity.Property(e => e.MaterialNo).HasMaxLength(50);
@@ -11894,7 +11887,7 @@ namespace CoreERP.Models
                 entity.Property(e => e.RackName)
                     .HasColumnName("rackName")
                     .IsUnicode(false);
-            });              
+            });
 
             modelBuilder.Entity<TblReceiptDetails>(entity =>
             {
@@ -15375,10 +15368,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.MainAssetNo).HasMaxLength(15);
             });
 
@@ -15665,6 +15654,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
+                entity.Property(e => e.EffectiveFrom).HasColumnType("date");
+
                 entity.Property(e => e.Igst)
                     .HasColumnName("IGST")
                     .HasColumnType("decimal(18, 0)");
@@ -15782,6 +15773,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.Code).HasMaxLength(5);
 
                 entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.TaxType).HasMaxLength(5);
             });
 
             modelBuilder.Entity<TblTaxtypes>(entity =>
@@ -15794,9 +15787,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
-                entity.Property(e => e.Ext).HasMaxLength(50);
-
                 entity.Property(e => e.Ext1).HasMaxLength(50);
+
+                entity.Property(e => e.Nature).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblTdsRates>(entity =>
@@ -16241,7 +16234,39 @@ namespace CoreERP.Models
                 entity.Property(e => e.View)
                     .HasColumnName("view")
                     .HasDefaultValueSql("((0))");
-            });            
+            });
+
+            modelBuilder.Entity<TblUserTest>(entity =>
+            {
+                entity.HasKey(e => e.UserId)
+                    .HasName("tbl_user_test_id");
+
+                entity.ToTable("tbl_User_Test");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Active).HasColumnName("active");
+
+                entity.Property(e => e.FullName)
+                    .HasColumnName("fullName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Password)
+                    .HasColumnName("password")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RoleId)
+                    .HasColumnName("roleId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
 
             modelBuilder.Entity<TblVchType>(entity =>
             {
