@@ -30,7 +30,6 @@ namespace CoreERP.Models
         public virtual DbSet<Ctcbreakup> Ctcbreakup { get; set; }
         public virtual DbSet<Department> Department { get; set; }
         public virtual DbSet<Departments> Departments { get; set; }
-        public virtual DbSet<DividentTest> DividentTest { get; set; }
         public virtual DbSet<Divisions> Divisions { get; set; }
         public virtual DbSet<EmployeeInBranches> EmployeeInBranches { get; set; }
         public virtual DbSet<ErpConfiguration> ErpConfiguration { get; set; }
@@ -39,7 +38,6 @@ namespace CoreERP.Models
         public virtual DbSet<GeneralLedgerAccounts> GeneralLedgerAccounts { get; set; }
         public virtual DbSet<GlaccGroup> GlaccGroup { get; set; }
         public virtual DbSet<Glaccounts> Glaccounts { get; set; }
-        public virtual DbSet<Health559> Health559 { get; set; }
         public virtual DbSet<LeaveApplDetails> LeaveApplDetails { get; set; }
         public virtual DbSet<LeaveBalanceMaster> LeaveBalanceMaster { get; set; }
         public virtual DbSet<LeaveTypes> LeaveTypes { get; set; }
@@ -60,14 +58,9 @@ namespace CoreERP.Models
         public virtual DbSet<Ptmaster> Ptmaster { get; set; }
         public virtual DbSet<PurchaseRequisitionMaster> PurchaseRequisitionMaster { get; set; }
         public virtual DbSet<PurchaseRequisitiondetails> PurchaseRequisitiondetails { get; set; }
-        public virtual DbSet<RebateSus558> RebateSus558 { get; set; }
-        public virtual DbSet<Roundtest> Roundtest { get; set; }
         public virtual DbSet<SalaryEarnDedn> SalaryEarnDedn { get; set; }
         public virtual DbSet<SalesDepartment> SalesDepartment { get; set; }
         public virtual DbSet<Segment> Segment { get; set; }
-        public virtual DbSet<Sheet1> Sheet1 { get; set; }
-        public virtual DbSet<Sheet1Openig> Sheet1Openig { get; set; }
-        public virtual DbSet<Sheet1Stock> Sheet1Stock { get; set; }
         public virtual DbSet<Sizes> Sizes { get; set; }
         public virtual DbSet<Smsstatus> Smsstatus { get; set; }
         public virtual DbSet<States> States { get; set; }
@@ -249,8 +242,6 @@ namespace CoreERP.Models
         public virtual DbSet<TblQuickLaunchItems> TblQuickLaunchItems { get; set; }
         public virtual DbSet<TblQuickLaunchItemsToCopy> TblQuickLaunchItemsToCopy { get; set; }
         public virtual DbSet<TblRack> TblRack { get; set; }
-        public virtual DbSet<TblRebateMaster> TblRebateMaster { get; set; }
-        public virtual DbSet<TblRebateType> TblRebateType { get; set; }
         public virtual DbSet<TblReceiptDetails> TblReceiptDetails { get; set; }
         public virtual DbSet<TblReceiptMaster> TblReceiptMaster { get; set; }
         public virtual DbSet<TblRegion> TblRegion { get; set; }
@@ -334,7 +325,6 @@ namespace CoreERP.Models
         public virtual DbSet<TblUserNew> TblUserNew { get; set; }
         public virtual DbSet<TblUserProductBranch> TblUserProductBranch { get; set; }
         public virtual DbSet<TblUserRolePrivilege> TblUserRolePrivilege { get; set; }
-        public virtual DbSet<TblUserTest> TblUserTest { get; set; }
         public virtual DbSet<TblVchType> TblVchType { get; set; }
         public virtual DbSet<TblVehicle> TblVehicle { get; set; }
         public virtual DbSet<TblVehicleType> TblVehicleType { get; set; }
@@ -986,29 +976,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.ResponsiblePersonCode).HasMaxLength(5);
             });
 
-            modelBuilder.Entity<DividentTest>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("DividentTest$");
-
-                entity.Property(e => e.Code).HasColumnName("code");
-
-                entity.Property(e => e.Final).HasColumnName("final");
-
-                entity.Property(e => e.PartyId)
-                    .HasColumnName("party_id")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.PartyName)
-                    .HasColumnName("party_name")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.Payment)
-                    .HasColumnName("payment")
-                    .HasMaxLength(255);
-            });
-
             modelBuilder.Entity<Divisions>(entity =>
             {
                 entity.HasKey(e => e.Code);
@@ -1247,27 +1214,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.RelevantCashFlow).HasMaxLength(50);
 
                 entity.Property(e => e.TaxCategory).HasMaxLength(20);
-            });
-
-            modelBuilder.Entity<Health559>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("HEALTH559$");
-
-                entity.Property(e => e.Code)
-                    .HasColumnName("code")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.Final).HasColumnName("final");
-
-                entity.Property(e => e.PartyId)
-                    .HasColumnName("party_id")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.PartyName)
-                    .HasColumnName("party_name")
-                    .HasMaxLength(255);
             });
 
             modelBuilder.Entity<LeaveApplDetails>(entity =>
@@ -2173,46 +2119,6 @@ namespace CoreERP.Models
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<RebateSus558>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("RebateSus558$");
-
-                entity.Property(e => e.PartyCode)
-                    .HasColumnName("partyCode")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.PartyId)
-                    .HasColumnName("party_id")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.PartyName)
-                    .HasColumnName("party_name")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.TotRebate).HasColumnName("tot_rebate");
-            });
-
-            modelBuilder.Entity<Roundtest>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("ROUNDTEST");
-
-                entity.Property(e => e.BranchCode).HasColumnName("branchCode");
-
-                entity.Property(e => e.Date)
-                    .HasColumnName("date")
-                    .HasColumnType("date");
-
-                entity.Property(e => e.Ledgercode).HasColumnName("ledgercode");
-
-                entity.Property(e => e.Roundoff)
-                    .HasColumnName("ROUNDOFF")
-                    .HasColumnType("decimal(18, 2)");
-            });
-
             modelBuilder.Entity<SalaryEarnDedn>(entity =>
             {
                 entity.HasKey(e => new { e.SalMonth, e.SalYear, e.EmpCode, e.EarnDednCode });
@@ -2377,133 +2283,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Name)
                     .HasMaxLength(40)
                     .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<Sheet1>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("Sheet1$");
-
-                entity.Property(e => e.BranchCode).HasColumnName("branchCode");
-
-                entity.Property(e => e.BranchId).HasColumnName("branchID");
-
-                entity.Property(e => e.F14).HasMaxLength(255);
-
-                entity.Property(e => e.InvoiceNo)
-                    .HasColumnName("invoiceNo")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.InwardQty).HasColumnName("inwardQty");
-
-                entity.Property(e => e.ProductCode)
-                    .HasColumnName("productCode")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.ProductId).HasColumnName("productId");
-
-                entity.Property(e => e.ProductName)
-                    .HasColumnName("productName")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.ShiftId).HasColumnName("shiftId");
-
-                entity.Property(e => e.TransactionDate).HasColumnType("datetime");
-
-                entity.Property(e => e.UserId).HasColumnName("userId");
-
-                entity.Property(e => e.VoucherNo).HasColumnName("voucherNo");
-
-                entity.Property(e => e.VoucherTypeId)
-                    .HasColumnName("voucherTypeId")
-                    .HasMaxLength(255);
-            });
-
-            modelBuilder.Entity<Sheet1Openig>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("Sheet1$_Openig");
-
-                entity.Property(e => e.BranchId).HasColumnName("BranchID");
-
-                entity.Property(e => e.BranchName).HasMaxLength(255);
-
-                entity.Property(e => e.Credits).HasColumnName("credits");
-
-                entity.Property(e => e.Debits).HasColumnName("debits");
-
-                entity.Property(e => e.EmployeeId).HasColumnName("employeeId");
-
-                entity.Property(e => e.LedgerCode).HasColumnName("ledgerCode");
-
-                entity.Property(e => e.LedgerId).HasColumnName("ledgerId");
-
-                entity.Property(e => e.LedgerName)
-                    .HasColumnName("ledgerName")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.Narration)
-                    .HasColumnName("narration")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.OpeningBalanceDate)
-                    .HasColumnName("openingBalanceDate")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.PaymentTypeId).HasColumnName("paymentTypeId");
-
-                entity.Property(e => e.PaymentTypeName)
-                    .HasColumnName("paymentTypeName")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.ShiftId).HasColumnName("shiftId");
-
-                entity.Property(e => e.UserId).HasColumnName("userId");
-
-                entity.Property(e => e.UserName)
-                    .HasColumnName("userName")
-                    .HasMaxLength(255);
-            });
-
-            modelBuilder.Entity<Sheet1Stock>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("Sheet1$_Stock");
-
-                entity.Property(e => e.BranchCode).HasColumnName("branchCode");
-
-                entity.Property(e => e.BranchId).HasColumnName("branchID");
-
-                entity.Property(e => e.InvoiceNo)
-                    .HasColumnName("invoiceNo")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.InwardQty).HasColumnName("inwardQty");
-
-                entity.Property(e => e.ProductCode)
-                    .HasColumnName("productCode")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.ProductId).HasColumnName("productId");
-
-                entity.Property(e => e.ProductName)
-                    .HasColumnName("productName")
-                    .HasMaxLength(255);
-
-                entity.Property(e => e.ShiftId).HasColumnName("shiftId");
-
-                entity.Property(e => e.TransactionDate).HasColumnType("datetime");
-
-                entity.Property(e => e.UserId).HasColumnName("userId");
-
-                entity.Property(e => e.VoucherNo).HasColumnName("voucherNo");
-
-                entity.Property(e => e.VoucherTypeId)
-                    .HasColumnName("voucherTypeId")
-                    .HasMaxLength(255);
             });
 
             modelBuilder.Entity<Sizes>(entity =>
@@ -12115,75 +11894,7 @@ namespace CoreERP.Models
                 entity.Property(e => e.RackName)
                     .HasColumnName("rackName")
                     .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<TblRebateMaster>(entity =>
-            {
-                entity.HasKey(e => e.RebateMasterId)
-                    .HasName("PK__tbl__RebateMaster");
-
-                entity.ToTable("tbl_RebateMaster");
-
-                entity.Property(e => e.RebateMasterId)
-                    .HasColumnName("rebateMasterId")
-                    .HasColumnType("numeric(18, 0)")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.DieselQty)
-                    .HasColumnName("dieselQty")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.FineAmount)
-                    .HasColumnName("fineAmount")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.IsActive).HasColumnName("isActive");
-
-                entity.Property(e => e.MemberCretiria)
-                    .HasColumnName("memberCretiria")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.RebateId)
-                    .HasColumnName("rebateId")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.RebateName)
-                    .IsRequired()
-                    .HasColumnName("rebateName")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.RebatePerLtr)
-                    .HasColumnName("rebatePerLtr")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.SparesPercentage)
-                    .HasColumnName("sparesPercentage")
-                    .HasColumnType("numeric(18, 2)");
-
-                entity.HasOne(d => d.Rebate)
-                    .WithMany(p => p.TblRebateMaster)
-                    .HasForeignKey(d => d.RebateId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("RebateMaster_Rebate_fk");
-            });
-
-            modelBuilder.Entity<TblRebateType>(entity =>
-            {
-                entity.HasKey(e => e.RebateId)
-                    .HasName("PK__tbl_Rebate");
-
-                entity.ToTable("tbl_RebateType");
-
-                entity.Property(e => e.RebateId)
-                    .HasColumnName("rebateId")
-                    .HasColumnType("numeric(18, 0)")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.RebateName)
-                    .IsRequired()
-                    .HasColumnName("rebateName")
-                    .IsUnicode(false);
-            });
+            });              
 
             modelBuilder.Entity<TblReceiptDetails>(entity =>
             {
@@ -16530,39 +16241,7 @@ namespace CoreERP.Models
                 entity.Property(e => e.View)
                     .HasColumnName("view")
                     .HasDefaultValueSql("((0))");
-            });
-
-            modelBuilder.Entity<TblUserTest>(entity =>
-            {
-                entity.HasKey(e => e.UserId)
-                    .HasName("tbl_user_test_id");
-
-                entity.ToTable("tbl_User_Test");
-
-                entity.Property(e => e.UserId)
-                    .HasColumnName("userId")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.Active).HasColumnName("active");
-
-                entity.Property(e => e.FullName)
-                    .HasColumnName("fullName")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Password)
-                    .HasColumnName("password")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.RoleId)
-                    .HasColumnName("roleId")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.UserName)
-                    .HasColumnName("userName")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            });
+            });            
 
             modelBuilder.Entity<TblVchType>(entity =>
             {
