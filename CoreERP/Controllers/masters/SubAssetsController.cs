@@ -9,30 +9,30 @@ using System.Threading.Tasks;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/BusienessPartnerAccount")]
-    public class BusienessPartnerAccountController : ControllerBase
+    [Route("api/SubAssets")]
+    public class SubAssetsController : ControllerBase
     {
-        private readonly IRepository<TblBusinessPartnerAccount> _businessPartnerAccountRepository;
-        public BusienessPartnerAccountController(IRepository<TblBusinessPartnerAccount> businessPartnerAccountRepository)
+        private readonly IRepository<TblSubAssetMaster> _subAssetMasterRepository;
+        public SubAssetsController(IRepository<TblSubAssetMaster> subAssetMasterRepository)
         {
-            _businessPartnerAccountRepository = businessPartnerAccountRepository;
+            _subAssetMasterRepository = subAssetMasterRepository;
         }
-        [HttpGet("GetBusienessPartnerAccountList")]
-        public async Task<IActionResult> GetBusienessPartnerAccountList()
+        [HttpGet("GetSubAssetsList")]
+        public async Task<IActionResult> GetSubAssetsList()
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var bpaList = _businessPartnerAccountRepository.GetAll();
-                    if (bpaList.Count() > 0)
+                    var saList = _subAssetMasterRepository.GetAll();
+                    if (saList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
-                        expdoObj.bpaList = bpaList;
+                        expdoObj.saList = saList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
                     else
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for BusienessPartnerAccount." });
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for SubAssets." });
                 }
                 catch (Exception ex)
                 {
@@ -42,19 +42,19 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpPost("RegisterBusienessPartnerAccount")]
-        public async Task<IActionResult> RegisterBusienessPartnerAccount([FromBody]TblBusinessPartnerAccount bpa)
+        [HttpPost("RegisterSubAssets")]
+        public async Task<IActionResult> RegisterSubAssets([FromBody]TblSubAssetMaster sam)
         {
             APIResponse apiResponse;
-            if (bpa == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(bpa)} cannot be null" });
+            if (sam == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(sam)} cannot be null" });
             else
             {
                 try
                 {
-                    _businessPartnerAccountRepository.Add(bpa);
-                    if (_businessPartnerAccountRepository.SaveChanges() > 0)
-                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bpa };
+                    _subAssetMasterRepository.Add(sam);
+                    if (_subAssetMasterRepository.SaveChanges() > 0)
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = sam };
                     else
                         apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -68,18 +68,18 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpPut("UpdateBusienessPartnerAccount")]
-        public async Task<IActionResult> UpdateBusienessPartnerAccount([FromBody] TblBusinessPartnerAccount bpa)
+        [HttpPut("UpdateSubAssets")]
+        public async Task<IActionResult> UpdateSubAssets([FromBody] TblSubAssetMaster sam)
         {
             APIResponse apiResponse = null;
-            if (bpa == null)
+            if (sam == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
 
             try
             {
-                _businessPartnerAccountRepository.Update(bpa);
-                if (_businessPartnerAccountRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bpa };
+                _subAssetMasterRepository.Update(sam);
+                if (_subAssetMasterRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = sam };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -91,8 +91,8 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpDelete("DeleteBusienessPartnerAccount/{code}")]
-        public async Task<IActionResult> DeleteBusienessPartnerAccount(string code)
+        [HttpDelete("DeleteSubAssets/{code}")]
+        public async Task<IActionResult> DeleteSubAssets(string code)
         {
             APIResponse apiResponse = null;
             if (code == null)
@@ -100,9 +100,9 @@ namespace CoreERP.Controllers
 
             try
             {
-                var record = _businessPartnerAccountRepository.GetSingleOrDefault(x => x.Code.Equals(code));
-                _businessPartnerAccountRepository.Remove(record);
-                if (_businessPartnerAccountRepository.SaveChanges() > 0)
+                var record = _subAssetMasterRepository.GetSingleOrDefault(x => x.SubAssetNumber.Equals(code));
+                _subAssetMasterRepository.Remove(record);
+                if (_subAssetMasterRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
