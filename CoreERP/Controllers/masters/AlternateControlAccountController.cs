@@ -90,7 +90,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeleteAlternateControlAccount/{code}")]
-        public IActionResult DeleteAlternateControlAccountbyID(string code)
+        public IActionResult DeleteAlternateControlAccountbyID(int code)
         {
             try
             {
