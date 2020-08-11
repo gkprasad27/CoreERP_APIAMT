@@ -2552,38 +2552,21 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccountGroupId)
                     .HasColumnName("accountGroupId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasMaxLength(10);
 
                 entity.Property(e => e.AccountGroupName)
                     .HasColumnName("accountGroupName")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.AffectGrossProfit)
-                    .HasColumnName("affectGrossProfit")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Extra1)
-                    .HasColumnName("extra1")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Extra2)
-                    .HasColumnName("extra2")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ExtraDate)
-                    .HasColumnName("extraDate")
-                    .HasColumnType("datetime");
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.GroupUnder)
                     .HasColumnName("groupUnder")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasMaxLength(10);
 
                 entity.Property(e => e.IsDefault).HasColumnName("isDefault");
 
                 entity.Property(e => e.Narration)
                     .HasColumnName("narration")
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Nature)
                     .HasColumnName("nature")
@@ -3189,11 +3172,11 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_AlternateControlAccTrans");
 
-                entity.Property(e => e.Code).HasMaxLength(5);
-
                 entity.Property(e => e.AlternativeControlAccount).HasMaxLength(50);
 
-                entity.Property(e => e.Description).HasMaxLength(50);
+                entity.Property(e => e.ChartofAccount).HasMaxLength(5);
+
+                entity.Property(e => e.Company).HasMaxLength(5);
 
                 entity.Property(e => e.NormalControlAccount).HasMaxLength(50);
             });
@@ -3346,6 +3329,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.LowValueAssetClass).HasMaxLength(5);
 
+                entity.Property(e => e.Nature).HasMaxLength(50);
+
                 entity.Property(e => e.NumberRange).HasMaxLength(5);
             });
 
@@ -3473,13 +3458,9 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_AssignAccountkeytoAsset");
 
-                entity.Property(e => e.Code).HasMaxLength(5);
-
                 entity.Property(e => e.AccountKey).HasMaxLength(5);
 
                 entity.Property(e => e.AssetClass).HasMaxLength(5);
-
-                entity.Property(e => e.Description).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblAssignAssetClasstoBlockAsset>(entity =>
@@ -3505,17 +3486,19 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Code).HasMaxLength(5);
 
+                entity.Property(e => e.Branch).HasMaxLength(5);
+
                 entity.Property(e => e.Cgstgl)
                     .HasColumnName("CGSTGL")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.Description).HasMaxLength(50);
-
-                entity.Property(e => e.Ext).HasMaxLength(50);
+                entity.Property(e => e.Company).HasMaxLength(5);
 
                 entity.Property(e => e.Igstgl)
                     .HasColumnName("IGSTGL")
                     .HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
 
                 entity.Property(e => e.Sgstgl)
                     .HasColumnName("SGSTGL")
@@ -3553,13 +3536,9 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Assignment");
 
-                entity.Property(e => e.Code).HasMaxLength(5);
-
                 entity.Property(e => e.Bpgroup)
                     .HasColumnName("BPGroup")
                     .HasMaxLength(5);
-
-                entity.Property(e => e.Desctiption).HasMaxLength(50);
 
                 entity.Property(e => e.NumberRangeKey).HasMaxLength(5);
             });
@@ -5864,8 +5843,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Code).HasMaxLength(5);
 
-                entity.Property(e => e.DepreciationDuringLife).HasMaxLength(5);
-
                 entity.Property(e => e.DepreciationMethod).HasMaxLength(50);
 
                 entity.Property(e => e.Description).HasMaxLength(50);
@@ -5874,13 +5851,19 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.MaxDepreciationRate).HasColumnType("numeric(18, 0)");
 
-                entity.Property(e => e.PurchaseWithin).HasColumnType("date");
+                entity.Property(e => e.PurchaseWithin).HasMaxLength(5);
 
-                entity.Property(e => e.Rate).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.Rate).HasColumnName("%Rate");
 
-                entity.Property(e => e.Upto).HasMaxLength(50);
+                entity.Property(e => e.Upto1Months).HasColumnName("UPto1Months");
 
-                entity.Property(e => e.UptoDate).HasColumnType("date");
+                entity.Property(e => e.Upto1Rate).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Upto2Rate).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Upto3Rate).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Upto4Rate).HasColumnType("numeric(18, 0)");
             });
 
             modelBuilder.Entity<TblDepreciationAreas>(entity =>
@@ -9942,13 +9925,14 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblPaymentTerms>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.Code)
+                    .HasName("PK_tbl_PaymentTerms_1");
 
                 entity.ToTable("tbl_PaymentTerms");
 
                 entity.Property(e => e.Code).HasMaxLength(5);
 
-                entity.Property(e => e.Narration).HasMaxLength(50);
+                entity.Property(e => e.Description).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblPaymentType>(entity =>

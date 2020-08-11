@@ -11,5 +11,6 @@ namespace CoreERP.Models
         public string ClassType { get; set; }
         public string LowValueAssetClass { get; set; }
         public string AssetLowValue { get; set; }
+        public string Nature { get; set; }
     }
 }

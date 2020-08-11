@@ -10,7 +10,8 @@ namespace CoreERP.Models
         public string Cgstgl { get; set; }
         public string Igstgl { get; set; }
         public string Ugstgl { get; set; }
-        public string Description { get; set; }
-        public string Ext { get; set; }
+        public string Company { get; set; }
+        public string Branch { get; set; }
+        public string Plant { get; set; }
     }
 }

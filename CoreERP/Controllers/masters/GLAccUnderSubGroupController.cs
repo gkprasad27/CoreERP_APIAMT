@@ -29,7 +29,6 @@ namespace CoreERP.Controllers.GL
             {
                 APIResponse apiResponse;
 
-                tblAccGrp.ExtraDate = DateTime.Now;
                 tblAccGrp.IsDefault = false;
 
                 _glaugRepository.Add(tblAccGrp);
@@ -53,7 +52,6 @@ namespace CoreERP.Controllers.GL
 
             try
             {
-                tblAccGrp.ExtraDate = DateTime.Now;
                 tblAccGrp.IsDefault = false;
 
                 APIResponse apiResponse;
@@ -93,7 +91,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetGLUnderSubGroupList/{undersubgroup}")]
-        public IActionResult GetGLUnderSubGroupList(int undersubgroup)
+        public IActionResult GetGLUnderSubGroupList(string undersubgroup)
         {
             try
             {
@@ -187,7 +185,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpGet("GetAccountGrouplist/{glaccGroupCode}")]
-        public IActionResult GetAccountSubGrouplist(int glaccGroupCode)
+        public IActionResult GetAccountSubGrouplist(string glaccGroupCode)
         {
 
             try
