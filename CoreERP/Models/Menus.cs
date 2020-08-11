@@ -15,7 +15,7 @@ namespace CoreERP.Models
         public string IsMasterScreen { get; set; }
         public string Route { get; set; }
         public string ScreenType { get; set; }
-        public string Ext1 { get; set; }
+        public string TabScreen { get; set; }
         public DateTime? AddDate { get; set; }
     }
 }

@@ -1515,10 +1515,6 @@ namespace CoreERP.Models
                     .HasColumnName("displayName")
                     .HasMaxLength(100);
 
-                entity.Property(e => e.Ext1)
-                    .HasColumnName("ext1")
-                    .HasMaxLength(50);
-
                 entity.Property(e => e.IsMasterScreen)
                     .HasColumnName("isMasterScreen")
                     .HasMaxLength(1)
@@ -1536,6 +1532,8 @@ namespace CoreERP.Models
                     .HasMaxLength(100);
 
                 entity.Property(e => e.ScreenType).HasMaxLength(100);
+
+                entity.Property(e => e.TabScreen).HasMaxLength(5);
             });
 
             modelBuilder.Entity<MissingPunch>(entity =>
@@ -6112,11 +6110,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Component).HasMaxLength(100);
 
+                entity.Property(e => e.Delete).HasMaxLength(50);
+
                 entity.Property(e => e.DeleteUrl)
                     .HasColumnName("DeleteURL")
                     .HasMaxLength(100);
-
-                entity.Property(e => e.Ext).HasMaxLength(50);
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
