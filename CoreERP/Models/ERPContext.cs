@@ -7089,7 +7089,7 @@ namespace CoreERP.Models
                 entity.HasIndex(e => e.InvoiceMasterId)
                     .HasName("NonClusteredInvoiceMasterIndex2");
 
-                entity.HasIndex(e => new { e.VoucherNo, e.InvoiceNo, e.LedgerName, e.LedgerCode, e.BranchCode, e.GrandTotal, e.InvoiceDate, e.InvoiceMasterId })
+                entity.HasIndex(e => new { e.LedgerCode, e.BranchCode, e.GrandTotal, e.VoucherNo, e.InvoiceNo, e.LedgerName, e.InvoiceDate, e.InvoiceMasterId })
                     .HasName("NonClusteredInvoiceMasterIndex1");
 
                 entity.Property(e => e.InvoiceMasterId)
@@ -10726,7 +10726,7 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Product");
 
-                entity.HasIndex(e => new { e.ProductCode, e.ProductName, e.HsnNo })
+                entity.HasIndex(e => new { e.ProductName, e.ProductCode, e.HsnNo })
                     .HasName("NonClusteredIndex-20181226-173757");
 
                 entity.Property(e => e.ProductId)
@@ -15346,11 +15346,41 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.SubAssetNumber).HasMaxLength(20);
 
+                entity.Property(e => e.AccountKey).HasMaxLength(50);
+
+                entity.Property(e => e.AcquisitionDate).HasColumnType("date");
+
+                entity.Property(e => e.Branch).HasMaxLength(5);
+
+                entity.Property(e => e.DepreciationArea).HasMaxLength(50);
+
+                entity.Property(e => e.DepreciationCode).HasMaxLength(50);
+
+                entity.Property(e => e.DepreciationData).HasMaxLength(50);
+
+                entity.Property(e => e.DepreciationStartDate).HasColumnType("date");
+
                 entity.Property(e => e.Description).HasMaxLength(50);
 
-                entity.Property(e => e.Ext).HasMaxLength(50);
+                entity.Property(e => e.Division).HasMaxLength(5);
+
+                entity.Property(e => e.Location).HasMaxLength(5);
 
                 entity.Property(e => e.MainAssetNo).HasMaxLength(15);
+
+                entity.Property(e => e.MaterialNo).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+
+                entity.Property(e => e.ProfitCenter).HasMaxLength(5);
+
+                entity.Property(e => e.Room).HasMaxLength(50);
+
+                entity.Property(e => e.Segment).HasMaxLength(5);
+
+                entity.Property(e => e.SerialNumber).HasMaxLength(50);
+
+                entity.Property(e => e.Supplier).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblSuffixPrefix>(entity =>
