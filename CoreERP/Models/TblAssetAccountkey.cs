@@ -14,5 +14,7 @@ namespace CoreERP.Models
         public string GainOnSaleGl { get; set; }
         public string ScrappingGl { get; set; }
         public string Auggl { get; set; }
+        public string CompanyCode { get; set; }
+        public string ChartofAccount { get; set; }
     }
 }

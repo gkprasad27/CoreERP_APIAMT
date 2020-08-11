@@ -3229,6 +3229,10 @@ namespace CoreERP.Models
                     .HasColumnName("AUGGL")
                     .HasMaxLength(5);
 
+                entity.Property(e => e.ChartofAccount).HasMaxLength(50);
+
+                entity.Property(e => e.CompanyCode).HasMaxLength(50);
+
                 entity.Property(e => e.DepreciationGl)
                     .HasColumnName("DepreciationGL")
                     .HasMaxLength(5);
@@ -3465,13 +3469,9 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_AssignAssetClasstoBlockAsset");
 
-                entity.Property(e => e.Code).HasMaxLength(5);
-
                 entity.Property(e => e.AssetBlock).HasMaxLength(5);
 
                 entity.Property(e => e.AssetClass).HasMaxLength(5);
-
-                entity.Property(e => e.Description).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblAssignTaxacctoTaxcode>(entity =>
