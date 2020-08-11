@@ -1532,8 +1532,6 @@ namespace CoreERP.Models
                     .HasMaxLength(100);
 
                 entity.Property(e => e.ScreenType).HasMaxLength(100);
-
-                entity.Property(e => e.TabScreen).HasMaxLength(5);
             });
 
             modelBuilder.Entity<MissingPunch>(entity =>
@@ -6127,6 +6125,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.RegisterUrl)
                     .HasColumnName("RegisterURL")
                     .HasMaxLength(100);
+
+                entity.Property(e => e.TabScreen).HasMaxLength(5);
 
                 entity.Property(e => e.UpdateUrl)
                     .HasColumnName("UpdateURL")

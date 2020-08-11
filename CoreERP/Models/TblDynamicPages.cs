@@ -15,5 +15,6 @@ namespace CoreERP.Models
         public string ListName { get; set; }
         public string PrimaryKey { get; set; }
         public string Delete { get; set; }
+        public string TabScreen { get; set; }
     }
 }
