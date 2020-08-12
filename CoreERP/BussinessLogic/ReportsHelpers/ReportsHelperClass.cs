@@ -1641,6 +1641,127 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             return getDataFromDataBase(dbParametersList, procedureName);
         }
         #endregion
+        #region BankReconciliation
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetBankReconciliationReportDataList(string ledgerCode, string ledgerName,DateTime fromDate, DateTime toDate)
+        {
+            DataSet dsResult = GetBankReconciliationReportDataSet(ledgerCode,ledgerName,fromDate,toDate);
+            List<dynamic> bankReconciliation = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    bankReconciliation = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (bankReconciliation, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
+        public static DataSet GetBankReconciliationReportDataSet(string ledgerCode,string ledgerName,DateTime fromDate, DateTime toDate)
+        {
+            {
+                ScopeRepository scopeRepository = new ScopeRepository();
+                // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+                using DbCommand command = scopeRepository.CreateCommand();
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = "Usp_BankReconcillationReport";
+                #region Parameters
+                DbParameter pmledgerCode = command.CreateParameter();
+                pmledgerCode.Direction = ParameterDirection.Input;
+                pmledgerCode.Value = (object)ledgerCode ?? DBNull.Value;
+                pmledgerCode.ParameterName = "ledgerCode";
+
+                DbParameter pmledgerName = command.CreateParameter();
+                pmledgerName.Direction = ParameterDirection.Input;
+                pmledgerName.Value = (object)ledgerName ?? DBNull.Value;
+                pmledgerName.ParameterName = "ledgerName";
+
+                DbParameter pmfromDate = command.CreateParameter();
+                pmfromDate.Direction = ParameterDirection.Input;
+                pmfromDate.Value = (object)fromDate ?? DBNull.Value;
+                pmfromDate.ParameterName = "fDate";
+
+                DbParameter pmtoDate = command.CreateParameter();
+                pmtoDate.Direction = ParameterDirection.Input;
+                pmtoDate.Value = (object)toDate ?? DBNull.Value;
+                pmtoDate.ParameterName = "tDate";
+                #endregion
+                // Add parameter as specified in the store procedure
+                command.Parameters.Add(pmledgerCode);
+                command.Parameters.Add(pmledgerName);
+                command.Parameters.Add(pmfromDate);
+                command.Parameters.Add(pmtoDate);
+                return scopeRepository.ExecuteParamerizedCommand(command);
+            }
+
+        }
+        #endregion
+        #region Stock Valuation
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetStockValuationDataList(DateTime fromDate, DateTime toDate, string UserID)
+        {
+            DataSet dsResult = GetStockValuationReportDataSet(fromDate, toDate, UserID);
+            List<dynamic> stockValuation = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    stockValuation = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (stockValuation, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
+
+        public static DataSet GetStockValuationReportDataSet(DateTime fromDate, DateTime toDate, string UserID)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_StockValuationBankReport";
+            #region Parameters
+            DbParameter pmfDate = command.CreateParameter();
+            pmfDate.Direction = ParameterDirection.Input;
+            pmfDate.Value = (object)fromDate ?? DBNull.Value;
+            pmfDate.ParameterName = "fDate";
+
+            DbParameter pmtDate = command.CreateParameter();
+            pmtDate.Direction = ParameterDirection.Input;
+            pmtDate.Value = (object)toDate ?? DBNull.Value;
+            pmtDate.ParameterName = "tDate";
+
+            DbParameter pmuserName = command.CreateParameter();
+            pmuserName.Direction = ParameterDirection.Input;
+            pmuserName.Value = (object)UserID ?? DBNull.Value;
+            pmuserName.ParameterName = "userName";
+
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmfDate);
+            command.Parameters.Add(pmtDate);
+            command.Parameters.Add(pmuserName);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
+        #endregion
         #region CommonMethods
         public static DataSet getDataFromDataBase(List<parametersClass> dbParametersList, string procedureName)
         {
