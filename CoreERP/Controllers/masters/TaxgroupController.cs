@@ -134,24 +134,6 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetProductGroups")]
-        [Produces(typeof(List<MaterialGroup>))]
-        public async Task<IActionResult> GetProductGroups()
-        {
-            var result = await Task.Run(() =>
-            {
-                try
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.ProductGroupsList = new TaxgroupHelpers().GetProductGroups().Select(pro => new { ID = pro.GroupCode, TEXT = pro.GroupName });
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-                catch (Exception ex)
-                {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-                }
-            });
-            return result;
-        }
+       
     }
 }

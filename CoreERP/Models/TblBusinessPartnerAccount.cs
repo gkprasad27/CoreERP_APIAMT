@@ -44,5 +44,6 @@ namespace CoreERP.Models
         public string ContactPersionMobile { get; set; }
         public string Narration { get; set; }
         public string Ext { get; set; }
+        public string Bpgroup { get; set; }
     }
 }
