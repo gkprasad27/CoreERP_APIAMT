@@ -53,7 +53,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                var ccode = Repository<TblUnit>.Instance.GetSingleOrDefault(x => x.UnitId == Code);
+                var ccode = Repository<TblUnit>.Instance.GetSingleOrDefault(x => Convert.ToString(x.UnitId) == Code);
                 Repository<TblUnit>.Instance.Remove(ccode);
                 if (Repository<TblUnit>.Instance.SaveChanges() > 0)
                     return ccode;
