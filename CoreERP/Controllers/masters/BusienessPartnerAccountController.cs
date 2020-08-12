@@ -93,14 +93,14 @@ namespace CoreERP.Controllers
 
         [HttpDelete("DeleteBusienessPartnerAccount/{code}")]
         public async Task<IActionResult> DeleteBusienessPartnerAccount(string code)
-        {
+            {
             APIResponse apiResponse = null;
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
             {
-                var record = _businessPartnerAccountRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                var record = _businessPartnerAccountRepository.GetSingleOrDefault(x => x.Bpnumber.Equals(code));
                 _businessPartnerAccountRepository.Remove(record);
                 if (_businessPartnerAccountRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
