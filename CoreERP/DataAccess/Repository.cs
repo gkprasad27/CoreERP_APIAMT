@@ -1,10 +1,13 @@
 ﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CoreERP.DataAccess
@@ -88,7 +91,43 @@ namespace CoreERP.DataAccess
 
         public virtual IEnumerable<TEntity> GetAll()
         {
+            //var j = new[] { typeof(TblLanguage), typeof(TblJvdetails), typeof(TblLedgerPosting), typeof(TblLocation) };
+            //GetAll<TblLanguage>(j);
             return _entities;
         }
+
+        //public virtual IEnumerable<TResult> GetAll<TResult>(Type[] types)
+        //{
+        //    _context.GetType().GetProperty(types[0].Name);
+        //    IQueryable outer;
+        //    outer.Provider.
+        //    //for (int i = 0; i < types.Length; i++)
+        //    //{
+        //    //    MethodInfo methodInfo = _context.GetType().GetMethod("Set");
+        //    //    IQueryable main;
+        //    //    switch(i)
+        //    //    {
+        //    //        case 0:
+        //    //            methodInfo = methodInfo.MakeGenericMethod(types[0]);                        
+        //    //            methodInfo.Invoke(_context, null).;
+        //    //            break;
+        //    //        default:
+        //    //            break;
+
+        //    //    }
+        //    //}
+
+        //    return new List<TResult>();
+        //}
+
+        //public static class TypeHelper
+        //{
+        //    public static DbSet<Type> GetTypedDbSet<T>(this DbSetFinder dbSetFinder, Type type )
+        //    {
+        //        dbSetFinder.FindSets(type).
+        //    }
+        //}
+
     }
 }
+ 

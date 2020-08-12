@@ -21,5 +21,6 @@ namespace CoreERP.Models
         public string LegacyGl { get; set; }
         public string CostElementCategory { get; set; }
         public string Subgroup { get; set; }
+        public string GroupUnder { get; set; }
     }
 }
