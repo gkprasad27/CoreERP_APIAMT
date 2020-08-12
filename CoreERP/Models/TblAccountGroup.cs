@@ -9,7 +9,7 @@ namespace CoreERP.Models
         public string AccountGroupName { get; set; }
         public string GroupUnder { get; set; }
         public string Narration { get; set; }
-        public bool? IsDefault { get; set; }
+        public int? IsDefault { get; set; }
         public string Nature { get; set; }
         public int? Hirarchy { get; set; }
     }

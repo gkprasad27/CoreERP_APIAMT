@@ -29,7 +29,7 @@ namespace CoreERP.Controllers.GL
             {
                 APIResponse apiResponse;
 
-                tblAccGrp.IsDefault = false;
+                //tblAccGrp.IsDefault = false;
 
                 _glaugRepository.Add(tblAccGrp);
                 if (_glaugRepository.SaveChanges() > 0)
@@ -52,7 +52,7 @@ namespace CoreERP.Controllers.GL
 
             try
             {
-                tblAccGrp.IsDefault = false;
+                //tblAccGrp.IsDefault = false;
 
                 APIResponse apiResponse;
                 _glaugRepository.Update(tblAccGrp);
@@ -68,7 +68,7 @@ namespace CoreERP.Controllers.GL
         }
 
         [HttpDelete("DeleteTblAccountGroup/{code}")]
-        public IActionResult DeleteTblAccountGroup(int code)
+        public IActionResult DeleteTblAccountGroup(string code)
         {
 
             //if (string.IsNullOrWhiteSpace(code))
@@ -77,7 +77,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 APIResponse apiResponse;
-                var record = _glaugRepository.GetSingleOrDefault(x => x.AccountGroupId.Equals(code));
+                var record = _glaugRepository.Where(x => x.AccountGroupId==code).SingleOrDefault();
                 _glaugRepository.Remove(record);
                 if (_glaugRepository.SaveChanges() > 0)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = record });
