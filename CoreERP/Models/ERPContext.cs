@@ -1214,6 +1214,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.RelevantCashFlow).HasMaxLength(50);
 
+                entity.Property(e => e.Subgroup).HasMaxLength(50);
+
                 entity.Property(e => e.TaxCategory).HasMaxLength(20);
             });
 
@@ -3488,7 +3490,11 @@ namespace CoreERP.Models
                     .HasColumnName("CGSTGL")
                     .HasMaxLength(50);
 
+                entity.Property(e => e.ChartofAccount).HasMaxLength(50);
+
                 entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.CompositeAccount).HasMaxLength(50);
 
                 entity.Property(e => e.Igstgl)
                     .HasColumnName("IGSTGL")
@@ -7089,7 +7095,7 @@ namespace CoreERP.Models
                 entity.HasIndex(e => e.InvoiceMasterId)
                     .HasName("NonClusteredInvoiceMasterIndex2");
 
-                entity.HasIndex(e => new { e.LedgerCode, e.BranchCode, e.GrandTotal, e.VoucherNo, e.InvoiceNo, e.LedgerName, e.InvoiceDate, e.InvoiceMasterId })
+                entity.HasIndex(e => new { e.VoucherNo, e.InvoiceNo, e.LedgerName, e.LedgerCode, e.BranchCode, e.GrandTotal, e.InvoiceDate, e.InvoiceMasterId })
                     .HasName("NonClusteredInvoiceMasterIndex1");
 
                 entity.Property(e => e.InvoiceMasterId)
@@ -10726,7 +10732,7 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Product");
 
-                entity.HasIndex(e => new { e.ProductName, e.ProductCode, e.HsnNo })
+                entity.HasIndex(e => new { e.ProductCode, e.ProductName, e.HsnNo })
                     .HasName("NonClusteredIndex-20181226-173757");
 
                 entity.Property(e => e.ProductId)
@@ -15815,10 +15821,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Desctiption).HasMaxLength(50);
 
                 entity.Property(e => e.EffectiveFrom).HasColumnType("date");
-
-                entity.Property(e => e.Ext)
-                    .HasColumnName("ext")
-                    .HasMaxLength(50);
 
                 entity.Property(e => e.IncomeType).HasMaxLength(5);
 

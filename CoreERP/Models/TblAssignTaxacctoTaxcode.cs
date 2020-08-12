@@ -13,5 +13,7 @@ namespace CoreERP.Models
         public string Company { get; set; }
         public string Branch { get; set; }
         public string Plant { get; set; }
+        public string CompositeAccount { get; set; }
+        public string ChartofAccount { get; set; }
     }
 }

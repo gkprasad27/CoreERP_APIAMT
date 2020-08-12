@@ -11,6 +11,6 @@ namespace CoreERP.Models
         public string IncomeType { get; set; }
         public string Status { get; set; }
         public DateTime? EffectiveFrom { get; set; }
-        public string Ext { get; set; }
+        public int? BaseAmount { get; set; }
     }
 }

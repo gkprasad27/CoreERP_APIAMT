@@ -20,5 +20,6 @@ namespace CoreERP.Models
         public string BankKey { get; set; }
         public string LegacyGl { get; set; }
         public string CostElementCategory { get; set; }
+        public string Subgroup { get; set; }
     }
 }
