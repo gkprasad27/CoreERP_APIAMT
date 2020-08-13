@@ -17,6 +17,7 @@ namespace CoreERP.Models
 
         public virtual DbSet<AsignmentAcctoAccClass> AsignmentAcctoAccClass { get; set; }
         public virtual DbSet<AsignmentCashAccBranch> AsignmentCashAccBranch { get; set; }
+        public virtual DbSet<AssignmentSubaccounttoGl> AssignmentSubaccounttoGl { get; set; }
         public virtual DbSet<CashInOutFlow1> CashInOutFlow1 { get; set; }
         public virtual DbSet<ConfigurationTable> ConfigurationTable { get; set; }
         public virtual DbSet<CostCenters> CostCenters { get; set; }
@@ -209,6 +210,23 @@ namespace CoreERP.Models
                 entity.Property(e => e.Ext1).HasMaxLength(20);
 
                 entity.Property(e => e.Ext2).HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<AssignmentSubaccounttoGl>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("AssignmentSubaccounttoGL");
+
+                entity.Property(e => e.FromGl)
+                    .HasColumnName("FromGL")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.SubAccount).HasMaxLength(50);
+
+                entity.Property(e => e.ToGl)
+                    .HasColumnName("ToGL")
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<CashInOutFlow1>(entity =>
@@ -605,10 +623,7 @@ namespace CoreERP.Models
                     .HasColumnName("LegacyGL")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.NoPostingAllowed)
-                    .HasMaxLength(1)
-                    .IsUnicode(false)
-                    .IsFixedLength();
+                entity.Property(e => e.NoPostingAllowed).HasMaxLength(50);
 
                 entity.Property(e => e.RelevantCashFlow).HasMaxLength(50);
 
@@ -1233,6 +1248,8 @@ namespace CoreERP.Models
                     .HasColumnName("nature")
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.StructureKey).HasMaxLength(10);
             });
 
             modelBuilder.Entity<TblAccountLedger>(entity =>
@@ -1730,11 +1747,7 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_AssignchartaccttoCompanycode");
 
-                entity.Property(e => e.Code).HasMaxLength(5);
-
                 entity.Property(e => e.Company).HasMaxLength(5);
-
-                entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.Property(e => e.GroupCoa)
                     .HasColumnName("GroupCOA")
@@ -3610,6 +3623,8 @@ namespace CoreERP.Models
                 entity.ToTable("tbl_Posting");
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
+
+                entity.Property(e => e.ChartofAccount).HasMaxLength(5);
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 

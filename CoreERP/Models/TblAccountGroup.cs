@@ -12,5 +12,6 @@ namespace CoreERP.Models
         public int? IsDefault { get; set; }
         public string Nature { get; set; }
         public int? Hirarchy { get; set; }
+        public string StructureKey { get; set; }
     }
 }
