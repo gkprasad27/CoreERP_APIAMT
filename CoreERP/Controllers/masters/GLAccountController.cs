@@ -12,10 +12,15 @@ namespace CoreERP.Controllers
     [Route("api/GLAccount")]
     public class GLAccountController : ControllerBase
     {
+        private readonly IRepository<GlaccGroup> _glagRepository;
+        private readonly IRepository<TblChartAccount> _chartAccountRepository;
         private readonly IRepository<Glaccounts> _glaccountsRepository;
-        public GLAccountController(IRepository<Glaccounts> glaccountsRepository)
+        public GLAccountController(IRepository<Glaccounts> glaccountsRepository,
+         IRepository<TblChartAccount> chartAccountRepository, IRepository<GlaccGroup> glagRepository)
         {
             _glaccountsRepository = glaccountsRepository;
+            _chartAccountRepository = chartAccountRepository;
+            _glagRepository = glagRepository;
         }
         [HttpGet("GetGLAccountList")]
         public async Task<IActionResult> GetGLAccountList()
@@ -109,6 +114,60 @@ namespace CoreERP.Controllers
 
                 return Ok(apiResponse);
             }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetChartAccountList")]
+        public IActionResult GetChartAccountList()
+        {
+            try
+            {
+                try
+                {
+                    var coalist = _chartAccountRepository.Where(x => x.Type == "Consolidated");
+                    if (coalist.Count() > 0)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.coalist = coalist;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for chartaccount." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetaccountNumberList/{code}/{code1}")]
+        public IActionResult GetaccountNumberList(string code, int code1)
+        {
+            try
+            {
+                var Getaccnolist = _glagRepository.Where(x => x.GroupCode == code).FirstOrDefault();
+                //var Getassetnumrangelist = _assetNumberRangeRepository.Where(x => x.Code == Getaccnolist.NumberRange).FirstOrDefault();
+                if (Enumerable.Range(Convert.ToInt32(Getaccnolist.NumberRangeFrom), Convert.ToInt32(Getaccnolist.NumberRangeTo)).Contains(code1))
+                {
+                    if (code1 >= Convert.ToInt32(Getaccnolist.NumberRangeFrom) && code1 <= Convert.ToInt32(Getaccnolist.NumberRangeTo))
+                    {
+                        return Ok();
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
+                }
+
+                return Ok();
+            }
+
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });

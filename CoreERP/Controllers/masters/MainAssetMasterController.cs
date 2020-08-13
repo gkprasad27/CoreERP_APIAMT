@@ -12,10 +12,15 @@ namespace CoreERP.Controllers
     [Route("api/MainAssetMaster")]
     public class MainAssetMasterController : ControllerBase
     {
+        private readonly IRepository<TblAssetClass> _assetClassRepository;
+        private readonly IRepository<TblAssetNumberRange> _assetNumberRangeRepository;
         private readonly IRepository<TblMainAssetMaster> _mainAssetMasterRepository;
-        public MainAssetMasterController(IRepository<TblMainAssetMaster> mainAssetMasterRepository)
+        public MainAssetMasterController(IRepository<TblMainAssetMaster> mainAssetMasterRepository,
+         IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetNumberRange> assetNumberRangeRepository)
         {
             _mainAssetMasterRepository = mainAssetMasterRepository;
+            _assetClassRepository = assetClassRepository;
+            _assetNumberRangeRepository = assetNumberRangeRepository;
         }
         [HttpGet("GetMainAssetMasterList")]
         public async Task<IActionResult> GetMainAssetMasterList()
@@ -114,5 +119,32 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpGet("GetAssetNumber/{code}/{code1}")]
+        public IActionResult GetGLUnderSubGroupList(string code, int code1)
+        {
+              try
+                {
+                    var Getassetlist = _assetClassRepository.Where(x => x.Code == code).FirstOrDefault();
+                    var Getassetnumrangelist = _assetNumberRangeRepository.Where(x => x.Code == Getassetlist.NumberRange).FirstOrDefault();
+                if (Enumerable.Range(Convert.ToInt32(Getassetnumrangelist.FromRange),Convert.ToInt32(Getassetnumrangelist.ToRange)).Contains(code1))
+                {
+                    if (code1 >= Convert.ToInt32(Getassetnumrangelist.FromRange) && code1 <= Convert.ToInt32(Getassetnumrangelist.ToRange))
+                    {
+                        return Ok();
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
+                }
+              
+                return Ok();
+            }
+
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+           
+        }
     }
-}
