@@ -42,7 +42,6 @@ namespace CoreERP.Models
         public virtual DbSet<ProfitCenters> ProfitCenters { get; set; }
         public virtual DbSet<SalesDepartment> SalesDepartment { get; set; }
         public virtual DbSet<Segment> Segment { get; set; }
-        public virtual DbSet<Sizes> Sizes { get; set; }
         public virtual DbSet<Smsstatus> Smsstatus { get; set; }
         public virtual DbSet<States> States { get; set; }
         public virtual DbSet<TaxIntegration> TaxIntegration { get; set; }
@@ -119,7 +118,6 @@ namespace CoreERP.Models
         public virtual DbSet<TblSettings> TblSettings { get; set; }
         public virtual DbSet<TblShift> TblShift { get; set; }
         public virtual DbSet<TblShiftTimings> TblShiftTimings { get; set; }
-        public virtual DbSet<TblSize> TblSize { get; set; }
         public virtual DbSet<TblStateWiseGst> TblStateWiseGst { get; set; }
         public virtual DbSet<TblStorageLocation> TblStorageLocation { get; set; }
         public virtual DbSet<TblSubAssetMaster> TblSubAssetMaster { get; set; }
@@ -1040,26 +1038,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Name)
                     .HasMaxLength(40)
                     .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<Sizes>(entity =>
-            {
-                entity.HasKey(e => e.Code);
-
-                entity.Property(e => e.Code).HasMaxLength(20);
-
-                entity.Property(e => e.Active)
-                    .HasMaxLength(1)
-                    .IsUnicode(false)
-                    .IsFixedLength();
-
-                entity.Property(e => e.AddDate).HasColumnType("datetime");
-
-                entity.Property(e => e.Description).HasMaxLength(50);
-
-                entity.Property(e => e.Ext1).HasMaxLength(20);
-
-                entity.Property(e => e.Ext2).HasMaxLength(20);
             });
 
             modelBuilder.Entity<Smsstatus>(entity =>
@@ -4035,34 +4013,6 @@ namespace CoreERP.Models
                     .HasColumnType("datetime");
             });
 
-            modelBuilder.Entity<TblSize>(entity =>
-            {
-                entity.HasKey(e => e.SizeId)
-                    .HasName("PK__tbl_Size__55B1E55749E3F248");
-
-                entity.ToTable("tbl_Size");
-
-                entity.Property(e => e.SizeId)
-                    .HasColumnName("sizeId")
-                    .HasMaxLength(5);
-
-                entity.Property(e => e.Extra1)
-                    .HasColumnName("extra1")
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.ExtraDate)
-                    .HasColumnName("extraDate")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.Narration)
-                    .HasColumnName("narration")
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.Size)
-                    .HasColumnName("size")
-                    .HasMaxLength(50);
-            });
-
             modelBuilder.Entity<TblStateWiseGst>(entity =>
             {
                 entity.ToTable("tbl_StateWiseGst");
@@ -4367,31 +4317,15 @@ namespace CoreERP.Models
                     .HasColumnType("numeric(18, 0)")
                     .ValueGeneratedOnAdd();
 
-                entity.Property(e => e.Extra1)
-                    .HasColumnName("extra1")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Extra2)
-                    .HasColumnName("extra2")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ExtraDate)
-                    .HasColumnName("extraDate")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.FormalName)
-                    .HasColumnName("formalName")
-                    .IsUnicode(false);
-
                 entity.Property(e => e.Narration)
                     .HasColumnName("narration")
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.NoOfDecimalplaces).HasColumnName("noOfDecimalplaces");
 
                 entity.Property(e => e.UnitName)
                     .HasColumnName("unitName")
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblUser>(entity =>
