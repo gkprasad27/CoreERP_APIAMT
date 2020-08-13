@@ -90,7 +90,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeleteAssiignChartAcctoCompanyCode/{code}")]
-        public IActionResult DeleteAssiignChartAcctoCompanyCodebyID(string code)
+        public IActionResult DeleteAssiignChartAcctoCompanyCodebyID(int code)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _acaRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                var record = _acaRepository.Where(x => x.Code==code).FirstOrDefault();
                 _acaRepository.Remove(record);
                 if (_acaRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
