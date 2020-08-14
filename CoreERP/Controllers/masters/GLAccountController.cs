@@ -164,8 +164,8 @@ namespace CoreERP.Controllers
                     else
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
                 }
-
-                return Ok();
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
+                //return Ok();
             }
 
             catch (Exception ex)
