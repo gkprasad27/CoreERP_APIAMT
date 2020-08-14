@@ -70,6 +70,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblBpgroup> TblBpgroup { get; set; }
         public virtual DbSet<TblBranch> TblBranch { get; set; }
         public virtual DbSet<TblBusinessPartnerAccount> TblBusinessPartnerAccount { get; set; }
+        public virtual DbSet<TblBusinessTransactionTypes> TblBusinessTransactionTypes { get; set; }
         public virtual DbSet<TblCashBankDetails> TblCashBankDetails { get; set; }
         public virtual DbSet<TblCashBankMaster> TblCashBankMaster { get; set; }
         public virtual DbSet<TblChartAccount> TblChartAccount { get; set; }
@@ -85,6 +86,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblEmployeeMaster> TblEmployeeMaster { get; set; }
         public virtual DbSet<TblFormMenuCollection> TblFormMenuCollection { get; set; }
         public virtual DbSet<TblFunctionalDepartment> TblFunctionalDepartment { get; set; }
+        public virtual DbSet<TblGlsubAccount> TblGlsubAccount { get; set; }
         public virtual DbSet<TblHideTableColumns> TblHideTableColumns { get; set; }
         public virtual DbSet<TblHsnsac> TblHsnsac { get; set; }
         public virtual DbSet<TblIncomeTypes> TblIncomeTypes { get; set; }
@@ -2061,6 +2063,17 @@ namespace CoreERP.Models
                     .HasMaxLength(50);
             });
 
+            modelBuilder.Entity<TblBusinessTransactionTypes>(entity =>
+            {
+                entity.ToTable("tbl_BusinessTransactionTypes");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Code).HasMaxLength(10);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<TblCashBankDetails>(entity =>
             {
                 entity.HasNoKey();
@@ -2840,6 +2853,25 @@ namespace CoreERP.Models
                 entity.Property(e => e.Ext).HasMaxLength(50);
 
                 entity.Property(e => e.ResponsiblePerson).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblGlsubAccount>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("Tbl_GLSubAccount");
+
+                entity.Property(e => e.Glaccount)
+                    .HasColumnName("GLAccount")
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.GlsubCode)
+                    .HasColumnName("GLSubCode")
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.GlsubName)
+                    .HasColumnName("GLSubName")
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblHideTableColumns>(entity =>
