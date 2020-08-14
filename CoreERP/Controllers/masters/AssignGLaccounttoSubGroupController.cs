@@ -2,6 +2,7 @@
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -96,7 +97,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteAssignGLaccounttoSubGroup/{code}")]
-        public async Task<IActionResult> DeleteAssignGLaccounttoSubGroup(string code)
+        public async Task<IActionResult> DeleteAssignGLaccounttoSubGroup(int code)
         {
             APIResponse apiResponse = null;
             if (code == null)
@@ -104,7 +105,7 @@ namespace CoreERP.Controllers
 
             try
             {
-                var record = _assignmentSubaccounttoGLRepository.GetSingleOrDefault(x => x.Glgroup.Equals(code));
+                var record = _assignmentSubaccounttoGLRepository.Where(x => x.Code==code).SingleOrDefault();
                 _assignmentSubaccounttoGLRepository.Remove(record);
                 if (_assignmentSubaccounttoGLRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
@@ -146,6 +147,31 @@ namespace CoreERP.Controllers
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+        }
+
+        [HttpGet("GetStructurekeyList")]
+        public async Task<IActionResult> GetStructurekeyList()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var structkeyList = _glaugRepository.GetAll().Select(x=>x.StructureKey).Distinct();                
+                    if (structkeyList.Count() > 0)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.structkeyList = structkeyList.ToArray();
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for assignacckeyList." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
     }

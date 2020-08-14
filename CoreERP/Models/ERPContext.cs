@@ -1457,15 +1457,15 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccumulatedGl)
                     .HasColumnName("AccumulatedGL")
-                    .HasMaxLength(5);
+                    .HasMaxLength(15);
 
                 entity.Property(e => e.AcquisitionsGl)
                     .HasColumnName("AcquisitionsGL")
-                    .HasMaxLength(5);
+                    .HasMaxLength(15);
 
                 entity.Property(e => e.Auggl)
                     .HasColumnName("AUGGL")
-                    .HasMaxLength(5);
+                    .HasMaxLength(15);
 
                 entity.Property(e => e.ChartofAccount).HasMaxLength(50);
 
@@ -1473,23 +1473,23 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.DepreciationGl)
                     .HasColumnName("DepreciationGL")
-                    .HasMaxLength(5);
+                    .HasMaxLength(15);
 
                 entity.Property(e => e.GainOnSaleGl)
                     .HasColumnName("GainOnSaleGL")
-                    .HasMaxLength(5);
+                    .HasMaxLength(15);
 
                 entity.Property(e => e.LossOnSaleGl)
                     .HasColumnName("LossOnSaleGL")
-                    .HasMaxLength(5);
+                    .HasMaxLength(15);
 
                 entity.Property(e => e.SalesRevenueGl)
                     .HasColumnName("SalesRevenueGL")
-                    .HasMaxLength(5);
+                    .HasMaxLength(15);
 
                 entity.Property(e => e.ScrappingGl)
                     .HasColumnName("ScrappingGL")
-                    .HasMaxLength(5);
+                    .HasMaxLength(15);
             });
 
             modelBuilder.Entity<TblAssetBeginingAcquisition>(entity =>
@@ -3658,25 +3658,21 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Posting");
 
-                entity.Property(e => e.Branch).HasMaxLength(5);
+                entity.Property(e => e.Branch).HasMaxLength(15);
 
-                entity.Property(e => e.ChartofAccount).HasMaxLength(5);
+                entity.Property(e => e.ChartofAccount).HasMaxLength(15);
 
-                entity.Property(e => e.Company).HasMaxLength(5);
+                entity.Property(e => e.Company).HasMaxLength(15);
 
                 entity.Property(e => e.Glaccount)
                     .HasColumnName("GLAccount")
-                    .HasMaxLength(5);
+                    .HasMaxLength(15);
 
-                entity.Property(e => e.Plant).HasMaxLength(5);
+                entity.Property(e => e.Plant).HasMaxLength(15);
 
                 entity.Property(e => e.Tdsrate)
                     .HasColumnName("TDSRate")
-                    .HasMaxLength(5);
-
-                entity.Property(e => e.Tdstype)
-                    .HasColumnName("TDSType")
-                    .HasMaxLength(5);
+                    .HasMaxLength(15);
             });
 
             modelBuilder.Entity<TblPriceList>(entity =>

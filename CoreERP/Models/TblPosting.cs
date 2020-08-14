@@ -6,7 +6,6 @@ namespace CoreERP.Models
     public partial class TblPosting
     {
         public int Code { get; set; }
-        public string Tdstype { get; set; }
         public string Tdsrate { get; set; }
         public string Glaccount { get; set; }
         public string Company { get; set; }
