@@ -6,6 +6,7 @@ namespace CoreERP.Models
     public partial class TblAssetAccountkey
     {
         public string Code { get; set; }
+        public string Description { get; set; }
         public string AcquisitionsGl { get; set; }
         public string AccumulatedGl { get; set; }
         public string DepreciationGl { get; set; }

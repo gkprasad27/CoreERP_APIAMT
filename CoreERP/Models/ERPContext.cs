@@ -1475,6 +1475,8 @@ namespace CoreERP.Models
                     .HasColumnName("DepreciationGL")
                     .HasMaxLength(15);
 
+                entity.Property(e => e.Description).HasMaxLength(50);
+
                 entity.Property(e => e.GainOnSaleGl)
                     .HasColumnName("GainOnSaleGL")
                     .HasMaxLength(15);
