@@ -1,6 +1,8 @@
 ﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -48,16 +50,22 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("RegisterAssignGLaccounttoSubGroup")]
-        public async Task<IActionResult> RegisterAssignGLaccounttoSubGroup([FromBody]AssignmentSubaccounttoGl assnacckey)
+        public async Task<IActionResult> RegisterAssignGLaccounttoSubGroup([FromBody] JObject obj)
         {
+            
             APIResponse apiResponse;
-            if (assnacckey == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(assnacckey)} cannot be null" });
+            
+            if (obj == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"request cannot be null" });
             else
             {
                 try
                 {
-                    _assignmentSubaccounttoGLRepository.Add(assnacckey);
+
+                    List<AssignmentSubaccounttoGl> assnacckey = null;
+                    assnacckey = obj["GLS"].ToObject<IList<AssignmentSubaccounttoGl>>().ToList();
+
+                    _assignmentSubaccounttoGLRepository.AddRange(assnacckey);
                     if (_assignmentSubaccounttoGLRepository.SaveChanges() > 0)
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assnacckey };
                     else
