@@ -92,12 +92,28 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
+
+        public static List<TblMemberMaster> GetMemberMastersList()
+        {
+            try
+            {
+                using Repository<TblMemberMaster> repo = new Repository<TblMemberMaster>();
+                return repo.TblMemberMaster.ToList();
+
+            }
+            catch { throw; }
+        }
+
         public TblVehicle UpdateVehicle(TblVehicle vehicle)
         {
             try
             {
                 using (Repository<TblVehicle> _repo = new Repository<TblVehicle>())
                 {
+                    var _memberShare = GetMemberMastersList().Where(m => m.MemberCode == vehicle.MemberCode).FirstOrDefault();
+                    var _vehicleType = GetVehicleTypes().Where(v => v.VehicleTypeName == vehicle.VehicleTypeName).FirstOrDefault();
+                    vehicle.VehicleTypeId = _vehicleType.VehicleTypeId;
+                    vehicle.MemberShares = _memberShare.TotalShares;
                     _repo.TblVehicle.Update(vehicle);
                     if (_repo.SaveChanges() > 0)
                         return vehicle;
@@ -323,6 +339,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 vehicle.MemberId = memberMaster.MemberId;
                 vehicle.MemberCode = memberMaster.MemberCode;
                 vehicle.MemberShares = memberMaster.TotalShares;
+                var _vehicleType = GetVehicleTypes().Where(v=>v.VehicleTypeName==vehicle.VehicleTypeName).FirstOrDefault();
+                vehicle.VehicleTypeId = _vehicleType.VehicleTypeId;
                 if (context == null)
                 {
                     using (context = new ERPContext())
