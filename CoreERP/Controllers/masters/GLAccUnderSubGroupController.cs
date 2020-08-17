@@ -124,7 +124,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 
-                var tblAccountGroupList = _glaugRepository.GetAll().OrderBy(x=>x.Nature);
+                var tblAccountGroupList = _glaugRepository.GetAll().OrderBy(x=>x.Sequence);
                 if (tblAccountGroupList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
