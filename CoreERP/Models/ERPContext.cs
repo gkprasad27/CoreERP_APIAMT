@@ -96,6 +96,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblLocation> TblLocation { get; set; }
         public virtual DbSet<TblLogin> TblLogin { get; set; }
         public virtual DbSet<TblMainAssetMaster> TblMainAssetMaster { get; set; }
+        public virtual DbSet<TblMainAssetMasterTransaction> TblMainAssetMasterTransaction { get; set; }
         public virtual DbSet<TblMaintenancearea> TblMaintenancearea { get; set; }
         public virtual DbSet<TblMonthList> TblMonthList { get; set; }
         public virtual DbSet<TblMonthListForReports> TblMonthListForReports { get; set; }
@@ -125,6 +126,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblStateWiseGst> TblStateWiseGst { get; set; }
         public virtual DbSet<TblStorageLocation> TblStorageLocation { get; set; }
         public virtual DbSet<TblSubAssetMaster> TblSubAssetMaster { get; set; }
+        public virtual DbSet<TblSubAssetMasterTransaction> TblSubAssetMasterTransaction { get; set; }
         public virtual DbSet<TblSuffixPrefix> TblSuffixPrefix { get; set; }
         public virtual DbSet<TblTaxRates> TblTaxRates { get; set; }
         public virtual DbSet<TblTaxtransactions> TblTaxtransactions { get; set; }
@@ -3174,6 +3176,25 @@ namespace CoreERP.Models
                 entity.Property(e => e.Supplier).HasMaxLength(50);
             });
 
+            modelBuilder.Entity<TblMainAssetMasterTransaction>(entity =>
+            {
+                entity.ToTable("tbl_MainAssetMasterTransaction");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AssetNumber)
+                    .IsRequired()
+                    .HasMaxLength(15);
+
+                entity.Property(e => e.DepreciationArea).HasMaxLength(50);
+
+                entity.Property(e => e.DepreciationCode).HasMaxLength(50);
+
+                entity.Property(e => e.DepreciationStartDate).HasColumnType("date");
+
+                entity.Property(e => e.Rate).HasColumnType("numeric(18, 0)");
+            });
+
             modelBuilder.Entity<TblMaintenancearea>(entity =>
             {
                 entity.HasKey(e => e.Code);
@@ -4184,6 +4205,25 @@ namespace CoreERP.Models
                 entity.Property(e => e.SerialNumber).HasMaxLength(50);
 
                 entity.Property(e => e.Supplier).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblSubAssetMasterTransaction>(entity =>
+            {
+                entity.ToTable("tbl_SubAssetMasterTransaction");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.DepreciationArea).HasMaxLength(50);
+
+                entity.Property(e => e.DepreciationCode).HasMaxLength(50);
+
+                entity.Property(e => e.DepreciationRate).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.DepreciationStartDate).HasColumnType("date");
+
+                entity.Property(e => e.MainAssetNumber).HasMaxLength(15);
+
+                entity.Property(e => e.SubAssetNumber).HasMaxLength(15);
             });
 
             modelBuilder.Entity<TblSuffixPrefix>(entity =>
