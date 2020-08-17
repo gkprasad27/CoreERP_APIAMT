@@ -11,5 +11,6 @@ namespace CoreERP.Models
         public string NumberRangeTo { get; set; }
         public string GroupType { get; set; }
         public string Active { get; set; }
+        public int? Sequence { get; set; }
     }
 }
