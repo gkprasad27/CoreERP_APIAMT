@@ -4366,7 +4366,7 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_TdsRates");
 
-                entity.Property(e => e.Code).HasMaxLength(5);
+                entity.Property(e => e.Code).HasMaxLength(10);
 
                 entity.Property(e => e.Desctiption).HasMaxLength(50);
 

@@ -12,5 +12,6 @@ namespace CoreERP.Models
         public string Status { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public int? BaseAmount { get; set; }
+        public int? TdsRate { get; set; }
     }
 }
