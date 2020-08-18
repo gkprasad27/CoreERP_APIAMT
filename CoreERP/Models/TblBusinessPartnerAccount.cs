@@ -5,7 +5,6 @@ namespace CoreERP.Models
 {
     public partial class TblBusinessPartnerAccount
     {
-        public int Id { get; set; }
         public string Code { get; set; }
         public string Bptype { get; set; }
         public string Bpnumber { get; set; }
@@ -45,5 +44,6 @@ namespace CoreERP.Models
         public string ContactPersionMobile { get; set; }
         public string Narration { get; set; }
         public string Ext { get; set; }
+        public string Bpgroup { get; set; }
     }
 }

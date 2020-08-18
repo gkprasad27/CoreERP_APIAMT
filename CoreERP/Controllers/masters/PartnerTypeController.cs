@@ -1,87 +1,43 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Dynamic;
-using System.Threading.Tasks;
+using System.Linq;
 
-namespace CoreERP.Controllers
+namespace CoreERP.Controllers.masters
 {
-
     [ApiController]
-    [Route("api/masters/PartnerType")]
+    [Route("api/PartnerType")]
     public class PartnerTypeController : ControllerBase
     {
+        private readonly IRepository<PartnerType> _ptRepository;
+        public PartnerTypeController(IRepository<PartnerType> ptRepository)
+        {
+            _ptRepository = ptRepository;
+        }
 
         [HttpPost("RegisterPartnerType")]
-        public async Task<IActionResult> RegisterPartnerType([FromBody]PartnerType partnerType)
+        public IActionResult RegisterPartnerType([FromBody]PartnerType ptype)
         {
-            if (partnerType == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(partnerType)} can not be null" });
+            if (ptype == null)
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
+
             try
             {
-                var result = PartnerTypeHelper.RegistePartnerType(partnerType);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = partnerType });
+                //if (partnertypeHelper.GetList(ptype.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Assignmentofcoatocompcode Code {nameof(ptype.Code)} is already exists ,Please Use Different Code " });
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+                APIResponse apiResponse;
+                _ptRepository.Add(ptype);
+                if (_ptRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = ptype };
+                else
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
-        [HttpPut("UpdatePartnerType")]
-        public async Task<IActionResult> UpdatePartnerType([FromBody] PartnerType partnerType)
-        {
-            try
-            {
-                if (partnerType == null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(partnerType)} cannot be null" });
+                return Ok(apiResponse);
 
-                var rs = PartnerTypeHelper.UpdatePartnerType(partnerType);
-                if (rs != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = rs });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpDelete("DeletePartnerType/{code}")]
-        public async Task<IActionResult> DeletePartnerTypeByID(string code)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(code))
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
-
-
-                var result = PartnerTypeHelper.DeletePartnerType(code);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpGet("GetAccountTypesList")]
-        public async Task<IActionResult> GetAccountTypesList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.partnerTypeList = PartnerTypeHelper.GetAccountTypesList();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
             {
@@ -90,19 +46,66 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetPartnerTypeList")]
-        public async Task<IActionResult> GetPartnerTypeList()
+        public IActionResult GetPartnerTypeList()
         {
             try
             {
-                var partnerTypeList = PartnerTypeHelper.GetPartnerTypeList();
-                if (partnerTypeList.Count > 0)
+                var ptypeList = _ptRepository.GetAll();
+                if (ptypeList.Count() > 0)
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.partnerTypeList = partnerTypeList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.ptypeList = ptypeList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+        [HttpPut("UpdatePartnerType")]
+        public IActionResult UpdatePartnerType([FromBody] PartnerType ptype)
+        {
+            if (ptype == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(ptype)} cannot be null" });
+
+            try
+            {
+                APIResponse apiResponse;
+                _ptRepository.Update(ptype);
+                if (_ptRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = ptype };
+                else
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpDelete("DeletePartnerType/{code}")]
+        public IActionResult DeletePartnerTypebyID(string code)
+        {
+            try
+            {
+                if (code == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
+
+                APIResponse apiResponse;
+                var record = _ptRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _ptRepository.Remove(record);
+                if (_ptRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
+                else
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+
+                return Ok(apiResponse);
             }
             catch (Exception ex)
             {

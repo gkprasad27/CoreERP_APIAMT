@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers
 {
@@ -15,7 +12,24 @@ namespace CoreERP.Controllers
     [Route("api/Company")]
     public class CompanyController : ControllerBase
     {
-
+        private readonly IRepository<TblCompany> _companyRepository;
+        private readonly IRepository<States> _stateRepository;
+        private readonly IRepository<TblCurrency> _currencyRepository;
+        private readonly IRepository<TblLanguage> _languageRepository;
+        private readonly IRepository<TblRegion> _regionRepository;
+        private readonly IRepository<Countries> _countryRepository;
+        private readonly IRepository<TblEmployee> _employeeRepository;
+        public CompanyController(IRepository<TblCompany> companyRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
+                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository)
+        {
+            _companyRepository = companyRepository;
+            _stateRepository = stateRepository;
+            _currencyRepository = currencyRepository;
+            _languageRepository = languageRepository;
+            _regionRepository = regionRepository;
+            _countryRepository = countryRepository;
+            _employeeRepository = employeeRepository;
+        }
 
         [HttpGet("GetStatesList")]
         public IActionResult GetStatesList()
@@ -23,7 +37,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.StatesList = CompaniesHelper.GetStatesList().Select(x => new { ID = x.StateCode, TEXT = x.StateName });
+                expando.StatesList = _stateRepository.GetAll().Select(x => new { ID = x.StateCode, TEXT = x.StateName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -31,7 +45,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        
 
         [HttpGet("GetCurrencyList")]
         public IActionResult GetCurrencyList()
@@ -39,7 +52,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CurrencyList = CompaniesHelper.GetCurrencyList().Select(x => new { ID = x.CurrencySymbol, TEXT = x.CurrencyName });
+                expando.CurrencyList = _currencyRepository.GetAll().Select(x => new { ID = x.CurrencySymbol, TEXT = x.CurrencyName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -54,7 +67,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.LanguageList = CompaniesHelper.GetLanguageList().Select(x => new { ID = x.LanguageCode, TEXT = x.LanguageName });
+                expando.LanguageList = _languageRepository.GetAll().Select(x => new { ID = x.LanguageCode, TEXT = x.LanguageName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -62,13 +75,14 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
         [HttpGet("GetRegionList")]
         public IActionResult GetRegionList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.RegionList = CompaniesHelper.GetRegionListList().Select(x => new { ID = x.RegionCode, TEXT = x.RegionName });
+                expando.RegionList = _regionRepository.GetAll().Select(x => new { ID = x.RegionCode, TEXT = x.RegionName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -83,7 +97,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CountryList = CompaniesHelper.GetCountryList().Select(x => new { ID = x.CountryCode, TEXT = x.CountryName });
+                expando.CountryList = _countryRepository.GetAll().Select(x => new { ID = x.CountryCode, TEXT = x.CountryName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -92,39 +106,20 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetCompanysList")]
-        public IActionResult GetCompanysList()
-        {
-            try
-            {
-                var companiesList = CompaniesHelper.GetListOfCompanies();
-                if (companiesList.Count > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.companiesList = companiesList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
         [HttpGet("GetEmployeesList")]
         public IActionResult GetEmployeesList()
         {
             try
             {
-                var empList = CompaniesHelper.GetListOfEmployes();
-                if (empList.Count > 0)
+                var empList = _employeeRepository.GetAll();
+                if (empList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.emplist = empList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -132,30 +127,46 @@ namespace CoreERP.Controllers
             }
         }
 
-       
+        [HttpGet("GetCompanysList")]
+        public IActionResult GetCompanysList()
+        {
+            try
+            {
+                var companiesList = _companyRepository.GetAll();
+                if (companiesList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.companiesList = companiesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPost("RegisterCompany")]
-        public IActionResult RegisterCompany([FromBody]TblCompany company)
+        public IActionResult RegisterCompany([FromBody] TblCompany company)
         {
 
             if (company == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(company)} cannot be null" });
             else
             {
-                if (CompaniesHelper.GetCompanies(company.CompanyCode)!=null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + company.CompanyCode + " is already Exists,Please Use Another Code" });
+                //if (CompaniesHelper.GetCompanies(company.CompanyCode)!=null)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + company.CompanyCode + " is already Exists,Please Use Another Code" });
 
                 try
-                 {
-                    APIResponse apiResponse = null;
-                    var result = CompaniesHelper.Register(company);
-                    if (result != null)
-                    {
-                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                    }
+                {
+                    APIResponse apiResponse;
+                    _companyRepository.Add(company);
+                    if (_companyRepository.SaveChanges() > 0)
+                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = company };
                     else
-                    {
                         apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                    }
 
                     return Ok(apiResponse);
                 }
@@ -165,8 +176,8 @@ namespace CoreERP.Controllers
                 }
             }
         }
-        
-       [HttpPut("UpdateCompany")]
+
+        [HttpPut("UpdateCompany")]
         public IActionResult UpdateCompany([FromBody] TblCompany company)
         {
 
@@ -174,17 +185,14 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(company)} cannot be null" });
             try
             {
-                APIResponse apiResponse = null;
+                APIResponse apiResponse;
 
-                TblCompany result = CompaniesHelper.Update(company);
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _companyRepository.Update(company);
+                if (_companyRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = company };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -192,7 +200,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        
 
         [HttpDelete("DeleteCompany/{code}")]
         public IActionResult DeleteCompany(string code)
@@ -202,16 +209,14 @@ namespace CoreERP.Controllers
 
             try
             {
-                var result = CompaniesHelper.DeleteCompanies(code);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                var record = _companyRepository.GetSingleOrDefault(x => x.CompanyCode.Equals(code));
+                _companyRepository.Remove(record);
+                if (_companyRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -219,5 +224,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
     }
 }

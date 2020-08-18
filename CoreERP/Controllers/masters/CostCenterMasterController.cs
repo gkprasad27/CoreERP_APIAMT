@@ -1,10 +1,9 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
-using System.Dynamic;
-using CoreERP.DataAccess;
+using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers
 {
@@ -12,13 +11,19 @@ namespace CoreERP.Controllers
     [Route("api/CostCenter")]
     public class CostCenterMasterController : ControllerBase
     {
+        private readonly IRepository<CostCenters> _ccRepository;
+        public CostCenterMasterController(IRepository<CostCenters> ccRepository)
+        {
+            _ccRepository = ccRepository;
+        }
+
         [HttpGet("GetCostCenterList")]
         public IActionResult GetCostCenterList()
         {
             try
             {
-                var costcenterList = CostCenterHelper.GetCostCenterList();
-                if (costcenterList.Count > 0)
+                var costcenterList = _ccRepository.GetAll();
+                if (costcenterList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.costcenterList = costcenterList;
@@ -33,7 +38,6 @@ namespace CoreERP.Controllers
             }
         }
 
-
         [HttpPost("RegisterCostCenter")]
         public IActionResult RegisterCostCenter([FromBody]CostCenters costCenter)
         {
@@ -41,19 +45,15 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(costCenter)} cannot be null" });
             try
             {
-                if (CostCenterHelper.IsCodeExists(costCenter.Code))
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"Code ={costCenter.Code} Already Exists." });
+                //if (CostCenterHelper.IsCodeExists(costCenter.Code))
+                //    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"Code ={costCenter.Code} Already Exists." });
 
-                var result = CostCenterHelper.RegisterCostCenter(costCenter);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _ccRepository.Add(costCenter);
+                if (_ccRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = costCenter };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
             }
@@ -63,8 +63,6 @@ namespace CoreERP.Controllers
             }
         }
 
-
-
         [HttpPut("UpdateCostCenter")]
         public IActionResult UpdateCostCenter([FromBody] CostCenters costCenter)
         {
@@ -73,16 +71,13 @@ namespace CoreERP.Controllers
             try
             {
 
-                var rs = CostCenterHelper.UpdateCostCenter(costCenter);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _ccRepository.Update(costCenter);
+                if (_ccRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = costCenter };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+                
                 return Ok(apiResponse);
 
             }
@@ -99,16 +94,14 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
             try
             {
-                var result = CostCenterHelper.DeleteCostCenter(code);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                var record = _ccRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _ccRepository.Remove(record);
+                if (_ccRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)

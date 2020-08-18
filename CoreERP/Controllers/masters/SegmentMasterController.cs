@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
-using CoreERP.DataAccess;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers
 {
@@ -14,15 +11,19 @@ namespace CoreERP.Controllers
     [Route("api/Segment")]
     public class SegmentMasterController : ControllerBase
     {
-
+        private readonly IRepository<Segment> _segmentRepository;
+        public SegmentMasterController(IRepository<Segment> segmentRepository)
+        {
+            _segmentRepository = segmentRepository;
+        }
 
         [HttpGet("GetSegmentList")]
         public IActionResult GetSegmentList()
         {
             try
             {
-                var segmentList = SegmentHelper.GetSegmentList();
-                if (segmentList.Count > 0)
+                var segmentList = _segmentRepository.GetAll();
+                if (segmentList.Count() > 0)
                 {
                     dynamic expando = new ExpandoObject();
                     expando.segmentList = segmentList;
@@ -38,18 +39,18 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("RegisterSegment")]
-        public IActionResult RegisterSegment([FromBody]Segment segment)
+        public IActionResult RegisterSegment([FromBody] Segment segment)
         {
             if (segment == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(segment)} cannot be null" });
             try
             {
-                if (SegmentHelper.IsSegmentIDExists(segment.Id))
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"ID={segment.Id} Already Exists." });
-
-                var result = SegmentHelper.RegisterSegment(segment);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
+                //if (SegmentHelper.IsSegmentIDExists(segment.Id))
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"ID={segment.Id} Already Exists." });
+                APIResponse apiResponse;
+                _segmentRepository.Add(segment);
+                if (_segmentRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = segment });
                 else
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
             }
@@ -58,7 +59,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpPut("UpdateSegment")]
         public IActionResult UpdateSegment([FromBody] Segment segment)
@@ -70,11 +70,12 @@ namespace CoreERP.Controllers
                 if (segment == null)
                     return BadRequest($"{nameof(segment)} cannot be null");
 
-                var result = SegmentHelper.UpdateSegment(segment);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
+                APIResponse apiResponse;
+                _segmentRepository.Update(segment);
+                if (_segmentRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = segment });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
             }
             catch (Exception ex)
             {
@@ -89,11 +90,12 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(ID)}can not be null" });
             try
             {
-                var result = SegmentHelper.DeleteSegment(Convert.ToInt32(ID));
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
+                var record = _segmentRepository.GetSingleOrDefault(x => x.Id.Equals(ID));
+                _segmentRepository.Remove(record);
+                if (_segmentRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = record });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." });
             }
             catch (Exception ex)
             {

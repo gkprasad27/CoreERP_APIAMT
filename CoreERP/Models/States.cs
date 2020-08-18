@@ -10,7 +10,6 @@ namespace CoreERP.Models
             ProfitCenters = new HashSet<ProfitCenters>();
             SalesDepartment = new HashSet<SalesDepartment>();
             TblBranch = new HashSet<TblBranch>();
-            TblCompany = new HashSet<TblCompany>();
             TblPlant = new HashSet<TblPlant>();
             TblSalesOffice = new HashSet<TblSalesOffice>();
         }
@@ -20,10 +19,11 @@ namespace CoreERP.Models
         public string CountryCode { get; set; }
         public string Language { get; set; }
 
+        public virtual Countries CountryCodeNavigation { get; set; }
+        public virtual TblLanguage LanguageNavigation { get; set; }
         public virtual ICollection<ProfitCenters> ProfitCenters { get; set; }
         public virtual ICollection<SalesDepartment> SalesDepartment { get; set; }
         public virtual ICollection<TblBranch> TblBranch { get; set; }
-        public virtual ICollection<TblCompany> TblCompany { get; set; }
         public virtual ICollection<TblPlant> TblPlant { get; set; }
         public virtual ICollection<TblSalesOffice> TblSalesOffice { get; set; }
     }

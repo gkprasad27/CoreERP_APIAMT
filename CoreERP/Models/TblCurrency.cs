@@ -7,6 +7,7 @@ namespace CoreERP.Models
     {
         public TblCurrency()
         {
+            Countries = new HashSet<Countries>();
             ProfitCenters = new HashSet<ProfitCenters>();
             SalesDepartment = new HashSet<SalesDepartment>();
             TblBranch = new HashSet<TblBranch>();
@@ -17,14 +18,9 @@ namespace CoreERP.Models
 
         public string CurrencySymbol { get; set; }
         public string CurrencyName { get; set; }
-        public string SubunitName { get; set; }
         public int? NoOfDecimalPlaces { get; set; }
-        public string Narration { get; set; }
-        public bool? IsDefault { get; set; }
-        public DateTime? DateTime { get; set; }
-        public string Extra1 { get; set; }
-        public string Extra2 { get; set; }
 
+        public virtual ICollection<Countries> Countries { get; set; }
         public virtual ICollection<ProfitCenters> ProfitCenters { get; set; }
         public virtual ICollection<SalesDepartment> SalesDepartment { get; set; }
         public virtual ICollection<TblBranch> TblBranch { get; set; }

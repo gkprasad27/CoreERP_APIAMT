@@ -1,12 +1,10 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -14,6 +12,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/SalesGroup")]
     public class SalesGroupController : ControllerBase
     {
+        private readonly IRepository<TblSalesGroup> _sgRepository;
+        public SalesGroupController(IRepository<TblSalesGroup> sgRepository)
+        {
+            _sgRepository = sgRepository;
+        }
+
         [HttpPost("RegisterSalesGroup")]
         public IActionResult RegisterSalesGroup([FromBody]TblSalesGroup slgrp)
         {
@@ -22,19 +26,15 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (SalesGroupHelper.GetList(slgrp.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"salesoffice Code {nameof(slgrp.Code)} is already exists ,Please Use Different Code " });
+                //if (SalesGroupHelper.GetList(slgrp.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"salesoffice Code {nameof(slgrp.Code)} is already exists ,Please Use Different Code " });
 
-                var result = SalesGroupHelper.Register(slgrp);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _sgRepository.Add(slgrp);
+                if (_sgRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = slgrp };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var salesgrplList = SalesGroupHelper.GetList();
+                var salesgrplList = _sgRepository.GetAll();
                 if (salesgrplList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -58,9 +58,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -76,16 +74,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = SalesGroupHelper.Update(slgrp);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _sgRepository.Update(slgrp);
+                if (_sgRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = slgrp };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -93,7 +88,6 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteSalesGroup/{code}")]
         public IActionResult DeleteSalesGroupByID(string code)
@@ -103,16 +97,14 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = SalesGroupHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _sgRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _sgRepository.Remove(record);
+                if (_sgRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)

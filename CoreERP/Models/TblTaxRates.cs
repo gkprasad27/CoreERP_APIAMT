@@ -14,5 +14,7 @@ namespace CoreERP.Models
         public decimal? Cgst { get; set; }
         public decimal? Igst { get; set; }
         public decimal? Ugst { get; set; }
+        public decimal? CompositeCess { get; set; }
+        public DateTime? EffectiveFrom { get; set; }
     }
 }

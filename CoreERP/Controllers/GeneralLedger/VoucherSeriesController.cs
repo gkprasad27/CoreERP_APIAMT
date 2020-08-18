@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreERP.BussinessLogic.GenerlLedger;
+﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers.GeneralLedger
 {
@@ -14,6 +12,12 @@ namespace CoreERP.Controllers.GeneralLedger
     [Route("api/VoucherSeries")]
     public class VoucherSeriesController : ControllerBase
     {
+        private readonly IRepository<TblVoucherSeries> _vsRepository;
+        public VoucherSeriesController(IRepository<TblVoucherSeries> vsRepository)
+        {
+            _vsRepository = vsRepository;
+        }
+
         [HttpPost("RegisterVoucherSeries")]
         public IActionResult RegisterVoucherSeries([FromBody]TblVoucherSeries vcseries)
         {
@@ -22,19 +26,15 @@ namespace CoreERP.Controllers.GeneralLedger
 
             try
             {
-                if (VoucherSeriesHelper.GetList(vcseries.VoucherSeriesKey).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Vocherseries Code {nameof(vcseries.VoucherSeriesKey)} is already exists ,Please Use Different Code " });
+                //if (VoucherSeriesHelper.GetList(vcseries.VoucherSeriesKey).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Vocherseries Code {nameof(vcseries.VoucherSeriesKey)} is already exists ,Please Use Different Code " });
 
-                var result = VoucherSeriesHelper.Register(vcseries);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _vsRepository.Add(vcseries);
+                if (_vsRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = vcseries };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                var vcseriesList = VoucherSeriesHelper.GetList();
+                var vcseriesList = _vsRepository.GetAll();
                 if (vcseriesList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -58,9 +58,7 @@ namespace CoreERP.Controllers.GeneralLedger
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -76,16 +74,13 @@ namespace CoreERP.Controllers.GeneralLedger
 
             try
             {
-                var rs = VoucherSeriesHelper.Update(vcseries);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _vsRepository.Update(vcseries);
+                if (_vsRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = vcseries };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -93,7 +88,6 @@ namespace CoreERP.Controllers.GeneralLedger
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteVoucherSeries/{code}")]
         public IActionResult DeleteVoucherSeriesByID(string code)
@@ -103,16 +97,14 @@ namespace CoreERP.Controllers.GeneralLedger
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = VoucherSeriesHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _vsRepository.GetSingleOrDefault(x => x.VoucherSeriesKey.Equals(code));
+                _vsRepository.Remove(record);
+                if (_vsRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)

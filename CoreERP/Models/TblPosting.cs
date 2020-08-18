@@ -5,13 +5,12 @@ namespace CoreERP.Models
 {
     public partial class TblPosting
     {
-        public string Code { get; set; }
-        public string Tdstype { get; set; }
-        public string IncomeType { get; set; }
+        public int Code { get; set; }
         public string Tdsrate { get; set; }
         public string Glaccount { get; set; }
-        public string Description { get; set; }
-        public DateTime? Date { get; set; }
-        public string Ext { get; set; }
+        public string Company { get; set; }
+        public string Branch { get; set; }
+        public string Plant { get; set; }
+        public string ChartofAccount { get; set; }
     }
 }

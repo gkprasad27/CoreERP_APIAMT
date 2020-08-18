@@ -1,12 +1,9 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -14,6 +11,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/Region")]
     public class RegionController : ControllerBase
     {
+        private readonly IRepository<TblRegion> _regionRepository;
+        public RegionController(IRepository<TblRegion> regionRepository)
+        {
+            _regionRepository = regionRepository;
+        }
+
         [HttpPost("RegisterRegion")]
         public IActionResult RegisterRegion([FromBody]TblRegion region)
         {
@@ -22,19 +25,15 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (RegionHelper.GetList(region.RegionCode).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"region Code {nameof(region.RegionCode)} is already exists ,Please Use Different Code " });
+                //if (RegionHelper.GetList(region.RegionCode).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"region Code {nameof(region.RegionCode)} is already exists ,Please Use Different Code " });
 
-                var result = RegionHelper.Register(region);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _regionRepository.Add(region);
+                if (_regionRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = region };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -50,7 +49,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var regionList = RegionHelper.GetList();
+                var regionList = _regionRepository.GetAll();
                 if (regionList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -58,9 +57,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -76,16 +73,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = RegionHelper.Update(region);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _regionRepository.Update(region);
+                if (_regionRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = region };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -93,7 +87,6 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteRegion/{code}")]
         public IActionResult DeleteRegionByID(string code)
@@ -103,16 +96,14 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = RegionHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _regionRepository.GetSingleOrDefault(x => x.RegionCode.Equals(code));
+                _regionRepository.Remove(record);
+                if (_regionRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)

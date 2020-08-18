@@ -5,7 +5,6 @@ namespace CoreERP.Models
 {
     public partial class TblMainAssetMaster
     {
-        public int Id { get; set; }
         public string AssetNumber { get; set; }
         public string Name { get; set; }
         public string Name1 { get; set; }
@@ -30,5 +29,7 @@ namespace CoreERP.Models
         public DateTime? DepreciationStartDate { get; set; }
         public string Ext { get; set; }
         public string Ext1 { get; set; }
+        public string Company { get; set; }
+        public string Assetclass { get; set; }
     }
 }

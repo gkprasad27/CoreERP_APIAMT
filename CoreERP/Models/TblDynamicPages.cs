@@ -14,6 +14,7 @@ namespace CoreERP.Models
         public string DeleteUrl { get; set; }
         public string ListName { get; set; }
         public string PrimaryKey { get; set; }
-        public string Ext { get; set; }
+        public string Delete { get; set; }
+        public string TabScreen { get; set; }
     }
 }

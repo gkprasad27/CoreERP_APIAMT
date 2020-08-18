@@ -1,12 +1,9 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -14,6 +11,12 @@ namespace CoreERP.Controllers.masters
     [Route("api/PurchaseDepartment")]
     public class PurchaseDepartmentController : ControllerBase
     {
+        private readonly IRepository<TblPurchaseDepartment> _pdRepository;
+        public PurchaseDepartmentController(IRepository<TblPurchaseDepartment> pdRepository)
+        {
+            _pdRepository = pdRepository;
+        }
+
         [HttpPost("RegisterPurchaseDepartment")]
         public IActionResult RegisterPurchaseDepartment([FromBody]TblPurchaseDepartment prdept)
         {
@@ -22,19 +25,15 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (PurchaseDepartmentHelper.GetList(prdept.Code).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"salesoffice Code {nameof(prdept.Code)} is already exists ,Please Use Different Code " });
+                //if (PurchaseDepartmentHelper.GetList(prdept.Code).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"salesoffice Code {nameof(prdept.Code)} is already exists ,Please Use Different Code " });
 
-                var result = PurchaseDepartmentHelper.Register(prdept);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _pdRepository.Add(prdept);
+                if (_pdRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = prdept };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -50,7 +49,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var prdeptList = PurchaseDepartmentHelper.GetList();
+                var prdeptList = _pdRepository.GetAll();
                 if (prdeptList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -58,9 +57,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -76,16 +73,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = PurchaseDepartmentHelper.Update(prdept);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _pdRepository.Update(prdept);
+                if (_pdRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = prdept };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -93,7 +87,6 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeletePurchaseDepartment/{code}")]
         public IActionResult DeletePurchaseDepartmentByID(string code)
@@ -103,16 +96,14 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = PurchaseDepartmentHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _pdRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _pdRepository.Remove(record);
+                if (_pdRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)

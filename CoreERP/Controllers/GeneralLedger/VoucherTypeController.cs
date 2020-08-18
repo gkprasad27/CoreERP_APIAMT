@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreERP.BussinessLogic.GenerlLedger;
+﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Dynamic;
+using System.Linq;
 
 namespace CoreERP.Controllers.GL
 {
@@ -14,26 +12,14 @@ namespace CoreERP.Controllers.GL
     [Route("api/VoucherType")]
     public class VoucherTypeController : ControllerBase
     {
-
-        [HttpGet("GetVoucherTypeList")]
-        public IActionResult GetVoucherTypeList()
+        private readonly IRepository<TblCompany> _companyRepository;
+        private readonly IRepository<Branches> _branchRepository;
+        private readonly IRepository<TblVoucherType> _vtRepository;
+        public VoucherTypeController(IRepository<TblVoucherType> vtRepository, IRepository<TblCompany> companyRepository,IRepository<Branches>branchRepository)
         {
-            try
-            {
-                var vouchertypeList = GLHelper.GetVoucherTypeList();
-                if (vouchertypeList.Count > 0)
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.GLSubCodeList = vouchertypeList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+            _vtRepository = vtRepository;
+            _companyRepository = companyRepository;
+            _branchRepository = branchRepository;
         }
 
         [HttpGet("GetBranchesList")]
@@ -42,7 +28,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BranchesList = GLHelper.GetBranches().Select(b => new { ID = b.BranchCode, TEXT = b.BranchName });
+                expando.BranchesList = _branchRepository.GetAll().Select(b => new { ID = b.BranchCode, TEXT = b.Name });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -57,7 +43,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CompaniesList = GLHelper.GetCompanies().Select(x => new { ID = x.CompanyCode, TEXT = x.CompanyName });
+                expando.CompaniesList = _companyRepository.GetAll().Select(x => new { ID = x.CompanyCode, TEXT = x.CompanyName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -66,22 +52,43 @@ namespace CoreERP.Controllers.GL
             }
         }
 
+        [HttpGet("GetVoucherTypeList")]
+        public IActionResult GetVoucherTypeList()
+        {
+            try
+            {
+                var vouchertypeList = _vtRepository.GetAll();
+                if (vouchertypeList.Count() > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.GLSubCodeList = vouchertypeList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
         [HttpPost("RegisterVoucherTypes")]
-        public IActionResult RegisterVoucherTypes([FromBody]TblVoucherType vouhertype)
+        public IActionResult RegisterVoucherTypes([FromBody] TblVoucherType vouhertype)
         {
             if (vouhertype == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Requst can not be empty." });
             try
             {
-                if (GLHelper.GetVoucherTypeList(vouhertype.VoucherTypeId).Count > 0)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Voucher Code ={vouhertype.VoucherTypeId} alredy exists." });
+                //if (GLHelper.GetVoucherTypeList(vouhertype.VoucherTypeId).Count > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Voucher Code ={vouhertype.VoucherTypeId} alredy exists." });
 
-                TblVoucherType result = GLHelper.RegisterVoucherType(vouhertype);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
+                APIResponse apiResponse;
+                _vtRepository.Add(vouhertype);
+                if (_vtRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = vouhertype });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration failed." });
             }
             catch (Exception ex)
             {
@@ -98,11 +105,12 @@ namespace CoreERP.Controllers.GL
 
             try
             {
-                TblVoucherType result = GLHelper.UpdateVoucherType(vouchertype);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
+                APIResponse apiResponse;
+                _vtRepository.Update(vouchertype);
+                if (_vtRepository.SaveChanges()>0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = vouchertype });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation failed." });
             }
             catch (Exception ex)
             {
@@ -119,11 +127,13 @@ namespace CoreERP.Controllers.GL
 
             try
             {
-                TblVoucherType result = GLHelper.DeleteVoucherType(code);
-                if (result != null)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = result });
-
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
+                APIResponse apiResponse;
+                var record = _vtRepository.GetSingleOrDefault(x => x.VoucherTypeId.Equals(code));
+                _vtRepository.Remove(record);
+                if (_vtRepository.SaveChanges() > 0)
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = record });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion failed." });
             }
             catch (Exception ex)
             {

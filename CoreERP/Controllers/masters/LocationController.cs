@@ -1,12 +1,10 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -14,6 +12,15 @@ namespace CoreERP.Controllers.masters
     [Route("api/Location")]
     public class LocationController : ControllerBase
     {
+        private readonly IRepository<TblPlant> _plantRepository;
+        private readonly IRepository<TblLocation> _locationRepository;
+        public LocationController(IRepository<TblLocation>locationRepository ,IRepository<TblPlant> plantRepository)
+        {
+            _locationRepository = locationRepository;
+            _plantRepository = plantRepository;
+
+        }
+
         [HttpPost("RegisterLocation")]
         public IActionResult RegisterLocation([FromBody]TblLocation location)
         {
@@ -22,19 +29,15 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                if (LocationHelper.GetList(location.LocationId).Count() > 0)
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"location Code {nameof(location.LocationId)} is already exists ,Please Use Different Code " });
+                //if (LocationHelper.GetList(location.LocationId).Count() > 0)
+                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"location Code {nameof(location.LocationId)} is already exists ,Please Use Different Code " });
 
-                var result = LocationHelper.Register(location);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _locationRepository.Add(location);
+                if (_locationRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = location };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
 
                 return Ok(apiResponse);
 
@@ -50,7 +53,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var locationList = LocationHelper.GetList();
+                var locationList = _locationRepository.GetAll();
                 if (locationList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -58,9 +61,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                {
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                }
             }
             catch (Exception ex)
             {
@@ -73,7 +74,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var plantList = LocationHelper.GetPlants();
+                var plantList = _plantRepository.GetAll();
                 if (plantList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -97,16 +98,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = LocationHelper.Update(loc);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _locationRepository.Update(loc);
+                if (_locationRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = loc };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -114,7 +112,6 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
         [HttpDelete("DeleteLocation/{code}")]
         public IActionResult DeleteLocationByID(string code)
@@ -124,16 +121,14 @@ namespace CoreERP.Controllers.masters
                 if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                var rs = LocationHelper.Delete(code);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                var record = _locationRepository.GetSingleOrDefault(x => x.LocationId.Equals(code));
+                _locationRepository.Remove(record);
+                if (_locationRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                }
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)

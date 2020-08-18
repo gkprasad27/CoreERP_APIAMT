@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreERP.DataAccess;
+using CoreERP.DataAccess.Repositories;
+using CoreERP.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using CoreERP.BussinessLogic.Common;
 
 namespace CoreERP
 {
@@ -24,14 +29,16 @@ namespace CoreERP
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ERPContext>(ServiceLifetime.Singleton);
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddControllers().AddJsonOptions(options =>
             {
-               options.JsonSerializerOptions.Converters.Add(new BussinessLogic.Common.JsonValueConvertor<int>());
-               options.JsonSerializerOptions.Converters.Add(new BussinessLogic.Common.JsonValueConvertor<decimal>());
-               options.JsonSerializerOptions.Converters.Add(new BussinessLogic.Common.JsonValueConvertor<DateTime>());
-               options.JsonSerializerOptions.Converters.Add(new BussinessLogic.Common.JsonValueConvertor<string>());
+                options.JsonSerializerOptions.Converters.Add(new BussinessLogic.Common.JsonValueConvertor<int>());
+                options.JsonSerializerOptions.Converters.Add(new BussinessLogic.Common.JsonValueConvertor<decimal>());
+                options.JsonSerializerOptions.Converters.Add(new BussinessLogic.Common.JsonValueConvertor<DateTime>());
+                options.JsonSerializerOptions.Converters.Add(new BussinessLogic.Common.JsonValueConvertor<string>());
             });
-         
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CoreERPCoresPloicy",
@@ -60,7 +67,7 @@ namespace CoreERP
 
             app.UseRouting();
 
-          //  app.UseAuthorization();
+            //  app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

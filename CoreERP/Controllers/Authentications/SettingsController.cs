@@ -24,13 +24,13 @@ namespace CoreERP.Controllers.Authentications
                 try
                 {
                     var menusList = new SettingsHelper().GetMenusList();
-                    if (menusList.Count > 0)
-                    {
+                    //if (menusList.Count > 0)
+                    //{
                         dynamic expando = new ExpandoObject();
                         expando.ScreenNames = menusList.Select(m => new { ID = m.Code, TEXT = m.DisplayName });
 
-                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                    }
+                    //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    //}
 
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Screen Found" });
                 }

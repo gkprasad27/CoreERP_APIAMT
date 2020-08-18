@@ -8,31 +8,28 @@ namespace CoreERP.BussinessLogic.masterHlepers
 {
     public class UserHelper
     {
-        public static List<Erpuser> GetList(string user)
+        public static IEnumerable<Erpuser> GetList(string user)
         {
             try
             {
-                using Repository<Erpuser> repo = new Repository<Erpuser>();
-                return repo.Erpuser.Where(x => x.UserName == user).ToList();
+                return Repository<Erpuser>.Instance.Where(x => x.UserName == user);
             }
             catch { throw; }
         }
 
-        public static List<Erpuser> GetList()
+        public static IEnumerable<Erpuser> GetList()
         {
             try
             {
-                using Repository<Erpuser> repo = new Repository<Erpuser>();
-                return repo.Erpuser.ToList();
+                return Repository<Erpuser>.Instance.GetAll().OrderBy(x => x.UserName);
             }
             catch { throw; }
         }
-        public static List<TblRole> GetRoleList()
+        public static IEnumerable<TblRole> GetRoleList()
         {
             try
             {
-                using Repository<TblRole> repo = new Repository<TblRole>();
-                return repo.TblRole.ToList();
+                return Repository<TblRole>.Instance.GetAll().OrderBy(x => x.RoleId);
             }
             catch { throw; }
         }
@@ -41,10 +38,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Erpuser> repo = new Repository<Erpuser>();
-                user.AddDate = DateTime.Now;
-                repo.Erpuser.Add(user);
-                if (repo.SaveChanges() > 0)
+                Repository<Erpuser>.Instance.Add(user);
+                if (Repository<Erpuser>.Instance.SaveChanges() > 0)
                     return user;
 
                 return null;
@@ -59,10 +54,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Erpuser> repo = new Repository<Erpuser>();
-                user.AddDate = DateTime.Now;
-                repo.Erpuser.Update(user);
-                if (repo.SaveChanges() > 0)
+                Repository<Erpuser>.Instance.Update(user);
+                if (Repository<Erpuser>.Instance.SaveChanges() > 0)
                     return user;
 
                 return null;
@@ -77,11 +70,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Erpuser> repo = new Repository<Erpuser>();
-                var scodes = repo.Erpuser.Where(x => x.SeqId ==Convert.ToInt32(code)).FirstOrDefault();
-                repo.Erpuser.Remove(scodes);
-                if (repo.SaveChanges() > 0)
-                    return scodes;
+                var ccode = Repository<Erpuser>.Instance.GetSingleOrDefault(x => x.UserName == code);
+                Repository<Erpuser>.Instance.Remove(ccode);
+                if (Repository<Erpuser>.Instance.SaveChanges() > 0)
+                    return ccode;
 
                 return null;
             }

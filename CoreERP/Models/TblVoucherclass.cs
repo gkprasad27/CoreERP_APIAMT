@@ -7,5 +7,6 @@ namespace CoreERP.Models
     {
         public string VoucherKey { get; set; }
         public string Description { get; set; }
+        public string VoucherNature { get; set; }
     }
 }

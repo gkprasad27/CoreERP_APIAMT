@@ -7,7 +7,7 @@ namespace CoreERP.Models
     {
         public string TaxKey { get; set; }
         public string Description { get; set; }
-        public string Ext { get; set; }
+        public string Nature { get; set; }
         public string Ext1 { get; set; }
     }
 }

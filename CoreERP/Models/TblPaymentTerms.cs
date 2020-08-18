@@ -15,6 +15,7 @@ namespace CoreERP.Models
         public int? Term3Discount { get; set; }
         public int? Term4Days { get; set; }
         public int? Term4Discount { get; set; }
-        public string Ext { get; set; }
+        public int? Term5Days { get; set; }
+        public int? Term5Discount { get; set; }
     }
 }

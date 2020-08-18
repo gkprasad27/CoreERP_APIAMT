@@ -19,9 +19,11 @@ namespace CoreERP.DataAccess.Repositories
 
         int Count();
 
-        IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
+        IEnumerable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
         TEntity GetSingleOrDefault(Expression<Func<TEntity, bool>> predicate);
         TEntity Get(int id);
         IEnumerable<TEntity> GetAll();
+
+        int SaveChanges();
     }
 }
