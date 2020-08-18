@@ -25,6 +25,8 @@ namespace CoreERP.Models
         public string DecimalFormat { get; set; }
         public string TimeFormat { get; set; }
 
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        public string LanguageName { get; set; }
         public virtual ICollection<ProfitCenters> ProfitCenters { get; set; }
         public virtual ICollection<SalesDepartment> SalesDepartment { get; set; }
         public virtual ICollection<TblBranch> TblBranch { get; set; }
