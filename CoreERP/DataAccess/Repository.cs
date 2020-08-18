@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace CoreERP.DataAccess
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, new()
+    public class Repository<TEntity> :ERPContext, IRepository<TEntity> where TEntity : class, new()
     {
         private readonly ERPContext _context;
         private readonly DbSet<TEntity> _entities;

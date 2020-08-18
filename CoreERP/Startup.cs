@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using CoreERP.BussinessLogic.Common;
+using Newtonsoft.Json;
 
 namespace CoreERP
 {
@@ -52,7 +53,11 @@ namespace CoreERP
             });
 
             services.AddControllers();
-            services.AddMvc().AddNewtonsoftJson();
+            services.AddMvc().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            }); 
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

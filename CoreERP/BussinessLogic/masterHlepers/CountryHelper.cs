@@ -13,26 +13,28 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Countries> repo = new Repository<Countries>();
-                return repo.Countries.Where(x => x.CountryCode == countrycode).ToList();
+                using (Repository<Countries> repo = new Repository<Countries>())
+                {
+                    return repo.Countries.Where(x => x.CountryCode == countrycode).ToList();
+                }
             }
             catch { throw; }
         }
 
-        public static List<Countries> GetList()
+        public static List<Countries> GetCountries()
         {
             try
-            {  
+            {
                 using (Repository<Countries> repo = new Repository<Countries>())
                 {
                     List<TblLanguage> languages = repo.TblLanguage.ToList();
                     repo.Countries.ToList()
                         .ForEach(c =>
                             {
-                               c.LanguageName = languages.Where(l => l.LanguageCode == c.Language).FirstOrDefault()?.LanguageName;  
+                                c.LangName = languages.Where(l => l.LanguageCode == c.Language).FirstOrDefault()?.LanguageName;
                             });
                     return repo.Countries.ToList();
-                }
+                }           
             }
             catch { throw; }
         }
@@ -41,11 +43,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Countries> repo = new Repository<Countries>();
-                repo.Countries.Add(country);
-                if (repo.SaveChanges() > 0)
-                    return country;
-
+                using (ERPContext repo = new ERPContext())
+                {
+                    repo.Countries.Add(country);
+                    if (repo.SaveChanges() > 0)
+                        return country;
+                }
                 return null;
             }
             catch (Exception ex)
@@ -58,11 +61,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Countries> repo = new Repository<Countries>();
-                repo.Countries.Update(country);
-                if (repo.SaveChanges() > 0)
-                    return country;
-
+                using (Repository<Countries> repo = new Repository<Countries>()) 
+                {
+                    repo.Countries.Update(country);
+                    if (repo.SaveChanges() > 0)
+                        return country;
+                }
                 return null;
             }
             catch (Exception ex)
@@ -75,12 +79,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<Countries> repo = new Repository<Countries>();
-                var ccode = repo.Countries.Where(x => x.CountryCode == countrycode).FirstOrDefault();
-                repo.Countries.Remove(ccode);
-                if (repo.SaveChanges() > 0)
-                    return ccode;
-
+                using (Repository<Countries> _repo = new Repository<Countries>())
+                {
+                    Countries ccode= _repo.Countries.Where(x => x.CountryCode == countrycode).FirstOrDefault();
+                    _repo.Countries.Remove(ccode);
+                    if (_repo.SaveChanges() > 0)
+                        return ccode;
+                }
                 return null;
             }
             catch (Exception ex)
