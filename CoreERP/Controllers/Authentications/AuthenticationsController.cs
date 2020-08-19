@@ -179,36 +179,24 @@ namespace CoreERP.Controllers
         }
         #endregion
 
-        //[HttpGet("logout/{userId}")]
-        //public async Task<IActionResult> GetMenuList(string userId)
-        //{
-        //    var result = await Task.Run(() =>
-        //    {
-        //        try
-        //        {
-        //            string errorMessage = string.Empty;
-        //            var result = new UserManagmentHelper().GetErpuser(userId);
-        //            if (result != null)
-        //            {
-        //                //var _branch = UserManagmentHelper.GetBranchesByUser(Convert.ToDecimal(userId));
-        //                //foreach (var br in _branch)
-        //                //    new UserManagmentHelper().LogoutShiftId(Convert.ToDecimal(userId), br, out errorMessage);
+        [HttpGet("logout/{userId}")]
+        public async Task<IActionResult> GetMenuList(string userId)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Log out successfully." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
+        }
 
-
-        //                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Log out successfully." });
-        //            }
-
-        //            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No  Menu found." });
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
-        //        }
-        //    });
-        //    return result;
-        //}
-
-       // [Authorize]
+        // [Authorize]
         //[HttpGet("ShiftStart/{userId}/{branchCode}")]
         //public async Task<IActionResult> ShiftStart(string userId,string branchCode)
         //{
@@ -235,7 +223,7 @@ namespace CoreERP.Controllers
         //    return result;
         //}
 
-       // [Authorize]
+        // [Authorize]
         //[HttpGet("ShiftTerminate/{shiftId}")]
         //public async Task<IActionResult> ShiftTerminate(string shiftId)
         //{

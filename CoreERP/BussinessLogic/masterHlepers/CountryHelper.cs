@@ -28,10 +28,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using (Repository<Countries> repo = new Repository<Countries>())
                 {
                     List<TblLanguage> languages = repo.TblLanguage.ToList();
+                    List<TblCurrency> currencies = repo.TblCurrency.ToList();
                     repo.Countries.ToList()
                         .ForEach(c =>
                             {
                                 c.LangName = languages.Where(l => l.LanguageCode == c.Language).FirstOrDefault()?.LanguageName;
+                               c.CurrName = currencies.Where(cur => cur.CurrencySymbol == c.Currency).FirstOrDefault()?.CurrencyName;
                             });
                     return repo.Countries.ToList();
                 }           

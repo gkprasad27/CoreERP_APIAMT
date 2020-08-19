@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace CoreERP.Models
 {
@@ -28,8 +26,7 @@ namespace CoreERP.Models
         public string DateFormat { get; set; }
         public string DecimalFormat { get; set; }
         public string TimeFormat { get; set; }
-        [NotMapped]
-        public string LangName { get; set; }
+
         public virtual TblCurrency CurrencyNavigation { get; set; }
         public virtual TblLanguage LanguageNavigation { get; set; }
         public virtual ICollection<ProfitCenters> ProfitCenters { get; set; }
@@ -41,6 +38,4 @@ namespace CoreERP.Models
         public virtual ICollection<TblRegion> TblRegion { get; set; }
         public virtual ICollection<TblSalesOffice> TblSalesOffice { get; set; }
     }
-
-
 }

@@ -15,6 +15,7 @@ namespace CoreERP.Models
         {
         }
 
+        public virtual DbSet<AppConfig> AppConfig { get; set; }
         public virtual DbSet<AsignmentAcctoAccClass> AsignmentAcctoAccClass { get; set; }
         public virtual DbSet<AsignmentCashAccBranch> AsignmentCashAccBranch { get; set; }
         public virtual DbSet<AssignmentSubaccounttoGl> AssignmentSubaccounttoGl { get; set; }
@@ -160,6 +161,17 @@ namespace CoreERP.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AppConfig>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.Property(e => e.GroupName).HasMaxLength(100);
+
+                entity.Property(e => e.SeqId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Valu).HasMaxLength(500);
+            });
+
             modelBuilder.Entity<AsignmentAcctoAccClass>(entity =>
             {
                 entity.HasKey(e => e.Code);
