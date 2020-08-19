@@ -792,6 +792,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 invdtl.PumpId = invdtl.PumpId ?? 0;
                                 invdtl.PumpNo = invdtl.PumpNo ?? 0;
                                 invdtl.SlipNo = invdtl.SlipNo ?? 0;
+                                invdtl.InvoiceDate = invoice.InvoiceDate;
 
                                 repo.TblInvoiceDetail.Add(invdtl);
                                 repo.SaveChanges();
@@ -980,7 +981,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 _stockInformation.InwardQty = 0;
                 _stockInformation.Rate = rate;
                 _stockInformation.UserId = invoice.UserId;
-                _stockInformation.TransactionDate = DateTime.Now;
+                _stockInformation.TransactionDate = invoice.InvoiceDate;
 
                 context.TblStockInformation.Add(_stockInformation);
                 if (context.SaveChanges() > 0)
