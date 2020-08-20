@@ -250,7 +250,16 @@ namespace CoreERP.BussinessLogic.TransactionsHelpers
                     stockInformation.ProductCode = _productQty.OutputproductCode;
                     if (_productpackingType.PackingName == "LOOSE")
                     {
-                        stockInformation.InwardQty = _productQty.OutputQty;
+                        if (oilConversionDetail.Qty == _productQty.InputQty)
+                        {
+                            stockInformation.InwardQty = _productQty.OutputQty;
+                        }
+                        else
+                        {
+                            stockInformation.InwardQty = oilConversionDetail.Qty/_productQty.InputQty;
+                        }
+                        
+                       
                     }
                     else
                     {
