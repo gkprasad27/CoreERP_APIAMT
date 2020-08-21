@@ -1573,6 +1573,10 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
+                entity.Property(e => e.Ext)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
                 entity.Property(e => e.LowValueAssetClass).HasMaxLength(5);
 
                 entity.Property(e => e.Nature).HasMaxLength(50);
@@ -2060,8 +2064,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.TaxClassification).HasMaxLength(50);
 
-                entity.Property(e => e.Tdstate)
-                    .HasColumnName("TDSTate")
+                entity.Property(e => e.Tdsrate)
+                    .HasColumnName("TDSRate")
                     .HasMaxLength(50);
 
                 entity.Property(e => e.Tdstype)
@@ -3135,11 +3139,15 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AcquisitionDate).HasColumnType("date");
 
+                entity.Property(e => e.AssetLowValue).HasMaxLength(5);
+
                 entity.Property(e => e.Assetclass)
                     .HasColumnName("assetclass")
                     .HasMaxLength(50);
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
+
+                entity.Property(e => e.ClassType).HasMaxLength(50);
 
                 entity.Property(e => e.Company).HasMaxLength(50);
 
@@ -3151,6 +3159,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.DepreciationStartDate).HasColumnType("date");
 
+                entity.Property(e => e.Description).HasMaxLength(50);
+
                 entity.Property(e => e.Division).HasMaxLength(5);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
@@ -3159,11 +3169,17 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Location).HasMaxLength(50);
 
+                entity.Property(e => e.LowValueAssetClass).HasMaxLength(5);
+
                 entity.Property(e => e.MaterialNo).HasMaxLength(50);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
                 entity.Property(e => e.Name1).HasMaxLength(50);
+
+                entity.Property(e => e.Nature).HasMaxLength(50);
+
+                entity.Property(e => e.NumberRange).HasMaxLength(5);
 
                 entity.Property(e => e.Plant).HasMaxLength(5);
 

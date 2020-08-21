@@ -12,5 +12,7 @@ namespace CoreERP.Models
         public string LowValueAssetClass { get; set; }
         public string AssetLowValue { get; set; }
         public string Nature { get; set; }
+        public int? LastNumberRange { get; set; }
+        public string Ext { get; set; }
     }
 }

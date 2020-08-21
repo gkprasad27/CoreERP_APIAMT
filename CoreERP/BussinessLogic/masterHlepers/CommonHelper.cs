@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess;
+﻿using CoreERP.Controllers;
+using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -899,6 +900,44 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     {
                        
                         c.AccGroupName = gLAccGroups.Where(cur => cur.AccountNumber == c.Glaccount).FirstOrDefault()?.GlaccountName;
+                    });
+                    return result;
+                }
+            }
+            catch { throw; }
+        }
+
+        public static IEnumerable<TblBusinessPartnerAccount> GetBusinessPartner()
+        {
+            try
+            {
+                using (Repository<TblBusinessPartnerAccount> repo = new Repository<TblBusinessPartnerAccount>())
+                {
+                    List<TblCompany> companies = repo.TblCompany.ToList();
+                    List<PartnerType> partnerTypes = repo.PartnerType.ToList();
+                    List<TblBpgroup> tblBpgroups = repo.TblBpgroup.ToList();
+                    List<States> states = repo.States.ToList();
+                    List<TblRegion> regions = repo.TblRegion.ToList();
+                    List<Countries> countries = repo.Countries.ToList();
+                    List<Glaccounts> gLAccGroups = repo.Glaccounts.ToList();
+                    List<TblPaymentTerms> tblPaymentTerms = repo.TblPaymentTerms.ToList();
+                    List<TblTdstypes> tblTdstypes = repo.TblTdstypes.ToList();
+                    List<TblTdsRates> tblTdsRates = repo.TblTdsRates.ToList();
+
+                    var result = repo.TblBusinessPartnerAccount.ToList();
+
+                    result.ForEach(c =>
+                    {
+                        c.CompanyName = companies.Where(l => l.CompanyCode == c.Company).FirstOrDefault()?.CompanyName;
+                        c.BpTypeName = partnerTypes.Where(l => l.Code == c.Bptype).FirstOrDefault()?.Description;
+                        c.BpGroupName = tblBpgroups.Where(cur => cur.Bpgroup == c.Bpgroup).FirstOrDefault()?.Description;
+                        c.StateName = states.Where(cur => cur.StateCode == c.State).FirstOrDefault()?.StateName;
+                        c.RegionName = regions.Where(cur => cur.RegionCode == c.Region).FirstOrDefault()?.RegionName;
+                        c.CountryName = countries.Where(cur => cur.CountryCode == c.Country).FirstOrDefault()?.CountryName;
+                        c.ControlAccountName = gLAccGroups.Where(cur => cur.AccountNumber == c.ControlAccount).FirstOrDefault()?.GlaccountName;
+                        c.PaymentTermsName = tblPaymentTerms.Where(cur => cur.Code == c.PaymentTerms).FirstOrDefault()?.Description;
+                        c.TdsTypeName = tblTdstypes.Where(cur => cur.TdsCode == c.Tdstype).FirstOrDefault()?.Desctiption;
+                        c.TdsStateName = tblTdsRates.Where(cur => cur.Code == c.Tdsrate).FirstOrDefault()?.Desctiption;
                     });
                     return result;
                 }

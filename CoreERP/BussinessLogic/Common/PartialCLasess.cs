@@ -378,5 +378,30 @@ namespace CoreERP.Models
         [NotMapped]
         public string AccGroupName { get; set; }
     }
+
+    partial class TblBusinessPartnerAccount
+    {
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string BpTypeName { get; set; }
+        [NotMapped]
+        public string BpGroupName { get; set; }
+        [NotMapped]
+        public string StateName { get; set; }
+        [NotMapped]
+        public string RegionName { get; set; }
+        [NotMapped]
+        public string CountryName { get; set; }         
+        [NotMapped]
+        public string ControlAccountName { get; set; }
+        [NotMapped]
+        public string PaymentTermsName { get; set; }
+        [NotMapped]
+        public string TdsTypeName { get; set; }
+        [NotMapped]
+        public string TdsStateName { get; set; }       
+       
+    }
 }
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreERP.BussinessLogic.masterHlepers;
 
 namespace CoreERP.Controllers
 {
@@ -32,7 +33,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var bpaList = _businessPartnerAccountRepository.GetAll();
+                    var bpaList = CommonHelper.GetBusinessPartner();
                     if (bpaList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();

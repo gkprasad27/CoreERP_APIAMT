@@ -29,7 +29,7 @@ namespace CoreERP.Models
         public string ControlAccount { get; set; }
         public string PaymentTerms { get; set; }
         public string Tdstype { get; set; }
-        public string Tdstate { get; set; }
+        public string Tdsrate { get; set; }
         public int? BaseAmount { get; set; }
         public string ObligationFrom { get; set; }
         public string ObligationTo { get; set; }
