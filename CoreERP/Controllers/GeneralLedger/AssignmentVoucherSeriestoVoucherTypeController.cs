@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +52,7 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                var avsvList = _vsvtRepository.GetAll();
+                var avsvList = CommonHelper.GetAssignVoucherseriesVoucherType();
                 if (avsvList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

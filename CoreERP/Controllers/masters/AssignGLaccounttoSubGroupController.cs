@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -31,7 +32,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var assignacckeyList = _assignmentSubaccounttoGLRepository.GetAll();
+                    var assignacckeyList = CommonHelper.GetAssignmentsubaccounttoGL();
                     if (assignacckeyList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();

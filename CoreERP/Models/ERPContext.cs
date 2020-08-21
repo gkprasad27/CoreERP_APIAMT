@@ -1510,17 +1510,13 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblAssetBeginingAcquisition>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("tbl_AssetBeginingAcquisition");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.AcquisitionCost).HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.AcquisitionDate).HasColumnType("date");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.MainAssetDescription).HasMaxLength(50);
 
@@ -1533,17 +1529,13 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblAssetBegningAccumulatedDepreciation>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("tbl_AssetBegningAccumulatedDepreciation");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.AccumulatedDepreciation).HasMaxLength(50);
 
                 entity.Property(e => e.DepreciationArea).HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.MainAssetNo).HasMaxLength(50);
 
@@ -1871,9 +1863,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
-                entity.Property(e => e.Ext1)
-                    .HasColumnName("ext1")
-                    .HasMaxLength(50);
+                entity.Property(e => e.Ext1).HasColumnName("ext1");
             });
 
             modelBuilder.Entity<TblBranch>(entity =>

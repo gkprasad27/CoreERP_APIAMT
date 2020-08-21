@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var alacuntList = _alterRepository.GetAll();
+                var alacuntList = CommonHelper.GetAlternateControlAccounts();
                 if (alacuntList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

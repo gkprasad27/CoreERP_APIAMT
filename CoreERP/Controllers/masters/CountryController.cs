@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var countryList =CountryHelper.GetCountries();
+                var countryList =CommonHelper.GetCountries();
                 if (countryList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

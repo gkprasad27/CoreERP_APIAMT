@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var coaList = _acaRepository.GetAll();
+                var coaList = CommonHelper.GetChartofAccounttoCompany();
                 if (coaList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

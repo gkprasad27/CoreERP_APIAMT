@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreERP.BussinessLogic.masterHlepers;
 
 namespace CoreERP.Controllers
 {
@@ -29,7 +30,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var glList = _glaccountsRepository.GetAll();
+                    var glList = CommonHelper.GetGLAccounts();
                     if (glList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();

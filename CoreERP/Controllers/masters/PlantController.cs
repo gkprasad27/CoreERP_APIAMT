@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var plantList = _plantRepository.GetAll();
+                var plantList = CommonHelper.GetPlants();
                 if (plantList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

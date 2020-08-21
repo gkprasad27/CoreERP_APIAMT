@@ -47,7 +47,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var SubAccountList = _glsubAccountRepository.GetAll();
+                var SubAccountList = CommonHelper.GetGLSubAccounts();
                 if (SubAccountList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

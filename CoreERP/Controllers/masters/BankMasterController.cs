@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreERP.BussinessLogic.masterHlepers;
 
 namespace CoreERP.Controllers
 {
@@ -24,7 +25,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var bankList = _bankMasterRepository.GetAll();
+                    var bankList = CommonHelper.GetBankMaster();
                     if (bankList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();

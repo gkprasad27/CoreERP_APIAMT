@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -49,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var bpgList = _bpgRepository.GetAll();
+                var bpgList = CommonHelper.GetBPGroups();
                 if (bpgList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

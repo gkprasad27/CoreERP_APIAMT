@@ -1,4 +1,6 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -49,7 +51,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var regionList = _regionRepository.GetAll();
+                var regionList = CommonHelper.GetRegions();
                 if (regionList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

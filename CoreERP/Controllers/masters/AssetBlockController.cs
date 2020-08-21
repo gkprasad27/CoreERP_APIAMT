@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var assetblockList = _abRepository.GetAll();
+                var assetblockList = CommonHelper.GetAssetBlock();
                 if (assetblockList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

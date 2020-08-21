@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -50,7 +51,7 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                var taxcodeList = _assitrateRepository.GetAll();
+                var taxcodeList = CommonHelper.GetTaxaccountsTaxcodes();
                 if (taxcodeList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

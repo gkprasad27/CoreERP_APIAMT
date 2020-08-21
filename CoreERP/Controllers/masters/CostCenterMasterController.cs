@@ -1,3 +1,4 @@
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var costcenterList = _ccRepository.GetAll();
+                var costcenterList = CommonHelper.GetCostcenters();
                 if (costcenterList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

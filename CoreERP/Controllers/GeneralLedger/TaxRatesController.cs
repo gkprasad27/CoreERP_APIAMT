@@ -59,7 +59,7 @@ namespace CoreERP.Controllers.masters
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    var TaxRatesList = _trateRepository.GetAll();
+                    var TaxRatesList = CommonHelper.GetTaxRates();
                     expando.TaxratesList = TaxRatesList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }

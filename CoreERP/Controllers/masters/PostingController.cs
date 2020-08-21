@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var postingList = _postingRepository.GetAll();
+                var postingList = CommonHelper.GetPosting();
                 if (postingList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

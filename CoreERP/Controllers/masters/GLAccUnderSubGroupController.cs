@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -123,8 +124,9 @@ namespace CoreERP.Controllers.GL
         {
             try
             {
-                
-                var tblAccountGroupList = _glaugRepository.GetAll().OrderBy(x=>x.Sequence);
+
+                //var tblAccountGroupList = _glaugRepository.GetAll().OrderBy(x=>x.Sequence);
+                var tblAccountGroupList = CommonHelper.GetAccountGroups();
                 if (tblAccountGroupList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

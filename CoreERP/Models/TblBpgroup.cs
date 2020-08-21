@@ -8,6 +8,6 @@ namespace CoreERP.Models
         public string Bpgroup { get; set; }
         public string Bptype { get; set; }
         public string Description { get; set; }
-        public string Ext1 { get; set; }
+        public int? Ext1 { get; set; }
     }
 }

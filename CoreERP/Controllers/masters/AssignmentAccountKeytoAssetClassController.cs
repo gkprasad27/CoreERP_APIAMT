@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -24,7 +25,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var acckeyList = _assignAccountkeytoAssetRepository.GetAll();
+                    var acckeyList = CommonHelper.GetAssetAccountkeytoasset();
                     if (acckeyList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();

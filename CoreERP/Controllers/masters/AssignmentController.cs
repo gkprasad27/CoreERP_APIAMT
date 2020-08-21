@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var asnmList = _assignRepository.GetAll();
+                var asnmList = CommonHelper.GetAssignments();
                 if (asnmList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

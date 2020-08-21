@@ -53,7 +53,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var fdeptList = _fdRepository.GetAll();
+                var fdeptList = CommonHelper.GetFunctionalDepts();
                 if (fdeptList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

@@ -1,3 +1,4 @@
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var profitCenterList = _pcRepository.GetAll();
+                var profitCenterList = CommonHelper.GetProfitcenters();
                 if (profitCenterList.Count() > 0)
                 {
                     dynamic expando = new ExpandoObject();

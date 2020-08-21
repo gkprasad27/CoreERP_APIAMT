@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var salesdeptList = _sdRepository.GetAll();
+                var salesdeptList = CommonHelper.GetSalesDepartments();
                 if (salesdeptList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

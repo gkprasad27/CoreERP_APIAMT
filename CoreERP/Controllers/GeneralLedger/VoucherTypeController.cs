@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -57,7 +58,7 @@ namespace CoreERP.Controllers.GL
         {
             try
             {
-                var vouchertypeList = _vtRepository.GetAll();
+                var vouchertypeList = CommonHelper.GetVoucherType();
                 if (vouchertypeList.Count() > 0)
                 {
                     dynamic expando = new ExpandoObject();

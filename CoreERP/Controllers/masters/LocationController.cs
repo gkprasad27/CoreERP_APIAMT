@@ -53,7 +53,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var locationList = _locationRepository.GetAll();
+                var locationList = CommonHelper.Getlocations();
                 if (locationList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var mareaList = _maRepository.GetAll();
+                var mareaList = CommonHelper.GetMaintenance();
                 if (mareaList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

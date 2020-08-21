@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -45,7 +46,7 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                var taxtransactionList = _ttranRepository.GetAll();
+                var taxtransactionList = CommonHelper.GetTaxTransactions();
                 if (taxtransactionList.Count() > 0)
                 {
                     dynamic expando = new ExpandoObject();

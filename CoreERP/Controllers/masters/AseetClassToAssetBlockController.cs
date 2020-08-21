@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -25,7 +26,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var acabList = _assignAssetClasstoBlockAssetRepository.GetAll();
+                    var acabList = CommonHelper.GetAssetClassBlock();
                     if (acabList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();

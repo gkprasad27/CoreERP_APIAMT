@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -132,7 +133,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var companiesList = _companyRepository.GetAll();
+                var companiesList = CommonHelper.GetCompanies();
                 if (companiesList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

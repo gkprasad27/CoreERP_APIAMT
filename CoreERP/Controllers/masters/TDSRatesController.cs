@@ -50,7 +50,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var tdsratesList = _trateRepository.GetAll();
+                var tdsratesList = CommonHelper.GetTdsRates();
                 if (tdsratesList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();

@@ -1,5 +1,4 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,30 +8,27 @@ using System.Linq;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/StorageLocation")]
-    public class StorageLocationController : ControllerBase
+    [Route("api/AssetBegningAcqusition")]
+    public class AssetBegningAcqusitionController : ControllerBase
     {
-        private readonly IRepository<TblStorageLocation> _slRepository;
-        public StorageLocationController(IRepository<TblStorageLocation> slRepository)
+        private readonly IRepository<TblAssetBeginingAcquisition> _assetBeginingAcquisitionRepository;
+        public AssetBegningAcqusitionController(IRepository<TblAssetBeginingAcquisition> assetBeginingAcquisitionRepository)
         {
-            _slRepository = slRepository;
+            _assetBeginingAcquisitionRepository = assetBeginingAcquisitionRepository;
         }
 
-        [HttpPost("RegisterStorageLocation")]
-        public IActionResult RegisterStorageLocation([FromBody]TblStorageLocation stloc)
+        [HttpPost("RegisterAssetBegningAcqusition")]
+        public IActionResult RegisterAssetBegningAcqusition([FromBody]TblAssetBeginingAcquisition assetbgacq)
         {
-            if (stloc == null)
+            if (assetbgacq == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-                //if (StorageLocationHelper.GetList(stloc.Code).Count() > 0)
-                //    //return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"StorageLocation Code {nameof(stloc.Code)} is already exists ,Please Use Different Code " });
-                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"StorageLocation Code {nameof(stloc.Code)} is already exists ,Please Use Different Code " });
                 APIResponse apiResponse;
-                _slRepository.Add(stloc);
-                if (_slRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = stloc };
+                _assetBeginingAcquisitionRepository.Add(assetbgacq);
+                if (_assetBeginingAcquisitionRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assetbgacq };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -45,16 +41,16 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetStorageLocation")]
-        public IActionResult GetStorageLocation()
+        [HttpGet("GetAssetBegningAcqusitionList")]
+        public IActionResult GetAssetBegningAcqusitionList()
         {
             try
             {
-                var stlocList = CommonHelper.GetStorageLocation();
-                if (stlocList.Count() > 0)
+                var assetbgnaqsnList = _assetBeginingAcquisitionRepository.GetAll();
+                if (assetbgnaqsnList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.stlocList = stlocList;
+                    expdoObj.assetbgnaqsnList = assetbgnaqsnList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
@@ -66,21 +62,21 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpPut("UpdateStorageLocation")]
-        public IActionResult UpdateStorageLocation([FromBody] TblStorageLocation stloc)
+        [HttpPut("UpdateAssetBegningAcqusition")]
+        public IActionResult UpdateAssetBegningAcqusition([FromBody] TblAssetBeginingAcquisition assetbgacq)
         {
-            if (stloc == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(stloc)} cannot be null" });
+            if (assetbgacq == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(assetbgacq)} cannot be null" });
 
             try
             {
                 APIResponse apiResponse;
-                _slRepository.Update(stloc);
-                if (_slRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = stloc };
+                _assetBeginingAcquisitionRepository.Update(assetbgacq);
+                if (_assetBeginingAcquisitionRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assetbgacq };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -89,8 +85,8 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpDelete("DeleteStorageLocation/{code}")]
-        public IActionResult DeleteStorageLocationByID(string code)
+        [HttpDelete("DeleteAssetBegningAcqusition/{code}")]
+        public IActionResult DeleteAssetBegningAcqusitionbyID(string code)
         {
             try
             {
@@ -98,13 +94,13 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _slRepository.GetSingleOrDefault(x => x.Code.Equals(code));
-                _slRepository.Remove(record);
-                if (_slRepository.SaveChanges() > 0)
+                var record = _assetBeginingAcquisitionRepository.GetSingleOrDefault(x => x.MainAssetNo.Equals(code));
+                _assetBeginingAcquisitionRepository.Remove(record);
+                if (_assetBeginingAcquisitionRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)

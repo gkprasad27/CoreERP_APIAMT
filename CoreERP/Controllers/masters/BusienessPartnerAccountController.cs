@@ -12,10 +12,18 @@ namespace CoreERP.Controllers
     [Route("api/BusienessPartnerAccount")]
     public class BusienessPartnerAccountController : ControllerBase
     {
+        private readonly IRepository<TblAssignment> _assignmentrepository;
+        private readonly IRepository<TblBpgroup> _bpgrouprepository;
+        private readonly IRepository<TblNumberRange> _numberRangerepository;
         private readonly IRepository<TblBusinessPartnerAccount> _businessPartnerAccountRepository;
-        public BusienessPartnerAccountController(IRepository<TblBusinessPartnerAccount> businessPartnerAccountRepository)
+        public BusienessPartnerAccountController(IRepository<TblBusinessPartnerAccount> businessPartnerAccountRepository,
+          IRepository<TblAssignment> assignmentepository, IRepository<TblBpgroup> bpgrouprepository,
+          IRepository<TblNumberRange> numberRangerepository)
         {
             _businessPartnerAccountRepository = businessPartnerAccountRepository;
+            _assignmentrepository = assignmentepository;
+            _numberRangerepository = numberRangerepository;
+            _bpgrouprepository = bpgrouprepository;
         }
         [HttpGet("GetBusienessPartnerAccountList")]
         public async Task<IActionResult> GetBusienessPartnerAccountList()
@@ -53,6 +61,13 @@ namespace CoreERP.Controllers
                 try
                 {
                     _businessPartnerAccountRepository.Add(bpa);
+                    TblBpgroup BGG = new TblBpgroup();
+                    BGG.Ext1 = int.Parse(bpa.Bpnumber);
+                    BGG.Bpgroup = bpa.Bpgroup;
+                    BGG.Bptype = bpa.Bptype;
+                    BGG.Description = bpa.Ext;
+                    _bpgrouprepository.Update(BGG);
+                    _bpgrouprepository.SaveChanges();
                     if (_businessPartnerAccountRepository.SaveChanges() > 0)
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bpa };
                     else
@@ -114,5 +129,96 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpGet("GetBPtNumberList/{code}/{code1}")]
+        public IActionResult GetBPtNumberList(string code, int code1)
+        {
+            try
+            {
+                var Getaccnolist = _assignmentrepository.Where(x => x.Bpgroup == code).FirstOrDefault();
+                var numrnglist= _numberRangerepository.Where(x => x.Code == Getaccnolist.NumberRangeKey.ToString()).FirstOrDefault();
+                if (Enumerable.Range(Convert.ToInt32(numrnglist.RangeFrom), Convert.ToInt32(numrnglist.RangeTo)).Contains(code1))
+                {
+                    if (code1 >= Convert.ToInt32(numrnglist.RangeFrom) && code1 <= Convert.ToInt32(numrnglist.RangeTo))
+                    {
+                        return Ok();
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
+                }
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
+            }
+
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetBPtNumber/{code}")]
+        public IActionResult GetBPtNumber(string code)
+        {
+            try
+            {
+                int num = Convert.ToInt32(_bpgrouprepository.Where(x => x.Bpgroup == code).SingleOrDefault()?.Ext1);
+                 var Getaccnolist = _assignmentrepository.Where(x => x.Bpgroup == code).FirstOrDefault();
+                 var numrnglist= _numberRangerepository.Where(x => x.Code == Getaccnolist.NumberRangeKey.ToString()).FirstOrDefault();
+                if (Enumerable.Range(Convert.ToInt32(numrnglist.RangeFrom), Convert.ToInt32(numrnglist.RangeTo)).Contains(num))
+                {
+                    if (num >= Convert.ToInt32(numrnglist.RangeFrom) && num <= Convert.ToInt32(numrnglist.RangeTo))
+                    {
+                        var bpnum = num + 1;
+                        if (bpnum != null)
+                        {
+                            dynamic expdoObj = new ExpandoObject();
+                            expdoObj.bpaNum = bpnum;
+                            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                        }
+                        //return Ok(bpnum);
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
+                }
+                //var bpnum = num + 1;
+                //if (bpnum != null)
+                //{
+                //    dynamic expdoObj = new ExpandoObject();
+                //    expdoObj.bpaNum = bpnum;
+                //    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                //}
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data.." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+            return Ok();
+
+        }
+
+        [HttpGet("GetBPtName/{code}")]
+        public IActionResult GetBPtNumberList(string code)
+        {
+            try
+            {
+                var bpname = _bpgrouprepository.Where(x => x.Bpgroup == code).SingleOrDefault()?.Description;
+                //var bpname = _bpgrouprepository.Where(x => x.Bpgroup == code).FirstOrDefault();
+                if (bpname!=null)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.bpname = bpname;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for BusienessPartnerAccount." });
+            }
+
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
     }
 }
