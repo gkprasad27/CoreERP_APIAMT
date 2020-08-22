@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreERP.BussinessLogic.masterHlepers;
 
 namespace CoreERP.Controllers
 {
@@ -29,7 +30,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var mamList = _mainAssetMasterRepository.GetAll();
+                    var mamList = CommonHelper.GetMainAssetMaster();
                     if (mamList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -51,6 +52,7 @@ namespace CoreERP.Controllers
         public async Task<IActionResult> RegisterMainAssetMaster([FromBody]TblMainAssetMaster mam)
         {
             APIResponse apiResponse;
+            //var assetname = _assetClassRepository.Where(x => x.Code == mvm.code).FirstOrDefault();
             if (mam == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(mam)} cannot be null" });
             else
@@ -58,6 +60,17 @@ namespace CoreERP.Controllers
                 try
                 {
                     _mainAssetMasterRepository.Add(mam);
+                    TblAssetClass ac = new TblAssetClass();
+                    ac.LastNumberRange = int.Parse(mam.AssetNumber);
+                    ac.Code = mam.Assetclass;
+                    ac.Description = mam.Description;
+                    ac.NumberRange = mam.NumberRange;
+                    ac.LowValueAssetClass = mam.LowValueAssetClass;
+                    ac.AssetLowValue = mam.AssetLowValue;
+                    ac.ClassType = mam.ClassType;
+                    ac.Nature = mam.Nature;
+                    _assetClassRepository.Update(ac);
+                    _assetClassRepository.SaveChanges();
                     if (_mainAssetMasterRepository.SaveChanges() > 0)
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = mam };
                     else
@@ -136,8 +149,8 @@ namespace CoreERP.Controllers
                     else
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
                 }
-              
-                return Ok();
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
             }
 
             catch (Exception ex)
@@ -145,6 +158,68 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-           
+
+        [HttpGet("GettingAssetNumber/{code}")]
+        public IActionResult GettingAssetNumber(string code)
+        {
+            try
+            {
+                var Getassetlist = _assetClassRepository.Where(x => x.Code == code).FirstOrDefault();
+                //var Getassetnumrangelist = _assetNumberRangeRepository.Where(x => x.Code == Getassetlist.NumberRange).FirstOrDefault();
+                int num = Convert.ToInt32(_assetClassRepository.Where(x => x.Code == code).SingleOrDefault()?.LastNumberRange);
+                var Getaccnolist = _assetNumberRangeRepository.Where(x => x.Code == Getassetlist.NumberRange).FirstOrDefault();
+                var numrnglist = _assetNumberRangeRepository.Where(x => x.Code == Getaccnolist.Code.ToString()).FirstOrDefault();
+                if (Enumerable.Range(Convert.ToInt32(numrnglist.FromRange), Convert.ToInt32(numrnglist.ToRange)).Contains(num))
+                {
+                    if (num >= Convert.ToInt32(numrnglist.FromRange) && num <= Convert.ToInt32(numrnglist.ToRange))
+                    {
+                        var astnum = num + 1;
+                        if (astnum != null)
+                        {
+                            dynamic expdoObj = new ExpandoObject();
+                            expdoObj.astnum = astnum;
+                            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                        }
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
+                }
+
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data.." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+            return Ok();
+
         }
+
+        [HttpGet("GettingAssetName/{code}")]
+        public IActionResult GettingAssetNameList(string code)
+        {
+            try
+            {
+                var assetname = _assetClassRepository.Where(x => x.Code == code).FirstOrDefault();
+                //var bpname = _bpgrouprepository.Where(x => x.Bpgroup == code).FirstOrDefault();
+                if (assetname != null)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.assetname = assetname;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for BusienessPartnerAccount." });
+            }
+
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+
+
     }
+}

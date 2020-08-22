@@ -6,6 +6,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using CoreERP.BussinessLogic.masterHlepers;
 
 namespace CoreERP.Controllers
 {
@@ -31,7 +32,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var saList = _subAssetMasterRepository.GetAll();
+                    var saList = CommonHelper.GetSubAssetMaster();
                     if (saList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();

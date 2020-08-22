@@ -944,5 +944,83 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch { throw; }
         }
+
+        public static IEnumerable<TblMainAssetMaster> GetMainAssetMaster()
+        {
+            try
+            {
+                using (Repository<TblMainAssetMaster> repo = new Repository<TblMainAssetMaster>())
+                {
+                    List<TblCompany> companies = repo.TblCompany.ToList();
+                    List<TblAssetClass> tblAssetClasses = repo.TblAssetClass.ToList();
+                    List<TblAssetAccountkey> tblAssetAccountkeys = repo.TblAssetAccountkey.ToList();
+                    List<TblBranch> branches = repo.TblBranch.ToList();
+                    List<ProfitCenters> profitCenters = repo.ProfitCenters.ToList();
+                    List<Segment> segments = repo.Segment.ToList();
+                    List<Divisions> divisions = repo.Divisions.ToList();
+                    List<TblPlant> plants = repo.TblPlant.ToList();
+                    List<TblLocation> tblLocations = repo.TblLocation.ToList();
+                    List<TblDepreciation> tblDepreciations = repo.TblDepreciation.ToList();
+                    List<TblDepreciationAreas> tblDepreciationAreas = repo.TblDepreciationAreas.ToList();
+
+                    var result = repo.TblMainAssetMaster.ToList();
+
+                    result.ForEach(c =>
+                    {
+                        c.CompanyName = companies.Where(l => l.CompanyCode == c.Company).FirstOrDefault()?.CompanyName;
+                        c.AssetClassName = tblAssetClasses.Where(l => l.Code == c.Assetclass).FirstOrDefault()?.Description;
+                        c.AccountKeyName = tblAssetAccountkeys.Where(cur => cur.Code == c.AccountKey).FirstOrDefault()?.Description;
+                        c.BranchName = branches.Where(cur => cur.BranchCode == c.Branch).FirstOrDefault()?.BranchName;
+                        c.ProfitCenterName = profitCenters.Where(cur => cur.Code == c.ProfitCenter).FirstOrDefault()?.Description;
+                        c.SegmentName = segments.Where(cur => cur.Id == c.Segment).FirstOrDefault()?.Name;
+                        c.DivisionName = divisions.Where(cur => cur.Code == c.Division).FirstOrDefault()?.Description;
+                        c.PlantName = plants.Where(cur => cur.PlantCode == c.Plant).FirstOrDefault()?.Plantname;
+                        c.LocationName = tblLocations.Where(cur => cur.LocationId == c.Location).FirstOrDefault()?.Description;
+                        c.DepreciationDataName = tblDepreciations.Where(cur => cur.Code == c.DepreciationData).FirstOrDefault()?.Description;
+                        c.DepreciationAreaName = tblDepreciationAreas.Where(cur => cur.Code == c.DepreciationArea).FirstOrDefault()?.Description;
+                    });
+                    return result;
+                }
+            }
+            catch { throw; }
+        }
+
+        public static IEnumerable<TblSubAssetMaster> GetSubAssetMaster()
+        {
+            try
+            {
+                using (Repository<TblSubAssetMaster> repo = new Repository<TblSubAssetMaster>())
+                {
+                    List<TblMainAssetMaster> tblMainAssetMasters = repo.TblMainAssetMaster.ToList();
+                    List<TblAssetAccountkey> tblAssetAccountkeys = repo.TblAssetAccountkey.ToList();
+                    List<TblBranch> branches = repo.TblBranch.ToList();
+                    List<ProfitCenters> profitCenters = repo.ProfitCenters.ToList();
+                    List<Segment> segments = repo.Segment.ToList();
+                    List<Divisions> divisions = repo.Divisions.ToList();
+                    List<TblPlant> plants = repo.TblPlant.ToList();
+                    List<TblLocation> tblLocations = repo.TblLocation.ToList();
+                    List<TblDepreciation> tblDepreciations = repo.TblDepreciation.ToList();
+                    List<TblDepreciationAreas> tblDepreciationAreas = repo.TblDepreciationAreas.ToList();
+
+                    var result = repo.TblSubAssetMaster.ToList();
+
+                    result.ForEach(c =>
+                    {
+                        c.MainAssetName = tblMainAssetMasters.Where(l => l.AssetNumber == c.MainAssetNo).FirstOrDefault()?.Name;
+                        c.AccountKeyName = tblAssetAccountkeys.Where(cur => cur.Code == c.AccountKey).FirstOrDefault()?.Description;
+                        c.BranchName = branches.Where(cur => cur.BranchCode == c.Branch).FirstOrDefault()?.BranchName;
+                        c.ProfitCenterName = profitCenters.Where(cur => cur.Code == c.ProfitCenter).FirstOrDefault()?.Description;
+                        c.SegmentName = segments.Where(cur => cur.Id == c.Segment).FirstOrDefault()?.Name;
+                        c.DivisionName = divisions.Where(cur => cur.Code == c.Division).FirstOrDefault()?.Description;
+                        c.PlantName = plants.Where(cur => cur.PlantCode == c.Plant).FirstOrDefault()?.Plantname;
+                        c.LocationName = tblLocations.Where(cur => cur.LocationId == c.Location).FirstOrDefault()?.Description;
+                        c.DepreciationDataName = tblDepreciations.Where(cur => cur.Code == c.DepreciationData).FirstOrDefault()?.Description;
+                        c.DepreciationAreaName = tblDepreciationAreas.Where(cur => cur.Code == c.DepreciationArea).FirstOrDefault()?.Description;
+                    });
+                    return result;
+                }
+            }
+            catch { throw; }
+        }
     }
 }

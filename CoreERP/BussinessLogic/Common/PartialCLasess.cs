@@ -400,8 +400,57 @@ namespace CoreERP.Models
         [NotMapped]
         public string TdsTypeName { get; set; }
         [NotMapped]
-        public string TdsStateName { get; set; }       
-       
+        public string TdsStateName { get; set; }          
+    }
+
+    partial class TblMainAssetMaster
+    {
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string AssetClassName { get; set; }
+        [NotMapped]
+        public string AccountKeyName { get; set; }
+        [NotMapped]
+        public string BranchName { get; set; }
+        [NotMapped]
+        public string ProfitCenterName { get; set; }
+        [NotMapped]
+        public string SegmentName { get; set; }
+        [NotMapped]
+        public string DivisionName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string LocationName { get; set; }
+        [NotMapped]
+        public string DepreciationDataName { get; set; }
+        [NotMapped]
+        public string DepreciationAreaName { get; set; }
+    }
+
+    partial class TblSubAssetMaster
+    {
+        [NotMapped]
+        public string MainAssetName { get; set; }
+        [NotMapped]
+        public string AccountKeyName { get; set; }
+        [NotMapped]
+        public string BranchName { get; set; }
+        [NotMapped]
+        public string ProfitCenterName { get; set; }
+        [NotMapped]
+        public string SegmentName { get; set; }
+        [NotMapped]
+        public string DivisionName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string LocationName { get; set; }
+        [NotMapped]
+        public string DepreciationDataName { get; set; }
+        [NotMapped]
+        public string DepreciationAreaName { get; set; }
     }
 }
 
