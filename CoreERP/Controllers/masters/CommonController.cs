@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Dynamic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CoreERP.Controllers
 {
@@ -25,10 +26,15 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblBranch> _branchRepository;
         private readonly IRepository<TblVoucherType> _vtRepository;
         private readonly IRepository<TblVoucherSeries> _vsRepository;
+        private readonly IRepository<TblTaxtransactions> _ttRepository;
+        private readonly IRepository<TblTaxRates> _trRepository;
+        private readonly IRepository<Glaccounts> _glaccountRepository;
+        private readonly IRepository<TblTdsRates> _tdsRatesRepository;
 
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository,IRepository<TblLocation> locationRepository,
-                                IRepository<TblPlant> plantRepository,IRepository<TblBranch>branchRepository,IRepository<TblVoucherType>vtRepository, IRepository<TblVoucherSeries>vsRepository)
+                                IRepository<TblPlant> plantRepository,IRepository<TblBranch>branchRepository,IRepository<TblVoucherType>vtRepository, IRepository<TblVoucherSeries>vsRepository,
+                                IRepository<TblTaxtransactions>ttRepository, IRepository<TblTaxRates>trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository)
         {
             _companyRepository = companyRepository;
             _stateRepository = stateRepository;
@@ -42,6 +48,10 @@ namespace CoreERP.Controllers
             _branchRepository = branchRepository;
             _vtRepository = vtRepository;
             _vsRepository = vsRepository;
+            _ttRepository = ttRepository;
+            _trRepository = trRepository;
+            _glaccountRepository = glaccountRepository;
+            _tdsRatesRepository = tdsRatesRepository;
         }
 
         [HttpGet("GetLanguageList")]
@@ -255,6 +265,94 @@ namespace CoreERP.Controllers
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.vseriesList = vcseriesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetTaxTransactionsList")]
+        public IActionResult GetTaxTransaction()
+        {
+            try
+            {
+                var taxtransactionList = _ttRepository.GetAll().Select(x=> new {ID=x.Code,TEXT=x.Description });
+                if (taxtransactionList.Count() > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.TaxtransactionList = taxtransactionList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+
+        }
+
+        [HttpGet("GetTaxRateList")]
+        public async Task<IActionResult> GetTaxRateList()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    var TaxRatesList = _trRepository.GetAll().Select(x => new { ID = x.TaxRateCode, TEXT = x.Description });
+                    expando.TaxratesList = TaxRatesList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetGLAccountsList")]
+        public async Task<IActionResult> GetGLAccountsList()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var glList = _glaccountRepository.GetAll().Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName,TAXCategory =x.TaxCategory});
+                    if (glList.Count() > 0)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.glList = glList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetTDSRateList")]
+        public IActionResult GetTDSRateList()
+        {
+            try
+            {
+                var tdsratesList = _tdsRatesRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Desctiption });
+                if (tdsratesList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.tdsratesList = tdsratesList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
