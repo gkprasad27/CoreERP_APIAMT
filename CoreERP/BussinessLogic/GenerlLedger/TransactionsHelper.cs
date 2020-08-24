@@ -86,6 +86,80 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw ex;
             }
         }
+        public bool AddCashBank(TblCashBankMaster cashBankMaster,List<TblCashBankDetails> cashBankDetails)
+        {
+            try
+            {
+                using(ERPContext context=new ERPContext())
+                {
+                    using(var dbtrans=context.Database.BeginTransaction())
+                    {
+                        try
+                        {
+
+                            context.TblCashBankMaster.Add(cashBankMaster);
+                            context.SaveChanges();
+
+                            cashBankDetails.ForEach(cb =>
+                            {
+                                cb.VoucherNumber = cashBankMaster.Id.ToString();
+                            });
+
+                            context.TblCashBankDetails.AddRange(cashBankDetails);
+
+                            context.SaveChanges();
+
+                            dbtrans.Commit();
+                            return true;
+                        }
+                        catch(Exception ex)
+                        {
+                            dbtrans.Rollback();
+                            throw ex;
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<TblCashBankMaster> GetCashBankMasters(TblCashBankMaster cashBankMaster)
+        {
+            try
+            {
+                if (cashBankMaster == null)
+                    cashBankMaster = new TblCashBankMaster();
+               
+                using(Repository<TblCashBankMaster> _repo=new Repository<TblCashBankMaster>())
+                {
+                    return _repo.TblCashBankMaster
+                                .Where(x => x.VoucherNumber.Contains(x.VoucherNumber ?? cashBankMaster.VoucherNumber)
+                                        // &&  x.VoucherDate.
+                                )
+                                .ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<TblCashBankDetails> GetCashBankDetails(string voucherNumber)
+        {
+            try
+            {
+                using(Repository<TblCashBankDetails> _repo=new Repository<TblCashBankDetails>())
+                {
+                    return _repo.TblCashBankDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
     }
 }

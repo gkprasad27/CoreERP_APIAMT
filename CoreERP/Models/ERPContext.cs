@@ -2086,9 +2086,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblCashBankDetails>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("tbl_CashBankDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
 
@@ -2121,10 +2121,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Hsnsaccode)
                     .HasColumnName("HSNSACCode")
                     .HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Igstamount)
                     .HasColumnName("IGSTAmount")
