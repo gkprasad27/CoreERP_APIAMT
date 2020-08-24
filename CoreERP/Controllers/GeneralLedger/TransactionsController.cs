@@ -4,8 +4,10 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers.GeneralLedger
 {
@@ -128,6 +130,75 @@ namespace CoreERP.Controllers.GeneralLedger
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.TransactionType = accIndicator.Select(nt => new { id = nt, text = nt });
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("GetCashBankMaster")]
+        public IActionResult GetCashBankMaster([FromBody] TblCashBankMaster tblCashBankMaster)
+        {
+            try
+            {
+                var cashBankMasters = new TransactionsHelper().GetCashBankMasters(tblCashBankMaster);
+                if (cashBankMasters.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.CashBankMasters = cashBankMasters;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+       
+        [HttpGet("GetCashBankDetail/{voucherNo}")]
+        public IActionResult GetCashBankDetail(string voucherNo)
+        {
+            try
+            {
+                var cashBankDetial = new TransactionsHelper().GetCashBankDetails(voucherNo);
+                if (cashBankDetial.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.CashBankDetail = cashBankDetial;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddCashBank")]
+        public IActionResult AddCashBank([FromBody]JObject obj)
+        {
+            try
+            {
+                if(obj==null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                TblCashBankMaster cashBankMaster = obj["cashbankHdr"].ToObject<TblCashBankMaster>();
+                List<TblCashBankDetails> cashBankDetails= obj["cashbankDtl"].ToObject<List<TblCashBankDetails>>();
+               
+                
+                if (new TransactionsHelper().AddCashBank(cashBankMaster, cashBankDetails))
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.CashBankMaster = cashBankMaster;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
