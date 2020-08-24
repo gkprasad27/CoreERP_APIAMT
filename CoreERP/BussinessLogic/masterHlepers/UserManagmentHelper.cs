@@ -377,12 +377,27 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
+
+        public static List<TblShift> GetShifts()
+        {
+            try
+            {
+                using Repository<TblShift> repo = new Repository<TblShift>();
+                return repo.TblShift.ToList();
+            }
+            catch { throw; }
+        }
+
         public TblShift StartShift(decimal userId, string branchCode)
         {
             try
             {
                 var _branch = BrancheHelper.GetBranches().Where(b => b.BranchCode == branchCode).FirstOrDefault();
-
+                var _shiftStatus = GetShifts().Where(s => s.UserId == userId && s.Status == 0).OrderByDescending(s => s.ShiftId).FirstOrDefault();
+                if (_shiftStatus != null)
+                {
+                    throw new Exception("Shift already logged in");
+                }
                 TblShift _shift = new TblShift
                 {
                     UserId = userId,
@@ -414,7 +429,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
+                var _shiftStatus = GetShifts().Where(s => s.ShiftId == shiftId && s.Status == 1).OrderByDescending(s => s.ShiftId).FirstOrDefault();
                 TblShift _shift = null;
+                if (_shiftStatus != null)
+                {
+                    throw new Exception("Shift already logged out");
+                }
                 using (Repository<TblShift> _repo = new Repository<TblShift>())
                 {
                     _shift = _repo.TblShift
