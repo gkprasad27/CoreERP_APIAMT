@@ -20,7 +20,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetProfitCenterList")]
-        public async Task<IActionResult> GetProfitCenterList()
+        public  IActionResult GetProfitCenterList()
         {
             try
             {
@@ -41,7 +41,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("RegisterProfitCenters")]
-        public async Task<IActionResult> RegisterProfitCenters([FromBody] ProfitCenters profitCenter)
+        public  IActionResult RegisterProfitCenters([FromBody] ProfitCenters profitCenter)
         {
 
             if (profitCenter == null)
@@ -64,7 +64,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateProfitCenters")]
-        public async Task<IActionResult> UpdateProfitCenters(string code, [FromBody] ProfitCenters profitCenter)
+        public  IActionResult UpdateProfitCenters(string code, [FromBody] ProfitCenters profitCenter)
         {
             if (profitCenter == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(profitCenter)} cannot be null" });
@@ -86,7 +86,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteProfitCenters/{code}")]
-        public async Task<IActionResult> DeleteProfitCenters(string code)
+        public IActionResult DeleteProfitCenters(string code)
         {
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });

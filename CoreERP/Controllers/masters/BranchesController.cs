@@ -14,33 +14,11 @@ namespace CoreERP.Controllers
     public class BranchesController : ControllerBase
     {
         private readonly IRepository<TblBranch> _branchRepository;
-        private readonly IRepository<TblCompany> _companyRepository;
-        public BranchesController(IRepository<TblBranch> branchRepository, IRepository<TblCompany> companyRepository)
+        public BranchesController(IRepository<TblBranch> branchRepository)
         {
             _branchRepository = branchRepository;
-            _companyRepository = companyRepository;
         }
-
-        [HttpGet("GetAllCompanys")]
-        public async Task<IActionResult> GetAllCompanys()
-        {
-            var result = await Task.Run(() =>
-            {
-                try
-                {
-                    var companiesList = _companyRepository.GetAll();
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.companiesList = companiesList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                catch (Exception ex)
-                {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-                }
-            });
-            return result;
-        }
-
+       
         [HttpGet("GetBranchesList")]
         public async Task<IActionResult> GetBranchesList()
         {
@@ -67,7 +45,7 @@ namespace CoreERP.Controllers
         }       
 
         [HttpPost("RegisterBranch")]
-        public async Task<IActionResult> RegisterBranch([FromBody]TblBranch branch)
+        public IActionResult RegisterBranch([FromBody]TblBranch branch)
         {
             APIResponse apiResponse ;
             if (branch == null)
@@ -95,7 +73,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateBranch")]
-        public async Task<IActionResult> UpdateBranch([FromBody] TblBranch branch)
+        public  IActionResult UpdateBranch([FromBody] TblBranch branch)
         {
             APIResponse apiResponse = null;
             if (branch == null)
@@ -118,7 +96,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteBranches/{code}")]
-        public async Task<IActionResult> DeleteBranch(string code)
+        public  IActionResult DeleteBranch(string code)
         {
             APIResponse apiResponse = null;
             if (code == null)

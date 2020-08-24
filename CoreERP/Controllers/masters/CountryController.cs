@@ -111,6 +111,6 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-        }
+        }        
     }
 }

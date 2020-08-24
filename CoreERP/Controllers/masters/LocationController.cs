@@ -67,28 +67,7 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-        }
-
-        [HttpGet("GetPlantList")]
-        public IActionResult GetPlantList()
-        {
-            try
-            {
-                var plantList = _plantRepository.GetAll();
-                if (plantList.Count() > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.plantsList = plantList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        }       
 
         [HttpPut("UpdateLocation")]
         public IActionResult UpdateLocation([FromBody] TblLocation loc)
