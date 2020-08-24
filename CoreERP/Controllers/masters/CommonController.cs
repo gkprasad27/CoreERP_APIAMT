@@ -22,9 +22,13 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblLocation> _locationRepository;
         private readonly IRepository<TblEmployee> _employeeRepository;
         private readonly IRepository<TblPlant> _plantRepository;
+        private readonly IRepository<TblBranch> _branchRepository;
+        private readonly IRepository<TblVoucherType> _vtRepository;
+        private readonly IRepository<TblVoucherSeries> _vsRepository;
+
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository,IRepository<TblLocation> locationRepository,
-                                IRepository<TblPlant> plantRepository)
+                                IRepository<TblPlant> plantRepository,IRepository<TblBranch>branchRepository,IRepository<TblVoucherType>vtRepository, IRepository<TblVoucherSeries>vsRepository)
         {
             _companyRepository = companyRepository;
             _stateRepository = stateRepository;
@@ -35,6 +39,9 @@ namespace CoreERP.Controllers
             _locationRepository = locationRepository;
             _employeeRepository = employeeRepository;
             _plantRepository = plantRepository;
+            _branchRepository = branchRepository;
+            _vtRepository = vtRepository;
+            _vsRepository = vsRepository;
         }
 
         [HttpGet("GetLanguageList")]
@@ -196,5 +203,67 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetBranchList")]
+        public IActionResult GetBranchList()
+        {
+            try
+            {
+                var branchList = _branchRepository.GetAll().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
+                if (branchList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.branchsList = branchList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetVoucherTypesList")]
+        public IActionResult GetVoucherTypesList()
+        {
+            try
+            {
+                var vouchertypeList = _vtRepository.GetAll().Select(x => new { ID = x.VoucherTypeId, TEXT = x.VoucherTypeName });
+                if (vouchertypeList.Count() > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.vouchertypeList = vouchertypeList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetVouchersSeriesList")]
+        public IActionResult GetVouchersSeriesList()
+        {
+            try
+            {
+                var vcseriesList = _vsRepository.GetAll().Select(x=>new { ID =x.VoucherSeriesKey});
+                if (vcseriesList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.vseriesList = vcseriesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

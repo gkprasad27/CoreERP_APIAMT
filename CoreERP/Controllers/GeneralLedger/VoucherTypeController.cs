@@ -13,44 +13,10 @@ namespace CoreERP.Controllers.GL
     [Route("api/VoucherType")]
     public class VoucherTypeController : ControllerBase
     {
-        private readonly IRepository<TblCompany> _companyRepository;
-        private readonly IRepository<Branches> _branchRepository;
         private readonly IRepository<TblVoucherType> _vtRepository;
-        public VoucherTypeController(IRepository<TblVoucherType> vtRepository, IRepository<TblCompany> companyRepository,IRepository<Branches>branchRepository)
+        public VoucherTypeController(IRepository<TblVoucherType> vtRepository)
         {
             _vtRepository = vtRepository;
-            _companyRepository = companyRepository;
-            _branchRepository = branchRepository;
-        }
-
-        [HttpGet("GetBranchesList")]
-        public IActionResult GetBranchesList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.BranchesList = _branchRepository.GetAll().Select(b => new { ID = b.BranchCode, TEXT = b.Name });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
-        [HttpGet("GetCompaniesList")]
-        public IActionResult GetCompaniesList()
-        {
-            try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.CompaniesList = _companyRepository.GetAll().Select(x => new { ID = x.CompanyCode, TEXT = x.CompanyName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
         }
 
         [HttpGet("GetVoucherTypeList")]
