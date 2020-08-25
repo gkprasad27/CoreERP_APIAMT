@@ -30,11 +30,19 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblTaxRates> _trRepository;
         private readonly IRepository<Glaccounts> _glaccountRepository;
         private readonly IRepository<TblTdsRates> _tdsRatesRepository;
+        private readonly IRepository<TblBpgroup> _bpgroupRepository;
+        private readonly IRepository<TblAssetClass> _assetClassRepository;
+        private readonly IRepository<TblAssetBlock> _assetBlockRepository;
+        private readonly IRepository<TblAssetAccountkey> _assetAccountkeyRepository;
+        private readonly IRepository<TblBankMaster> _bankMasterRepository;
+        private readonly IRepository<TblPaymentTerms> _paymentTermsRepository;
 
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository,IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository,IRepository<TblBranch>branchRepository,IRepository<TblVoucherType>vtRepository, IRepository<TblVoucherSeries>vsRepository,
-                                IRepository<TblTaxtransactions>ttRepository, IRepository<TblTaxRates>trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository)
+                                IRepository<TblTaxtransactions>ttRepository, IRepository<TblTaxRates>trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
+                                IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
+                                IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository)
         {
             _companyRepository = companyRepository;
             _stateRepository = stateRepository;
@@ -52,6 +60,12 @@ namespace CoreERP.Controllers
             _trRepository = trRepository;
             _glaccountRepository = glaccountRepository;
             _tdsRatesRepository = tdsRatesRepository;
+            _bpgroupRepository = bpgroupRepository;
+            _assetClassRepository = assetClassRepository;
+            _assetBlockRepository = assetBlockRepository;
+            _assetAccountkeyRepository = assetAccountkeyRepository;
+            _bankMasterRepository = bankMasterRepository;
+            _paymentTermsRepository = paymentTermsRepository;
         }
 
         [HttpGet("GetLanguageList")]
@@ -353,6 +367,140 @@ namespace CoreERP.Controllers
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.tdsratesList = tdsratesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetBusienessPartnersGroupsList")]
+        public IActionResult GetBusienessPartnersGroupsList()
+        {
+            try
+            {
+                var bpgList = _bpgroupRepository.GetAll().Select(x => new { ID = x.Bpgroup, TEXT = x.Description });
+                if (bpgList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.bpgList = bpgList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetAssetsBlockList")]
+        public IActionResult GetAssetsBlockList()
+        {
+            try
+            {
+                var assetblockList = _assetBlockRepository.GetAll().Select(x=>new { ID=x.Code,TEXT=x.Description});
+                if (assetblockList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.assetblockList = assetblockList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetAssetsClassList")]
+        public IActionResult GetAssetsClassList()
+        {
+            try
+            {
+                var assetList = _assetClassRepository.GetAll().Select(x=>new { ID=x.Code,TEXT=x.Description});
+                if (assetList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.assetList = assetList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetAccountsKeyList")]
+        public async Task<IActionResult> GetAccountsKeyList()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var acckeyList = _assetAccountkeyRepository.GetAll().Select(x=>new { ID=x.Code,TEXT=x.Description});
+                    if (acckeyList.Count() > 0)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.acckeyList = acckeyList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetBankMastersList")]
+        public async Task<IActionResult> GetBankMastersList()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var bankList = _bankMasterRepository.GetAll().Select(x=>new { ID=x.BankCode,TEXT=x.BankName});
+                    if (bankList.Count() > 0)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.bankList = bankList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetPaymentsTermsList")]
+        public IActionResult GetPaymentsTermsList()
+        {
+            try
+            {
+                var ptermsList = _paymentTermsRepository.GetAll().Select(x=>new { ID=x.Code,TEXT=x.Description});
+                if (ptermsList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.ptermsList = ptermsList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else

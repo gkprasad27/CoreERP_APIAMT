@@ -14,13 +14,10 @@ namespace CoreERP.Controllers
     public class GLAccountController : ControllerBase
     {
         private readonly IRepository<GlaccGroup> _glagRepository;
-        private readonly IRepository<TblChartAccount> _chartAccountRepository;
         private readonly IRepository<Glaccounts> _glaccountsRepository;
-        public GLAccountController(IRepository<Glaccounts> glaccountsRepository,
-         IRepository<TblChartAccount> chartAccountRepository, IRepository<GlaccGroup> glagRepository)
+        public GLAccountController(IRepository<Glaccounts> glaccountsRepository, IRepository<GlaccGroup> glagRepository)
         {
             _glaccountsRepository = glaccountsRepository;
-            _chartAccountRepository = chartAccountRepository;
             _glagRepository = glagRepository;
         }
         [HttpGet("GetGLAccountList")]
@@ -120,35 +117,7 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
-        [HttpGet("GetChartAccountList")]
-        public IActionResult GetChartAccountList()
-        {
-            try
-            {
-                try
-                {
-                    var coalist = _chartAccountRepository.Where(x => x.Type == "Consolidated");
-                    if (coalist.Count() > 0)
-                    {
-                        dynamic expdoObj = new ExpandoObject();
-                        expdoObj.coalist = coalist;
-                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                    }
-                    else
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for chartaccount." });
-                }
-                catch (Exception ex)
-                {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-                }
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
+        
         [HttpGet("GetaccountNumberList/{code}/{code1}")]
         public IActionResult GetaccountNumberList(string code, int code1)
         {
