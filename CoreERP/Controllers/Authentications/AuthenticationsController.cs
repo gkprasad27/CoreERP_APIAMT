@@ -249,7 +249,33 @@ namespace CoreERP.Controllers
             return result;
         }
 
-       // [Authorize]
+        [HttpGet("GetShiftId/{userId}/{branchCode}")]
+        public async Task<IActionResult> GetShiftId(string userId, string branchCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    string errorMessage = string.Empty;
+                    var result = new UserManagmentHelper().GetShiftId(Convert.ToDecimal(userId), branchCode);
+                    if (result != null)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.ShiftId = result;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Fialed to generate shift id." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.InnerException == null ? ex.Message : ex.InnerException.Message });
+                }
+            });
+            return result;
+        }
+
+        // [Authorize]
         [HttpGet("ShiftTerminate/{shiftId}")]
         public async Task<IActionResult> ShiftTerminate(string shiftId)
         {

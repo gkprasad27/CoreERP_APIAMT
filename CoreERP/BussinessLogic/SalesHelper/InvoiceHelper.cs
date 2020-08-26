@@ -178,16 +178,23 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     if (searchCriteria.Role == 1)
                     {
                         //searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
-                        searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                        //searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
                        
                         if (searchCriteria.FromDate == null)
                         {
+                            searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                            searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
                             _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
-                                 .Where(inv =>
-                                             DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
-                                          && !inv.IsSalesReturned.Value
-                                    )
-                                  .ToList();
+                                .Where(inv =>
+                                     DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                   && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString()))
+                                .ToList();
+                            //_invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
+                            //     .Where(inv =>
+                            //                 DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                            //              && !inv.IsSalesReturned.Value
+                            //        )
+                            //      .ToList();
                         }
                         else
                         {
@@ -204,7 +211,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     }
                     else
                     {
-                        _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
+                        if (searchCriteria.FromDate == null)
+                        {
+                            searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                            searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                        }
+                            _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
                               .Where(inv =>
                                          DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
                                        && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString())<= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
