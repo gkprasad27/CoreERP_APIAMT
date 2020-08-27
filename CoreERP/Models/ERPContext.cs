@@ -1876,7 +1876,7 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Branch");
 
-                entity.HasIndex(e => new { e.BranchName, e.Panno, e.BranchCode })
+                entity.HasIndex(e => new { e.Panno, e.BranchName, e.BranchCode })
                     .HasName("NonClusteredIndex-20181226-173932");
 
                 entity.Property(e => e.BranchCode).HasMaxLength(5);
