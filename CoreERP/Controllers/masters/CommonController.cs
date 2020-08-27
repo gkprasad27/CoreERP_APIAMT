@@ -332,14 +332,39 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetGLAccountsList")]
-        public async Task<IActionResult> GetGLAccountsList()
+        [HttpGet("GLAccountListbyCatetory/{code}")]
+        public async Task<IActionResult> GLAccountListbyCatetory(string code)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var glList = _glaccountRepository.GetAll().Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName,TAXCategory =x.TaxCategory});
+                    var glList = _glaccountRepository.Where(x=>x.TaxCategory== code).Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName,TAXCategory =x.TaxCategory, AccGroup =x.AccGroup});
+                    if (glList.Count() > 0)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.glList = glList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GLAccountListbyCatetory")]
+        public async Task<IActionResult> GLAccountListbyCatetory()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var glList = _glaccountRepository.GetAll().Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName, ControlAccount = x.ControlAccount, accGroup = x.AccGroup });
                     if (glList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
