@@ -39,7 +39,7 @@ namespace CoreERP.Helpers.SharedModels
                 _toDate = value;
             }
         }
-        public string InvoiceNo 
+        public string searchCriteria 
         {
             get
             {

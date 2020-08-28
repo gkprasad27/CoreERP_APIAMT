@@ -1,5 +1,6 @@
 ﻿using CoreERP.BussinessLogic.Common;
 using CoreERP.DataAccess;
+using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -25,11 +26,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw ex;
             }
         }
-        public List<string> GetTransactionType()
+        public List<string> GetTransactionType(string transactionName)
         {
             try
             {
-               return AppManager.GetAppConfigValue("TRANSACTIONTYPE");
+               return AppManager.GetAppConfigValue(transactionName);
             }
             catch(Exception ex)
             {
@@ -90,6 +91,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
+                if (cashBankMaster.VoucherDate == null)
+                    throw new Exception("Voucher Date Canot be empty/null.");
                 using(ERPContext context=new ERPContext())
                 {
                     using(var dbtrans=context.Database.BeginTransaction())
@@ -125,23 +128,40 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw ex;
             }
         }
-        public List<TblCashBankMaster> GetCashBankMasters(TblCashBankMaster cashBankMaster)
+        public List<TblCashBankMaster> GetCashBankMasters(SearchCriteria searchCriteria)
         {
             try
             {
-                if (cashBankMaster == null)
-                    cashBankMaster = new TblCashBankMaster();
+                if (searchCriteria == null)
+                    searchCriteria = new SearchCriteria() { FromDate= DateTime.Today.AddDays(-1), ToDate=DateTime.Today };
                
                 using(Repository<TblCashBankMaster> _repo=new Repository<TblCashBankMaster>())
                 {
                     return _repo.TblCashBankMaster
-                                .Where(x => x.VoucherNumber.Contains(x.VoucherNumber ?? cashBankMaster.VoucherNumber)
-                                        // &&  x.VoucherDate.
-                                )
+                                .Where(x => x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
+                                         && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                                         && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                                         )
                                 .ToList();
                 }
             }
             catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public TblCashBankMaster GetCashBankMastersById(int id)
+        {
+            try
+            {
+                using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
+                {
+                    return _repo.TblCashBankMaster
+                                .Where(x => x.Id == id)
+                                .FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -160,6 +180,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw ex;
             }
         }
+        #endregion
+
+        #region General Journels
+
         #endregion
     }
 }

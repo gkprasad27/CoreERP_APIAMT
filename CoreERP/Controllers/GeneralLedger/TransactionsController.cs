@@ -4,6 +4,8 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.BussinessLogic.masterHlepers;
+using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +43,7 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                var transactionType = new TransactionsHelper().GetTransactionType();
+                var transactionType = new TransactionsHelper().GetTransactionType("TRANSACTIONTYPE");
                 if (transactionType.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -142,11 +144,11 @@ namespace CoreERP.Controllers.GeneralLedger
         }
 
         [HttpPost("GetCashBankMaster")]
-        public IActionResult GetCashBankMaster([FromBody] TblCashBankMaster tblCashBankMaster)
+        public IActionResult GetCashBankMaster([FromBody] SearchCriteria searchCriteria)
         {
             try
             {
-                var cashBankMasters = new TransactionsHelper().GetCashBankMasters(tblCashBankMaster);
+                var cashBankMasters = new TransactionsHelper().GetCashBankMasters(searchCriteria);
                 if (cashBankMasters.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -167,11 +169,13 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                var cashBankDetial = new TransactionsHelper().GetCashBankDetails(voucherNo);
-                if (cashBankDetial.Count() > 0)
+                TransactionsHelper _Transactions = new TransactionsHelper();
+                TblCashBankMaster _CashBankMasters = _Transactions.GetCashBankMastersById(Convert.ToInt32(voucherNo));
+                if (_CashBankMasters !=null)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.CashBankDetail = cashBankDetial;
+                    expdoObj.CashBankMasters = _CashBankMasters;
+                    expdoObj.CashBankDetail = new TransactionsHelper().GetCashBankDetails(voucherNo); ;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
@@ -199,6 +203,133 @@ namespace CoreERP.Controllers.GeneralLedger
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.CashBankMaster = cashBankMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetFunctionalDepts")]
+        public IActionResult GetFunctionalDepts()
+        {
+            try
+            {
+                var _functionalDepts = CommonHelper.GetFunctionalDepts();
+                if (_functionalDepts.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.FunctionalDepts = _functionalDepts.Select(t => new { id = t.Code, text = t.Description });
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetProfitcenters")]
+        public IActionResult GetProfitcenters()
+        {
+            try
+            {
+                var _Profitcenterss = CommonHelper.GetProfitcenters();
+                if (_Profitcenterss.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.Profitcenters = _Profitcenterss.Select(t => new { id = t.Code, text = t.Description });
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        [HttpGet("GetSegments")]
+        public IActionResult GetSegments()
+        {
+            try
+            {
+                var _Segments = CommonHelper.GetSegments();
+                if (_Segments.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.Segments = _Segments.Select(t => new { id = t.Id, text = t.Name });
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        [HttpGet("GetCostcenters")]
+        public IActionResult GetCostcenters()
+        {
+            try
+            {
+                var _Costcenters = CommonHelper.GetCostcenters();
+                if (_Costcenters.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.Costcenters = _Costcenters.Select(t => new { id = t.Code, text = t.Name });
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        [HttpGet("GetHsnsac")]
+        public IActionResult GetHsnsac()
+        {
+            try
+            {
+                var _Hsnsac = CommonHelper.GetHsnsac();
+                if (_Hsnsac.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.Hsnsac = _Hsnsac.Select(t => new { id = t.Code, text = t.Description });
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        #endregion
+
+
+
+        #region General VOucher
+        [HttpGet("GetGJTransTypes")]
+        public IActionResult GetGJTransTypes()
+        {
+            try
+            {
+                var transactionType = new TransactionsHelper().GetTransactionType("GJTRANSTYPE");
+                if (transactionType.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.TransactionType = transactionType.Select(v => new { id = v, text = v });
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else

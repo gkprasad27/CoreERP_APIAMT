@@ -1022,5 +1022,29 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
             catch { throw; }
         }
+
+        public static IEnumerable<Segment> GetSegments()
+        {
+            try
+            {
+                using(Repository<Segment> _repo=new Repository<Segment>())
+                {
+                    return _repo.Segment.ToList();
+                }
+            }
+            catch(Exception ex) { throw ex; }
+        }
+        public static IEnumerable<TblHsnsac> GetHsnsac()
+        {
+            try
+            {
+                using (Repository<Segment> _repo = new Repository<Segment>())
+                {
+                    return _repo.TblHsnsac.ToList();
+                }
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
     }
 }

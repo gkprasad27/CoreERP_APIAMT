@@ -332,6 +332,24 @@ namespace CoreERP.Controllers
             return result;
         }
 
+        [HttpGet("GetTaxRate/{taxRateCode}")]
+        public async Task<IActionResult> GetTaxRateList(string taxRateCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.Taxrates = _trRepository.Where(x => x.TaxRateCode == taxRateCode).FirstOrDefault(); ;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
         [HttpGet("GetGLAccountsList")]
         public async Task<IActionResult> GetGLAccountsList()
         {
@@ -511,5 +529,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
     }
 }
