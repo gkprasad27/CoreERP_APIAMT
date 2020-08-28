@@ -45,7 +45,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 }
                 using Repository<TblCashPaymentMaster> repo = new Repository<TblCashPaymentMaster>();
                 List<TblCashPaymentMaster> _cashpaymentMasterList = null;
-                if (searchCriteria.Role == 1)
+                if (searchCriteria.Role == 1 || searchCriteria.Role == 3 || searchCriteria.Role == 89)
                 {
                     _cashpaymentMasterList = repo.TblCashPaymentMaster.AsEnumerable()
                           .Where(cp =>

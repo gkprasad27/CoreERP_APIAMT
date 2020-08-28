@@ -218,10 +218,43 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 procedureName = "Usp_ShiftSaleValueReport";
             return getDataFromDataBase(dbParametersList, procedureName);
         }
-        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetDefaultShiftReportDataTableList()
+
+        public static DataSet GetDefaultShiftViewReportDataTable(string branchCode,DateTime fromDate, DateTime toDate)
         {
-            List<parametersClass> dbParametersList = new List<parametersClass>();
-            DataSet dsResult = getDataFromDataBase(dbParametersList, "Usp_ShifViewReport");
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_ShifViewReport";
+            #region Parameters
+            DbParameter pmbranchCode = command.CreateParameter();
+            pmbranchCode.Direction = ParameterDirection.Input;
+            pmbranchCode.Value = (object)branchCode ?? DBNull.Value;
+            pmbranchCode.ParameterName = "branchCode";
+
+            DbParameter pmfromDate = command.CreateParameter();
+            pmfromDate.Direction = ParameterDirection.Input;
+            pmfromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmfromDate.ParameterName = "fromDate";
+
+            DbParameter pmtoDate = command.CreateParameter();
+            pmtoDate.Direction = ParameterDirection.Input;
+            pmtoDate.Value = (object)toDate ?? DBNull.Value;
+            pmtoDate.ParameterName = "toDate";
+
+           
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmbranchCode);
+            command.Parameters.Add(pmfromDate);
+            command.Parameters.Add(pmtoDate);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+
+        }
+
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetDefaultShiftReportDataTableList(string branchCode,DateTime fromDate,DateTime toDate)
+        {
+            DataSet dsResult = GetDefaultShiftViewReportDataTable(branchCode,fromDate, toDate);
             List<dynamic> shiftViewLists = null;
             List<dynamic> headerList = null;
             List<dynamic> footerList = null;
@@ -242,6 +275,28 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 return (shiftViewLists, headerList, footerList);
             }
             else return (null, null, null);
+            //List<parametersClass> dbParametersList = new List<parametersClass>();
+            //DataSet dsResult = getDataFromDataBase(dbParametersList, "Usp_ShifViewReport");
+            //List<dynamic> shiftViewLists = null;
+            //List<dynamic> headerList = null;
+            //List<dynamic> footerList = null;
+            //if (dsResult != null)
+            //{
+            //    if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+            //    {
+            //        shiftViewLists = ToDynamic(dsResult.Tables[0]);
+            //    }
+            //    if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+            //    {
+            //        headerList = ToDynamic(dsResult.Tables[1]);
+            //    }
+            //    if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+            //    {
+            //        footerList = ToDynamic(dsResult.Tables[2]);
+            //    }
+            //    return (shiftViewLists, headerList, footerList);
+            //}
+            //else return (null, null, null);
         }
 
         public static (List<dynamic>, List<dynamic>, List<dynamic>) GetDefaultShiftReportDataTableList1(string userName, string userID, string branchCode, string shiftId, DateTime fromDate, DateTime toDate, int reportID)

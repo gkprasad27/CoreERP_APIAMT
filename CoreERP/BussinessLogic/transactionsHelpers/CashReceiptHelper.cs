@@ -164,7 +164,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 using Repository<TblCashReceiptMaster> repo = new Repository<TblCashReceiptMaster>();
                 List<TblCashReceiptMaster> _cashreceiptMasterList = null;
 
-                if (searchCriteria.Role == 1)
+                if (searchCriteria.Role == 1 || searchCriteria.Role == 3 || searchCriteria.Role == 89)
                 {
                     _cashreceiptMasterList = repo.TblCashReceiptMaster.AsEnumerable()
                           .Where(cr =>

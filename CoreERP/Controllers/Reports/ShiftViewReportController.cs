@@ -33,14 +33,20 @@ namespace CoreERP.Controllers.Reports
             }
         }
 
-        [HttpGet("GetDefaultShiftReportDataTableList")]
+        [HttpGet("GetDefaultShiftReportDataTableList/{branchCode}")]
         public async Task<IActionResult> GetDefaultShiftReportDataTableList(string userName, string userID, string branchCode, string shiftId, DateTime fromDate, DateTime toDate, int reportID)
         {
             try
             {
                 if (reportID == 0)
                 {
-                    var serviceResult = await Task.FromResult(ReportsHelperClass.GetDefaultShiftReportDataTableList());
+                    if (fromDate == Convert.ToDateTime("01-01-0001 00:00:00") && toDate == Convert.ToDateTime("01-01-0001 00:00:00"))
+                {
+                    fromDate = DateTime.Now;
+                    toDate = DateTime.Now;
+                    // return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                    var serviceResult = await Task.FromResult(ReportsHelperClass.GetDefaultShiftReportDataTableList(branchCode,fromDate,toDate));
                     if (serviceResult.Item1 != null && serviceResult.Item1.Count > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();

@@ -129,7 +129,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
                 using Repository<TblJournalVoucherMaster> repo = new Repository<TblJournalVoucherMaster>();
                 List<TblJournalVoucherMaster> _journalVoucherMasterList = null;
-                if (searchCriteria.Role == 1)
+                if (searchCriteria.Role == 1 || searchCriteria.Role == 3 || searchCriteria.Role == 89)
                 {
                     _journalVoucherMasterList = repo.TblJournalVoucherMaster.AsEnumerable()
                           .Where(jv =>

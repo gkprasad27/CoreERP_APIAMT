@@ -98,7 +98,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
                 using Repository<TblBankReceiptMaster> repo = new Repository<TblBankReceiptMaster>();
                 List<TblBankReceiptMaster> _bankreceiptMasterList = null;
-                if (searchCriteria.Role == 1)
+                if (searchCriteria.Role == 1 || searchCriteria.Role == 3 || searchCriteria.Role == 89)
                 {
                     _bankreceiptMasterList = repo.TblBankReceiptMaster.AsEnumerable()
                                              .Where(br =>

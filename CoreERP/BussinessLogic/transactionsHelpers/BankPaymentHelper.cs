@@ -149,7 +149,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
                 using Repository<TblBankPaymentMaster> repo = new Repository<TblBankPaymentMaster>();
                 List<TblBankPaymentMaster> _bankpaymentMasterList = null;
-                if (searchCriteria.Role == 1)
+                if (searchCriteria.Role == 1 || searchCriteria.Role == 3 || searchCriteria.Role == 89)
                 {
                     _bankpaymentMasterList = repo.TblBankPaymentMaster.AsEnumerable()
                          .Where(bp =>
