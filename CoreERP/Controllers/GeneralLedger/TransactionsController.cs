@@ -18,6 +18,20 @@ namespace CoreERP.Controllers.GeneralLedger
     public class TransactionsController : ControllerBase
     {
         #region  Cash Bank 
+        [HttpGet("GetVoucherNumber/{voucherType}")]
+        public IActionResult GetVoucherNumber(string voucherType)
+        {
+            try
+            {
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.VoucherNumber = new TransactionsHelper().GetVoucherNumber(voucherType);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
         [HttpGet("GetVoucherClassList")]
         public IActionResult GetVoucherClassList()
         {

@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.Common;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
@@ -12,6 +13,38 @@ namespace CoreERP.BussinessLogic.GenerlLedger
     public class TransactionsHelper
     {
         #region Cash Bank
+        public string GetVoucherNumber(string voucherType)
+        {
+            try
+            {
+               
+                  var _voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType);
+
+                while (true)
+                {
+                    if (this.IsVoucherNumberExists(_voucerTypeNoseries.LastNumber + "-" + _voucerTypeNoseries.Suffix))
+                    {
+                        _voucerTypeNoseries.LastNumber += 1;
+                        continue;
+                    }
+                    if (_voucerTypeNoseries.LastNumber == 0)
+                        _voucerTypeNoseries.LastNumber = 1;
+                    break;
+                }
+                using(Repository<TblAssignmentVoucherSeriestoVoucherType> _repo=new Repository<TblAssignmentVoucherSeriestoVoucherType>())
+                {
+                    _repo.TblAssignmentVoucherSeriestoVoucherType.Update(_voucerTypeNoseries);
+                    _repo.SaveChanges();
+                }
+
+                return _voucerTypeNoseries.LastNumber + "-" + _voucerTypeNoseries.Suffix;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public List<TblVoucherclass> GetTblVoucherclasses()
         {
             try
@@ -94,11 +127,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (cashBankMaster.VoucherDate == null)
                     throw new Exception("Voucher Date Canot be empty/null.");
 
+                if (cashBankMaster.VoucherNumber == null)
+                    throw new Exception("Voucher Number Canot be empty/null.");
+
                 if (this.IsVoucherNumberExists(cashBankMaster.VoucherNumber))
                  throw new Exception("Voucher number exists.");
 
                 if (cashBankMaster.VoucherDate == null)
                     cashBankMaster.VoucherDate = DateTime.Now;
+
+                if (cashBankMaster.NatureofTransaction.ToUpper().Contains("RECEIPTS"))
+                    cashBankMaster.Indicator = "Debit";
+
+                if (cashBankMaster.NatureofTransaction.ToUpper().Contains("PAYMENT"))
+                    cashBankMaster.Indicator = "Debit";
 
                 cashBankDetails.ForEach(x => { x.VoucherDate = cashBankMaster.VoucherDate; });
 
@@ -150,12 +192,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (searchCriteria == null)
                     searchCriteria = new SearchCriteria() { FromDate= DateTime.Today.AddDays(-1), ToDate=DateTime.Today };
-               
-                using(Repository<TblCashBankMaster> _repo=new Repository<TblCashBankMaster>())
+                if (searchCriteria.FromDate == null)
+                    searchCriteria.FromDate = DateTime.Today.AddDays(-1);
+                if (searchCriteria.ToDate == null)
+                    searchCriteria.ToDate = DateTime.Today;
+
+                using (Repository<TblCashBankMaster> _repo=new Repository<TblCashBankMaster>())
                 {
                     return _repo.TblCashBankMaster.AsEnumerable()
                                 .Where(x => x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
-                                         && Convert.ToDateTime(x.VoucherDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                                         &&  Convert.ToDateTime(x.VoucherDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                                          && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
                                          )
                                 .ToList();

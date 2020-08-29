@@ -1046,5 +1046,16 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch (Exception ex) { throw ex; }
         }
 
+        public static TblAssignmentVoucherSeriestoVoucherType GetVoucherNo(string voucherTypeId)
+        {
+            try
+            {
+                using (ERPContext _repo = new ERPContext())
+                {
+                   return _repo.TblAssignmentVoucherSeriestoVoucherType.Where(t => t.VoucherType == voucherTypeId).FirstOrDefault();
+                };
+            }
+            catch { throw; }
+        }
     }
 }
