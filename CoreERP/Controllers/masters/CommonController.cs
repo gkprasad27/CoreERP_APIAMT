@@ -36,13 +36,14 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblAssetAccountkey> _assetAccountkeyRepository;
         private readonly IRepository<TblBankMaster> _bankMasterRepository;
         private readonly IRepository<TblPaymentTerms> _paymentTermsRepository;
+        private readonly IRepository<ProfitCenters> _profitCentersRepository;
 
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository,IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository,IRepository<TblBranch>branchRepository,IRepository<TblVoucherType>vtRepository, IRepository<TblVoucherSeries>vsRepository,
                                 IRepository<TblTaxtransactions>ttRepository, IRepository<TblTaxRates>trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
                                 IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
-                                IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository)
+                                IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository)
         {
             _companyRepository = companyRepository;
             _stateRepository = stateRepository;
@@ -66,6 +67,7 @@ namespace CoreERP.Controllers
             _assetAccountkeyRepository = assetAccountkeyRepository;
             _bankMasterRepository = bankMasterRepository;
             _paymentTermsRepository = paymentTermsRepository;
+            _profitCentersRepository = profitCentersRepository
         }
 
         [HttpGet("GetLanguageList")]
@@ -253,7 +255,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var vouchertypeList = _vtRepository.GetAll().Select(x => new { ID = x.VoucherTypeId, TEXT = x.VoucherTypeName });
+                var vouchertypeList = _vtRepository.GetAll().Select(x => new { ID = x.VoucherTypeId, TEXT = x.VoucherTypeName,VoucherClassName=x.VoucherClass });
                 if (vouchertypeList.Count() > 0)
                 {
                     dynamic expando = new ExpandoObject();
@@ -578,6 +580,27 @@ namespace CoreERP.Controllers
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetProfitCentersList")]
+        public IActionResult GetProfitCentersList()
+        {
+            try
+            {
+                var profitCenterList =  _profitCentersRepository.GetAll().Select(x=>new { ID=x.Code,TEXT=x.Description});
+                if (profitCenterList.Count() > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.profitCenterList = profitCenterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception e)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = e.Message });
             }
         }
 
