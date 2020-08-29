@@ -9,5 +9,6 @@ namespace CoreERP.Models
         public string VoucherType { get; set; }
         public string VoucherSeries { get; set; }
         public int? LastNumber { get; set; }
+        public string Suffix { get; set; }
     }
 }

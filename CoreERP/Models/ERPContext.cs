@@ -1795,6 +1795,8 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_AssignmentVoucherSeriestoVoucherType");
 
+                entity.Property(e => e.Suffix).HasMaxLength(5);
+
                 entity.Property(e => e.VoucherSeries).HasMaxLength(5);
 
                 entity.Property(e => e.VoucherType).HasMaxLength(5);
