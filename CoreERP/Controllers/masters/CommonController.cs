@@ -67,7 +67,7 @@ namespace CoreERP.Controllers
             _assetAccountkeyRepository = assetAccountkeyRepository;
             _bankMasterRepository = bankMasterRepository;
             _paymentTermsRepository = paymentTermsRepository;
-            _profitCentersRepository = profitCentersRepository
+            _profitCentersRepository = profitCentersRepository;
         }
 
         [HttpGet("GetLanguageList")]
