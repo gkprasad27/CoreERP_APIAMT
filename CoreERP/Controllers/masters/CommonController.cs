@@ -332,7 +332,6 @@ namespace CoreERP.Controllers
             return result;
         }
 
-<<<<<<< HEAD
         [HttpGet("GetTaxRate/{taxRateCode}")]
         public async Task<IActionResult> GetTaxRateList(string taxRateCode)
         {
@@ -351,12 +350,34 @@ namespace CoreERP.Controllers
             });
             return result;
         }
+
         [HttpGet("GetGLAccountsList")]
         public async Task<IActionResult> GetGLAccountsList()
-=======
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var glList = _glaccountRepository.GetAll().Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName, TAXCategory = x.TaxCategory });
+                    if (glList.Count() > 0)
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.glList = glList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GLAccountListbyCatetory/{code}")]
         public async Task<IActionResult> GLAccountListbyCatetory(string code)
->>>>>>> d465a49a200446061c34f90943a561a26bb0f347
         {
             var result = await Task.Run(() =>
             {
@@ -559,7 +580,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
     }
 }
