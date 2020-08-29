@@ -1795,7 +1795,7 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_AssignmentVoucherSeriestoVoucherType");
 
-                entity.Property(e => e.Ext).HasMaxLength(50);
+                entity.Property(e => e.Suffix).HasMaxLength(5);
 
                 entity.Property(e => e.VoucherSeries).HasMaxLength(5);
 
@@ -1876,7 +1876,7 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Branch");
 
-                entity.HasIndex(e => new { e.Panno, e.BranchName, e.BranchCode })
+                entity.HasIndex(e => new { e.BranchName, e.Panno, e.BranchCode })
                     .HasName("NonClusteredIndex-20181226-173932");
 
                 entity.Property(e => e.BranchCode).HasMaxLength(5);
@@ -3315,9 +3315,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccountingYear).HasMaxLength(5);
 
-                entity.Property(e => e.FinancialYearEndTo).HasColumnType("date");
+                entity.Property(e => e.FinancialYearEndTo).HasMaxLength(5);
 
-                entity.Property(e => e.FinancialYearStartFrom).HasColumnType("date");
+                entity.Property(e => e.FinancialYearStartFrom).HasMaxLength(5);
 
                 entity.Property(e => e.LedgerKey)
                     .IsRequired()
