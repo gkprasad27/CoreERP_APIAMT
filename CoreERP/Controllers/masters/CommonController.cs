@@ -331,38 +331,14 @@ namespace CoreERP.Controllers
             });
             return result;
         }
-
-<<<<<<< HEAD
-        [HttpGet("GetTaxRate/{taxRateCode}")]
-        public async Task<IActionResult> GetTaxRateList(string taxRateCode)
-        {
-            var result = await Task.Run(() =>
-            {
-                try
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.Taxrates = _trRepository.Where(x => x.TaxRateCode == taxRateCode).FirstOrDefault(); ;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-                catch (Exception ex)
-                {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-                }
-            });
-            return result;
-        }
-        [HttpGet("GetGLAccountsList")]
-        public async Task<IActionResult> GetGLAccountsList()
-=======
         [HttpGet("GLAccountListbyCatetory/{code}")]
         public async Task<IActionResult> GLAccountListbyCatetory(string code)
->>>>>>> d465a49a200446061c34f90943a561a26bb0f347
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var glList = _glaccountRepository.Where(x=>x.TaxCategory== code).Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName,TAXCategory =x.TaxCategory, AccGroup =x.AccGroup});
+                    var glList = _glaccountRepository.Where(x => x.TaxCategory == code).Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName, TAXCategory = x.TaxCategory, AccGroup = x.AccGroup });
                     if (glList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -379,9 +355,8 @@ namespace CoreERP.Controllers
             });
             return result;
         }
-
-        [HttpGet("GLAccountListbyCatetory")]
-        public async Task<IActionResult> GLAccountListbyCatetory()
+        [HttpGet("GetGLAccountsList")]
+        public async Task<IActionResult> GetGLAccountsList()
         {
             var result = await Task.Run(() =>
             {
@@ -559,7 +534,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
 
     }
 }

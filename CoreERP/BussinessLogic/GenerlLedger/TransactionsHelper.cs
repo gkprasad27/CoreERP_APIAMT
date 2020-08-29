@@ -93,7 +93,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (cashBankMaster.VoucherDate == null)
                     throw new Exception("Voucher Date Canot be empty/null.");
-                using(ERPContext context=new ERPContext())
+
+                if (this.IsVoucherNumberExists(cashBankMaster.VoucherNumber))
+                 throw new Exception("Voucher number exists.");
+
+                if (cashBankMaster.VoucherDate == null)
+                    cashBankMaster.VoucherDate = DateTime.Now;
+
+                cashBankDetails.ForEach(x => { x.VoucherDate = cashBankMaster.VoucherDate; });
+
+                using (ERPContext context=new ERPContext())
                 {
                     using(var dbtrans=context.Database.BeginTransaction())
                     {
@@ -128,6 +137,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw ex;
             }
         }
+        public bool IsVoucherNumberExists(string voucherNo)
+        {
+            using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
+            {
+                return _repo.TblCashBankMaster.Where(v => v.VoucherNumber == voucherNo).Count() > 0;
+            };
+        }
         public List<TblCashBankMaster> GetCashBankMasters(SearchCriteria searchCriteria)
         {
             try
@@ -137,9 +153,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                
                 using(Repository<TblCashBankMaster> _repo=new Repository<TblCashBankMaster>())
                 {
-                    return _repo.TblCashBankMaster
+                    return _repo.TblCashBankMaster.AsEnumerable()
                                 .Where(x => x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
-                                         && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                                         && Convert.ToDateTime(x.VoucherDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                                          && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
                                          )
                                 .ToList();
