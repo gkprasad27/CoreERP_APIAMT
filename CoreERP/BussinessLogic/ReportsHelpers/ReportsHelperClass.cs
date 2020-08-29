@@ -1817,6 +1817,59 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
+        #region Stock Transfer Print
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetStockTransferPrintReportDataList(string userName, string fromBranchCode, string stockTransferNo)
+        {
+            DataSet dsResult = GetStockTransferPrintReportDataSet(userName, fromBranchCode, stockTransferNo);
+            List<dynamic> stock = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    stock = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (stock, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
+        public static DataSet GetStockTransferPrintReportDataSet(string userName, string fromBranchCode, string stockTransferNo)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_StockTransferPrintReport";
+            #region Parameters
+            DbParameter UserName = command.CreateParameter();
+            UserName.Direction = ParameterDirection.Input;
+            UserName.Value = (object)userName ?? DBNull.Value;
+            UserName.ParameterName = "userName";
+            DbParameter pmFromBranch = command.CreateParameter();
+            pmFromBranch.Direction = ParameterDirection.Input;
+            pmFromBranch.Value = (object)fromBranchCode ?? DBNull.Value;
+            pmFromBranch.ParameterName = "fromBranchCode";
+            DbParameter pmStockTransferNo = command.CreateParameter();
+            pmStockTransferNo.Direction = ParameterDirection.Input;
+            pmStockTransferNo.Value = (object)stockTransferNo ?? DBNull.Value;
+            pmStockTransferNo.ParameterName = "stockTransferNo";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(UserName);
+            command.Parameters.Add(pmFromBranch);
+            command.Parameters.Add(pmStockTransferNo);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
+        #endregion
         #region CommonMethods
         public static DataSet getDataFromDataBase(List<parametersClass> dbParametersList, string procedureName)
         {
