@@ -24,6 +24,22 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
+
+        public TblUserNew GetShiftEmployeeID(decimal userId)
+        {
+            try
+            {
+                using (Repository<TblUserNew> _repo = new Repository<TblUserNew>())
+                {
+                    return _repo.TblUserNew.Where(u => u.UserId == userId).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public static Erpuser ValidateUser(Erpuser erpuser,out string errorMessage)
         {
             Erpuser user = null;
@@ -395,12 +411,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 var _branch = BrancheHelper.GetBranches().Where(b => b.BranchCode == branchCode).FirstOrDefault();
                 var _shiftStatus = GetShifts().Where(s => s.UserId == userId && s.Status == 0).OrderByDescending(s => s.ShiftId).FirstOrDefault();
+                var _employeeId = new UserManagmentHelper().GetShiftEmployeeID(userId)?.EmployeeId;
                 TblShift _shift = new TblShift
                 {
                     UserId = userId,
                     Narration = "Shift in Progress.",
                     Status = 0,
-                    EmployeeId = -1,
+                    EmployeeId = _employeeId,
                     BranchId = _branch?.BranchId,
                     BranchCode = _branch?.BranchCode,
                     BranchName = _branch?.BranchName,
