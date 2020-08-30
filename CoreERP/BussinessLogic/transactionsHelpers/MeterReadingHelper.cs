@@ -138,6 +138,35 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             }
         }
 
+        public decimal GetSaledUnits(string branchCode, decimal pumpNo = 0, decimal shiftId =0)
+        {
+
+            try
+            {
+                using (Repository<TblInvoiceMaster> repo = new Repository<TblInvoiceMaster>())
+                {
+                    var Qty = (from IM in repo.TblInvoiceMaster
+                                      join ID in repo.TblInvoiceDetail on IM.InvoiceMasterId equals ID.InvoiceMasterId
+                                               where ID.PumpNo==pumpNo && IM.BranchCode==branchCode && ID.ShiftId==shiftId
+                                               select ID).ToList();
+
+                    decimal _saledUnits = Qty.Sum(x => Convert.ToDecimal(x.Qty ?? 0));
+
+                    if (_saledUnits > 0)
+                    {
+                        return _saledUnits;
+                    }
+
+                    return 0;
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public TblMeterReading Register(TblMeterReading meterReading)
         {
             try

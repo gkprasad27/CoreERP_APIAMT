@@ -183,6 +183,29 @@ namespace CoreERP.Controllers.Transactions
             return result;
         }
 
+        [HttpPost("GetSaledUnits/{branchCode}/{pumpNo}/{shiftId}")]
+        public async Task<IActionResult> GetSaledUnits(string branchCode, decimal pumpNo, decimal shiftId)
+        {
+            var result = await Task.Run(() =>
+            {
+                if (pumpNo == 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.saledList = new MeterReadingHelper().GetSaledUnits(branchCode, pumpNo, shiftId);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+
         [HttpPost("GetOBFromPump/{branchCode}/{pumpNo}")]
         public async Task<IActionResult> GetOBFromPump(string branchCode,decimal pumpNo)
         {
