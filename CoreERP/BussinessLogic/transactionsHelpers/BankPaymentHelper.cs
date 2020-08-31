@@ -451,7 +451,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
 
                         AddAccountLedgerTransactions(repo, bankPaymentMaster, _voucherDetail, bankPaymentMaster.BankPaymentDate);
                         #endregion
-                        AddVoucherDetails(repo, bankPaymentMaster, _branch, _voucherMaster, _accountLedger, bankDtl.Amount, bankDtl.ToLedgerId, bankDtl.ToLedgerCode, false);
+                        _voucherDetail=AddVoucherDetails(repo, bankPaymentMaster, _branch, _voucherMaster, _accountLedger, bankDtl.Amount, bankDtl.ToLedgerId, bankDtl.ToLedgerCode, false);
                         AddAccountLedgerTransactions(repo, bankPaymentMaster, _voucherDetail, bankPaymentMaster.BankPaymentDate, false);
                     }
 

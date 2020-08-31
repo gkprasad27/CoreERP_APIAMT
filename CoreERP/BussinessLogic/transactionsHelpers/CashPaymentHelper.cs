@@ -451,7 +451,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                         AddAccountLedgerTransactions(repo, cashPaymentMaster, _voucherDetail, cashPaymentMaster.CashPaymentDate);
                         #endregion
                         _accountLedger = GetAccountLedgers(cashPaymentMaster.FromLedgerCode).ToArray().FirstOrDefault();
-                        AddVoucherDetails(repo, cashPaymentMaster, _branch, _voucherMaster, _accountLedger, cashDtl.Amount, cashDtl.ToLedgerId, cashDtl.ToLedgerCode, false);
+                        _voucherDetail= AddVoucherDetails(repo, cashPaymentMaster, _branch, _voucherMaster, _accountLedger, cashDtl.Amount, cashDtl.ToLedgerId, cashDtl.ToLedgerCode, false);
                         AddAccountLedgerTransactions(repo, cashPaymentMaster, _voucherDetail, cashPaymentMaster.CashPaymentDate, true);
                     }
 
