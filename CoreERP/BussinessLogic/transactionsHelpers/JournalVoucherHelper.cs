@@ -361,15 +361,16 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                     _accountLedgerTransactions.LedgerName = journalVoucherMaster.FromLedgerName;
                     if(_voucherDetail.TransactionType== "Debit")
                     {
-                        _accountLedgerTransactions.TransactionType = "Credit";
-                        _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
-                        _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
-                    }
-                    else
-                    {
                         _accountLedgerTransactions.TransactionType = "Debit";
                         _accountLedgerTransactions.DebitAmount = _accountLedgerTransactions.VoucherAmount;
                         _accountLedgerTransactions.CreditAmount = Convert.ToDecimal("0.00");
+                    }
+                    else
+                    {
+                        _accountLedgerTransactions.TransactionType = "Credit";
+                        _accountLedgerTransactions.CreditAmount = _accountLedgerTransactions.VoucherAmount;
+                        _accountLedgerTransactions.DebitAmount = Convert.ToDecimal("0.00");
+                        
                     }
                    
                 }
