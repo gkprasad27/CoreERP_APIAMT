@@ -6,19 +6,19 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.GenerlLedger
 {
     public class TransactionsHelper
     {
-        #region Cash Bank
+        #region VoucherNumber & TransactionType
+
         public string GetVoucherNumber(string voucherType)
         {
             try
             {
-               
-                  var _voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType);
+
+                var _voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType);
 
                 while (true)
                 {
@@ -31,7 +31,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         _voucerTypeNoseries.LastNumber = 1;
                     break;
                 }
-                using(Repository<TblAssignmentVoucherSeriestoVoucherType> _repo=new Repository<TblAssignmentVoucherSeriestoVoucherType>())
+                using (Repository<TblAssignmentVoucherSeriestoVoucherType> _repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>())
                 {
                     _repo.TblAssignmentVoucherSeriestoVoucherType.Update(_voucerTypeNoseries);
                     _repo.SaveChanges();
@@ -39,87 +39,36 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 return _voucerTypeNoseries.LastNumber + "-" + _voucerTypeNoseries.Suffix;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
         }
 
-        public List<TblVoucherclass> GetTblVoucherclasses()
+        public bool IsVoucherNumberExists(string voucherNo)
         {
-            try
+            using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
             {
-                using (Repository<TblVoucherclass> _repo = new Repository<TblVoucherclass>())
-                {
-                    return _repo.TblVoucherclass.ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                return _repo.TblCashBankMaster.Where(v => v.VoucherNumber == voucherNo).Count() > 0;
+            };
         }
+
         public List<string> GetTransactionType(string transactionName)
         {
             try
             {
-               return AppManager.GetAppConfigValue(transactionName);
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
-        public List<Glaccounts> GetGlaccounts()
-        {
-            try
-            {
-                using (Repository<Glaccounts> _repo = new Repository<Glaccounts>())
-                {
-                    return _repo.Glaccounts.ToList();
-                }
+                return AppManager.GetAppConfigValue(transactionName);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public List<TblVoucherType> GetVoucherTypes()
-        {
-            try
-            {
-                using(Repository<TblVoucherType> _repo=new Repository<TblVoucherType>())
-                {
-                    return _repo.TblVoucherType.ToList();
-                }
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
-        public List<string> GetNatureOfTransaction()
-        {
-            try 
-            {
-                return AppManager.GetAppConfigValue("NATUREOFTRANSACTION");
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
-        public List<string> GetAccountingIndicator()
-        {
-            try
-            {
-                return AppManager.GetAppConfigValue("ACCOUNTINGINDICATOR");
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        
+        #endregion
+
+        #region Cash Bank
+
         public bool AddCashBank(TblCashBankMaster cashBankMaster,List<TblCashBankDetails> cashBankDetails)
         {
             try
@@ -178,14 +127,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 throw ex;
             }
-        }
-        public bool IsVoucherNumberExists(string voucherNo)
-        {
-            using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
-            {
-                return _repo.TblCashBankMaster.Where(v => v.VoucherNumber == voucherNo).Count() > 0;
-            };
-        }
+        }        
+
         public List<TblCashBankMaster> GetCashBankMasters(SearchCriteria searchCriteria)
         {
             try
@@ -212,6 +155,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw ex;
             }
         }
+
         public TblCashBankMaster GetCashBankMastersById(int id)
         {
             try
@@ -228,6 +172,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw ex;
             }
         }
+
         public List<TblCashBankDetails> GetCashBankDetails(string voucherNumber)
         {
             try
@@ -242,6 +187,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw ex;
             }
         }
+
         #endregion
 
         #region General Journels
