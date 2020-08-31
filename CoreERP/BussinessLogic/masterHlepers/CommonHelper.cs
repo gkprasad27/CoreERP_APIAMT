@@ -1046,13 +1046,23 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch (Exception ex) { throw ex; }
         }
 
-        public static TblAssignmentVoucherSeriestoVoucherType GetVoucherNo(string voucherTypeId)
+        public static TblAssignmentVoucherSeriestoVoucherType GetVoucherNo(string voucherTypeId,out Int32 startNumber,out Int32 endNumber)
         {
+            startNumber = 0;
+            endNumber = 0;
             try
             {
                 using (ERPContext _repo = new ERPContext())
                 {
-                   return _repo.TblAssignmentVoucherSeriestoVoucherType.Where(t => t.VoucherType == voucherTypeId).FirstOrDefault();
+                    TblVoucherSeries voucherSeries= (from avsvt in _repo.TblAssignmentVoucherSeriestoVoucherType
+                                                     join vs in _repo.TblVoucherSeries on avsvt.VoucherSeries equals vs.VoucherSeriesKey
+                                                     where avsvt.VoucherType == voucherTypeId
+                                                     select vs).FirstOrDefault();
+
+                    startNumber = Convert.ToInt32(voucherSeries.FromInterval ?? "0");
+                    endNumber= Convert.ToInt32(voucherSeries.ToInterval ?? "0");
+
+                    return _repo.TblAssignmentVoucherSeriestoVoucherType.Where(t => t.VoucherType == voucherTypeId).FirstOrDefault();
                 };
             }
             catch { throw; }

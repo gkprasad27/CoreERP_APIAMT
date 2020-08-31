@@ -3,6 +3,7 @@ using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +18,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-               
-                  var _voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType);
+                
+                Int32 startNumber = 0, endNumber = 0;
+                  var _voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType,out startNumber,out endNumber);
 
                 while (true)
                 {
@@ -28,16 +30,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         continue;
                     }
                     if (_voucerTypeNoseries.LastNumber == 0)
-                        _voucerTypeNoseries.LastNumber = 1;
+                        _voucerTypeNoseries.LastNumber = startNumber;
                     break;
                 }
-                using(Repository<TblAssignmentVoucherSeriestoVoucherType> _repo=new Repository<TblAssignmentVoucherSeriestoVoucherType>())
+
+                using (ERPContext _repo = new ERPContext())
                 {
                     _repo.TblAssignmentVoucherSeriestoVoucherType.Update(_voucerTypeNoseries);
-                    _repo.SaveChanges();
+                   _repo.SaveChanges();
                 }
-
-                return _voucerTypeNoseries.LastNumber + "-" + _voucerTypeNoseries.Suffix;
+                return  $"{_voucerTypeNoseries.Suffix}-{_voucerTypeNoseries.LastNumber}";
             }
             catch(Exception ex)
             {
@@ -150,7 +152,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         try
                         {
-
+                            //Enum.TryParse(context.TblOpenLedger.FirstOrDefault().FinancialYearStartFrom, out MONTHNUMBER mONTHNUMBER);
+                            //cashBankMaster.Period (int)mONTHNUMBER
                             context.TblCashBankMaster.Add(cashBankMaster);
                             context.SaveChanges();
 
