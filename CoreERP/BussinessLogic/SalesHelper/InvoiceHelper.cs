@@ -343,7 +343,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     decimal totalCrditAmount = accountTransactions.Sum(x => Convert.ToDecimal(x.CreditAmount ?? 0));
                     decimal totalDebittAmount = accountTransactions.Sum(x => Convert.ToDecimal(x.DebitAmount ?? 0));
 
-                   var  _value =  _OpeningBalance.Amount +(totalDebittAmount - totalCrditAmount);
+                   var  _value =  _OpeningBalance.Amount +(totalCrditAmount - totalDebittAmount);
                     if(_value > 0)
                     {
                         return _value;
