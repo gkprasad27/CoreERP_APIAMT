@@ -21,6 +21,7 @@ namespace CoreERP
        _3 =12
     }
 
+
     public enum CRDRINDICATORS
     {
         CREDIT,DEBIT
