@@ -110,7 +110,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         try
                         {
-
+                            cashBankMaster.Ext = "N";
                             context.TblCashBankMaster.Add(cashBankMaster);
                             context.SaveChanges();
 
@@ -148,7 +148,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using (Repository<TblCashBankMaster> _repo=new Repository<TblCashBankMaster>())
                 {
                     return _repo.TblCashBankMaster.AsEnumerable()
-                                .Where(x => x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
+                                .Where(x => x.Ext =="N"
+                                         && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
                                          &&  Convert.ToDateTime(x.VoucherDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                                          && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
                                          )
@@ -193,7 +194,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
-        public bool ReturnCashBank(int id)
+        public bool ReturnCashBank(string voucherNumber)
         {
             try
             {
@@ -201,14 +202,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 List<TblCashBankDetails> cashBankDetails = null;
                 using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
                 {
-                    cashBankMaster = _repo.TblCashBankMaster.Where(c => c.Id == id).FirstOrDefault();
+                    cashBankMaster = _repo.TblCashBankMaster.Where(c => c.VoucherNumber == voucherNumber).FirstOrDefault();
                 };
 
                 if (cashBankMaster == null)
                     return false;
                 using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
                 {
-                    cashBankDetails = _repo.TblCashBankDetails.Where(t => t.VoucherNumber == id.ToString()).ToList();
+                    cashBankDetails = _repo.TblCashBankDetails.Where(t => t.VoucherNumber == voucherNumber).ToList();
                 };
 
                 cashBankMaster.Indicator = cashBankMaster.Indicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
@@ -216,8 +217,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 //deep copy 
                 cashBankMaster1 = (JObject.FromObject(cashBankMaster)).ToObject<TblCashBankMaster>();
-                cashBankMaster1.VoucherNumber = this.GetVoucherNumber(cashBankMaster1.VoucherType);
-                cashBankMaster1.Id = 0;
+                cashBankMaster1.VoucherNumber = $"{this.GetVoucherNumber(cashBankMaster1.VoucherType)}-R";
 
                 cashBankDetails.ForEach(csh =>
                 {
@@ -234,10 +234,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             context.TblCashBankMaster.Update(cashBankMaster);
                             context.SaveChanges();
 
+                            cashBankMaster1.Ext = "R";
                             context.TblCashBankMaster.Add(cashBankMaster1);
                             context.SaveChanges();
 
-                            cashBankDetails.ForEach(csh => { csh.VoucherNumber = cashBankMaster1.Id.ToString(); });
+                            cashBankDetails.ForEach(csh => { csh.VoucherNumber = cashBankMaster1.VoucherNumber.ToString(); });
                             context.TblCashBankDetails.AddRange(cashBankDetails);
                             context.SaveChanges();
 

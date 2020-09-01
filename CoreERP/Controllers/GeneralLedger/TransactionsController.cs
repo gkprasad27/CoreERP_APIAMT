@@ -69,7 +69,7 @@ namespace CoreERP.Controllers.GeneralLedger
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for cash bank." });
             }
             catch (Exception ex)
             {
@@ -125,12 +125,12 @@ namespace CoreERP.Controllers.GeneralLedger
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpGet("ReturnCashBank/{id}")]
-        public IActionResult ReturnCashBank(string id)
+        [HttpGet("ReturnCashBank/{voucherNumber}")]
+        public IActionResult ReturnCashBank(string voucherNumber)
         {
             try
             {
-                bool result = new TransactionsHelper().ReturnCashBank(Convert.ToInt32(id));
+                bool result = new TransactionsHelper().ReturnCashBank(voucherNumber);
                 if (result)
                 {
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "Return Successfully..." });
