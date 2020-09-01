@@ -18,18 +18,24 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
+                int startNumber = 0, endNumber = 0;
 
-                var _voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType);
+                var _voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType,out startNumber,out endNumber);
 
                 while (true)
                 {
+                    
+
                     if (this.IsVoucherNumberExists(_voucerTypeNoseries.LastNumber + "-" + _voucerTypeNoseries.Suffix))
                     {
                         _voucerTypeNoseries.LastNumber += 1;
-                        continue;
+                        if (_voucerTypeNoseries.LastNumber > endNumber)
+                            throw new Exception("No series is ended.");
+
+                            continue;
                     }
                     if (_voucerTypeNoseries.LastNumber == 0)
-                        _voucerTypeNoseries.LastNumber = 1;
+                        _voucerTypeNoseries.LastNumber = startNumber;
                     break;
                 }
                 using (Repository<TblAssignmentVoucherSeriestoVoucherType> _repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>())
