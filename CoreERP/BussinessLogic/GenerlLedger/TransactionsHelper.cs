@@ -26,7 +26,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     
 
-                    if (this.IsVoucherNumberExists(_voucerTypeNoseries.LastNumber + "-" + _voucerTypeNoseries.Suffix))
+                    if (this.IsVoucherNumberExists(_voucerTypeNoseries.Suffix + "-" + _voucerTypeNoseries.LastNumber  ))
                     {
                         _voucerTypeNoseries.LastNumber += 1;
                         if (_voucerTypeNoseries.LastNumber > endNumber)
@@ -44,7 +44,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     _repo.SaveChanges();
                 }
 
-                return _voucerTypeNoseries.LastNumber + "-" + _voucerTypeNoseries.Suffix;
+                return _voucerTypeNoseries.Suffix + "-" + _voucerTypeNoseries.LastNumber  ;
             }
             catch (Exception ex)
             {
@@ -93,12 +93,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     cashBankMaster.VoucherDate = DateTime.Now;
 
                 if (cashBankMaster.NatureofTransaction.ToUpper().Contains("RECEIPTS"))
-                    cashBankMaster.Indicator = "Debit";
+                    cashBankMaster.Indicator = CRDRINDICATORS.DEBIT.ToString();
+                else if (cashBankMaster.NatureofTransaction.ToUpper().Contains("PAYMENT"))
+                    cashBankMaster.Indicator = CRDRINDICATORS.DEBIT.ToString();
 
-                if (cashBankMaster.NatureofTransaction.ToUpper().Contains("PAYMENT"))
-                    cashBankMaster.Indicator = "Debit";
-
-                cashBankDetails.ForEach(x => { x.VoucherDate = cashBankMaster.VoucherDate; });
+                cashBankDetails.ForEach(x => 
+                {
+                    x.VoucherNumber = cashBankMaster.VoucherNumber;
+                    x.VoucherDate = cashBankMaster.VoucherDate;
+                    x.Ext = cashBankMaster.Indicator == CRDRINDICATORS.DEBIT.ToString()  ? CRDRINDICATORS.DEBIT.ToString() : CRDRINDICATORS.CREDIT.ToString();
+                });
 
                 using (ERPContext context=new ERPContext())
                 {
@@ -110,13 +114,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             context.TblCashBankMaster.Add(cashBankMaster);
                             context.SaveChanges();
 
-                            cashBankDetails.ForEach(cb =>
-                            {
-                                cb.VoucherNumber = cashBankMaster.Id.ToString();
-                            });
-
                             context.TblCashBankDetails.AddRange(cashBankDetails);
-
                             context.SaveChanges();
 
                             dbtrans.Commit();
@@ -163,14 +161,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
-        public TblCashBankMaster GetCashBankMastersById(int id)
+        public TblCashBankMaster GetCashBankMastersById(string voucherNumber)
         {
             try
             {
                 using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
                 {
                     return _repo.TblCashBankMaster
-                                .Where(x => x.Id == id)
+                                .Where(x => x.VoucherNumber == voucherNumber)
                                 .FirstOrDefault();
                 }
             }

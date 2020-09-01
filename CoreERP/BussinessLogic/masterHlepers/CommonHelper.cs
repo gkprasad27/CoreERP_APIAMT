@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoreERP.BussinessLogic.masterHlepers
+namespace CoreERP
 {
     public class CommonHelper
     {

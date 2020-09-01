@@ -2181,10 +2181,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
-
                 entity.Property(e => e.Indicator).HasMaxLength(10);
 
                 entity.Property(e => e.Narration).HasMaxLength(50);

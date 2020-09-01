@@ -77,18 +77,18 @@ namespace CoreERP.Controllers.GeneralLedger
             }
         }
 
-        [HttpGet("GetCashBankDetail/{voucherNo}")]
-        public IActionResult GetCashBankDetail(string voucherNo)
+        [HttpGet("GetCashBankDetail/{voucherNumber}")]
+        public IActionResult GetCashBankDetail(string voucherNumber)
         {
             try
             {
                 TransactionsHelper _Transactions = new TransactionsHelper();
-                TblCashBankMaster _CashBankMasters = _Transactions.GetCashBankMastersById(Convert.ToInt32(voucherNo));
+                TblCashBankMaster _CashBankMasters = _Transactions.GetCashBankMastersById(voucherNumber);
                 if (_CashBankMasters != null)
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.CashBankMasters = _CashBankMasters;
-                    expdoObj.CashBankDetail = new TransactionsHelper().GetCashBankDetails(voucherNo); ;
+                    expdoObj.CashBankDetail = new TransactionsHelper().GetCashBankDetails(voucherNumber); ;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
