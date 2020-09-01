@@ -3,25 +3,22 @@ using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.GenerlLedger
 {
     public class TransactionsHelper
     {
-        #region Cash Bank
+        #region VoucherNumber & TransactionType
+
         public string GetVoucherNumber(string voucherType)
         {
             try
             {
-                
-                Int32 startNumber = 0, endNumber = 0;
-                  var _voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType,out startNumber,out endNumber);
+
+                var _voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType);
 
                 while (true)
                 {
@@ -31,98 +28,47 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         continue;
                     }
                     if (_voucerTypeNoseries.LastNumber == 0)
-                        _voucerTypeNoseries.LastNumber = startNumber;
+                        _voucerTypeNoseries.LastNumber = 1;
                     break;
                 }
-
-                using (ERPContext _repo = new ERPContext())
+                using (Repository<TblAssignmentVoucherSeriestoVoucherType> _repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>())
                 {
                     _repo.TblAssignmentVoucherSeriestoVoucherType.Update(_voucerTypeNoseries);
-                   _repo.SaveChanges();
+                    _repo.SaveChanges();
                 }
-                return  $"{_voucerTypeNoseries.Suffix}-{_voucerTypeNoseries.LastNumber}";
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
 
-        public List<TblVoucherclass> GetTblVoucherclasses()
-        {
-            try
-            {
-                using (Repository<TblVoucherclass> _repo = new Repository<TblVoucherclass>())
-                {
-                    return _repo.TblVoucherclass.ToList();
-                }
+                return _voucerTypeNoseries.LastNumber + "-" + _voucerTypeNoseries.Suffix;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
+
+        public bool IsVoucherNumberExists(string voucherNo)
+        {
+            using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
+            {
+                return _repo.TblCashBankMaster.Where(v => v.VoucherNumber == voucherNo).Count() > 0;
+            };
+        }
+
         public List<string> GetTransactionType(string transactionName)
         {
             try
             {
-               return AppManager.GetAppConfigValue(transactionName);
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
-        public List<Glaccounts> GetGlaccounts()
-        {
-            try
-            {
-                using (Repository<Glaccounts> _repo = new Repository<Glaccounts>())
-                {
-                    return _repo.Glaccounts.ToList();
-                }
+                return AppManager.GetAppConfigValue(transactionName);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public List<TblVoucherType> GetVoucherTypes()
-        {
-            try
-            {
-                using(Repository<TblVoucherType> _repo=new Repository<TblVoucherType>())
-                {
-                    return _repo.TblVoucherType.ToList();
-                }
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
-        public List<string> GetNatureOfTransaction()
-        {
-            try 
-            {
-                return AppManager.GetAppConfigValue("NATUREOFTRANSACTION");
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
-        public List<string> GetAccountingIndicator()
-        {
-            try
-            {
-                return AppManager.GetAppConfigValue("ACCOUNTINGINDICATOR");
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        
+        #endregion
+
+        #region Cash Bank
+
         public bool AddCashBank(TblCashBankMaster cashBankMaster,List<TblCashBankDetails> cashBankDetails)
         {
             try
@@ -140,16 +86,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     cashBankMaster.VoucherDate = DateTime.Now;
 
                 if (cashBankMaster.NatureofTransaction.ToUpper().Contains("RECEIPTS"))
-                    cashBankMaster.Indicator = CRDRINDICATORS.DEBIT.ToString();
+                    cashBankMaster.Indicator = "Debit";
 
                 if (cashBankMaster.NatureofTransaction.ToUpper().Contains("PAYMENT"))
-                    cashBankMaster.Indicator = CRDRINDICATORS.CREDIT.ToString();
+                    cashBankMaster.Indicator = "Debit";
 
-                cashBankDetails.ForEach(x => 
-                { 
-                    x.VoucherDate = cashBankMaster.VoucherDate;
-                    x.Ext = cashBankMaster.Indicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.DEBIT.ToString() : CRDRINDICATORS.CREDIT.ToString();
-                });
+                cashBankDetails.ForEach(x => { x.VoucherDate = cashBankMaster.VoucherDate; });
 
                 using (ERPContext context=new ERPContext())
                 {
@@ -157,8 +99,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         try
                         {
-                            //Enum.TryParse(context.TblOpenLedger.FirstOrDefault().FinancialYearStartFrom, out MONTHNUMBER mONTHNUMBER);
-                            //cashBankMaster.Period (int)mONTHNUMBER
+
                             context.TblCashBankMaster.Add(cashBankMaster);
                             context.SaveChanges();
 
@@ -186,14 +127,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 throw ex;
             }
-        }
-        public bool IsVoucherNumberExists(string voucherNo)
-        {
-            using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
-            {
-                return _repo.TblCashBankMaster.Where(v => v.VoucherNumber == voucherNo).Count() > 0;
-            };
-        }
+        }        
+
         public List<TblCashBankMaster> GetCashBankMasters(SearchCriteria searchCriteria)
         {
             try
@@ -220,6 +155,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw ex;
             }
         }
+
         public TblCashBankMaster GetCashBankMastersById(int id)
         {
             try
@@ -236,6 +172,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw ex;
             }
         }
+
         public List<TblCashBankDetails> GetCashBankDetails(string voucherNumber)
         {
             try
@@ -250,71 +187,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw ex;
             }
         }
-        
-        public bool ReturnCashBank(int id)
-        {
-            try
-            {
-                TblCashBankMaster cashBankMaster = null,cashBankMaster1=null;
-                List<TblCashBankDetails> cashBankDetails = null;
-                using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
-                {
-                    cashBankMaster = _repo.TblCashBankMaster.Where(c => c.Id == id).FirstOrDefault();
-                };
 
-                if (cashBankMaster == null)
-                    return false;
-                using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
-                {
-                    cashBankDetails = _repo.TblCashBankDetails.Where(t => t.VoucherNumber == id.ToString()).ToList();
-                };
-
-                cashBankMaster.Indicator = cashBankMaster.Indicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
-                
-
-                //deep copy 
-                cashBankMaster1 = (JObject.FromObject(cashBankMaster)).ToObject<TblCashBankMaster>();
-                cashBankMaster1.VoucherNumber = this.GetVoucherNumber(cashBankMaster1.VoucherType);
-                cashBankMaster1.Id = 0;
-
-                cashBankDetails.ForEach(csh =>
-                {
-                    csh.Id = 0;
-                    csh.Ext = cashBankMaster.Indicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
-                });
-                using (ERPContext context=new ERPContext())
-                {
-                    using (var dbtrans = context.Database.BeginTransaction())
-                    {
-                        try
-                        {
-                            cashBankMaster.Ext = "Y";
-                            context.TblCashBankMaster.Update(cashBankMaster);
-                            context.SaveChanges();
-
-                            context.TblCashBankMaster.Add(cashBankMaster1);
-                            context.SaveChanges();
-
-                            cashBankDetails.ForEach(csh => { csh.VoucherNumber = cashBankMaster1.Id.ToString(); });
-                            context.TblCashBankDetails.AddRange(cashBankDetails);
-                            context.SaveChanges();
-
-                            dbtrans.Commit();
-                            return true;
-                        }
-                        catch(Exception ex)
-                        {
-                            dbtrans.Rollback();
-                            return false;
-                        }
-                    }
-                };
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
         #endregion
 
         #region General Journels
