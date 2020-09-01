@@ -136,7 +136,7 @@ namespace CoreERP.Controllers.GeneralLedger
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "Return Successfully..." });
                 }
                 else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning.." });
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning cash bank.." });
             }
             catch (Exception ex)
             {
