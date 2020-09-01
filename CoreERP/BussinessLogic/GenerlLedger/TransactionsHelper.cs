@@ -3,6 +3,7 @@ using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -187,6 +188,73 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw ex;
             }
         }
+
+        public bool ReturnCashBank(int id)
+        {
+            try
+            {
+                TblCashBankMaster cashBankMaster = null, cashBankMaster1 = null;
+                List<TblCashBankDetails> cashBankDetails = null;
+                using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
+                {
+                    cashBankMaster = _repo.TblCashBankMaster.Where(c => c.Id == id).FirstOrDefault();
+                };
+
+                if (cashBankMaster == null)
+                    return false;
+                using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
+                {
+                    cashBankDetails = _repo.TblCashBankDetails.Where(t => t.VoucherNumber == id.ToString()).ToList();
+                };
+
+                cashBankMaster.Indicator = cashBankMaster.Indicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
+
+
+                //deep copy 
+                cashBankMaster1 = (JObject.FromObject(cashBankMaster)).ToObject<TblCashBankMaster>();
+                cashBankMaster1.VoucherNumber = this.GetVoucherNumber(cashBankMaster1.VoucherType);
+                cashBankMaster1.Id = 0;
+
+                cashBankDetails.ForEach(csh =>
+                {
+                    csh.Id = 0;
+                    csh.Ext = cashBankMaster.Indicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
+                });
+                using (ERPContext context = new ERPContext())
+                {
+                    using (var dbtrans = context.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            cashBankMaster.Ext = "Y";
+                            context.TblCashBankMaster.Update(cashBankMaster);
+                            context.SaveChanges();
+
+                            context.TblCashBankMaster.Add(cashBankMaster1);
+                            context.SaveChanges();
+
+                            cashBankDetails.ForEach(csh => { csh.VoucherNumber = cashBankMaster1.Id.ToString(); });
+                            context.TblCashBankDetails.AddRange(cashBankDetails);
+                            context.SaveChanges();
+
+                            dbtrans.Commit();
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            dbtrans.Rollback();
+                            return false;
+                        }
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
 
         #endregion
 

@@ -125,6 +125,25 @@ namespace CoreERP.Controllers.GeneralLedger
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+        [HttpGet("ReturnCashBank/{id}")]
+        public IActionResult ReturnCashBank(string id)
+        {
+            try
+            {
+                bool result = new TransactionsHelper().ReturnCashBank(Convert.ToInt32(id));
+                if (result)
+                {
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "Return Successfully..." });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning.." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
 
         #endregion
 
