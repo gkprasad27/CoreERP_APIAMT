@@ -16,8 +16,7 @@ namespace CoreERP.Models
         public string TransactionType { get; set; }
         public string NatureofTransaction { get; set; }
         public string Account { get; set; }
-        public string Accounting { get; set; }
-        public string Indicator { get; set; }
+        public string AccountingIndicator { get; set; }
         public string ReferenceNo { get; set; }
         public DateTime? ReferenceDate { get; set; }
         public string ProfitCenter { get; set; }

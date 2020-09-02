@@ -34,6 +34,6 @@ namespace CoreERP.Models
         public string Commitment { get; set; }
         public string Hsnsac { get; set; }
         public string Narration { get; set; }
-        public string Ext { get; set; }
+        public string AccountingIndicator { get; set; }
     }
 }

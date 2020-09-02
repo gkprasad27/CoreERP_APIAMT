@@ -93,15 +93,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     cashBankMaster.VoucherDate = DateTime.Now;
 
                 if (cashBankMaster.NatureofTransaction.ToUpper().Contains("RECEIPTS"))
-                    cashBankMaster.Indicator = CRDRINDICATORS.DEBIT.ToString();
+                    cashBankMaster.AccountingIndicator = CRDRINDICATORS.DEBIT.ToString();
                 else if (cashBankMaster.NatureofTransaction.ToUpper().Contains("PAYMENT"))
-                    cashBankMaster.Indicator = CRDRINDICATORS.DEBIT.ToString();
+                    cashBankMaster.AccountingIndicator = CRDRINDICATORS.DEBIT.ToString();
 
                 cashBankDetails.ForEach(x => 
                 {
                     x.VoucherNumber = cashBankMaster.VoucherNumber;
                     x.VoucherDate = cashBankMaster.VoucherDate;
-                    x.Ext = cashBankMaster.Indicator == CRDRINDICATORS.DEBIT.ToString()  ? CRDRINDICATORS.DEBIT.ToString() : CRDRINDICATORS.CREDIT.ToString();
+                    x.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString()  ? CRDRINDICATORS.DEBIT.ToString() : CRDRINDICATORS.CREDIT.ToString();
                 });
 
                 using (ERPContext context=new ERPContext())
@@ -212,7 +212,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     cashBankDetails = _repo.TblCashBankDetails.Where(t => t.VoucherNumber == voucherNumber).ToList();
                 };
 
-                cashBankMaster.Indicator = cashBankMaster.Indicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
+                cashBankMaster.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
 
 
                 //deep copy 
@@ -222,7 +222,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 cashBankDetails.ForEach(csh =>
                 {
                     csh.Id = 0;
-                    csh.Ext = cashBankMaster.Indicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
+                    csh.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
                 });
                 using (ERPContext context = new ERPContext())
                 {

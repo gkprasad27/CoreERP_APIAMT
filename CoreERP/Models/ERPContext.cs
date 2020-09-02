@@ -2092,6 +2092,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.AccountingIndicator).HasMaxLength(50);
+
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
@@ -2105,8 +2107,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Company).HasMaxLength(5);
 
                 entity.Property(e => e.CostCenter).HasMaxLength(5);
-
-                entity.Property(e => e.Ext).HasMaxLength(50);
 
                 entity.Property(e => e.FunctionalDept).HasMaxLength(5);
 
@@ -2175,15 +2175,13 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Account).HasMaxLength(50);
 
-                entity.Property(e => e.Accounting).HasMaxLength(10);
+                entity.Property(e => e.AccountingIndicator).HasMaxLength(10);
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
-
-                entity.Property(e => e.Indicator).HasMaxLength(10);
 
                 entity.Property(e => e.Narration).HasMaxLength(50);
 
@@ -2943,6 +2941,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.AccountingIndicator).HasMaxLength(50);
+
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
@@ -2956,8 +2956,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Company).HasMaxLength(5);
 
                 entity.Property(e => e.CostCenter).HasMaxLength(5);
-
-                entity.Property(e => e.Ext).HasMaxLength(50);
 
                 entity.Property(e => e.FunctionalDept).HasMaxLength(50);
 
@@ -3077,9 +3075,11 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblJvdetails>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("tbl_JVDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AccountingIndicator).HasMaxLength(50);
 
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
 
@@ -3094,8 +3094,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Company).HasMaxLength(5);
 
                 entity.Property(e => e.CostCenter).HasMaxLength(5);
-
-                entity.Property(e => e.Ext).HasMaxLength(50);
 
                 entity.Property(e => e.FunctionalDept).HasMaxLength(5);
 
@@ -3112,10 +3110,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Hsnsac)
                     .HasColumnName("HSNSAC")
                     .HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Igstamount)
                     .HasColumnName("IGSTAmount")
@@ -3160,9 +3154,14 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblJvmaster>(entity =>
             {
+                entity.HasKey(e => e.VoucherNumber)
+                    .HasName("PK_tbl_JVMaster_1");
+
                 entity.ToTable("tbl_JVMaster");
 
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.VoucherNumber).HasMaxLength(50);
+
+                entity.Property(e => e.AccountingIndicator).HasMaxLength(50);
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
 
@@ -3187,8 +3186,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.VoucherClass).HasMaxLength(5);
 
                 entity.Property(e => e.VoucherDate).HasColumnType("date");
-
-                entity.Property(e => e.VoucherNumber).HasMaxLength(50);
 
                 entity.Property(e => e.VoucherType).HasMaxLength(5);
             });

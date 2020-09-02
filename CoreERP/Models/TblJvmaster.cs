@@ -5,7 +5,6 @@ namespace CoreERP.Models
 {
     public partial class TblJvmaster
     {
-        public int Id { get; set; }
         public string Company { get; set; }
         public string Branch { get; set; }
         public string VoucherClass { get; set; }
@@ -20,5 +19,6 @@ namespace CoreERP.Models
         public string Narration { get; set; }
         public string Ext { get; set; }
         public string Ext1 { get; set; }
+        public string AccountingIndicator { get; set; }
     }
 }
