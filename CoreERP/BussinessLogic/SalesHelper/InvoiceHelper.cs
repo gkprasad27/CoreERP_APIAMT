@@ -8,13 +8,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.SalesHelper
 {
     public class InvoiceHelper
     {
+        private WebProxy objProxy1 = null;
         //to get the invoice Master data while page load
         public List<TblInvoiceMaster> GetInvoiceList(int? role, string branchCode, DateTime? fromDate = null, DateTime? toDate = null, string invoiceNo = null)
         {
@@ -325,9 +328,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     _OpeningBalance = repo.TblOpeningBalance.Where(a => a.LedgerCode == ldgerCode ).FirstOrDefault();
                 }
 
-                if (_OpeningBalance == null)
-                    return 0;
-
+                //if (_OpeningBalance == null)
+                //    return 0;
+                
 
                 //select * from tbl_OpeningBalance where ledgercode=2030 -- 230270
 
@@ -342,9 +345,19 @@ namespace CoreERP.BussinessLogic.SalesHelper
                  
                     decimal totalCrditAmount = accountTransactions.Sum(x => Convert.ToDecimal(x.CreditAmount ?? 0));
                     decimal totalDebittAmount = accountTransactions.Sum(x => Convert.ToDecimal(x.DebitAmount ?? 0));
+                    decimal _value;
+                    if (_OpeningBalance == null)
+                    {
+                        _value = 0 + (totalCrditAmount - totalDebittAmount);
+                       
+                    }
+                    else
+                    {
+                         _value = _OpeningBalance.Amount + (totalCrditAmount - totalDebittAmount);
+                        
+                    }
 
-                   var  _value =  _OpeningBalance.Amount +(totalCrditAmount - totalDebittAmount);
-                    if(_value > 0)
+                    if (_value > 0)
                     {
                         return _value;
                     }
@@ -700,6 +713,11 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 TblTaxStructure _taxStructure = null;
                 TblProduct _product = null;
                 TblPumps _pumpId = null;
+                var invProduct = "";
+                decimal _invRate =0;
+                decimal _invQty =0;
+                decimal _invAmount =0;
+                string _invUnitName = "";
                 using (ERPContext repo = new ERPContext())
                 {
                     using (var dbTransaction = repo.Database.BeginTransaction())
@@ -752,6 +770,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 _product = GetProducts(invdtl.ProductCode).FirstOrDefault();
                                 _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
                                 _accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure?.SalesAccount).FirstOrDefault();
+                                if (invdtl.ProductCode == "D")
+                                {
+                                     invProduct = "D";
+                                    _invRate = invdtl.Rate ?? 0;
+                                    _invQty = invdtl.Qty ?? 0;
+                                    _invAmount = _invRate * _invQty;
+                                    _invUnitName = invdtl.UnitName;
+                                }
                                 if (invdtl.PumpNo != null)
                                 {
                                     _pumpId = GetPumpID(Convert.ToInt32(invdtl.PumpNo), invoice.BranchCode).FirstOrDefault();
@@ -827,14 +853,24 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             {
                                 //Add IGST record
                                 var _accAL = GetAccountLedgersByCode("243");
+                                var SmsResult = "";
                                 voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalIgst, "Credit", false);
                                 AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
+                                if (invProduct == "D" && invoice.Mobile != null)
+                                {
+                                    var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
+                                                  invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
+                                    SmsResult = SendSMS("ksdlomacs", "kdlomacs", invoice.Mobile, message, "N", "Y");
+                                    AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult);
+                                }
+                                
 
                             }
                             else
                             {
                                 // cgst
                                 var _accAL = GetAccountLedgersByCode("240");
+                                var SmsResult = "";
                                 voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalCgst, "Credit", false);
                                 AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
 
@@ -842,6 +878,15 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 _accAL = GetAccountLedgersByCode("241");
                                 voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalSgst, "Credit", false);
                                 AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
+                                if (invProduct == "D" && invoice.Mobile!=null)
+                                {
+                                    var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName +" "+ "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
+                                                   invoice.BranchName +" " + "B.No" +" " + invoice.InvoiceNo +" " + "Amount" +" " + _invAmount +" " + "V.No:" +" " + invoice.VehicleRegNo;
+                                    SmsResult = SendSMS("ksdlomacs", "kdlomacs", invoice.Mobile, message, "N", "Y");
+                                    AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult);
+                                }
+                                
+
                             }
 
                             dbTransaction.Commit();
@@ -1051,6 +1096,45 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
+        public Smsstatus AddSmsStatus(ERPContext context, TblInvoiceMaster invoice, decimal invRate, decimal invQty, decimal invAmount, string SmsResult)
+        {
+            try
+            {
+                var _smsStatus = new Smsstatus();
+                _smsStatus.InvoiceNo=invoice.InvoiceNo;
+                _smsStatus.InvoiceDate = invoice.InvoiceDate;
+                _smsStatus.Branch = invoice.BranchName;
+                _smsStatus.Mobile = invoice.Mobile;
+                _smsStatus.VehicleRegNo = invoice.VehicleRegNo;
+                _smsStatus.Price = invRate;
+                _smsStatus.Qty = invQty;
+                _smsStatus.Amount = invAmount;
+                if (SmsResult != null)
+                {
+                    _smsStatus.Status = 1;
+                    _smsStatus.SmsReturnId = SmsResult;
+                }
+                else
+                {
+                    _smsStatus.Status = -1;
+                    _smsStatus.SmsReturnId = "-1";
+                }
+
+                context.Smsstatus.Add(_smsStatus);
+                if (context.SaveChanges() > 0)
+                {
+                    return _smsStatus;
+                }
+
+                return null;
+                
+
+            }
+            catch (Exception ex)
+            {
+                throw ex.InnerException;
+            }
+        }
 
         // validation 
         public int NoOfrecordsAllowed(IConfiguration configuration, string branchCode)
@@ -1060,6 +1144,74 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 return 3;
 
             return 6;
+        }
+
+        public string SendSMS(string User, string password, string Mobile_Number, string Message, string Mtype, string DR)
+        {
+            string stringpost = null;
+            stringpost = "User=" + User + "&passwd=" + password + "&mobilenumber=" + Mobile_Number + "&message=" + Message + "&MType=" + Mtype + "&DR=" + DR;
+
+            HttpWebRequest objWebRequest = null;
+            HttpWebResponse objWebResponse = null;
+            StreamWriter objStreamWriter = null;
+            StreamReader objStreamReader = null;
+
+            try
+            {
+
+                string stringResult = null;
+
+                objWebRequest = (HttpWebRequest)WebRequest.Create("http://www.smscountry.com/SMSCwebservice_bulk.aspx");
+                objWebRequest.Method = "POST";
+
+                if ((objProxy1 != null))
+                {
+                    objWebRequest.Proxy = objProxy1;
+                }
+
+
+                // Use below code if you want to SETUP PROXY.
+                //Parameters to pass: 1. ProxyAddress 2. Port
+                //You can find both the parameters in Connection settings of your internet explorer.
+
+                //WebProxy myProxy = new WebProxy("YOUR PROXY", PROXPORT);
+                //myProxy.BypassProxyOnLocal = true;
+                //wrGETURL.Proxy = myProxy;
+
+                objWebRequest.ContentType = "application/x-www-form-urlencoded";
+
+                objStreamWriter = new StreamWriter(objWebRequest.GetRequestStream());
+                objStreamWriter.Write(stringpost);
+                objStreamWriter.Flush();
+                objStreamWriter.Close();
+
+                objWebResponse = (HttpWebResponse)objWebRequest.GetResponse();
+                objStreamReader = new StreamReader(objWebResponse.GetResponseStream());
+                stringResult = objStreamReader.ReadToEnd();
+
+                objStreamReader.Close();
+                return stringResult;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+
+                if ((objStreamWriter != null))
+                {
+                    objStreamWriter.Close();
+                }
+                if ((objStreamReader != null))
+                {
+                    objStreamReader.Close();
+                }
+                objWebRequest = null;
+                objWebResponse = null;
+                objProxy1 = null;
+            }
+
         }
     }
 }
