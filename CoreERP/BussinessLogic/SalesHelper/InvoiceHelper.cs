@@ -775,7 +775,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                      invProduct = "D";
                                     _invRate = invdtl.Rate ?? 0;
                                     _invQty = invdtl.Qty ?? 0;
-                                    _invAmount = _invRate * _invQty;
+                                    _invAmount = System.Math.Round(_invRate * _invQty,2);
                                     _invUnitName = invdtl.UnitName;
                                 }
                                 if (invdtl.PumpNo != null)
