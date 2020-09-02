@@ -1,11 +1,11 @@
 ﻿using CoreERP.BussinessLogic.Common;
-using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace CoreERP.BussinessLogic.GenerlLedger
@@ -16,60 +16,41 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public string GetVoucherNumber(string voucherType)
         {
-            try
+            var voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType,out var startNumber,out var endNumber);
+
+            while (true)
             {
-                int startNumber = 0, endNumber = 0;
-
-                var _voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType,out startNumber,out endNumber);
-
-                while (true)
-                {
                     
 
-                    if (this.IsVoucherNumberExists(_voucerTypeNoseries.Suffix + "-" + _voucerTypeNoseries.LastNumber  ))
-                    {
-                        _voucerTypeNoseries.LastNumber += 1;
-                        if (_voucerTypeNoseries.LastNumber > endNumber)
-                            throw new Exception("No series is ended.");
-
-                            continue;
-                    }
-                    if (_voucerTypeNoseries.LastNumber == 0)
-                        _voucerTypeNoseries.LastNumber = startNumber;
-                    break;
-                }
-                using (Repository<TblAssignmentVoucherSeriestoVoucherType> _repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>())
+                if (this.IsVoucherNumberExists(voucerTypeNoseries.Suffix + "-" + voucerTypeNoseries.LastNumber  ))
                 {
-                    _repo.TblAssignmentVoucherSeriestoVoucherType.Update(_voucerTypeNoseries);
-                    _repo.SaveChanges();
-                }
+                    voucerTypeNoseries.LastNumber += 1;
+                    if (voucerTypeNoseries.LastNumber > endNumber)
+                        throw new Exception("No series is ended.");
 
-                return _voucerTypeNoseries.Suffix + "-" + _voucerTypeNoseries.LastNumber  ;
+                    continue;
+                }
+                if (voucerTypeNoseries.LastNumber == 0)
+                    voucerTypeNoseries.LastNumber = startNumber;
+                break;
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+
+            using Repository<TblAssignmentVoucherSeriestoVoucherType> repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>();
+            repo.TblAssignmentVoucherSeriestoVoucherType.Update(voucerTypeNoseries);
+            repo.SaveChanges();
+
+            return voucerTypeNoseries.Suffix + "-" + voucerTypeNoseries.LastNumber  ;
         }
 
         public bool IsVoucherNumberExists(string voucherNo)
         {
-            using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
-            {
-                return _repo.TblCashBankMaster.Where(v => v.VoucherNumber == voucherNo).Count() > 0;
-            };
+            using Repository<TblCashBankMaster> repo = new Repository<TblCashBankMaster>();
+            return repo.TblCashBankMaster.Any(v => v.VoucherNumber == voucherNo);
         }
 
         public List<string> GetTransactionType(string transactionName)
         {
-            try
-            {
-                return AppManager.GetAppConfigValue(transactionName);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return AppManager.GetAppConfigValue(transactionName);
         }
         
         #endregion
@@ -78,184 +59,139 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public bool AddCashBank(TblCashBankMaster cashBankMaster,List<TblCashBankDetails> cashBankDetails)
         {
+            if (cashBankMaster.VoucherDate == null)
+                throw new Exception("Voucher Date Canot be empty/null.");
+
+            if (cashBankMaster.VoucherNumber == null)
+                throw new Exception("Voucher Number Canot be empty/null.");
+
+            if (this.IsVoucherNumberExists(cashBankMaster.VoucherNumber))
+                throw new Exception("Voucher number exists.");
+
+            cashBankMaster.VoucherDate ??= DateTime.Now;
+
+            if (cashBankMaster.NatureofTransaction.ToUpper().Contains("RECEIPTS"))
+                cashBankMaster.AccountingIndicator = CRDRINDICATORS.DEBIT.ToString();
+            else if (cashBankMaster.NatureofTransaction.ToUpper().Contains("PAYMENT"))
+                cashBankMaster.AccountingIndicator = CRDRINDICATORS.DEBIT.ToString();
+
+            cashBankDetails.ForEach(x => 
+            {
+                x.VoucherNumber = cashBankMaster.VoucherNumber;
+                x.VoucherDate = cashBankMaster.VoucherDate;
+                x.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString()  ? CRDRINDICATORS.DEBIT.ToString() : CRDRINDICATORS.CREDIT.ToString();
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
             try
             {
-                if (cashBankMaster.VoucherDate == null)
-                    throw new Exception("Voucher Date Canot be empty/null.");
+                cashBankMaster.Ext = "N";
+                context.TblCashBankMaster.Add(cashBankMaster);
+                context.SaveChanges();
 
-                if (cashBankMaster.VoucherNumber == null)
-                    throw new Exception("Voucher Number Canot be empty/null.");
+                context.TblCashBankDetails.AddRange(cashBankDetails);
+                context.SaveChanges();
 
-                if (this.IsVoucherNumberExists(cashBankMaster.VoucherNumber))
-                 throw new Exception("Voucher number exists.");
-
-                if (cashBankMaster.VoucherDate == null)
-                    cashBankMaster.VoucherDate = DateTime.Now;
-
-                if (cashBankMaster.NatureofTransaction.ToUpper().Contains("RECEIPTS"))
-                    cashBankMaster.AccountingIndicator = CRDRINDICATORS.DEBIT.ToString();
-                else if (cashBankMaster.NatureofTransaction.ToUpper().Contains("PAYMENT"))
-                    cashBankMaster.AccountingIndicator = CRDRINDICATORS.DEBIT.ToString();
-
-                cashBankDetails.ForEach(x => 
-                {
-                    x.VoucherNumber = cashBankMaster.VoucherNumber;
-                    x.VoucherDate = cashBankMaster.VoucherDate;
-                    x.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString()  ? CRDRINDICATORS.DEBIT.ToString() : CRDRINDICATORS.CREDIT.ToString();
-                });
-
-                using (ERPContext context=new ERPContext())
-                {
-                    using(var dbtrans=context.Database.BeginTransaction())
-                    {
-                        try
-                        {
-                            cashBankMaster.Ext = "N";
-                            context.TblCashBankMaster.Add(cashBankMaster);
-                            context.SaveChanges();
-
-                            context.TblCashBankDetails.AddRange(cashBankDetails);
-                            context.SaveChanges();
-
-                            dbtrans.Commit();
-                            return true;
-                        }
-                        catch(Exception ex)
-                        {
-                            dbtrans.Rollback();
-                            throw ex;
-                        }
-                    }
-                }
+                dbtrans.Commit();
+                return true;
             }
-            catch(Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                dbtrans.Rollback();
+                throw;
             }
         }        
 
         public List<TblCashBankMaster> GetCashBankMasters(SearchCriteria searchCriteria)
         {
-            try
-            {
-                if (searchCriteria == null)
-                    searchCriteria = new SearchCriteria() { FromDate= DateTime.Today.AddDays(-1), ToDate=DateTime.Today };
-                if (searchCriteria.FromDate == null)
-                    searchCriteria.FromDate = DateTime.Today.AddDays(-1);
-                if (searchCriteria.ToDate == null)
-                    searchCriteria.ToDate = DateTime.Today;
+            searchCriteria ??= new SearchCriteria() {FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today};
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
 
-                using (Repository<TblCashBankMaster> _repo=new Repository<TblCashBankMaster>())
+            using var repo=new Repository<TblCashBankMaster>();
+            return repo.TblCashBankMaster.AsEnumerable()
+                .Where(x =>
                 {
-                    return _repo.TblCashBankMaster.AsEnumerable()
-                                .Where(x => x.Ext =="N"
-                                         && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
-                                         &&  Convert.ToDateTime(x.VoucherDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                                         && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-                                         )
-                                .ToList();
-                }
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+                    Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
+                    return x.Ext == "N"
+                           && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
+                           && Convert.ToDateTime(x.VoucherDate.Value) >=
+                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                           && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                })
+                .ToList();
         }
 
         public TblCashBankMaster GetCashBankMastersById(string voucherNumber)
         {
-            try
-            {
-                using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
-                {
-                    return _repo.TblCashBankMaster
-                                .Where(x => x.VoucherNumber == voucherNumber)
-                                .FirstOrDefault();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            using var repo = new Repository<TblCashBankMaster>();
+            return repo.TblCashBankMaster
+                .FirstOrDefault(x => x.VoucherNumber == voucherNumber);
         }
 
         public List<TblCashBankDetails> GetCashBankDetails(string voucherNumber)
         {
-            try
-            {
-                using(Repository<TblCashBankDetails> _repo=new Repository<TblCashBankDetails>())
-                {
-                    return _repo.TblCashBankDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
-                }
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+            using var repo=new Repository<TblCashBankDetails>();
+            return repo.TblCashBankDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
         }
 
         public bool ReturnCashBank(string voucherNumber)
         {
-            try
+            TblCashBankMaster cashBankMaster;
+            List<TblCashBankDetails> cashBankDetails;
+            using (var repo = new Repository<TblCashBankMaster>())
             {
-                TblCashBankMaster cashBankMaster = null, cashBankMaster1 = null;
-                List<TblCashBankDetails> cashBankDetails = null;
-                using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
-                {
-                    cashBankMaster = _repo.TblCashBankMaster.Where(c => c.VoucherNumber == voucherNumber).FirstOrDefault();
-                };
-
-                if (cashBankMaster == null)
-                    return false;
-                using (Repository<TblCashBankMaster> _repo = new Repository<TblCashBankMaster>())
-                {
-                    cashBankDetails = _repo.TblCashBankDetails.Where(t => t.VoucherNumber == voucherNumber).ToList();
-                };
-
-                cashBankMaster.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
-
-
-                //deep copy 
-                cashBankMaster1 = (JObject.FromObject(cashBankMaster)).ToObject<TblCashBankMaster>();
-                cashBankMaster1.VoucherNumber = $"{this.GetVoucherNumber(cashBankMaster1.VoucherType)}-R";
-
-                cashBankDetails.ForEach(csh =>
-                {
-                    csh.Id = 0;
-                    csh.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
-                });
-                using (ERPContext context = new ERPContext())
-                {
-                    using (var dbtrans = context.Database.BeginTransaction())
-                    {
-                        try
-                        {
-                            cashBankMaster.Ext = "Y";
-                            context.TblCashBankMaster.Update(cashBankMaster);
-                            context.SaveChanges();
-
-                            cashBankMaster1.Ext = "R";
-                            context.TblCashBankMaster.Add(cashBankMaster1);
-                            context.SaveChanges();
-
-                            cashBankDetails.ForEach(csh => { csh.VoucherNumber = cashBankMaster1.VoucherNumber.ToString(); });
-                            context.TblCashBankDetails.AddRange(cashBankDetails);
-                            context.SaveChanges();
-
-                            dbtrans.Commit();
-                            return true;
-                        }
-                        catch (Exception ex)
-                        {
-                            dbtrans.Rollback();
-                            return false;
-                        }
-                    }
-                };
+                cashBankMaster = repo.TblCashBankMaster.FirstOrDefault(c => c.VoucherNumber == voucherNumber);
             }
-            catch (Exception ex)
+
+            if (cashBankMaster == null)
+                return false;
+            using (var repo = new Repository<TblCashBankMaster>())
             {
-                throw ex;
+                cashBankDetails = repo.TblCashBankDetails.Where(t => t.VoucherNumber == voucherNumber).ToList();
+            }
+
+            cashBankMaster.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
+
+
+            //deep copy 
+            var cashBankMaster1 = (JObject.FromObject(cashBankMaster)).ToObject<TblCashBankMaster>();
+            cashBankMaster1.VoucherNumber = $"{this.GetVoucherNumber(cashBankMaster1.VoucherType)}-R";
+
+            cashBankDetails.ForEach(csh =>
+            {
+                csh.Id = 0;
+                csh.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
+            });
+            using (ERPContext context = new ERPContext())
+            {
+                using (var dbtrans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        cashBankMaster.Ext = "Y";
+                        context.TblCashBankMaster.Update(cashBankMaster);
+                        context.SaveChanges();
+
+                        cashBankMaster1.Ext = "R";
+                        context.TblCashBankMaster.Add(cashBankMaster1);
+                        context.SaveChanges();
+
+                        cashBankDetails.ForEach(csh => { csh.VoucherNumber = cashBankMaster1.VoucherNumber; });
+                        context.TblCashBankDetails.AddRange(cashBankDetails);
+                        context.SaveChanges();
+
+                        dbtrans.Commit();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        dbtrans.Rollback();
+                        return false;
+                    }
+                }
             }
         }
 

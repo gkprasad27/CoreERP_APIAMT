@@ -37,7 +37,7 @@ namespace CoreERP.Controllers.GeneralLedger
             try
             {
                 var transactionType = new TransactionsHelper().GetTransactionType("TRANSACTIONTYPE");
-                if (transactionType.Count() > 0)
+                if (transactionType.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.TransactionType = transactionType.Select(v => new { id = v, text = v });
@@ -62,7 +62,7 @@ namespace CoreERP.Controllers.GeneralLedger
             try
             {
                 var cashBankMasters = new TransactionsHelper().GetCashBankMasters(searchCriteria);
-                if (cashBankMasters.Count() > 0)
+                if (cashBankMasters.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.CashBankMasters = cashBankMasters;
@@ -82,13 +82,13 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                TransactionsHelper _Transactions = new TransactionsHelper();
-                TblCashBankMaster _CashBankMasters = _Transactions.GetCashBankMastersById(voucherNumber);
-                if (_CashBankMasters != null)
+                var transactions = new TransactionsHelper();
+                var cashBankMasters = transactions.GetCashBankMastersById(voucherNumber);
+                if (cashBankMasters != null)
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.CashBankMasters = _CashBankMasters;
-                    expdoObj.CashBankDetail = new TransactionsHelper().GetCashBankDetails(voucherNumber); ;
+                    expdoObj.CashBankMasters = cashBankMasters;
+                    expdoObj.CashBankDetail = new TransactionsHelper().GetCashBankDetails(voucherNumber); 
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 else
@@ -108,8 +108,8 @@ namespace CoreERP.Controllers.GeneralLedger
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                TblCashBankMaster cashBankMaster = obj["cashbankHdr"].ToObject<TblCashBankMaster>();
-                List<TblCashBankDetails> cashBankDetails = obj["cashbankDtl"].ToObject<List<TblCashBankDetails>>();
+                var cashBankMaster = obj["cashbankHdr"].ToObject<TblCashBankMaster>();
+                var cashBankDetails = obj["cashbankDtl"].ToObject<List<TblCashBankDetails>>();
 
                 if (new TransactionsHelper().AddCashBank(cashBankMaster, cashBankDetails))
                 {
@@ -130,7 +130,7 @@ namespace CoreERP.Controllers.GeneralLedger
         {
             try
             {
-                bool result = new TransactionsHelper().ReturnCashBank(voucherNumber);
+                var result = new TransactionsHelper().ReturnCashBank(voucherNumber);
                 if (result)
                 {
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "Return Successfully..." });
@@ -151,12 +151,12 @@ namespace CoreERP.Controllers.GeneralLedger
         #region General VOucher
 
         [HttpGet("GetGJTransTypes")]
-        public IActionResult GetGJTransTypes()
+        public IActionResult GetGjTransTypes()
         {
             try
             {
                 var transactionType = new TransactionsHelper().GetTransactionType("GJTRANSTYPE");
-                if (transactionType.Count() > 0)
+                if (transactionType.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.TransactionType = transactionType.Select(v => new { id = v, text = v });
