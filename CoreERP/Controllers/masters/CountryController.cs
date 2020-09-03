@@ -1,5 +1,4 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -26,9 +25,6 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                //if (CountryHelper.GetList(country.CountryCode).Count() > 0)
-                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"country Code {nameof(country.CountryCode)} is already exists ,Please Use Different Code " });
-
                 APIResponse apiResponse;
                 _countryRepository.Add(country);
                 if (_countryRepository.SaveChanges() > 0)
@@ -51,14 +47,12 @@ namespace CoreERP.Controllers.masters
             try
             {
                 var countryList =CommonHelper.GetCountries();
-                if (countryList.Count() > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.countryList = countryList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                if (!countryList.Any())
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.countryList = countryList;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
             }
             catch (Exception ex)
             {
@@ -90,7 +84,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeleteCountry/{code}")]
-        public IActionResult DeleteCountryByID(string code)
+        public IActionResult DeleteCountryById(string code)
         {
             try
             {

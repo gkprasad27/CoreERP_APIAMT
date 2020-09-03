@@ -1,11 +1,10 @@
-﻿using System;
-using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
-using CoreERP.BussinessLogic.masterHlepers;
 
 namespace CoreERP.Controllers
 {
@@ -21,21 +20,21 @@ namespace CoreERP.Controllers
             _glagRepository = glagRepository;
         }
         [HttpGet("GetGLAccountList")]
-        public async Task<IActionResult> GetGLAccountList()
+        public async Task<IActionResult> GetGlAccountList()
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var glList = CommonHelper.GetGLAccounts();
-                    if (glList.Count() > 0)
+                    var glList = CommonHelper.GetGlAccounts();
+                    if (glList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
                         expdoObj.glList = glList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
-                    else
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
                 }
                 catch (Exception ex)
                 {
@@ -46,41 +45,37 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("RegisterGLAccount")]
-        public async Task<IActionResult> RegisterGLAccount([FromBody]Glaccounts glacunts)
+        public async Task<IActionResult> RegisterGlAccount([FromBody]Glaccounts glacunts)
         {
-            APIResponse apiResponse;
             if (glacunts == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(glacunts)} cannot be null" });
-            else
+            try
             {
-                try
-                {
-                    _glaccountsRepository.Add(glacunts);
-                    if (_glaccountsRepository.SaveChanges() > 0)
-                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = glacunts };
-                    else
-                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                _glaccountsRepository.Add(glacunts);
+                APIResponse apiResponse;
+                if (_glaccountsRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = glacunts };
+                else
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
-                    return Ok(apiResponse);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-                }
-
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpPut("UpdateGLAccount")]
-        public async Task<IActionResult> UpdateGLAccount([FromBody] Glaccounts glacunts)
+        public async Task<IActionResult> UpdateGlAccount([FromBody] Glaccounts glacunts)
         {
-            APIResponse apiResponse = null;
             if (glacunts == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
 
             try
             {
                 _glaccountsRepository.Update(glacunts);
+                APIResponse apiResponse;
                 if (_glaccountsRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = glacunts };
                 else
@@ -95,9 +90,8 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteGLAccount/{code}")]
-        public async Task<IActionResult> DeleteGLAccount(string code)
+        public async Task<IActionResult> DeleteGlAccount(string code)
         {
-            APIResponse apiResponse = null;
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
 
@@ -105,6 +99,7 @@ namespace CoreERP.Controllers
             {
                 var record = _glaccountsRepository.GetSingleOrDefault(x => x.AccountNumber.Equals(code));
                 _glaccountsRepository.Remove(record);
+                APIResponse apiResponse;
                 if (_glaccountsRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
@@ -123,19 +118,16 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var Getaccnolist = _glagRepository.Where(x => x.GroupCode == code).FirstOrDefault();
-                //var Getassetnumrangelist = _assetNumberRangeRepository.Where(x => x.Code == Getaccnolist.NumberRange).FirstOrDefault();
-                if (Enumerable.Range(Convert.ToInt32(Getaccnolist.NumberRangeFrom), Convert.ToInt32(Getaccnolist.NumberRangeTo)).Contains(code1))
+                var getaccnolist = _glagRepository.Where(x => x.GroupCode == code).FirstOrDefault();
+                if (!Enumerable.Range(Convert.ToInt32(getaccnolist?.NumberRangeFrom),
+                    Convert.ToInt32(getaccnolist?.NumberRangeTo)).Contains(code1))
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "incorrect data."});
+                if (code1 >= Convert.ToInt32(getaccnolist?.NumberRangeFrom) && code1 <= Convert.ToInt32(getaccnolist.NumberRangeTo))
                 {
-                    if (code1 >= Convert.ToInt32(Getaccnolist.NumberRangeFrom) && code1 <= Convert.ToInt32(Getaccnolist.NumberRangeTo))
-                    {
-                        return Ok();
-                    }
-                    else
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
+                    return Ok();
                 }
+
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
-                //return Ok();
             }
 
             catch (Exception ex)

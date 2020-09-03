@@ -1,5 +1,4 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,8 +16,9 @@ namespace CoreERP.Controllers.masters
         {
             _glsubAccountRepository = glsubAccountRepository;
         }
+       
         [HttpPost("RegisterGLSubAccount")]
-        public IActionResult RegisterGLSubAccount([FromBody]TblGlsubAccount glsub)
+        public IActionResult RegisterGlSubAccount([FromBody]TblGlsubAccount glsub)
         {
             if (glsub == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -43,19 +43,19 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetGLSubAccountList")]
-        public IActionResult GetGLSubAccountList()
+        public IActionResult GetGlSubAccountList()
         {
             try
             {
-                var SubAccountList = CommonHelper.GetGLSubAccounts();
-                if (SubAccountList.Count() > 0)
+                var subAccountList = CommonHelper.GetGlSubAccounts();
+                if (subAccountList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.SubAccountList = SubAccountList;
+                    expdoObj.SubAccountList = subAccountList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -64,7 +64,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPut("UpdateGLSubAccount")]
-        public IActionResult UpdateGLSubAccount([FromBody] TblGlsubAccount glsub)
+        public IActionResult UpdateGlSubAccount([FromBody] TblGlsubAccount glsub)
         {
             if (glsub == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(glsub)} cannot be null" });
@@ -87,7 +87,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeleteGLSubAccount/{code}")]
-        public IActionResult DeleteGLSubAccountbyID(string code)
+        public IActionResult DeleteGlSubAccountbyId(string code)
         {
             try
             {

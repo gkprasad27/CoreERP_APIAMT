@@ -1,5 +1,4 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -26,15 +25,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                //if (BusienessPartnerGroupsHelper.GetList(bpgroup.Bpgroup).Count() > 0)
-                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Bpgroup Code {nameof(bpgroup.Bpgroup)} is already exists ,Please Use Different Code " });
-
                 APIResponse apiResponse;
                 _bpgRepository.Add(bpgroup);
                 if (_bpgRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bpgroup };
+                    apiResponse = new APIResponse() {status = APIStatus.PASS.ToString(), response = bpgroup};
                 else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                    apiResponse = new APIResponse()
+                        {status = APIStatus.FAIL.ToString(), response = "Registration Failed."};
 
                 return Ok(apiResponse);
 
@@ -50,15 +47,13 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var bpgList = CommonHelper.GetBPGroups();
-                if (bpgList.Count() > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.bpgList = bpgList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                var bpgList = CommonHelper.GetBpGroups();
+                if (!bpgList.Any())
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.bpgList = bpgList;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
             }
             catch (Exception ex)
             {
@@ -77,9 +72,9 @@ namespace CoreERP.Controllers.masters
                 APIResponse apiResponse;
                 _bpgRepository.Update(bpgroup);
                 if (_bpgRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = bpgroup };
+                    apiResponse = new APIResponse() {status = APIStatus.PASS.ToString(), response = bpgroup};
                 else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+                    apiResponse = new APIResponse() {status = APIStatus.FAIL.ToString(), response = "Updation Failed."};
 
                 return Ok(apiResponse);
             }
@@ -90,7 +85,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeleteBusienessPartnerGroups/{code}")]
-        public IActionResult DeleteBusienessPartnerGroupsbyID(string code)
+        public IActionResult DeleteBusienessPartnerGroupsbyId(string code)
         {
             try
             {
@@ -101,9 +96,9 @@ namespace CoreERP.Controllers.masters
                 var record = _bpgRepository.GetSingleOrDefault(x => x.Bpgroup.Equals(code));
                 _bpgRepository.Remove(record);
                 if (_bpgRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = code };
+                    apiResponse = new APIResponse() {status = APIStatus.PASS.ToString(), response = code};
                 else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+                    apiResponse = new APIResponse() {status = APIStatus.FAIL.ToString(), response = "Deletion Failed."};
 
                 return Ok(apiResponse);
             }

@@ -1,5 +1,4 @@
-﻿using CoreERP.Controllers;
-using CoreERP.DataAccess;
+﻿using CoreERP.DataAccess;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -9,1063 +8,765 @@ namespace CoreERP
 {
     public class CommonHelper
     {
-        public static string IncreaseCode(string code)
-        {
-            try
-            {
-                string strnum = string.Empty;
-                string prefix = string.Empty;
-                for (int i = 0; i < code.Length; i++)
-                {
-                    if (char.IsDigit(code[i]))
-                    {
-                        if (string.IsNullOrEmpty(strnum) && code[i] == '0')
-                            strnum += code[i];
-
-                        strnum += code[i];
-                    }
-                    else if (char.IsLetter(code[i]) || code[i] == '0')
-                        prefix += code[i];
-                }
-
-                return prefix + (Convert.ToInt64(strnum) + 1).ToString();
-            }
-            catch { throw; }
-        }
-
         public static List<Countries> GetCountries()
         {
-            try
-            {
-                using (Repository<Countries> repo = new Repository<Countries>())
+            using var repo = new Repository<Countries>();
+            var languages = repo.TblLanguage.ToList();
+            var currencies = repo.TblCurrency.ToList();
+            repo.Countries.ToList()
+                .ForEach(c =>
                 {
-                    List<TblLanguage> languages = repo.TblLanguage.ToList();
-                    List<TblCurrency> currencies = repo.TblCurrency.ToList();
-                    repo.Countries.ToList()
-                        .ForEach(c =>
-                            {
-                                c.LangName = languages.Where(l => l.LanguageCode == c.Language).FirstOrDefault()?.LanguageName;
-                                c.CurrName = currencies.Where(cur => cur.CurrencySymbol == c.Currency).FirstOrDefault()?.CurrencyName;
-                            });
-                    return repo.Countries.ToList();
-                }
-            }
-            catch { throw; }
+                    c.LangName = languages.FirstOrDefault(l => l.LanguageCode == c.Language)?.LanguageName;
+                    c.CurrName = currencies.FirstOrDefault(cur => cur.CurrencySymbol == c.Currency)?.CurrencyName;
+                });
+            return repo.Countries.ToList();
         }
 
         public static IEnumerable<TblRegion> GetRegions()
         {
-            try
-            {
-                using (Repository<TblRegion> repo = new Repository<TblRegion>())
-                {
-                    List<Countries> countries = repo.Countries.ToList();
-                    var resul = repo.TblRegion.ToList();
+            using var repo = new Repository<TblRegion>();
+            var countries = repo.Countries.ToList();
+            var resul = repo.TblRegion.ToList();
 
-                    resul.ForEach(c =>
-                        {
-                            c.CountryName = countries.Where(cur => cur.CountryCode == c.Country).FirstOrDefault()?.CountryName;
-                        });
-                    return resul;
-                }
-            }
-            catch { throw; }
+            resul.ForEach(c =>
+            {
+                c.CountryName = countries.FirstOrDefault(cur => cur.CountryCode == c.Country)?.CountryName;
+            });
+            return resul;
         }
 
         public static IEnumerable<States> GetStates()
         {
-            try
-            {
-                using (Repository<States> repo = new Repository<States>())
-                {
-                    List<TblLanguage> languages = repo.TblLanguage.ToList();
-                    List<Countries> countries = repo.Countries.ToList();
-                    var result = repo.States.ToList();
+            using var repo = new Repository<States>();
+            var languages = repo.TblLanguage.ToList();
+            var countries = repo.Countries.ToList();
+            var result = repo.States.ToList();
 
-                    result.ForEach(c =>
-                    {
-                        c.CountryName = countries.Where(cur => cur.CountryCode == c.CountryCode).FirstOrDefault()?.CountryName;
-                         c.LangName = languages.Where(l => l.LanguageCode == c.Language).FirstOrDefault()?.LanguageName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+            result.ForEach(c =>
+            {
+                c.CountryName = countries.FirstOrDefault(cur => cur.CountryCode == c.CountryCode)?.CountryName;
+                c.LangName = languages.FirstOrDefault(l => l.LanguageCode == c.Language)?.LanguageName;
+            });
+            return result;
         }
 
         public static IEnumerable<TblCompany> GetCompanies()
         {
-            try
-            {
-                using (Repository<TblCompany> repo = new Repository<TblCompany>())
-                {
-                    List<States> states = repo.States.ToList();
-                    List<TblRegion> regions = repo.TblRegion.ToList();
-                    List<Countries> countries = repo.Countries.ToList();
-                    List<TblCurrency> currencies = repo.TblCurrency.ToList();
-                    List<TblLanguage> languages = repo.TblLanguage.ToList();
-                 
-                    var result = repo.TblCompany.ToList();
+            using var repo = new Repository<TblCompany>();
+            var states = repo.States.ToList();
+            var regions = repo.TblRegion.ToList();
+            var countries = repo.Countries.ToList();
+            var currencies = repo.TblCurrency.ToList();
+            var languages = repo.TblLanguage.ToList();
+            var result = repo.TblCompany.ToList();
 
-                    result.ForEach(c =>
-                    {
-                        c.StateName = states.Where(cur => cur.StateCode == c.State).FirstOrDefault()?.StateName;
-                        c.RegionName = regions.Where(cur => cur.RegionCode == c.Region).FirstOrDefault()?.RegionName;
-                        c.CountryName = countries.Where(cur => cur.CountryCode == c.Country).FirstOrDefault()?.CountryName;
-                        c.CurrencyName = currencies.Where(cur => cur.CurrencySymbol == c.Currency).FirstOrDefault()?.CurrencyName;
-                        c.LanguageName = languages.Where(l => l.LanguageCode == c.Language).FirstOrDefault()?.LanguageName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+            result.ForEach(c =>
+            {
+                c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
+                c.RegionName = regions.FirstOrDefault(cur => cur.RegionCode == c.Region)?.RegionName;
+                c.CountryName = countries.FirstOrDefault(cur => cur.CountryCode == c.Country)?.CountryName;
+                c.CurrencyName = currencies.FirstOrDefault(cur => cur.CurrencySymbol == c.Currency)?.CurrencyName;
+                c.LanguageName = languages.FirstOrDefault(l => l.LanguageCode == c.Language)?.LanguageName;
+            });
+            return result;
         }
 
         public static IEnumerable<ProfitCenters> GetProfitcenters()
         {
-            try
+            using var repo = new Repository<ProfitCenters>();
+            var states = repo.States.ToList();
+            var regions = repo.TblRegion.ToList();
+            var countries = repo.Countries.ToList();
+            var currencies = repo.TblCurrency.ToList();
+            var languages = repo.TblLanguage.ToList();
+            var employees = repo.TblEmployee.ToList();
+            var result = repo.ProfitCenters.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<ProfitCenters> repo = new Repository<ProfitCenters>())
-                {
-                    List<States> states = repo.States.ToList();
-                    List<TblRegion> regions = repo.TblRegion.ToList();
-                    List<Countries> countries = repo.Countries.ToList();
-                    List<TblCurrency> currencies = repo.TblCurrency.ToList();
-                    List<TblLanguage> languages = repo.TblLanguage.ToList();
-                    List<TblEmployee> employees = repo.TblEmployee.ToList();
-
-                    var result = repo.ProfitCenters.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.StateName = states.Where(cur => cur.StateCode == c.State).FirstOrDefault()?.StateName;
-                        c.RegionName = regions.Where(cur => cur.RegionCode == c.Region).FirstOrDefault()?.RegionName;
-                        c.CountryName = countries.Where(cur => cur.CountryCode == c.Country).FirstOrDefault()?.CountryName;
-                        c.CurrencyName = currencies.Where(cur => cur.CurrencySymbol == c.Currency).FirstOrDefault()?.CurrencyName;
-                        c.LanguageName = languages.Where(l => l.LanguageCode == c.Language).FirstOrDefault()?.LanguageName;
-                        c.ResponsibleName = employees.Where(l => l.EmployeeCode == c.ResponsiblePerson).FirstOrDefault()?.EmployeeName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
+                c.RegionName = regions.FirstOrDefault(cur => cur.RegionCode == c.Region)?.RegionName;
+                c.CountryName = countries.FirstOrDefault(cur => cur.CountryCode == c.Country)?.CountryName;
+                c.CurrencyName = currencies.FirstOrDefault(cur => cur.CurrencySymbol == c.Currency)?.CurrencyName;
+                c.LanguageName = languages.FirstOrDefault(l => l.LanguageCode == c.Language)?.LanguageName;
+                c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
+            });
+            return result;
         }
 
         public static IEnumerable<TblBranch> GetBranches()
         {
-            try
+            using var repo = new Repository<TblBranch>();
+            var states = repo.States.ToList();
+            var regions = repo.TblRegion.ToList();
+            var countries = repo.Countries.ToList();
+            var currencies = repo.TblCurrency.ToList();
+            var languages = repo.TblLanguage.ToList();
+            var employees = repo.TblEmployee.ToList();
+            var companies = repo.TblCompany.ToList();
+            var result = repo.TblBranch.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblBranch> repo = new Repository<TblBranch>())
-                {
-                    List<States> states = repo.States.ToList();
-                    List<TblRegion> regions = repo.TblRegion.ToList();
-                    List<Countries> countries = repo.Countries.ToList();
-                    List<TblCurrency> currencies = repo.TblCurrency.ToList();
-                    List<TblLanguage> languages = repo.TblLanguage.ToList();
-                    List<TblEmployee> employees = repo.TblEmployee.ToList();
-                    List<TblCompany> companies = repo.TblCompany.ToList();
-
-                    var result = repo.TblBranch.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.StateName = states.Where(cur => cur.StateCode == c.State).FirstOrDefault()?.StateName;
-                        c.RegionName = regions.Where(cur => cur.RegionCode == c.Region).FirstOrDefault()?.RegionName;
-                        c.CountryName = countries.Where(cur => cur.CountryCode == c.Country).FirstOrDefault()?.CountryName;
-                        c.CurrencyName = currencies.Where(cur => cur.CurrencySymbol == c.Currency).FirstOrDefault()?.CurrencyName;
-                        c.LanguageName = languages.Where(l => l.LanguageCode == c.Language).FirstOrDefault()?.LanguageName;
-                        c.ResponsibleName = employees.Where(l => l.EmployeeCode == c.ResponsiblePerson).FirstOrDefault()?.EmployeeName;
-                        c.CompanyName = companies.Where(l => l.CompanyCode == c.CompanyCode).FirstOrDefault()?.CompanyName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
+                c.RegionName = regions.FirstOrDefault(cur => cur.RegionCode == c.Region)?.RegionName;
+                c.CountryName = countries.FirstOrDefault(cur => cur.CountryCode == c.Country)?.CountryName;
+                c.CurrencyName = currencies.FirstOrDefault(cur => cur.CurrencySymbol == c.Currency)?.CurrencyName;
+                c.LanguageName = languages.FirstOrDefault(l => l.LanguageCode == c.Language)?.LanguageName;
+                c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.CompanyCode)?.CompanyName;
+            });
+            return result;
         }
 
         public static IEnumerable<CostCenters> GetCostcenters()
         {
-            try
+            using var repo = new Repository<CostCenters>();
+            var states = repo.States.ToList();
+            var employees = repo.TblEmployee.ToList();
+            var companies = repo.TblCompany.ToList();
+            var result = repo.CostCenters.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<CostCenters> repo = new Repository<CostCenters>())
-                {
-                    List<States> states = repo.States.ToList();
-                    List<TblEmployee> employees = repo.TblEmployee.ToList();
-                    List<TblCompany> companies = repo.TblCompany.ToList();
-
-                    var result = repo.CostCenters.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.StateName = states.Where(cur => cur.StateCode == c.State).FirstOrDefault()?.StateName;
-                        c.ResponsibleName = employees.Where(l => l.EmployeeCode == c.ResponsiblePerson).FirstOrDefault()?.EmployeeName;
-                        c.CompanyName = companies.Where(l => l.CompanyCode == c.CompCode).FirstOrDefault()?.CompanyName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
+                c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.CompCode)?.CompanyName;
+            });
+            return result;
         }
 
         public static IEnumerable<TblFunctionalDepartment> GetFunctionalDepts()
         {
-            try
+            using var repo = new Repository<TblFunctionalDepartment>();
+            var employees = repo.TblEmployee.ToList();
+
+            var result = repo.TblFunctionalDepartment.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblFunctionalDepartment> repo = new Repository<TblFunctionalDepartment>())
-                {
-                    List<TblEmployee> employees = repo.TblEmployee.ToList();
-
-                    var result = repo.TblFunctionalDepartment.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.ResponsibleName = employees.Where(l => l.EmployeeCode == c.ResponsiblePerson).FirstOrDefault()?.EmployeeName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
+            });
+            return result;
         }
 
         public static IEnumerable<Divisions> GetDivisions()
         {
-            try
+            using var repo = new Repository<Divisions>();
+            var employees = repo.TblEmployee.ToList();
+
+            var result = repo.Divisions.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<Divisions> repo = new Repository<Divisions>())
-                {
-                    List<TblEmployee> employees = repo.TblEmployee.ToList();
-
-                    var result = repo.Divisions.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.ResponsibleName = employees.Where(l => l.EmployeeCode == c.ResponsiblePerson).FirstOrDefault()?.EmployeeName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
+            });
+            return result;
         }
 
         public static IEnumerable<TblPlant> GetPlants()
         {
-            try
+            using var repo = new Repository<TblPlant>();
+            var states = repo.States.ToList();
+            var regions = repo.TblRegion.ToList();
+            var countries = repo.Countries.ToList();
+            var currencies = repo.TblCurrency.ToList();
+            var languages = repo.TblLanguage.ToList();
+            var employees = repo.TblEmployee.ToList();
+            var locations = repo.TblLocation.ToList();
+
+            var result = repo.TblPlant.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblPlant> repo = new Repository<TblPlant>())
-                {
-                    List<States> states = repo.States.ToList();
-                    List<TblRegion> regions = repo.TblRegion.ToList();
-                    List<Countries> countries = repo.Countries.ToList();
-                    List<TblCurrency> currencies = repo.TblCurrency.ToList();
-                    List<TblLanguage> languages = repo.TblLanguage.ToList();
-                    List<TblEmployee> employees = repo.TblEmployee.ToList();
-                    List<TblLocation> locations = repo.TblLocation.ToList();
-
-                    var result = repo.TblPlant.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.StateName = states.Where(cur => cur.StateCode == c.State).FirstOrDefault()?.StateName;
-                        c.RegionName = regions.Where(cur => cur.RegionCode == c.Region).FirstOrDefault()?.RegionName;
-                        c.CountryName = countries.Where(cur => cur.CountryCode == c.Country).FirstOrDefault()?.CountryName;
-                        c.CurrencyName = currencies.Where(cur => cur.CurrencySymbol == c.Currency).FirstOrDefault()?.CurrencyName;
-                        c.LanguageName = languages.Where(l => l.LanguageCode == c.Language).FirstOrDefault()?.LanguageName;
-                        c.ResponsibleName = employees.Where(l => l.EmployeeCode == c.ResponsiblePerson).FirstOrDefault()?.EmployeeName;
-                        c.LocationName = locations.Where(l => l.LocationId == c.Location).FirstOrDefault()?.Description;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
+                c.RegionName = regions.FirstOrDefault(cur => cur.RegionCode == c.Region)?.RegionName;
+                c.CountryName = countries.FirstOrDefault(cur => cur.CountryCode == c.Country)?.CountryName;
+                c.CurrencyName = currencies.FirstOrDefault(cur => cur.CurrencySymbol == c.Currency)?.CurrencyName;
+                c.LanguageName = languages.FirstOrDefault(l => l.LanguageCode == c.Language)?.LanguageName;
+                c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
+                c.LocationName = locations.FirstOrDefault(l => l.LocationId == c.Location)?.Description;
+            });
+            return result;
         }
 
         public static IEnumerable<TblLocation> Getlocations()
         {
-            try
+            using var repo = new Repository<TblLocation>();
+            var plants = repo.TblPlant.ToList();
+
+            var result = repo.TblLocation.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblLocation> repo = new Repository<TblLocation>())
-                {
-                    List<TblPlant> plants = repo.TblPlant.ToList();
-
-                    var result = repo.TblLocation.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.PlantName = plants.Where(l => l.PlantCode == c.Plant).FirstOrDefault()?.Plantname;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.PlantName = plants.FirstOrDefault(l => l.PlantCode == c.Plant)?.Plantname;
+            });
+            return result;
         }
 
         public static IEnumerable<SalesDepartment> GetSalesDepartments()
         {
-            try
+            using var repo = new Repository<SalesDepartment>();
+            var states = repo.States.ToList();
+            var regions = repo.TblRegion.ToList();
+            var countries = repo.Countries.ToList();
+            var currencies = repo.TblCurrency.ToList();
+            var languages = repo.TblLanguage.ToList();
+            var employees = repo.TblEmployee.ToList();
+
+            var result = repo.SalesDepartment.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<SalesDepartment> repo = new Repository<SalesDepartment>())
-                {
-                    List<States> states = repo.States.ToList();
-                    List<TblRegion> regions = repo.TblRegion.ToList();
-                    List<Countries> countries = repo.Countries.ToList();
-                    List<TblCurrency> currencies = repo.TblCurrency.ToList();
-                    List<TblLanguage> languages = repo.TblLanguage.ToList();
-                    List<TblEmployee> employees = repo.TblEmployee.ToList();
-
-                    var result = repo.SalesDepartment.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.StateName = states.Where(cur => cur.StateCode == c.State).FirstOrDefault()?.StateName;
-                        c.RegionName = regions.Where(cur => cur.RegionCode == c.Region).FirstOrDefault()?.RegionName;
-                        c.CountryName = countries.Where(cur => cur.CountryCode == c.Country).FirstOrDefault()?.CountryName;
-                        c.CurrencyName = currencies.Where(cur => cur.CurrencySymbol == c.Currency).FirstOrDefault()?.CurrencyName;
-                        c.LanguageName = languages.Where(l => l.LanguageCode == c.Language).FirstOrDefault()?.LanguageName;
-                        c.ResponsibleName = employees.Where(l => l.EmployeeCode == c.ResponsiblePerson).FirstOrDefault()?.EmployeeName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
+                c.RegionName = regions.FirstOrDefault(cur => cur.RegionCode == c.Region)?.RegionName;
+                c.CountryName = countries.FirstOrDefault(cur => cur.CountryCode == c.Country)?.CountryName;
+                c.CurrencyName = currencies.FirstOrDefault(cur => cur.CurrencySymbol == c.Currency)?.CurrencyName;
+                c.LanguageName = languages.FirstOrDefault(l => l.LanguageCode == c.Language)?.LanguageName;
+                c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
+            });
+            return result;
         }
 
         public static IEnumerable<TblSalesOffice> GetSalesOffice()
         {
-            try
+            using var repo = new Repository<TblSalesOffice>();
+            var states = repo.States.ToList();
+            var regions = repo.TblRegion.ToList();
+            var countries = repo.Countries.ToList();
+            var currencies = repo.TblCurrency.ToList();
+            var languages = repo.TblLanguage.ToList();
+            var employees = repo.TblEmployee.ToList();
+
+            var result = repo.TblSalesOffice.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblSalesOffice> repo = new Repository<TblSalesOffice>())
-                {
-                    List<States> states = repo.States.ToList();
-                    List<TblRegion> regions = repo.TblRegion.ToList();
-                    List<Countries> countries = repo.Countries.ToList();
-                    List<TblCurrency> currencies = repo.TblCurrency.ToList();
-                    List<TblLanguage> languages = repo.TblLanguage.ToList();
-                    List<TblEmployee> employees = repo.TblEmployee.ToList();
-
-                    var result = repo.TblSalesOffice.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.StateName = states.Where(cur => cur.StateCode == c.State).FirstOrDefault()?.StateName;
-                        c.RegionName = regions.Where(cur => cur.RegionCode == c.Region).FirstOrDefault()?.RegionName;
-                        c.CountryName = countries.Where(cur => cur.CountryCode == c.Country).FirstOrDefault()?.CountryName;
-                        c.CurrencyName = currencies.Where(cur => cur.CurrencySymbol == c.Currency).FirstOrDefault()?.CurrencyName;
-                        c.LanguageName = languages.Where(l => l.LanguageCode == c.Language).FirstOrDefault()?.LanguageName;
-                        c.ResponsibleName = employees.Where(l => l.EmployeeCode == c.ResponsiblePerson).FirstOrDefault()?.EmployeeName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
+                c.RegionName = regions.FirstOrDefault(cur => cur.RegionCode == c.Region)?.RegionName;
+                c.CountryName = countries.FirstOrDefault(cur => cur.CountryCode == c.Country)?.CountryName;
+                c.CurrencyName = currencies.FirstOrDefault(cur => cur.CurrencySymbol == c.Currency)?.CurrencyName;
+                c.LanguageName = languages.FirstOrDefault(l => l.LanguageCode == c.Language)?.LanguageName;
+                c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
+            });
+            return result;
         }
 
         public static IEnumerable<TblMaintenancearea> GetMaintenance()
         {
-            try
+            using var repo = new Repository<TblMaintenancearea>();
+            var plants = repo.TblPlant.ToList();
+
+            var result = repo.TblMaintenancearea.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblMaintenancearea> repo = new Repository<TblMaintenancearea>())
-                {
-                    List<TblPlant> plants = repo.TblPlant.ToList();
-
-                    var result = repo.TblMaintenancearea.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.PlantName = plants.Where(l => l.PlantCode == c.Plant).FirstOrDefault()?.Plantname;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.PlantName = plants.FirstOrDefault(l => l.PlantCode == c.Plant)?.Plantname;
+            });
+            return result;
         }
 
         public static IEnumerable<TblStorageLocation> GetStorageLocation()
         {
-            try
+            using Repository<TblStorageLocation> repo = new Repository<TblStorageLocation>();
+            var plants = repo.TblPlant.ToList();
+
+            var result = repo.TblStorageLocation.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblStorageLocation> repo = new Repository<TblStorageLocation>())
-                {
-                    List<TblPlant> plants = repo.TblPlant.ToList();
-
-                    var result = repo.TblStorageLocation.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.PlantName = plants.Where(l => l.PlantCode == c.Plant).FirstOrDefault()?.Plantname;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.PlantName = plants.FirstOrDefault(l => l.PlantCode == c.Plant)?.Plantname;
+            });
+            return result;
         }
 
         public static IEnumerable<TblOpenLedger> GetOpenLedger()
         {
-            try
+            using Repository<TblOpenLedger> repo = new Repository<TblOpenLedger>();
+            var ledgers = repo.Ledger.ToList();
+
+            var result = repo.TblOpenLedger.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblOpenLedger> repo = new Repository<TblOpenLedger>())
-                {
-                    List<Ledger> ledgers = repo.Ledger.ToList();
-
-                    var result = repo.TblOpenLedger.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.LedgerName = ledgers.Where(l => l.Code == c.LedgerKey).FirstOrDefault()?.Description;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.LedgerName = ledgers.FirstOrDefault(l => l.Code == c.LedgerKey)?.Description;
+            });
+            return result;
         }
 
         public static IEnumerable<TblVoucherType> GetVoucherType()
         {
-            try
+            using var repo = new Repository<TblVoucherType>();
+            var voucherclasses = repo.TblVoucherclass.ToList();
+
+            var result = repo.TblVoucherType.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblVoucherType> repo = new Repository<TblVoucherType>())
-                {
-                    List<TblVoucherclass> voucherclasses = repo.TblVoucherclass.ToList();
-
-                    var result = repo.TblVoucherType.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.VoucherClassName = voucherclasses.Where(l => l.VoucherKey == c.VoucherClass).FirstOrDefault()?.Description;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.VoucherClassName = voucherclasses.FirstOrDefault(l => l.VoucherKey == c.VoucherClass)?.Description;
+            });
+            return result;
         }
 
         public static IEnumerable<TblVoucherSeries> GetVoucherseries()
         {
-            try
+            using var repo = new Repository<TblVoucherSeries>();
+            var plants = repo.TblPlant.ToList();
+            var branches = repo.TblBranch.ToList();
+            var companies = repo.TblCompany.ToList();
+
+            var result = repo.TblVoucherSeries.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblVoucherSeries> repo = new Repository<TblVoucherSeries>())
-                {
-                    List<TblPlant> plants = repo.TblPlant.ToList();
-                    List<TblBranch> branches = repo.TblBranch.ToList();
-                    List<TblCompany> companies = repo.TblCompany.ToList();
-
-                    var result = repo.TblVoucherSeries.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.PlantName = plants.Where(cur => cur.PlantCode == c.Plant).FirstOrDefault()?.Plantname;
-                        c.BranchName = branches.Where(l => l.BranchCode == c.Branch).FirstOrDefault()?.BranchName;
-                        c.CompanyName = companies.Where(l => l.CompanyCode == c.Company).FirstOrDefault()?.CompanyName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.PlantName = plants.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.BranchName = branches.FirstOrDefault(l => l.BranchCode == c.Branch)?.BranchName;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+            });
+            return result;
         }
 
         public static IEnumerable<TblAssignmentVoucherSeriestoVoucherType> GetAssignVoucherseriesVoucherType()
         {
-            try
+            using var repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>();
+            var tblVoucherTypes = repo.TblVoucherType.ToList();
+
+            var result = repo.TblAssignmentVoucherSeriestoVoucherType.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblAssignmentVoucherSeriestoVoucherType> repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>())
-                {
-                    List<TblVoucherType> tblVoucherTypes = repo.TblVoucherType.ToList();
-
-                    var result = repo.TblAssignmentVoucherSeriestoVoucherType.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.VoucherTypeName = tblVoucherTypes.Where(l => l.VoucherTypeId == c.VoucherType).FirstOrDefault()?.VoucherTypeName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.VoucherTypeName = tblVoucherTypes.FirstOrDefault(l => l.VoucherTypeId == c.VoucherType)?.VoucherTypeName;
+            });
+            return result;
         }
 
         public static IEnumerable<TblTaxtransactions> GetTaxTransactions()
         {
-            try
+            using Repository<TblTaxtransactions> repo = new Repository<TblTaxtransactions>();
+            var tblTaxtypes = repo.TblTaxtypes.ToList();
+
+            var result = repo.TblTaxtransactions.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblTaxtransactions> repo = new Repository<TblTaxtransactions>())
-                {
-                    List<TblTaxtypes> tblTaxtypes = repo.TblTaxtypes.ToList();
-
-                    var result = repo.TblTaxtransactions.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.TaxTypeName = tblTaxtypes.Where(l => l.TaxKey == c.TaxType).FirstOrDefault()?.Description;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.TaxTypeName = tblTaxtypes.FirstOrDefault(l => l.TaxKey == c.TaxType)?.Description;
+            });
+            return result;
         }
 
         public static IEnumerable<TblTaxRates> GetTaxRates()
         {
-            try
+            using Repository<TblTaxRates> repo = new Repository<TblTaxRates>();
+            var tblTaxtransactions = repo.TblTaxtransactions.ToList();
+
+            var result = repo.TblTaxRates.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblTaxRates> repo = new Repository<TblTaxRates>())
-                {
-                    List<TblTaxtransactions> tblTaxtransactions = repo.TblTaxtransactions.ToList();
-
-                    var result = repo.TblTaxRates.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.TaxTransactionName = tblTaxtransactions.Where(l => l.Code == c.TaxTransaction).FirstOrDefault()?.Description;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.TaxTransactionName = tblTaxtransactions.FirstOrDefault(l => l.Code == c.TaxTransaction)?.Description;
+            });
+            return result;
         }
 
         public static IEnumerable<TblAssignTaxacctoTaxcode> GetTaxaccountsTaxcodes()
         {
-            try
+            using var repo = new Repository<TblAssignTaxacctoTaxcode>();
+            var plants = repo.TblPlant.ToList();
+            var branches = repo.TblBranch.ToList();
+            var companies = repo.TblCompany.ToList();
+            var chartAccounts = repo.TblChartAccount.ToList();
+            var glaccounts = repo.Glaccounts.ToList();
+
+            var result = repo.TblAssignTaxacctoTaxcode.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblAssignTaxacctoTaxcode> repo = new Repository<TblAssignTaxacctoTaxcode>())
-                {
-                    List<TblPlant> plants = repo.TblPlant.ToList();
-                    List<TblBranch> branches = repo.TblBranch.ToList();
-                    List<TblCompany> companies = repo.TblCompany.ToList();
-                    List<TblChartAccount> chartAccounts = repo.TblChartAccount.ToList();
-                    List<Glaccounts> glaccounts = repo.Glaccounts.ToList();
-
-                    var result = repo.TblAssignTaxacctoTaxcode.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.PlantName = plants.Where(cur => cur.PlantCode == c.Plant).FirstOrDefault()?.Plantname;
-                        c.BranchName = branches.Where(l => l.BranchCode == c.Branch).FirstOrDefault()?.BranchName;
-                        c.CompanyName = companies.Where(l => l.CompanyCode == c.Company).FirstOrDefault()?.CompanyName;
-                        c.ChartAccountName = chartAccounts.Where(l => l.Code == c.ChartofAccount).FirstOrDefault()?.Desctiption;
-                        c.CGSTName = glaccounts.Where(l => l.AccountNumber == c.Cgstgl).FirstOrDefault()?.GlaccountName;
-                        c.SGSTName = glaccounts.Where(l => l.AccountNumber == c.Sgstgl).FirstOrDefault()?.GlaccountName;
-                        c.IGSTName = glaccounts.Where(l => l.AccountNumber == c.Igstgl).FirstOrDefault()?.GlaccountName;
-                        c.UGSTName = glaccounts.Where(l => l.AccountNumber == c.Ugstgl).FirstOrDefault()?.GlaccountName;
-                        c.CompositeAccountName = glaccounts.Where(l => l.AccountNumber == c.CompositeAccount).FirstOrDefault()?.GlaccountName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.PlantName = plants.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.BranchName = branches.FirstOrDefault(l => l.BranchCode == c.Branch)?.BranchName;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.ChartAccountName = chartAccounts.FirstOrDefault(l => l.Code == c.ChartofAccount)?.Desctiption;
+                c.CGSTName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.Cgstgl)?.GlaccountName;
+                c.SGSTName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.Sgstgl)?.GlaccountName;
+                c.IGSTName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.Igstgl)?.GlaccountName;
+                c.UGSTName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.Ugstgl)?.GlaccountName;
+                c.CompositeAccountName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.CompositeAccount)?.GlaccountName;
+            });
+            return result;
         }
 
         public static IEnumerable<TblTdsRates> GetTdsRates()
         {
-            try
-            {
-                using (Repository<TblTdsRates> repo = new Repository<TblTdsRates>())
-                {
-                    List<TblTdstypes> tdstypes = repo.TblTdstypes.ToList();
-                    List<TblIncomeTypes> incomeTypes = repo.TblIncomeTypes.ToList();
+            using var repo = new Repository<TblTdsRates>();
+            var tdstypes = repo.TblTdstypes.ToList();
+            var incomeTypes = repo.TblIncomeTypes.ToList();
 
-                    var result = repo.TblTdsRates.ToList();
-                    
-                    result.ForEach(c =>
-                    {
-                        c.TdsTypeName = tdstypes.Where(l => l.TdsCode == c.Tdstype).FirstOrDefault()?.Desctiption;
-                        c.IncomeTypeName = incomeTypes.Where(l => l.Code == c.IncomeType).FirstOrDefault()?.Desctiption;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+            var result = repo.TblTdsRates.ToList();
+
+            result.ForEach(c =>
+            {
+                c.TdsTypeName = tdstypes.FirstOrDefault(l => l.TdsCode == c.Tdstype)?.Desctiption;
+                c.IncomeTypeName = incomeTypes.FirstOrDefault(l => l.Code == c.IncomeType)?.Desctiption;
+            });
+            return result;
         }
 
         public static IEnumerable<TblPosting> GetPosting()
         {
-            try
+            using var repo = new Repository<TblPosting>();
+            var plants = repo.TblPlant.ToList();
+            var branches = repo.TblBranch.ToList();
+            var companies = repo.TblCompany.ToList();
+            var chartAccounts = repo.TblChartAccount.ToList();
+            var glaccounts = repo.Glaccounts.ToList();
+            var tdsRates = repo.TblTdsRates.ToList();
+
+            var result = repo.TblPosting.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblPosting> repo = new Repository<TblPosting>())
-                {
-                    List<TblPlant> plants = repo.TblPlant.ToList();
-                    List<TblBranch> branches = repo.TblBranch.ToList();
-                    List<TblCompany> companies = repo.TblCompany.ToList();
-                    List<TblChartAccount> chartAccounts = repo.TblChartAccount.ToList();
-                    List<Glaccounts> glaccounts = repo.Glaccounts.ToList();
-                    List<TblTdsRates> tdsRates = repo.TblTdsRates.ToList();
-
-                    var result = repo.TblPosting.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.PlantName = plants.Where(cur => cur.PlantCode == c.Plant).FirstOrDefault()?.Plantname;
-                        c.BranchName = branches.Where(l => l.BranchCode == c.Branch).FirstOrDefault()?.BranchName;
-                        c.CompanyName = companies.Where(l => l.CompanyCode == c.Company).FirstOrDefault()?.CompanyName;
-                        c.ChartAccountName = chartAccounts.Where(l => l.Code == c.ChartofAccount).FirstOrDefault()?.Desctiption;
-                        c.GLAccountName = glaccounts.Where(l => l.AccountNumber == c.Glaccount).FirstOrDefault()?.GlaccountName;
-                        c.TdsRatetName = tdsRates.Where(l => l.Code == c.Tdsrate).FirstOrDefault()?.Desctiption;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.PlantName = plants.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.BranchName = branches.FirstOrDefault(l => l.BranchCode == c.Branch)?.BranchName;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.ChartAccountName = chartAccounts.FirstOrDefault(l => l.Code == c.ChartofAccount)?.Desctiption;
+                c.GLAccountName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.Glaccount)?.GlaccountName;
+                c.TdsRatetName = tdsRates.FirstOrDefault(l => l.Code == c.Tdsrate)?.Desctiption;
+            });
+            return result;
         }
 
         public static IEnumerable<TblAssignchartaccttoCompanycode> GetChartofAccounttoCompany()
         {
-            try
+            using var repo = new Repository<TblAssignchartaccttoCompanycode>();
+            var companies = repo.TblCompany.ToList();
+            var chartAccounts = repo.TblChartAccount.ToList();
+
+            var result = repo.TblAssignchartaccttoCompanycode.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblAssignchartaccttoCompanycode> repo = new Repository<TblAssignchartaccttoCompanycode>())
-                {
-                    List<TblCompany> companies = repo.TblCompany.ToList();
-                    List<TblChartAccount> chartAccounts = repo.TblChartAccount.ToList();
-
-                    var result = repo.TblAssignchartaccttoCompanycode.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.CompanyName = companies.Where(l => l.CompanyCode == c.Company).FirstOrDefault()?.CompanyName;
-                        c.OchartAccountName = chartAccounts.Where(l => l.Code == c.OperationCoa).FirstOrDefault()?.Desctiption;
-                        c.GchartAccountName = chartAccounts.Where(l => l.Code == c.GroupCoa).FirstOrDefault()?.Desctiption;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.OchartAccountName = chartAccounts.FirstOrDefault(l => l.Code == c.OperationCoa)?.Desctiption;
+                c.GchartAccountName = chartAccounts.FirstOrDefault(l => l.Code == c.GroupCoa)?.Desctiption;
+            });
+            return result;
         }
 
         public static IEnumerable<TblAccountGroup> GetAccountGroups()
         {
-            try
-            {
-                using (Repository<TblAccountGroup> repo = new Repository<TblAccountGroup>())
-                {
-                    var result = repo.TblAccountGroup.ToList();
+            using var repo = new Repository<TblAccountGroup>();
+            var result = repo.TblAccountGroup.ToList();
 
-                    result.ForEach(c =>
-                    {
-                        c.UnderAccountName = result.Where(l => l.AccountGroupId == c.GroupUnder).FirstOrDefault()?.AccountGroupName;
-                        
-                    });
-                    return result.OrderBy(x => x.Sequence); 
-                }
-            }
-            catch { throw; }
+            result.ForEach(c =>
+            {
+                c.UnderAccountName = result.FirstOrDefault(l => l.AccountGroupId == c.GroupUnder)?.AccountGroupName;
+
+            });
+            return result.OrderBy(x => x.Sequence);
         }
 
-        public static IEnumerable<AssignmentSubaccounttoGl> GetAssignmentsubaccounttoGL()
+        public static IEnumerable<AssignmentSubaccounttoGl> GetAssignmentsubaccounttoGl()
         {
-            try
+            using var repo = new Repository<AssignmentSubaccounttoGl>();
+            var tblAccountGroups = repo.TblAccountGroup.ToList();
+            var glaccounts = repo.Glaccounts.ToList();
+
+            var result = repo.AssignmentSubaccounttoGl.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<AssignmentSubaccounttoGl> repo = new Repository<AssignmentSubaccounttoGl>())
-                {
-                    List<TblAccountGroup> tblAccountGroups = repo.TblAccountGroup.ToList();
-                    List<Glaccounts> glaccounts = repo.Glaccounts.ToList();
-
-                    var result = repo.AssignmentSubaccounttoGl.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.UnderAccountName = tblAccountGroups.Where(l => l.AccountGroupId == c.SubAccount).FirstOrDefault()?.AccountGroupName;
-                        c.GlAccountName = glaccounts.Where(l => l.AccountNumber == c.FromGl).FirstOrDefault()?.GlaccountName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.UnderAccountName = tblAccountGroups.FirstOrDefault(l => l.AccountGroupId == c.SubAccount)?.AccountGroupName;
+                c.GlAccountName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.FromGl)?.GlaccountName;
+            });
+            return result;
         }
 
-        public static IEnumerable<TblBpgroup> GetBPGroups()
+        public static IEnumerable<TblBpgroup> GetBpGroups()
         {
-            try
+            using Repository<TblBpgroup> repo = new Repository<TblBpgroup>();
+            var partnertypes = repo.PartnerType.ToList();
+
+            var result = repo.TblBpgroup.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblBpgroup> repo = new Repository<TblBpgroup>())
-                {
-                    List<PartnerType> partnertypes = repo.PartnerType.ToList();
-
-                    var result = repo.TblBpgroup.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.PartnerTypeName = partnertypes.Where(l => l.Code == c.Bptype).FirstOrDefault()?.Description;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.PartnerTypeName = partnertypes.FirstOrDefault(l => l.Code == c.Bptype)?.Description;
+            });
+            return result;
         }
 
         public static IEnumerable<TblAssignment> GetAssignments()
         {
-            try
+            using var repo = new Repository<TblAssignment>();
+            var tblBpgroups = repo.TblBpgroup.ToList();
+
+            var result = repo.TblAssignment.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblAssignment> repo = new Repository<TblAssignment>())
-                {
-                    List<TblBpgroup> tblBpgroups = repo.TblBpgroup.ToList();
-
-                    var result = repo.TblAssignment.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.BpGroupName = tblBpgroups.Where(l => l.Bpgroup == c.Bpgroup).FirstOrDefault()?.Description;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.BpGroupName = tblBpgroups.FirstOrDefault(l => l.Bpgroup == c.Bpgroup)?.Description;
+            });
+            return result;
         }
 
         public static IEnumerable<TblAlternateControlAccTrans> GetAlternateControlAccounts()
         {
-            try
+            using var repo = new Repository<TblAlternateControlAccTrans>();
+            var companies = repo.TblCompany.ToList();
+            var chartAccounts = repo.TblChartAccount.ToList();
+            var glaccounts = repo.Glaccounts.ToList();
+
+            var result = repo.TblAlternateControlAccTrans.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblAlternateControlAccTrans> repo = new Repository<TblAlternateControlAccTrans>())
-                {
-                    List<TblCompany> companies = repo.TblCompany.ToList();
-                    List<TblChartAccount> chartAccounts = repo.TblChartAccount.ToList();
-                    List<Glaccounts> glaccounts = repo.Glaccounts.ToList();
-
-                    var result = repo.TblAlternateControlAccTrans.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.NcName = glaccounts.Where(l => l.AccountNumber == c.NormalControlAccount).FirstOrDefault()?.GlaccountName;
-                        c.AcName = glaccounts.Where(l => l.AccountNumber == c.AlternativeControlAccount).FirstOrDefault()?.GlaccountName;
-                        c.CompanyName = companies.Where(l => l.CompanyCode == c.Company).FirstOrDefault()?.CompanyName;
-                        c.ChartAccountName = chartAccounts.Where(l => l.Code == c.ChartofAccount).FirstOrDefault()?.Desctiption;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.NcName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.NormalControlAccount)?.GlaccountName;
+                c.AcName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.AlternativeControlAccount)?.GlaccountName;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.ChartAccountName = chartAccounts.FirstOrDefault(l => l.Code == c.ChartofAccount)?.Desctiption;
+            });
+            return result;
         }
 
         public static IEnumerable<TblAssetBlock> GetAssetBlock()
         {
-            try
+            using var repo = new Repository<TblAssetBlock>();
+            var tblDepreciationAreas = repo.TblDepreciationAreas.ToList();
+
+            var result = repo.TblAssetBlock.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblAssetBlock> repo = new Repository<TblAssetBlock>())
-                {
-                    List<TblDepreciationAreas> tblDepreciationAreas = repo.TblDepreciationAreas.ToList();
-
-                    var result = repo.TblAssetBlock.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.DepreciationName = tblDepreciationAreas.Where(l => l.Code == c.DepreciationKey).FirstOrDefault()?.Description;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.DepreciationName = tblDepreciationAreas.FirstOrDefault(l => l.Code == c.DepreciationKey)?.Description;
+            });
+            return result;
         }
 
         public static IEnumerable<TblAssignAssetClasstoBlockAsset> GetAssetClassBlock()
         {
-            try
+            using Repository<TblAssignAssetClasstoBlockAsset> repo = new Repository<TblAssignAssetClasstoBlockAsset>();
+            var tblAssetBlocks = repo.TblAssetBlock.ToList();
+            var tblAssetClasses = repo.TblAssetClass.ToList();
+
+            var result = repo.TblAssignAssetClasstoBlockAsset.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblAssignAssetClasstoBlockAsset> repo = new Repository<TblAssignAssetClasstoBlockAsset>())
-                {
-                    List<TblAssetBlock> tblAssetBlocks = repo.TblAssetBlock.ToList();
-                    List<TblAssetClass> tblAssetClasses = repo.TblAssetClass.ToList();
-
-                    var result = repo.TblAssignAssetClasstoBlockAsset.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.AssetBlockName = tblAssetBlocks.Where(l => l.Code == c.AssetBlock).FirstOrDefault()?.Description;
-                        c.AssetClassName = tblAssetClasses.Where(l => l.Code == c.AssetClass).FirstOrDefault()?.Description;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.AssetBlockName = tblAssetBlocks.FirstOrDefault(l => l.Code == c.AssetBlock)?.Description;
+                c.AssetClassName = tblAssetClasses.FirstOrDefault(l => l.Code == c.AssetClass)?.Description;
+            });
+            return result;
         }
 
         public static IEnumerable<TblAssignAccountkeytoAsset> GetAssetAccountkeytoasset()
         {
-            try
+            using Repository<TblAssignAccountkeytoAsset> repo = new Repository<TblAssignAccountkeytoAsset>();
+            var tblAssetAccountkeys = repo.TblAssetAccountkey.ToList();
+            var tblAssetClasses = repo.TblAssetClass.ToList();
+
+            var result = repo.TblAssignAccountkeytoAsset.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblAssignAccountkeytoAsset> repo = new Repository<TblAssignAccountkeytoAsset>())
-                {
-                    List<TblAssetAccountkey> tblAssetAccountkeys = repo.TblAssetAccountkey.ToList();
-                    List<TblAssetClass> tblAssetClasses = repo.TblAssetClass.ToList();
-
-                    var result = repo.TblAssignAccountkeytoAsset.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.AccountKeyName = tblAssetAccountkeys.Where(l => l.Code == c.AccountKey).FirstOrDefault()?.Description;
-                        c.AssetClassName = tblAssetClasses.Where(l => l.Code == c.AssetClass).FirstOrDefault()?.Description;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.AccountKeyName = tblAssetAccountkeys.FirstOrDefault(l => l.Code == c.AccountKey)?.Description;
+                c.AssetClassName = tblAssetClasses.FirstOrDefault(l => l.Code == c.AssetClass)?.Description;
+            });
+            return result;
         }
 
         public static IEnumerable<TblAssetAccountkey> GetAssetAccountKey()
         {
-            try
+            using Repository<TblAssetAccountkey> repo = new Repository<TblAssetAccountkey>();
+            var companies = repo.TblCompany.ToList();
+            var chartAccounts = repo.TblChartAccount.ToList();
+            var glaccounts = repo.Glaccounts.ToList();
+
+            var result = repo.TblAssetAccountkey.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblAssetAccountkey> repo = new Repository<TblAssetAccountkey>())
-                {
-                    List<TblCompany> companies = repo.TblCompany.ToList();
-                    List<TblChartAccount> chartAccounts = repo.TblChartAccount.ToList();
-                    List<Glaccounts> glaccounts = repo.Glaccounts.ToList();
-
-                    var result = repo.TblAssetAccountkey.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.CompanyName = companies.Where(l => l.CompanyCode == c.CompanyCode).FirstOrDefault()?.CompanyName;
-                        c.ChartAccountName = chartAccounts.Where(l => l.Code == c.ChartofAccount).FirstOrDefault()?.Desctiption;
-                        c.AcquisationName = glaccounts.Where(l => l.AccountNumber == c.AcquisitionsGl).FirstOrDefault()?.GlaccountName;
-                        c.AccumulatedName = glaccounts.Where(l => l.AccountNumber == c.AccumulatedGl).FirstOrDefault()?.GlaccountName;
-                        c.AucName = glaccounts.Where(l => l.AccountNumber == c.Auggl).FirstOrDefault()?.GlaccountName;
-                        c.SalesRevenueName = glaccounts.Where(l => l.AccountNumber == c.SalesRevenueGl).FirstOrDefault()?.GlaccountName;
-                        c.LossonSalesName = glaccounts.Where(l => l.AccountNumber == c.LossOnSaleGl).FirstOrDefault()?.GlaccountName;
-                        c.GainonSalesName = glaccounts.Where(l => l.AccountNumber == c.GainOnSaleGl).FirstOrDefault()?.GlaccountName;
-                        c.ScrapGLName = glaccounts.Where(l => l.AccountNumber == c.ScrappingGl).FirstOrDefault()?.GlaccountName;
-                        c.DepreciationGLName = glaccounts.Where(l => l.AccountNumber == c.DepreciationGl).FirstOrDefault()?.GlaccountName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.CompanyCode)?.CompanyName;
+                c.ChartAccountName = chartAccounts.FirstOrDefault(l => l.Code == c.ChartofAccount)?.Desctiption;
+                c.AcquisationName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.AcquisitionsGl)?.GlaccountName;
+                c.AccumulatedName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.AccumulatedGl)?.GlaccountName;
+                c.AucName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.Auggl)?.GlaccountName;
+                c.SalesRevenueName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.SalesRevenueGl)?.GlaccountName;
+                c.LossonSalesName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.LossOnSaleGl)?.GlaccountName;
+                c.GainonSalesName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.GainOnSaleGl)?.GlaccountName;
+                c.ScrapGLName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.ScrappingGl)?.GlaccountName;
+                c.DepreciationGLName = glaccounts.FirstOrDefault(l => l.AccountNumber == c.DepreciationGl)?.GlaccountName;
+            });
+            return result;
         }
 
         public static IEnumerable<TblBankMaster> GetBankMaster()
         {
-            try
+            using Repository<TblBankMaster> repo = new Repository<TblBankMaster>();
+            var states = repo.States.ToList();
+            var regions = repo.TblRegion.ToList();
+            var countries = repo.Countries.ToList();
+            var currencies = repo.TblCurrency.ToList();
+
+            var result = repo.TblBankMaster.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblBankMaster> repo = new Repository<TblBankMaster>())
-                {
-                    List<States> states = repo.States.ToList();
-                    List<TblRegion> regions = repo.TblRegion.ToList();
-                    List<Countries> countries = repo.Countries.ToList();
-                    List<TblCurrency> currencies = repo.TblCurrency.ToList();
-
-                    var result = repo.TblBankMaster.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.StateName = states.Where(cur => cur.StateCode == c.State).FirstOrDefault()?.StateName;
-                        c.RegionName = regions.Where(cur => cur.RegionCode == c.Region).FirstOrDefault()?.RegionName;
-                        c.CountryName = countries.Where(cur => cur.CountryCode == c.Country).FirstOrDefault()?.CountryName;
-                        c.CurrencyName = currencies.Where(cur => cur.CurrencySymbol == c.Currency).FirstOrDefault()?.CurrencyName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
+                c.RegionName = regions.FirstOrDefault(cur => cur.RegionCode == c.Region)?.RegionName;
+                c.CountryName = countries.FirstOrDefault(cur => cur.CountryCode == c.Country)?.CountryName;
+                c.CurrencyName = currencies.FirstOrDefault(cur => cur.CurrencySymbol == c.Currency)?.CurrencyName;
+            });
+            return result;
         }
 
-        public static IEnumerable<Glaccounts> GetGLAccounts()
+        public static IEnumerable<Glaccounts> GetGlAccounts()
         {
-            try
+            using var repo = new Repository<Glaccounts>();
+            var currencies = repo.TblCurrency.ToList();
+            var companies = repo.TblCompany.ToList();
+            var chartAccounts = repo.TblChartAccount.ToList();
+            var gLAccGroups = repo.GlaccGroup.ToList();
+            var tblBankMasters = repo.TblBankMaster.ToList();
+
+            var result = repo.Glaccounts.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<Glaccounts> repo = new Repository<Glaccounts>())
-                {
-                    List<TblCurrency> currencies = repo.TblCurrency.ToList();
-                    List<TblCompany> companies = repo.TblCompany.ToList();
-                    List<TblChartAccount> chartAccounts = repo.TblChartAccount.ToList();
-                    List<GlaccGroup> gLAccGroups = repo.GlaccGroup.ToList();
-                    List<TblBankMaster> tblBankMasters = repo.TblBankMaster.ToList();
-
-                    var result = repo.Glaccounts.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.CompanyName = companies.Where(l => l.CompanyCode == c.Company).FirstOrDefault()?.CompanyName;
-                        c.ChartAccountName = chartAccounts.Where(l => l.Code == c.ChartAccount).FirstOrDefault()?.Desctiption;
-                        c.CurrencyName = currencies.Where(cur => cur.CurrencySymbol == c.Currency).FirstOrDefault()?.CurrencyName;
-                        c.AccGroupName = gLAccGroups.Where(cur => cur.GroupCode == c.AccGroup).FirstOrDefault()?.GroupName;
-                        c.BankName = tblBankMasters.Where(cur => cur.BankCode == c.BankKey).FirstOrDefault()?.BankName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.ChartAccountName = chartAccounts.FirstOrDefault(l => l.Code == c.ChartAccount)?.Desctiption;
+                c.CurrencyName = currencies.FirstOrDefault(cur => cur.CurrencySymbol == c.Currency)?.CurrencyName;
+                c.AccGroupName = gLAccGroups.FirstOrDefault(cur => cur.GroupCode == c.AccGroup)?.GroupName;
+                c.BankName = tblBankMasters.FirstOrDefault(cur => cur.BankCode == c.BankKey)?.BankName;
+            });
+            return result;
         }
 
-        public static IEnumerable<TblGlsubAccount> GetGLSubAccounts()
+        public static IEnumerable<TblGlsubAccount> GetGlSubAccounts()
         {
-            try
+            using var repo = new Repository<TblGlsubAccount>();
+            var gLAccGroups = repo.Glaccounts.ToList();
+
+            var result = repo.TblGlsubAccount.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblGlsubAccount> repo = new Repository<TblGlsubAccount>())
-                {
-                    
-                    List<Glaccounts> gLAccGroups = repo.Glaccounts.ToList();
 
-                    var result = repo.TblGlsubAccount.ToList();
-
-                    result.ForEach(c =>
-                    {
-                       
-                        c.AccGroupName = gLAccGroups.Where(cur => cur.AccountNumber == c.Glaccount).FirstOrDefault()?.GlaccountName;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.AccGroupName = gLAccGroups.FirstOrDefault(cur => cur.AccountNumber == c.Glaccount)?.GlaccountName;
+            });
+            return result;
         }
 
         public static IEnumerable<TblBusinessPartnerAccount> GetBusinessPartner()
         {
-            try
+            using var repo = new Repository<TblBusinessPartnerAccount>();
+            var companies = repo.TblCompany.ToList();
+            var partnerTypes = repo.PartnerType.ToList();
+            var tblBpgroups = repo.TblBpgroup.ToList();
+            var states = repo.States.ToList();
+            var regions = repo.TblRegion.ToList();
+            var countries = repo.Countries.ToList();
+            var gLAccGroups = repo.Glaccounts.ToList();
+            var tblPaymentTerms = repo.TblPaymentTerms.ToList();
+            var tblTdstypes = repo.TblTdstypes.ToList();
+            var tblTdsRates = repo.TblTdsRates.ToList();
+
+            var result = repo.TblBusinessPartnerAccount.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblBusinessPartnerAccount> repo = new Repository<TblBusinessPartnerAccount>())
-                {
-                    List<TblCompany> companies = repo.TblCompany.ToList();
-                    List<PartnerType> partnerTypes = repo.PartnerType.ToList();
-                    List<TblBpgroup> tblBpgroups = repo.TblBpgroup.ToList();
-                    List<States> states = repo.States.ToList();
-                    List<TblRegion> regions = repo.TblRegion.ToList();
-                    List<Countries> countries = repo.Countries.ToList();
-                    List<Glaccounts> gLAccGroups = repo.Glaccounts.ToList();
-                    List<TblPaymentTerms> tblPaymentTerms = repo.TblPaymentTerms.ToList();
-                    List<TblTdstypes> tblTdstypes = repo.TblTdstypes.ToList();
-                    List<TblTdsRates> tblTdsRates = repo.TblTdsRates.ToList();
-
-                    var result = repo.TblBusinessPartnerAccount.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.CompanyName = companies.Where(l => l.CompanyCode == c.Company).FirstOrDefault()?.CompanyName;
-                        c.BpTypeName = partnerTypes.Where(l => l.Code == c.Bptype).FirstOrDefault()?.Description;
-                        c.BpGroupName = tblBpgroups.Where(cur => cur.Bpgroup == c.Bpgroup).FirstOrDefault()?.Description;
-                        c.StateName = states.Where(cur => cur.StateCode == c.State).FirstOrDefault()?.StateName;
-                        c.RegionName = regions.Where(cur => cur.RegionCode == c.Region).FirstOrDefault()?.RegionName;
-                        c.CountryName = countries.Where(cur => cur.CountryCode == c.Country).FirstOrDefault()?.CountryName;
-                        c.ControlAccountName = gLAccGroups.Where(cur => cur.AccountNumber == c.ControlAccount).FirstOrDefault()?.GlaccountName;
-                        c.PaymentTermsName = tblPaymentTerms.Where(cur => cur.Code == c.PaymentTerms).FirstOrDefault()?.Description;
-                        c.TdsTypeName = tblTdstypes.Where(cur => cur.TdsCode == c.Tdstype).FirstOrDefault()?.Desctiption;
-                        c.TdsStateName = tblTdsRates.Where(cur => cur.Code == c.Tdsrate).FirstOrDefault()?.Desctiption;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.BpTypeName = partnerTypes.FirstOrDefault(l => l.Code == c.Bptype)?.Description;
+                c.BpGroupName = tblBpgroups.FirstOrDefault(cur => cur.Bpgroup == c.Bpgroup)?.Description;
+                c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
+                c.RegionName = regions.FirstOrDefault(cur => cur.RegionCode == c.Region)?.RegionName;
+                c.CountryName = countries.FirstOrDefault(cur => cur.CountryCode == c.Country)?.CountryName;
+                c.ControlAccountName = gLAccGroups.FirstOrDefault(cur => cur.AccountNumber == c.ControlAccount)?.GlaccountName;
+                c.PaymentTermsName = tblPaymentTerms.FirstOrDefault(cur => cur.Code == c.PaymentTerms)?.Description;
+                c.TdsTypeName = tblTdstypes.FirstOrDefault(cur => cur.TdsCode == c.Tdstype)?.Desctiption;
+                c.TdsStateName = tblTdsRates.FirstOrDefault(cur => cur.Code == c.Tdsrate)?.Desctiption;
+            });
+            return result;
         }
 
         public static IEnumerable<TblMainAssetMaster> GetMainAssetMaster()
         {
-            try
+            using var repo = new Repository<TblMainAssetMaster>();
+            var companies = repo.TblCompany.ToList();
+            var tblAssetClasses = repo.TblAssetClass.ToList();
+            var tblAssetAccountkeys = repo.TblAssetAccountkey.ToList();
+            var branches = repo.TblBranch.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            var segments = repo.Segment.ToList();
+            var divisions = repo.Divisions.ToList();
+            var plants = repo.TblPlant.ToList();
+            var tblLocations = repo.TblLocation.ToList();
+            var tblDepreciations = repo.TblDepreciation.ToList();
+            var tblDepreciationAreas = repo.TblDepreciationAreas.ToList();
+
+            var result = repo.TblMainAssetMaster.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblMainAssetMaster> repo = new Repository<TblMainAssetMaster>())
-                {
-                    List<TblCompany> companies = repo.TblCompany.ToList();
-                    List<TblAssetClass> tblAssetClasses = repo.TblAssetClass.ToList();
-                    List<TblAssetAccountkey> tblAssetAccountkeys = repo.TblAssetAccountkey.ToList();
-                    List<TblBranch> branches = repo.TblBranch.ToList();
-                    List<ProfitCenters> profitCenters = repo.ProfitCenters.ToList();
-                    List<Segment> segments = repo.Segment.ToList();
-                    List<Divisions> divisions = repo.Divisions.ToList();
-                    List<TblPlant> plants = repo.TblPlant.ToList();
-                    List<TblLocation> tblLocations = repo.TblLocation.ToList();
-                    List<TblDepreciation> tblDepreciations = repo.TblDepreciation.ToList();
-                    List<TblDepreciationAreas> tblDepreciationAreas = repo.TblDepreciationAreas.ToList();
-
-                    var result = repo.TblMainAssetMaster.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.CompanyName = companies.Where(l => l.CompanyCode == c.Company).FirstOrDefault()?.CompanyName;
-                        c.AssetClassName = tblAssetClasses.Where(l => l.Code == c.Assetclass).FirstOrDefault()?.Description;
-                        c.AccountKeyName = tblAssetAccountkeys.Where(cur => cur.Code == c.AccountKey).FirstOrDefault()?.Description;
-                        c.BranchName = branches.Where(cur => cur.BranchCode == c.Branch).FirstOrDefault()?.BranchName;
-                        c.ProfitCenterName = profitCenters.Where(cur => cur.Code == c.ProfitCenter).FirstOrDefault()?.Description;
-                        c.SegmentName = segments.Where(cur => cur.Id == c.Segment).FirstOrDefault()?.Name;
-                        c.DivisionName = divisions.Where(cur => cur.Code == c.Division).FirstOrDefault()?.Description;
-                        c.PlantName = plants.Where(cur => cur.PlantCode == c.Plant).FirstOrDefault()?.Plantname;
-                        c.LocationName = tblLocations.Where(cur => cur.LocationId == c.Location).FirstOrDefault()?.Description;
-                        c.DepreciationDataName = tblDepreciations.Where(cur => cur.Code == c.DepreciationData).FirstOrDefault()?.Description;
-                        c.DepreciationAreaName = tblDepreciationAreas.Where(cur => cur.Code == c.DepreciationArea).FirstOrDefault()?.Description;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.AssetClassName = tblAssetClasses.FirstOrDefault(l => l.Code == c.Assetclass)?.Description;
+                c.AccountKeyName = tblAssetAccountkeys.FirstOrDefault(cur => cur.Code == c.AccountKey)?.Description;
+                c.BranchName = branches.FirstOrDefault(cur => cur.BranchCode == c.Branch)?.BranchName;
+                c.ProfitCenterName = profitCenters.FirstOrDefault(cur => cur.Code == c.ProfitCenter)?.Description;
+                c.SegmentName = segments.FirstOrDefault(cur => cur.Id == c.Segment)?.Name;
+                c.DivisionName = divisions.FirstOrDefault(cur => cur.Code == c.Division)?.Description;
+                c.PlantName = plants.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.LocationName = tblLocations.FirstOrDefault(cur => cur.LocationId == c.Location)?.Description;
+                c.DepreciationDataName = tblDepreciations.FirstOrDefault(cur => cur.Code == c.DepreciationData)?.Description;
+                c.DepreciationAreaName = tblDepreciationAreas.FirstOrDefault(cur => cur.Code == c.DepreciationArea)?.Description;
+            });
+            return result;
         }
 
         public static IEnumerable<TblSubAssetMaster> GetSubAssetMaster()
         {
-            try
+            using var repo = new Repository<TblSubAssetMaster>();
+            var tblMainAssetMasters = repo.TblMainAssetMaster.ToList();
+            var tblAssetAccountkeys = repo.TblAssetAccountkey.ToList();
+            var branches = repo.TblBranch.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            var segments = repo.Segment.ToList();
+            var divisions = repo.Divisions.ToList();
+            var plants = repo.TblPlant.ToList();
+            var tblLocations = repo.TblLocation.ToList();
+            var tblDepreciations = repo.TblDepreciation.ToList();
+            var tblDepreciationAreas = repo.TblDepreciationAreas.ToList();
+
+            var result = repo.TblSubAssetMaster.ToList();
+
+            result.ForEach(c =>
             {
-                using (Repository<TblSubAssetMaster> repo = new Repository<TblSubAssetMaster>())
-                {
-                    List<TblMainAssetMaster> tblMainAssetMasters = repo.TblMainAssetMaster.ToList();
-                    List<TblAssetAccountkey> tblAssetAccountkeys = repo.TblAssetAccountkey.ToList();
-                    List<TblBranch> branches = repo.TblBranch.ToList();
-                    List<ProfitCenters> profitCenters = repo.ProfitCenters.ToList();
-                    List<Segment> segments = repo.Segment.ToList();
-                    List<Divisions> divisions = repo.Divisions.ToList();
-                    List<TblPlant> plants = repo.TblPlant.ToList();
-                    List<TblLocation> tblLocations = repo.TblLocation.ToList();
-                    List<TblDepreciation> tblDepreciations = repo.TblDepreciation.ToList();
-                    List<TblDepreciationAreas> tblDepreciationAreas = repo.TblDepreciationAreas.ToList();
-
-                    var result = repo.TblSubAssetMaster.ToList();
-
-                    result.ForEach(c =>
-                    {
-                        c.MainAssetName = tblMainAssetMasters.Where(l => l.AssetNumber == c.MainAssetNo).FirstOrDefault()?.Name;
-                        c.AccountKeyName = tblAssetAccountkeys.Where(cur => cur.Code == c.AccountKey).FirstOrDefault()?.Description;
-                        c.BranchName = branches.Where(cur => cur.BranchCode == c.Branch).FirstOrDefault()?.BranchName;
-                        c.ProfitCenterName = profitCenters.Where(cur => cur.Code == c.ProfitCenter).FirstOrDefault()?.Description;
-                        c.SegmentName = segments.Where(cur => cur.Id == c.Segment).FirstOrDefault()?.Name;
-                        c.DivisionName = divisions.Where(cur => cur.Code == c.Division).FirstOrDefault()?.Description;
-                        c.PlantName = plants.Where(cur => cur.PlantCode == c.Plant).FirstOrDefault()?.Plantname;
-                        c.LocationName = tblLocations.Where(cur => cur.LocationId == c.Location).FirstOrDefault()?.Description;
-                        c.DepreciationDataName = tblDepreciations.Where(cur => cur.Code == c.DepreciationData).FirstOrDefault()?.Description;
-                        c.DepreciationAreaName = tblDepreciationAreas.Where(cur => cur.Code == c.DepreciationArea).FirstOrDefault()?.Description;
-                    });
-                    return result;
-                }
-            }
-            catch { throw; }
+                c.MainAssetName = tblMainAssetMasters.FirstOrDefault(l => l.AssetNumber == c.MainAssetNo)?.Name;
+                c.AccountKeyName = tblAssetAccountkeys.FirstOrDefault(cur => cur.Code == c.AccountKey)?.Description;
+                c.BranchName = branches.FirstOrDefault(cur => cur.BranchCode == c.Branch)?.BranchName;
+                c.ProfitCenterName = profitCenters.FirstOrDefault(cur => cur.Code == c.ProfitCenter)?.Description;
+                c.SegmentName = segments.FirstOrDefault(cur => cur.Id == c.Segment)?.Name;
+                c.DivisionName = divisions.FirstOrDefault(cur => cur.Code == c.Division)?.Description;
+                c.PlantName = plants.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.LocationName = tblLocations.FirstOrDefault(cur => cur.LocationId == c.Location)?.Description;
+                c.DepreciationDataName = tblDepreciations.FirstOrDefault(cur => cur.Code == c.DepreciationData)?.Description;
+                c.DepreciationAreaName = tblDepreciationAreas.FirstOrDefault(cur => cur.Code == c.DepreciationArea)?.Description;
+            });
+            return result;
         }
 
-        public static IEnumerable<Segment> GetSegments()
-        {
-            try
-            {
-                using(Repository<Segment> _repo=new Repository<Segment>())
-                {
-                    return _repo.Segment.ToList();
-                }
-            }
-            catch(Exception ex) { throw ex; }
-        }
-        public static IEnumerable<TblHsnsac> GetHsnsac()
-        {
-            try
-            {
-                using (Repository<Segment> _repo = new Repository<Segment>())
-                {
-                    return _repo.TblHsnsac.ToList();
-                }
-            }
-            catch (Exception ex) { throw ex; }
-        }
-
-        public static TblAssignmentVoucherSeriestoVoucherType GetVoucherNo(string voucherTypeId,out Int32 startNumber,out Int32 endNumber)
+        public static TblAssignmentVoucherSeriestoVoucherType GetVoucherNo(string voucherTypeId, out int startNumber, out int endNumber)
         {
             startNumber = 0;
             endNumber = 0;
-            try
-            {
-                using (ERPContext _repo = new ERPContext())
-                {
-                    TblVoucherSeries voucherSeries= (from avsvt in _repo.TblAssignmentVoucherSeriestoVoucherType
-                                                     join vs in _repo.TblVoucherSeries on avsvt.VoucherSeries equals vs.VoucherSeriesKey
-                                                     where avsvt.VoucherType == voucherTypeId
-                                                     select vs).FirstOrDefault();
+            using var repo = new ERPContext();
+            var voucherSeries = (from avsvt in repo.TblAssignmentVoucherSeriestoVoucherType
+                                 join vs in repo.TblVoucherSeries on avsvt.VoucherSeries equals vs.VoucherSeriesKey
+                                 where avsvt.VoucherType == voucherTypeId
+                                 select vs).FirstOrDefault();
 
-                    startNumber = Convert.ToInt32(voucherSeries.FromInterval ?? "0");
-                    endNumber= Convert.ToInt32(voucherSeries.ToInterval ?? "0");
+            startNumber = Convert.ToInt32(voucherSeries?.FromInterval ?? "0");
+            endNumber = Convert.ToInt32(voucherSeries?.ToInterval ?? "0");
 
-                    return _repo.TblAssignmentVoucherSeriestoVoucherType.Where(t => t.VoucherType == voucherTypeId).FirstOrDefault();
-                };
-            }
-            catch { throw; }
+            return repo.TblAssignmentVoucherSeriestoVoucherType.FirstOrDefault(t => t.VoucherType == voucherTypeId);
         }
     }
 }
