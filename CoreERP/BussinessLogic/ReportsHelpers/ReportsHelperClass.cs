@@ -865,29 +865,57 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #region StockVerificationReport
-        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetStockVerificationReportDataList(string branchCode, string UserID, DateTime fromDate, DateTime toDate)
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetStockVerificationReportDataList(string branchCode, string UserID, DateTime fromDate, DateTime toDate,string RO)
         {
-            DataSet dsResult = GetStockVerificationReportDataSet(branchCode, UserID, fromDate, toDate);
-            List<dynamic> saleValue = null;
-            List<dynamic> headerList = null;
-            List<dynamic> footerList = null;
-            if (dsResult != null)
+            if (RO != "false")
             {
-                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                DataSet dsResult = GetStockVerificationReportRODataSet(branchCode, UserID, fromDate, toDate);
+                List<dynamic> saleValue = null;
+                List<dynamic> headerList = null;
+                List<dynamic> footerList = null;
+                if (dsResult != null)
                 {
-                    saleValue = ToDynamic(dsResult.Tables[0]);
+                    if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                    {
+                        saleValue = ToDynamic(dsResult.Tables[0]);
+                    }
+                    if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                    {
+                        headerList = ToDynamic(dsResult.Tables[1]);
+                    }
+                    if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                    {
+                        footerList = ToDynamic(dsResult.Tables[2]);
+                    }
+                    return (saleValue, headerList, footerList);
                 }
-                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
-                {
-                    headerList = ToDynamic(dsResult.Tables[1]);
-                }
-                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
-                {
-                    footerList = ToDynamic(dsResult.Tables[2]);
-                }
-                return (saleValue, headerList, footerList);
+                else return (null, null, null);
             }
-            else return (null, null, null);
+            else
+            {
+                DataSet dsResult = GetStockVerificationReportDataSet(branchCode, UserID, fromDate, toDate);
+                List<dynamic> saleValue = null;
+                List<dynamic> headerList = null;
+                List<dynamic> footerList = null;
+                if (dsResult != null)
+                {
+                    if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                    {
+                        saleValue = ToDynamic(dsResult.Tables[0]);
+                    }
+                    if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                    {
+                        headerList = ToDynamic(dsResult.Tables[1]);
+                    }
+                    if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                    {
+                        footerList = ToDynamic(dsResult.Tables[2]);
+                    }
+                    return (saleValue, headerList, footerList);
+                }
+                else return (null, null, null);
+            }
+            
         }
 
         public static DataSet GetStockVerificationReportDataSet(string branchCode, string UserID, DateTime fromDate, DateTime toDate)
@@ -917,6 +945,42 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             pmToDate.Direction = ParameterDirection.Input;
             pmToDate.Value = (object)toDate ?? DBNull.Value;
             pmToDate.ParameterName = "toDate";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(pmbranchID);
+            command.Parameters.Add(pmFromDate);
+            command.Parameters.Add(pmToDate);
+            command.Parameters.Add(pmuserName);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
+
+        public static DataSet GetStockVerificationReportRODataSet(string branchCode, string UserID, DateTime fromDate, DateTime toDate)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_StockVerificationReportByBranchROS";
+            #region Parameters
+            DbParameter pmbranchID = command.CreateParameter();
+            pmbranchID.Direction = ParameterDirection.Input;
+            pmbranchID.Value = (object)branchCode ?? DBNull.Value;
+            pmbranchID.ParameterName = "branchCode";
+
+            DbParameter pmuserName = command.CreateParameter();
+            pmuserName.Direction = ParameterDirection.Input;
+            pmuserName.Value = (object)UserID ?? DBNull.Value;
+            pmuserName.ParameterName = "userName";
+
+            DbParameter pmFromDate = command.CreateParameter();
+            pmFromDate.Direction = ParameterDirection.Input;
+            pmFromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmFromDate.ParameterName = "fDate";
+
+            DbParameter pmToDate = command.CreateParameter();
+            pmToDate.Direction = ParameterDirection.Input;
+            pmToDate.Value = (object)toDate ?? DBNull.Value;
+            pmToDate.ParameterName = "tDate";
             #endregion
             // Add parameter as specified in the store procedure
             command.Parameters.Add(pmbranchID);

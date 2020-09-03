@@ -15,7 +15,7 @@ namespace CoreERP.Controllers.Reports
     public class StockVerificationReportController : ControllerBase
     {
         [HttpGet("GetStockVerificationReportData")]
-        public async Task<IActionResult> GetStockVerificationReportData(string branchCode, string UserID, DateTime fromDate, DateTime toDate)
+        public async Task<IActionResult> GetStockVerificationReportData(string branchCode, string UserID, DateTime fromDate, DateTime toDate,string RO)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace CoreERP.Controllers.Reports
                     fromDate = DateTime.Now;
                     toDate = DateTime.Now;
                 }
-                var serviceResult = await Task.FromResult(ReportsHelperClass.GetStockVerificationReportDataList(branchCode,UserID,fromDate,toDate));
+                var serviceResult = await Task.FromResult(ReportsHelperClass.GetStockVerificationReportDataList(branchCode,UserID,fromDate,toDate,RO));
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.StockVerificationList = serviceResult.Item1;
                 expdoObj.headerList = serviceResult.Item2;
