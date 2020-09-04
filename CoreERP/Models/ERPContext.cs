@@ -80,6 +80,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblDepreciation> TblDepreciation { get; set; }
         public virtual DbSet<TblDepreciationAreas> TblDepreciationAreas { get; set; }
         public virtual DbSet<TblDepreciationDetails> TblDepreciationDetails { get; set; }
+        public virtual DbSet<TblDepreciationcodeDetails> TblDepreciationcodeDetails { get; set; }
         public virtual DbSet<TblDesignation> TblDesignation { get; set; }
         public virtual DbSet<TblDistributionChannel> TblDistributionChannel { get; set; }
         public virtual DbSet<TblDynamicPages> TblDynamicPages { get; set; }
@@ -108,6 +109,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblOpenLedger> TblOpenLedger { get; set; }
         public virtual DbSet<TblPartyCashBankMaster> TblPartyCashBankMaster { get; set; }
         public virtual DbSet<TblParyCashBankDetails> TblParyCashBankDetails { get; set; }
+        public virtual DbSet<TblPaymentTermDetails> TblPaymentTermDetails { get; set; }
         public virtual DbSet<TblPaymentTerms> TblPaymentTerms { get; set; }
         public virtual DbSet<TblPlant> TblPlant { get; set; }
         public virtual DbSet<TblPosaleAssetInvoiceMemoDetails> TblPosaleAssetInvoiceMemoDetails { get; set; }
@@ -2409,6 +2411,21 @@ namespace CoreERP.Models
                 entity.Property(e => e.Year).HasMaxLength(5);
             });
 
+            modelBuilder.Entity<TblDepreciationcodeDetails>(entity =>
+            {
+                entity.ToTable("tbl_depreciationcodeDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.DepreciationCode).HasMaxLength(5);
+
+                entity.Property(e => e.Monthupto).HasMaxLength(5);
+
+                entity.Property(e => e.Rateupto).HasMaxLength(50);
+
+                entity.Property(e => e.Yearsupto).HasMaxLength(5);
+            });
+
             modelBuilder.Entity<TblDesignation>(entity =>
             {
                 entity.HasKey(e => e.DesignationId)
@@ -3576,6 +3593,21 @@ namespace CoreERP.Models
                 entity.Property(e => e.WriteOffGl)
                     .HasColumnName("WriteOffGL")
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblPaymentTermDetails>(entity =>
+            {
+                entity.ToTable("tbl_PaymentTermDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Days).HasMaxLength(5);
+
+                entity.Property(e => e.Discount).HasMaxLength(5);
+
+                entity.Property(e => e.Ext).HasMaxLength(50);
+
+                entity.Property(e => e.PaymentTermCode).HasMaxLength(5);
             });
 
             modelBuilder.Entity<TblPaymentTerms>(entity =>

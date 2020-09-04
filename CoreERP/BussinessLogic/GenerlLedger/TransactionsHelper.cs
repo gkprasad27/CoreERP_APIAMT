@@ -277,9 +277,77 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
+        public List<TblJvmaster> GetJvMasters(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblJvmaster>();
+            return repo.TblJvmaster.AsEnumerable()
+                .Where(x =>
+                {
+                    Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
+                    return x.Ext == "N"
+                           && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
+                           && Convert.ToDateTime(x.VoucherDate.Value) >=
+                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                           && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                })
+                .ToList();
+        }
+
+        public TblJvmaster GetJvMastersById(string voucherNumber)
+        {
+            using var repo = new Repository<TblJvmaster>();
+            return repo.TblJvmaster
+                .FirstOrDefault(x => x.VoucherNumber == voucherNumber);
+        }
+
+        public List<TblJvdetails> GetJvDetails(string voucherNumber)
+        {
+            using var repo = new Repository<TblJvdetails>();
+            return repo.TblJvdetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
+        }
+
         #endregion
 
         #region Invoices & Memos
+
+        public List<TblInvoiceMemoHeader> GetImMasters(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblInvoiceMemoHeader>();
+            return repo.TblInvoiceMemoHeader.AsEnumerable()
+                .Where(x =>
+                {
+                    Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
+                    return x.Ext == "N"
+                           && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
+                           && Convert.ToDateTime(x.VoucherDate.Value) >=
+                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                           && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                })
+                .ToList();
+        }
+
+        public TblInvoiceMemoHeader GetImMastersById(string voucherNumber)
+        {
+            using var repo = new Repository<TblInvoiceMemoHeader>();
+            return repo.TblInvoiceMemoHeader
+                .FirstOrDefault(x => x.VoucherNumber == voucherNumber);
+        }
+
+        public List<TblInvoiceMemoDetails> GetImDetails(string voucherNumber)
+        {
+            using var repo = new Repository<TblInvoiceMemoDetails>();
+            return repo.TblInvoiceMemoDetails.Where(cd => cd.VoucherNo == voucherNumber).ToList();
+        }
 
         public bool AddInvoiceMemos(TblInvoiceMemoHeader imMaster, List<TblInvoiceMemoDetails> imDetails)
         {

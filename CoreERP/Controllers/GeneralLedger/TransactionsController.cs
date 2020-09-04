@@ -37,14 +37,12 @@ namespace CoreERP.Controllers.GeneralLedger
             try
             {
                 var transactionType = new TransactionsHelper().GetTransactionType("TRANSACTIONTYPE");
-                if (transactionType.Any())
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.TransactionType = transactionType.Select(v => new { id = v, text = v });
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                if (!transactionType.Any())
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.TransactionType = transactionType.Select(v => new { id = v, text = v });
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
             }
             catch (Exception ex)
             {
@@ -62,14 +60,12 @@ namespace CoreERP.Controllers.GeneralLedger
             try
             {
                 var cashBankMasters = new TransactionsHelper().GetCashBankMasters(searchCriteria);
-                if (cashBankMasters.Any())
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.CashBankMasters = cashBankMasters;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for cash bank." });
+                if (!cashBankMasters.Any())
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found for cash bank."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.CashBankMasters = cashBankMasters;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
             }
             catch (Exception ex)
             {
@@ -84,15 +80,13 @@ namespace CoreERP.Controllers.GeneralLedger
             {
                 var transactions = new TransactionsHelper();
                 var cashBankMasters = transactions.GetCashBankMastersById(voucherNumber);
-                if (cashBankMasters != null)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.CashBankMasters = cashBankMasters;
-                    expdoObj.CashBankDetail = new TransactionsHelper().GetCashBankDetails(voucherNumber);
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                if (cashBankMasters == null)
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.CashBankMasters = cashBankMasters;
+                expdoObj.CashBankDetail = new TransactionsHelper().GetCashBankDetails(voucherNumber);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
             }
             catch (Exception ex)
             {
@@ -131,11 +125,10 @@ namespace CoreERP.Controllers.GeneralLedger
             {
                 var result = new TransactionsHelper().ReturnCashBank(voucherNumber);
                 if (result)
-                {
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "Return Successfully..." });
-                }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning cash bank.." });
+                    return Ok(new APIResponse {status = APIStatus.PASS.ToString(), response = "Return Successfully..."});
+
+                return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "error while returning cash bank.."});
+
             }
             catch (Exception ex)
             {
@@ -155,14 +148,52 @@ namespace CoreERP.Controllers.GeneralLedger
             try
             {
                 var transactionType = new TransactionsHelper().GetTransactionType("GJTRANSTYPE");
-                if (transactionType.Any())
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.TransactionType = transactionType.Select(v => new { id = v, text = v });
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                if (!transactionType.Any())
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.TransactionType = transactionType.Select(v => new { id = v, text = v });
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+       
+        [HttpPost("GetJVMaster")]
+        public IActionResult GetJvMaster([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var jvMasters = new TransactionsHelper().GetJvMasters(searchCriteria);
+                if (!jvMasters.Any())
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found for cash bank."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.jvMasters = jvMasters;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetJVDetail/{voucherNumber}")]
+        public IActionResult GetJvDetail(string voucherNumber)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var jvMasters = transactions.GetJvMastersById(voucherNumber);
+                if (jvMasters == null)
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.jvMasters = jvMasters;
+                expdoObj.JvDetail = new TransactionsHelper().GetJvDetails(voucherNumber);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
             }
             catch (Exception ex)
             {
@@ -196,7 +227,47 @@ namespace CoreERP.Controllers.GeneralLedger
         #endregion
 
         #region Invoice & Memo
-        
+
+        [HttpPost("GetIMMaster")]
+        public IActionResult GetImMaster([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var imMasters = new TransactionsHelper().GetJvMasters(searchCriteria);
+                if (!imMasters.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for cash bank." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.imMasters = imMasters;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetIMDetail/{voucherNumber}")]
+        public IActionResult GetImDetail(string voucherNumber)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var imMasters = transactions.GetJvMastersById(voucherNumber);
+                if (imMasters == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.imMasters = imMasters;
+                expdoObj.ImDetail = new TransactionsHelper().GetJvDetails(voucherNumber);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPost("AddInvoiceMemo")]
         public IActionResult AddInvoiceMemo([FromBody] JObject obj)
         {
@@ -220,6 +291,7 @@ namespace CoreERP.Controllers.GeneralLedger
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
         #endregion
     }
 }
