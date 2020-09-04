@@ -115,6 +115,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
+
+        public List<TblPumps> GetPumpsDropDown(string branchCode, string productCode)
+        {
+            try
+            {
+                using Repository<TblPumps> repo = new Repository<TblPumps>();
+                return repo.TblPumps.Where(p=>p.BranchCode==branchCode && p.ProductCode==productCode).ToList();
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
         public List<TblStateWiseGst> GetStateWiseGsts(string stateId=null)
         {
             try

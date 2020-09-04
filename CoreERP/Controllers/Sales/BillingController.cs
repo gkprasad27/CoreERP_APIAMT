@@ -61,6 +61,25 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetPumps/{branchCode}/{productCode?}")]
+        public IActionResult GetPumps(string branchCode, string productCode)
+        {
+            try
+            {
+                string errorMessage = string.Empty;
+
+                var pumpsList = new InvoiceHelper().GetPumpsDropDown(branchCode, productCode);
+
+                dynamic expando = new ExpandoObject();
+                expando.PumpsList = pumpsList.OrderBy(x => x.PumpNo).Select(x => new { ID = x.PumpId, TEXT = x.PumpNo });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GenerateBillNo/{branchCode}")]
         public IActionResult GenerateBillNo(string branchCode)
         {
