@@ -3081,7 +3081,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.TaxAmount).HasColumnType("numeric(18, 0)");
 
-                entity.Property(e => e.ToalAmount).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.TotalAmount).HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.TransactionType).HasMaxLength(20);
 
