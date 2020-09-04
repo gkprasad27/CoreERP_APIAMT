@@ -46,19 +46,26 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             switch (voucherType)
             {
-                case "Cash Payments":
-                case "Cash Receipts":
-                case "Bank Payments":
-                case "Bank Receipts":
-                {
-                    using var repo = new Repository<TblCashBankMaster>();
-                    return repo.TblCashBankMaster.Any(v => v.VoucherNumber == voucherNo);
-                }
-                case "Journal Voucher":
-                {
-                    using var repo = new Repository<TblCashBankMaster>();
-                    return repo.TblCashBankMaster.Any(v => v.VoucherNumber == voucherNo);
-                }
+                case "501":
+                case "502":
+                case "401":
+                case "402":
+                    {
+                        using var repo = new Repository<TblCashBankMaster>();
+                        return repo.TblCashBankMaster.Any(v => v.VoucherNumber == voucherNo);
+                    }
+                case "301":
+                    {
+                        using var repo = new Repository<TblCashBankMaster>();
+                        return repo.TblCashBankMaster.Any(v => v.VoucherNumber == voucherNo);
+                    }
+                case "201":
+                case "202":
+                    {
+                        using var repo = new Repository<TblInvoiceMemoHeader>();
+                        return repo.TblInvoiceMemoHeader.Any(v => v.VoucherNumber == voucherNo);
+                    }
+
                 default:
                     return false;
             }
@@ -87,9 +94,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             cashBankMaster.VoucherDate ??= DateTime.Now;
 
             if (cashBankMaster.NatureofTransaction.ToUpper().Contains("RECEIPTS"))
-                cashBankMaster.AccountingIndicator = CRDRINDICATORS.DEBIT.ToString();
+                cashBankMaster.AccountingIndicator = CRDRINDICATORS.Debit.ToString();
             else if (cashBankMaster.NatureofTransaction.ToUpper().Contains("PAYMENT"))
-                cashBankMaster.AccountingIndicator = CRDRINDICATORS.CREDIT.ToString();
+                cashBankMaster.AccountingIndicator = CRDRINDICATORS.Credit.ToString();
 
             int lineno = 1;
 
@@ -101,7 +108,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 x.Branch = cashBankMaster.Branch;
                 x.PostingDate = cashBankMaster.PostingDate;
                 x.LineItemNo = Convert.ToString(lineno++);
-                x.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
+                x.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
             });
 
             using var context = new ERPContext();
@@ -175,7 +182,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 cashBankDetails = repo.TblCashBankDetails.Where(t => t.VoucherNumber == voucherNumber).ToList();
             }
 
-            cashBankMaster.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
+            cashBankMaster.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
 
 
             //deep copy 
@@ -185,7 +192,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             cashBankDetails.ForEach(csh =>
             {
                 csh.Id = 0;
-                csh.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
+                csh.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
             });
             using (ERPContext context = new ERPContext())
             {
@@ -218,10 +225,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
 
 
-
         #endregion
 
         #region General Journels
+
         public bool AddJournal(TblJvmaster jvMaster, List<TblJvdetails> jvDetails)
         {
             if (jvMaster.VoucherDate == null)
@@ -230,7 +237,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (jvMaster.VoucherNumber == null)
                 throw new Exception("Voucher Number Canot be empty/null.");
 
-            if (this.IsVoucherNumberExists(jvMaster.VoucherNumber,jvMaster.VoucherType))
+            if (this.IsVoucherNumberExists(jvMaster.VoucherNumber, jvMaster.VoucherType))
                 throw new Exception("Voucher number exists.");
 
             jvMaster.VoucherDate ??= DateTime.Now;
@@ -246,7 +253,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 x.Branch = jvMaster.Branch;
                 x.PostingDate = jvMaster.PostingDate;
                 x.LineItemNo = Convert.ToString(lineno++);
-                x.AccountingIndicator = jvMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
+                x.AccountingIndicator = jvMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
             });
 
             using var context = new ERPContext();
@@ -269,6 +276,59 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw;
             }
         }
+
+        #endregion
+
+        #region Invoices & Memos
+
+        public bool AddInvoiceMemos(TblInvoiceMemoHeader imMaster, List<TblInvoiceMemoDetails> imDetails)
+        {
+            if (imMaster.VoucherDate == null)
+                throw new Exception("Voucher Date Canot be empty/null.");
+
+            if (imMaster.VoucherNumber == null)
+                throw new Exception("Voucher Number Canot be empty/null.");
+
+            if (this.IsVoucherNumberExists(imMaster.VoucherNumber, imMaster.VoucherType))
+                throw new Exception("Voucher number exists.");
+
+            imMaster.VoucherDate ??= DateTime.Now;
+            //imMaster.TransactionType = "JV";
+
+            int lineno = 1;
+
+            imDetails.ForEach(x =>
+            {
+                x.VoucherNo = imMaster.VoucherNumber;
+                x.VoucherDate = imMaster.VoucherDate;
+                x.Company = imMaster.Company;
+                x.Branch = imMaster.Branch;
+                x.PostingDate = imMaster.PostingDate;
+                x.LineItemNo = Convert.ToString(lineno++);
+                //x.AccountingIndicator = imMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                imMaster.Ext = "N";
+                context.TblInvoiceMemoHeader.Add(imMaster);
+                context.SaveChanges();
+
+                context.TblInvoiceMemoDetails.AddRange(imDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
         #endregion
     }
 }

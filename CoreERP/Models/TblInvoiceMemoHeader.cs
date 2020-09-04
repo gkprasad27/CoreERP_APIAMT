@@ -25,8 +25,9 @@ namespace CoreERP.Models
         public string Grnno { get; set; }
         public DateTime? Grndate { get; set; }
         public string Paymentterms { get; set; }
-        public decimal? Amount { get; set; }
+        public decimal? ToalAmount { get; set; }
         public decimal? TaxAmount { get; set; }
         public string Narration { get; set; }
+        public string Ext { get; set; }
     }
 }

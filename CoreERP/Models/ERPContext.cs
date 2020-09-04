@@ -3024,8 +3024,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccountingIndicator).HasMaxLength(50);
 
-                entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
-
                 entity.Property(e => e.Bpcategory)
                     .HasColumnName("BPCategory")
                     .HasMaxLength(5);
@@ -3033,6 +3031,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.Branch).HasMaxLength(5);
 
                 entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.Ext).HasMaxLength(50);
 
                 entity.Property(e => e.Grndate)
                     .HasColumnName("GRNDate")
@@ -3063,6 +3063,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.ReferenceNumber).HasMaxLength(50);
 
                 entity.Property(e => e.TaxAmount).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ToalAmount).HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.TransactionType).HasMaxLength(20);
 

@@ -194,5 +194,32 @@ namespace CoreERP.Controllers.GeneralLedger
             }
         }
         #endregion
+
+        #region Invoice & Memo
+        
+        [HttpPost("AddInvoiceMemo")]
+        public IActionResult AddInvoiceMemo([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var imMaster = obj["imHdr"].ToObject<TblInvoiceMemoHeader>();
+                var imDetails = obj["imDtl"].ToObject<List<TblInvoiceMemoDetails>>();
+
+                if (!new TransactionsHelper().AddInvoiceMemos(imMaster, imDetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = imMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        #endregion
     }
 }
