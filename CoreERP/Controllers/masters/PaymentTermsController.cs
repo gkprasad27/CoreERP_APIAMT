@@ -1,8 +1,9 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 
@@ -18,47 +19,18 @@ namespace CoreERP.Controllers.masters
             _ptRepository = ptRepository;
         }
 
-        [HttpPost("RegisterPaymentTerms")]
-        public IActionResult RegisterPaymentTerms([FromBody]TblPaymentTerms paymentterms)
-        {
-            if (paymentterms == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
-
-            try
-            {
-                //if (PaymentHelper.GetList(paymentterms.Code).Count() > 0)
-                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Payment Code {nameof(paymentterms.Code)} is already exists ,Please Use Different Code " });
-
-                APIResponse apiResponse;
-                _ptRepository.Add(paymentterms);
-                if (_ptRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = paymentterms };
-                else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-
-                return Ok(apiResponse);
-
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
-
         [HttpGet("GetPaymentTermsList")]
         public IActionResult GetPaymentTermsList()
         {
             try
             {
                 var ptermsList = _ptRepository.GetAll();
-                if (ptermsList.Count() > 0)
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.ptermsList = ptermsList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                if (!ptermsList.Any())
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.ptermsList = ptermsList;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
             }
             catch (Exception ex)
             {
@@ -112,5 +84,51 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpPost("RegisterPaymentTerms")]
+        public IActionResult RegisterPaymentTerms([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var ptems = obj["paymentstrmsHdr"].ToObject<TblPaymentTerms>();
+                var ptrmDetail = obj["paymentstrmsDetail"].ToObject<List<TblPaymentTermDetails>>();
+
+                if (!new CommonHelper().Paymentterms(ptems, ptrmDetail))
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.CashBankMaster = ptems;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetPaymentTermsDetail/{assetNumber}")]
+        public IActionResult GetPaymentTermsDetail(string assetNumber)
+        {
+            try
+            {
+                var common = new CommonHelper();
+                TblPaymentTerms ptrms = common.GetpaymenttermsById(assetNumber);
+                if (ptrms == null)
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.PaymentTermMasters = ptrms;
+                expdoObj.PaymentTermDetail = new CommonHelper().GetTblPaymentTermDetails(assetNumber); ;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
     }
 }

@@ -8,6 +8,118 @@ namespace CoreERP
 {
     public class CommonHelper
     {
+        public bool Paymentterms(TblPaymentTerms ptrms, List<TblPaymentTermDetails> ptrmsDetails)
+        {
+            ptrmsDetails.ForEach(x =>
+            {
+                x.PaymentTermCode = ptrms.Code;
+            });
+
+            using (ERPContext context = new ERPContext())
+            {
+                using (var dbtrans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var data = context.TblPaymentTermDetails.FirstOrDefault(obj => obj.PaymentTermCode == ptrms.Code)?.Id;
+                        if (data > 0)
+                        {
+                            context.TblPaymentTerms.Update(ptrms);
+                            context.SaveChanges();
+
+                            context.TblPaymentTermDetails.UpdateRange(ptrmsDetails);
+                            context.SaveChanges();
+                            dbtrans.Commit();
+                            return true;
+                        }
+
+                        context.TblPaymentTerms.Add(ptrms);
+                        context.SaveChanges();
+
+                        context.TblPaymentTermDetails.AddRange(ptrmsDetails);
+                        context.SaveChanges();
+
+                        dbtrans.Commit();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        dbtrans.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        //paymentterms transaction
+        public TblPaymentTerms GetpaymenttermsById(string code)
+        {
+            using var repo = new Repository<TblPaymentTerms>();
+            return repo.TblPaymentTerms.FirstOrDefault(x => x.Code == code);
+        }
+
+        public List<TblPaymentTermDetails> GetTblPaymentTermDetails(string code)
+        {
+            using var repo = new Repository<TblPaymentTermDetails>();
+            return repo.TblPaymentTermDetails.Where(cd => cd.PaymentTermCode == code).ToList();
+        }
+        //depreciationcode
+        public bool Depreciationcode(TblDepreciation dprctn, List<TblDepreciationcodeDetails> dpDetails)
+        {
+            dpDetails.ForEach(x =>
+            {
+                x.DepreciationCode = dprctn.Code;
+            });
+
+            using (ERPContext context = new ERPContext())
+            {
+                using (var dbtrans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var data = context.TblDepreciationcodeDetails.FirstOrDefault(obj => obj.DepreciationCode == dprctn.Code)?.Id;
+                        if (data > 0)
+                        {
+                            context.TblDepreciation.Update(dprctn);
+                            context.SaveChanges();
+
+                            context.TblDepreciationcodeDetails.UpdateRange(dpDetails);
+                            context.SaveChanges();
+                            dbtrans.Commit();
+                            return true;
+                        }
+
+                        context.TblDepreciation.Add(dprctn);
+                        context.SaveChanges();
+
+                        context.TblDepreciationcodeDetails.AddRange(dpDetails);
+                        context.SaveChanges();
+
+                        dbtrans.Commit();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        dbtrans.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+
+        public TblDepreciation GetDepreciationById(string code)
+        {
+            using var repo = new Repository<TblDepreciation>();
+            return repo.TblDepreciation.FirstOrDefault(x => x.Code == code);
+        }
+
+        public List<TblDepreciationcodeDetails> GetTblDepreciationcodeDetails(string code)
+        {
+            using var repo = new Repository<TblDepreciationcodeDetails>();
+            return repo.TblDepreciationcodeDetails.Where(cd => cd.DepreciationCode == code).ToList();
+        }
+
         public static List<Countries> GetCountries()
         {
             using var repo = new Repository<Countries>();

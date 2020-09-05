@@ -456,15 +456,15 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var bpgList = _bpgroupRepository.GetAll().Select(x => new { ID = x.Bpgroup, TEXT = x.Description });
+                var bpgList = _bpgroupRepository.GetAll().Select(x => new { ID = x.Bpgroup, TEXT = x.Description,BPTYPE = x.Bptype});
                 if (bpgList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.bpgList = bpgList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
