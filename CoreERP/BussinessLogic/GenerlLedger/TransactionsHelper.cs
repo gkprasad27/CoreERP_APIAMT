@@ -107,6 +107,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 x.Company = cashBankMaster.Company;
                 x.Branch = cashBankMaster.Branch;
                 x.PostingDate = cashBankMaster.PostingDate;
+                x.Status = "N";
                 x.LineItemNo = Convert.ToString(lineno++);
                 x.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
             });
@@ -115,7 +116,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
-                cashBankMaster.Ext = "N";
+                cashBankMaster.Status = "N";
                 context.TblCashBankMaster.Add(cashBankMaster);
                 context.SaveChanges();
 
@@ -143,7 +144,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .Where(x =>
                 {
                     Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
-                    return x.Ext == "N"
+                    return x.Status == "N"
                            && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
                            && Convert.ToDateTime(x.VoucherDate.Value) >=
                            Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
@@ -200,11 +201,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     try
                     {
-                        cashBankMaster.Ext = "Y";
+                        cashBankMaster.Status = "Y";
                         context.TblCashBankMaster.Update(cashBankMaster);
                         context.SaveChanges();
 
-                        cashBankMaster1.Ext = "R";
+                        cashBankMaster1.Status = "R";
                         context.TblCashBankMaster.Add(cashBankMaster1);
                         context.SaveChanges();
 
@@ -260,7 +261,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
-                jvMaster.Ext = "N";
+                jvMaster.Status = "N";
                 context.TblJvmaster.Add(jvMaster);
                 context.SaveChanges();
 
@@ -288,7 +289,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .Where(x =>
                 {
                     Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
-                    return x.Ext == "N"
+                    return x.Status == "N"
                            && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
                            && Convert.ToDateTime(x.VoucherDate.Value) >=
                            Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
@@ -315,12 +316,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo=new ERPContext();
             var jvmaster = repo.TblJvmaster.FirstOrDefault(x => x.VoucherNumber == voucherNumber);
 
-            if (jvmaster?.Ext == "Y")
+            if (jvmaster?.Status == "Y")
                 throw new Exception($"Journal voucher no {voucherNumber} already return.");
 
             if (jvmaster != null)
             {
-                jvmaster.Ext = "Y";
+                jvmaster.Status = "Y";
                 repo.TblJvmaster.Update(jvmaster);
             }
 
@@ -342,7 +343,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .Where(x =>
                 {
                     Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
-                    return x.Ext == "N"
+                    return x.Status == "N"
                            && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
                            && Convert.ToDateTime(x.VoucherDate.Value) >=
                            Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
@@ -396,7 +397,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
-                imMaster.Ext = "N";
+                imMaster.Status = "N";
                 context.TblInvoiceMemoHeader.Add(imMaster);
                 context.SaveChanges();
 
@@ -417,12 +418,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo=new ERPContext();
             var invoiceMemoHeader = repo.TblInvoiceMemoHeader.FirstOrDefault(im => im.VoucherNumber == voucherNumber);
 
-            if (invoiceMemoHeader != null && invoiceMemoHeader.Ext == "Y")
+            if (invoiceMemoHeader != null && invoiceMemoHeader.Status == "Y")
                 throw new Exception($"Invoice memo no {voucherNumber} already return.");
 
             if (invoiceMemoHeader != null)
             {
-                invoiceMemoHeader.Ext = "Y";
+                invoiceMemoHeader.Status = "Y";
                 repo.TblInvoiceMemoHeader.Update(invoiceMemoHeader);
             }
 
