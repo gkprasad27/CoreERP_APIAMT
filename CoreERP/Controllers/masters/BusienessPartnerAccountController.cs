@@ -161,32 +161,46 @@ namespace CoreERP.Controllers
         {
             try
             {
-                int num = Convert.ToInt32(_bpgrouprepository.Where(x => x.Bpgroup == code).SingleOrDefault()?.Ext1);
-                 var Getaccnolist = _assignmentrepository.Where(x => x.Bpgroup == code).FirstOrDefault();
-                 var numrnglist= _numberRangerepository.Where(x => x.Code == Getaccnolist.NumberRangeKey.ToString()).FirstOrDefault();
-                if (Enumerable.Range(Convert.ToInt32(numrnglist.RangeFrom), Convert.ToInt32(numrnglist.RangeTo)).Contains(num))
+                int i = Convert.ToInt32(_bpgrouprepository.Where(x => x.Bpgroup == code).SingleOrDefault()?.Ext1);
+                var Getaccnolist = _assignmentrepository.Where(x => x.Bpgroup == code).FirstOrDefault();
+                var numrnglist = _numberRangerepository.Where(x => x.Code == Getaccnolist.NumberRangeKey.ToString()).FirstOrDefault();
+                if (i == 0 && Getaccnolist.Bpgroup == code)
                 {
-                    if (num >= Convert.ToInt32(numrnglist.RangeFrom) && num <= Convert.ToInt32(numrnglist.RangeTo))
+                    var x = numrnglist.RangeFrom;
+
+                    if (Enumerable.Range(Convert.ToInt32(numrnglist.RangeFrom), Convert.ToInt32(numrnglist.RangeTo)).Contains(Convert.ToInt32(x)))
                     {
-                        var bpnum = num + 1;
+                        if (x >= Convert.ToInt32(numrnglist.RangeFrom) && x <= Convert.ToInt32(numrnglist.RangeTo))
+                        {
+                            var bpnum = x + 1;
+                            if (bpnum != null)
+                            {
+                                dynamic expdoObj = new ExpandoObject();
+                                expdoObj.bpaNum = bpnum;
+                                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                            }
+                        }
+                        else
+                            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
+                    }
+                }
+                else
+                if (Enumerable.Range(Convert.ToInt32(numrnglist.RangeFrom), Convert.ToInt32(numrnglist.RangeTo)).Contains(i))
+                {
+                    if (i >= Convert.ToInt32(numrnglist.RangeFrom) && i <= Convert.ToInt32(numrnglist.RangeTo))
+                    {
+                        var bpnum = i + 1;
                         if (bpnum != null)
                         {
                             dynamic expdoObj = new ExpandoObject();
                             expdoObj.bpaNum = bpnum;
                             return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                         }
-                        //return Ok(bpnum);
                     }
                     else
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
                 }
-                //var bpnum = num + 1;
-                //if (bpnum != null)
-                //{
-                //    dynamic expdoObj = new ExpandoObject();
-                //    expdoObj.bpaNum = bpnum;
-                //    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                //}
+
                 else
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data.." });
             }

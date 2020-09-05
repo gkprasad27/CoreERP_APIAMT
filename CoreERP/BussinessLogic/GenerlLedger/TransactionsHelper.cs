@@ -56,8 +56,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                 case "301":
                     {
-                        using var repo = new Repository<TblCashBankMaster>();
-                        return repo.TblCashBankMaster.Any(v => v.VoucherNumber == voucherNo);
+                        using var repo = new Repository<TblJvmaster>();
+                        return repo.TblJvmaster.Any(v => v.VoucherNumber == voucherNo);
                     }
                 case "201":
                 case "202":
@@ -254,7 +254,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 x.Branch = jvMaster.Branch;
                 x.PostingDate = jvMaster.PostingDate;
                 x.LineItemNo = Convert.ToString(lineno++);
-                x.AccountingIndicator = jvMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
+                //x.AccountingIndicator = jvMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
             });
 
             using var context = new ERPContext();
