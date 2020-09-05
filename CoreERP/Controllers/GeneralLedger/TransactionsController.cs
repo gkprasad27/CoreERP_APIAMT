@@ -188,7 +188,7 @@ namespace CoreERP.Controllers.GeneralLedger
                 var transactions = new TransactionsHelper();
                 var jvMasters = transactions.GetJvMastersById(voucherNumber);
                 if (jvMasters == null)
-                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Foundfor journalvoucher."});
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.jvMasters = jvMasters;
                 expdoObj.JvDetail = new TransactionsHelper().GetJvDetails(voucherNumber);
@@ -218,6 +218,23 @@ namespace CoreERP.Controllers.GeneralLedger
                 expdoObj.jvMaster = jvMaster;
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("returnJournalvoucher/{voucherNumber}")]
+        public IActionResult ReturnJournalVoucher(string voucherNumber)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.RetuenJournalVoucher(voucherNumber))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"journal voucher - {voucherNumber} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error occure while returning journal voucher." });
             }
             catch (Exception ex)
             {
@@ -292,6 +309,22 @@ namespace CoreERP.Controllers.GeneralLedger
             }
         }
 
+        [HttpGet("ReturnInvoiceMemo/{voucherNumber}")]
+        public IActionResult ReturnInvoiceMemo(string voucherNumber)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnInvoiceMemo(voucherNumber))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Invoice memo no {voucherNumber} return successfully." });
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
         #endregion
     }
 }

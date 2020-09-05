@@ -310,7 +310,31 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblJvdetails>();
             return repo.TblJvdetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
         }
+        public bool RetuenJournalVoucher(string voucherNumber)
+        {
+            try
+            {
+                TblJvmaster jvmaster = null;
+                List<TblJvdetails> jvdetails = null;
 
+                using (ERPContext _repo=new ERPContext())
+                {
+                    jvmaster= _repo.TblJvmaster.Where(x => x.VoucherNumber == voucherNumber).FirstOrDefault();
+
+                    if (jvmaster.Ext == "Y")
+                        throw new Exception($"Journal voucher no {voucherNumber} already return.");
+
+                    jvmaster.Ext = "Y";
+                    _repo.TblJvmaster.Update(jvmaster);
+                    _repo.SaveChanges();
+                };
+                return true;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
 
         #region Invoices & Memos
@@ -396,7 +420,31 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw;
             }
         }
+        public bool ReturnInvoiceMemo(string voucherNumber)
+        {
+            try
+            {
+                TblInvoiceMemoHeader invoiceMemoHeader = null;
 
+                using (ERPContext _repo=new ERPContext())
+                {
+                    invoiceMemoHeader = _repo.TblInvoiceMemoHeader.Where(im => im.VoucherNumber == voucherNumber).FirstOrDefault();
+
+                    if (invoiceMemoHeader.Ext == "Y")
+                        throw new Exception($"Invoice memo no {voucherNumber} already return.");
+
+                        invoiceMemoHeader.Ext = "Y";
+                    _repo.TblInvoiceMemoHeader.Update(invoiceMemoHeader);
+                    _repo.SaveChanges();
+                }
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
     }
 }
