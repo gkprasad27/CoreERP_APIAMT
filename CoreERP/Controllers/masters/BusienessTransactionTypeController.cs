@@ -1,5 +1,4 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -87,7 +86,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeleteBusienessTransactionType/{code}")]
-        public IActionResult DeleteBusienessTransactionTypebyID(string code)
+        public IActionResult DeleteBusienessTransactionTypebyId(string code)
         {
             try
             {

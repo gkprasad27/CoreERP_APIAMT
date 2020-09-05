@@ -168,7 +168,7 @@ namespace CoreERP.Controllers.GeneralLedger
             {
                 var jvMasters = new TransactionsHelper().GetJvMasters(searchCriteria);
                 if (!jvMasters.Any())
-                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found for cash bank."});
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found for Journal."});
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.jvMasters = jvMasters;
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
@@ -318,7 +318,7 @@ namespace CoreERP.Controllers.GeneralLedger
                 if (transactions.ReturnInvoiceMemo(voucherNumber))
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Invoice memo no {voucherNumber} return successfully." });
 
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
             }
             catch (Exception ex)
             {

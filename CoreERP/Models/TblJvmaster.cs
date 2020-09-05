@@ -17,8 +17,13 @@ namespace CoreERP.Models
         public string ReferenceNo { get; set; }
         public string ReferenceDate { get; set; }
         public string Narration { get; set; }
+        public string Status { get; set; }
+        public string AccountingIndicator { get; set; }
+        public string AddWho { get; set; }
+        public DateTime? AddDate { get; set; }
+        public string EditWho { get; set; }
+        public DateTime? EditDate { get; set; }
         public string Ext { get; set; }
         public string Ext1 { get; set; }
-        public string AccountingIndicator { get; set; }
     }
 }

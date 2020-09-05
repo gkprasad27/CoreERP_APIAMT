@@ -13,10 +13,9 @@ namespace CoreERP.Models
         public DateTime? PostingDate { get; set; }
         public string LineItemNo { get; set; }
         public string Glaccount { get; set; }
-        public string Gldescription { get; set; }
+        public string Bttypes { get; set; }
         public decimal? Amount { get; set; }
         public string TaxCode { get; set; }
-        public string TaxCodeDescription { get; set; }
         public decimal? Sgstamount { get; set; }
         public decimal? Cgstamount { get; set; }
         public decimal? Igstamount { get; set; }
@@ -35,5 +34,11 @@ namespace CoreERP.Models
         public string Hsnsaccode { get; set; }
         public string Narration { get; set; }
         public string AccountingIndicator { get; set; }
+        public string AddWho { get; set; }
+        public DateTime? AddDate { get; set; }
+        public string EditWho { get; set; }
+        public DateTime? EditDate { get; set; }
+        public string Ext { get; set; }
+        public string Ext1 { get; set; }
     }
 }

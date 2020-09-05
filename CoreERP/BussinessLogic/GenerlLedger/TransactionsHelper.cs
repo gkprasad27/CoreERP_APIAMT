@@ -312,28 +312,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public bool RetuenJournalVoucher(string voucherNumber)
         {
-            try
+            using var repo=new ERPContext();
+            var jvmaster = repo.TblJvmaster.FirstOrDefault(x => x.VoucherNumber == voucherNumber);
+
+            if (jvmaster?.Ext == "Y")
+                throw new Exception($"Journal voucher no {voucherNumber} already return.");
+
+            if (jvmaster != null)
             {
-                TblJvmaster jvmaster = null;
-                List<TblJvdetails> jvdetails = null;
-
-                using (ERPContext _repo=new ERPContext())
-                {
-                    jvmaster= _repo.TblJvmaster.Where(x => x.VoucherNumber == voucherNumber).FirstOrDefault();
-
-                    if (jvmaster.Ext == "Y")
-                        throw new Exception($"Journal voucher no {voucherNumber} already return.");
-
-                    jvmaster.Ext = "Y";
-                    _repo.TblJvmaster.Update(jvmaster);
-                    _repo.SaveChanges();
-                };
-                return true;
+                jvmaster.Ext = "Y";
+                repo.TblJvmaster.Update(jvmaster);
             }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+
+            repo.SaveChanges();
+            return true;
         }
         #endregion
 
@@ -422,28 +414,21 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public bool ReturnInvoiceMemo(string voucherNumber)
         {
-            try
+            using var repo=new ERPContext();
+            var invoiceMemoHeader = repo.TblInvoiceMemoHeader.FirstOrDefault(im => im.VoucherNumber == voucherNumber);
+
+            if (invoiceMemoHeader != null && invoiceMemoHeader.Ext == "Y")
+                throw new Exception($"Invoice memo no {voucherNumber} already return.");
+
+            if (invoiceMemoHeader != null)
             {
-                TblInvoiceMemoHeader invoiceMemoHeader = null;
-
-                using (ERPContext _repo=new ERPContext())
-                {
-                    invoiceMemoHeader = _repo.TblInvoiceMemoHeader.Where(im => im.VoucherNumber == voucherNumber).FirstOrDefault();
-
-                    if (invoiceMemoHeader.Ext == "Y")
-                        throw new Exception($"Invoice memo no {voucherNumber} already return.");
-
-                        invoiceMemoHeader.Ext = "Y";
-                    _repo.TblInvoiceMemoHeader.Update(invoiceMemoHeader);
-                    _repo.SaveChanges();
-                }
-
-                return true;
+                invoiceMemoHeader.Ext = "Y";
+                repo.TblInvoiceMemoHeader.Update(invoiceMemoHeader);
             }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+
+            repo.SaveChanges();
+
+            return true;
         }
         #endregion
     }

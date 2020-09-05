@@ -2096,9 +2096,19 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccountingIndicator).HasMaxLength(50);
 
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
+
+                entity.Property(e => e.Bttypes)
+                    .HasColumnName("BTTypes")
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Cgstamount)
                     .HasColumnName("CGSTAmount")
@@ -2110,16 +2120,22 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.CostCenter).HasMaxLength(5);
 
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
+
+                entity.Property(e => e.Ext).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(50);
+
                 entity.Property(e => e.FunctionalDept).HasMaxLength(5);
 
                 entity.Property(e => e.FundCenter).HasMaxLength(50);
 
                 entity.Property(e => e.Glaccount)
                     .HasColumnName("GLAccount")
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.Gldescription)
-                    .HasColumnName("GLDescription")
                     .HasMaxLength(50);
 
                 entity.Property(e => e.Hsnsaccode)
@@ -2154,8 +2170,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.TaxCode).HasMaxLength(5);
 
-                entity.Property(e => e.TaxCodeDescription).HasMaxLength(50);
-
                 entity.Property(e => e.Ugstamount)
                     .HasColumnName("UGSTAmount")
                     .HasColumnType("numeric(18, 0)");
@@ -2179,9 +2193,21 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccountingIndicator).HasMaxLength(10);
 
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
                 entity.Property(e => e.Branch).HasMaxLength(5);
 
                 entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
 
@@ -2200,6 +2226,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.ReferenceNo).HasMaxLength(50);
 
                 entity.Property(e => e.Segment).HasMaxLength(5);
+
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.Property(e => e.TransactionType).HasMaxLength(5);
 
@@ -2960,9 +2988,19 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccountingIndicator).HasMaxLength(50);
 
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
+
+                entity.Property(e => e.Bttypes)
+                    .HasColumnName("BTTypes")
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Cgstamount)
                     .HasColumnName("CGSTAmount")
@@ -2974,16 +3012,20 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.CostCenter).HasMaxLength(5);
 
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
+
+                entity.Property(e => e.Ext).HasMaxLength(50);
+
                 entity.Property(e => e.FunctionalDept).HasMaxLength(50);
 
                 entity.Property(e => e.FundCenter).HasMaxLength(50);
 
                 entity.Property(e => e.Glaccount)
                     .HasColumnName("GLAccount")
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.GlaccountDescription)
-                    .HasColumnName("GLAccountDescription")
                     .HasMaxLength(50);
 
                 entity.Property(e => e.Hsnsac)
@@ -3016,9 +3058,9 @@ namespace CoreERP.Models
                     .HasColumnName("SGSTAmount")
                     .HasColumnType("numeric(18, 0)");
 
-                entity.Property(e => e.TaxCode).HasMaxLength(5);
+                entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.Property(e => e.TaxCodeDescription).HasMaxLength(50);
+                entity.Property(e => e.TaxCode).HasMaxLength(5);
 
                 entity.Property(e => e.Ugstamount)
                     .HasColumnName("UGSTAmount")
@@ -3041,6 +3083,12 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccountingIndicator).HasMaxLength(50);
 
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
                 entity.Property(e => e.Bpcategory)
                     .HasColumnName("BPCategory")
                     .HasMaxLength(5);
@@ -3049,7 +3097,15 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
+
                 entity.Property(e => e.Ext).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasMaxLength(50);
 
                 entity.Property(e => e.Grndate)
                     .HasColumnName("GRNDate")
@@ -3079,6 +3135,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.ReferenceNumber).HasMaxLength(50);
 
+                entity.Property(e => e.Status).HasMaxLength(50);
+
                 entity.Property(e => e.TaxAmount).HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.TotalAmount).HasColumnType("numeric(18, 0)");
@@ -3100,9 +3158,19 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccountingIndicator).HasMaxLength(50);
 
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
+
+                entity.Property(e => e.Bttypes)
+                    .HasColumnName("BTTypes")
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Cgstamount)
                     .HasColumnName("CGSTAmount")
@@ -3114,16 +3182,20 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.CostCenter).HasMaxLength(5);
 
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
+
+                entity.Property(e => e.Ext).HasMaxLength(50);
+
                 entity.Property(e => e.FunctionalDept).HasMaxLength(5);
 
                 entity.Property(e => e.FundCenter).HasMaxLength(50);
 
                 entity.Property(e => e.Glaccount)
                     .HasColumnName("GLAccount")
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.Gldescription)
-                    .HasColumnName("GLDescription")
                     .HasMaxLength(50);
 
                 entity.Property(e => e.Hsnsac)
@@ -3156,9 +3228,9 @@ namespace CoreERP.Models
                     .HasColumnName("SGSTAmount")
                     .HasColumnType("numeric(18, 0)");
 
-                entity.Property(e => e.TaxCode).HasMaxLength(5);
+                entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.Property(e => e.TaxDescription).HasMaxLength(50);
+                entity.Property(e => e.TaxCode).HasMaxLength(5);
 
                 entity.Property(e => e.Ugstamount)
                     .HasColumnName("UGSTAmount")
@@ -3182,9 +3254,21 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccountingIndicator).HasMaxLength(50);
 
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
                 entity.Property(e => e.Branch).HasMaxLength(5);
 
                 entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
 
@@ -3199,6 +3283,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.ReferenceDate).HasMaxLength(50);
 
                 entity.Property(e => e.ReferenceNo).HasMaxLength(50);
+
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.Property(e => e.TransactionType).HasMaxLength(20);
 

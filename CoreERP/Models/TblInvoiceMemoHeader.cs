@@ -28,6 +28,12 @@ namespace CoreERP.Models
         public decimal? TotalAmount { get; set; }
         public decimal? TaxAmount { get; set; }
         public string Narration { get; set; }
+        public string Status { get; set; }
         public string Ext { get; set; }
+        public string Ext1 { get; set; }
+        public string AddWho { get; set; }
+        public DateTime? AddDate { get; set; }
+        public string EditWho { get; set; }
+        public DateTime? EditDate { get; set; }
     }
 }
