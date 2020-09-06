@@ -1,11 +1,12 @@
-﻿using System;
-using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
-using CoreERP.BussinessLogic.masterHlepers;
 
 namespace CoreERP.Controllers
 {
@@ -49,53 +50,61 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("RegisterMainAssetMaster")]
-        public async Task<IActionResult> RegisterMainAssetMaster([FromBody]TblMainAssetMaster mam)
+        public IActionResult RegisterMainAssetMaster([FromBody] JObject obj)
         {
-            APIResponse apiResponse;
-            //var assetname = _assetClassRepository.Where(x => x.Code == mvm.code).FirstOrDefault();
-            if (mam == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(mam)} cannot be null" });
-            else
+            try
             {
-                try
-                {
-                    _mainAssetMasterRepository.Add(mam);
-                    TblAssetClass ac = new TblAssetClass();
-                    ac.LastNumberRange = int.Parse(mam.AssetNumber);
-                    ac.Code = mam.Assetclass;
-                    ac.Description = mam.Description;
-                    ac.NumberRange = mam.NumberRange;
-                    ac.LowValueAssetClass = mam.LowValueAssetClass;
-                    ac.AssetLowValue = mam.AssetLowValue;
-                    ac.ClassType = mam.ClassType;
-                    ac.Nature = mam.Nature;
-                    _assetClassRepository.Update(ac);
-                    _assetClassRepository.SaveChanges();
-                    if (_mainAssetMasterRepository.SaveChanges() > 0)
-                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = mam };
-                    else
-                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                    return Ok(apiResponse);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-                }
+                TblMainAssetMaster mainassetkMaster = obj["mainasstHdr"].ToObject<TblMainAssetMaster>();
+                List<TblMainAssetMasterTransaction> mainassetDetail = obj["mainassetDetail"].ToObject<List<TblMainAssetMasterTransaction>>();
 
+                if (new CommonHelper().MainAssetsdatas(mainassetkMaster, mainassetDetail))
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.CashBankMaster = mainassetkMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
+        [HttpGet("GetMainAssetsDetail/{assetNumber}")]
+        public IActionResult GetMainAssetsDetail(string assetNumber)
+        {
+            try
+            {
+                var common = new CommonHelper();
+                var mainMasters = common.GetmainassetMastersById(assetNumber);
+                if (mainMasters == null)
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.MainassetMasters = mainMasters;
+                expdoObj.MainassetDetail = new CommonHelper().GetMainAssetMasterTransactionDetails(assetNumber); 
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
         [HttpPut("UpdateMainAssetMaster")]
         public async Task<IActionResult> UpdateMainAssetMaster([FromBody] TblMainAssetMaster mam)
         {
-            APIResponse apiResponse = null;
             if (mam == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
 
             try
             {
                 _mainAssetMasterRepository.Update(mam);
+                APIResponse apiResponse;
                 if (_mainAssetMasterRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = mam };
                 else
@@ -112,7 +121,6 @@ namespace CoreERP.Controllers
         [HttpDelete("DeleteMainAssetMaster/{code}")]
         public async Task<IActionResult> DeleteMainAssetMaster(string code)
         {
-            APIResponse apiResponse = null;
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
 
@@ -120,6 +128,7 @@ namespace CoreERP.Controllers
             {
                 var record = _mainAssetMasterRepository.GetSingleOrDefault(x => x.AssetNumber.Equals(code));
                 _mainAssetMasterRepository.Remove(record);
+                APIResponse apiResponse;
                 if (_mainAssetMasterRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
@@ -134,15 +143,15 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetAssetNumber/{code}/{code1}")]
-        public IActionResult GetGLUnderSubGroupList(string code, int code1)
+        public IActionResult GetGlUnderSubGroupList(string code, int code1)
         {
               try
                 {
-                    var Getassetlist = _assetClassRepository.Where(x => x.Code == code).FirstOrDefault();
-                    var Getassetnumrangelist = _assetNumberRangeRepository.Where(x => x.Code == Getassetlist.NumberRange).FirstOrDefault();
-                if (Enumerable.Range(Convert.ToInt32(Getassetnumrangelist.FromRange),Convert.ToInt32(Getassetnumrangelist.ToRange)).Contains(code1))
+                    var getassetlist = _assetClassRepository.Where(x => x.Code == code).FirstOrDefault();
+                    var getassetnumrangelist = _assetNumberRangeRepository.Where(x => x.Code == getassetlist.NumberRange).FirstOrDefault();
+                if (Enumerable.Range(Convert.ToInt32(getassetnumrangelist.FromRange),Convert.ToInt32(getassetnumrangelist.ToRange)).Contains(code1))
                 {
-                    if (code1 >= Convert.ToInt32(Getassetnumrangelist.FromRange) && code1 <= Convert.ToInt32(Getassetnumrangelist.ToRange))
+                    if (code1 >= Convert.ToInt32(getassetnumrangelist.FromRange) && code1 <= Convert.ToInt32(getassetnumrangelist.ToRange))
                     {
                         return Ok();
                     }
@@ -164,11 +173,11 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var Getassetlist = _assetClassRepository.Where(x => x.Code == code).FirstOrDefault();
+                var getassetlist = _assetClassRepository.Where(x => x.Code == code).FirstOrDefault();
                 //var Getassetnumrangelist = _assetNumberRangeRepository.Where(x => x.Code == Getassetlist.NumberRange).FirstOrDefault();
                 int num = Convert.ToInt32(_assetClassRepository.Where(x => x.Code == code).SingleOrDefault()?.LastNumberRange);
-                var Getaccnolist = _assetNumberRangeRepository.Where(x => x.Code == Getassetlist.NumberRange).FirstOrDefault();
-                var numrnglist = _assetNumberRangeRepository.Where(x => x.Code == Getaccnolist.Code.ToString()).FirstOrDefault();
+                var getaccnolist = _assetNumberRangeRepository.Where(x => x.Code == getassetlist.NumberRange).FirstOrDefault();
+                var numrnglist = _assetNumberRangeRepository.Where(x => x.Code == getaccnolist.Code).FirstOrDefault();
                 if (Enumerable.Range(Convert.ToInt32(numrnglist.FromRange), Convert.ToInt32(numrnglist.ToRange)).Contains(num))
                 {
                     if (num >= Convert.ToInt32(numrnglist.FromRange) && num <= Convert.ToInt32(numrnglist.ToRange))

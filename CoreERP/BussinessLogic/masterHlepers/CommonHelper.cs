@@ -880,5 +880,112 @@ namespace CoreERP
 
             return repo.TblAssignmentVoucherSeriestoVoucherType.FirstOrDefault(t => t.VoucherType == voucherTypeId);
         }
+
+        //Main Asset
+        public bool MainAssetsdatas(TblMainAssetMaster mainassetMaster, List<TblMainAssetMasterTransaction> mainassetDetails)
+        {
+            mainassetDetails.ForEach(x =>
+            {
+                x.AssetNumber = mainassetMaster.AssetNumber;
+
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                var data = context.TblMainAssetMasterTransaction.FirstOrDefault(obj => obj.AssetNumber == mainassetMaster.AssetNumber)?.Id;
+                if (data > 0)
+                {
+                    context.TblMainAssetMaster.Update(mainassetMaster);
+                    context.SaveChanges();
+
+                    context.TblMainAssetMasterTransaction.UpdateRange(mainassetDetails);
+                    context.SaveChanges();
+                    dbtrans.Commit();
+                    return true;
+                }
+
+                context.TblMainAssetMaster.Add(mainassetMaster);
+                context.SaveChanges();
+
+                context.TblMainAssetMasterTransaction.AddRange(mainassetDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public TblMainAssetMaster GetmainassetMastersById(string assetNumber)
+        {
+            using var repo = new Repository<TblMainAssetMaster>();
+            return repo.TblMainAssetMaster.FirstOrDefault(x => x.AssetNumber == assetNumber);
+        }
+
+        public List<TblMainAssetMasterTransaction> GetMainAssetMasterTransactionDetails(string assetNumber)
+        {
+            using var repo = new Repository<TblMainAssetMasterTransaction>();
+            return repo.TblMainAssetMasterTransaction.Where(cd => cd.AssetNumber == assetNumber).ToList();
+        }
+        //subassets
+        public bool SubAssetsdatas(TblSubAssetMaster assetMaster, List<TblSubAssetMasterTransaction> assetDetails)
+        {
+            assetDetails.ForEach(x =>
+            {
+                x.SubAssetNumber = assetMaster.MainAssetNo + assetMaster.SubAssetNumber;
+                x.MainAssetNumber = assetMaster.MainAssetNo;
+
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                var data = context.TblSubAssetMasterTransaction.FirstOrDefault(obj => obj.SubAssetNumber == assetMaster.SubAssetNumber)?.Id;
+                if (data > 0)
+                {
+                    context.TblSubAssetMaster.Update(assetMaster);
+                    context.SaveChanges();
+
+                    context.TblSubAssetMasterTransaction.UpdateRange(assetDetails);
+                    context.SaveChanges();
+                    dbtrans.Commit();
+                    return true;
+                }
+
+                assetMaster.SubAssetNumber = assetMaster.MainAssetNo + assetMaster.SubAssetNumber;
+                context.TblSubAssetMaster.Add(assetMaster);
+                context.SaveChanges();
+
+                context.TblSubAssetMasterTransaction.AddRange(assetDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public TblSubAssetMaster GetsubassetMastersById(string assetNumber)
+        {
+            using var repo = new Repository<TblSubAssetMaster>();
+            return repo.TblSubAssetMaster.FirstOrDefault(x => x.SubAssetNumber == assetNumber);
+        }
+
+        public List<TblSubAssetMasterTransaction> GetSubAssetMasterTransactionDetails(string assetNumber)
+        {
+            using var repo = new Repository<TblSubAssetMasterTransaction>();
+            return repo.TblSubAssetMasterTransaction.Where(cd => cd.SubAssetNumber == assetNumber).ToList();
+        }
     }
 }
