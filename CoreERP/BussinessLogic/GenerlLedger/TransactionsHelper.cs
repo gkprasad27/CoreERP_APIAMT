@@ -107,7 +107,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 x.Company = cashBankMaster.Company;
                 x.Branch = cashBankMaster.Branch;
                 x.PostingDate = cashBankMaster.PostingDate;
-                x.Status = "N";
                 x.LineItemNo = Convert.ToString(lineno++);
                 x.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
             });
@@ -254,7 +253,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 x.Branch = jvMaster.Branch;
                 x.PostingDate = jvMaster.PostingDate;
                 x.LineItemNo = Convert.ToString(lineno++);
-                //x.AccountingIndicator = jvMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
             });
 
             using var context = new ERPContext();
@@ -378,7 +376,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw new Exception("Voucher number exists.");
 
             imMaster.VoucherDate ??= DateTime.Now;
-            //imMaster.TransactionType = "JV";
+            if (imMaster.NatureofTransaction.ToUpper().Contains("INCOMING"))
+                imMaster.AccountingIndicator = CRDRINDICATORS.Debit.ToString();
+            else if (imMaster.NatureofTransaction.ToUpper().Contains("OUTGOING"))
+                imMaster.AccountingIndicator = CRDRINDICATORS.Credit.ToString();
 
             int lineno = 1;
 
@@ -390,7 +391,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 x.Branch = imMaster.Branch;
                 x.PostingDate = imMaster.PostingDate;
                 x.LineItemNo = Convert.ToString(lineno++);
-                //x.AccountingIndicator = imMaster.AccountingIndicator == CRDRINDICATORS.DEBIT.ToString() ? CRDRINDICATORS.CREDIT.ToString() : CRDRINDICATORS.DEBIT.ToString();
             });
 
             using var context = new ERPContext();

@@ -188,7 +188,7 @@ namespace CoreERP.Controllers.GeneralLedger
                 var transactions = new TransactionsHelper();
                 var jvMasters = transactions.GetJvMastersById(voucherNumber);
                 if (jvMasters == null)
-                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Foundfor journalvoucher."});
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found for journal Voucher."});
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.jvMasters = jvMasters;
                 expdoObj.JvDetail = new TransactionsHelper().GetJvDetails(voucherNumber);
@@ -252,7 +252,7 @@ namespace CoreERP.Controllers.GeneralLedger
             {
                 var imMasters = new TransactionsHelper().GetImMasters(searchCriteria);
                 if (!imMasters.Any())
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for cash bank." });
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Invoice / Memo." });
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.imMasters = imMasters;
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
