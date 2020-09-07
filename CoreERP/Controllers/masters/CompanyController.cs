@@ -26,14 +26,14 @@ namespace CoreERP.Controllers
             try
             {
                 var companiesList = CommonHelper.GetCompanies();
-                if (companiesList.Count() > 0)
+                if (companiesList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.companiesList = companiesList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -47,26 +47,21 @@ namespace CoreERP.Controllers
 
             if (company == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(company)} cannot be null" });
-            else
+
+            try
             {
-                //if (CompaniesHelper.GetCompanies(company.CompanyCode)!=null)
-                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Code =" + company.CompanyCode + " is already Exists,Please Use Another Code" });
+                APIResponse apiResponse;
+                _companyRepository.Add(company);
+                if (_companyRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = company };
+                else
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
-                try
-                {
-                    APIResponse apiResponse;
-                    _companyRepository.Add(company);
-                    if (_companyRepository.SaveChanges() > 0)
-                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = company };
-                    else
-                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-
-                    return Ok(apiResponse);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-                }
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 

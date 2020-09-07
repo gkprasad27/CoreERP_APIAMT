@@ -57,8 +57,8 @@ namespace CoreERP.Controllers
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                TblMainAssetMaster mainassetkMaster = obj["mainasstHdr"].ToObject<TblMainAssetMaster>();
-                List<TblMainAssetMasterTransaction> mainassetDetail = obj["mainassetDetail"].ToObject<List<TblMainAssetMasterTransaction>>();
+                var mainassetkMaster = obj["mainasstHdr"].ToObject<TblMainAssetMaster>();
+                var mainassetDetail = obj["mainassetDetail"].ToObject<List<TblMainAssetMasterTransaction>>();
 
                 if (new CommonHelper().MainAssetsdatas(mainassetkMaster, mainassetDetail))
                 {
@@ -66,8 +66,8 @@ namespace CoreERP.Controllers
                     expdoObj.CashBankMaster = mainassetkMaster;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -83,10 +83,10 @@ namespace CoreERP.Controllers
                 var common = new CommonHelper();
                 var mainMasters = common.GetmainassetMastersById(assetNumber);
                 if (mainMasters == null)
-                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.MainassetMasters = mainMasters;
-                expdoObj.MainassetDetail = new CommonHelper().GetMainAssetMasterTransactionDetails(assetNumber); 
+                expdoObj.MainassetDetail = new CommonHelper().GetMainAssetMasterTransactionDetails(assetNumber);
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
             }
@@ -145,18 +145,18 @@ namespace CoreERP.Controllers
         [HttpGet("GetAssetNumber/{code}/{code1}")]
         public IActionResult GetGlUnderSubGroupList(string code, int code1)
         {
-              try
-                {
-                    var getassetlist = _assetClassRepository.Where(x => x.Code == code).FirstOrDefault();
-                    var getassetnumrangelist = _assetNumberRangeRepository.Where(x => x.Code == getassetlist.NumberRange).FirstOrDefault();
-                if (Enumerable.Range(Convert.ToInt32(getassetnumrangelist.FromRange),Convert.ToInt32(getassetnumrangelist.ToRange)).Contains(code1))
+            try
+            {
+                var getassetlist = _assetClassRepository.Where(x => x.Code == code).FirstOrDefault();
+                var getassetnumrangelist = _assetNumberRangeRepository.Where(x => x.Code == getassetlist.NumberRange).FirstOrDefault();
+                if (Enumerable.Range(Convert.ToInt32(getassetnumrangelist.FromRange), Convert.ToInt32(getassetnumrangelist.ToRange)).Contains(code1))
                 {
                     if (code1 >= Convert.ToInt32(getassetnumrangelist.FromRange) && code1 <= Convert.ToInt32(getassetnumrangelist.ToRange))
                     {
                         return Ok();
                     }
-                    else
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
                 }
 
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });

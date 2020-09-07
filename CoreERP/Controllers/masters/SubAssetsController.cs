@@ -33,14 +33,14 @@ namespace CoreERP.Controllers
                 try
                 {
                     var saList = CommonHelper.GetSubAssetMaster();
-                    if (saList.Count() > 0)
+                    if (saList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
                         expdoObj.saList = saList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
-                    else
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for SubAssets." });
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for SubAssets." });
                 }
                 catch (Exception ex)
                 {
@@ -58,8 +58,8 @@ namespace CoreERP.Controllers
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                TblSubAssetMaster cashBankMaster = obj["subasstHdr"].ToObject<TblSubAssetMaster>();
-                List<TblSubAssetMasterTransaction> cashBankDetail = obj["subassetDetail"].ToObject<List<TblSubAssetMasterTransaction>>();
+                var cashBankMaster = obj["subasstHdr"].ToObject<TblSubAssetMaster>();
+                var cashBankDetail = obj["subassetDetail"].ToObject<List<TblSubAssetMasterTransaction>>();
 
                 if (new CommonHelper().SubAssetsdatas(cashBankMaster, cashBankDetail))
                 {
@@ -67,8 +67,8 @@ namespace CoreERP.Controllers
                     expdoObj.CashBankMaster = cashBankMaster;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -152,49 +152,22 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var maList = _mainAssetMasterRepository.GetAll().Where(x => x.AssetNumber == code).FirstOrDefault();
+                    var maList = _mainAssetMasterRepository.GetAll().FirstOrDefault(x => x.AssetNumber == code);
                     if (maList!=null)
                     {
                         dynamic expdoObj = new ExpandoObject();
                         expdoObj.maList = maList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = maList });
                     }
-                    else
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for SubAssets." });
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for SubAssets." });
                 }
                 catch (Exception ex)
                 {
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }
             });
-        //[HttpPost("RegisterSubAssetsdatas")]
-        //public async Task<IActionResult> RegisterSubAssetsdatas([FromBody]JObject objData)
-        //{
-        //    APIResponse apiResponse = null;
-        //    if (objData == null)
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-        //    try
-        //    {
-        //        var _subasstHdrr = objData["subasstHdr"].ToObject<TblSubAssetMaster>();
-        //        var _subassetDetail = objData["subassetDetail"].ToObject<TblSubAssetMasterTransaction[]>();
-        //        foreach(var item in _subassetDetail)
-        //        {
-        //            _subAssetMasterTransactionRepository.Add(item);
-        //            _subAssetMasterRepository.SaveChanges();
-        //        }
-        //        _subAssetMasterRepository.Add(_subasstHdrr);
-        //        if (_subAssetMasterRepository.SaveChanges() > 0)
-        //            apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = _subasstHdrr };
-        //        else
-        //            apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-
-        //        return Ok(apiResponse);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //    }
-        //}
+       
             return result;
         }
 

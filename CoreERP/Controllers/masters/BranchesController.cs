@@ -1,5 +1,4 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
-using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -27,14 +26,14 @@ namespace CoreERP.Controllers
                 try
                 {
                     var branchesList = CommonHelper.GetBranches();
-                    if (branchesList.Count() > 0)
+                    if (branchesList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
                         expdoObj.branchesList = branchesList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
-                    else
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
                 }
                 catch (Exception ex)
                 {
@@ -50,38 +49,32 @@ namespace CoreERP.Controllers
             APIResponse apiResponse ;
             if (branch == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(branch)} cannot be null" });
-            else
+            try
             {
-                //if (BrancheHelper.SearchBranch(branch.BranchCode).Count() > 0)
-                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"Branch Code {nameof(branch.BranchCode)} is already Present ,Please Use Different Code" });
-                try
-                {
-                    _branchRepository.Add(branch);
-                    if (_branchRepository.SaveChanges() > 0)
-                        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = branch };
-                    else
-                        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                _branchRepository.Add(branch);
+                if (_branchRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = branch };
+                else
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
-                    return Ok(apiResponse);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-                }
-
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpPut("UpdateBranch")]
         public  IActionResult UpdateBranch([FromBody] TblBranch branch)
         {
-            APIResponse apiResponse = null;
             if (branch == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
 
             try
             {
                 _branchRepository.Update(branch);
+                APIResponse apiResponse = null;
                 if (_branchRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = branch };
                 else
@@ -98,7 +91,6 @@ namespace CoreERP.Controllers
         [HttpDelete("DeleteBranches/{code}")]
         public  IActionResult DeleteBranch(string code)
         {
-            APIResponse apiResponse = null;
             if (code == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
 
@@ -106,6 +98,7 @@ namespace CoreERP.Controllers
             {
                 var record = _branchRepository.GetSingleOrDefault(x => x.BranchCode.Equals(code));
                 _branchRepository.Remove(record);
+                APIResponse apiResponse = null;
                 if (_branchRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else

@@ -61,6 +61,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                 case "201":
                 case "202":
+                case "203":
+                case "204":
                     {
                         using var repo = new Repository<TblInvoiceMemoHeader>();
                         return repo.TblInvoiceMemoHeader.Any(v => v.VoucherNumber == voucherNo);

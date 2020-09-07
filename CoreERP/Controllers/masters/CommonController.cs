@@ -156,14 +156,14 @@ namespace CoreERP.Controllers
             try
             {
                 var companiesList = _companyRepository.GetAll().Select(x => new { ID = x.CompanyCode, TEXT = x.CompanyName });
-                if (companiesList.Count() > 0)
+                if (companiesList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.companiesList = companiesList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -177,14 +177,14 @@ namespace CoreERP.Controllers
             try
             {
                 var empList = _employeeRepository.GetAll().Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
-                if (empList.Count() > 0)
+                if (empList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.emplist = empList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -198,14 +198,14 @@ namespace CoreERP.Controllers
             try
             {
                 var locationList = _locationRepository.GetAll().Select(x => new { ID = x.LocationId, TEXT = x.Description });
-                if (locationList.Count() > 0)
+                if (locationList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.locationList = locationList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -219,14 +219,14 @@ namespace CoreERP.Controllers
             try
             {
                 var plantList = _plantRepository.GetAll().Select(x => new { ID = x.PlantCode, TEXT = x.Plantname });
-                if (plantList.Count() > 0)
+                if (plantList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.plantsList = plantList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -240,14 +240,14 @@ namespace CoreERP.Controllers
             try
             {
                 var branchList = _branchRepository.GetAll().Select(x => new { ID = x.BranchCode, TEXT = x.BranchName });
-                if (branchList.Count() > 0)
+                if (branchList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.branchsList = branchList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -260,15 +260,16 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var vouchertypeList = _vtRepository.GetAll().Select(x => new { ID = x.VoucherTypeId, TEXT = x.VoucherTypeName, VoucherClassName = x.VoucherClass });
-                if (vouchertypeList.Count() > 0)
+                //var vouchertypeList = _vtRepository.GetAll().Select(x => new { ID = x.VoucherTypeId, TEXT = x.VoucherTypeName, VoucherClassName = x.VoucherClass,accountType=x.AccountType });
+                var vouchertypeList = CommonHelper.GetVoucherType();
+                if (vouchertypeList.Any())
                 {
                     dynamic expando = new ExpandoObject();
                     expando.vouchertypeList = vouchertypeList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
-                else
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -282,14 +283,14 @@ namespace CoreERP.Controllers
             try
             {
                 var vcseriesList = _vsRepository.GetAll().Select(x => new { ID = x.VoucherSeriesKey });
-                if (vcseriesList.Count() > 0)
+                if (vcseriesList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.vseriesList = vcseriesList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -303,14 +304,14 @@ namespace CoreERP.Controllers
             try
             {
                 var taxtransactionList = _ttRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
-                if (taxtransactionList.Count() > 0)
+                if (taxtransactionList.Any())
                 {
                     dynamic expando = new ExpandoObject();
                     expando.TaxtransactionList = taxtransactionList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
-                else
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -481,14 +482,14 @@ namespace CoreERP.Controllers
             try
             {
                 var assetblockList = _assetBlockRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
-                if (assetblockList.Count() > 0)
+                if (assetblockList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.assetblockList = assetblockList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -502,14 +503,14 @@ namespace CoreERP.Controllers
             try
             {
                 var assetList = _assetClassRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
-                if (assetList.Count() > 0)
+                if (assetList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.assetList = assetList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -525,14 +526,14 @@ namespace CoreERP.Controllers
                 try
                 {
                     var acckeyList = _assetAccountkeyRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
-                    if (acckeyList.Count() > 0)
+                    if (acckeyList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
                         expdoObj.acckeyList = acckeyList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
-                    else
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
                 }
                 catch (Exception ex)
                 {
@@ -550,14 +551,14 @@ namespace CoreERP.Controllers
                 try
                 {
                     var bankList = _bankMasterRepository.GetAll().Select(x => new { ID = x.BankCode, TEXT = x.BankName });
-                    if (bankList.Count() > 0)
+                    if (bankList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
                         expdoObj.bankList = bankList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
-                    else
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
                 }
                 catch (Exception ex)
                 {
@@ -573,14 +574,14 @@ namespace CoreERP.Controllers
             try
             {
                 var ptermsList = _paymentTermsRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
-                if (ptermsList.Count() > 0)
+                if (ptermsList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.ptermsList = ptermsList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {

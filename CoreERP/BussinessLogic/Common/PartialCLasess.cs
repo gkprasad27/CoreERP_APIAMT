@@ -174,6 +174,8 @@ namespace CoreERP.Models
     {
         [NotMapped]
         public string VoucherClassName { get; set; }
+        [NotMapped]
+        public string VoucherNature { get; set; }
     }
 
     partial class TblVoucherSeries

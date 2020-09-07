@@ -416,6 +416,7 @@ namespace CoreERP
             result.ForEach(c =>
             {
                 c.VoucherClassName = voucherclasses.FirstOrDefault(l => l.VoucherKey == c.VoucherClass)?.Description;
+                c.VoucherNature = voucherclasses.FirstOrDefault(l => l.VoucherKey == c.VoucherClass)?.VoucherNature;
             });
             return result;
         }
@@ -897,6 +898,7 @@ namespace CoreERP
                 var data = context.TblMainAssetMasterTransaction.FirstOrDefault(obj => obj.AssetNumber == mainassetMaster.AssetNumber)?.Id;
                 if (data > 0)
                 {
+
                     context.TblMainAssetMaster.Update(mainassetMaster);
                     context.SaveChanges();
 
@@ -905,6 +907,15 @@ namespace CoreERP
                     dbtrans.Commit();
                     return true;
                 }
+
+                TblAssetClass assetclass;
+                using (var repo = new Repository<TblAssetClass>())
+                {
+                    assetclass = repo.TblAssetClass.FirstOrDefault(c => c.Code == mainassetMaster.Assetclass);
+                }
+                assetclass.LastNumberRange = Convert.ToInt32(mainassetMaster.AssetNumber);
+                context.TblAssetClass.Update(assetclass);
+                context.SaveChanges();
 
                 context.TblMainAssetMaster.Add(mainassetMaster);
                 context.SaveChanges();
@@ -992,14 +1003,10 @@ namespace CoreERP
         {
             try
             {
-                using(Repository<TblFieldsConfiguration> _repo=new Repository<TblFieldsConfiguration>())
-                {
-                    return _repo.TblFieldsConfiguration
-                                .Where(fc => fc.Screenname == screenName  && fc.ScreenModule == screenmodel)
-                                .FirstOrDefault().Configuration;
-                }
+                using var repo=new Repository<TblFieldsConfiguration>();
+                return repo.TblFieldsConfiguration.FirstOrDefault(fc => fc.Screenname == screenName  && fc.ScreenModule == screenmodel).Configuration;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return null;
             }
