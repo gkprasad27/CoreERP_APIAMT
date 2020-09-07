@@ -41,9 +41,9 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblBusinessPartnerAccount> _bpRepository;
 
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
-                                IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository,IRepository<TblLocation> locationRepository,
-                                IRepository<TblPlant> plantRepository,IRepository<TblBranch>branchRepository,IRepository<TblVoucherType>vtRepository, IRepository<TblVoucherSeries>vsRepository,
-                                IRepository<TblTaxtransactions>ttRepository, IRepository<TblTaxRates>trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
+                                IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
+                                IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
+                                IRepository<TblTaxtransactions> ttRepository, IRepository<TblTaxRates> trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
                                 IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
                                 IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository, IRepository<CostCenters> ccRepository,
                                 IRepository<TblBusinessPartnerAccount> bpRepository)
@@ -176,7 +176,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var empList = _employeeRepository.GetAll().Select(x=> new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
+                var empList = _employeeRepository.GetAll().Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
                 if (empList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -260,7 +260,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var vouchertypeList = _vtRepository.GetAll().Select(x => new { ID = x.VoucherTypeId, TEXT = x.VoucherTypeName,VoucherClassName=x.VoucherClass });
+                var vouchertypeList = _vtRepository.GetAll().Select(x => new { ID = x.VoucherTypeId, TEXT = x.VoucherTypeName, VoucherClassName = x.VoucherClass });
                 if (vouchertypeList.Count() > 0)
                 {
                     dynamic expando = new ExpandoObject();
@@ -281,7 +281,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var vcseriesList = _vsRepository.GetAll().Select(x=>new { ID =x.VoucherSeriesKey});
+                var vcseriesList = _vsRepository.GetAll().Select(x => new { ID = x.VoucherSeriesKey });
                 if (vcseriesList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -302,7 +302,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var taxtransactionList = _ttRepository.GetAll().Select(x=> new {ID=x.Code,TEXT=x.Description });
+                var taxtransactionList = _ttRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
                 if (taxtransactionList.Count() > 0)
                 {
                     dynamic expando = new ExpandoObject();
@@ -390,7 +390,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var glList = _glaccountRepository.Where(x=>x.TaxCategory== code).Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName,TAXCategory =x.TaxCategory, x.AccGroup});
+                    var glList = _glaccountRepository.Where(x => x.TaxCategory == code).Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName, TAXCategory = x.TaxCategory, x.AccGroup });
                     if (glList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -415,7 +415,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var glList = _glaccountRepository.GetAll().Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName, controlaccount = x.ControlAccount,category=x.TaxCategory, accGroup = x.AccGroup });
+                    var glList = _glaccountRepository.GetAll().Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName, controlaccount = x.ControlAccount, category = x.TaxCategory, accGroup = x.AccGroup });
                     if (glList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -459,7 +459,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var bpgList = _bpgroupRepository.GetAll().Select(x => new { ID = x.Bpgroup, TEXT = x.Description,BPTYPE = x.Bptype});
+                var bpgList = _bpgroupRepository.GetAll().Select(x => new { ID = x.Bpgroup, TEXT = x.Description, BPTYPE = x.Bptype });
                 if (bpgList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -480,7 +480,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var assetblockList = _assetBlockRepository.GetAll().Select(x=>new { ID=x.Code,TEXT=x.Description});
+                var assetblockList = _assetBlockRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
                 if (assetblockList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -501,7 +501,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var assetList = _assetClassRepository.GetAll().Select(x=>new { ID=x.Code,TEXT=x.Description});
+                var assetList = _assetClassRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
                 if (assetList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -524,7 +524,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var acckeyList = _assetAccountkeyRepository.GetAll().Select(x=>new { ID=x.Code,TEXT=x.Description});
+                    var acckeyList = _assetAccountkeyRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
                     if (acckeyList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -549,7 +549,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var bankList = _bankMasterRepository.GetAll().Select(x=>new { ID=x.BankCode,TEXT=x.BankName});
+                    var bankList = _bankMasterRepository.GetAll().Select(x => new { ID = x.BankCode, TEXT = x.BankName });
                     if (bankList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -572,7 +572,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var ptermsList = _paymentTermsRepository.GetAll().Select(x=>new { ID=x.Code,TEXT=x.Description});
+                var ptermsList = _paymentTermsRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
                 if (ptermsList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -593,7 +593,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var profitCenterList =  _profitCentersRepository.GetAll().Select(x=>new { ID=x.Code,TEXT=x.Description});
+                var profitCenterList = _profitCentersRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
                 if (profitCenterList.Any())
                 {
                     dynamic expando = new ExpandoObject();
@@ -614,7 +614,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var costcenterList = _ccRepository.GetAll().Select(x=>new { ID=x.Code,TEXT=x.Name});
+                var costcenterList = _ccRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Name });
                 if (costcenterList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -635,7 +635,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var bpList = _bpRepository.GetAll().Select(x => new { ID = x.Bpnumber, TEXT = x.Name ,BPTYPE=x.Bptype});
+                var bpList = _bpRepository.GetAll().Select(x => new { ID = x.Bpnumber, TEXT = x.Name, BPTYPE = x.Bptype });
                 if (bpList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -651,5 +651,20 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetFieldsConfig/{screenmodel}/{screenName}")]
+        public IActionResult GetFieldsConfig(string screenmodel, string screenName)
+        {
+            try
+            {
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.FieldsConfiguration = CommonHelper.GetScreenConfig(screenmodel,screenName);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+      
     }
 }

@@ -987,5 +987,22 @@ namespace CoreERP
             using var repo = new Repository<TblSubAssetMasterTransaction>();
             return repo.TblSubAssetMasterTransaction.Where(cd => cd.SubAssetNumber == assetNumber).ToList();
         }
+
+        public static  string GetScreenConfig(string screenmodel,string screenName)
+        {
+            try
+            {
+                using(Repository<TblFieldsConfiguration> _repo=new Repository<TblFieldsConfiguration>())
+                {
+                    return _repo.TblFieldsConfiguration
+                                .Where(fc => fc.Screenname == screenName  && fc.ScreenModule == screenmodel)
+                                .FirstOrDefault().Configuration;
+                }
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

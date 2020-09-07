@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CoreERP.Models
 {
@@ -86,6 +85,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblDynamicPages> TblDynamicPages { get; set; }
         public virtual DbSet<TblEmployee> TblEmployee { get; set; }
         public virtual DbSet<TblEmployeeMaster> TblEmployeeMaster { get; set; }
+        public virtual DbSet<TblFieldsConfiguration> TblFieldsConfiguration { get; set; }
         public virtual DbSet<TblFormMenuCollection> TblFormMenuCollection { get; set; }
         public virtual DbSet<TblFunctionalDepartment> TblFunctionalDepartment { get; set; }
         public virtual DbSet<TblGlsubAccount> TblGlsubAccount { get; set; }
@@ -2849,6 +2849,20 @@ namespace CoreERP.Models
                 entity.Property(e => e.SpecialPay)
                     .HasColumnName("specialPay")
                     .HasColumnType("numeric(18, 2)");
+            });
+
+            modelBuilder.Entity<TblFieldsConfiguration>(entity =>
+            {
+                entity.ToTable("TBL_FieldsConfiguration");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ScreenModule).HasMaxLength(50);
+
+                entity.Property(e => e.Screenname)
+                    .IsRequired()
+                    .HasColumnName("screenname")
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblFormMenuCollection>(entity =>
