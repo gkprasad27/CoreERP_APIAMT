@@ -85,28 +85,28 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpDelete("DeleteAssetBegningAccumulatedDepreciation/{code}")]
-        public IActionResult DeleteAssetBegningAccumulatedDepreciationbyID(string code)
-        {
-            try
-            {
-                if (code == null)
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
+        //[HttpDelete("DeleteAssetBegningAccumulatedDepreciation/{code}")]
+        //public IActionResult DeleteAssetBegningAccumulatedDepreciationbyID(string code)
+        //{
+        //    try
+        //    {
+        //        if (code == null)
+        //            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
-                APIResponse apiResponse;
-                var record = _assetBegningAccumulatedDepreciationRepository.GetSingleOrDefault(x => x.MainAssetNo.Equals(code));
-                _assetBegningAccumulatedDepreciationRepository.Remove(record);
-                if (_assetBegningAccumulatedDepreciationRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
-                else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+        //        APIResponse apiResponse;
+        //        var record = _assetBegningAccumulatedDepreciationRepository.GetSingleOrDefault(x => x.MainAssetNo.Equals(code));
+        //        _assetBegningAccumulatedDepreciationRepository.Remove(record);
+        //        if (_assetBegningAccumulatedDepreciationRepository.SaveChanges() > 0)
+        //            apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
+        //        else
+        //            apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //        return Ok(apiResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CoreERP.Models
 {
@@ -1522,6 +1523,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AcquisitionDate).HasColumnType("date");
 
+                entity.Property(e => e.Code).HasMaxLength(50);
+
                 entity.Property(e => e.MainAssetDescription).HasMaxLength(50);
 
                 entity.Property(e => e.MainAssetNo).HasMaxLength(50);
@@ -1539,11 +1542,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccumulatedDepreciation).HasMaxLength(50);
 
+                entity.Property(e => e.AqyusutuibCode).HasMaxLength(50);
+
                 entity.Property(e => e.DepreciationArea).HasMaxLength(50);
-
-                entity.Property(e => e.MainAssetNo).HasMaxLength(50);
-
-                entity.Property(e => e.SubAssetNo).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblAssetBlock>(entity =>
@@ -4901,6 +4902,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.VoucherTypeId)
                     .HasColumnName("VoucherTypeID")
                     .HasMaxLength(5);
+
+                entity.Property(e => e.AccountType).HasMaxLength(50);
 
                 entity.Property(e => e.PrintText).HasMaxLength(50);
 

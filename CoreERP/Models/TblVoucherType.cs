@@ -9,5 +9,6 @@ namespace CoreERP.Models
         public string VoucherTypeName { get; set; }
         public string PrintText { get; set; }
         public string VoucherClass { get; set; }
+        public string AccountType { get; set; }
     }
 }

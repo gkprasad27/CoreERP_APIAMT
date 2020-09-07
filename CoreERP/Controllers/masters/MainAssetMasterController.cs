@@ -39,7 +39,7 @@ namespace CoreERP.Controllers
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
                     else
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Main Assets." });
                 }
                 catch (Exception ex)
                 {
@@ -174,15 +174,35 @@ namespace CoreERP.Controllers
             try
             {
                 var getassetlist = _assetClassRepository.Where(x => x.Code == code).FirstOrDefault();
-                //var Getassetnumrangelist = _assetNumberRangeRepository.Where(x => x.Code == Getassetlist.NumberRange).FirstOrDefault();
-                int num = Convert.ToInt32(_assetClassRepository.Where(x => x.Code == code).SingleOrDefault()?.LastNumberRange);
+                int i = Convert.ToInt32(_assetClassRepository.Where(x => x.Code == code).SingleOrDefault()?.LastNumberRange);
                 var getaccnolist = _assetNumberRangeRepository.Where(x => x.Code == getassetlist.NumberRange).FirstOrDefault();
                 var numrnglist = _assetNumberRangeRepository.Where(x => x.Code == getaccnolist.Code).FirstOrDefault();
-                if (Enumerable.Range(Convert.ToInt32(numrnglist.FromRange), Convert.ToInt32(numrnglist.ToRange)).Contains(num))
+                if (i == 0 && getassetlist.Code == code)
                 {
-                    if (num >= Convert.ToInt32(numrnglist.FromRange) && num <= Convert.ToInt32(numrnglist.ToRange))
+                    var x = numrnglist.FromRange;
+
+                    if (Enumerable.Range(Convert.ToInt32(numrnglist.FromRange), Convert.ToInt32(numrnglist.ToRange)).Contains(Convert.ToInt32(x)))
                     {
-                        var astnum = num + 1;
+                        if (x >= Convert.ToInt32(numrnglist.FromRange) && x <= Convert.ToInt32(numrnglist.ToRange))
+                        {
+                            var astnum = x + 1;
+                            if (astnum != null)
+                            {
+                                dynamic expdoObj = new ExpandoObject();
+                                expdoObj.astnum = astnum;
+                                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                            }
+                        }
+                        else
+                            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
+                    }
+                }
+                else
+                if (Enumerable.Range(Convert.ToInt32(numrnglist.FromRange), Convert.ToInt32(numrnglist.ToRange)).Contains(i))
+                {
+                    if (i >= Convert.ToInt32(numrnglist.FromRange) && i <= Convert.ToInt32(numrnglist.ToRange))
+                    {
+                        var astnum = i + 1;
                         if (astnum != null)
                         {
                             dynamic expdoObj = new ExpandoObject();
