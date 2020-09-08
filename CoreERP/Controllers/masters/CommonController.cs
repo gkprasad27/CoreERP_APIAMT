@@ -656,13 +656,13 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetFieldsConfig/{screenmodel}/{screenName}")]
-        public IActionResult GetFieldsConfig(string screenmodel, string screenName)
+        [HttpGet("GetFieldsConfig/{screenmodel}/{screenName}/{userName}")]
+        public IActionResult GetFieldsConfig(string screenmodel, string screenName,string userName)
         {
             try
             {
                 dynamic expdoObj = new ExpandoObject();
-                expdoObj.FieldsConfiguration = CommonHelper.GetScreenConfig(screenmodel,screenName);
+                expdoObj.FieldsConfiguration = CommonHelper.GetScreenConfig(screenmodel,screenName, userName);
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
             }
             catch (Exception ex)
