@@ -882,6 +882,59 @@ namespace CoreERP
             return repo.TblAssignmentVoucherSeriestoVoucherType.FirstOrDefault(t => t.VoucherType == voucherTypeId);
         }
 
+        //AssetBeingAquisition
+        public bool AssetBeingAquisition(TblAssetBeginingAcquisition bngaqsn, List<TblAssetBegningAccumulatedDepreciation> astbngdsrpnDetails)
+        {
+            astbngdsrpnDetails.ForEach(x =>
+            {
+                x.AcquisitionCode = bngaqsn.Code;
+
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+               // var data = context.TblMainAssetMasterTransaction.FirstOrDefault(obj => obj.AssetNumber == bngaqsn.AssetNumber)?.Id;
+                if (bngaqsn.Id > 0)
+                {
+                    context.TblAssetBeginingAcquisition.Update(bngaqsn);
+                    context.SaveChanges();
+
+                    context.TblAssetBegningAccumulatedDepreciation.UpdateRange(astbngdsrpnDetails);
+                    context.SaveChanges();
+                    dbtrans.Commit();
+                    return true;
+                }
+
+                context.TblAssetBeginingAcquisition.Add(bngaqsn);
+                context.SaveChanges();
+
+                context.TblAssetBegningAccumulatedDepreciation.AddRange(astbngdsrpnDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public TblAssetBeginingAcquisition GetmainAqsnById(string code)
+        {
+            using var repo = new Repository<TblAssetBeginingAcquisition>();
+            return repo.TblAssetBeginingAcquisition.FirstOrDefault(x => x.Code == code);
+        }
+
+        public List<TblAssetBegningAccumulatedDepreciation> GetAqsnDetailDetails(string code)
+        {
+            using var repo = new Repository<TblAssetBegningAccumulatedDepreciation>();
+            return repo.TblAssetBegningAccumulatedDepreciation.Where(cd => cd.AcquisitionCode == code).ToList();
+        }
+
         //Main Asset
         public bool MainAssetsdatas(TblMainAssetMaster mainassetMaster, List<TblMainAssetMasterTransaction> mainassetDetails)
         {
@@ -944,6 +997,7 @@ namespace CoreERP
             using var repo = new Repository<TblMainAssetMasterTransaction>();
             return repo.TblMainAssetMasterTransaction.Where(cd => cd.AssetNumber == assetNumber).ToList();
         }
+       
         //subassets
         public bool SubAssetsdatas(TblSubAssetMaster assetMaster, List<TblSubAssetMasterTransaction> assetDetails)
         {
@@ -999,18 +1053,17 @@ namespace CoreERP
             return repo.TblSubAssetMasterTransaction.Where(cd => cd.SubAssetNumber == assetNumber).ToList();
         }
 
-        public static  string GetScreenConfig(string screenmodel,string screenName,string username)
+        public static string GetScreenConfig(string screenmodel, string screenName, string username)
         {
             try
             {
-                using var repo=new Repository<TblFieldsConfiguration>();
+                using var repo = new Repository<TblFieldsConfiguration>();
                 return repo.TblFieldsConfiguration
-                         .Where(fc => fc.Screenname == screenName  
-                                  && fc.ScreenModule == screenmodel
-                                  && fc.UserName == username)
-                         .FirstOrDefault().Configuration;
+                    .FirstOrDefault(fc => fc.Screenname == screenName
+                                          && fc.ScreenModule == screenmodel
+                                          && fc.UserName == username).Configuration;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return null;
             }

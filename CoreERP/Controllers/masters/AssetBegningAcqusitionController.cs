@@ -1,7 +1,9 @@
 ﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 
@@ -17,29 +19,29 @@ namespace CoreERP.Controllers.masters
             _assetBeginingAcquisitionRepository = assetBeginingAcquisitionRepository;
         }
 
-        [HttpPost("RegisterAssetBegningAcqusition")]
-        public IActionResult RegisterAssetBegningAcqusition([FromBody]TblAssetBeginingAcquisition assetbgacq)
-        {
-            if (assetbgacq == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
+        //[HttpPost("RegisterAssetBegningAcqusition")]
+        //public IActionResult RegisterAssetBegningAcqusition([FromBody]TblAssetBeginingAcquisition assetbgacq)
+        //{
+        //    if (assetbgacq == null)
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
-            try
-            {
-                APIResponse apiResponse;
-                _assetBeginingAcquisitionRepository.Add(assetbgacq);
-                if (_assetBeginingAcquisitionRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assetbgacq };
-                else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+        //    try
+        //    {
+        //        APIResponse apiResponse;
+        //        _assetBeginingAcquisitionRepository.Add(assetbgacq);
+        //        if (_assetBeginingAcquisitionRepository.SaveChanges() > 0)
+        //            apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assetbgacq };
+        //        else
+        //            apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
-                return Ok(apiResponse);
+        //        return Ok(apiResponse);
 
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
 
         [HttpGet("GetAssetBegningAcqusitionList")]
         public IActionResult GetAssetBegningAcqusitionList()
@@ -102,6 +104,53 @@ namespace CoreERP.Controllers.masters
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 
                 return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("RegisterAssetBegningAcqusition")]
+        public IActionResult RegisterAssetBegningAcqusition([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var AqsnHdr = obj["mainaqsnHdr"].ToObject<TblAssetBeginingAcquisition>();
+                var AqsnDetail = obj["mainaqsnDetail"].ToObject<List<TblAssetBegningAccumulatedDepreciation>>();
+
+                if (new CommonHelper().AssetBeingAquisition(AqsnHdr, AqsnDetail))
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.CashBankMaster = AqsnHdr;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetAssetBegningAcqusitionDetail/{code}")]
+        public IActionResult GetAssetBegningAcqusitionDetail(string code)
+        {
+            try
+            {
+                var common = new CommonHelper();
+                var mainAqsn = common.GetmainAqsnById(code);
+                if (mainAqsn == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.AqsnMasters = mainAqsn;
+                expdoObj.AqsnDetail = new CommonHelper().GetAqsnDetailDetails(code);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
             }
             catch (Exception ex)
             {
