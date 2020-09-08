@@ -436,5 +436,110 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return true;
         }
         #endregion
+
+        #region Purchase Sale & Purchase
+
+        public List<TblPosaleAssetInvoiceMemoHeader> GetPSIMAssetMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblPosaleAssetInvoiceMemoHeader>();
+            return repo.TblPosaleAssetInvoiceMemoHeader.AsEnumerable()
+                .Where(x =>
+                {
+                    Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
+                    return x.Status == "N"
+                           && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
+                           && Convert.ToDateTime(x.VoucherDate.Value) >=
+                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                           && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                })
+                .ToList();
+        }
+
+        public TblPosaleAssetInvoiceMemoHeader GetPSIMAssetById(string voucherNumber)
+        {
+            using var repo = new Repository<TblPosaleAssetInvoiceMemoHeader>();
+            return repo.TblPosaleAssetInvoiceMemoHeader
+                .FirstOrDefault(x => x.VoucherNumber == voucherNumber);
+        }
+
+        public List<TblPosaleAssetInvoiceMemoDetails> GetPSIMAssetDetail(string voucherNumber)
+        {
+            using var repo = new Repository<TblPosaleAssetInvoiceMemoDetails>();
+            return repo.TblPosaleAssetInvoiceMemoDetails.Where(cd => cd.VoucherNo == voucherNumber).ToList();
+        }
+
+        public bool AddPSIMAsset(TblPosaleAssetInvoiceMemoHeader assetMaster, List<TblPosaleAssetInvoiceMemoDetails> assetDetails)
+        {
+            if (assetMaster.VoucherDate == null)
+                throw new Exception("Voucher Date Canot be empty/null.");
+
+            if (assetMaster.VoucherNumber == null)
+                throw new Exception("Voucher Number Canot be empty/null.");
+
+            if (this.IsVoucherNumberExists(assetMaster.VoucherNumber, assetMaster.VoucherType))
+                throw new Exception("Voucher number exists.");
+
+            assetMaster.VoucherDate ??= DateTime.Now;
+            //if (imMaster.NatureofTransaction.ToUpper().Contains("INCOMING"))
+            //    imMaster.AccountingIndicator = CRDRINDICATORS.Debit.ToString();
+            //else if (imMaster.NatureofTransaction.ToUpper().Contains("OUTGOING"))
+            //    imMaster.AccountingIndicator = CRDRINDICATORS.Credit.ToString();
+
+            int lineno = 1;
+
+            assetDetails.ForEach(x =>
+            {
+                x.VoucherNo = assetMaster.VoucherNumber;
+                x.VoucherDate = assetMaster.VoucherDate;
+                x.Company = assetMaster.Company;
+                x.Branch = assetMaster.Branch;
+                x.PostingDate = assetMaster.PostingDate;
+                x.LineItemNo = Convert.ToString(lineno++);
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                assetMaster.Status = "N";
+                context.TblPosaleAssetInvoiceMemoHeader.Add(assetMaster);
+                context.SaveChanges();
+
+                context.TblPosaleAssetInvoiceMemoDetails.AddRange(assetDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public bool ReturnPSIMAsset(string voucherNumber)
+        {
+            using var repo = new ERPContext();
+            var invoiceMemoHeader = repo.TblPosaleAssetInvoiceMemoHeader.FirstOrDefault(im => im.VoucherNumber == voucherNumber);
+
+            if (invoiceMemoHeader != null && invoiceMemoHeader.Status == "Y")
+                throw new Exception($"Invoice memo no {voucherNumber} already return.");
+
+            if (invoiceMemoHeader != null)
+            {
+                invoiceMemoHeader.Status = "Y";
+                repo.TblPosaleAssetInvoiceMemoHeader.Update(invoiceMemoHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+        #endregion
     }
 }

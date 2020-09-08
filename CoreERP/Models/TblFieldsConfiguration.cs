@@ -9,5 +9,6 @@ namespace CoreERP.Models
         public string ScreenModule { get; set; }
         public string Screenname { get; set; }
         public string Configuration { get; set; }
+        public string UserName { get; set; }
     }
 }

@@ -2864,6 +2864,8 @@ namespace CoreERP.Models
                     .IsRequired()
                     .HasColumnName("screenname")
                     .HasMaxLength(50);
+
+                entity.Property(e => e.UserName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblFormMenuCollection>(entity =>
@@ -3805,6 +3807,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.AccountingIndicator).HasMaxLength(50);
+
                 entity.Property(e => e.AddDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
@@ -3814,6 +3818,10 @@ namespace CoreERP.Models
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
+
+                entity.Property(e => e.Bttypes)
+                    .HasColumnName("bttypes")
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Cgstamount)
                     .HasColumnName("CGSTAmount")
@@ -3837,10 +3845,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Glaccount)
                     .HasColumnName("GLAccount")
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.GlaccountDescription)
-                    .HasColumnName("GLAccountDescription")
                     .HasMaxLength(50);
 
                 entity.Property(e => e.Hsnsac)
@@ -3875,11 +3879,11 @@ namespace CoreERP.Models
                     .HasColumnName("SGSTAmount")
                     .HasColumnType("numeric(18, 0)");
 
+                entity.Property(e => e.Status).HasMaxLength(50);
+
                 entity.Property(e => e.SubAssetNo).HasMaxLength(50);
 
                 entity.Property(e => e.TaxCode).HasMaxLength(5);
-
-                entity.Property(e => e.TaxCodeDescription).HasMaxLength(50);
 
                 entity.Property(e => e.Ugstamount)
                     .HasColumnName("UGSTAmount")
@@ -3940,11 +3944,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.PartyAccount).HasMaxLength(50);
 
-                entity.Property(e => e.PartyInvoiceDate).HasMaxLength(50);
+                entity.Property(e => e.PartyInvoiceDate).HasColumnType("date");
 
                 entity.Property(e => e.PartyInvoiceNo).HasMaxLength(50);
 
-                entity.Property(e => e.PaymentItem).HasMaxLength(50);
+                entity.Property(e => e.Paymentterms).HasMaxLength(50);
 
                 entity.Property(e => e.Period).HasColumnType("date");
 
@@ -3953,6 +3957,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.ReferenceDate).HasColumnType("date");
 
                 entity.Property(e => e.ReferenceNumber).HasMaxLength(50);
+
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.Property(e => e.TaxAmount).HasColumnType("numeric(18, 0)");
 

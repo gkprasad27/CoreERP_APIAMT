@@ -326,5 +326,89 @@ namespace CoreERP.Controllers.GeneralLedger
             }
         }
         #endregion
+
+        #region Asset Sale & Purchase
+
+        [HttpPost("GetPSIMAssetMaster")]
+        public IActionResult GetPSIMAssetMaster([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var assetMasters = new TransactionsHelper().GetPSIMAssetMaster(searchCriteria);
+                if (!assetMasters.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Asset." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.assetMasters = assetMasters;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetPSIMAssetDetail/{voucherNumber}")]
+        public IActionResult GetPSIMAssetDetail(string voucherNumber)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var assetMasters = transactions.GetPSIMAssetById(voucherNumber);
+                if (assetMasters == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.assetMasters = assetMasters;
+                expdoObj.assetDetail = new TransactionsHelper().GetPSIMAssetDetail(voucherNumber);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddPSIMAsset")]
+        public IActionResult AddPSIMAsset([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var assetMaster = obj["imHdr"].ToObject<TblPosaleAssetInvoiceMemoHeader>();
+                var assetDetails = obj["imDtl"].ToObject<List<TblPosaleAssetInvoiceMemoDetails>>();
+
+                if (!new TransactionsHelper().AddPSIMAsset(assetMaster, assetDetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = assetMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("ReturnPSIMAsset/{voucherNumber}")]
+        public IActionResult ReturnPSIMAsset(string voucherNumber)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnPSIMAsset(voucherNumber))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Invoice memo no {voucherNumber} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        #endregion
     }
 }

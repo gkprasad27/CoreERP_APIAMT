@@ -21,10 +21,10 @@ namespace CoreERP.Models
         public string ReferenceNumber { get; set; }
         public DateTime? ReferenceDate { get; set; }
         public string PartyInvoiceNo { get; set; }
-        public string PartyInvoiceDate { get; set; }
+        public DateTime? PartyInvoiceDate { get; set; }
         public string Grnno { get; set; }
         public DateTime? Grndate { get; set; }
-        public string PaymentItem { get; set; }
+        public string Paymentterms { get; set; }
         public string AddWho { get; set; }
         public DateTime? AddDate { get; set; }
         public string EditWho { get; set; }
@@ -34,5 +34,6 @@ namespace CoreERP.Models
         public string Narration { get; set; }
         public string Ext { get; set; }
         public decimal? TotalAmount { get; set; }
+        public string Status { get; set; }
     }
 }
