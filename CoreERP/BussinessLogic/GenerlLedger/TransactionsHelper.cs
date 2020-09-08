@@ -59,6 +59,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         using var repo = new Repository<TblJvmaster>();
                         return repo.TblJvmaster.Any(v => v.VoucherNumber == voucherNo);
                     }
+                case "101":
+                case "102":
                 case "201":
                 case "202":
                 case "203":
