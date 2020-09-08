@@ -3801,9 +3801,15 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblPosaleAssetInvoiceMemoDetails>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("tbl_POSaleAssetInvoiceMemoDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
 
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
 
@@ -3818,6 +3824,12 @@ namespace CoreERP.Models
                 entity.Property(e => e.Company).HasMaxLength(5);
 
                 entity.Property(e => e.CostCenter).HasMaxLength(5);
+
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
 
                 entity.Property(e => e.FunctionalDept).HasMaxLength(50);
 
@@ -3834,10 +3846,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Hsnsac)
                     .HasColumnName("HSNSAC")
                     .HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Igstamount)
                     .HasColumnName("IGSTAmount")
@@ -3886,11 +3894,19 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblPosaleAssetInvoiceMemoHeader>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.VoucherNumber);
 
                 entity.ToTable("tbl_POSaleAssetInvoiceMemoHeader");
 
+                entity.Property(e => e.VoucherNumber).HasMaxLength(50);
+
                 entity.Property(e => e.AccountingIndicator).HasMaxLength(50);
+
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
 
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
 
@@ -3904,6 +3920,12 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
+                entity.Property(e => e.EditDate)
+                    .HasMaxLength(50)
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
+
                 entity.Property(e => e.Ext).HasMaxLength(50);
 
                 entity.Property(e => e.Grndate)
@@ -3913,10 +3935,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Grnno)
                     .HasColumnName("GRNNo")
                     .HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Narration).HasMaxLength(50);
 
@@ -3938,21 +3956,13 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.TaxAmount).HasColumnType("numeric(18, 0)");
 
-                entity.Property(e => e.Term1).HasMaxLength(50);
-
-                entity.Property(e => e.Term2).HasMaxLength(50);
-
-                entity.Property(e => e.Term3).HasMaxLength(50);
-
-                entity.Property(e => e.Term4).HasMaxLength(50);
+                entity.Property(e => e.TotalAmount).HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.TransactionType).HasMaxLength(20);
 
                 entity.Property(e => e.VoucherClass).HasMaxLength(5);
 
                 entity.Property(e => e.VoucherDate).HasColumnType("date");
-
-                entity.Property(e => e.VoucherNumber).HasMaxLength(50);
 
                 entity.Property(e => e.VoucherType).HasMaxLength(5);
             });

@@ -5,7 +5,6 @@ namespace CoreERP.Models
 {
     public partial class TblPosaleAssetInvoiceMemoHeader
     {
-        public int Id { get; set; }
         public string Company { get; set; }
         public string Branch { get; set; }
         public string VoucherClass { get; set; }
@@ -26,13 +25,14 @@ namespace CoreERP.Models
         public string Grnno { get; set; }
         public DateTime? Grndate { get; set; }
         public string PaymentItem { get; set; }
-        public string Term1 { get; set; }
-        public string Term2 { get; set; }
-        public string Term3 { get; set; }
-        public string Term4 { get; set; }
+        public string AddWho { get; set; }
+        public DateTime? AddDate { get; set; }
+        public string EditWho { get; set; }
+        public string EditDate { get; set; }
         public decimal? Amount { get; set; }
         public decimal? TaxAmount { get; set; }
         public string Narration { get; set; }
         public string Ext { get; set; }
+        public decimal? TotalAmount { get; set; }
     }
 }
