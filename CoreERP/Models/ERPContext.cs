@@ -2864,6 +2864,8 @@ namespace CoreERP.Models
                     .IsRequired()
                     .HasColumnName("screenname")
                     .HasMaxLength(50);
+
+                entity.Property(e => e.UserName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblFormMenuCollection>(entity =>
