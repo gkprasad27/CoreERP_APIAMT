@@ -1542,7 +1542,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AccumulatedDepreciation).HasMaxLength(50);
 
-                entity.Property(e => e.AqyusutuibCode).HasMaxLength(50);
+                entity.Property(e => e.AcquisitionCode).HasMaxLength(50);
 
                 entity.Property(e => e.DepreciationArea).HasMaxLength(50);
             });
