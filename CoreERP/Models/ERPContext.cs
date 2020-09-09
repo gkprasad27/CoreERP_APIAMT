@@ -113,6 +113,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblParyCashBankDetails> TblParyCashBankDetails { get; set; }
         public virtual DbSet<TblPaymentTermDetails> TblPaymentTermDetails { get; set; }
         public virtual DbSet<TblPaymentTerms> TblPaymentTerms { get; set; }
+        public virtual DbSet<TblPermissions> TblPermissions { get; set; }
         public virtual DbSet<TblPlant> TblPlant { get; set; }
         public virtual DbSet<TblPosaleAssetInvoiceMemoDetails> TblPosaleAssetInvoiceMemoDetails { get; set; }
         public virtual DbSet<TblPosaleAssetInvoiceMemoHeader> TblPosaleAssetInvoiceMemoHeader { get; set; }
@@ -3755,6 +3756,25 @@ namespace CoreERP.Models
                 entity.Property(e => e.Code).HasMaxLength(5);
 
                 entity.Property(e => e.Description).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblPermissions>(entity =>
+            {
+                entity.HasKey(e => e.SeqId);
+
+                entity.ToTable("Tbl_Permissions");
+
+                entity.Property(e => e.SeqId).HasColumnName("seqId");
+
+                entity.Property(e => e.ScreenModule).HasMaxLength(50);
+
+                entity.Property(e => e.ScreenName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblPlant>(entity =>
