@@ -315,7 +315,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public bool RetuenJournalVoucher(string voucherNumber)
         {
-            using var repo=new ERPContext();
+            using var repo = new ERPContext();
             var jvmaster = repo.TblJvmaster.FirstOrDefault(x => x.VoucherNumber == voucherNumber);
 
             if (jvmaster?.Status == "Y")
@@ -419,7 +419,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public bool ReturnInvoiceMemo(string voucherNumber)
         {
-            using var repo=new ERPContext();
+            using var repo = new ERPContext();
             var invoiceMemoHeader = repo.TblInvoiceMemoHeader.FirstOrDefault(im => im.VoucherNumber == voucherNumber);
 
             if (invoiceMemoHeader != null && invoiceMemoHeader.Status == "Y")
@@ -540,6 +540,109 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             return true;
         }
+        #endregion
+
+        #region Asset Transfer
+
+        public List<TblAssetTransfer> GetAssetTransferMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblAssetTransfer>();
+            return repo.TblAssetTransfer.AsEnumerable()
+                .Where(x =>
+                {
+                    Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
+                    return x.Status == "N"
+                           && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
+                           && Convert.ToDateTime(x.VoucherDate.Value) >=
+                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                           && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                })
+                .ToList();
+        }
+
+        public TblAssetTransfer GetAssetTransferById(string voucherNumber)
+        {
+            using var repo = new Repository<TblAssetTransfer>();
+            return repo.TblAssetTransfer
+                .FirstOrDefault(x => x.VoucherNumber == voucherNumber);
+        }
+
+        public List<TblAssetTransferDetails> GetAssetTransferDetail(string voucherNumber)
+        {
+            using var repo = new Repository<TblAssetTransferDetails>();
+            return repo.TblAssetTransferDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
+        }
+
+        public bool AddAssetTransfer(TblAssetTransfer assettransferMaster, List<TblAssetTransferDetails> assettransferDetails)
+        {
+            if (assettransferMaster.VoucherDate == null)
+                throw new Exception("Voucher Date Canot be empty/null.");
+
+            if (assettransferMaster.VoucherNumber == null)
+                throw new Exception("Voucher Number Canot be empty/null.");
+
+            if (this.IsVoucherNumberExists(assettransferMaster.VoucherNumber, assettransferMaster.VoucherType))
+                throw new Exception("Voucher number exists.");
+
+            assettransferMaster.VoucherDate ??= DateTime.Now;
+
+            int lineno = 1;
+
+            assettransferDetails.ForEach(x =>
+            {
+                x.VoucherNumber = assettransferMaster.VoucherNumber;
+                //x.voucherd = assettransferMaster.VoucherDate;
+                //x.co = assettransferMaster.Company;
+                //x.Branch = assettransferMaster.Branch;
+                //x.PostingDate = assettransferMaster.PostingDate;
+                //x.it = Convert.ToString(lineno++);
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                assettransferMaster.Status = "N";
+                context.TblAssetTransfer.Add(assettransferMaster);
+                context.SaveChanges();
+
+                context.TblAssetTransferDetails.AddRange(assettransferDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public bool ReturnAssetTransfer(string voucherNumber)
+        {
+            using var repo = new ERPContext();
+            var assettransferHeader = repo.TblAssetTransfer.FirstOrDefault(im => im.VoucherNumber == voucherNumber);
+
+            if (assettransferHeader != null && assettransferHeader.Status == "Y")
+                throw new Exception($"Invoice memo no {voucherNumber} already return.");
+
+            if (assettransferHeader != null)
+            {
+                assettransferHeader.Status = "Y";
+                repo.TblAssetTransfer.Update(assettransferHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+
         #endregion
     }
 }

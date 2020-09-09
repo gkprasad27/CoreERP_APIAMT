@@ -895,16 +895,21 @@ namespace CoreERP
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
-               // var data = context.TblMainAssetMasterTransaction.FirstOrDefault(obj => obj.AssetNumber == bngaqsn.AssetNumber)?.Id;
                 if (bngaqsn.Id > 0)
                 {
                     context.TblAssetBeginingAcquisition.Update(bngaqsn);
                     context.SaveChanges();
+                    foreach (var item in astbngdsrpnDetails)
+                    {
+                        if (item.Id == 0)
+                        {
+                            context.TblAssetBegningAccumulatedDepreciation.UpdateRange(astbngdsrpnDetails);
+                            context.SaveChanges();
+                            dbtrans.Commit();
+                            return true;
+                        }
+                    }
 
-                    context.TblAssetBegningAccumulatedDepreciation.UpdateRange(astbngdsrpnDetails);
-                    context.SaveChanges();
-                    dbtrans.Commit();
-                    return true;
                 }
 
                 context.TblAssetBeginingAcquisition.Add(bngaqsn);
