@@ -61,6 +61,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblAssetNumberRange> TblAssetNumberRange { get; set; }
         public virtual DbSet<TblAssetTransactiontype> TblAssetTransactiontype { get; set; }
         public virtual DbSet<TblAssetTransfer> TblAssetTransfer { get; set; }
+        public virtual DbSet<TblAssetTransferDetails> TblAssetTransferDetails { get; set; }
         public virtual DbSet<TblAssignAccountkeytoAsset> TblAssignAccountkeytoAsset { get; set; }
         public virtual DbSet<TblAssignAssetClasstoBlockAsset> TblAssignAssetClasstoBlockAsset { get; set; }
         public virtual DbSet<TblAssignTaxacctoTaxcode> TblAssignTaxacctoTaxcode { get; set; }
@@ -1656,11 +1657,15 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblAssetTransfer>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.VoucherNumber);
 
                 entity.ToTable("tbl_AssetTransfer");
 
-                entity.Property(e => e.AcquisitionValue).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.VoucherNumber).HasMaxLength(50);
+
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
 
                 entity.Property(e => e.AssetTransactionType).HasMaxLength(50);
 
@@ -1668,33 +1673,15 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.EditDate).HasColumnType("datetime");
 
-                entity.Property(e => e.MainAsset).HasMaxLength(50);
+                entity.Property(e => e.EditWho).HasMaxLength(50);
 
                 entity.Property(e => e.Period).HasColumnType("date");
 
                 entity.Property(e => e.PostingDate).HasColumnType("date");
 
-                entity.Property(e => e.ReceiverBranch).HasMaxLength(5);
-
-                entity.Property(e => e.ReceiverCostCenter).HasMaxLength(50);
-
-                entity.Property(e => e.ReceiverProfitCenter).HasMaxLength(50);
-
-                entity.Property(e => e.ReceiverSegment).HasMaxLength(50);
-
-                entity.Property(e => e.SenderBranch).HasMaxLength(5);
-
-                entity.Property(e => e.SenderCostCenter).HasMaxLength(50);
-
-                entity.Property(e => e.SenderProfitCenter).HasMaxLength(50);
-
-                entity.Property(e => e.SenderSegment).HasMaxLength(50);
-
-                entity.Property(e => e.SubAsset).HasMaxLength(50);
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.Property(e => e.TransferDate).HasColumnType("date");
 
@@ -1702,9 +1689,54 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.VoucherDate).HasColumnType("date");
 
-                entity.Property(e => e.VoucherNo).HasMaxLength(50);
-
                 entity.Property(e => e.VoucherType).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblAssetTransferDetails>(entity =>
+            {
+                entity.ToTable("tbl_AssetTransferDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AccumulatedValue).HasMaxLength(50);
+
+                entity.Property(e => e.AcquisitionValue).HasMaxLength(50);
+
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
+
+                entity.Property(e => e.MainAssetNo).HasMaxLength(50);
+
+                entity.Property(e => e.ReceiverBranch).HasMaxLength(50);
+
+                entity.Property(e => e.ReceiverCostCenter).HasMaxLength(50);
+
+                entity.Property(e => e.ReceiverProfitCenter).HasMaxLength(50);
+
+                entity.Property(e => e.ReceiverSegment).HasMaxLength(50);
+
+                entity.Property(e => e.SenderBranch).HasMaxLength(50);
+
+                entity.Property(e => e.SenderCostCenter).HasMaxLength(50);
+
+                entity.Property(e => e.SenderProfitCenter).HasMaxLength(50);
+
+                entity.Property(e => e.SenderSegment).HasMaxLength(50);
+
+                entity.Property(e => e.Status).HasMaxLength(50);
+
+                entity.Property(e => e.SubAssetNo).HasMaxLength(50);
+
+                entity.Property(e => e.VoucherNumber).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblAssignAccountkeytoAsset>(entity =>
