@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace CoreERP.BussinessLogic.GenerlLedger
 {
@@ -17,60 +18,51 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public string GetVoucherNumber(string voucherType)
         {
             var voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType, out var startNumber, out var endNumber);
-
-            while (true)
+            
+            if (voucerTypeNoseries.LastNumber != startNumber)
             {
-
-
-                if (this.IsVoucherNumberExists(voucerTypeNoseries.Suffix + "-" + voucerTypeNoseries.LastNumber, voucherType))
-                {
-                    voucerTypeNoseries.LastNumber += 1;
-                    if (voucerTypeNoseries.LastNumber > endNumber)
-                        throw new Exception("No series is ended.");
-
-                    continue;
-                }
-                if (voucerTypeNoseries.LastNumber == 0)
-                    voucerTypeNoseries.LastNumber = startNumber;
-                break;
+                voucerTypeNoseries.LastNumber += 1;
+                if (voucerTypeNoseries.LastNumber > endNumber)
+                    throw new Exception("No series is ended.");
+            }
+            else
+            {
+                voucerTypeNoseries.LastNumber = startNumber;
+                if (voucerTypeNoseries.LastNumber > endNumber)
+                    throw new Exception("No series is ended.");
             }
 
-            using Repository<TblAssignmentVoucherSeriestoVoucherType> repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>();
-            repo.TblAssignmentVoucherSeriestoVoucherType.Update(voucerTypeNoseries);
-            repo.SaveChanges();
+            using var context = new ERPContext();
+            context.TblAssignmentVoucherSeriestoVoucherType.UpdateRange(voucerTypeNoseries);
+            context.SaveChanges();
 
             return voucerTypeNoseries.Suffix + "-" + voucerTypeNoseries.LastNumber;
         }
 
-        public bool IsVoucherNumberExists(string voucherNo, string voucherType)
+        public bool IsVoucherNumberExists(string voucherNo, string voucherType, [Optional] string screenName)
         {
-            switch (voucherType)
+            switch (screenName)
             {
-                case "501":
-                case "502":
-                case "401":
-                case "402":
+                case "cashbank":
                     {
                         using var repo = new Repository<TblCashBankMaster>();
                         return repo.TblCashBankMaster.Any(v => v.VoucherNumber == voucherNo);
                     }
-                case "301":
-                case "1":
+                case "journals":
                     {
                         using var repo = new Repository<TblJvmaster>();
                         return repo.TblJvmaster.Any(v => v.VoucherNumber == voucherNo);
                     }
-                case "101":
-                case "102":
-                case "201":
-                case "202":
-                case "203":
-                case "204":
+                case "invoicesmemos":
                     {
                         using var repo = new Repository<TblInvoiceMemoHeader>();
                         return repo.TblInvoiceMemoHeader.Any(v => v.VoucherNumber == voucherNo);
                     }
-
+                case "purchasesaleasset":
+                    {
+                        using var repo = new Repository<TblPosaleAssetInvoiceMemoHeader>();
+                        return repo.TblPosaleAssetInvoiceMemoHeader.Any(v => v.VoucherNumber == voucherNo);
+                    }
                 default:
                     return false;
             }
@@ -93,7 +85,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (cashBankMaster.VoucherNumber == null)
                 throw new Exception("Voucher Number Canot be empty/null.");
 
-            if (this.IsVoucherNumberExists(cashBankMaster.VoucherNumber, cashBankMaster.VoucherType))
+            if (this.IsVoucherNumberExists(cashBankMaster.VoucherNumber, cashBankMaster.VoucherType, "cashbank"))
                 throw new Exception("Voucher number exists.");
 
             cashBankMaster.VoucherDate ??= DateTime.Now;
@@ -242,7 +234,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (jvMaster.VoucherNumber == null)
                 throw new Exception("Voucher Number Canot be empty/null.");
 
-            if (this.IsVoucherNumberExists(jvMaster.VoucherNumber, jvMaster.VoucherType))
+            if (this.IsVoucherNumberExists(jvMaster.VoucherNumber, jvMaster.VoucherType, "journals"))
                 throw new Exception("Voucher number exists.");
 
             jvMaster.VoucherDate ??= DateTime.Now;
@@ -377,7 +369,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (imMaster.VoucherNumber == null)
                 throw new Exception("Voucher Number Canot be empty/null.");
 
-            if (this.IsVoucherNumberExists(imMaster.VoucherNumber, imMaster.VoucherType))
+            if (this.IsVoucherNumberExists(imMaster.VoucherNumber, imMaster.VoucherType, "invoicesmemos"))
                 throw new Exception("Voucher number exists.");
 
             imMaster.VoucherDate ??= DateTime.Now;
@@ -482,7 +474,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (assetMaster.VoucherNumber == null)
                 throw new Exception("Voucher Number Canot be empty/null.");
 
-            if (this.IsVoucherNumberExists(assetMaster.VoucherNumber, assetMaster.VoucherType))
+            if (this.IsVoucherNumberExists(assetMaster.VoucherNumber, assetMaster.VoucherType, "receiptspayments"))
                 throw new Exception("Voucher number exists.");
 
             assetMaster.VoucherDate ??= DateTime.Now;
