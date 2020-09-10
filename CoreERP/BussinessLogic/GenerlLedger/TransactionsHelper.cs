@@ -55,6 +55,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         return repo.TblCashBankMaster.Any(v => v.VoucherNumber == voucherNo);
                     }
                 case "301":
+                case "1":
                     {
                         using var repo = new Repository<TblJvmaster>();
                         return repo.TblJvmaster.Any(v => v.VoucherNumber == voucherNo);
@@ -380,9 +381,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw new Exception("Voucher number exists.");
 
             imMaster.VoucherDate ??= DateTime.Now;
-            if (imMaster.NatureofTransaction.ToUpper().Contains("INCOMING"))
+            if (imMaster.NatureofTransaction.ToUpper().Contains("PURCHASE"))
                 imMaster.AccountingIndicator = CRDRINDICATORS.Debit.ToString();
-            else if (imMaster.NatureofTransaction.ToUpper().Contains("OUTGOING"))
+            else if (imMaster.NatureofTransaction.ToUpper().Contains("SALE"))
                 imMaster.AccountingIndicator = CRDRINDICATORS.Credit.ToString();
 
             int lineno = 1;
