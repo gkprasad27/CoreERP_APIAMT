@@ -3615,13 +3615,21 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblPartyCashBankMaster>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.VoucherNumber);
 
                 entity.ToTable("tbl_PartyCashBankMaster");
+
+                entity.Property(e => e.VoucherNumber).HasMaxLength(50);
 
                 entity.Property(e => e.Account).HasMaxLength(50);
 
                 entity.Property(e => e.AccountingIndicator).HasMaxLength(10);
+
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
 
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
 
@@ -3639,13 +3647,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
-                entity.Property(e => e.Ext).HasMaxLength(50);
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Ext1).HasMaxLength(50);
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.EditWho).HasMaxLength(50);
 
                 entity.Property(e => e.Narration).HasMaxLength(50);
 
@@ -3679,16 +3685,20 @@ namespace CoreERP.Models
                     .HasColumnType("date")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.VoucherNumber).HasMaxLength(50);
-
                 entity.Property(e => e.VoucherType).HasMaxLength(5);
             });
 
             modelBuilder.Entity<TblParyCashBankDetails>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("tbl_ParyCashBankDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
 
                 entity.Property(e => e.AdjustmentAmount).HasColumnType("numeric(18, 0)");
 
@@ -3702,11 +3712,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.DueDate).HasColumnType("date");
 
-                entity.Property(e => e.Ext).HasMaxLength(50);
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.EditWho).HasMaxLength(50);
 
                 entity.Property(e => e.InvoiceAmount).HasColumnType("numeric(18, 0)");
 
