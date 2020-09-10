@@ -495,5 +495,88 @@ namespace CoreERP.Controllers.GeneralLedger
         }
 
         #endregion
+
+       //PaymentReceipt
+        [HttpPost("GetPaymentsReceiptsMaster")]
+        public IActionResult GetPaymentsReceiptsMaster([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var paymentreceiptMasters = new TransactionsHelper().GetPaymentsReceiptsMaster(searchCriteria);
+                if (!paymentreceiptMasters.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Asset." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.paymentreceiptMasters = paymentreceiptMasters;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetPaymentsReceiptsDetail/{voucherNumber}")]
+        public IActionResult GetPaymentsReceiptsDetail(string voucherNumber)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var paymentreceiptMasters = transactions.GetPaymentsReceiptsById(voucherNumber);
+                if (paymentreceiptMasters == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.paymentreceiptMasters = paymentreceiptMasters;
+                expdoObj.paymentreceiptDetail = new TransactionsHelper().GetPaymentsReceiptsDetail(voucherNumber);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddPaymentsReceipts")]
+        public IActionResult AddPaymentsReceipts([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var paymentreceiptsMaster = obj["pcbHdr"].ToObject<TblPartyCashBankMaster>();
+                var paymentreceiptsDetails = obj["pcbDtl"].ToObject<List<TblParyCashBankDetails>>();
+
+                if (!new TransactionsHelper().AddPaymentsReceipts(paymentreceiptsMaster, paymentreceiptsDetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = paymentreceiptsMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("ReturnPaymentsReceipts/{voucherNumber}")]
+        public IActionResult ReturnPaymentsReceipts(string voucherNumber)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnPaymentsReceipts(voucherNumber))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Invoice memo no {voucherNumber} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
     }
 }
