@@ -1058,20 +1058,20 @@ namespace CoreERP
             return repo.TblSubAssetMasterTransaction.Where(cd => cd.SubAssetNumber == assetNumber).ToList();
         }
 
-        public static string GetScreenConfig(string screenmodel, string screenName, string username)
-        {
-            try
-            {
-                using var repo = new Repository<TblFieldsConfiguration>();
-                return repo.TblFieldsConfiguration
-                    .FirstOrDefault(fc => fc.Screenname == screenName
-                                          && fc.ScreenModule == screenmodel
-                                          && fc.UserName == username).Configuration;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
+        //public static string GetScreenConfig(string screenmodel, string screenName, string username)
+        //{
+        //    try
+        //    {
+        //        using var repo = new Repository<TblFieldsConfiguration>();
+        //        return repo.TblFieldsConfiguration
+        //            .FirstOrDefault(fc => fc.Screenname == screenName
+        //                                  && fc.ScreenModule == screenmodel
+        //                                  && fc.UserName == username).Configuration;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return null;
+        //    }
+        //}
     }
 }
