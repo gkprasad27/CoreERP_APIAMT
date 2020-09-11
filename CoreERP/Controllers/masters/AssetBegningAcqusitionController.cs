@@ -36,7 +36,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No AssetBegningAcqusitionList Data Found." });
             }
             catch (Exception ex)
             {

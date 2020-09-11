@@ -440,7 +440,7 @@ namespace CoreERP.Controllers.GeneralLedger
                 var transactions = new TransactionsHelper();
                 var assettransferMasters = transactions.GetAssetTransferById(voucherNumber);
                 if (assettransferMasters == null)
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "" });
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.assettransferMasters = assettransferMasters;
                 expdoObj.assettransferDetail = new TransactionsHelper().GetAssetTransferDetail(voucherNumber);
@@ -504,7 +504,7 @@ namespace CoreERP.Controllers.GeneralLedger
             {
                 var paymentreceiptMasters = new TransactionsHelper().GetPaymentsReceiptsMaster(searchCriteria);
                 if (!paymentreceiptMasters.Any())
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Asset." });
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for PaymentsReceipts." });
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.paymentreceiptMasters = paymentreceiptMasters;
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
