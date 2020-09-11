@@ -132,6 +132,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblShiftTimings> TblShiftTimings { get; set; }
         public virtual DbSet<TblSize> TblSize { get; set; }
         public virtual DbSet<TblStateWiseGst> TblStateWiseGst { get; set; }
+        public virtual DbSet<TblStockInformation> TblStockInformation { get; set; }
         public virtual DbSet<TblStorageLocation> TblStorageLocation { get; set; }
         public virtual DbSet<TblSubAssetMaster> TblSubAssetMaster { get; set; }
         public virtual DbSet<TblSubAssetMasterTransaction> TblSubAssetMasterTransaction { get; set; }
@@ -1388,68 +1389,57 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblAccountLedgerTransactions>(entity =>
             {
-                entity.HasKey(e => e.LedgerTransactionId);
-
                 entity.ToTable("tbl_AccountLedgerTransactions");
 
-                entity.HasIndex(e => new { e.LedgerCode, e.VoucherDetailId, e.DebitAmount, e.CreditAmount })
+                entity.HasIndex(e => new { e.LedgerCode, e.VoucherNumber, e.DebitAmount, e.CreditAmount })
                     .HasName("NonClusteredAccountLedgerTransCols");
 
-                entity.Property(e => e.LedgerTransactionId)
-                    .HasColumnName("ledgerTransactionId")
-                    .HasColumnType("numeric(18, 0)")
-                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.BranchCode)
-                    .HasColumnName("branchCode")
-                    .IsUnicode(false);
+                entity.Property(e => e.AccountingIndicator).HasMaxLength(10);
 
-                entity.Property(e => e.BranchId)
-                    .HasColumnName("branchID")
-                    .HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.BranchName)
-                    .HasColumnName("branchName")
-                    .IsUnicode(false);
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
+                entity.Property(e => e.Branch).HasMaxLength(50);
+
+                entity.Property(e => e.Company).HasMaxLength(50);
+
+                entity.Property(e => e.CostCenter).HasMaxLength(50);
 
                 entity.Property(e => e.CreditAmount)
-                    .HasColumnName("creditAmount")
-                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnType("numeric(18, 0)")
                     .HasDefaultValueSql("((0.00))");
 
                 entity.Property(e => e.DebitAmount)
-                    .HasColumnName("debitAmount")
-                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnType("numeric(18, 0)")
                     .HasDefaultValueSql("((0.00))");
 
-                entity.Property(e => e.LedgerCode)
-                    .HasColumnName("ledgerCode")
-                    .HasMaxLength(100);
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.LedgerId)
-                    .HasColumnName("ledgerId")
-                    .HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.EditWho).HasMaxLength(50);
 
-                entity.Property(e => e.LedgerName)
-                    .HasColumnName("ledgerName")
-                    .IsUnicode(false);
+                entity.Property(e => e.LedgerCode).HasMaxLength(10);
 
-                entity.Property(e => e.TransactionDate)
-                    .HasColumnName("transactionDate")
-                    .HasColumnType("datetime");
+                entity.Property(e => e.LedgerName).HasMaxLength(50);
 
-                entity.Property(e => e.TransactionType)
-                    .HasColumnName("transactionType")
-                    .IsUnicode(false);
+                entity.Property(e => e.Segment).HasMaxLength(50);
+
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.Property(e => e.VoucherAmount)
-                    .HasColumnName("voucherAmount")
                     .HasColumnType("numeric(18, 2)")
                     .HasDefaultValueSql("((0.00))");
 
-                entity.Property(e => e.VoucherDetailId)
-                    .HasColumnName("voucherDetailId")
-                    .HasColumnType("numeric(18, 0)")
+                entity.Property(e => e.VoucherDate).HasColumnType("date");
+
+                entity.Property(e => e.VoucherNumber)
+                    .HasMaxLength(50)
                     .HasDefaultValueSql("((0))");
             });
 
@@ -3739,6 +3729,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.WriteOffGl)
                     .HasColumnName("WriteOffGL")
                     .HasMaxLength(50);
+
+                entity.Property(e => e.Writeoff).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblPaymentTermDetails>(entity =>
@@ -4505,6 +4497,53 @@ namespace CoreERP.Models
                 entity.Property(e => e.StateName)
                     .IsRequired()
                     .HasMaxLength(250);
+            });
+
+            modelBuilder.Entity<TblStockInformation>(entity =>
+            {
+                entity.ToTable("tbl_StockInformation");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
+                entity.Property(e => e.Branch).HasMaxLength(50);
+
+                entity.Property(e => e.Company).HasMaxLength(50);
+
+                entity.Property(e => e.CostCenter).HasMaxLength(50);
+
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
+
+                entity.Property(e => e.InvoiceDate).HasColumnType("date");
+
+                entity.Property(e => e.InvoiceNumber).HasMaxLength(50);
+
+                entity.Property(e => e.InwardQty).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.OutwardQty).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.ProductCode).HasMaxLength(50);
+
+                entity.Property(e => e.ProfitCenter).HasMaxLength(50);
+
+                entity.Property(e => e.Rate).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TransactionDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.TransactionType).HasMaxLength(50);
+
+                entity.Property(e => e.VoucherNumber).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblStorageLocation>(entity =>
