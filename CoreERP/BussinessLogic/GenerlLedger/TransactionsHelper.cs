@@ -19,18 +19,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             var voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType, out var startNumber, out var endNumber);
             
-            if (voucerTypeNoseries.LastNumber != startNumber)
-            {
+            //if (voucerTypeNoseries.LastNumber != startNumber)
+            //{
                 voucerTypeNoseries.LastNumber += 1;
                 if (voucerTypeNoseries.LastNumber > endNumber)
                     throw new Exception("No series is ended.");
-            }
-            else
-            {
-                voucerTypeNoseries.LastNumber = startNumber;
-                if (voucerTypeNoseries.LastNumber > endNumber)
-                    throw new Exception("No series is ended.");
-            }
+            //}
+            //else
+            //{
+            //    voucerTypeNoseries.LastNumber = startNumber;
+            //    if (voucerTypeNoseries.LastNumber > endNumber)
+            //        throw new Exception("No series is ended.");
+            //}
 
             using var context = new ERPContext();
             context.TblAssignmentVoucherSeriestoVoucherType.UpdateRange(voucerTypeNoseries);
