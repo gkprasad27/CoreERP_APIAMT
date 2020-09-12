@@ -354,6 +354,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 var  _role = GetRole(Convert.ToDecimal(roleId));
                 foreach(MenuAccesses ma in menus)
                 {
+                    ma.ScreenName = CommonHelper.GetMenu(ma.OperationCode)?.Route;
+                    
                     if (ma.Active ==true )
                         ma.Access = 1;
                     else 

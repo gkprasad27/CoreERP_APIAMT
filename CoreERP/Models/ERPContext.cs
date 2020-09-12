@@ -741,6 +741,8 @@ namespace CoreERP.Models
                     .HasColumnName("RoleID")
                     .HasMaxLength(200);
 
+                entity.Property(e => e.ScreenName).HasMaxLength(100);
+
                 entity.Property(e => e.UserId).HasMaxLength(200);
             });
 
