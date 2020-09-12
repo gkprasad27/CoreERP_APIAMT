@@ -69,6 +69,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblAssignment> TblAssignment { get; set; }
         public virtual DbSet<TblAssignmentVoucherSeriestoVoucherType> TblAssignmentVoucherSeriestoVoucherType { get; set; }
         public virtual DbSet<TblBankMaster> TblBankMaster { get; set; }
+        public virtual DbSet<TblBinsCreation> TblBinsCreation { get; set; }
         public virtual DbSet<TblBpgroup> TblBpgroup { get; set; }
         public virtual DbSet<TblBranch> TblBranch { get; set; }
         public virtual DbSet<TblBusinessPartnerAccount> TblBusinessPartnerAccount { get; set; }
@@ -90,7 +91,11 @@ namespace CoreERP.Models
         public virtual DbSet<TblFieldsConfiguration> TblFieldsConfiguration { get; set; }
         public virtual DbSet<TblFormMenuCollection> TblFormMenuCollection { get; set; }
         public virtual DbSet<TblFunctionalDepartment> TblFunctionalDepartment { get; set; }
+        public virtual DbSet<TblGinnoSeries> TblGinnoSeries { get; set; }
+        public virtual DbSet<TblGinseriesAssignment> TblGinseriesAssignment { get; set; }
         public virtual DbSet<TblGlsubAccount> TblGlsubAccount { get; set; }
+        public virtual DbSet<TblGrnassignment> TblGrnassignment { get; set; }
+        public virtual DbSet<TblGrnnoSeries> TblGrnnoSeries { get; set; }
         public virtual DbSet<TblHideTableColumns> TblHideTableColumns { get; set; }
         public virtual DbSet<TblHsnsac> TblHsnsac { get; set; }
         public virtual DbSet<TblIncomeTypes> TblIncomeTypes { get; set; }
@@ -101,11 +106,21 @@ namespace CoreERP.Models
         public virtual DbSet<TblLanguage> TblLanguage { get; set; }
         public virtual DbSet<TblLocation> TblLocation { get; set; }
         public virtual DbSet<TblLogin> TblLogin { get; set; }
+        public virtual DbSet<TblLotAssignment> TblLotAssignment { get; set; }
+        public virtual DbSet<TblLotSeries> TblLotSeries { get; set; }
         public virtual DbSet<TblMainAssetMaster> TblMainAssetMaster { get; set; }
         public virtual DbSet<TblMainAssetMasterTransaction> TblMainAssetMasterTransaction { get; set; }
         public virtual DbSet<TblMaintenancearea> TblMaintenancearea { get; set; }
+        public virtual DbSet<TblMaterialGroups> TblMaterialGroups { get; set; }
+        public virtual DbSet<TblMaterialNoAssignment> TblMaterialNoAssignment { get; set; }
+        public virtual DbSet<TblMaterialNoSeries> TblMaterialNoSeries { get; set; }
+        public virtual DbSet<TblMaterialTypes> TblMaterialTypes { get; set; }
+        public virtual DbSet<TblModelPattern> TblModelPattern { get; set; }
         public virtual DbSet<TblMonthList> TblMonthList { get; set; }
         public virtual DbSet<TblMonthListForReports> TblMonthListForReports { get; set; }
+        public virtual DbSet<TblMovementType> TblMovementType { get; set; }
+        public virtual DbSet<TblMrnnoAssignment> TblMrnnoAssignment { get; set; }
+        public virtual DbSet<TblMrnnoSeries> TblMrnnoSeries { get; set; }
         public virtual DbSet<TblNumberAssignment> TblNumberAssignment { get; set; }
         public virtual DbSet<TblNumberRange> TblNumberRange { get; set; }
         public virtual DbSet<TblOpenLedger> TblOpenLedger { get; set; }
@@ -119,10 +134,22 @@ namespace CoreERP.Models
         public virtual DbSet<TblPosaleAssetInvoiceMemoHeader> TblPosaleAssetInvoiceMemoHeader { get; set; }
         public virtual DbSet<TblPosting> TblPosting { get; set; }
         public virtual DbSet<TblPriceList> TblPriceList { get; set; }
+        public virtual DbSet<TblPrnoRange> TblPrnoRange { get; set; }
         public virtual DbSet<TblPurchaseDepartment> TblPurchaseDepartment { get; set; }
+        public virtual DbSet<TblPurchaseGroup> TblPurchaseGroup { get; set; }
+        public virtual DbSet<TblPurchaseNoRange> TblPurchaseNoRange { get; set; }
+        public virtual DbSet<TblPurchaseOrderNoAssignment> TblPurchaseOrderNoAssignment { get; set; }
+        public virtual DbSet<TblPurchaseOrderType> TblPurchaseOrderType { get; set; }
+        public virtual DbSet<TblPurchasePerson> TblPurchasePerson { get; set; }
+        public virtual DbSet<TblPurchaseType> TblPurchaseType { get; set; }
+        public virtual DbSet<TblQuotationNoAssignment> TblQuotationNoAssignment { get; set; }
+        public virtual DbSet<TblQuotationNoRange> TblQuotationNoRange { get; set; }
         public virtual DbSet<TblRegion> TblRegion { get; set; }
+        public virtual DbSet<TblRejectionReason> TblRejectionReason { get; set; }
         public virtual DbSet<TblRelation> TblRelation { get; set; }
         public virtual DbSet<TblReminder> TblReminder { get; set; }
+        public virtual DbSet<TblReqNoAssignment> TblReqNoAssignment { get; set; }
+        public virtual DbSet<TblRequisitionNoRange> TblRequisitionNoRange { get; set; }
         public virtual DbSet<TblRole> TblRole { get; set; }
         public virtual DbSet<TblRoute> TblRoute { get; set; }
         public virtual DbSet<TblSalesGroup> TblSalesGroup { get; set; }
@@ -134,9 +161,11 @@ namespace CoreERP.Models
         public virtual DbSet<TblStateWiseGst> TblStateWiseGst { get; set; }
         public virtual DbSet<TblStockInformation> TblStockInformation { get; set; }
         public virtual DbSet<TblStorageLocation> TblStorageLocation { get; set; }
+        public virtual DbSet<TblStoreTypes> TblStoreTypes { get; set; }
         public virtual DbSet<TblSubAssetMaster> TblSubAssetMaster { get; set; }
         public virtual DbSet<TblSubAssetMasterTransaction> TblSubAssetMasterTransaction { get; set; }
         public virtual DbSet<TblSuffixPrefix> TblSuffixPrefix { get; set; }
+        public virtual DbSet<TblSupplierTermsAndConditons> TblSupplierTermsAndConditons { get; set; }
         public virtual DbSet<TblTaxRates> TblTaxRates { get; set; }
         public virtual DbSet<TblTaxtransactions> TblTaxtransactions { get; set; }
         public virtual DbSet<TblTaxtypes> TblTaxtypes { get; set; }
@@ -1879,6 +1908,32 @@ namespace CoreERP.Models
                     .HasMaxLength(50);
             });
 
+            modelBuilder.Entity<TblBinsCreation>(entity =>
+            {
+                entity.HasKey(e => e.BinNumber);
+
+                entity.ToTable("tbl_BinsCreation");
+
+                entity.Property(e => e.BinNumber).HasMaxLength(10);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Material).HasMaxLength(10);
+
+                entity.Property(e => e.OpenQty).HasColumnName("OpenQTY");
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+
+                entity.Property(e => e.StorageLocation).HasMaxLength(5);
+
+                entity.Property(e => e.StoreIncharge).HasMaxLength(50);
+
+                entity.Property(e => e.Uom)
+                    .HasColumnName("UOM")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+            });
+
             modelBuilder.Entity<TblBpgroup>(entity =>
             {
                 entity.HasKey(e => e.Bpgroup);
@@ -2942,6 +2997,38 @@ namespace CoreERP.Models
                 entity.Property(e => e.ResponsiblePerson).HasMaxLength(5);
             });
 
+            modelBuilder.Entity<TblGinnoSeries>(entity =>
+            {
+                entity.HasKey(e => e.Ginseries);
+
+                entity.ToTable("tbl_GINNoSeries");
+
+                entity.Property(e => e.Ginseries)
+                    .HasColumnName("GINSeries")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Prefix).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblGinseriesAssignment>(entity =>
+            {
+                entity.HasKey(e => new { e.Ginseries, e.Company });
+
+                entity.ToTable("tbl_GINSeriesAssignment");
+
+                entity.Property(e => e.Ginseries)
+                    .HasColumnName("GINSeries")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.MaterilaType).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+            });
+
             modelBuilder.Entity<TblGlsubAccount>(entity =>
             {
                 entity.HasKey(e => e.Code);
@@ -2959,6 +3046,38 @@ namespace CoreERP.Models
                 entity.Property(e => e.GlsubName)
                     .HasColumnName("GLSubName")
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblGrnassignment>(entity =>
+            {
+                entity.HasKey(e => new { e.Grnseries, e.Company });
+
+                entity.ToTable("tbl_GRNAssignment");
+
+                entity.Property(e => e.Grnseries)
+                    .HasColumnName("GRNSeries")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.MaterialType).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblGrnnoSeries>(entity =>
+            {
+                entity.HasKey(e => e.Grnseries);
+
+                entity.ToTable("tbl_GRNNoSeries");
+
+                entity.Property(e => e.Grnseries)
+                    .HasColumnName("GRNSeries")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Prefix).HasMaxLength(5);
             });
 
             modelBuilder.Entity<TblHideTableColumns>(entity =>
@@ -3401,6 +3520,34 @@ namespace CoreERP.Models
                     .HasColumnType("numeric(18, 0)");
             });
 
+            modelBuilder.Entity<TblLotAssignment>(entity =>
+            {
+                entity.HasKey(e => new { e.LotSeries, e.Company });
+
+                entity.ToTable("tbl_LotAssignment");
+
+                entity.Property(e => e.LotSeries).HasMaxLength(10);
+
+                entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.MaterialType).HasMaxLength(10);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblLotSeries>(entity =>
+            {
+                entity.HasKey(e => e.SeriesKey);
+
+                entity.ToTable("tbl_LotSeries");
+
+                entity.Property(e => e.SeriesKey).HasMaxLength(10);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Prefix).HasMaxLength(5);
+            });
+
             modelBuilder.Entity<TblMainAssetMaster>(entity =>
             {
                 entity.HasKey(e => e.AssetNumber);
@@ -3502,6 +3649,74 @@ namespace CoreERP.Models
                 entity.Property(e => e.Plant).HasMaxLength(5);
             });
 
+            modelBuilder.Entity<TblMaterialGroups>(entity =>
+            {
+                entity.HasKey(e => e.GroupKey);
+
+                entity.ToTable("tbl_MaterialGroups");
+
+                entity.Property(e => e.GroupKey).HasMaxLength(10);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblMaterialNoAssignment>(entity =>
+            {
+                entity.HasKey(e => new { e.NumberRange, e.CompanyCode });
+
+                entity.ToTable("tbl_MaterialNoAssignment");
+
+                entity.Property(e => e.NumberRange).HasMaxLength(10);
+
+                entity.Property(e => e.CompanyCode).HasMaxLength(5);
+
+                entity.Property(e => e.MaterialType).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblMaterialNoSeries>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_MaterialNoSeries");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.NonNumaric)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Prefix).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblMaterialTypes>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_MaterialTypes");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.Class).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Usage).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblModelPattern>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_ModelPattern");
+
+                entity.Property(e => e.Code).HasMaxLength(10);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<TblMonthList>(entity =>
             {
                 entity.HasKey(e => e.MonthId)
@@ -3546,6 +3761,51 @@ namespace CoreERP.Models
                 entity.Property(e => e.Todt)
                     .HasColumnName("TODt")
                     .HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<TblMovementType>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_MovementType");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.Category).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblMrnnoAssignment>(entity =>
+            {
+                entity.HasKey(e => new { e.Mrnseries, e.Company });
+
+                entity.ToTable("tbl_MRNNoAssignment");
+
+                entity.Property(e => e.Mrnseries)
+                    .HasColumnName("MRNSeries")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.MaterialType).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblMrnnoSeries>(entity =>
+            {
+                entity.HasKey(e => e.Mrnseries);
+
+                entity.ToTable("tbl_MRNNoSeries");
+
+                entity.Property(e => e.Mrnseries)
+                    .HasColumnName("MRNSeries")
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Prefix).HasMaxLength(5);
             });
 
             modelBuilder.Entity<TblNumberAssignment>(entity =>
@@ -4095,6 +4355,21 @@ namespace CoreERP.Models
                     .HasColumnType("numeric(18, 0)");
             });
 
+            modelBuilder.Entity<TblPrnoRange>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_PRNoRange");
+
+                entity.Property(e => e.Code).HasMaxLength(10);
+
+                entity.Property(e => e.Department).HasMaxLength(5);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+
+                entity.Property(e => e.Prefix).HasMaxLength(5);
+            });
+
             modelBuilder.Entity<TblPurchaseDepartment>(entity =>
             {
                 entity.HasKey(e => e.Code);
@@ -4106,6 +4381,106 @@ namespace CoreERP.Models
                 entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblPurchaseGroup>(entity =>
+            {
+                entity.HasKey(e => e.PruchaseGroup);
+
+                entity.ToTable("tbl_PurchaseGroup");
+
+                entity.Property(e => e.PruchaseGroup).HasMaxLength(10);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblPurchaseNoRange>(entity =>
+            {
+                entity.HasKey(e => e.NumberRange);
+
+                entity.ToTable("tbl_PurchaseNoRange");
+
+                entity.Property(e => e.NumberRange).HasMaxLength(5);
+
+                entity.Property(e => e.Prefix).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblPurchaseOrderNoAssignment>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("tbl_PurchaseOrderNoAssignment");
+
+                entity.Property(e => e.CompanyCode).HasMaxLength(5);
+
+                entity.Property(e => e.NumberRange).HasMaxLength(5);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+
+                entity.Property(e => e.PurchaseOrderType).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblPurchaseOrderType>(entity =>
+            {
+                entity.HasKey(e => e.PurchaseOrderType);
+
+                entity.ToTable("tbl_PurchaseOrderType");
+
+                entity.Property(e => e.PurchaseOrderType).HasMaxLength(10);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.PrintText).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblPurchasePerson>(entity =>
+            {
+                entity.HasKey(e => new { e.PurchasePerson, e.PurchaseGroup, e.PurchaseTypes });
+
+                entity.ToTable("tbl_PurchasePerson");
+
+                entity.Property(e => e.PurchasePerson).HasMaxLength(50);
+
+                entity.Property(e => e.PurchaseGroup).HasMaxLength(10);
+
+                entity.Property(e => e.PurchaseTypes).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblPurchaseType>(entity =>
+            {
+                entity.HasKey(e => e.PurchaseType);
+
+                entity.ToTable("tbl_PurchaseType");
+
+                entity.Property(e => e.PurchaseType).HasMaxLength(10);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblQuotationNoAssignment>(entity =>
+            {
+                entity.HasKey(e => new { e.NumberRange, e.Company });
+
+                entity.ToTable("tbl_QuotationNoAssignment");
+
+                entity.Property(e => e.NumberRange).HasMaxLength(5);
+
+                entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblQuotationNoRange>(entity =>
+            {
+                entity.HasKey(e => e.NumberRange);
+
+                entity.ToTable("tbl_QuotationNoRange");
+
+                entity.Property(e => e.NumberRange).HasMaxLength(5);
+
+                entity.Property(e => e.Prefix).HasMaxLength(5);
             });
 
             modelBuilder.Entity<TblRegion>(entity =>
@@ -4128,6 +4503,17 @@ namespace CoreERP.Models
                     .WithMany(p => p.TblRegion)
                     .HasForeignKey(d => d.Country)
                     .HasConstraintName("FK__tbl_Regio__Count__2C401776");
+            });
+
+            modelBuilder.Entity<TblRejectionReason>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_RejectionReason");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblRelation>(entity =>
@@ -4182,6 +4568,37 @@ namespace CoreERP.Models
                 entity.Property(e => e.ToDate)
                     .HasColumnName("toDate")
                     .HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<TblReqNoAssignment>(entity =>
+            {
+                entity.HasKey(e => new { e.NumberRange, e.Company })
+                    .HasName("PK_tbl_ReqNoAssignment_1");
+
+                entity.ToTable("tbl_ReqNoAssignment");
+
+                entity.Property(e => e.NumberRange).HasMaxLength(5);
+
+                entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.Department)
+                    .IsRequired()
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.Plant)
+                    .IsRequired()
+                    .HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblRequisitionNoRange>(entity =>
+            {
+                entity.HasKey(e => e.NumberRange);
+
+                entity.ToTable("tbl_RequisitionNoRange");
+
+                entity.Property(e => e.NumberRange).HasMaxLength(5);
+
+                entity.Property(e => e.Prefix).HasMaxLength(5);
             });
 
             modelBuilder.Entity<TblRole>(entity =>
@@ -4561,6 +4978,17 @@ namespace CoreERP.Models
                 entity.Property(e => e.Plant).HasMaxLength(5);
             });
 
+            modelBuilder.Entity<TblStoreTypes>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_StoreTypes");
+
+                entity.Property(e => e.Code).HasMaxLength(10);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<TblSubAssetMaster>(entity =>
             {
                 entity.HasKey(e => e.SubAssetNumber);
@@ -4692,6 +5120,31 @@ namespace CoreERP.Models
                     .HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.WidthOfNumericalPart).HasColumnName("widthOfNumericalPart");
+            });
+
+            modelBuilder.Entity<TblSupplierTermsAndConditons>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("tbl_SupplierTermsAndConditons");
+
+                entity.Property(e => e.Code).HasMaxLength(5);
+
+                entity.Property(e => e.Advance).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ContactPerson).HasMaxLength(50);
+
+                entity.Property(e => e.DeliveryDate).HasColumnType("date");
+
+                entity.Property(e => e.DeliveryMethod).HasMaxLength(50);
+
+                entity.Property(e => e.DeliveryPeriod).HasMaxLength(5);
+
+                entity.Property(e => e.DeliveryPlace).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.PhoneNumber).HasMaxLength(15);
             });
 
             modelBuilder.Entity<TblTaxRates>(entity =>
