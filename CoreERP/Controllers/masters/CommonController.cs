@@ -712,5 +712,25 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpGet("GetUserPermissions/{roleId}/{screenName}")]
+        public IActionResult GetUserPermissions(string roleId,string screenName)
+        {
+            try
+            {
+                var permission = CommonHelper.GetUserPermissions(roleId,screenName);
+                if (permission == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = null });
+                
+
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.Permissions = permission;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

@@ -1073,5 +1073,51 @@ namespace CoreERP
         //        return null;
         //    }
         //}
+        public static string GetScreenConfig(string screenmodel, string screenName, string username)
+        {
+            try
+            {
+                using var repo = new Repository<TblFieldsConfiguration>();
+                return repo.TblFieldsConfiguration
+                         .Where(fc => fc.Screenname == screenName
+                                  && fc.ScreenModule == screenmodel
+                                  && fc.UserName == username)
+                         .FirstOrDefault().Configuration;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        public static Menus GetMenu(string operationCode)
+        {
+            try
+            {
+                using (Repository<Menus> _repo = new Repository<Menus>())
+                {
+                    return _repo.Menus.Where(m => m.OperationCode == operationCode).FirstOrDefault();
+                };
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public static MenuAccesses GetUserPermissions(string roleid, string screenName)
+        {
+            try
+            {
+                using (Repository<TblPermissions> _repo = new Repository<TblPermissions>())
+                {
+                    return _repo.MenuAccesses
+                                .Where(x => x.ScreenName == screenName
+                                         && x.RoleId == roleid).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }
