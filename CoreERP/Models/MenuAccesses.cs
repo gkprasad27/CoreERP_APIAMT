@@ -21,5 +21,6 @@ namespace CoreERP.Models
         public bool? CanEdit { get; set; }
         public bool? CanDelete { get; set; }
         public bool? CanView { get; set; }
+        public string ScreenName { get; set; }
     }
 }

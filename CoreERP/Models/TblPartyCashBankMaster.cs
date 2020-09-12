@@ -5,7 +5,6 @@ namespace CoreERP.Models
 {
     public partial class TblPartyCashBankMaster
     {
-        public int Id { get; set; }
         public string Company { get; set; }
         public string Branch { get; set; }
         public string VoucherClass { get; set; }
@@ -28,7 +27,9 @@ namespace CoreERP.Models
         public string Bpcategory { get; set; }
         public string PartyAccount { get; set; }
         public string Narration { get; set; }
-        public string Ext { get; set; }
-        public string Ext1 { get; set; }
+        public string AddWho { get; set; }
+        public string EditWho { get; set; }
+        public DateTime? AddDate { get; set; }
+        public DateTime? EditDate { get; set; }
     }
 }

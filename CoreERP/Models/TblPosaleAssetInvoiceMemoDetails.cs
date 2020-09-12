@@ -15,10 +15,10 @@ namespace CoreERP.Models
         public string MainAssetNo { get; set; }
         public string SubAssetNo { get; set; }
         public string Glaccount { get; set; }
-        public string GlaccountDescription { get; set; }
+        public string AccountingIndicator { get; set; }
         public decimal? Amount { get; set; }
         public string TaxCode { get; set; }
-        public string TaxCodeDescription { get; set; }
+        public string Bttypes { get; set; }
         public decimal? Sgstamount { get; set; }
         public decimal? Cgstamount { get; set; }
         public decimal? Igstamount { get; set; }
@@ -40,5 +40,6 @@ namespace CoreERP.Models
         public DateTime? AddDate { get; set; }
         public string EditWho { get; set; }
         public DateTime? EditDate { get; set; }
+        public string Status { get; set; }
     }
 }
