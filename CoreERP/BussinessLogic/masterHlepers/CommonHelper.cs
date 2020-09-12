@@ -882,6 +882,64 @@ namespace CoreERP
             return repo.TblAssignmentVoucherSeriestoVoucherType.FirstOrDefault(t => t.VoucherType == voucherTypeId);
         }
 
+        //AssetBeingAquisition
+        public bool AssetBeingAquisition(TblAssetBeginingAcquisition bngaqsn, List<TblAssetBegningAccumulatedDepreciation> astbngdsrpnDetails)
+        {
+            astbngdsrpnDetails.ForEach(x =>
+            {
+                x.AcquisitionCode = bngaqsn.Code;
+
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                if (bngaqsn.Id > 0)
+                {
+                    context.TblAssetBeginingAcquisition.Update(bngaqsn);
+                    context.SaveChanges();
+                    foreach (var item in astbngdsrpnDetails)
+                    {
+                        if (item.Id == 0)
+                        {
+                            context.TblAssetBegningAccumulatedDepreciation.UpdateRange(astbngdsrpnDetails);
+                            context.SaveChanges();
+                            dbtrans.Commit();
+                            return true;
+                        }
+                    }
+
+                }
+
+                context.TblAssetBeginingAcquisition.Add(bngaqsn);
+                context.SaveChanges();
+
+                context.TblAssetBegningAccumulatedDepreciation.AddRange(astbngdsrpnDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public TblAssetBeginingAcquisition GetmainAqsnById(string code)
+        {
+            using var repo = new Repository<TblAssetBeginingAcquisition>();
+            return repo.TblAssetBeginingAcquisition.FirstOrDefault(x => x.Code == code);
+        }
+
+        public List<TblAssetBegningAccumulatedDepreciation> GetAqsnDetailDetails(string code)
+        {
+            using var repo = new Repository<TblAssetBegningAccumulatedDepreciation>();
+            return repo.TblAssetBegningAccumulatedDepreciation.Where(cd => cd.AcquisitionCode == code).ToList();
+        }
+
         //Main Asset
         public bool MainAssetsdatas(TblMainAssetMaster mainassetMaster, List<TblMainAssetMasterTransaction> mainassetDetails)
         {
@@ -944,6 +1002,7 @@ namespace CoreERP
             using var repo = new Repository<TblMainAssetMasterTransaction>();
             return repo.TblMainAssetMasterTransaction.Where(cd => cd.AssetNumber == assetNumber).ToList();
         }
+       
         //subassets
         public bool SubAssetsdatas(TblSubAssetMaster assetMaster, List<TblSubAssetMasterTransaction> assetDetails)
         {
@@ -999,51 +1058,20 @@ namespace CoreERP
             return repo.TblSubAssetMasterTransaction.Where(cd => cd.SubAssetNumber == assetNumber).ToList();
         }
 
-        public static  string GetScreenConfig(string screenmodel,string screenName,string username)
-        {
-            try
-            {
-                using var repo=new Repository<TblFieldsConfiguration>();
-                return repo.TblFieldsConfiguration
-                         .Where(fc => fc.Screenname == screenName  
-                                  && fc.ScreenModule == screenmodel
-                                  && fc.UserName == username)
-                         .FirstOrDefault().Configuration;
-            }
-            catch(Exception)
-            {
-                return null;
-            }
-        }
-        public static Menus GetMenu(string operationCode)
-        {
-            try
-            {
-                using (Repository<Menus> _repo = new Repository<Menus>())
-                {
-                    return _repo.Menus.Where(m => m.OperationCode == operationCode).FirstOrDefault();
-                };
-            }
-            catch(Exception ex)
-            {
-                return null;
-            }
-        }
-        public static MenuAccesses GetUserPermissions(string roleid,string screenName)
-        {
-            try
-            {
-                using(Repository<TblPermissions> _repo=new Repository<TblPermissions>())
-                {
-                    return _repo.MenuAccesses
-                                .Where(x => x.ScreenName == screenName 
-                                         && x.RoleId == roleid).FirstOrDefault();
-                }
-            }
-            catch(Exception ex) 
-            {
-                throw ex;
-            }
-        }
+        //public static string GetScreenConfig(string screenmodel, string screenName, string username)
+        //{
+        //    try
+        //    {
+        //        using var repo = new Repository<TblFieldsConfiguration>();
+        //        return repo.TblFieldsConfiguration
+        //            .FirstOrDefault(fc => fc.Screenname == screenName
+        //                                  && fc.ScreenModule == screenmodel
+        //                                  && fc.UserName == username).Configuration;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return null;
+        //    }
+        //}
     }
 }

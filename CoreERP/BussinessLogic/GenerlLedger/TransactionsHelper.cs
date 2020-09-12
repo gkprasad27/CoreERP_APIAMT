@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace CoreERP.BussinessLogic.GenerlLedger
 {
@@ -17,59 +18,51 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public string GetVoucherNumber(string voucherType)
         {
             var voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType, out var startNumber, out var endNumber);
+            
+            //if (voucerTypeNoseries.LastNumber != startNumber)
+            //{
+                voucerTypeNoseries.LastNumber += 1;
+                if (voucerTypeNoseries.LastNumber > endNumber)
+                    throw new Exception("No series is ended.");
+            //}
+            //else
+            //{
+            //    voucerTypeNoseries.LastNumber = startNumber;
+            //    if (voucerTypeNoseries.LastNumber > endNumber)
+            //        throw new Exception("No series is ended.");
+            //}
 
-            while (true)
-            {
-
-
-                if (this.IsVoucherNumberExists(voucerTypeNoseries.Suffix + "-" + voucerTypeNoseries.LastNumber, voucherType))
-                {
-                    voucerTypeNoseries.LastNumber += 1;
-                    if (voucerTypeNoseries.LastNumber > endNumber)
-                        throw new Exception("No series is ended.");
-
-                    continue;
-                }
-                if (voucerTypeNoseries.LastNumber == 0)
-                    voucerTypeNoseries.LastNumber = startNumber;
-                break;
-            }
-
-            using Repository<TblAssignmentVoucherSeriestoVoucherType> repo = new Repository<TblAssignmentVoucherSeriestoVoucherType>();
-            repo.TblAssignmentVoucherSeriestoVoucherType.Update(voucerTypeNoseries);
-            repo.SaveChanges();
+            using var context = new ERPContext();
+            context.TblAssignmentVoucherSeriestoVoucherType.UpdateRange(voucerTypeNoseries);
+            context.SaveChanges();
 
             return voucerTypeNoseries.Suffix + "-" + voucerTypeNoseries.LastNumber;
         }
 
-        public bool IsVoucherNumberExists(string voucherNo, string voucherType)
+        public bool IsVoucherNumberExists(string voucherNo, string voucherType, [Optional] string screenName)
         {
-            switch (voucherType)
+            switch (screenName)
             {
-                case "501":
-                case "502":
-                case "401":
-                case "402":
+                case "cashbank":
                     {
                         using var repo = new Repository<TblCashBankMaster>();
                         return repo.TblCashBankMaster.Any(v => v.VoucherNumber == voucherNo);
                     }
-                case "301":
+                case "journals":
                     {
                         using var repo = new Repository<TblJvmaster>();
                         return repo.TblJvmaster.Any(v => v.VoucherNumber == voucherNo);
                     }
-                case "101":
-                case "102":
-                case "201":
-                case "202":
-                case "203":
-                case "204":
+                case "invoicesmemos":
                     {
                         using var repo = new Repository<TblInvoiceMemoHeader>();
                         return repo.TblInvoiceMemoHeader.Any(v => v.VoucherNumber == voucherNo);
                     }
-
+                case "purchasesaleasset":
+                    {
+                        using var repo = new Repository<TblPosaleAssetInvoiceMemoHeader>();
+                        return repo.TblPosaleAssetInvoiceMemoHeader.Any(v => v.VoucherNumber == voucherNo);
+                    }
                 default:
                     return false;
             }
@@ -92,7 +85,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (cashBankMaster.VoucherNumber == null)
                 throw new Exception("Voucher Number Canot be empty/null.");
 
-            if (this.IsVoucherNumberExists(cashBankMaster.VoucherNumber, cashBankMaster.VoucherType))
+            if (this.IsVoucherNumberExists(cashBankMaster.VoucherNumber, cashBankMaster.VoucherType, "cashbank"))
                 throw new Exception("Voucher number exists.");
 
             cashBankMaster.VoucherDate ??= DateTime.Now;
@@ -241,7 +234,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (jvMaster.VoucherNumber == null)
                 throw new Exception("Voucher Number Canot be empty/null.");
 
-            if (this.IsVoucherNumberExists(jvMaster.VoucherNumber, jvMaster.VoucherType))
+            if (this.IsVoucherNumberExists(jvMaster.VoucherNumber, jvMaster.VoucherType, "journals"))
                 throw new Exception("Voucher number exists.");
 
             jvMaster.VoucherDate ??= DateTime.Now;
@@ -315,7 +308,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public bool RetuenJournalVoucher(string voucherNumber)
         {
-            using var repo=new ERPContext();
+            using var repo = new ERPContext();
             var jvmaster = repo.TblJvmaster.FirstOrDefault(x => x.VoucherNumber == voucherNumber);
 
             if (jvmaster?.Status == "Y")
@@ -376,13 +369,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (imMaster.VoucherNumber == null)
                 throw new Exception("Voucher Number Canot be empty/null.");
 
-            if (this.IsVoucherNumberExists(imMaster.VoucherNumber, imMaster.VoucherType))
+            if (this.IsVoucherNumberExists(imMaster.VoucherNumber, imMaster.VoucherType, "invoicesmemos"))
                 throw new Exception("Voucher number exists.");
 
             imMaster.VoucherDate ??= DateTime.Now;
-            if (imMaster.NatureofTransaction.ToUpper().Contains("INCOMING"))
+            if (imMaster.NatureofTransaction.ToUpper().Contains("PURCHASE"))
                 imMaster.AccountingIndicator = CRDRINDICATORS.Debit.ToString();
-            else if (imMaster.NatureofTransaction.ToUpper().Contains("OUTGOING"))
+            else if (imMaster.NatureofTransaction.ToUpper().Contains("SALE"))
                 imMaster.AccountingIndicator = CRDRINDICATORS.Credit.ToString();
 
             int lineno = 1;
@@ -419,7 +412,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public bool ReturnInvoiceMemo(string voucherNumber)
         {
-            using var repo=new ERPContext();
+            using var repo = new ERPContext();
             var invoiceMemoHeader = repo.TblInvoiceMemoHeader.FirstOrDefault(im => im.VoucherNumber == voucherNumber);
 
             if (invoiceMemoHeader != null && invoiceMemoHeader.Status == "Y")
@@ -435,6 +428,312 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             return true;
         }
+        #endregion
+
+        #region Purchase Sale & Purchase
+
+        public List<TblPosaleAssetInvoiceMemoHeader> GetPSIMAssetMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblPosaleAssetInvoiceMemoHeader>();
+            return repo.TblPosaleAssetInvoiceMemoHeader.AsEnumerable()
+                .Where(x =>
+                {
+                    Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
+                    return x.Status == "N"
+                           && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
+                           && Convert.ToDateTime(x.VoucherDate.Value) >=
+                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                           && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                })
+                .ToList();
+        }
+
+        public TblPosaleAssetInvoiceMemoHeader GetPSIMAssetById(string voucherNumber)
+        {
+            using var repo = new Repository<TblPosaleAssetInvoiceMemoHeader>();
+            return repo.TblPosaleAssetInvoiceMemoHeader
+                .FirstOrDefault(x => x.VoucherNumber == voucherNumber);
+        }
+
+        public List<TblPosaleAssetInvoiceMemoDetails> GetPSIMAssetDetail(string voucherNumber)
+        {
+            using var repo = new Repository<TblPosaleAssetInvoiceMemoDetails>();
+            return repo.TblPosaleAssetInvoiceMemoDetails.Where(cd => cd.VoucherNo == voucherNumber).ToList();
+        }
+
+        public bool AddPSIMAsset(TblPosaleAssetInvoiceMemoHeader assetMaster, List<TblPosaleAssetInvoiceMemoDetails> assetDetails)
+        {
+            if (assetMaster.VoucherDate == null)
+                throw new Exception("Voucher Date Canot be empty/null.");
+
+            if (assetMaster.VoucherNumber == null)
+                throw new Exception("Voucher Number Canot be empty/null.");
+
+            if (this.IsVoucherNumberExists(assetMaster.VoucherNumber, assetMaster.VoucherType, "receiptspayments"))
+                throw new Exception("Voucher number exists.");
+
+            assetMaster.VoucherDate ??= DateTime.Now;
+            //if (imMaster.NatureofTransaction.ToUpper().Contains("INCOMING"))
+            //    imMaster.AccountingIndicator = CRDRINDICATORS.Debit.ToString();
+            //else if (imMaster.NatureofTransaction.ToUpper().Contains("OUTGOING"))
+            //    imMaster.AccountingIndicator = CRDRINDICATORS.Credit.ToString();
+
+            int lineno = 1;
+
+            assetDetails.ForEach(x =>
+            {
+                x.VoucherNo = assetMaster.VoucherNumber;
+                x.VoucherDate = assetMaster.VoucherDate;
+                x.Company = assetMaster.Company;
+                x.Branch = assetMaster.Branch;
+                x.PostingDate = assetMaster.PostingDate;
+                x.LineItemNo = Convert.ToString(lineno++);
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                assetMaster.Status = "N";
+                context.TblPosaleAssetInvoiceMemoHeader.Add(assetMaster);
+                context.SaveChanges();
+
+                context.TblPosaleAssetInvoiceMemoDetails.AddRange(assetDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public bool ReturnPSIMAsset(string voucherNumber)
+        {
+            using var repo = new ERPContext();
+            var invoiceMemoHeader = repo.TblPosaleAssetInvoiceMemoHeader.FirstOrDefault(im => im.VoucherNumber == voucherNumber);
+
+            if (invoiceMemoHeader != null && invoiceMemoHeader.Status == "Y")
+                throw new Exception($"Invoice memo no {voucherNumber} already return.");
+
+            if (invoiceMemoHeader != null)
+            {
+                invoiceMemoHeader.Status = "Y";
+                repo.TblPosaleAssetInvoiceMemoHeader.Update(invoiceMemoHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+        #endregion
+
+        #region Asset Transfer
+
+        public List<TblAssetTransfer> GetAssetTransferMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblAssetTransfer>();
+            return repo.TblAssetTransfer.AsEnumerable()
+                .Where(x =>
+                {
+                    Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
+                    return x.Status == "N"
+                           && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
+                           && Convert.ToDateTime(x.VoucherDate.Value) >=
+                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                           && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                })
+                .ToList();
+        }
+
+        public TblAssetTransfer GetAssetTransferById(string voucherNumber)
+        {
+            using var repo = new Repository<TblAssetTransfer>();
+            return repo.TblAssetTransfer
+                .FirstOrDefault(x => x.VoucherNumber == voucherNumber);
+        }
+
+        public List<TblAssetTransferDetails> GetAssetTransferDetail(string voucherNumber)
+        {
+            using var repo = new Repository<TblAssetTransferDetails>();
+            return repo.TblAssetTransferDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
+        }
+
+        public bool AddAssetTransfer(TblAssetTransfer assettransferMaster, List<TblAssetTransferDetails> assettransferDetails)
+        {
+            if (assettransferMaster.VoucherDate == null)
+                throw new Exception("Voucher Date Canot be empty/null.");
+
+            if (assettransferMaster.VoucherNumber == null)
+                throw new Exception("Voucher Number Canot be empty/null.");
+
+            if (this.IsVoucherNumberExists(assettransferMaster.VoucherNumber, assettransferMaster.VoucherType))
+                throw new Exception("Voucher number exists.");
+
+            assettransferMaster.VoucherDate ??= DateTime.Now;
+
+            int lineno = 1;
+
+            assettransferDetails.ForEach(x =>
+            {
+                x.VoucherNumber = assettransferMaster.VoucherNumber;
+                //x.voucherd = assettransferMaster.VoucherDate;
+                //x.co = assettransferMaster.Company;
+                //x.Branch = assettransferMaster.Branch;
+                //x.PostingDate = assettransferMaster.PostingDate;
+                //x.it = Convert.ToString(lineno++);
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                assettransferMaster.Status = "N";
+                context.TblAssetTransfer.Add(assettransferMaster);
+                context.SaveChanges();
+
+                context.TblAssetTransferDetails.AddRange(assettransferDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public bool ReturnAssetTransfer(string voucherNumber)
+        {
+            using var repo = new ERPContext();
+            var assettransferHeader = repo.TblAssetTransfer.FirstOrDefault(im => im.VoucherNumber == voucherNumber);
+
+            if (assettransferHeader != null && assettransferHeader.Status == "Y")
+                throw new Exception($"Invoice memo no {voucherNumber} already return.");
+
+            if (assettransferHeader != null)
+            {
+                assettransferHeader.Status = "Y";
+                repo.TblAssetTransfer.Update(assettransferHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+
+        #endregion
+
+        #region Party Cash Bank /Payments/Receipts
+
+        public List<TblPartyCashBankMaster> GetPaymentsReceiptsMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblPartyCashBankMaster>();
+            return repo.TblPartyCashBankMaster.AsEnumerable()
+                .Where(x =>
+                {
+                    Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
+                    return
+                    x.VoucherNumber != null
+                           && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
+                           && Convert.ToDateTime(x.VoucherDate.Value) >=
+                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                           && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                })
+                .ToList();
+        }
+
+        public TblPartyCashBankMaster GetPaymentsReceiptsById(string voucherNumber)
+        {
+            using var repo = new Repository<TblPartyCashBankMaster>();
+            return repo.TblPartyCashBankMaster
+                .FirstOrDefault(x => x.VoucherNumber == voucherNumber);
+        }
+        
+        public List<TblParyCashBankDetails> GetPaymentsReceiptsDetail(string voucherNumber)
+        {
+            using var repo = new Repository<TblParyCashBankDetails>();
+            return repo.TblParyCashBankDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
+        }
+        
+        public bool AddPaymentsReceipts(TblPartyCashBankMaster cbmaster, List<TblParyCashBankDetails> pcbDetails)
+        {
+            if (cbmaster.VoucherDate == null)
+                throw new Exception("Voucher Date Canot be empty/null.");
+
+            if (cbmaster.VoucherNumber == null)
+                throw new Exception("Voucher Number Canot be empty/null.");
+
+            if (this.IsVoucherNumberExists(cbmaster.VoucherNumber, cbmaster.VoucherType))
+                throw new Exception("Voucher number exists.");
+
+            cbmaster.VoucherDate ??= DateTime.Now;
+
+            int lineno = 1;
+
+            pcbDetails.ForEach(x =>
+            {
+                x.VoucherNumber = cbmaster.VoucherNumber;
+                x.VoucherDate = cbmaster.VoucherDate;
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblPartyCashBankMaster.Add(cbmaster);
+                context.SaveChanges();
+
+                context.TblParyCashBankDetails.AddRange(pcbDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public bool ReturnPaymentsReceipts(string voucherNumber)
+        {
+            using var repo = new ERPContext();
+            var cashpaymentHeader = repo.TblPartyCashBankMaster.FirstOrDefault(im => im.VoucherNumber == voucherNumber);
+
+            if (cashpaymentHeader != null)
+                throw new Exception($"Invoice memo no {voucherNumber} already return.");
+
+            if (cashpaymentHeader != null)
+            {
+                repo.TblPartyCashBankMaster.Update(cashpaymentHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+        
         #endregion
     }
 }

@@ -405,6 +405,11 @@ namespace CoreERP.Models
         public string TdsStateName { get; set; }          
     }
 
+    partial class TblAssetBeginingAcquisition
+    {
+        [NotMapped]
+        public string DepreciationArea { get; set; }
+    }
     partial class TblMainAssetMaster
     {
         [NotMapped]

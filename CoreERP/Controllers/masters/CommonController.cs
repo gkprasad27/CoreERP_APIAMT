@@ -39,6 +39,8 @@ namespace CoreERP.Controllers
         private readonly IRepository<ProfitCenters> _profitCentersRepository;
         private readonly IRepository<CostCenters> _ccRepository;
         private readonly IRepository<TblBusinessPartnerAccount> _bpRepository;
+        private readonly IRepository<TblMainAssetMaster> _tblMainAssetRepository;
+        private readonly IRepository<TblSubAssetMaster> _tblsubAssetRepository;
 
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
@@ -46,7 +48,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblTaxtransactions> ttRepository, IRepository<TblTaxRates> trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
                                 IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
                                 IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository, IRepository<CostCenters> ccRepository,
-                                IRepository<TblBusinessPartnerAccount> bpRepository)
+                                IRepository<TblBusinessPartnerAccount> bpRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository)
         {
             _companyRepository = companyRepository;
             _stateRepository = stateRepository;
@@ -73,6 +75,8 @@ namespace CoreERP.Controllers
             _profitCentersRepository = profitCentersRepository;
             _ccRepository = ccRepository;
             _bpRepository = bpRepository;
+            _tblMainAssetRepository = tblMainAssetRepository;
+            _tblsubAssetRepository = tblsubAssetRepository;
         }
 
         [HttpGet("GetLanguageList")]
@@ -652,38 +656,61 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetFieldsConfig/{screenmodel}/{screenName}/{userName}")]
-        public IActionResult GetFieldsConfig(string screenmodel, string screenName,string userName)
+        //[HttpGet("GetFieldsConfig/{screenmodel}/{screenName}/{userName}")]
+        //public IActionResult GetFieldsConfig(string screenmodel, string screenName,string userName)
+        //{
+        //    try
+        //    {
+        //        dynamic expdoObj = new ExpandoObject();
+        //        expdoObj.FieldsConfiguration = CommonHelper.GetScreenConfig(screenmodel,screenName, userName);
+        //        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
+
+        [HttpGet("GetMainAssetMasterList")]
+        public IActionResult GetMainAssetMasterList()
         {
             try
             {
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.FieldsConfiguration = CommonHelper.GetScreenConfig(screenmodel,screenName, userName);
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                var costcenterList = _tblMainAssetRepository.GetAll().Select(x => new { ID = x.AssetNumber, TEXT = x.Name });
+                if (costcenterList.Any())
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.mamList = costcenterList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found" });
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpGet("GetUserPermissions/{userName}/{screenName}")]
-        public IActionResult GetFieldsConfig(string userName, string screenName)
+
+        [HttpGet("GetSubAssetMasterList")]
+        public IActionResult GetSubAssetMasterList()
         {
             try
             {
-               var permissions=  CommonHelper.GetUserPermissions(userName, screenName);
-                if(permissions == null)
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = null });
+                var costcenterList = _tblsubAssetRepository.GetAll().Select(x => new { ID = x.SubAssetNumber, TEXT = x.Description });
+                if (costcenterList.Any())
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.saList = costcenterList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
 
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.Permissions = permissions;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found" });
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
     }
 }
