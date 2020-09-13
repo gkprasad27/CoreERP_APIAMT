@@ -39,6 +39,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<ProfitCenters> _profitCentersRepository;
         private readonly IRepository<CostCenters> _ccRepository;
         private readonly IRepository<TblBusinessPartnerAccount> _bpRepository;
+        private readonly IRepository<TblInvoiceMemoHeader> _InvoiceMemoHeaderRepository;
         private readonly IRepository<TblMainAssetMaster> _tblMainAssetRepository;
         private readonly IRepository<TblSubAssetMaster> _tblsubAssetRepository;
 
@@ -48,8 +49,10 @@ namespace CoreERP.Controllers
                                 IRepository<TblTaxtransactions> ttRepository, IRepository<TblTaxRates> trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
                                 IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
                                 IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository, IRepository<CostCenters> ccRepository,
-                                IRepository<TblBusinessPartnerAccount> bpRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository)
+                                IRepository<TblBusinessPartnerAccount> bpRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
+                                IRepository<TblInvoiceMemoHeader> tblInvoiceMemoHeaderRepository)
         {
+            _InvoiceMemoHeaderRepository = tblInvoiceMemoHeaderRepository;
             _companyRepository = companyRepository;
             _stateRepository = stateRepository;
             _currencyRepository = currencyRepository;
@@ -655,6 +658,29 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpGet("GetPurchaseInvoiceList")]
+        public IActionResult GetPurchaseInvoiceList()
+        {
+            try
+            {
+                var purchaseinvoiceList = _InvoiceMemoHeaderRepository.GetAll().Select(x => new { ID = x.PartyAccount, TEXT = x.PartyAccount,invoino = x.PartyInvoiceNo,Date=x.PartyInvoiceDate,Amount=x.TotalAmount,Amounts=x.TotalAmount });
+                if (purchaseinvoiceList.Any())
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.purchaseinvoiceList = purchaseinvoiceList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found" });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+
 
         //[HttpGet("GetFieldsConfig/{screenmodel}/{screenName}/{userName}")]
         //public IActionResult GetFieldsConfig(string screenmodel, string screenName,string userName)
