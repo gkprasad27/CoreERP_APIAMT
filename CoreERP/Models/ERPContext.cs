@@ -132,6 +132,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblMaterialNoSeries> TblMaterialNoSeries { get; set; }
         public virtual DbSet<TblMaterialPurchasePrice> TblMaterialPurchasePrice { get; set; }
         public virtual DbSet<TblMaterialRequisitionMaster> TblMaterialRequisitionMaster { get; set; }
+        public virtual DbSet<TblMaterialSize> TblMaterialSize { get; set; }
         public virtual DbSet<TblMaterialSupplierDetails> TblMaterialSupplierDetails { get; set; }
         public virtual DbSet<TblMaterialSupplierMaster> TblMaterialSupplierMaster { get; set; }
         public virtual DbSet<TblMaterialTypes> TblMaterialTypes { get; set; }
@@ -4186,6 +4187,22 @@ namespace CoreERP.Models
                 entity.Property(e => e.Status).HasMaxLength(50);
             });
 
+            modelBuilder.Entity<TblMaterialSize>(entity =>
+            {
+                entity.HasKey(e => e.Sizekey)
+                    .HasName("PK_MaterialSize");
+
+                entity.ToTable("tbl_MaterialSize");
+
+                entity.Property(e => e.Sizekey)
+                    .HasMaxLength(5)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<TblMaterialSupplierDetails>(entity =>
             {
                 entity.ToTable("tbl_MaterialSupplierDetails");
@@ -5778,17 +5795,7 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Size");
 
-                entity.Property(e => e.SizeId)
-                    .HasColumnName("sizeId")
-                    .HasMaxLength(5);
-
-                entity.Property(e => e.Extra1)
-                    .HasColumnName("extra1")
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.ExtraDate)
-                    .HasColumnName("extraDate")
-                    .HasColumnType("datetime");
+                entity.Property(e => e.SizeId).HasColumnName("sizeId");
 
                 entity.Property(e => e.Narration)
                     .HasColumnName("narration")
