@@ -22,6 +22,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<Countries> _countryRepository;
         private readonly IRepository<TblLocation> _locationRepository;
         private readonly IRepository<TblEmployee> _employeeRepository;
+        private readonly IRepository<Sizes> _sizesRepository;
         private readonly IRepository<TblPlant> _plantRepository;
         private readonly IRepository<TblBranch> _branchRepository;
         private readonly IRepository<TblVoucherType> _vtRepository;
@@ -49,11 +50,12 @@ namespace CoreERP.Controllers
                                 IRepository<TblTaxtransactions> ttRepository, IRepository<TblTaxRates> trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
                                 IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
                                 IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository, IRepository<CostCenters> ccRepository,
-                                IRepository<TblBusinessPartnerAccount> bpRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
+                                IRepository<TblBusinessPartnerAccount> bpRepository,IRepository<Sizes> sizesRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
                                 IRepository<TblInvoiceMemoHeader> tblInvoiceMemoHeaderRepository)
         {
             _InvoiceMemoHeaderRepository = tblInvoiceMemoHeaderRepository;
             _companyRepository = companyRepository;
+            _sizesRepository = sizesRepository;
             _stateRepository = stateRepository;
             _currencyRepository = currencyRepository;
             _languageRepository = languageRepository;
@@ -89,6 +91,21 @@ namespace CoreERP.Controllers
             {
                 dynamic expando = new ExpandoObject();
                 expando.LanguageList = _languageRepository.GetAll().Select(x => new { ID = x.LanguageCode, TEXT = x.LanguageName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetUOMList")]
+        public IActionResult GetUOMList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.UomList = _sizesRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
