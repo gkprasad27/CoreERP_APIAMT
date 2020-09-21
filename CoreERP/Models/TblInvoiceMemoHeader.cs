@@ -30,7 +30,7 @@ namespace CoreERP.Models
         public string Narration { get; set; }
         public string Status { get; set; }
         public string Ext { get; set; }
-        public string Ext1 { get; set; }
+        public DateTime? DueDate { get; set; }
         public string AddWho { get; set; }
         public DateTime? AddDate { get; set; }
         public string EditWho { get; set; }

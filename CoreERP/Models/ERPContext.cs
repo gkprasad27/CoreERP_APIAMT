@@ -3599,6 +3599,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
+                entity.Property(e => e.DueDate).HasColumnType("date");
+
                 entity.Property(e => e.EditDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
@@ -3606,8 +3608,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.EditWho).HasMaxLength(50);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
-
-                entity.Property(e => e.Ext1).HasMaxLength(50);
 
                 entity.Property(e => e.Grndate)
                     .HasColumnName("GRNDate")
@@ -4053,6 +4053,10 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.NetWeight).HasColumnType("numeric(18, 0)");
 
+                entity.Property(e => e.NetWeightUom)
+                    .HasColumnName("NetWeightUOM")
+                    .HasColumnType("numeric(18, 0)");
+
                 entity.Property(e => e.OpeningQty).HasColumnName("OpeningQTY");
 
                 entity.Property(e => e.Ouom)
@@ -4272,6 +4276,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.Class).HasMaxLength(50);
 
                 entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Ext1).HasColumnName("ext1");
 
                 entity.Property(e => e.Usage).HasMaxLength(50);
             });
@@ -4583,10 +4589,6 @@ namespace CoreERP.Models
                 entity.ToTable("tbl_PaymentTermDetails");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Days).HasMaxLength(5);
-
-                entity.Property(e => e.Discount).HasMaxLength(5);
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
 

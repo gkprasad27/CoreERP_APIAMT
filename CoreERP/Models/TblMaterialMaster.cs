@@ -41,5 +41,6 @@ namespace CoreERP.Models
         public string AddWho { get; set; }
         public DateTime? EditDate { get; set; }
         public DateTime? AddDate { get; set; }
+        public decimal? NetWeightUom { get; set; }
     }
 }

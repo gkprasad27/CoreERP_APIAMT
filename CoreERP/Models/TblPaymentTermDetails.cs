@@ -7,8 +7,8 @@ namespace CoreERP.Models
     {
         public int Id { get; set; }
         public string PaymentTermCode { get; set; }
-        public string Days { get; set; }
-        public string Discount { get; set; }
+        public int? Days { get; set; }
+        public int? Discount { get; set; }
         public string Ext { get; set; }
     }
 }
