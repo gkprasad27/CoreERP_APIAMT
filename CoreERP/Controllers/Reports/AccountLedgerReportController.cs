@@ -25,7 +25,7 @@ namespace CoreERP.Controllers.Reports
                     // return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 var serviceResult =await Task.FromResult(ReportsHelperClass.GetAccountLedgerReportDataList(UserID,ledgerCode, fromDate,toDate,branchCode));
-                if (serviceResult.Item1 != null && serviceResult.Item1.Count>0)
+                if (serviceResult.Item2 != null && serviceResult.Item2.Count>0)
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.accountLedgerList = serviceResult.Item1;

@@ -286,7 +286,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("GetMembersList")]
-        public async Task<IActionResult> GetMembersList([FromBody]SearchCriteria searchCriteria)
+        public async Task<IActionResult> GetMembersList([FromBody]VoucherNoSearchCriteria searchCriteria)
         {
             var result = await Task.Run(() =>
             {
@@ -674,6 +674,209 @@ namespace CoreERP.Controllers.masters
 
                     dynamic expando = new ExpandoObject();
                     expando.Gift = _gift;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Empty;
+
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
+        }
+        #endregion
+
+        #region Share Transfer And Additional Share Transfer
+        [HttpGet("GetShareTransfer/{memberCode}")]
+        public async Task<IActionResult> GetShareTransfer(string memberCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                string errorMessage = string.Empty;
+                List<TblShareTransfer> _members = null;
+                try
+                {
+                    if (string.IsNullOrEmpty(memberCode))
+                    {
+                        memberCode = "0";
+                    }
+                    _members = new MemberMasterHelper().GetShareTransfer(Convert.ToDecimal(memberCode));
+
+                    if (_members == null && _members.Count() > 0)
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data found." });
+
+                    dynamic expando = new ExpandoObject();
+                    expando.ShareList = _members;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Empty;
+
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetShareTransferNo")]
+        public async Task<IActionResult> GetShareTransferNo()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    string errorMessage = string.Empty;
+                    dynamic expando = new ExpandoObject();
+                    expando.ShareTransferNoList = new MemberMasterHelper().GetShareTransferNo(out errorMessage);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetShareMembersList")]
+        public async Task<IActionResult> GetShareMembersList()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.memberList = new MemberMasterHelper().GetShareMembersList().Select(x => new { ID = x.MemberCode, TEXT = x.MemberName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetNoOfShares/{memberCode}")]
+        public async Task<IActionResult> GetNoOfShares(decimal memberCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                //if (pumpNo == 0)
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Query string parameter missing." });
+
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.noOfsharesList = new MemberMasterHelper().GetNoOfShares(memberCode).Select(x=>x.NoofShares);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetAdditionalShareTransfer/{memberCode}")]
+        public async Task<IActionResult> GetAdditionalShareTransfer(string memberCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                string errorMessage = string.Empty;
+                List<TblAdditionalShareTransfer> _members = null;
+                try
+                {
+                    if (string.IsNullOrEmpty(memberCode))
+                    {
+                        memberCode = "0";
+                    }
+                    _members = new MemberMasterHelper().GetAdditionalShareTransfer(Convert.ToDecimal(memberCode));
+
+                    if (_members == null && _members.Count() > 0)
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data found." });
+
+                    dynamic expando = new ExpandoObject();
+                    expando.ShareList = _members;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Empty;
+
+                    if (ex.InnerException != null)
+                    {
+                        message = ex.InnerException.Message;
+                    }
+                    else
+                    {
+                        message = ex.Message;
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = message });
+                }
+            });
+            return result;
+        }
+
+        [HttpPost("RegisterShareTransfer/{memberCode}")]
+        public async Task<IActionResult> RegisterShareTransfer(string memberCode, TblShareTransfer shareTransfer)
+        {
+            var result = await Task.Run(() =>
+            {
+                string errorMessage = string.Empty;
+
+                try
+                {
+                    if (string.IsNullOrEmpty(memberCode))
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "member Code query string can not be null/empty." });
+                    }
+
+                    if (shareTransfer == null)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No request records can not empty/null." });
+                    }
+
+                    if (shareTransfer.FromMemberCode == 0)
+                    {
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Frmom Member Code can not be null/empty." });
+                    }
+
+                    var result = new MemberMasterHelper().AddShareTransfer(Convert.ToDecimal(memberCode), shareTransfer, out errorMessage);
+                    if (result == null)
+                    {
+                        if (string.IsNullOrEmpty(errorMessage))
+                        {
+                            errorMessage = "Registration Failed.";
+                        }
+
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
+                    }
+
+                    dynamic expando = new ExpandoObject();
+                    expando.Member = result;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)

@@ -9,6 +9,9 @@ namespace CoreERP.Helpers.SharedModels
     {
         private DateTime? _fromDate;
         private DateTime? _toDate;
+        private string _invoiceNo;
+        private string _vehicle;
+        private string _name;
         public DateTime? FromDate
         {
             get
@@ -37,6 +40,20 @@ namespace CoreERP.Helpers.SharedModels
                 _toDate = value;
             }
         }
+        public string InvoiceNo
+        {
+            get
+            {
+                return _invoiceNo;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    _invoiceNo = null;
+                else
+                    _invoiceNo = value;
+            }
+        }
         public string VoucherNo { get; set; }
         public string StockExcessNo { get; set; }
         public string OilConversionVchNo { get; set; }
@@ -46,5 +63,33 @@ namespace CoreERP.Helpers.SharedModels
         public int Role { get; set; }
 
         public string BranchCode { get; set; }
+        public string Vehicle
+        {
+            get
+            {
+                return _vehicle;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    _vehicle = null;
+                else
+                    _vehicle = value;
+            }
+        }
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    _name = null;
+                else
+                    _name = value;
+            }
+        }
     }
 }

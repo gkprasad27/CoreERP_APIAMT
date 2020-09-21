@@ -147,7 +147,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 {
                     var Qty = (from IM in repo.TblInvoiceMaster
                                       join ID in repo.TblInvoiceDetail on IM.InvoiceMasterId equals ID.InvoiceMasterId
-                                               where ID.PumpNo==pumpNo && IM.BranchCode==branchCode && ID.ShiftId==shiftId
+                                               where ID.PumpNo==pumpNo && IM.BranchCode==branchCode && ID.ShiftId==shiftId && IM.IsSalesReturned==false
                                                select ID).ToList();
 
                     decimal _saledUnits = Qty.Sum(x => Convert.ToDecimal(x.Qty ?? 0));
