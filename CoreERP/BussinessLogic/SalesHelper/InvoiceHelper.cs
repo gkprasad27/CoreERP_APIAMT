@@ -362,13 +362,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         _value = 0 + (totalCrditAmount - totalDebittAmount);
                        
                     }
-                    else
+                    else if(_OpeningBalance.PaymentTypeId==1)
                     {
                          _value = _OpeningBalance.Amount + (totalCrditAmount - totalDebittAmount);
                         
                     }
+                    else
+                    {
+                        _value = (totalCrditAmount - totalDebittAmount) - _OpeningBalance.Amount;
+                    }
 
-                    if (_value > 0)
+                    if (_value != 0)
                     {
                         return _value;
                     }
