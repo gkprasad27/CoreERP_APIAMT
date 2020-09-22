@@ -372,6 +372,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (this.IsVoucherNumberExists(imMaster.VoucherNumber, imMaster.VoucherType, "invoicesmemos"))
                 throw new Exception("Voucher number exists.");
 
+            //Add Duedate Based on PostingDate
+            using var repo = new Repository<TblPaymentTermDetails>();
+            //int ptDays =Convert.ToInt32( repo.TblPaymentTermDetails.Max(x => x.PaymentTermCode ==imMaster.Paymentterms).ToString());
+            if (imMaster.Paymentterms != null)
+            {
+                int ptDays = Convert.ToInt32(repo.TblPaymentTermDetails.Where(x => x.PaymentTermCode == imMaster.Paymentterms).Max(y => y.Days).ToString());
+                string addduedate = Convert.ToString(imMaster.PostingDate ??= DateTime.Now);
+                imMaster.DueDate = DateTime.Parse(addduedate).AddDays(ptDays);
+            }
+
             imMaster.VoucherDate ??= DateTime.Now;
             if (imMaster.NatureofTransaction.ToUpper().Contains("PURCHASE"))
                 imMaster.AccountingIndicator = CRDRINDICATORS.Debit.ToString();
