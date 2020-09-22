@@ -24,6 +24,6 @@ namespace CoreERP.Models
         public string EditWho { get; set; }
         public DateTime? EditDate { get; set; }
         public string Ext { get; set; }
-        public string Ext1 { get; set; }
+        public decimal? TotalAmount { get; set; }
     }
 }

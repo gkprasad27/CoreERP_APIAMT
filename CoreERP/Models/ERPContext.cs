@@ -2321,7 +2321,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AddWho).HasMaxLength(50);
 
-                entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
 
@@ -2331,7 +2331,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Cgstamount)
                     .HasColumnName("CGSTAmount")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.Commitment).HasMaxLength(50);
 
@@ -2361,7 +2361,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Igstamount)
                     .HasColumnName("IGSTAmount")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.LineItemNo).HasMaxLength(50);
 
@@ -2383,7 +2383,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Sgstamount)
                     .HasColumnName("SGSTAmount")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
@@ -2391,7 +2391,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ugstamount)
                     .HasColumnName("UGSTAmount")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.VoucherDate).HasColumnType("date");
 
@@ -2447,6 +2447,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.Segment).HasMaxLength(5);
 
                 entity.Property(e => e.Status).HasMaxLength(50);
+
+                entity.Property(e => e.TotalAmount).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.TransactionType).HasMaxLength(5);
 
@@ -3496,7 +3498,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AddWho).HasMaxLength(50);
 
-                entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
 
@@ -3506,7 +3508,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Cgstamount)
                     .HasColumnName("CGSTAmount")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.Commitment).HasMaxLength(50);
 
@@ -3536,7 +3538,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Igstamount)
                     .HasColumnName("IGSTAmount")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.LineItemNo).HasMaxLength(50);
 
@@ -3558,7 +3560,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Sgstamount)
                     .HasColumnName("SGSTAmount")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
@@ -3566,7 +3568,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ugstamount)
                     .HasColumnName("UGSTAmount")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.VoucherDate).HasColumnType("date");
 
@@ -3639,9 +3641,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.Property(e => e.TaxAmount).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.TaxAmount).HasColumnType("numeric(18, 2)");
 
-                entity.Property(e => e.TotalAmount).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.TotalAmount).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.TransactionType).HasMaxLength(20);
 
@@ -3666,7 +3668,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AddWho).HasMaxLength(50);
 
-                entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.Branch).HasMaxLength(5);
 
@@ -3676,7 +3678,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Cgstamount)
                     .HasColumnName("CGSTAmount")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.Commitment).HasMaxLength(50);
 
@@ -3706,7 +3708,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Igstamount)
                     .HasColumnName("IGSTAmount")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.LineItemNo).HasMaxLength(50);
 
@@ -3728,7 +3730,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Sgstamount)
                     .HasColumnName("SGSTAmount")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
@@ -3736,7 +3738,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ugstamount)
                     .HasColumnName("UGSTAmount")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.VoucherDate).HasMaxLength(50);
 
@@ -3774,8 +3776,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ext).HasMaxLength(50);
 
-                entity.Property(e => e.Ext1).HasMaxLength(50);
-
                 entity.Property(e => e.Narration).HasMaxLength(50);
 
                 entity.Property(e => e.Period).HasColumnType("date");
@@ -3787,6 +3787,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.ReferenceNo).HasMaxLength(50);
 
                 entity.Property(e => e.Status).HasMaxLength(50);
+
+                entity.Property(e => e.TotalAmount).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.TransactionType).HasMaxLength(20);
 
@@ -4472,7 +4474,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AddWho).HasMaxLength(50);
 
-                entity.Property(e => e.Amount).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.Bpcategory)
                     .HasColumnName("BPCategory")
@@ -4541,11 +4543,13 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AddWho).HasMaxLength(50);
 
-                entity.Property(e => e.AdjustmentAmount).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.AdjustmentAmount).HasColumnType("numeric(18, 2)");
 
-                entity.Property(e => e.BalanceDue).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.BalanceDue).HasColumnType("numeric(18, 2)");
 
-                entity.Property(e => e.ClearedAmount).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.ClearedAmount).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Discount).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.DiscountGl)
                     .HasColumnName("DiscountGL")
@@ -4559,13 +4563,13 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.EditWho).HasMaxLength(50);
 
-                entity.Property(e => e.InvoiceAmount).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.InvoiceAmount).HasColumnType("numeric(18, 2)");
 
-                entity.Property(e => e.MemoAmount).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.MemoAmount).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.Narration).HasMaxLength(50);
 
-                entity.Property(e => e.NotDue).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.NotDue).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.PartyInvoiceDate).HasColumnType("date");
 
@@ -4581,7 +4585,7 @@ namespace CoreERP.Models
                     .HasColumnName("WriteOffGL")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.Writeoff).HasMaxLength(50);
+                entity.Property(e => e.Writeoff).HasColumnType("numeric(18, 2)");
             });
 
             modelBuilder.Entity<TblPaymentTermDetails>(entity =>

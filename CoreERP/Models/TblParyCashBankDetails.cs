@@ -17,7 +17,7 @@ namespace CoreERP.Models
         public decimal? BalanceDue { get; set; }
         public decimal? NotDue { get; set; }
         public decimal? AdjustmentAmount { get; set; }
-        public int? Discount { get; set; }
+        public decimal? Discount { get; set; }
         public string DiscountGl { get; set; }
         public string WriteOffAmount { get; set; }
         public string WriteOffGl { get; set; }
@@ -26,6 +26,6 @@ namespace CoreERP.Models
         public DateTime? AddDate { get; set; }
         public string EditWho { get; set; }
         public DateTime? EditDate { get; set; }
-        public string Writeoff { get; set; }
+        public decimal? Writeoff { get; set; }
     }
 }
