@@ -48,7 +48,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var storeasnList = _lotAssignmentRepository.GetAll();
+                var storeasnList = CommonHelper.GetLotAssignment();
                 if (storeasnList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

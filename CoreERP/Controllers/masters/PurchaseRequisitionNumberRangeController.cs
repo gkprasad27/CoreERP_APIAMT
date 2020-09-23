@@ -48,7 +48,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var prnoList = _prnoRangeRepository.GetAll();
+                var prnoList = CommonHelper.GetPrnoRange();
                 if (prnoList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

@@ -47,7 +47,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var reqassgnmntList = _reqNoAssignmentRepository.GetAll();
+                var reqassgnmntList = CommonHelper.GetReqNoAssignment();
                 if (reqassgnmntList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

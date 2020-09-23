@@ -47,7 +47,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var qtnnoassnList = _quotationNoAssignmentRepository.GetAll();
+                var qtnnoassnList = CommonHelper.GetQuotationNoAssignment();
                 if (qtnnoassnList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

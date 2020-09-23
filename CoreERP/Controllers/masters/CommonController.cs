@@ -43,15 +43,21 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblInvoiceMemoHeader> _InvoiceMemoHeaderRepository;
         private readonly IRepository<TblMainAssetMaster> _tblMainAssetRepository;
         private readonly IRepository<TblSubAssetMaster> _tblsubAssetRepository;
-
-        public CommonController(IRepository<TblCompany> companyRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
+        private readonly IRepository<Department> _departmentRepository;
+        private readonly IRepository<TblSecondaryCostElement> _secondaryCostElementRepository;
+        private readonly IRepository<TblCostingObjectTypes> _costingObjectTypesRepository;
+        private readonly IRepository<TblCostingNumberSeries> _costingNumberSeriesRepository;
+        public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
                                 IRepository<TblTaxtransactions> ttRepository, IRepository<TblTaxRates> trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
                                 IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
                                 IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository, IRepository<CostCenters> ccRepository,
                                 IRepository<TblBusinessPartnerAccount> bpRepository,IRepository<Sizes> sizesRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
-                                IRepository<TblInvoiceMemoHeader> tblInvoiceMemoHeaderRepository)
+                                IRepository<TblInvoiceMemoHeader> tblInvoiceMemoHeaderRepository,
+                                IRepository<TblSecondaryCostElement> secondaryCostElementRepository,
+                                 IRepository<TblCostingObjectTypes> costingObjectTypesRepository,
+                                IRepository<TblCostingNumberSeries> costingNumberSeriesRepository)
         {
             _InvoiceMemoHeaderRepository = tblInvoiceMemoHeaderRepository;
             _companyRepository = companyRepository;
@@ -82,6 +88,71 @@ namespace CoreERP.Controllers
             _bpRepository = bpRepository;
             _tblMainAssetRepository = tblMainAssetRepository;
             _tblsubAssetRepository = tblsubAssetRepository;
+            _departmentRepository = departmentRepository;
+            _secondaryCostElementRepository = secondaryCostElementRepository;
+            _costingObjectTypesRepository = costingObjectTypesRepository;
+            _costingNumberSeriesRepository = costingNumberSeriesRepository;
+        }
+
+        [HttpGet("GetCostingObjectTypeList")]
+        public IActionResult GetCostingObjectTypeList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.cotList = _costingObjectTypesRepository.GetAll().Select(x => new { ID = x.ObjectType, TEXT = x.Description });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetCostingNumberSeriesList")]
+        public IActionResult GetCostingNumberSeriesList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.cnsList = _costingNumberSeriesRepository.GetAll().Select(x => new { ID = x.NumberObject, TEXT = x.NumberObject });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetCostingSecondaryList")]
+        public IActionResult GetCostingSecondaryList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.csList = _secondaryCostElementRepository.GetAll().Select(x => new { ID = x.SecondaryCostCode, TEXT = x.Description });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+
+        [HttpGet("GetDepartmentList")]
+        public IActionResult GetDepartmentList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.deptList = _departmentRepository.GetAll().Select(x => new { ID = x.DepartmentId, TEXT = x.DepartmentName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpGet("GetLanguageList")]

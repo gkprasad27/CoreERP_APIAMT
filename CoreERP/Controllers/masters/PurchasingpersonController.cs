@@ -47,7 +47,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var pcpList = _purchasingpersonRepository.GetAll();
+                var pcpList = CommonHelper.GetPurchasePerson();
                 if (pcpList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

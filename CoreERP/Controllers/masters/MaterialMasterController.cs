@@ -112,7 +112,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var mmasterList = _materialMasterRepository.GetAll();
+                var mmasterList = CommonHelper.GetMaterialMaster();
                 if (mmasterList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

@@ -47,7 +47,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var poassnList = _purchaseOrderNoAssignmentRepository.GetAll();
+                var poassnList = CommonHelper.GetPurchaseOrderNoAssignment();
                 if (poassnList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

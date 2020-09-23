@@ -17,12 +17,203 @@ namespace CoreERP.Models
         public string CountryName { get; set; }
     }
 
+
     partial class States
     {
         [NotMapped]
         public string CountryName { get; set; }
         [NotMapped]
         public string LangName { get; set; }
+    }
+
+    partial class TblPurchasePerson
+    {
+        [NotMapped]
+        public string PurchaseGroupName { get; set; }
+        [NotMapped]
+        public string PurchaseTypesName { get; set; }
+        [NotMapped]
+        public string PersonName { get; set; }
+    }
+
+    partial class TblReqNoAssignment
+    {
+        [NotMapped]
+        public string NoRangeName { get; set; }
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string DepartmentName { get; set; }
+       
+    }
+    partial class TblQuotationNoAssignment
+    {
+        [NotMapped]
+        public string NoRangeName { get; set; }
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+       
+    }
+    partial class TblPurchaseOrderNoAssignment
+    {
+        [NotMapped]
+        public string NoRangeName { get; set; }
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string PorderGroupName { get; set; }
+    }
+
+    partial class TblLotAssignment
+    {
+        [NotMapped]
+        public string NoRangeName { get; set; }
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string MaterialName { get; set; }
+    }
+
+    partial class TblGrnassignment
+    {
+        [NotMapped]
+        public string GrnseriesName { get; set; }
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string MaterialName { get; set; }
+    }
+
+    partial class TblGinseriesAssignment
+    {
+        [NotMapped]
+        public string GinseriesName { get; set; }
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string MaterialName { get; set; }
+    }
+
+    partial class TblMrnnoAssignment
+    {
+        [NotMapped]
+        public string MaterialseriesName { get; set; }
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string MaterialName { get; set; }
+    }
+
+    partial class TblMaterialNoAssignment
+    {
+        [NotMapped]
+        public string NumberRangeName { get; set; }
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string MaterialName { get; set; }
+    }
+
+    partial class TblBinsCreation
+    {
+        [NotMapped]
+        public string LocationName { get; set; }
+        [NotMapped]
+        public string EmployeeName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string MaterialName { get; set; }
+        [NotMapped]
+        public string UomName { get; set; }
+    }
+
+    partial class TblPrnoRange
+    {
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string Departmentname { get; set; }
+
+    }
+
+    partial class TblPrimaryCostElement
+    {
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string ChartAccountName { get; set; }
+        [NotMapped]
+        public string UomName { get; set; }
+        [NotMapped]
+        public string AccGroupName { get; set; }
+    }
+    partial class TblSecondaryCostElement
+    {
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string ChartAccountName { get; set; }
+        [NotMapped]
+        public string UomName { get; set; }
+    }
+    partial class TblCostingActivity
+    {
+        [NotMapped]
+        public string SecondCostName { get; set; }
+        [NotMapped]
+        public string UomName { get; set; }
+    }
+
+    partial class TblCostingnumberAssigntoObject
+    {
+        [NotMapped]
+        public string ObjectName { get; set; }
+        [NotMapped]
+        public string SeriesName { get; set; }
+    }
+    partial class TblCostingKeyFigures
+    {
+        [NotMapped]
+        public string UomName { get; set; }
+    }
+
+    partial class TblMaterialMaster
+    {
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string MaterialName { get; set; }
+        [NotMapped]
+        public string MaterialGroupName { get; set; }
+        [NotMapped]
+        public string MaterialSizeName { get; set; }
+        [NotMapped]
+        public string UomName { get; set; }
+        [NotMapped]
+        public string ModelPatternName { get; set; }
+        [NotMapped]
+        public string DivisionName { get; set; }
+        [NotMapped]
+        public string PurchaseGroupName { get; set; }
     }
 
     partial class TblCompany

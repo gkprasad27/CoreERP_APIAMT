@@ -1,35 +1,36 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using System;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Dynamic;
 using System.Linq;
 
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/GoodsReceiptNoteAssignment")]
-    public class GoodsReceiptNoteAssignmentController : ControllerBase
+    [Route("api/CostingKeyFigures")]
+    public class CostingKeyFiguresController : ControllerBase
     {
-        private readonly IRepository<TblGrnassignment> _grnassignmentRepository;
-        public GoodsReceiptNoteAssignmentController(IRepository<TblGrnassignment> grnassignmentRepository)
+
+        private readonly IRepository<TblCostingKeyFigures> _costingKeyFiguresRepository;
+        public CostingKeyFiguresController(IRepository<TblCostingKeyFigures> costingKeyFiguresRepository)
         {
-            _grnassignmentRepository = grnassignmentRepository;
+            _costingKeyFiguresRepository = costingKeyFiguresRepository;
         }
 
-        [HttpPost("RegisterGoodsReceiptNoteAssignment")]
-        public IActionResult RegisterGoodsReceiptNoteAssignment([FromBody]TblGrnassignment assgnmnt)
+        [HttpPost("RegisterCostingKeyFigures")]
+        public IActionResult RegisterCostingKeyFigures([FromBody]TblCostingKeyFigures costfigures)
         {
-            if (assgnmnt == null)
+            if (costfigures == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
 
                 APIResponse apiResponse;
-                _grnassignmentRepository.Add(assgnmnt);
-                if (_grnassignmentRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assgnmnt };
+                _costingKeyFiguresRepository.Add(costfigures);
+                if (_costingKeyFiguresRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = costfigures };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -42,16 +43,16 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetGoodsReceiptNoteAssignmentList")]
-        public IActionResult GetGoodsReceiptNoteAssignmentList()
+        [HttpGet("GetCostingKeyFiguresList")]
+        public IActionResult GetCostingKeyFiguresList()
         {
             try
             {
-                var grnoassgnmtList = CommonHelper.GetGrnassignment();
-                if (grnoassgnmtList.Any())
+                var costfiguresList = CommonHelper.GetCostingKeyFigures();
+                if (costfiguresList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.grnoassgnmtList = grnoassgnmtList;
+                    expdoObj.costfiguresList = costfiguresList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
 
@@ -63,18 +64,18 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpPut("UpdateGoodsReceiptNoteAssignment")]
-        public IActionResult UpdateGoodsReceiptNoteAssignment([FromBody] TblGrnassignment assgnmnt)
+        [HttpPut("UpdateCostingKeyFigures")]
+        public IActionResult UpdateCostingKeyFigures([FromBody] TblCostingKeyFigures costfigures)
         {
-            if (assgnmnt == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(assgnmnt)} cannot be null" });
+            if (costfigures == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(costfigures)} cannot be null" });
 
             try
             {
                 APIResponse apiResponse;
-                _grnassignmentRepository.Update(assgnmnt);
-                if (_grnassignmentRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assgnmnt };
+                _costingKeyFiguresRepository.Update(costfigures);
+                if (_costingKeyFiguresRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = costfigures };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -86,8 +87,8 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpDelete("DeleteGoodsReceiptNoteAssignment/{code}")]
-        public IActionResult DeleteGoodsReceiptNoteAssignmentbyId(string code)
+        [HttpDelete("DeleteCostingKeyFigures/{code}")]
+        public IActionResult DeleteCostingKeyFiguresbyId(string code)
         {
             try
             {
@@ -95,9 +96,9 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _grnassignmentRepository.GetSingleOrDefault(x => x.Grnseries.Equals(code));
-                _grnassignmentRepository.Remove(record);
-                if (_grnassignmentRepository.SaveChanges() > 0)
+                var record = _costingKeyFiguresRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _costingKeyFiguresRepository.Remove(record);
+                if (_costingKeyFiguresRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };

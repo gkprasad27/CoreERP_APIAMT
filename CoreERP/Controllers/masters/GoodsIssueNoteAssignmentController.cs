@@ -47,7 +47,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var issueassnList = _ginseriesAssignmentRepository.GetAll();
+                var issueassnList = CommonHelper.GetGinseriesAssignment();
                 if (issueassnList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

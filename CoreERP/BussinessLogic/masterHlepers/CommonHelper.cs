@@ -147,6 +147,326 @@ namespace CoreERP
             return resul;
         }
 
+
+        public static IEnumerable<TblReqNoAssignment> GetReqNoAssignment()
+        {
+            using var repo = new Repository<TblReqNoAssignment>();
+            var norange = repo.TblRequisitionNoRange.ToList();
+            var plant = repo.TblPlant.ToList();
+            var dept = repo.Department.ToList();
+            var companies = repo.TblCompany.ToList();
+            var result = repo.TblReqNoAssignment.ToList();
+
+            result.ForEach(c =>
+            {
+                c.NoRangeName = norange.FirstOrDefault(cur => cur.NumberRange == c.NumberRange)?.NumberRange;
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.DepartmentName = dept.FirstOrDefault(cur => cur.DepartmentId == c.Department)?.DepartmentName;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblQuotationNoAssignment> GetQuotationNoAssignment()
+        {
+            using var repo = new Repository<TblQuotationNoAssignment>();
+            var norange = repo.TblQuotationNoRange.ToList();
+            var plant = repo.TblPlant.ToList();
+            var dept = repo.Department.ToList();
+            var companies = repo.TblCompany.ToList();
+            var result = repo.TblQuotationNoAssignment.ToList();
+
+            result.ForEach(c =>
+            {
+                c.NoRangeName = norange.FirstOrDefault(cur => cur.NumberRange == c.NumberRange)?.NumberRange;
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblPurchaseOrderNoAssignment> GetPurchaseOrderNoAssignment()
+        {
+            using var repo = new Repository<TblPurchaseOrderNoAssignment>();
+            var norange = repo.TblPurchaseNoRange.ToList();
+            var plant = repo.TblPlant.ToList();
+            var pordertype = repo.TblPurchaseOrderType.ToList();
+            var companies = repo.TblCompany.ToList();
+            var result = repo.TblPurchaseOrderNoAssignment.ToList();
+
+            result.ForEach(c =>
+            {
+                c.NoRangeName = norange.FirstOrDefault(cur => cur.NumberRange == c.NumberRange)?.NumberRange;
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.CompanyCode)?.CompanyName;
+                c.PorderGroupName = pordertype.FirstOrDefault(l => l.PurchaseOrderType == c.PurchaseOrderType)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblLotAssignment> GetLotAssignment()
+        {
+            using var repo = new Repository<TblLotAssignment>();
+            var norange = repo.TblLotSeries.ToList();
+            var plant = repo.TblPlant.ToList();
+            var materialtype = repo.TblMaterialTypes.ToList();
+            var companies = repo.TblCompany.ToList();
+            var result = repo.TblLotAssignment.ToList();
+
+            result.ForEach(c =>
+            {
+                c.NoRangeName = norange.FirstOrDefault(cur => cur.SeriesKey == c.LotSeries)?.SeriesKey;
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblGrnassignment> GetGrnassignment()
+        {
+            using var repo = new Repository<TblGrnassignment>();
+            var grnseries = repo.TblGrnnoSeries.ToList();
+            var plant = repo.TblPlant.ToList();
+            var materialtype = repo.TblMaterialTypes.ToList();
+            var companies = repo.TblCompany.ToList();
+            var result = repo.TblGrnassignment.ToList();
+
+            result.ForEach(c =>
+            {
+                c.GrnseriesName = grnseries.FirstOrDefault(cur => cur.Grnseries == c.Grnseries)?.Grnseries;
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblGinseriesAssignment> GetGinseriesAssignment()
+        {
+            using var repo = new Repository<TblGinseriesAssignment>();
+            var ginseries = repo.TblGinnoSeries.ToList();
+            var plant = repo.TblPlant.ToList();
+            var materialtype = repo.TblMaterialTypes.ToList();
+            var companies = repo.TblCompany.ToList();
+            var result = repo.TblGinseriesAssignment.ToList();
+
+            result.ForEach(c =>
+            {
+                c.GinseriesName = ginseries.FirstOrDefault(cur => cur.Ginseries == c.Ginseries)?.Ginseries;
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterilaType)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblMrnnoAssignment> GetMrnnoAssignment()
+        {
+            using var repo = new Repository<TblMrnnoAssignment>();
+            var materialseries = repo.TblMaterialNoSeries.ToList();
+            var plant = repo.TblPlant.ToList();
+            var materialtype = repo.TblMaterialTypes.ToList();
+            var companies = repo.TblCompany.ToList();
+            var result = repo.TblMrnnoAssignment.ToList();
+
+            result.ForEach(c =>
+            {
+                c.MaterialseriesName = materialseries.FirstOrDefault(cur => cur.Code == c.Mrnseries)?.Code;
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblMaterialNoAssignment> GetMaterialNoAssignment()
+        {
+            using var repo = new Repository<TblMaterialNoAssignment>();
+            var numberrange = repo.TblMaterialNoSeries.ToList();
+            var plant = repo.TblPlant.ToList();
+            var materialtype = repo.TblMaterialTypes.ToList();
+            var companies = repo.TblCompany.ToList();
+            var result = repo.TblMaterialNoAssignment.ToList();
+
+            result.ForEach(c =>
+            {
+                c.NumberRangeName = numberrange.FirstOrDefault(cur => cur.Code == c.NumberRange)?.Code;
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.CompanyCode)?.CompanyName;
+                c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblBinsCreation> GetBinsCreation()
+        {
+            using var repo = new Repository<TblBinsCreation>();
+            var stloc = repo.TblStorageLocation.ToList();
+            var plant = repo.TblPlant.ToList();
+            var materialtype = repo.TblMaterialTypes.ToList();
+            var employee = repo.TblEmployee.ToList();
+            var uom = repo.Sizes.ToList();
+            var result = repo.TblBinsCreation.ToList();
+
+            result.ForEach(c =>
+            {
+                c.LocationName = stloc.FirstOrDefault(cur => cur.Code == c.StorageLocation)?.Code;
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.EmployeeName = employee.FirstOrDefault(l => l.EmployeeCode == c.StoreIncharge)?.EmployeeName;
+                c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.Material)?.Description;
+                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblPurchasePerson> GetPurchasePerson()
+        {
+            using var repo = new Repository<TblPurchasePerson>();
+            var pgroup = repo.TblPurchaseGroup.ToList();
+            var ptype = repo.TblPurchaseType.ToList();
+            var employee = repo.TblEmployee.ToList();
+            var result = repo.TblPurchasePerson.ToList();
+
+            result.ForEach(c =>
+            {
+                c.PurchaseGroupName = pgroup.FirstOrDefault(cur => cur.PruchaseGroup == c.PurchaseGroup)?.Description;
+                c.PurchaseTypesName = ptype.FirstOrDefault(l => l.PurchaseType == c.PurchaseTypes)?.Description;
+                c.PersonName = employee.FirstOrDefault(emp => emp.EmployeeCode == c.PurchasePerson)?.EmployeeName;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblPrnoRange> GetPrnoRange()
+        {
+            using var repo = new Repository<TblPrnoRange>();
+            var plant = repo.TblPlant.ToList();
+            var dept = repo.Department.ToList();
+            var result = repo.TblPrnoRange.ToList();
+
+            result.ForEach(c =>
+            {
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.Departmentname = dept.FirstOrDefault(l => l.DepartmentId == c.Department)?.DepartmentName;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblMaterialMaster> GetMaterialMaster()
+        {
+            using var repo = new Repository<TblMaterialMaster>();
+            var company = repo.TblCompany.ToList();
+            var plant = repo.TblPlant.ToList();
+            var materialtype = repo.TblMaterialTypes.ToList();
+            var materialgroup = repo.TblMaterialGroups.ToList();
+            var materialsize = repo.TblMaterialSize.ToList();
+            var uom = repo.Sizes.ToList();
+            var modelpattern = repo.TblModelPattern.ToList();
+            var division = repo.Divisions.ToList();
+            var purchasegroup = repo.TblMaterialGroups.ToList();
+            var result = repo.TblMaterialMaster.ToList();
+
+            result.ForEach(c =>
+            {
+                c.CompanyName = company.FirstOrDefault(cur => cur.CompanyCode == c.Company)?.CompanyName;
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
+                c.MaterialGroupName = materialgroup.FirstOrDefault(l => l.GroupKey == c.MaterialGroup)?.Description;
+                c.MaterialSizeName = materialsize.FirstOrDefault(l => l.Sizekey == c.Size)?.Description;
+                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+                c.ModelPatternName = modelpattern.FirstOrDefault(l => l.Code == c.ModelPattern)?.Description;
+                c.DivisionName = division.FirstOrDefault(l => l.Code == c.Division)?.Description;
+                c.PurchaseGroupName = purchasegroup.FirstOrDefault(l => l.GroupKey == c.PurchasingGroup)?.Description;
+            });
+            return result;
+        }
+
+
+        public static IEnumerable<TblPrimaryCostElement> GetPrimarycostelement()
+        {
+            using var repo = new Repository<TblPrimaryCostElement>();
+            var company = repo.TblCompany.ToList();
+            var chartaccount = repo.TblChartAccount.ToList();
+            var uom = repo.Sizes.ToList();
+            var gl = repo.Glaccounts.ToList();
+            
+            var result = repo.TblPrimaryCostElement.ToList();
+
+            result.ForEach(c =>
+            {
+                c.CompanyName = company.FirstOrDefault(cur => cur.CompanyCode == c.Company)?.CompanyName;
+                c.ChartAccountName = chartaccount.FirstOrDefault(cur => cur.Code == c.ChartofAccount)?.Desctiption;
+                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+                c.AccGroupName = gl.FirstOrDefault(l => l.AccGroup == c.GeneralLedger)?.AccGroupName;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblSecondaryCostElement> GetSecondarycostelement()
+        {
+            using var repo = new Repository<TblSecondaryCostElement>();
+            var company = repo.TblCompany.ToList();
+            var chartaccount = repo.TblChartAccount.ToList();
+            var uom = repo.Sizes.ToList();
+
+            var result = repo.TblSecondaryCostElement.ToList();
+
+            result.ForEach(c =>
+            {
+                c.CompanyName = company.FirstOrDefault(cur => cur.CompanyCode == c.Company)?.CompanyName;
+                c.ChartAccountName = chartaccount.FirstOrDefault(cur => cur.Code == c.ChartofAccount)?.Desctiption;
+                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblCostingActivity> GetActivities()
+        {
+            using var repo = new Repository<TblCostingActivity>();
+            var secondarycost = repo.TblSecondaryCostElement.ToList();
+            var uom = repo.Sizes.ToList();
+
+            var result = repo.TblCostingActivity.ToList();
+
+            result.ForEach(c =>
+            {
+                c.SecondCostName = secondarycost.FirstOrDefault(cur => cur.SecondaryCostCode == c.CostElement)?.Description;
+                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblCostingKeyFigures> GetCostingKeyFigures()
+        {
+            using var repo = new Repository<TblCostingKeyFigures>();
+            var uom = repo.Sizes.ToList();
+
+            var result = repo.TblCostingKeyFigures.ToList();
+
+            result.ForEach(c =>
+            {
+                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblCostingnumberAssigntoObject> GetCostingnumberAssigntoObject()
+        {
+            using var repo = new Repository<TblCostingnumberAssigntoObject>();
+            var objectype = repo.TblCostingObjectTypes.ToList();
+            var noseries = repo.TblCostingNumberSeries.ToList();
+
+            var result = repo.TblCostingnumberAssigntoObject.ToList();
+
+            result.ForEach(c =>
+            {
+                c.ObjectName = objectype.FirstOrDefault(cur => cur.ObjectType == c.ObjectType)?.Description;
+                c.SeriesName = noseries.FirstOrDefault(l => l.NumberObject == c.NumberSeries)?.NumberObject;
+            });
+            return result;
+        }
+
+
         public static IEnumerable<States> GetStates()
         {
             using var repo = new Repository<States>();

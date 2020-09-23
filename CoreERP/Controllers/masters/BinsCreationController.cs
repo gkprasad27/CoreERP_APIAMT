@@ -47,7 +47,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var bcList = _binsCreationRepository.GetAll();
+                var bcList = CommonHelper.GetBinsCreation();
                 if (bcList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
