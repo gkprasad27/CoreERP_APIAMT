@@ -1994,8 +1994,40 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 };
                 dbParametersList.Add(parameters);
             }
+            else
+            {
+                parameters = new parametersClass
+                {
+                    paramName = "userName",
+                    paramValue = UserID
+                };
+                dbParametersList.Add(parameters);
+
+                parameters = new parametersClass
+                {
+                    paramName = "fDate",
+                    paramValue = fromDate
+                };
+                dbParametersList.Add(parameters);
+
+                parameters = new parametersClass
+                {
+                    paramName = "tDate",
+                    paramValue = toDate
+                };
+                dbParametersList.Add(parameters);
+
+                parameters = new parametersClass
+                {
+                    paramName = "branchCode",
+                    paramValue = branchCode
+                };
+                dbParametersList.Add(parameters);
+            }
             if (fourColumnreportType == 1)
                 procedureName = "Usp_FourColumnCashBookByBranchReportNew";
+            else if (fourColumnreportType == 2)
+                procedureName = "Usp_FourColumnCashBookReport";
             return getDataFromDataBase(dbParametersList, procedureName);
 
         }
