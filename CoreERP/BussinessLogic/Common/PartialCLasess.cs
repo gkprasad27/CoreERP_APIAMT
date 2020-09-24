@@ -188,6 +188,36 @@ namespace CoreERP.Models
         [NotMapped]
         public string SeriesName { get; set; }
     }
+    partial class TblCostingUnitsCreation
+    {
+        [NotMapped]
+        public string ObjectName { get; set; }
+        [NotMapped]
+        public string MaterialName { get; set; }
+    }
+    partial class TblBatchMaster
+    {
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string EmployeeName { get; set; }
+        [NotMapped]
+        public string UomName { get; set; }
+    }
+    partial class TblProcess
+    {
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string CostunitName { get; set; }
+        [NotMapped]
+        public string MaterialName { get; set; }
+    }
+
     partial class TblCostingKeyFigures
     {
         [NotMapped]

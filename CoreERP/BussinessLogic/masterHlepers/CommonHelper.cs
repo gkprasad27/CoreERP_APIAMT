@@ -466,6 +466,62 @@ namespace CoreERP
             return result;
         }
 
+        public static IEnumerable<TblCostingUnitsCreation> GetCostingUnitsCreation()
+        {
+            using var repo = new Repository<TblCostingnumberAssigntoObject>();
+            var objectype = repo.TblCostingObjectTypes.ToList();
+            var material = repo.TblMaterialTypes.ToList();
+
+            var result = repo.TblCostingUnitsCreation.ToList();
+
+            result.ForEach(c =>
+            {
+                c.ObjectName = objectype.FirstOrDefault(cur => cur.ObjectType == c.ObjectType)?.Description;
+                c.MaterialName = material.FirstOrDefault(l => l.Code == c.Material)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblBatchMaster> GetBatchMaster()
+        {
+            using var repo = new Repository<TblBatchMaster>();
+            var company = repo.TblCompany.ToList();
+            var plant = repo.TblPlant.ToList();
+            var uom = repo.Sizes.ToList();
+            var employee = repo.TblEmployee.ToList();
+
+            var result = repo.TblBatchMaster.ToList();
+
+            result.ForEach(c =>
+            {
+                c.CompanyName = company.FirstOrDefault(cur => cur.CompanyCode == c.Company)?.CompanyName;
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.EmployeeName = employee.FirstOrDefault(l => l.EmployeeCode == c.CreatedBy)?.EmployeeName;
+                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblProcess> GetProcess()
+        {
+            using var repo = new Repository<TblProcess>();
+            var company = repo.TblCompany.ToList();
+            var plant = repo.TblPlant.ToList();
+            var costunit = repo.TblCostingUnitsCreation.ToList();
+            var material = repo.TblMaterialTypes.ToList();
+
+            var result = repo.TblProcess.ToList();
+
+            result.ForEach(c =>
+            {
+                c.CompanyName = company.FirstOrDefault(cur => cur.CompanyCode == c.Company)?.CompanyName;
+                c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
+                c.CostunitName = costunit.FirstOrDefault(l => l.ObjectNumber == c.CostUnit)?.Description;
+                c.MaterialName = material.FirstOrDefault(l => l.Code == c.Material)?.Description;
+            });
+            return result;
+        }
+
 
         public static IEnumerable<States> GetStates()
         {

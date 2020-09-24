@@ -47,6 +47,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblSecondaryCostElement> _secondaryCostElementRepository;
         private readonly IRepository<TblCostingObjectTypes> _costingObjectTypesRepository;
         private readonly IRepository<TblCostingNumberSeries> _costingNumberSeriesRepository;
+        private readonly IRepository<TblCostingUnitsCreation> _costingUnitsCreationRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
@@ -56,7 +57,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblBusinessPartnerAccount> bpRepository,IRepository<Sizes> sizesRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
                                 IRepository<TblInvoiceMemoHeader> tblInvoiceMemoHeaderRepository,
                                 IRepository<TblSecondaryCostElement> secondaryCostElementRepository,
-                                 IRepository<TblCostingObjectTypes> costingObjectTypesRepository,
+                                 IRepository<TblCostingObjectTypes> costingObjectTypesRepository, IRepository<TblCostingUnitsCreation> costingUnitsCreationRepository,
                                 IRepository<TblCostingNumberSeries> costingNumberSeriesRepository)
         {
             _InvoiceMemoHeaderRepository = tblInvoiceMemoHeaderRepository;
@@ -92,6 +93,7 @@ namespace CoreERP.Controllers
             _secondaryCostElementRepository = secondaryCostElementRepository;
             _costingObjectTypesRepository = costingObjectTypesRepository;
             _costingNumberSeriesRepository = costingNumberSeriesRepository;
+            _costingUnitsCreationRepository = costingUnitsCreationRepository;
         }
 
         [HttpGet("GetCostingObjectTypeList")]
@@ -276,6 +278,27 @@ namespace CoreERP.Controllers
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.emplist = empList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetCostUnitList")]
+        public IActionResult GetCostUnitList()
+        {
+            try
+            {
+                var costunitList = _costingUnitsCreationRepository.GetAll().Select(x => new { ID = x.ObjectNumber, TEXT = x.Description });
+                if (costunitList.Any())
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.costunitList = costunitList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
 
@@ -752,7 +775,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var purchaseinvoiceList = _InvoiceMemoHeaderRepository.GetAll().Select(x => new { ID = x.PartyAccount, TEXT = x.PartyAccount,invoino = x.PartyInvoiceNo,Date=x.PartyInvoiceDate,Amount=x.TotalAmount,Amounts=x.TotalAmount,x.PostingDate,x.Paymentterms,x.DueDate });
+                var purchaseinvoiceList = _InvoiceMemoHeaderRepository.GetAll().Select(x => new { ID = x.PartyAccount, TEXT = x.PartyAccount, invoino = x.PartyInvoiceNo, Date = x.PartyInvoiceDate, Amount = x.TotalAmount, Amounts = x.TotalAmount, x.PostingDate, x.Paymentterms, x.DueDate });
                 if (purchaseinvoiceList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
