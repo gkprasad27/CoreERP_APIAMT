@@ -139,7 +139,6 @@ namespace CoreERP.Controllers.GeneralLedger
 
         #endregion
 
-
         #region General VOucher
 
         [HttpGet("GetGJTransTypes")]
@@ -496,7 +495,27 @@ namespace CoreERP.Controllers.GeneralLedger
 
         #endregion
 
-       //PaymentReceipt
+        #region Party Payment & Receipt
+
+        [HttpPost("GetDiscount")]
+        public IActionResult GetDiscount(string postingDate, string dueDate, string paymentTerm,decimal invoiceAmount)
+        {
+            try
+            {
+                var discount = new TransactionsHelper().CalculateDiscount(postingDate, dueDate, paymentTerm,invoiceAmount);
+                if (discount==0)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Discount." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.discount = discount;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPost("GetPaymentsReceiptsMaster")]
         public IActionResult GetPaymentsReceiptsMaster([FromBody] SearchCriteria searchCriteria)
         {
@@ -578,5 +597,6 @@ namespace CoreERP.Controllers.GeneralLedger
             }
         }
 
+        #endregion
     }
 }
