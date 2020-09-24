@@ -2653,13 +2653,13 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblCostingnumberAssigntoObject>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.ObjectType);
 
                 entity.ToTable("tbl_CostingnumberAssigntoObject");
 
-                entity.Property(e => e.NumberSeries).HasMaxLength(5);
-
                 entity.Property(e => e.ObjectType).HasMaxLength(5);
+
+                entity.Property(e => e.NumberSeries).HasMaxLength(5);
             });
 
             modelBuilder.Entity<TblCurrency>(entity =>
