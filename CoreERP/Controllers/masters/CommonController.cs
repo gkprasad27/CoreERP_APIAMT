@@ -775,7 +775,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var purchaseinvoiceList = _InvoiceMemoHeaderRepository.GetAll().Select(x => new { ID = x.PartyAccount, TEXT = x.PartyAccount, invoino = x.PartyInvoiceNo, Date = x.PartyInvoiceDate, Amount = x.TotalAmount, Amounts = x.TotalAmount, x.PostingDate, x.Paymentterms, x.DueDate });
+                var purchaseinvoiceList = _InvoiceMemoHeaderRepository.GetAll().Select(x => new { x.PartyAccount,  x.PartyInvoiceNo,  x.TotalAmount,  x.PostingDate, x.Paymentterms, x.DueDate });
                 if (purchaseinvoiceList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

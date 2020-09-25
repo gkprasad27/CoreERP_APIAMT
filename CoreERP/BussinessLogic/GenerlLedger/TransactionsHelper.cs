@@ -651,23 +651,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         #region Party Cash Bank /Payments/Receipts
 
-        public decimal CalculateDiscount(string postingDate,string dueDate,string paymentTerm,decimal invoiceAmount)
+        public decimal CalculateDiscount(SearchCriteria searchCriteria)
         {
             using var repo = new Repository<TblPaymentTermDetails>();
-            var tabledata = repo.TblPaymentTermDetails
-                .Where(x => x.PaymentTermCode == paymentTerm);
-            if (DateTime.ParseExact(dueDate, "MM/dd/yyyy", CultureInfo.InvariantCulture) <= System.DateTime.Today)
-            {
-                foreach (var item in tabledata)
-                {
-                    postingDate = DateTime.Parse(postingDate).AddDays(Convert.ToInt32(item.Days)).ToShortDateString();
-                    if (DateTime.ParseExact(postingDate, "MM/dd/yyyy", CultureInfo.InvariantCulture) <= System.DateTime.Today)
-                    {
+            //var tabledata = repo.TblPaymentTermDetails
+            //    .Where(x => x.PaymentTermCode == paymentTerm);
+            //if (DateTime.ParseExact(dueDate, "MM/dd/yyyy", CultureInfo.InvariantCulture) <= System.DateTime.Today)
+            //{
+            //    foreach (var item in tabledata)
+            //    {
+            //        postingDate = DateTime.Parse(postingDate).AddDays(Convert.ToInt32(item.Days)).ToShortDateString();
+            //        if (DateTime.ParseExact(postingDate, "MM/dd/yyyy", CultureInfo.InvariantCulture) <= System.DateTime.Today)
+            //        {
 
-                    }
+            //        }
 
-                }
-            }
+            //    }
+            //}
            
             return 10;
         }

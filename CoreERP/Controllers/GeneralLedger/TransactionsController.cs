@@ -498,11 +498,11 @@ namespace CoreERP.Controllers.GeneralLedger
         #region Party Payment & Receipt
 
         [HttpPost("GetDiscount")]
-        public IActionResult GetDiscount(string postingDate, string dueDate, string paymentTerm,decimal invoiceAmount)
+        public IActionResult GetDiscount([FromBody] SearchCriteria searchCriteria)
         {
             try
             {
-                var discount = new TransactionsHelper().CalculateDiscount(postingDate, dueDate, paymentTerm,invoiceAmount);
+                var discount = new TransactionsHelper().CalculateDiscount(searchCriteria);
                 if (discount==0)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Discount." });
                 dynamic expdoObj = new ExpandoObject();
