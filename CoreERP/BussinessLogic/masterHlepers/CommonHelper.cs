@@ -397,7 +397,7 @@ namespace CoreERP
                 c.CompanyName = company.FirstOrDefault(cur => cur.CompanyCode == c.Company)?.CompanyName;
                 c.ChartAccountName = chartaccount.FirstOrDefault(cur => cur.Code == c.ChartofAccount)?.Desctiption;
                 c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
-                c.AccGroupName = gl.FirstOrDefault(l => l.AccGroup == c.GeneralLedger)?.AccGroupName;
+                c.AccGroupName = gl.FirstOrDefault(l => l.AccountNumber == c.GeneralLedger)?.GlaccountName;
             });
             return result;
         }
