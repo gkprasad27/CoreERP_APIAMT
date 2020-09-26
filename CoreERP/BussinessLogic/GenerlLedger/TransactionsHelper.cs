@@ -651,25 +651,27 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         #region Party Cash Bank /Payments/Receipts
 
-        public decimal CalculateDiscount(SearchCriteria searchCriteria)
+        public double CalculateDiscount(Dictionary<string,string> parameters)
         {
+            double discount = 0;
             using var repo = new Repository<TblPaymentTermDetails>();
-            //var tabledata = repo.TblPaymentTermDetails
-            //    .Where(x => x.PaymentTermCode == paymentTerm);
-            //if (DateTime.ParseExact(dueDate, "MM/dd/yyyy", CultureInfo.InvariantCulture) <= System.DateTime.Today)
-            //{
-            //    foreach (var item in tabledata)
-            //    {
-            //        postingDate = DateTime.Parse(postingDate).AddDays(Convert.ToInt32(item.Days)).ToShortDateString();
-            //        if (DateTime.ParseExact(postingDate, "MM/dd/yyyy", CultureInfo.InvariantCulture) <= System.DateTime.Today)
-            //        {
+            var tabledata = repo.TblPaymentTermDetails
+                .Where(x => x.PaymentTermCode == parameters["paymentterms"]);
+            string dueDate = DateTime.Parse(parameters["dueDate"]).ToShortDateString();
+            if (DateTime.Parse(dueDate) >= System.DateTime.Today)
+            {
+                foreach (var item in tabledata)
+                {
+                  string  postingDate = DateTime.Parse(parameters["postingDate"]).AddDays(Convert.ToInt32(item.Days)).ToShortDateString();
+                    if (DateTime.Parse(postingDate) >= System.DateTime.Today)
+                    {
+                      return  discount = Convert.ToDouble(parameters["totalAmount"]) * Convert.ToDouble(item.Discount) / 100;
+                    }
 
-            //        }
+                }
+            }
 
-            //    }
-            //}
-           
-            return 10;
+            return discount;
         }
 
         public List<TblPartyCashBankMaster> GetPaymentsReceiptsMaster(SearchCriteria searchCriteria)
