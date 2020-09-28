@@ -6,9 +6,8 @@ namespace CoreERP.Models
     public partial class CostCenter
     {
         public string ObjectType { get; set; }
-        public int? Number { get; set; }
-        public string ShortName { get; set; }
-        public string LongName { get; set; }
+        public string Code { get; set; }
+        public string CostCenterName { get; set; }
         public string Functions { get; set; }
         public string Type { get; set; }
         public string Quantity { get; set; }

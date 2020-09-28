@@ -31,9 +31,9 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                int i = Convert.ToInt32(_costingObjectTypesrepository.Where(x => x.ObjectType == code).SingleOrDefault());
+                int i = Convert.ToInt32(_assignmentrepository.Where(x => x.ObjectType == code).SingleOrDefault().PresentNumber);
                 var Getaccnolist = _assignmentrepository.Where(x => x.ObjectType == code).FirstOrDefault();
-                var numrnglist = _numberRangerepository.Where(x => x.NumberObject == Getaccnolist.ObjectType.ToString()).FirstOrDefault();
+                var numrnglist = _numberRangerepository.Where(x => x.NumberObject == Getaccnolist.NumberSeries.ToString()).FirstOrDefault();
                 if (i == 0 && Getaccnolist.ObjectType == code)
                 {
                     var x = numrnglist.FromInterval;

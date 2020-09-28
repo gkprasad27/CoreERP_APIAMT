@@ -767,7 +767,139 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             return true;
         }
-        
+
+        #endregion
+
+        #region BOM
+
+        public bool AddBOM(TbBommaster bomMaster, List<TblBomDetails> bomDetails)
+        {
+
+            int lineno = 1;
+
+            bomDetails.ForEach(x =>
+            {
+                //x.VoucherNumber = bomMaster.VoucherNumber;
+                //x.VoucherDate = bomMaster.VoucherDate;
+                //x.Company = bomMaster.Company;
+                //x.Branch = bomMaster.Branch;
+                //x.PostingDate = bomMaster.PostingDate;
+                //x.LineItemNo = Convert.ToString(lineno++);
+                //x.AccountingIndicator = bomMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TbBommaster.Add(bomMaster);
+                context.SaveChanges();
+
+                context.TblBomDetails.AddRange(bomDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public List<TbBommaster> GetBOMMasters(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TbBommaster>();
+            return repo.TbBommaster.AsEnumerable().ToList();
+                //.Where(x =>
+                //{
+                //    Debug.Assert(x.Bomnumber != null, "x.VoucherDate != null");
+                //    return
+                //    "x.Bomnumber != null"
+                //    && x.Bomnumber.Contains(searchCriteria.searchCriteria ?? x.Bomnumber)
+                //    //&& Convert.ToDateTime(x.date.Value) >=
+                //    //Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                //    //&& Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
+                //    //Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                //})
+                //.ToList();
+        }
+
+        public TbBommaster GetBommasterById(string bomNumber)
+        {
+            using var repo = new Repository<TbBommaster>();
+            return repo.TbBommaster
+                .FirstOrDefault(x => x.Bomnumber == bomNumber);
+        }
+
+        public List<TblBomDetails> GetlBomDetails(string bomNumber)
+        {
+            using var repo = new Repository<TblBomDetails>();
+            return repo.TblBomDetails.Where(cd => cd.BomKey == bomNumber).ToList();
+        }
+
+        public bool ReturnBommaster(string bomNumber)
+        {
+            TbBommaster bomMaster;
+            List<TblBomDetails> bomDetails;
+            using (var repo = new Repository<TbBommaster>())
+            {
+                bomMaster = repo.TbBommaster.FirstOrDefault(c => c.Bomnumber == bomNumber);
+            }
+
+            if (bomMaster == null)
+                return false;
+            using (var repo = new Repository<TbBommaster>())
+            {
+                bomDetails = repo.TblBomDetails.Where(t => t.BomKey == bomNumber).ToList();
+            }
+
+            ////bomMaster.AccountingIndicator = bomMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
+
+
+            ////deep copy 
+            //var cashBankMaster1 = (JObject.FromObject(bomMaster)).ToObject<TbBommaster>();
+            //cashBankMaster1.VoucherNumber = $"{this.GetVoucherNumber(cashBankMaster1.VoucherType)}-R";
+
+            //bomDetails.ForEach(csh =>
+            //{
+            //    csh.Id = 0;
+            //    csh.AccountingIndicator = bomMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
+            //});
+            using (ERPContext context = new ERPContext())
+            {
+                using (var dbtrans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        context.TbBommaster.Update(bomMaster);
+                        context.SaveChanges();
+
+                       // context.TblBomDetails.Add(bomDetails);
+                        context.SaveChanges();
+
+                        //bomDetails.ForEach(csh => { csh.VoucherNumber = cashBankMaster1.VoucherNumber; });
+                        context.TblBomDetails.AddRange(bomDetails);
+                        context.SaveChanges();
+
+                        dbtrans.Commit();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        dbtrans.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+
+
         #endregion
     }
 }

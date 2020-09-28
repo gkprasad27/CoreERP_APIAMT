@@ -358,19 +358,24 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<CostCenter>(entity =>
             {
-                entity.HasKey(e => e.ObjectType);
+                entity.HasKey(e => e.Code)
+                    .HasName("PK_CostCenter_1");
 
-                entity.Property(e => e.ObjectType).HasMaxLength(50);
+                entity.Property(e => e.Code).HasMaxLength(15);
+
+                entity.Property(e => e.CostCenterName).HasMaxLength(50);
 
                 entity.Property(e => e.CostType).HasMaxLength(50);
 
                 entity.Property(e => e.Department).HasMaxLength(50);
 
-                entity.Property(e => e.FromDate).HasColumnType("datetime");
+                entity.Property(e => e.FromDate).HasColumnType("date");
 
                 entity.Property(e => e.Functions).HasMaxLength(50);
 
-                entity.Property(e => e.LongName).HasMaxLength(50);
+                entity.Property(e => e.ObjectType)
+                    .IsRequired()
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Quantity)
                     .HasMaxLength(10)
@@ -380,8 +385,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.ResponsiblePerson)
                     .HasMaxLength(40)
                     .IsUnicode(false);
-
-                entity.Property(e => e.ShortName).HasMaxLength(50);
 
                 entity.Property(e => e.Type).HasMaxLength(50);
 

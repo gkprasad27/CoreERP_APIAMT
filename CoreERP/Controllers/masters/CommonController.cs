@@ -49,15 +49,17 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblCostingNumberSeries> _costingNumberSeriesRepository;
         private readonly IRepository<TblCostingUnitsCreation> _costingUnitsCreationRepository;
         private readonly IRepository<TblMaterialMaster> _materialMasterRepository;
-        public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, 
+        public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
                                 IRepository<TblTaxtransactions> ttRepository, IRepository<TblTaxRates> trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
                                 IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
                                 IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository, IRepository<CostCenters> ccRepository,
                                 IRepository<TblBusinessPartnerAccount> bpRepository,IRepository<Sizes> sizesRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
-                                IRepository<TblInvoiceMemoHeader> tblInvoiceMemoHeaderRepository, IRepository<TblSecondaryCostElement> secondaryCostElementRepository, IRepository<TblCostingNumberSeries> costingNumberSeriesRepository,
-                                IRepository<TblCostingObjectTypes> costingObjectTypesRepository, IRepository<TblCostingUnitsCreation> costingUnitsCreationRepository, IRepository<TblLanguage> languageRepository,
+                                IRepository<TblInvoiceMemoHeader> tblInvoiceMemoHeaderRepository,
+                                IRepository<TblSecondaryCostElement> secondaryCostElementRepository,
+                                 IRepository<TblCostingObjectTypes> costingObjectTypesRepository, IRepository<TblCostingUnitsCreation> costingUnitsCreationRepository,
+                                IRepository<TblCostingNumberSeries> costingNumberSeriesRepository,
                                 IRepository<TblMaterialMaster> materialMasterRepository)
         {
             _InvoiceMemoHeaderRepository = tblInvoiceMemoHeaderRepository;
@@ -97,13 +99,28 @@ namespace CoreERP.Controllers
             _materialMasterRepository = materialMasterRepository;
         }
 
+        [HttpGet("GetMaterialList")]
+        public IActionResult GetMaterialList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.materialList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetCostingObjectTypeList")]
         public IActionResult GetCostingObjectTypeList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.cotList = _costingObjectTypesRepository.GetAll().Select(x => new { ID = x.ObjectType, TEXT = x.Description });
+                expando.cotList = _costingObjectTypesRepository.GetAll().Select(x => new { ID = x.ObjectType, TEXT = x.Description ,Usage=x.Usage});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -295,7 +312,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var costunitList = _costingUnitsCreationRepository.GetAll().Select(x => new { ID = x.ObjectNumber, TEXT = x.Description ,MATERIAL=x.Material});
+                var costunitList = _costingUnitsCreationRepository.GetAll().Select(x => new { ID = x.ObjectNumber, TEXT = x.Description, MATERIAL = x.Material });
                 if (costunitList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -310,7 +327,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
         [HttpGet("GetMaterialMasterList")]
         public IActionResult GetMaterialMasterList()
         {

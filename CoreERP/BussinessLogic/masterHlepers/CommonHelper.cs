@@ -470,14 +470,14 @@ namespace CoreERP
         {
             using var repo = new Repository<TblCostingnumberAssigntoObject>();
             var objectype = repo.TblCostingObjectTypes.ToList();
-            var material = repo.TblMaterialTypes.ToList();
+            var material = repo.TblMaterialMaster.ToList();
 
             var result = repo.TblCostingUnitsCreation.ToList();
 
             result.ForEach(c =>
             {
                 c.ObjectName = objectype.FirstOrDefault(cur => cur.ObjectType == c.ObjectType)?.Description;
-                c.MaterialName = material.FirstOrDefault(l => l.Code == c.Material)?.Description;
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.Material)?.Description;
             });
             return result;
         }
@@ -610,16 +610,18 @@ namespace CoreERP
         public static IEnumerable<CostCenter> GetCostcenters()
         {
             using var repo = new Repository<CostCenter>();
-            var states = repo.States.ToList();
+            var objecttype = repo.TblCostingObjectTypes.ToList();
             var employees = repo.TblEmployee.ToList();
-            var companies = repo.TblCompany.ToList();
+            var department = repo.Department.ToList();
+            var uom = repo.Sizes.ToList();
             var result = repo.CostCenter.ToList();
 
             result.ForEach(c =>
             {
-                //c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
-                //c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
-                //c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.CompCode)?.CompanyName;
+                c.ObjectName = objecttype.FirstOrDefault(cur => cur.ObjectType == c.ObjectType)?.Description;
+                c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
+                c.DepartmentName = department.FirstOrDefault(l => l.DepartmentId == c.Department)?.DepartmentName;
+                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
             });
             return result;
         }
@@ -1487,11 +1489,11 @@ namespace CoreERP
                 {
 
                     return (from m in _repo.Menus
-                     join ma in _repo.MenuAccesses
-                     on m.OperationCode equals ma.OperationCode
-                     where m.Route == screenName
-                        && ma.RoleId == roleid
-                     select ma).FirstOrDefault();
+                            join ma in _repo.MenuAccesses
+                            on m.OperationCode equals ma.OperationCode
+                            where m.Route == screenName
+                               && ma.RoleId == roleid
+                            select ma).FirstOrDefault();
                     //return _repo.MenuAccesses
                     //            .Where(x => x.ScreenName == screenName
                     //                     && x.RoleId == roleid).FirstOrDefault();
@@ -1504,3 +1506,4 @@ namespace CoreERP
         }
     }
 }
+
