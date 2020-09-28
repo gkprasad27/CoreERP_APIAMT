@@ -1485,9 +1485,16 @@ namespace CoreERP
             {
                 using (Repository<TblPermissions> _repo = new Repository<TblPermissions>())
                 {
-                    return _repo.MenuAccesses
-                                .Where(x => x.ScreenName == screenName
-                                         && x.RoleId == roleid).FirstOrDefault();
+
+                    return (from m in _repo.Menus
+                     join ma in _repo.MenuAccesses
+                     on m.OperationCode equals ma.OperationCode
+                     where m.Route == screenName
+                        && ma.RoleId == roleid
+                     select ma).FirstOrDefault();
+                    //return _repo.MenuAccesses
+                    //            .Where(x => x.ScreenName == screenName
+                    //                     && x.RoleId == roleid).FirstOrDefault();
                 }
             }
             catch (Exception ex)
