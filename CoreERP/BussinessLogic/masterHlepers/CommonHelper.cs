@@ -607,19 +607,19 @@ namespace CoreERP
             return result;
         }
 
-        public static IEnumerable<CostCenters> GetCostcenters()
+        public static IEnumerable<CostCenter> GetCostcenters()
         {
-            using var repo = new Repository<CostCenters>();
+            using var repo = new Repository<CostCenter>();
             var states = repo.States.ToList();
             var employees = repo.TblEmployee.ToList();
             var companies = repo.TblCompany.ToList();
-            var result = repo.CostCenters.ToList();
+            var result = repo.CostCenter.ToList();
 
             result.ForEach(c =>
             {
-                c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
-                c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
-                c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.CompCode)?.CompanyName;
+                //c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
+                //c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
+                //c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.CompCode)?.CompanyName;
             });
             return result;
         }
