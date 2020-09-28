@@ -21,7 +21,7 @@ namespace CoreERP.Models
         public virtual DbSet<AssignmentSubaccounttoGl> AssignmentSubaccounttoGl { get; set; }
         public virtual DbSet<CashInOutFlow1> CashInOutFlow1 { get; set; }
         public virtual DbSet<ConfigurationTable> ConfigurationTable { get; set; }
-        public virtual DbSet<CostCenters> CostCenters { get; set; }
+        public virtual DbSet<CostCenter> CostCenter { get; set; }
         public virtual DbSet<Countries> Countries { get; set; }
         public virtual DbSet<Department> Department { get; set; }
         public virtual DbSet<Divisions> Divisions { get; set; }
@@ -356,77 +356,38 @@ namespace CoreERP.Models
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<CostCenters>(entity =>
+            modelBuilder.Entity<CostCenter>(entity =>
             {
-                entity.HasKey(e => new { e.Code, e.CompCode });
+                entity.HasKey(e => e.ObjectType);
 
-                entity.Property(e => e.Code)
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
+                entity.Property(e => e.ObjectType).HasMaxLength(50);
 
-                entity.Property(e => e.CompCode).HasMaxLength(20);
+                entity.Property(e => e.CostType).HasMaxLength(50);
 
-                entity.Property(e => e.Active)
-                    .HasMaxLength(1)
+                entity.Property(e => e.Department).HasMaxLength(50);
+
+                entity.Property(e => e.FromDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Functions).HasMaxLength(50);
+
+                entity.Property(e => e.LongName).HasMaxLength(50);
+
+                entity.Property(e => e.Quantity)
+                    .HasMaxLength(10)
                     .IsUnicode(false)
                     .IsFixedLength();
-
-                entity.Property(e => e.AddDate).HasColumnType("datetime");
-
-                entity.Property(e => e.Address1)
-                    .HasMaxLength(40)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Address2)
-                    .HasMaxLength(40)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Address3)
-                    .HasMaxLength(40)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Address4)
-                    .HasMaxLength(40)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Email)
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Phone1)
-                    .HasColumnName("Phone_1")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Phone2)
-                    .HasColumnName("Phone_2")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Phone3)
-                    .HasColumnName("Phone_3")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.PinCode)
-                    .HasMaxLength(6)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Place)
-                    .HasMaxLength(30)
-                    .IsUnicode(false);
 
                 entity.Property(e => e.ResponsiblePerson)
                     .HasMaxLength(40)
                     .IsUnicode(false);
 
-                entity.Property(e => e.State)
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
+                entity.Property(e => e.ShortName).HasMaxLength(50);
+
+                entity.Property(e => e.Type).HasMaxLength(50);
+
+                entity.Property(e => e.Uom)
+                    .HasColumnName("UOM")
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<Countries>(entity =>
