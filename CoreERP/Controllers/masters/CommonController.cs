@@ -38,7 +38,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblBankMaster> _bankMasterRepository;
         private readonly IRepository<TblPaymentTerms> _paymentTermsRepository;
         private readonly IRepository<ProfitCenters> _profitCentersRepository;
-        private readonly IRepository<CostCenters> _ccRepository;
+        private readonly IRepository<CostCenter> _ccRepository;
         private readonly IRepository<TblBusinessPartnerAccount> _bpRepository;
         private readonly IRepository<TblInvoiceMemoHeader> _InvoiceMemoHeaderRepository;
         private readonly IRepository<TblMainAssetMaster> _tblMainAssetRepository;
@@ -54,7 +54,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
                                 IRepository<TblTaxtransactions> ttRepository, IRepository<TblTaxRates> trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
                                 IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
-                                IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository, IRepository<CostCenters> ccRepository,
+                                IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository, IRepository<CostCenter> ccRepository,
                                 IRepository<TblBusinessPartnerAccount> bpRepository,IRepository<Sizes> sizesRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
                                 IRepository<TblInvoiceMemoHeader> tblInvoiceMemoHeaderRepository,
                                 IRepository<TblSecondaryCostElement> secondaryCostElementRepository,
@@ -771,7 +771,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var costcenterList = _ccRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Name });
+                var costcenterList = _ccRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.CostCenterName });
                 if (costcenterList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

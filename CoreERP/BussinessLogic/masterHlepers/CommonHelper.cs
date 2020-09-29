@@ -449,6 +449,19 @@ namespace CoreERP
             });
             return result;
         }
+        public static IEnumerable<TblStandardRateOutPut> GetStandardRateOutPut()
+        {
+            using var repo = new Repository<TblStandardRateOutPut>();
+            var uom = repo.Sizes.ToList();
+
+            var result = repo.TblStandardRateOutPut.ToList();
+
+            result.ForEach(c =>
+            {
+                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+            });
+            return result;
+        }
 
         public static IEnumerable<TblCostingnumberAssigntoObject> GetCostingnumberAssigntoObject()
         {
@@ -1506,4 +1519,3 @@ namespace CoreERP
         }
     }
 }
-

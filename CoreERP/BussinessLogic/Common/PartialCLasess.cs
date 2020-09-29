@@ -223,6 +223,11 @@ namespace CoreERP.Models
         [NotMapped]
         public string UomName { get; set; }
     }
+    partial class TblStandardRateOutPut
+    {
+        [NotMapped]
+        public string UomName { get; set; }
+    }
 
     partial class TblMaterialMaster
     {
