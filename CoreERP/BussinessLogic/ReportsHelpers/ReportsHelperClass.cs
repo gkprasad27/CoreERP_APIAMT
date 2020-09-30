@@ -2032,6 +2032,238 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
 
         }
         #endregion
+        #region BranchWise Monthly Sales Ltrs Report
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetBranchWiseMonthlySalesByLtrsReportData(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        {
+            DataSet dsResult = GetBranchWiseMonthlySalesByLtrsReportDataTable(userID, branchCode, fromDate, toDate);
+            List<dynamic> branchWiseLtrs = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    branchWiseLtrs = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (branchWiseLtrs, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
+        public static DataSet GetBranchWiseMonthlySalesByLtrsReportDataTable(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_BranchWiseMonthlySalesByLitersReport";
+            #region Parameters
+            DbParameter UserID = command.CreateParameter();
+            UserID.Direction = ParameterDirection.Input;
+            UserID.Value = (object)userID ?? DBNull.Value;
+            UserID.ParameterName = "userName";
+            DbParameter dbpBranchCode = command.CreateParameter();
+            dbpBranchCode.Direction = ParameterDirection.Input;
+            dbpBranchCode.Value = (object)branchCode ?? DBNull.Value;
+            dbpBranchCode.ParameterName = "branchID";
+            DbParameter pmFromDate = command.CreateParameter();
+            pmFromDate.Direction = ParameterDirection.Input;
+            pmFromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmFromDate.ParameterName = "fDate";
+            DbParameter pmToDate = command.CreateParameter();
+            pmToDate.Direction = ParameterDirection.Input;
+            pmToDate.Value = (object)toDate ?? DBNull.Value;
+            pmToDate.ParameterName = "tDate";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(UserID);
+            command.Parameters.Add(dbpBranchCode);
+            command.Parameters.Add(pmFromDate);
+            command.Parameters.Add(pmToDate);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
+        #endregion
+        #region ProductWise Monthly Sales Ltrs Report
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetProductMonthWisePurchaseLtrsReportDataList(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        {
+            DataSet dsResult = GetProductMonthWisePurchaseLtrsReportDataTable(userID, branchCode, fromDate, toDate);
+            List<dynamic> productWiseLtrs = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    productWiseLtrs = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (productWiseLtrs, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
+        public static DataSet GetProductMonthWisePurchaseLtrsReportDataTable(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_ProductMonthWisePurchaseLtrsReport";
+            #region Parameters
+            DbParameter UserID = command.CreateParameter();
+            UserID.Direction = ParameterDirection.Input;
+            UserID.Value = (object)userID ?? DBNull.Value;
+            UserID.ParameterName = "userName";
+            DbParameter dbpBranchCode = command.CreateParameter();
+            dbpBranchCode.Direction = ParameterDirection.Input;
+            dbpBranchCode.Value = (object)branchCode ?? DBNull.Value;
+            dbpBranchCode.ParameterName = "branchID";
+            DbParameter pmFromDate = command.CreateParameter();
+            pmFromDate.Direction = ParameterDirection.Input;
+            pmFromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmFromDate.ParameterName = "fDate";
+            DbParameter pmToDate = command.CreateParameter();
+            pmToDate.Direction = ParameterDirection.Input;
+            pmToDate.Value = (object)toDate ?? DBNull.Value;
+            pmToDate.ParameterName = "tDate";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(UserID);
+            command.Parameters.Add(dbpBranchCode);
+            command.Parameters.Add(pmFromDate);
+            command.Parameters.Add(pmToDate);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
+        #endregion
+        #region BranchWise StockStatement Ltrs Report
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetBranchWiseStockStatementLtrsReportDataList(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        {
+            DataSet dsResult = GetBranchWiseStockStatementLtrsReportDataTable(userID, branchCode, fromDate, toDate);
+            List<dynamic> branchWiseStockLtrs = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    branchWiseStockLtrs = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (branchWiseStockLtrs, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
+        public static DataSet GetBranchWiseStockStatementLtrsReportDataTable(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_BranchWiseStockStatementLtrsReport";
+            #region Parameters
+            DbParameter UserID = command.CreateParameter();
+            UserID.Direction = ParameterDirection.Input;
+            UserID.Value = (object)userID ?? DBNull.Value;
+            UserID.ParameterName = "userName";
+            DbParameter dbpBranchCode = command.CreateParameter();
+            dbpBranchCode.Direction = ParameterDirection.Input;
+            dbpBranchCode.Value = (object)branchCode ?? DBNull.Value;
+            dbpBranchCode.ParameterName = "branchID";
+            DbParameter pmFromDate = command.CreateParameter();
+            pmFromDate.Direction = ParameterDirection.Input;
+            pmFromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmFromDate.ParameterName = "fDate";
+            DbParameter pmToDate = command.CreateParameter();
+            pmToDate.Direction = ParameterDirection.Input;
+            pmToDate.Value = (object)toDate ?? DBNull.Value;
+            pmToDate.ParameterName = "tDate";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(UserID);
+            command.Parameters.Add(dbpBranchCode);
+            command.Parameters.Add(pmFromDate);
+            command.Parameters.Add(pmToDate);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
+        #endregion
+        #region BranchWise StockStatement Qty
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetBranchWiseStockStatementQtyReportDataList(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        {
+            DataSet dsResult = GetBranchWiseStockStatementQtyReportDataTable(userID, branchCode, fromDate, toDate);
+            List<dynamic> branchWiseStockQty = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    branchWiseStockQty = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (branchWiseStockQty, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
+        public static DataSet GetBranchWiseStockStatementQtyReportDataTable(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_BranchWiseStockStatementQtyReport";
+            #region Parameters
+            DbParameter UserID = command.CreateParameter();
+            UserID.Direction = ParameterDirection.Input;
+            UserID.Value = (object)userID ?? DBNull.Value;
+            UserID.ParameterName = "userName";
+            DbParameter dbpBranchCode = command.CreateParameter();
+            dbpBranchCode.Direction = ParameterDirection.Input;
+            dbpBranchCode.Value = (object)branchCode ?? DBNull.Value;
+            dbpBranchCode.ParameterName = "branchID";
+            DbParameter pmFromDate = command.CreateParameter();
+            pmFromDate.Direction = ParameterDirection.Input;
+            pmFromDate.Value = (object)fromDate ?? DBNull.Value;
+            pmFromDate.ParameterName = "fDate";
+            DbParameter pmToDate = command.CreateParameter();
+            pmToDate.Direction = ParameterDirection.Input;
+            pmToDate.Value = (object)toDate ?? DBNull.Value;
+            pmToDate.ParameterName = "tDate";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(UserID);
+            command.Parameters.Add(dbpBranchCode);
+            command.Parameters.Add(pmFromDate);
+            command.Parameters.Add(pmToDate);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
+        #endregion
         #region CommonMethods
         public static DataSet getDataFromDataBase(List<parametersClass> dbParametersList, string procedureName)
         {
