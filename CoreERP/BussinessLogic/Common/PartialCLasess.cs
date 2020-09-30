@@ -316,6 +316,19 @@ namespace CoreERP.Models
         [NotMapped]
         public string UomName { get; set; }
     }
+    partial class TblFundCenter
+    {
+        [NotMapped]
+        public string PersonName { get; set; }
+        [NotMapped]
+        public string ProfitName { get; set; }
+        [NotMapped]
+        public string DepartmentName { get; set; }
+        [NotMapped]
+        public string CostCenterName { get; set; }
+        [NotMapped]
+        public string SegmentName { get; set; }
+    }
 
     partial class TblFunctionalDepartment
     {

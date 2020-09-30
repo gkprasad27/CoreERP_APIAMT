@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -9,28 +8,28 @@ using System.Linq;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/PrimaryCostElementsCreation")]
-    public class PrimaryCostElementsCreationController : ControllerBase
+    [Route("api/FundCenter")]
+    public class FundCenterController : ControllerBase
     {
-        private readonly IRepository<TblPrimaryCostElement> _primaryCostElementRepository;
-        public PrimaryCostElementsCreationController(IRepository<TblPrimaryCostElement> primaryCostElementRepository)
+        private readonly IRepository<TblFundCenter> _fundCenterRepository;
+        public FundCenterController(IRepository<TblFundCenter> fundCenterRepository)
         {
-            _primaryCostElementRepository = primaryCostElementRepository;
+            _fundCenterRepository = fundCenterRepository;
         }
 
-        [HttpPost("RegisterPrimaryCostElementsCreation")]
-        public IActionResult RegisterPrimaryCostElementsCreation([FromBody]TblPrimaryCostElement pcost)
+        [HttpPost("RegisterFundCenter")]
+        public IActionResult RegisterFundCenter([FromBody]TblFundCenter fcenter)
         {
-            if (pcost == null)
+            if (fcenter == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
 
                 APIResponse apiResponse;
-                _primaryCostElementRepository.Add(pcost);
-                if (_primaryCostElementRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = pcost };
+                _fundCenterRepository.Add(fcenter);
+                if (_fundCenterRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = fcenter };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,16 +42,16 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetPrimaryCostElementsCreationList")]
-        public IActionResult GetPrimaryCostElementsCreationList()
+        [HttpGet("GetFundCenterList")]
+        public IActionResult GetFundCenterList()
         {
             try
             {
-                var pcostList = CommonHelper.GetPrimarycostelement();
-                if (pcostList.Any())
+                var fcList = CommonHelper.GetFundCenter();
+                if (fcList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.pcostList = pcostList;
+                    expdoObj.fcList = fcList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
 
@@ -64,18 +63,18 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpPut("UpdatePrimaryCostElementsCreation")]
-        public IActionResult UpdatePrimaryCostElementsCreation([FromBody] TblPrimaryCostElement pcost)
+        [HttpPut("UpdateFundCenter")]
+        public IActionResult UpdateFundCenter([FromBody] TblFundCenter fcenter)
         {
-            if (pcost == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(pcost)} cannot be null" });
+            if (fcenter == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(fcenter)} cannot be null" });
 
             try
             {
                 APIResponse apiResponse;
-                _primaryCostElementRepository.Update(pcost);
-                if (_primaryCostElementRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = pcost };
+                _fundCenterRepository.Update(fcenter);
+                if (_fundCenterRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = fcenter };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -87,8 +86,8 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpDelete("DeletePrimaryCostElementsCreation/{code}")]
-        public IActionResult DeletePrimaryCostElementsCreationbyId(string code)
+        [HttpDelete("DeleteFundCenter/{code}")]
+        public IActionResult DeleteFundCenterbyId(string code)
         {
             try
             {
@@ -96,9 +95,9 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _primaryCostElementRepository.GetSingleOrDefault(x => x.Id.Equals(code));
-                _primaryCostElementRepository.Remove(record);
-                if (_primaryCostElementRepository.SaveChanges() > 0)
+                var record = _fundCenterRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                _fundCenterRepository.Remove(record);
+                if (_fundCenterRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };

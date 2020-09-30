@@ -653,6 +653,27 @@ namespace CoreERP
             return result;
         }
 
+        public static IEnumerable<TblFundCenter> GetFundCenter()
+        {
+            using var repo = new Repository<TblFundCenter>();
+            var costcenter = repo.CostCenter.ToList();
+            var employees = repo.TblEmployee.ToList();
+            var department = repo.Department.ToList();
+            var profitcenter = repo.ProfitCenters.ToList();
+            var segment = repo.Segment.ToList();
+            var result = repo.TblFundCenter.ToList();
+
+            result.ForEach(c =>
+            {
+                c.CostCenterName = costcenter.FirstOrDefault(cur => cur.Code == c.CostCenter)?.CostCenterName;
+                c.PersonName = employees.FirstOrDefault(l => l.EmployeeCode == c.Person)?.EmployeeName;
+                c.DepartmentName = department.FirstOrDefault(l => l.DepartmentId == c.Department)?.DepartmentName;
+                c.ProfitName = profitcenter.FirstOrDefault(l => l.Code == c.ProfitCenter)?.Description;
+                c.SegmentName = segment.FirstOrDefault(l => l.Id == c.Segment)?.Name;
+            });
+            return result;
+        }
+
         public static IEnumerable<Divisions> GetDivisions()
         {
             using var repo = new Repository<Divisions>();

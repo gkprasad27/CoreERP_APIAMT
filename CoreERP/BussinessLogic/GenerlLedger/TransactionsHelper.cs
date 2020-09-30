@@ -779,7 +779,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             bomDetails.ForEach(x =>
             {
-                //x.VoucherNumber = bomMaster.VoucherNumber;
+                x.BomKey = bomMaster.Bomnumber;
                 //x.VoucherDate = bomMaster.VoucherDate;
                 //x.Company = bomMaster.Company;
                 //x.Branch = bomMaster.Branch;

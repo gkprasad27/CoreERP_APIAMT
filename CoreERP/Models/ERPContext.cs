@@ -363,19 +363,29 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Code).HasMaxLength(15);
 
+                entity.Property(e => e.Address).HasMaxLength(50);
+
+                entity.Property(e => e.City).HasMaxLength(50);
+
                 entity.Property(e => e.CostCenterName).HasMaxLength(50);
 
                 entity.Property(e => e.CostType).HasMaxLength(50);
 
                 entity.Property(e => e.Department).HasMaxLength(50);
 
+                entity.Property(e => e.Email).HasMaxLength(50);
+
                 entity.Property(e => e.FromDate).HasColumnType("date");
 
                 entity.Property(e => e.Functions).HasMaxLength(50);
 
+                entity.Property(e => e.Location).HasMaxLength(50);
+
                 entity.Property(e => e.ObjectType)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.Property(e => e.Phone).HasMaxLength(10);
 
                 entity.Property(e => e.Quantity)
                     .HasMaxLength(10)
@@ -385,6 +395,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.ResponsiblePerson)
                     .HasMaxLength(40)
                     .IsUnicode(false);
+
+                entity.Property(e => e.State).HasMaxLength(50);
 
                 entity.Property(e => e.Type).HasMaxLength(50);
 
@@ -4912,11 +4924,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblPrimaryCostElement>(entity =>
             {
-                entity.HasKey(e => e.PrimaryCostCode);
-
                 entity.ToTable("tbl_PrimaryCostElement");
 
-                entity.Property(e => e.PrimaryCostCode).HasMaxLength(50);
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.ChartofAccount).HasMaxLength(5);
 

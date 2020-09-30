@@ -16,5 +16,11 @@ namespace CoreERP.Models
         public string ResponsiblePerson { get; set; }
         public DateTime? FromDate { get; set; }
         public string CostType { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Location { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -9,28 +8,29 @@ using System.Linq;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/PrimaryCostElementsCreation")]
-    public class PrimaryCostElementsCreationController : ControllerBase
+    [Route("api/WorkBreakDownStructure")]
+    public class WorkBreakDownStructureController : ControllerBase
     {
-        private readonly IRepository<TblPrimaryCostElement> _primaryCostElementRepository;
-        public PrimaryCostElementsCreationController(IRepository<TblPrimaryCostElement> primaryCostElementRepository)
+
+        private readonly IRepository<TblWbs> _WbsRepository;
+        public WorkBreakDownStructureController(IRepository<TblWbs> WbsRepository)
         {
-            _primaryCostElementRepository = primaryCostElementRepository;
+            _WbsRepository = WbsRepository;
         }
 
-        [HttpPost("RegisterPrimaryCostElementsCreation")]
-        public IActionResult RegisterPrimaryCostElementsCreation([FromBody]TblPrimaryCostElement pcost)
+        [HttpPost("RegisterWorkBreakDownStructure")]
+        public IActionResult RegisterWorkBreakDownStructure([FromBody]TblWbs wbs)
         {
-            if (pcost == null)
+            if (wbs == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
 
                 APIResponse apiResponse;
-                _primaryCostElementRepository.Add(pcost);
-                if (_primaryCostElementRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = pcost };
+                _WbsRepository.Add(wbs);
+                if (_WbsRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = wbs };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -43,16 +43,16 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetPrimaryCostElementsCreationList")]
-        public IActionResult GetPrimaryCostElementsCreationList()
+        [HttpGet("GetWorkBreakDownStructureList")]
+        public IActionResult GetWorkBreakDownStructureList()
         {
             try
             {
-                var pcostList = CommonHelper.GetPrimarycostelement();
-                if (pcostList.Any())
+                var wbsList = _WbsRepository.GetAll();
+                if (wbsList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.pcostList = pcostList;
+                    expdoObj.wbsList = wbsList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
 
@@ -64,18 +64,18 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpPut("UpdatePrimaryCostElementsCreation")]
-        public IActionResult UpdatePrimaryCostElementsCreation([FromBody] TblPrimaryCostElement pcost)
+        [HttpPut("UpdateWorkBreakDownStructure")]
+        public IActionResult UpdateWorkBreakDownStructure([FromBody] TblWbs wbs)
         {
-            if (pcost == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(pcost)} cannot be null" });
+            if (wbs == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(wbs)} cannot be null" });
 
             try
             {
                 APIResponse apiResponse;
-                _primaryCostElementRepository.Update(pcost);
-                if (_primaryCostElementRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = pcost };
+                _WbsRepository.Update(wbs);
+                if (_WbsRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = wbs };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
@@ -87,8 +87,8 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpDelete("DeletePrimaryCostElementsCreation/{code}")]
-        public IActionResult DeletePrimaryCostElementsCreationbyId(string code)
+        [HttpDelete("DeleteWorkBreakDownStructureList/{code}")]
+        public IActionResult DeleteWorkBreakDownStructureListbyId(string code)
         {
             try
             {
@@ -96,9 +96,9 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _primaryCostElementRepository.GetSingleOrDefault(x => x.Id.Equals(code));
-                _primaryCostElementRepository.Remove(record);
-                if (_primaryCostElementRepository.SaveChanges() > 0)
+                var record = _WbsRepository.GetSingleOrDefault(x => x.Wbscode.Equals(code));
+                _WbsRepository.Remove(record);
+                if (_WbsRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
