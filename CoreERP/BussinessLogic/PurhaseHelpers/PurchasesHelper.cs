@@ -675,7 +675,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                     _purchaseList = _purchaseList.Where(x => x.BranchCode == branchCode).ToList();
                 }
 
-                return _purchaseList.OrderByDescending(x => x.PurchaseInvDate).ToList();
+                return _purchaseList.OrderByDescending(x => x.ServerDateTime).ToList();
             }
             catch (Exception ex)
             {
