@@ -3228,7 +3228,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
-                entity.Property(e => e.FormulaBar).HasMaxLength(50);
+                entity.Property(e => e.FormulaBar).HasMaxLength(500);
 
                 entity.Property(e => e.FormulaType).HasMaxLength(50);
             });
