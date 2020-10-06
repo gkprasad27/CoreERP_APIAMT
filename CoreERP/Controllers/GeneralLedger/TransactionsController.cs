@@ -600,5 +600,90 @@ namespace CoreERP.Controllers.GeneralLedger
         }
 
         #endregion
+
+        #region Goods Issues
+
+        [HttpPost("GetGoodsissue")]
+        public IActionResult GetGoodsissue([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var Goodsissue = new TransactionsHelper().GetGoodsIssueMaster(searchCriteria);
+                if (!Goodsissue.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for PaymentsReceipts." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.Goodsissue = Goodsissue;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetGoodsissueDetail/{GSNumber}")]
+        public IActionResult GetGoodsissueDetail(int GSNumber)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var goodsissueasters = transactions.GetGoodsIssueMasterById(GSNumber);
+                if (goodsissueasters == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.goodsissueasters = goodsissueasters;
+                expdoObj.goodsissueastersDetail = new TransactionsHelper().GetGoodsIssueDetails(GSNumber);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddGoodsissue")]
+        public IActionResult AddGoodsissue([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var goodsissueMaster = obj["gibHdr"].ToObject<TblGoodsIssueMaster>();
+                var goodsissueetails = obj["gibDtl"].ToObject<List<TblGoodsIssueDetails>>();
+
+                if (!new TransactionsHelper().AddGoodsIssue(goodsissueMaster, goodsissueetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = goodsissueMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("ReturnGoodsissue/{RequisitionNumber}")]
+        public IActionResult ReturnGoodsissue(string RequisitionNumber)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnGoodsIssue(RequisitionNumber))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Invoice memo no {RequisitionNumber} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        #endregion
     }
 }

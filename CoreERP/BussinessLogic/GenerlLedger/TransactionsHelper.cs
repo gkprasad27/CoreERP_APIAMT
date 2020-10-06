@@ -770,6 +770,87 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         #endregion
 
+        public List<TblGoodsIssueMaster> GetGoodsIssueMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblGoodsIssueMaster>();
+            return repo.TblGoodsIssueMaster.AsEnumerable().ToList();
+            //.Where(x =>
+            //{
+            //    Debug.Assert(x.GoodsIssueId != null, "x.VoucherDate != null");
+            //    return
+            //    x.GoodsIssueId != null
+            //           && x.GoodsIssueId.ToString().Contains(searchCriteria.searchCriteria ?? x.GoodsIssueId.ToString())
+            //          //// && Convert.ToDateTime(x.RequisitionNumber.Value) >=
+            //          //Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+            //           ///&& Convert.ToDateTime(x.RequisitionNumber.Value.ToShortDateString()) <=
+            //           //Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+            //})
+
+        }
+
+        public TblGoodsIssueMaster GetGoodsIssueMasterById(int GoodsIssueId)
+        {
+            using var repo = new Repository<TblGoodsIssueMaster>();
+            return repo.TblGoodsIssueMaster
+                .FirstOrDefault(x => x.GoodsIssueId == GoodsIssueId);
+        }
+
+        public List<TblGoodsIssueDetails> GetGoodsIssueDetails(int GoodsIssueId)
+        {
+            using var repo = new Repository<TblGoodsIssueDetails>();
+            return repo.TblGoodsIssueDetails.Where(cd => cd.GoodsIssueId == GoodsIssueId).ToList();
+        }
+
+        public bool AddGoodsIssue(TblGoodsIssueMaster gimaster, List<TblGoodsIssueDetails> gibDetails)
+        {
+
+            int lineno = 1;
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblGoodsIssueMaster.Add(gimaster);
+                context.SaveChanges();
+                gibDetails.ForEach(x =>
+                {
+                    x.GoodsIssueId = gimaster.GoodsIssueId;
+                });
+                context.TblGoodsIssueDetails.AddRange(gibDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public bool ReturnGoodsIssue(string RequisitionNumber)
+        {
+            using var repo = new ERPContext();
+            var goodissueHeader = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.RequisitionNumber == RequisitionNumber);
+
+            if (goodissueHeader != null)
+                throw new Exception($"Invoice memo no {RequisitionNumber} already return.");
+
+            if (goodissueHeader != null)
+            {
+                repo.TblGoodsIssueMaster.Update(goodissueHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+
         #region BOM
 
         public bool AddBOM(TbBommaster bomMaster, List<TblBomDetails> bomDetails)
