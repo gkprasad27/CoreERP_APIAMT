@@ -131,6 +131,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblMaterialNoAssignment> TblMaterialNoAssignment { get; set; }
         public virtual DbSet<TblMaterialNoSeries> TblMaterialNoSeries { get; set; }
         public virtual DbSet<TblMaterialPurchasePrice> TblMaterialPurchasePrice { get; set; }
+        public virtual DbSet<TblMaterialRequisitionDetails> TblMaterialRequisitionDetails { get; set; }
         public virtual DbSet<TblMaterialRequisitionMaster> TblMaterialRequisitionMaster { get; set; }
         public virtual DbSet<TblMaterialSize> TblMaterialSize { get; set; }
         public virtual DbSet<TblMaterialSupplierDetails> TblMaterialSupplierDetails { get; set; }
@@ -176,7 +177,6 @@ namespace CoreERP.Models
         public virtual DbSet<TblRelation> TblRelation { get; set; }
         public virtual DbSet<TblReminder> TblReminder { get; set; }
         public virtual DbSet<TblReqNoAssignment> TblReqNoAssignment { get; set; }
-        public virtual DbSet<TblRequisitionDetails> TblRequisitionDetails { get; set; }
         public virtual DbSet<TblRequisitionNoRange> TblRequisitionNoRange { get; set; }
         public virtual DbSet<TblRole> TblRole { get; set; }
         public virtual DbSet<TblRoute> TblRoute { get; set; }
@@ -4130,6 +4130,39 @@ namespace CoreERP.Models
                 entity.Property(e => e.SupplierCode).HasMaxLength(50);
             });
 
+            modelBuilder.Entity<TblMaterialRequisitionDetails>(entity =>
+            {
+                entity.ToTable("tbl_MaterialRequisitionDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CostCenter).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.JoborProject).HasMaxLength(50);
+
+                entity.Property(e => e.MaterialCode).HasMaxLength(50);
+
+                entity.Property(e => e.Order).HasMaxLength(50);
+
+                entity.Property(e => e.Price).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.ProfitCenter).HasMaxLength(50);
+
+                entity.Property(e => e.Qty).HasColumnName("QTY");
+
+                entity.Property(e => e.RequisitionNumber).HasMaxLength(20);
+
+                entity.Property(e => e.SotrageLocation).HasMaxLength(50);
+
+                entity.Property(e => e.Value).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Wbs)
+                    .HasColumnName("WBS")
+                    .HasMaxLength(50);
+            });
+
             modelBuilder.Entity<TblMaterialRequisitionMaster>(entity =>
             {
                 entity.HasKey(e => e.RequisitionNmber);
@@ -5338,39 +5371,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Plant)
                     .IsRequired()
                     .HasMaxLength(5);
-            });
-
-            modelBuilder.Entity<TblRequisitionDetails>(entity =>
-            {
-                entity.ToTable("tbl_RequisitionDetails");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.CostCenter).HasMaxLength(50);
-
-                entity.Property(e => e.Description).HasMaxLength(50);
-
-                entity.Property(e => e.JoborProject).HasMaxLength(50);
-
-                entity.Property(e => e.MaterialCode).HasMaxLength(50);
-
-                entity.Property(e => e.Order).HasMaxLength(50);
-
-                entity.Property(e => e.Price).HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.ProfitCenter).HasMaxLength(50);
-
-                entity.Property(e => e.Qty).HasColumnName("QTY");
-
-                entity.Property(e => e.RequisitionNumber).HasMaxLength(20);
-
-                entity.Property(e => e.SotrageLocation).HasMaxLength(50);
-
-                entity.Property(e => e.Value).HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.Wbs)
-                    .HasColumnName("WBS")
-                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblRequisitionNoRange>(entity =>
