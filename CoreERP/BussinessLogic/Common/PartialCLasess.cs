@@ -93,6 +93,84 @@ namespace CoreERP.Models
         [NotMapped]
         public string MaterialName { get; set; }
     }
+    partial class TblWorkcenterMaster
+    {
+        [NotMapped]
+        public string Activity { get; set; }
+        [NotMapped]
+        public string Description { get; set; }
+        [NotMapped]
+        public string UOM { get; set; }
+        [NotMapped]
+        public string CostCenter { get; set; }
+        [NotMapped]
+        public string Formula { get; set; }
+        [NotMapped]
+        public string Resource { get; set; }
+        [NotMapped]
+        public string Capacity { get; set; }
+        [NotMapped]
+        public string WorkingHours { get; set; }
+        [NotMapped]
+        public string BreakTime { get; set; }
+        [NotMapped]
+        public string NetHours { get; set; }
+        [NotMapped]
+        public string Shifts { get; set; }
+        [NotMapped]
+        public string TotalCapacity { get; set; }
+        [NotMapped]
+        public string WeekDays { get; set; }
+        [NotMapped]
+        public string HoursPerWeek { get; set; }
+    }
+
+    partial class TblTaskMaster
+    {
+        [NotMapped]
+        public string Resource { get; set; }
+        [NotMapped]
+        public string MaterialCode { get; set; }
+        [NotMapped]
+        public string QTY { get; set; }
+        [NotMapped]
+        public string CostCenter { get; set; }
+        [NotMapped]
+        public string Activity { get; set; }
+        [NotMapped]
+        public string Rate { get; set; }
+    }
+
+    partial class TblRoutingMasterData
+    {
+        [NotMapped]
+        public string Operation { get; set; }
+        [NotMapped]
+        public string SubOperation { get; set; }
+        [NotMapped]
+        public string WorkCenter { get; set; }
+        [NotMapped]
+        public string BaseQuantity { get; set; }
+        [NotMapped]
+        public string OperationUnit { get; set; }
+        [NotMapped]
+        public string CostCenter { get; set; }
+        [NotMapped]
+        public string Activity { get; set; }
+        [NotMapped]
+        public string StandardValue { get; set; }
+        [NotMapped]
+        public string UOM { get; set; }
+        [NotMapped]
+        public string Formula { get; set; }
+        [NotMapped]
+        public string Qty { get; set; }
+        [NotMapped]
+        public string ToolsEqupment { get; set; }
+        [NotMapped]
+        public string Numbers { get; set; }
+    }
+
 
     partial class TblGinseriesAssignment
     {

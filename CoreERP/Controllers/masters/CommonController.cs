@@ -49,6 +49,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblCostingNumberSeries> _costingNumberSeriesRepository;
         private readonly IRepository<TblCostingUnitsCreation> _costingUnitsCreationRepository;
         private readonly IRepository<TblMaterialMaster> _materialMasterRepository;
+        private readonly IRepository<TblWbs> _wbsRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
@@ -60,7 +61,8 @@ namespace CoreERP.Controllers
                                 IRepository<TblSecondaryCostElement> secondaryCostElementRepository,
                                  IRepository<TblCostingObjectTypes> costingObjectTypesRepository, IRepository<TblCostingUnitsCreation> costingUnitsCreationRepository,
                                 IRepository<TblCostingNumberSeries> costingNumberSeriesRepository,
-                                IRepository<TblMaterialMaster> materialMasterRepository)
+                                IRepository<TblMaterialMaster> materialMasterRepository,
+                                IRepository<TblWbs> wbsRepository)
         {
             _InvoiceMemoHeaderRepository = tblInvoiceMemoHeaderRepository;
             _companyRepository = companyRepository;
@@ -97,6 +99,21 @@ namespace CoreERP.Controllers
             _costingNumberSeriesRepository = costingNumberSeriesRepository;
             _costingUnitsCreationRepository = costingUnitsCreationRepository;
             _materialMasterRepository = materialMasterRepository;
+            _wbsRepository = wbsRepository;
+        }
+        [HttpGet("GetWbsList")]
+        public IActionResult GetWbsList()
+{
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.wbsList = _wbsRepository.GetAll().Select(x => new { ID = x.Wbscode, TEXT = x.Description });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpGet("GetMaterialList")]
