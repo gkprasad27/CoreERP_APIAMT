@@ -58,7 +58,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 using Repository<TblInvoiceMasterReturn> repo = new Repository<TblInvoiceMasterReturn>();
                 List<TblInvoiceMasterReturn> _invoiceMasterReturnList = null;
-                if (searchCriteria.Role == 1)
+                if (searchCriteria.Role == 1 || searchCriteria.Role == 3 || searchCriteria.Role == 89)
                 {
                     if (searchCriteria.FromDate != null && searchCriteria.ToDate != null)
                     {

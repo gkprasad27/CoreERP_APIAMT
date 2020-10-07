@@ -509,7 +509,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 using (Repository<TblPurchaseReturn> repo = new Repository<TblPurchaseReturn>())
                 {
                     List<TblPurchaseReturn> _purchaseList = null;
-                    if (searchCriteria.Role != 1)
+                    if (searchCriteria.Role != 1 || searchCriteria.Role != 3 || searchCriteria.Role != 89)
                     {
                         if (searchCriteria.FromDate != null && searchCriteria.ToDate != null)
                         {

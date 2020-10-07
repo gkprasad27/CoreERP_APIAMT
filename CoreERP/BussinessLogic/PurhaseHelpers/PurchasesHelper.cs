@@ -615,7 +615,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
             {
                 using Repository<TblPurchaseInvoice> repo = new Repository<TblPurchaseInvoice>();
                 List<TblPurchaseInvoice> _purchaseList = null;
-                if (searchCriteria.Role == 1)
+                if (searchCriteria.Role == 1 || searchCriteria.Role == 3 || searchCriteria.Role == 89)
                 {
                     if (searchCriteria.FromDate != null || searchCriteria.FromDate != null)
                     {

@@ -189,7 +189,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using (Repository<TblInvoiceMaster> repo=new Repository<TblInvoiceMaster>())
                 {
                     List<TblInvoiceMaster> _invoiceMasterList = null;
-                    if (searchCriteria.Role == 1)
+                    if (searchCriteria.Role == 1 || searchCriteria.Role == 3 || searchCriteria.Role == 89)
                     {
                         //searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
                         //searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;

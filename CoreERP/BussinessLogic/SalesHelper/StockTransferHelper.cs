@@ -138,7 +138,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             try
             {
                 List<TblStockTransferMaster> stockTransferList = null;
-                if (searchCriteria.Role == 1)
+                if (searchCriteria.Role == 1 || searchCriteria.Role == 3 || searchCriteria.Role == 89)
                 {
                     using (Repository<TblStockTransferMaster> repo = new Repository<TblStockTransferMaster>())
                     {
@@ -172,13 +172,13 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                                     .Where(x => DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) >= DateTime.Parse(searchCriteria.FromDate.Value.ToShortDateString())
                                                              && DateTime.Parse(x.StockTransferDate.Value.ToShortDateString()) <= DateTime.Parse(searchCriteria.ToDate.Value.ToShortDateString())
                                                              && x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)
-                                                             && x.FromBranchCode == branhCode).ToList();
+                                                             && x.FromBranchCode == branhCode || x.ToBranchCode==branhCode).ToList();
                         }
                         else
                         {
                             stockTransferList = repo.TblStockTransferMaster.AsEnumerable()
                                                                            .Where(x => x.StockTransferNo == (searchCriteria.InvoiceNo ?? x.StockTransferNo)
-                                                                                    && x.FromBranchCode == branhCode).ToList();
+                                                                                    && x.FromBranchCode == branhCode || x.ToBranchCode == branhCode).ToList();
                         }
                     }
                 }
