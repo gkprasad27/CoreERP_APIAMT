@@ -685,5 +685,89 @@ namespace CoreERP.Controllers.GeneralLedger
         }
 
         #endregion
+        #region Material Requisition
+
+        [HttpPost("GetMaterialRequisition")]
+        public IActionResult GetMaterialRequisition([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var materialreq = new TransactionsHelper().GetMaterialRequisitionMaster(searchCriteria);
+                if (!materialreq.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Material Requisition." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.materialreq = materialreq;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetMaterialRequisitionDetail/{reqno}")]
+        public IActionResult GetMaterialRequisitionDetail(string reqno)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var mreq = transactions.GetMaterialRequisitionMasterById(reqno);
+                if (mreq == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.mreqmasters = mreq;
+                expdoObj.mreqDetail = new TransactionsHelper().GetMaterialRequisitionDetails(reqno);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddMaterialRequisition")]
+        public IActionResult AddMaterialRequisition([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var mreqMaster = obj["mreqHdr"].ToObject<TblMaterialRequisitionMaster>();
+                var mreqdetails = obj["mreqDtl"].ToObject<List<TblMaterialRequisitionDetails>>();
+
+                if (!new TransactionsHelper().AddMaterialRequisition(mreqMaster, mreqdetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = mreqMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("ReturnMaterialRequisition/{RequisitionNumber}")]
+        public IActionResult ReturnMaterialRequisition(string RequisitionNumber)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnMaterialRequisition(RequisitionNumber))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Invoice memo no {RequisitionNumber} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        #endregion
     }
 }

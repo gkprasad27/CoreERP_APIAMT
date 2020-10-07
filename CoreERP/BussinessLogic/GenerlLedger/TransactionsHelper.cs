@@ -770,6 +770,84 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         #endregion
 
+        public List<TblMaterialRequisitionMaster> GetMaterialRequisitionMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblMaterialRequisitionMaster>();
+            return repo.TblMaterialRequisitionMaster.AsEnumerable().ToList();
+            //.Where(x =>
+            //{
+            //    Debug.Assert(x.RequisitionNmber != null, "x.VoucherDate != null");
+            //    return
+            //    x.RequisitionNmber != null
+            //           && x.RequisitionNmber.Contains(searchCriteria.searchCriteria ?? x.RequisitionNmber)
+            //           && Convert.ToDateTime(x.RequisitionDate.Value) >=
+            //           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+            //           && Convert.ToDateTime(x.RequisitionDate.Value.ToShortDateString()) <=
+            //           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+            //})
+
+        }
+        public TblMaterialRequisitionMaster GetMaterialRequisitionMasterById(string reqno)
+        {
+            using var repo = new Repository<TblMaterialRequisitionMaster>();
+            return repo.TblMaterialRequisitionMaster
+                .FirstOrDefault(x => x.RequisitionNmber == reqno);
+        }
+
+        public List<TblMaterialRequisitionDetails> GetMaterialRequisitionDetails(string reqno)
+        {
+            using var repo = new Repository<TblMaterialRequisitionDetails>();
+            return repo.TblMaterialRequisitionDetails.Where(cd => cd.RequisitionNumber == reqno).ToList();
+        }
+
+        public bool AddMaterialRequisition(TblMaterialRequisitionMaster mreqmaster, List<TblMaterialRequisitionDetails> mreqDetails)
+        {
+
+            int lineno = 1;
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblMaterialRequisitionMaster.Add(mreqmaster);
+                context.SaveChanges();
+                mreqDetails.ForEach(x =>
+                {
+                    x.RequisitionNumber = mreqmaster.RequisitionNmber;
+                });
+                context.TblMaterialRequisitionDetails.AddRange(mreqDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public bool ReturnMaterialRequisition(string RequisitionNumber)
+        {
+            using var repo = new ERPContext();
+            var goodissueHeader = repo.TblMaterialRequisitionMaster.FirstOrDefault(im => im.RequisitionNmber == RequisitionNumber);
+
+            if (goodissueHeader != null)
+                throw new Exception($"Invoice memo no {RequisitionNumber} already return.");
+
+            if (goodissueHeader != null)
+            {
+                repo.TblMaterialRequisitionMaster.Update(goodissueHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
         public List<TblGoodsIssueMaster> GetGoodsIssueMaster(SearchCriteria searchCriteria)
         {
             searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };

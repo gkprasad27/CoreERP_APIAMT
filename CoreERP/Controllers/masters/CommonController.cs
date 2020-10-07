@@ -50,6 +50,8 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblCostingUnitsCreation> _costingUnitsCreationRepository;
         private readonly IRepository<TblMaterialMaster> _materialMasterRepository;
         private readonly IRepository<TblWbs> _wbsRepository;
+        private readonly IRepository<TblMaterialRequisitionMaster> _materialRequisitionMasterRepository;
+        private readonly IRepository<TblMaterialRequisitionDetails> _materialRequisitionDetailsRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
@@ -62,8 +64,10 @@ namespace CoreERP.Controllers
                                  IRepository<TblCostingObjectTypes> costingObjectTypesRepository, IRepository<TblCostingUnitsCreation> costingUnitsCreationRepository,
                                 IRepository<TblCostingNumberSeries> costingNumberSeriesRepository,
                                 IRepository<TblMaterialMaster> materialMasterRepository,
-                                IRepository<TblWbs> wbsRepository)
+                                IRepository<TblWbs> wbsRepository, IRepository<TblMaterialRequisitionDetails> materialRequisitionDetailsRepository,
+                                IRepository<TblMaterialRequisitionMaster> materialRequisitionMasterRepository)
         {
+            _materialRequisitionMasterRepository = materialRequisitionMasterRepository;
             _InvoiceMemoHeaderRepository = tblInvoiceMemoHeaderRepository;
             _companyRepository = companyRepository;
             _sizesRepository = sizesRepository;
@@ -100,6 +104,35 @@ namespace CoreERP.Controllers
             _costingUnitsCreationRepository = costingUnitsCreationRepository;
             _materialMasterRepository = materialMasterRepository;
             _wbsRepository = wbsRepository;
+            _materialRequisitionDetailsRepository = materialRequisitionDetailsRepository;
+        }
+        [HttpGet("GetMaterialreqdetailsList")]
+        public IActionResult GetMaterialreqdetailsList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.mreqdetailsList = _materialRequisitionDetailsRepository.GetAll();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        [HttpGet("GetMaterialreqList")]
+        public IActionResult GetMaterialreqList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.mreqList = _materialRequisitionMasterRepository.GetAll().Select(x => new { ID = x.RequisitionNmber, TEXT = x.RequisitionNmber });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
         [HttpGet("GetWbsList")]
         public IActionResult GetWbsList()
