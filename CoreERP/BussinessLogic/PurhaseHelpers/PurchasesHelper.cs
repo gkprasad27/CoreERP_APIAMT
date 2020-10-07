@@ -670,7 +670,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                     if (_purchaseList.Count() == 0)
                         repo.TblPurchaseInvoice.AsEnumerable().Where(x => x.PurchaseInvNo == searchCriteria.InvoiceNo).ToList();
                 }
-                if (searchCriteria.Role != 1)
+                if (searchCriteria.Role != 1 && searchCriteria.Role != 3 && searchCriteria.Role != 89)
                 {
                     _purchaseList = _purchaseList.Where(x => x.BranchCode == branchCode).ToList();
                 }

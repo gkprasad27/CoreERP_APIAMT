@@ -15,7 +15,7 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             {
                 using (Repository<TblMeterReading> repo = new Repository<TblMeterReading>())
                 {
-                    if(role==1)
+                    if(role==1 || role==3 || role==89)
                     {
                         return repo.TblMeterReading.OrderByDescending(m => m.MeterReadingId).ToList();
                     }
