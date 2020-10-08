@@ -382,7 +382,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var mmasterList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, MATERIAL = x.MaterialType });
+                var mmasterList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, MATERIAL = x.MaterialType,AvailQTY=x.ClosingQty });
                 if (mmasterList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
