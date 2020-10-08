@@ -588,14 +588,15 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch (Exception ex) { throw ex; }
         }
 
-        public List<TblMemberMaster> GetNoOfShares(decimal memberCode)
+        public TblMemberMaster GetNoOfShares(decimal memberCode)
         {
 
             try
             {
                 using Repository<TblMemberMaster> repo = new Repository<TblMemberMaster>();
-                return repo.TblMemberMaster.Where(m=>m.MemberCode==memberCode).ToList();
-
+                //return repo.TblMemberMaster.Where(m=>m.MemberCode==memberCode).ToList();
+                var _noofShare = repo.TblMemberMaster.Where(x => x.MemberCode == memberCode).FirstOrDefault();
+                return _noofShare;
             }
             catch (Exception ex)
             {
@@ -667,11 +668,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
+                var _Frommember = context.TblMemberMaster.Where(x => x.MemberCode == shareTransfer.FromMemberCode).FirstOrDefault();
                 shareTransfer.IsSharesTransfered = 1;
                 shareTransfer.ShareCode = -1;
                 shareTransfer.ToMemberCode = memberMaster.MemberCode??0;
                 shareTransfer.ToMemberName = memberMaster.MemberName;
                 shareTransfer.ToMemberId = memberMaster.MemberId??0;
+                shareTransfer.FromMemberName = _Frommember.MemberName;
+                shareTransfer.FromMemberId = +_Frommember.MemberId ?? 0;
                 //vehicle.MemberShares = memberMaster.TotalShares;
                 //var _vehicleType = GetVehicleTypes().Where(v => v.VehicleTypeName == vehicle.VehicleTypeName).FirstOrDefault();
                 //vehicle.VehicleTypeId = _vehicleType.VehicleTypeId;

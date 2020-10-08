@@ -788,7 +788,7 @@ namespace CoreERP.Controllers.masters
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.noOfsharesList = new MemberMasterHelper().GetNoOfShares(memberCode).Select(x=>x.NoofShares);
+                    expando.noOfsharesList = new MemberMasterHelper().GetNoOfShares(memberCode).NoofShares;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
