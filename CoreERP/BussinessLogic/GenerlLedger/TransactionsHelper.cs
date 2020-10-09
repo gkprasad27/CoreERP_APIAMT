@@ -1074,12 +1074,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             workCenterCapacity.ForEach(x =>
             {
-                
+                x.WorkCenterCode = workCenterMaster.WorkcenterCode;
             });
 
             workCenterActivity.ForEach(x =>
             {
-
+                x.WorkcenterCode = workCenterMaster.WorkcenterCode;
             });
 
             using var context = new ERPContext();
@@ -1105,5 +1105,94 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
         #endregion
+
+        #region RoutingFile
+        public bool AddRoutingFile(TblRoutingMasterData routemasterdata, List<TblRoutingBasicData> routebasicdata,
+            List<TblRoutingMaterialAssignment> materialassignment, List<TblRoutingActiitiesAssignment> routeactiitiesAssignments,
+             List<TblRoutingToolsEqupments> toolsequpments)
+        {
+            if (routemasterdata.RoutingKey == null)
+                throw new Exception("WorkCenter Code Canot be empty/null.");
+
+            using var repo = new Repository<TblRoutingMasterData>();
+
+            if (repo.TblRoutingMasterData.Any(v => v.RoutingKey == routemasterdata.RoutingKey))
+                throw new Exception("RoutingKey number exists.");
+
+            routebasicdata.ForEach(x =>
+            {
+                x.RoutingKey = routemasterdata.RoutingKey;
+            });
+
+            materialassignment.ForEach(x =>
+            {
+                x.RoutingKey = routemasterdata.RoutingKey;
+            });
+            routeactiitiesAssignments.ForEach(x =>
+            {
+                x.RoutingKey = routemasterdata.RoutingKey;
+            });
+            toolsequpments.ForEach(x =>
+            {
+                x.RoutingKey = routemasterdata.RoutingKey;
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblRoutingMasterData.Add(routemasterdata);
+                context.SaveChanges();
+
+                context.TblRoutingBasicData.AddRange(routebasicdata);
+                context.SaveChanges();
+
+                context.TblRoutingMaterialAssignment.AddRange(materialassignment);
+                context.SaveChanges();
+
+                context.TblRoutingActiitiesAssignment.AddRange(routeactiitiesAssignments);
+                context.SaveChanges();
+
+                context.TblRoutingToolsEqupments.AddRange(toolsequpments);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public TblRoutingMasterData GetRoutingMasterById(string id)
+        {
+            using var repo = new Repository<TblRoutingMasterData>();
+            return repo.TblRoutingMasterData
+                .FirstOrDefault(x => x.RoutingKey == id);
+        }
+
+        public List<TblRoutingBasicData> GetRoutingBasicDataDetails(string routekey)
+        {
+            using var repo = new Repository<TblRoutingBasicData>();
+            return repo.TblRoutingBasicData.Where(cd => cd.RoutingKey == routekey).ToList();
+        }
+        public List<TblRoutingMaterialAssignment> GetRoutingMaterialAssignmentDetails(string routekey)
+        {
+            using var repo = new Repository<TblRoutingMaterialAssignment>();
+            return repo.TblRoutingMaterialAssignment.Where(cd => cd.RoutingKey == routekey).ToList();
+        }
+        public List<TblRoutingActiitiesAssignment> GetRoutingActiitiesAssignmentDetails(string routekey)
+        {
+            using var repo = new Repository<TblRoutingActiitiesAssignment>();
+            return repo.TblRoutingActiitiesAssignment.Where(cd => cd.RoutingKey == routekey).ToList();
+        }
+        public List<TblRoutingToolsEqupments> GetRoutingToolsEqupmentsDetails(string routekey)
+        {
+            using var repo = new Repository<TblRoutingToolsEqupments>();
+            return repo.TblRoutingToolsEqupments.Where(cd => cd.RoutingKey == routekey).ToList();
+        }
+        #endregion
+
     }
 }

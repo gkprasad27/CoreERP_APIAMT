@@ -50,6 +50,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblCostingUnitsCreation> _costingUnitsCreationRepository;
         private readonly IRepository<TblMaterialMaster> _materialMasterRepository;
         private readonly IRepository<TblWbs> _wbsRepository;
+        private readonly IRepository<TblWorkcenterMaster> _workcenterMasterRepository;
         private readonly IRepository<TblMaterialRequisitionMaster> _materialRequisitionMasterRepository;
         private readonly IRepository<TblMaterialRequisitionDetails> _materialRequisitionDetailsRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
@@ -65,8 +66,10 @@ namespace CoreERP.Controllers
                                 IRepository<TblCostingNumberSeries> costingNumberSeriesRepository,
                                 IRepository<TblMaterialMaster> materialMasterRepository,
                                 IRepository<TblWbs> wbsRepository, IRepository<TblMaterialRequisitionDetails> materialRequisitionDetailsRepository,
-                                IRepository<TblMaterialRequisitionMaster> materialRequisitionMasterRepository)
+                                IRepository<TblMaterialRequisitionMaster> materialRequisitionMasterRepository,
+                                IRepository<TblWorkcenterMaster> workcenterMasterRepository)
         {
+            _workcenterMasterRepository = workcenterMasterRepository;
             _materialRequisitionMasterRepository = materialRequisitionMasterRepository;
             _InvoiceMemoHeaderRepository = tblInvoiceMemoHeaderRepository;
             _companyRepository = companyRepository;
@@ -105,6 +108,20 @@ namespace CoreERP.Controllers
             _materialMasterRepository = materialMasterRepository;
             _wbsRepository = wbsRepository;
             _materialRequisitionDetailsRepository = materialRequisitionDetailsRepository;
+        }
+        [HttpGet("GetWorkcenterList")]
+        public IActionResult GetWorkcenterList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.wcList = _workcenterMasterRepository.GetAll().Select(x => new { ID = x.WorkcenterCode, TEXT = x.Name });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
         [HttpGet("GetMaterialreqdetailsList")]
         public IActionResult GetMaterialreqdetailsList()

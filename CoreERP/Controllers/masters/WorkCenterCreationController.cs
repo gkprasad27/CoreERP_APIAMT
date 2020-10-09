@@ -35,8 +35,8 @@ namespace CoreERP.Controllers.masters
             try
             {
                 var workcenterMaster = obj["mainasstHdr"].ToObject<TblWorkcenterMaster>();
-                var workcenterActivity = obj["mainassetDetail"].ToObject<List<TblWorkcenterActivity>>();
-                var workcenterCapacity = obj["mainassetDetail"].ToObject<List<TblWorkCenterCapacity>>();
+                var workcenterActivity = obj["mainactvtyDetail"].ToObject<List<TblWorkcenterActivity>>();
+                var workcenterCapacity = obj["mainassetcapacityDetail"].ToObject<List<TblWorkCenterCapacity>>();
 
                 if (!new TransactionsHelper().AddWorkCenterCreation(workcenterMaster, workcenterCapacity, workcenterActivity))
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
