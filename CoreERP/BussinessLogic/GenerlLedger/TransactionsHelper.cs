@@ -1060,5 +1060,50 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
 
         #endregion
+
+        #region WorkCenterCreation
+        public bool AddWorkCenterCreation(TblWorkcenterMaster workCenterMaster, List<TblWorkCenterCapacity> workCenterCapacity, List<TblWorkcenterActivity> workCenterActivity)
+        {
+            if (workCenterMaster.WorkcenterCode == null)
+                throw new Exception("WorkCenter Code Canot be empty/null.");
+            
+            using var repo = new Repository<TblWorkcenterMaster>();
+           
+            if(repo.TblWorkcenterMaster.Any(v => v.WorkcenterCode == workCenterMaster.WorkcenterCode))
+                throw new Exception("Voucher number exists.");
+
+            workCenterCapacity.ForEach(x =>
+            {
+                
+            });
+
+            workCenterActivity.ForEach(x =>
+            {
+
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblWorkcenterMaster.Add(workCenterMaster);
+                context.SaveChanges();
+
+                context.TblWorkCenterCapacity.AddRange(workCenterCapacity);
+                context.SaveChanges();
+
+                context.TblWorkcenterActivity.AddRange(workCenterActivity);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        #endregion
     }
 }

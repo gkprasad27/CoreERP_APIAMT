@@ -1,7 +1,10 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 
@@ -24,43 +27,23 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("RegisterWorkCenterCreation")]
-        public IActionResult RegisterWorkCenterCreation([FromBody]TblWorkcenterMaster wcm)
+        public IActionResult RegisterWorkCenterCreation([FromBody] JObject obj)
         {
-            if (wcm == null)
+            if (obj == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
-
+           
             try
             {
-                TblWorkCenterCapacity repo1 = new TblWorkCenterCapacity();
-                repo1.WorkCenterCode= wcm.WorkcenterCode;
-                repo1.Resource = wcm.Resource;
-                repo1.Capacity = wcm.Capacity;
-                repo1.WorkingHours =Convert.ToDecimal( wcm.WorkingHours);
-                repo1.BreakTime = Convert.ToDecimal(wcm.BreakTime);
-                repo1.NetHours = Convert.ToDecimal(wcm.NetHours);
-                repo1.Shifts =Convert.ToInt32( wcm.Shifts);
-                repo1.TotalCapacity = Convert.ToInt32(wcm.TotalCapacity);
-                repo1.WeekDays = Convert.ToInt32(wcm.WeekDays);
-                repo1.HoursPerWeek = Convert.ToInt32(wcm.HoursPerWeek);
-                TblWorkcenterActivity repo= new  TblWorkcenterActivity();
-                repo.WorkcenterCode = wcm.WorkcenterCode;
-                repo.Description = wcm.Description;
-                repo.Activity = wcm.Activity;
-                repo.Uom = wcm.UOM;
-                repo.CostCenter = wcm.CostCenter;
-                repo.Formula = wcm.Formula;
-                APIResponse apiResponse;
-                _workcenterMasterRepository.Add(wcm);
-                _workcenterActivityRepository.Add(repo);
-                _workCenterCapacityRepository.Add(repo1);
-                _workCenterCapacityRepository.SaveChanges();
-                _workcenterActivityRepository.SaveChanges();
-                if (_workcenterMasterRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = wcm };
-                else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                var workcenterMaster = obj["mainasstHdr"].ToObject<TblWorkcenterMaster>();
+                var workcenterActivity = obj["mainassetDetail"].ToObject<List<TblWorkcenterActivity>>();
+                var workcenterCapacity = obj["mainassetDetail"].ToObject<List<TblWorkCenterCapacity>>();
 
-                return Ok(apiResponse);
+                if (!new TransactionsHelper().AddWorkCenterCreation(workcenterMaster, workcenterCapacity, workcenterActivity))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.workcentermaster = workcenterMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
 
             }
             catch (Exception ex)
