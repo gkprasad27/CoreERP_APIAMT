@@ -91,10 +91,10 @@ namespace CoreERP.Controllers
 
         [HttpDelete("DeleteSize/{code}")]
         [Produces(typeof(TblUnit))]
-        public IActionResult DeleteSize(string code)
+        public IActionResult DeleteSize(int code)
         {
 
-            if (string.IsNullOrWhiteSpace(code))
+            if (code==0)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
 
             try
