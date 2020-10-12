@@ -88,11 +88,11 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeletePrimaryCostElementsCreation/{code}")]
-        public IActionResult DeletePrimaryCostElementsCreationbyId(string code)
+        public IActionResult DeletePrimaryCostElementsCreationbyId(int code)
         {
             try
             {
-                if (code == null)
+                if (code == 0)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
