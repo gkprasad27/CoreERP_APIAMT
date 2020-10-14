@@ -685,6 +685,7 @@ namespace CoreERP.Controllers.GeneralLedger
         }
 
         #endregion
+
         #region Material Requisition
 
         [HttpPost("GetMaterialRequisition")]
@@ -759,6 +760,176 @@ namespace CoreERP.Controllers.GeneralLedger
                 TransactionsHelper transactions = new TransactionsHelper();
                 if (transactions.ReturnMaterialRequisition(RequisitionNumber))
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Invoice memo no {RequisitionNumber} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        #endregion
+
+        #region PurchaseRequisition
+
+        [HttpPost("GetPurchaseRequisition")]
+        public IActionResult GetPurchaseRequisition([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var purchasereq = new TransactionsHelper().GetPurchaseRequisitionMaster(searchCriteria);
+                if (!purchasereq.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Purchase Requisition." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.purchasereq = purchasereq;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetPurchaseRequisitionDetail/{reqno}")]
+        public IActionResult GetPurchaseRequisitionDetail(string reqno)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var preq = transactions.GetPurchaseRequisitionMasterById(reqno);
+                if (preq == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.preqmasters = preq;
+                expdoObj.preqDetail = new TransactionsHelper().GetPurchaseRequisitionDetails(reqno);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddPurchaseRequisition")]
+        public IActionResult AddPurchaseRequisition([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var preqMaster = obj["preqHdr"].ToObject<TblPurchaseRequisitionMaster>();
+                var preqdetails = obj["preqDtl"].ToObject<List<TblPurchaseRequisitionDetails>>();
+
+                if (!new TransactionsHelper().AddPurchaseRequisitionMaster(preqMaster, preqdetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = preqMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("ReturnPurchaseRequisition/{Number}")]
+        public IActionResult ReturnPurchaseRequisition(string Number)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnMaterialRequisition(Number))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Invoice memo no {Number} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        #endregion
+
+        #region SourceSupply
+
+        [HttpPost("GetSourceSupply")]
+        public IActionResult GetSourceSupply([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var sorcesupply = new TransactionsHelper().GetMaterialSupplierMaster(searchCriteria);
+                if (!sorcesupply.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Source Supply." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.sorcesupply = sorcesupply;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetSourceSupplyDetail/{code}")]
+        public IActionResult GetSourceSupplyDetail(string code)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var sslist = transactions.GetMaterialSupplierMasterById(code);
+                if (sslist == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.ssmasters = sslist;
+                expdoObj.ssDetail = new TransactionsHelper().GetMaterialSupplierDetails(code);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddSourceSupply")]
+        public IActionResult AddSourceSupply([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var ssMaster = obj["ssHdr"].ToObject<TblMaterialSupplierMaster>();
+                var ssdetails = obj["ssDtl"].ToObject<List<TblMaterialSupplierDetails>>();
+
+                if (!new TransactionsHelper().AddMaterialSupplierMaster(ssMaster, ssdetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = ssMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("ReturnSourceSupply/{code}")]
+        public IActionResult ReturnSourceSupply(string code)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnMaterialRequisition(code))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Invoice memo no {code} return successfully." });
 
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
             }

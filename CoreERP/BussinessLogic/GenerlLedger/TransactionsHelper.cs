@@ -1242,7 +1242,174 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblTaskResources>();
             return repo.TblTaskResources.Where(cd => cd.TaskNumber == number).ToList();
         }
-       
+
+        #endregion
+
+        #region Purchase Requisition
+
+        public List<TblPurchaseRequisitionMaster> GetPurchaseRequisitionMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblPurchaseRequisitionMaster>();
+            return repo.TblPurchaseRequisitionMaster.AsEnumerable()
+                .Where(x =>
+                {
+                    Debug.Assert(x.RequisitionDate != null, "x.RequisitionDate != null");
+                    return
+                    x.RequisitionNumber != null
+                           && x.RequisitionNumber.Contains(searchCriteria.searchCriteria ?? x.RequisitionNumber)
+                           && Convert.ToDateTime(x.RequisitionDate.Value) >=
+                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                           && Convert.ToDateTime(x.RequisitionDate.Value.ToShortDateString()) <=
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                })
+                .ToList();
+        }
+        public bool AddPurchaseRequisitionMaster(TblPurchaseRequisitionMaster reqmasterdata, List<TblPurchaseRequisitionDetails> reqdetails)
+
+        {
+            if (reqmasterdata.RequisitionNumber == null)
+                throw new Exception("Requisition Number Code Canot be empty/null.");
+
+            using var repo = new Repository<TblPurchaseRequisitionMaster>();
+
+            if (repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
+                throw new Exception("Requisition Number  exists.");
+
+            reqdetails.ForEach(x =>
+            {
+                x.PurchaseRequisitionNumber = reqmasterdata.RequisitionNumber;
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblPurchaseRequisitionMaster.Add(reqmasterdata);
+                context.SaveChanges();
+
+                context.TblPurchaseRequisitionDetails.AddRange(reqdetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public TblPurchaseRequisitionMaster GetPurchaseRequisitionMasterById(string id)
+        {
+            using var repo = new Repository<TblPurchaseRequisitionMaster>();
+            return repo.TblPurchaseRequisitionMaster
+                .FirstOrDefault(x => x.RequisitionNumber == id);
+        }
+        public List<TblPurchaseRequisitionDetails> GetPurchaseRequisitionDetails(string number)
+        {
+            using var repo = new Repository<TblPurchaseRequisitionDetails>();
+            return repo.TblPurchaseRequisitionDetails.Where(cd => cd.PurchaseRequisitionNumber == number).ToList();
+        }
+
+        public bool ReturnPurchaseRequisition(string RequisitionNumber)
+        {
+            using var repo = new ERPContext();
+            var preqHeader = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == RequisitionNumber);
+
+            if (preqHeader != null)
+                throw new Exception($"Invoice memo no {RequisitionNumber} already return.");
+
+            if (preqHeader != null)
+            {
+                repo.TblPurchaseRequisitionMaster.Update(preqHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+
+        #endregion
+
+        #region Source Supply
+
+        public List<TblMaterialSupplierMaster> GetMaterialSupplierMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblMaterialSupplierMaster>();
+            return repo.TblMaterialSupplierMaster.AsEnumerable().ToList();
+        }
+        public bool AddMaterialSupplierMaster(TblMaterialSupplierMaster msdata, List<TblMaterialSupplierDetails> msdetails)
+
+        {
+            if (msdata.SupplierCode == null)
+                throw new Exception("Supplier Code Canot be empty/null.");
+
+            using var repo = new Repository<TblMaterialSupplierMaster>();
+
+            if (repo.TblMaterialSupplierMaster.Any(v => v.SupplierCode == msdata.SupplierCode))
+                throw new Exception("Supplier Code  exists.");
+
+            msdetails.ForEach(x =>
+            {
+                x.SupplierCode = msdata.SupplierCode;
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblMaterialSupplierMaster.Add(msdata);
+                context.SaveChanges();
+
+                context.TblMaterialSupplierDetails.AddRange(msdetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public TblMaterialSupplierMaster GetMaterialSupplierMasterById(string id)
+        {
+            using var repo = new Repository<TblMaterialSupplierMaster>();
+            return repo.TblMaterialSupplierMaster
+                .FirstOrDefault(x => x.SupplierCode == id);
+        }
+        public List<TblMaterialSupplierDetails> GetMaterialSupplierDetails(string number)
+        {
+            using var repo = new Repository<TblMaterialSupplierDetails>();
+            return repo.TblMaterialSupplierDetails.Where(cd => cd.SupplierCode == number).ToList();
+        }
+        public bool ReturnMaterialSupplier(string code)
+        {
+            using var repo = new ERPContext();
+            var preqHeader = repo.TblMaterialSupplierMaster.FirstOrDefault(im => im.SupplierCode == code);
+
+            if (preqHeader != null)
+                throw new Exception($"Invoice memo no {code} already return.");
+
+            if (preqHeader != null)
+            {
+                repo.TblMaterialSupplierMaster.Update(preqHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+
         #endregion
 
     }
