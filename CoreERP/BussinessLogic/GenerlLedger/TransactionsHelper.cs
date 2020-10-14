@@ -1194,5 +1194,56 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         #endregion
 
+        #region Task
+        public bool AddRegisterTasks(TblTaskMaster taskmasterdata, List<TblTaskResources> resourcedata)
+
+        {
+            if (taskmasterdata.TaskNumber == null)
+                throw new Exception("Task Number Code Canot be empty/null.");
+
+            using var repo = new Repository<TblTaskMaster>();
+
+            if (repo.TblTaskMaster.Any(v => v.TaskNumber == taskmasterdata.TaskNumber))
+                throw new Exception("TaskNumber number exists.");
+
+            resourcedata.ForEach(x =>
+            {
+                x.TaskNumber = taskmasterdata.TaskNumber;
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblTaskMaster.Add(taskmasterdata);
+                context.SaveChanges();
+
+                context.TblTaskResources.AddRange(resourcedata);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public TblTaskMaster GetTaskMasterById(string id)
+        {
+            using var repo = new Repository<TblTaskMaster>();
+            return repo.TblTaskMaster
+                .FirstOrDefault(x => x.TaskNumber == id);
+        }
+
+        public List<TblTaskResources> GetTaskResourcesDataDetails(string number)
+        {
+            using var repo = new Repository<TblTaskResources>();
+            return repo.TblTaskResources.Where(cd => cd.TaskNumber == number).ToList();
+        }
+       
+        #endregion
+
     }
 }

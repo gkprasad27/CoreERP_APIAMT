@@ -1297,12 +1297,7 @@ namespace CoreERP
         //AssetBeingAquisition
         public bool AssetBeingAquisition(TblAssetBeginingAcquisition bngaqsn, List<TblAssetBegningAccumulatedDepreciation> astbngdsrpnDetails)
         {
-            astbngdsrpnDetails.ForEach(x =>
-            {
-                x.AcquisitionCode = bngaqsn.Code;
-
-            });
-
+           
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             try
@@ -1326,6 +1321,11 @@ namespace CoreERP
 
                 context.TblAssetBeginingAcquisition.Add(bngaqsn);
                 context.SaveChanges();
+                astbngdsrpnDetails.ForEach(x =>
+                {
+                    x.AcquisitionCode = bngaqsn.Id.ToString();
+
+                });
 
                 context.TblAssetBegningAccumulatedDepreciation.AddRange(astbngdsrpnDetails);
                 context.SaveChanges();
@@ -1343,7 +1343,7 @@ namespace CoreERP
         public TblAssetBeginingAcquisition GetmainAqsnById(string code)
         {
             using var repo = new Repository<TblAssetBeginingAcquisition>();
-            return repo.TblAssetBeginingAcquisition.FirstOrDefault(x => x.Code == code);
+            return repo.TblAssetBeginingAcquisition.FirstOrDefault(x => x.Id.ToString() == code);
         }
 
         public List<TblAssetBegningAccumulatedDepreciation> GetAqsnDetailDetails(string code)

@@ -1,7 +1,10 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 
@@ -20,31 +23,77 @@ namespace CoreERP.Controllers.masters
             _taskResourcesRepository = taskResourcesRepository;
         }
 
-        [HttpPost("RegisterTasks")]
-        public IActionResult RegisterTasks([FromBody]TblTaskMaster task)
+        //[HttpPost("RegisterTasks")]
+        //public IActionResult RegisterTasks([FromBody]TblTaskMaster task)
+        //{
+        //    if (task == null)
+        //        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
+
+        //    try
+        //    {
+        //        TblTaskResources repo = new TblTaskResources();
+        //        repo.TaskNumber = task.TaskNumber;
+        //        repo.Resource = task.Resource;
+        //        repo.MaterialCode = task.MaterialCode;
+        //        repo.Qty =Convert.ToInt32(task.QTY);
+        //        repo.CostCenter = task.CostCenter;
+        //        repo.Rate = Convert.ToInt32(task.Rate);
+        //        _taskResourcesRepository.Add(repo);
+        //        _taskResourcesRepository.SaveChanges();
+        //        APIResponse apiResponse;
+        //        _taskMasterRepository.Add(task);
+        //        if (_taskMasterRepository.SaveChanges() > 0)
+        //            apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = task };
+        //        else
+        //            apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+
+        //        return Ok(apiResponse);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
+
+        [HttpGet("GetTaskDetail/{key}")]
+        public IActionResult GetTaskDetail(string key)
         {
-            if (task == null)
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var taskMasters = transactions.GetTaskMasterById(key);
+                if (taskMasters == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.taskMasters = taskMasters;
+                expdoObj.taskMastersDetail = new TransactionsHelper().GetTaskResourcesDataDetails(key);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("RegisterTasks")]
+        public IActionResult RegisterTasks([FromBody] JObject obj)
+        {
+            if (obj == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-                TblTaskResources repo = new TblTaskResources();
-                repo.TaskNumber = task.TaskNumber;
-                repo.Resource = task.Resource;
-                repo.MaterialCode = task.MaterialCode;
-                repo.Qty =Convert.ToInt32(task.QTY);
-                repo.CostCenter = task.CostCenter;
-                repo.Rate = Convert.ToInt32(task.Rate);
-                _taskResourcesRepository.Add(repo);
-                _taskResourcesRepository.SaveChanges();
-                APIResponse apiResponse;
-                _taskMasterRepository.Add(task);
-                if (_taskMasterRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = task };
-                else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                var routeHdr = obj["taskHdr"].ToObject<TblTaskMaster>();
+                var routingDetail = obj["taskDetail"].ToObject<List<TblTaskResources>>();
 
-                return Ok(apiResponse);
+                if (!new TransactionsHelper().AddRegisterTasks(routeHdr, routingDetail))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.routeHdr = routeHdr;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
 
             }
             catch (Exception ex)
