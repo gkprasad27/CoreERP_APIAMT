@@ -109,6 +109,8 @@ namespace CoreERP.Models
         public virtual DbSet<TblGlsubAccount> TblGlsubAccount { get; set; }
         public virtual DbSet<TblGoodsIssueDetails> TblGoodsIssueDetails { get; set; }
         public virtual DbSet<TblGoodsIssueMaster> TblGoodsIssueMaster { get; set; }
+        public virtual DbSet<TblGoodsReceiptDetails> TblGoodsReceiptDetails { get; set; }
+        public virtual DbSet<TblGoodsReceiptMaster> TblGoodsReceiptMaster { get; set; }
         public virtual DbSet<TblGrnassignment> TblGrnassignment { get; set; }
         public virtual DbSet<TblGrnnoSeries> TblGrnnoSeries { get; set; }
         public virtual DbSet<TblHideTableColumns> TblHideTableColumns { get; set; }
@@ -163,6 +165,8 @@ namespace CoreERP.Models
         public virtual DbSet<TblPurchaseDepartment> TblPurchaseDepartment { get; set; }
         public virtual DbSet<TblPurchaseGroup> TblPurchaseGroup { get; set; }
         public virtual DbSet<TblPurchaseNoRange> TblPurchaseNoRange { get; set; }
+        public virtual DbSet<TblPurchaseOrder> TblPurchaseOrder { get; set; }
+        public virtual DbSet<TblPurchaseOrderDetails> TblPurchaseOrderDetails { get; set; }
         public virtual DbSet<TblPurchaseOrderNoAssignment> TblPurchaseOrderNoAssignment { get; set; }
         public virtual DbSet<TblPurchaseOrderNoAssignmentst> TblPurchaseOrderNoAssignmentst { get; set; }
         public virtual DbSet<TblPurchaseOrderType> TblPurchaseOrderType { get; set; }
@@ -3373,6 +3377,98 @@ namespace CoreERP.Models
                 entity.Property(e => e.StoresPerson).HasMaxLength(50);
             });
 
+            modelBuilder.Entity<TblGoodsReceiptDetails>(entity =>
+            {
+                entity.ToTable("tbl_GoodsReceiptDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Branch).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.LotDate).HasColumnType("date");
+
+                entity.Property(e => e.LotNo).HasMaxLength(50);
+
+                entity.Property(e => e.MaterialCode).HasMaxLength(50);
+
+                entity.Property(e => e.MovementType).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(50);
+
+                entity.Property(e => e.Poqty).HasColumnName("POQTY");
+
+                entity.Property(e => e.ProfitCenter).HasMaxLength(50);
+
+                entity.Property(e => e.Project).HasMaxLength(50);
+
+                entity.Property(e => e.PurchaseOrderNo).HasMaxLength(50);
+
+                entity.Property(e => e.ReceivedQty).HasColumnName("ReceivedQTY");
+
+                entity.Property(e => e.StorageLocation).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblGoodsReceiptMaster>(entity =>
+            {
+                entity.ToTable("tbl_GoodsReceiptMaster");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
+                entity.Property(e => e.Branch).HasMaxLength(50);
+
+                entity.Property(e => e.Company).HasMaxLength(50);
+
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
+
+                entity.Property(e => e.Grnno)
+                    .HasColumnName("GRNNo")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.InspectionNoteNo).HasMaxLength(50);
+
+                entity.Property(e => e.MovementType).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(50);
+
+                entity.Property(e => e.ProfitCenter).HasMaxLength(50);
+
+                entity.Property(e => e.PurchaseOrderNo).HasMaxLength(50);
+
+                entity.Property(e => e.QualityCheck).HasMaxLength(5);
+
+                entity.Property(e => e.ReceivedBy).HasMaxLength(50);
+
+                entity.Property(e => e.ReceivedDate).HasColumnType("date");
+
+                entity.Property(e => e.Rrno)
+                    .HasColumnName("RRNo")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.StorageLocation).HasMaxLength(50);
+
+                entity.Property(e => e.SupplierCode).HasMaxLength(50);
+
+                entity.Property(e => e.SupplierGinno)
+                    .HasColumnName("SupplierGINNo")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.SupplierReferenceNo).HasMaxLength(50);
+
+                entity.Property(e => e.VehicleNo).HasMaxLength(15);
+            });
+
             modelBuilder.Entity<TblGrnassignment>(entity =>
             {
                 entity.HasKey(e => new { e.Grnseries, e.Company });
@@ -5063,6 +5159,106 @@ namespace CoreERP.Models
                 entity.Property(e => e.NumberRange).HasMaxLength(5);
 
                 entity.Property(e => e.Prefix).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblPurchaseOrder>(entity =>
+            {
+                entity.HasKey(e => e.PurchaseOrderNumber);
+
+                entity.ToTable("tbl_PurchaseOrder");
+
+                entity.Property(e => e.PurchaseOrderNumber).HasMaxLength(50);
+
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
+                entity.Property(e => e.Advance).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Branch).HasMaxLength(5);
+
+                entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.DeliveryDate).HasColumnType("date");
+
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
+
+                entity.Property(e => e.Gstno)
+                    .HasColumnName("GSTNo")
+                    .HasMaxLength(15);
+
+                entity.Property(e => e.PaymentTerms).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+
+                entity.Property(e => e.ProfitCenter).HasMaxLength(5);
+
+                entity.Property(e => e.PurchaseOrderDate).HasColumnType("date");
+
+                entity.Property(e => e.PurchaseOrderType).HasMaxLength(50);
+
+                entity.Property(e => e.QuotationDate).HasColumnType("date");
+
+                entity.Property(e => e.QuotationNumber)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.SupplierCode).HasMaxLength(50);
+
+                entity.Property(e => e.TermsofDelivery).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblPurchaseOrderDetails>(entity =>
+            {
+                entity.ToTable("tbl_PurchaseOrderDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ApprovedBy).HasMaxLength(50);
+
+                entity.Property(e => e.Branch).HasMaxLength(50);
+
+                entity.Property(e => e.Commitment).HasMaxLength(50);
+
+                entity.Property(e => e.CostCenter).HasMaxLength(50);
+
+                entity.Property(e => e.Department).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Discount).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.FundCenter).HasMaxLength(50);
+
+                entity.Property(e => e.Location).HasMaxLength(50);
+
+                entity.Property(e => e.MaterialCode).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(50);
+
+                entity.Property(e => e.PreparedBy).HasMaxLength(50);
+
+                entity.Property(e => e.ProfitCenter).HasMaxLength(50);
+
+                entity.Property(e => e.PurchaseOrderNumber).HasMaxLength(50);
+
+                entity.Property(e => e.Qty).HasColumnName("QTY");
+
+                entity.Property(e => e.Rate).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.RecommendedBy).HasMaxLength(50);
+
+                entity.Property(e => e.Tax).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Wbs)
+                    .HasColumnName("WBS")
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblPurchaseOrderNoAssignment>(entity =>
