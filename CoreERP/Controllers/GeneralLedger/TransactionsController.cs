@@ -940,5 +940,175 @@ namespace CoreERP.Controllers.GeneralLedger
         }
 
         #endregion
+
+        #region Quotation Supplier
+
+        [HttpPost("GetQuotationSupplier")]
+        public IActionResult GetQuotationSupplier([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var quotationsupplier = new TransactionsHelper().GetSupplierQuotationsMasterr(searchCriteria);
+                if (!quotationsupplier.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Source Supply." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.quotationsupplier = quotationsupplier;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetQuotationSupplierDetail/{code}")]
+        public IActionResult GetQuotationSupplierDetail(string code)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var qslist = transactions.GetSupplierQuotationsMasterById(code);
+                if (qslist == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.qsmasters = qslist;
+                expdoObj.qsDetail = new TransactionsHelper().GetSupplierQuotationDetails(code);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddQuotationSupplier")]
+        public IActionResult AddQuotationSupplier([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var qsMaster = obj["qsHdr"].ToObject<TblSupplierQuotationsMaster>();
+                var qsdetails = obj["qsDtl"].ToObject<List<TblSupplierQuotationDetails>>();
+
+                if (!new TransactionsHelper().AddSupplierQuotationsMaster(qsMaster, qsdetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = qsMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("ReturnQuotationSupplier/{code}")]
+        public IActionResult ReturnQuotationSupplier(string code)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnSupplierQuotationDetails(code))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Quotation Supplier memo no {code} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        #endregion
+
+        #region QuotationAnalysis
+
+        [HttpPost("GetQuotationAnalysis")]
+        public IActionResult GetQuotationAnalysis([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var quotationanalysis = new TransactionsHelper().GetQuotationAnalysis(searchCriteria);
+                if (!quotationanalysis.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Source Supply." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.quotationanalysis = quotationanalysis;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetQuotationAnalysisDetail/{code}")]
+        public IActionResult GetQuotationAnalysisDetail(string code)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var qalist = transactions.GetQuotationAnalysisMasterById(code);
+                if (qalist == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.qamasters = qalist;
+                expdoObj.qaDetail = new TransactionsHelper().GetQuotationAnalysisDetails(code);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddQuotationAnalysis")]
+        public IActionResult AddQuotationAnalysis([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var qaMaster = obj["qaHdr"].ToObject<TblQuotationAnalysis>();
+                var qadetails = obj["qaDtl"].ToObject<List<TblQuotationAnalysisDetails>>();
+
+                if (!new TransactionsHelper().AddQuotationAnalysis(qaMaster, qadetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = qaMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("ReturnQuotationAnalysis/{code}")]
+        public IActionResult ReturnQuotationAnalysis(string code)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnQuotationAnalysisDetails(code))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Quotation Analysis memo no {code} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        #endregion
     }
 }

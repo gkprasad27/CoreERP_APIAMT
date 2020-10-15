@@ -170,6 +170,8 @@ namespace CoreERP.Models
         public virtual DbSet<TblPurchaseRequisitionDetails> TblPurchaseRequisitionDetails { get; set; }
         public virtual DbSet<TblPurchaseRequisitionMaster> TblPurchaseRequisitionMaster { get; set; }
         public virtual DbSet<TblPurchaseType> TblPurchaseType { get; set; }
+        public virtual DbSet<TblQuotationAnalysis> TblQuotationAnalysis { get; set; }
+        public virtual DbSet<TblQuotationAnalysisDetails> TblQuotationAnalysisDetails { get; set; }
         public virtual DbSet<TblQuotationNoAssignment> TblQuotationNoAssignment { get; set; }
         public virtual DbSet<TblQuotationNoRange> TblQuotationNoRange { get; set; }
         public virtual DbSet<TblRegion> TblRegion { get; set; }
@@ -200,6 +202,8 @@ namespace CoreERP.Models
         public virtual DbSet<TblSubAssetMaster> TblSubAssetMaster { get; set; }
         public virtual DbSet<TblSubAssetMasterTransaction> TblSubAssetMasterTransaction { get; set; }
         public virtual DbSet<TblSuffixPrefix> TblSuffixPrefix { get; set; }
+        public virtual DbSet<TblSupplierQuotationDetails> TblSupplierQuotationDetails { get; set; }
+        public virtual DbSet<TblSupplierQuotationsMaster> TblSupplierQuotationsMaster { get; set; }
         public virtual DbSet<TblSupplierTermsAndConditons> TblSupplierTermsAndConditons { get; set; }
         public virtual DbSet<TblTaskMaster> TblTaskMaster { get; set; }
         public virtual DbSet<TblTaskResources> TblTaskResources { get; set; }
@@ -5242,6 +5246,52 @@ namespace CoreERP.Models
                 entity.Property(e => e.Description).HasMaxLength(50);
             });
 
+            modelBuilder.Entity<TblQuotationAnalysis>(entity =>
+            {
+                entity.HasKey(e => e.QuotationNumber);
+
+                entity.ToTable("tbl_QuotationAnalysis");
+
+                entity.Property(e => e.QuotationNumber).HasMaxLength(50);
+
+                entity.Property(e => e.Branch).HasMaxLength(5);
+
+                entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+
+                entity.Property(e => e.ProfitCenter).HasMaxLength(5);
+
+                entity.Property(e => e.Supplier).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblQuotationAnalysisDetails>(entity =>
+            {
+                entity.ToTable("tbl_QuotationAnalysisDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Advance).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Credit).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Delivery).HasMaxLength(50);
+
+                entity.Property(e => e.Discount).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.MaterialCode).HasMaxLength(50);
+
+                entity.Property(e => e.NetPrice).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.QuotationNumber).HasMaxLength(50);
+
+                entity.Property(e => e.Tax).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Total).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.UnitPrice).HasColumnType("numeric(18, 2)");
+            });
+
             modelBuilder.Entity<TblQuotationNoAssignment>(entity =>
             {
                 entity.HasKey(e => new { e.NumberRange, e.Company });
@@ -6032,6 +6082,56 @@ namespace CoreERP.Models
                     .HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.WidthOfNumericalPart).HasColumnName("widthOfNumericalPart");
+            });
+
+            modelBuilder.Entity<TblSupplierQuotationDetails>(entity =>
+            {
+                entity.ToTable("tbl_SupplierQuotationDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.DiscountAmount).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.ItemCode).HasMaxLength(50);
+
+                entity.Property(e => e.Price).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Qty).HasColumnName("QTY");
+
+                entity.Property(e => e.QuotationNumber).HasMaxLength(50);
+
+                entity.Property(e => e.Tax).HasColumnType("numeric(18, 2)");
+            });
+
+            modelBuilder.Entity<TblSupplierQuotationsMaster>(entity =>
+            {
+                entity.HasKey(e => e.QuotationNumber);
+
+                entity.ToTable("tbl_SupplierQuotationsMaster");
+
+                entity.Property(e => e.QuotationNumber).HasMaxLength(50);
+
+                entity.Property(e => e.Advance).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Branch).HasMaxLength(50);
+
+                entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.DeliveryMethod).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+
+                entity.Property(e => e.ProfitCenter).HasMaxLength(50);
+
+                entity.Property(e => e.QuotationDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Supplier).HasMaxLength(50);
+
+                entity.Property(e => e.SupplierQuoteDate).HasColumnType("date");
+
+                entity.Property(e => e.TransportMethod).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblSupplierTermsAndConditons>(entity =>

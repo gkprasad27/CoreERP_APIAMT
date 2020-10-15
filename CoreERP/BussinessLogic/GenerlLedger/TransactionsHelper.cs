@@ -1412,5 +1412,159 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         #endregion
 
+        #region Quotation Supplier
+
+        public List<TblSupplierQuotationsMaster> GetSupplierQuotationsMasterr(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblSupplierQuotationsMaster>();
+            return repo.TblSupplierQuotationsMaster.AsEnumerable().ToList();
+        }
+        public bool AddSupplierQuotationsMaster(TblSupplierQuotationsMaster msdata, List<TblSupplierQuotationDetails> qsdetails)
+
+        {
+            if (msdata.QuotationNumber == null)
+                throw new Exception("Supplier Code Canot be empty/null.");
+
+            using var repo = new Repository<TblSupplierQuotationsMaster>();
+
+            if (repo.TblSupplierQuotationsMaster.Any(v => v.QuotationNumber == msdata.QuotationNumber))
+                throw new Exception("Quotation Number  exists.");
+
+            qsdetails.ForEach(x =>
+            {
+                x.QuotationNumber = msdata.QuotationNumber;
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblSupplierQuotationsMaster.Add(msdata);
+                context.SaveChanges();
+
+                context.TblSupplierQuotationDetails.AddRange(qsdetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public TblSupplierQuotationsMaster GetSupplierQuotationsMasterById(string id)
+        {
+            using var repo = new Repository<TblSupplierQuotationsMaster>();
+            return repo.TblSupplierQuotationsMaster
+                .FirstOrDefault(x => x.QuotationNumber == id);
+        }
+        public List<TblSupplierQuotationDetails> GetSupplierQuotationDetails(string number)
+        {
+            using var repo = new Repository<TblSupplierQuotationDetails>();
+            return repo.TblSupplierQuotationDetails.Where(cd => cd.QuotationNumber == number).ToList();
+        }
+        public bool ReturnSupplierQuotationDetails(string code)
+        {
+            using var repo = new ERPContext();
+            var preqHeader = repo.TblSupplierQuotationsMaster.FirstOrDefault(im => im.QuotationNumber == code);
+
+            if (preqHeader != null)
+                throw new Exception($"Supplier Quotation memo no {code} already return.");
+
+            if (preqHeader != null)
+            {
+                repo.TblSupplierQuotationsMaster.Update(preqHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+
+        #endregion
+
+        #region QuotationAnalysis
+
+        public List<TblQuotationAnalysis> GetQuotationAnalysis(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblQuotationAnalysis>();
+            return repo.TblQuotationAnalysis.AsEnumerable().ToList();
+        }
+        public bool AddQuotationAnalysis(TblQuotationAnalysis qadata, List<TblQuotationAnalysisDetails> qadetails)
+
+        {
+            if (qadata.QuotationNumber == null)
+                throw new Exception("Quotation Number Code Canot be empty/null.");
+
+            using var repo = new Repository<TblQuotationAnalysis>();
+
+            if (repo.TblQuotationAnalysis.Any(v => v.QuotationNumber == qadata.QuotationNumber))
+                throw new Exception("Quotation Number  exists.");
+
+            qadetails.ForEach(x =>
+            {
+                x.QuotationNumber = qadata.QuotationNumber;
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblQuotationAnalysis.Add(qadata);
+                context.SaveChanges();
+
+                context.TblQuotationAnalysisDetails.AddRange(qadetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public TblQuotationAnalysis GetQuotationAnalysisMasterById(string id)
+        {
+            using var repo = new Repository<TblQuotationAnalysis>();
+            return repo.TblQuotationAnalysis
+                .FirstOrDefault(x => x.QuotationNumber == id);
+        }
+        public List<TblQuotationAnalysisDetails> GetQuotationAnalysisDetails(string number)
+        {
+            using var repo = new Repository<TblQuotationAnalysisDetails>();
+            return repo.TblQuotationAnalysisDetails.Where(cd => cd.QuotationNumber == number).ToList();
+        }
+        public bool ReturnQuotationAnalysisDetails(string code)
+        {
+            using var repo = new ERPContext();
+            var preqHeader = repo.TblQuotationAnalysis.FirstOrDefault(im => im.QuotationNumber == code);
+
+            if (preqHeader != null)
+                throw new Exception($"Analysis Quotation memo no {code} already return.");
+
+            if (preqHeader != null)
+            {
+                repo.TblQuotationAnalysis.Update(preqHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+
+        #endregion
+
     }
 }
