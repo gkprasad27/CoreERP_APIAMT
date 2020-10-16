@@ -1110,5 +1110,175 @@ namespace CoreERP.Controllers.GeneralLedger
         }
 
         #endregion
+
+        #region PurchaseOrder
+
+        [HttpPost("GetPurchaseOrder")]
+        public IActionResult GetPurchaseOrder([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var podetails = new TransactionsHelper().GetPurchaseOrder(searchCriteria);
+                if (!podetails.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Source Supply." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.podetails = podetails;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetPurchaseOrderDetail/{code}")]
+        public IActionResult GetPurchaseOrderDetail(string code)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var polist = transactions.GetPurchaseOrderMasterById(code);
+                if (polist == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.pomasters = polist;
+                expdoObj.poDetail = new TransactionsHelper().GetPurchaseOrderDetails(code);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddPurchaseOrder")]
+        public IActionResult AddPurchaseOrder([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var poMaster = obj["poHdr"].ToObject<TblPurchaseOrder>();
+                var podetails = obj["poDtl"].ToObject<List<TblPurchaseOrderDetails>>();
+
+                if (!new TransactionsHelper().AddPurchaseOrder(poMaster, podetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = poMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("ReturnPurchaseOrder/{code}")]
+        public IActionResult ReturnPurchaseOrder(string code)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnPurchaseOrderDetails(code))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Purchase Order Analysis memo no {code} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        #endregion
+
+        #region GoodsReceipt
+
+        [HttpPost("GetGoodsReceipt")]
+        public IActionResult GetGoodsReceipt([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var grdetails = new TransactionsHelper().GetGoodsReceiptMaster(searchCriteria);
+                if (!grdetails.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Goods Receipt." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.grdetails = grdetails;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetGoodsReceiptDetail/{code}")]
+        public IActionResult GetGoodsReceiptDetail(string code)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var grlist = transactions.GetGoodsReceiptMasterById(code);
+                if (grlist == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.grmasters = grlist;
+                expdoObj.grDetail = new TransactionsHelper().GetGoodsReceiptDetails(code);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddGoodsReceipt")]
+        public IActionResult AddGoodsReceipt([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var grMaster = obj["grHdr"].ToObject<TblGoodsReceiptMaster>();
+                var grdetails = obj["grDtl"].ToObject<List<TblGoodsReceiptDetails>>();
+
+                if (!new TransactionsHelper().AddGoodsReceipt(grMaster, grdetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = grMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("ReturnGoodsReceipt/{code}")]
+        public IActionResult ReturnGoodsReceipt(string code)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnGoodsReceiptMaster(code))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Purchase Order Analysis memo no {code} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        #endregion
     }
 }

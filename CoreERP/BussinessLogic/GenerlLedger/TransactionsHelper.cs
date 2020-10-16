@@ -1490,7 +1490,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         #endregion
 
         #region QuotationAnalysis
-
         public List<TblQuotationAnalysis> GetQuotationAnalysis(SearchCriteria searchCriteria)
         {
             searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
@@ -1563,7 +1562,156 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             return true;
         }
+        #endregion
 
+        #region PurchaseOrder
+        public List<TblPurchaseOrder> GetPurchaseOrder(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblPurchaseOrder>();
+            return repo.TblPurchaseOrder.AsEnumerable().ToList();
+        }
+        public bool AddPurchaseOrder(TblPurchaseOrder podata, List<TblPurchaseOrderDetails> podetails)
+
+        {
+            if (podata.PurchaseOrderNumber == null)
+                throw new Exception("PurchaseOrder NumberCanot be empty/null.");
+
+            using var repo = new Repository<TblPurchaseOrder>();
+
+            if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
+                throw new Exception("PurchaseOrder Number exists.");
+
+            podetails.ForEach(x =>
+            {
+                x.PurchaseOrderNumber = podata.PurchaseOrderNumber;
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblPurchaseOrder.Add(podata);
+                context.SaveChanges();
+
+                context.TblPurchaseOrderDetails.AddRange(podetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public TblPurchaseOrder GetPurchaseOrderMasterById(string id)
+        {
+            using var repo = new Repository<TblPurchaseOrder>();
+            return repo.TblPurchaseOrder
+                .FirstOrDefault(x => x.PurchaseOrderNumber == id);
+        }
+        public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(string number)
+        {
+            using var repo = new Repository<TblPurchaseOrderDetails>();
+            return repo.TblPurchaseOrderDetails.Where(cd => cd.PurchaseOrderNumber == number).ToList();
+        }
+        public bool ReturnPurchaseOrderDetails(string code)
+        {
+            using var repo = new ERPContext();
+            var poHeader = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == code);
+
+            if (poHeader != null)
+                throw new Exception($"Analysis PurchaseOrderNumber memo no {code} already return.");
+
+            if (poHeader != null)
+            {
+                repo.TblPurchaseOrder.Update(poHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+        #endregion
+
+        #region GoodsReceipt
+        public List<TblGoodsReceiptMaster> GetGoodsReceiptMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblGoodsReceiptMaster>();
+            return repo.TblGoodsReceiptMaster.AsEnumerable().ToList();
+        }
+        public bool AddGoodsReceipt(TblGoodsReceiptMaster grdata, List<TblGoodsReceiptDetails> grdetails)
+
+        {
+            if (grdata.PurchaseOrderNo == null)
+                throw new Exception("PurchaseOrder NumberCanot be empty/null.");
+
+            using var repo = new Repository<TblPurchaseOrder>();
+
+            if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo))
+                throw new Exception("PurchaseOrder Number exists.");
+
+            grdetails.ForEach(x =>
+            {
+                x.PurchaseOrderNo = grdata.PurchaseOrderNo;
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblGoodsReceiptMaster.Add(grdata);
+                context.SaveChanges();
+
+                context.TblGoodsReceiptDetails.AddRange(grdetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public TblGoodsReceiptMaster GetGoodsReceiptMasterById(string id)
+        {
+            using var repo = new Repository<TblGoodsReceiptMaster>();
+            return repo.TblGoodsReceiptMaster
+                .FirstOrDefault(x => x.PurchaseOrderNo == id);
+        }
+        public List<TblGoodsReceiptDetails> GetGoodsReceiptDetails(string number)
+        {
+            using var repo = new Repository<TblGoodsReceiptDetails>();
+            return repo.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == number).ToList();
+        }
+        public bool ReturnGoodsReceiptMaster(string code)
+        {
+            using var repo = new ERPContext();
+            var poHeader = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.PurchaseOrderNo == code);
+
+            if (poHeader != null)
+                throw new Exception($"Analysis PurchaseOrderNumber memo no {code} already return.");
+
+            if (poHeader != null)
+            {
+                repo.TblGoodsReceiptMaster.Update(poHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
         #endregion
 
     }

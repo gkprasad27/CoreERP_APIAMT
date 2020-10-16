@@ -53,6 +53,8 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblWorkcenterMaster> _workcenterMasterRepository;
         private readonly IRepository<TblMaterialRequisitionMaster> _materialRequisitionMasterRepository;
         private readonly IRepository<TblMaterialRequisitionDetails> _materialRequisitionDetailsRepository;
+        private readonly IRepository<TblQuotationAnalysis> _quotationAnalysisRepository;
+        private readonly IRepository<TblPurchaseOrder> _purchaseOrderRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
@@ -67,8 +69,11 @@ namespace CoreERP.Controllers
                                 IRepository<TblMaterialMaster> materialMasterRepository,
                                 IRepository<TblWbs> wbsRepository, IRepository<TblMaterialRequisitionDetails> materialRequisitionDetailsRepository,
                                 IRepository<TblMaterialRequisitionMaster> materialRequisitionMasterRepository,
-                                IRepository<TblWorkcenterMaster> workcenterMasterRepository)
+                                IRepository<TblWorkcenterMaster> workcenterMasterRepository, IRepository<TblPurchaseOrder> purchaseOrderRepository,
+                                IRepository<TblQuotationAnalysis> quotationAnalysisRepository)
         {
+            _purchaseOrderRepository = purchaseOrderRepository;
+            _quotationAnalysisRepository = quotationAnalysisRepository;
             _workcenterMasterRepository = workcenterMasterRepository;
             _materialRequisitionMasterRepository = materialRequisitionMasterRepository;
             _InvoiceMemoHeaderRepository = tblInvoiceMemoHeaderRepository;
@@ -116,6 +121,35 @@ namespace CoreERP.Controllers
             {
                 dynamic expando = new ExpandoObject();
                 expando.wcList = _workcenterMasterRepository.GetAll().Select(x => new { ID = x.WorkcenterCode, TEXT = x.Name });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        [HttpGet("GetQuotationnoList")]
+        public IActionResult GetQuotationnoList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.qnoList = _quotationAnalysisRepository.GetAll().Select(x => new { ID = x.QuotationNumber, TEXT = x.QuotationNumber });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetPurchaseOrdernoList")]
+        public IActionResult GetPurchaseOrdernoList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.purchaseordernoList = _purchaseOrderRepository.GetAll().Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.PurchaseOrderNumber });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
