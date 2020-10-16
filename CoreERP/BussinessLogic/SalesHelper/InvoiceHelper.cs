@@ -311,6 +311,25 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
+        public TblAccountLedger GetAccountLedgersByAccountGroupId(string ledgercode,int groupId)
+        {
+            try
+            {
+                ledgercode = ledgercode?.ToLower();
+                using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
+                {
+                    return repo.TblAccountLedger
+                        .Where(al => al.LedgerCode == ledgercode && al.AccountGroupId==groupId)
+                        .OrderBy(o => o.LedgerCode)
+                        .FirstOrDefault();
+                    //
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public List<TblAccountLedger> GetAccountLedgersByLedgerId(decimal LedgerId)
         {
             try
@@ -868,6 +887,23 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             {
                                 //Add IGST record
                                 var _accAL = GetAccountLedgersByCode("243");
+                                var _advance = GetAccountLedgersByAccountGroupId(invoice.LedgerCode, 7576);
+                                var _accountLedgerNo = GetAccountLedgersByCode(invoice.LedgerCode);
+                                if (_accountLedgerNo != null)
+                                {
+                                    if (_accountLedgerNo.Mobile == "")
+                                    {
+                                        _accountLedgerNo.Mobile = "0";
+                                    }
+                                }
+
+                                if (_advance != null)
+                                {
+                                    if (_advance.Mobile == "")
+                                    {
+                                        _advance.Mobile = "0";
+                                    }
+                                }
                                 var SmsResult = "";
                                 voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalIgst, "Credit", false);
                                 AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
@@ -885,20 +921,52 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                     SmsResult = SendSMS("ksdlomacs", "kdlomacs", invoice.Mobile, message, "N", "Y");
                                     AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult);
                                 }
-                                if (invProduct == "D" && _accountLedger.Mobile != null && invoice.MemberName == null)
+                                if (_advance != null)
                                 {
-                                    var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
-                                                  invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
-                                    SmsResult = SendSMS("ksdlomacs", "kdlomacs", _accountLedger.Mobile, message, "N", "Y");
-                                    AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult);
+                                    if (invProduct == "D" && _advance.Mobile != null && invoice.MemberName == null)
+                                    {
+                                        var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
+                                                      invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
+                                        SmsResult = SendSMS("ksdlomacs", "kdlomacs", _advance.Mobile, message, "N", "Y");
+                                        AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult);
+                                    }
                                 }
 
+                                if (_accountLedgerNo != null)
+                                {
+                                    if (invProduct == "D" && _accountLedgerNo.Mobile != null && invoice.MemberName == null && _invQty >= 25)
+                                    {
+                                        var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
+                                                      invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
+                                        SmsResult = SendSMS("ksdlomacs", "kdlomacs", _accountLedgerNo.Mobile, message, "N", "Y");
+                                        AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult);
+                                    }
+                                }
+                                
 
                             }
                             else
                             {
                                 // cgst
                                 var _accAL = GetAccountLedgersByCode("240");
+                                var _advance = GetAccountLedgersByAccountGroupId(invoice.LedgerCode, 7576);
+                                var _accountLedgerNo = GetAccountLedgersByCode(invoice.LedgerCode);
+                                if (_accountLedgerNo != null)
+                                {
+                                    if (_accountLedgerNo.Mobile == "")
+                                    {
+                                        _accountLedgerNo.Mobile = "0";
+                                    }
+                                }
+                                
+                                if (_advance != null)
+                                {
+                                    if (_advance.Mobile == "")
+                                    {
+                                        _advance.Mobile = "0";
+                                    }
+                                }
+                               
                                 var SmsResult = "";
                                 voucherDtl = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accAL, invoice.TotalCgst, "Credit", false);
                                 AddAccountLedgerTransactions(repo, voucherDtl, invoice.InvoiceDate);
@@ -921,13 +989,26 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                     SmsResult = SendSMS("ksdlomacs", "kdlomacs", invoice.Mobile, message, "N", "Y");
                                     AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult);
                                 }
-                                if (invProduct == "D" && _accountLedger.Mobile != null && invoice.MemberName == null)
-                                {
-                                    var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
-                                                  invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
-                                    SmsResult = SendSMS("ksdlomacs", "kdlomacs", _accountLedger.Mobile, message, "N", "Y");
-                                    AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult);
+                                if (_advance != null){
+                                    if (invProduct == "D" && _advance.Mobile != null && invoice.MemberName == null)
+                                    {
+                                        var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
+                                                      invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
+                                        SmsResult = SendSMS("ksdlomacs", "kdlomacs", _advance.Mobile, message, "N", "Y");
+                                        AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult);
+                                    }
                                 }
+                                if (_accountLedgerNo != null)
+                                {
+                                    if (invProduct == "D" && _accountLedgerNo.Mobile != null && invoice.MemberName == null && _invQty >= 25)
+                                    {
+                                        var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
+                                                      invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
+                                        SmsResult = SendSMS("ksdlomacs", "kdlomacs", _accountLedgerNo.Mobile, message, "N", "Y");
+                                        AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult);
+                                    }
+                                }
+                                
 
 
                             }
