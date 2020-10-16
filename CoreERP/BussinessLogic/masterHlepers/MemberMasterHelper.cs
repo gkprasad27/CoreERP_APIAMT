@@ -646,9 +646,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 using (ERPContext context = new ERPContext())
                 {
                     var _member = context.TblMemberMaster.Where(x => x.MemberCode == memberCode).FirstOrDefault();
-
+                    var _Frommember = context.TblMemberMaster.Where(x => x.MemberCode == shareTransfer.FromMemberCode).FirstOrDefault();
                     var _shareTransfer = AddShare(context, _member, shareTransfer);
-
+                    var _updatemember = UpdateMember(_Frommember,shareTransfer);
                     if (_shareTransfer == null)
                     {
                         errorMessage = "Regitration failed for Share Transfer.";
@@ -695,6 +695,28 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     context.TblShareTransfer.Add(shareTransfer);
                     if (context.SaveChanges() > 0)
                         return shareTransfer;
+
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public TblMemberMaster UpdateMember(TblMemberMaster member, TblShareTransfer shareTransfer)
+        {
+            try
+            {
+                using (Repository<TblMemberMaster> _repo = new Repository<TblMemberMaster>())
+                {
+                    member.TotalShares = shareTransfer.FromMemberSharesAfter;
+                    member.NoofShares = shareTransfer.FromMemberSharesAfter;
+                    member.IssuedShares = shareTransfer.ToMemberSharesAfter;
+                    _repo.TblMemberMaster.Update(member);
+                    if (_repo.SaveChanges() > 0)
+                        return member;
 
                     return null;
                 }
