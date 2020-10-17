@@ -258,6 +258,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                         try
                         {
                             var _memberMaster = AddMemberMaster(context, memberMaster);
+                            var _accountLedger = AddAccountLedger(context, memberMaster);
                             if (_memberMaster == null)
                             {
                                 errorMessage = "Rgistration failed.";
@@ -352,6 +353,47 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 throw ex;
             }
         }
+
+        private TblAccountLedger AddAccountLedger(ERPContext context, TblMemberMaster memberMaster)
+        {
+            try
+            {
+                TblAccountLedger accountLedger = new TblAccountLedger();
+                var record = context.TblAccountLedger.OrderByDescending(x => x.LedgerId).FirstOrDefault();
+                if (record != null)
+                {
+                    accountLedger.LedgerId = Convert.ToDecimal(CommonHelper.IncreaseCode(record.LedgerId.ToString()));
+                }
+                else
+                    accountLedger.LedgerId = 1;
+
+                accountLedger.LedgerCode = memberMaster.MemberCode.ToString();
+                accountLedger.LedgerName = memberMaster.MemberName;
+                accountLedger.Address = memberMaster.Address;
+                accountLedger.OpeningBalance = 0;
+                accountLedger.Phone = memberMaster.Phone;
+                accountLedger.Mobile = memberMaster.Mobile;
+                accountLedger.Email = memberMaster.Email;
+                accountLedger.IsDefault = false;
+                accountLedger.CrOrDr = "Credit";
+                accountLedger.MailingName = memberMaster.MemberName;
+                accountLedger.CreditPeriod = 0;
+                accountLedger.CreditLimit = 0;
+                accountLedger.PricinglevelId = 1;
+                accountLedger.AccountTypeId = 3;
+                accountLedger.AccountTypeName = "CREDIT A/C";
+                context.TblAccountLedger.Add(accountLedger);
+                if (context.SaveChanges() > 0)
+                    return accountLedger;
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         private TblVehicle AddVechicle(ERPContext context, TblMemberMaster memberMaster, TblVehicle vehicle)
         {
             try
