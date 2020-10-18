@@ -116,8 +116,13 @@ namespace CoreERP.Models
         public virtual DbSet<TblHideTableColumns> TblHideTableColumns { get; set; }
         public virtual DbSet<TblHsnsac> TblHsnsac { get; set; }
         public virtual DbSet<TblIncomeTypes> TblIncomeTypes { get; set; }
+        public virtual DbSet<TblInpectionCheckMaster> TblInpectionCheckMaster { get; set; }
+        public virtual DbSet<TblInspectionCheckDetails> TblInspectionCheckDetails { get; set; }
         public virtual DbSet<TblInvoiceMemoDetails> TblInvoiceMemoDetails { get; set; }
         public virtual DbSet<TblInvoiceMemoHeader> TblInvoiceMemoHeader { get; set; }
+        public virtual DbSet<TblInvoiceVerificationDetails> TblInvoiceVerificationDetails { get; set; }
+        public virtual DbSet<TblInvoiceVerificationMaster> TblInvoiceVerificationMaster { get; set; }
+        public virtual DbSet<TblInvoiceVerificationOtherExpenses> TblInvoiceVerificationOtherExpenses { get; set; }
         public virtual DbSet<TblJvdetails> TblJvdetails { get; set; }
         public virtual DbSet<TblJvmaster> TblJvmaster { get; set; }
         public virtual DbSet<TblLanguage> TblLanguage { get; set; }
@@ -3560,6 +3565,60 @@ namespace CoreERP.Models
                 entity.Property(e => e.ThresholdLimit).HasColumnType("numeric(18, 0)");
             });
 
+            modelBuilder.Entity<TblInpectionCheckMaster>(entity =>
+            {
+                entity.HasKey(e => e.InspectionCheckNo);
+
+                entity.ToTable("tbl_InpectionCheckMaster");
+
+                entity.Property(e => e.InspectionCheckNo).HasMaxLength(50);
+
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
+                entity.Property(e => e.Branch).HasMaxLength(5);
+
+                entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+
+                entity.Property(e => e.ProfitCenter).HasMaxLength(5);
+
+                entity.Property(e => e.Status).HasMaxLength(15);
+            });
+
+            modelBuilder.Entity<TblInspectionCheckDetails>(entity =>
+            {
+                entity.ToTable("tbl_InspectionCheckDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.InspectionCheckNo).HasMaxLength(50);
+
+                entity.Property(e => e.Location).HasMaxLength(50);
+
+                entity.Property(e => e.MaterialCode).HasMaxLength(50);
+
+                entity.Property(e => e.MovementTo).HasMaxLength(50);
+
+                entity.Property(e => e.ReceivedQty).HasColumnName("ReceivedQTY");
+
+                entity.Property(e => e.RejectReason).HasMaxLength(50);
+
+                entity.Property(e => e.RejectedQty).HasColumnName("RejectedQTY");
+            });
+
             modelBuilder.Entity<TblInvoiceMemoDetails>(entity =>
             {
                 entity.ToTable("tbl_InvoiceMemoDetails");
@@ -3728,6 +3787,111 @@ namespace CoreERP.Models
                 entity.Property(e => e.VoucherDate).HasColumnType("date");
 
                 entity.Property(e => e.VoucherType).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<TblInvoiceVerificationDetails>(entity =>
+            {
+                entity.ToTable("tbl_InvoiceVerificationDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AccountKey).HasMaxLength(50);
+
+                entity.Property(e => e.AccountKeyAccount).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.MaterialCode).HasMaxLength(50);
+
+                entity.Property(e => e.OtherExpenses).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.OtherExpensesAccount).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(50);
+
+                entity.Property(e => e.Price).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.PurchaseOrderNo).HasMaxLength(50);
+
+                entity.Property(e => e.Qty).HasColumnName("QTY");
+
+                entity.Property(e => e.Unit).HasMaxLength(50);
+
+                entity.Property(e => e.Value).HasColumnType("numeric(18, 2)");
+            });
+
+            modelBuilder.Entity<TblInvoiceVerificationMaster>(entity =>
+            {
+                entity.HasKey(e => e.PurchaseOrderNo);
+
+                entity.ToTable("tbl_InvoiceVerificationMaster");
+
+                entity.Property(e => e.PurchaseOrderNo).HasMaxLength(50);
+
+                entity.Property(e => e.AddDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.AddWho).HasMaxLength(50);
+
+                entity.Property(e => e.Branch).HasMaxLength(5);
+
+                entity.Property(e => e.Company).HasMaxLength(5);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.EditDate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.EditWho).HasMaxLength(50);
+
+                entity.Property(e => e.Grndate)
+                    .HasColumnName("GRNDate")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.Grnno)
+                    .HasColumnName("GRNNo")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.InvoiceAmount).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.InvoiceDate).HasColumnType("date");
+
+                entity.Property(e => e.InvoiceReferenceNo).HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(5);
+
+                entity.Property(e => e.ProfitCenter).HasMaxLength(5);
+
+                entity.Property(e => e.SupplierCode).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblInvoiceVerificationOtherExpenses>(entity =>
+            {
+                entity.ToTable("tbl_InvoiceVerificationOtherExpenses");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Account).HasMaxLength(50);
+
+                entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Branch).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(50);
+
+                entity.Property(e => e.Drcr)
+                    .HasColumnName("DRCR")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Plant).HasMaxLength(50);
+
+                entity.Property(e => e.ProfitCenter).HasMaxLength(50);
+
+                entity.Property(e => e.PurchaseOrderNo).HasMaxLength(50);
+
+                entity.Property(e => e.Segment).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblJvdetails>(entity =>
