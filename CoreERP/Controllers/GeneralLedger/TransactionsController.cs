@@ -610,7 +610,7 @@ namespace CoreERP.Controllers.GeneralLedger
             {
                 var Goodsissue = new TransactionsHelper().GetGoodsIssueMaster(searchCriteria);
                 if (!Goodsissue.Any())
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for PaymentsReceipts." });
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for GoodsIssue." });
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.Goodsissue = Goodsissue;
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
@@ -950,7 +950,7 @@ namespace CoreERP.Controllers.GeneralLedger
             {
                 var quotationsupplier = new TransactionsHelper().GetSupplierQuotationsMasterr(searchCriteria);
                 if (!quotationsupplier.Any())
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Source Supply." });
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Quotation Supply." });
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.quotationsupplier = quotationsupplier;
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });

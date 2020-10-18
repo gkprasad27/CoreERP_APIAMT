@@ -53,6 +53,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblWorkcenterMaster> _workcenterMasterRepository;
         private readonly IRepository<TblMaterialRequisitionMaster> _materialRequisitionMasterRepository;
         private readonly IRepository<TblMaterialRequisitionDetails> _materialRequisitionDetailsRepository;
+        private readonly IRepository<TblPurchaseOrderDetails> _purchaseOrderDetailsRepository;
         private readonly IRepository<TblQuotationAnalysis> _quotationAnalysisRepository;
         private readonly IRepository<TblPurchaseOrder> _purchaseOrderRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
@@ -67,6 +68,7 @@ namespace CoreERP.Controllers
                                  IRepository<TblCostingObjectTypes> costingObjectTypesRepository, IRepository<TblCostingUnitsCreation> costingUnitsCreationRepository,
                                 IRepository<TblCostingNumberSeries> costingNumberSeriesRepository,
                                 IRepository<TblMaterialMaster> materialMasterRepository,
+                                IRepository<TblPurchaseOrderDetails> PurchaseOrderDetailsRepository,
                                 IRepository<TblWbs> wbsRepository, IRepository<TblMaterialRequisitionDetails> materialRequisitionDetailsRepository,
                                 IRepository<TblMaterialRequisitionMaster> materialRequisitionMasterRepository,
                                 IRepository<TblWorkcenterMaster> workcenterMasterRepository, IRepository<TblPurchaseOrder> purchaseOrderRepository,
@@ -112,6 +114,7 @@ namespace CoreERP.Controllers
             _costingUnitsCreationRepository = costingUnitsCreationRepository;
             _materialMasterRepository = materialMasterRepository;
             _wbsRepository = wbsRepository;
+            _purchaseOrderDetailsRepository = PurchaseOrderDetailsRepository;
             _materialRequisitionDetailsRepository = materialRequisitionDetailsRepository;
         }
         [HttpGet("GetWorkcenterList")]
@@ -171,6 +174,20 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+        [HttpGet("GetPOdetailsList")]
+        public IActionResult GetPOdetailsList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.podetailsList = _purchaseOrderDetailsRepository.GetAll();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
         [HttpGet("GetMaterialreqList")]
         public IActionResult GetMaterialreqList()
         {
@@ -206,7 +223,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.materialList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description });
+                expando.materialList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description,ClosingQty=x.ClosingQty });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -297,7 +314,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.UomList = _sizesRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
+                expando.GetMaterialList = _sizesRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -413,7 +430,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var costunitList = _costingUnitsCreationRepository.GetAll().Select(x => new { ID = x.ObjectNumber, TEXT = x.Description, MATERIAL = x.Material });
+                var costunitList = _costingUnitsCreationRepository.GetAll().Select(x => new { ID = x.ObjectNumber, TEXT = x.Description, MATERIAL = x.Material,CostUnitType=x.CostUnitType });
                 if (costunitList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
