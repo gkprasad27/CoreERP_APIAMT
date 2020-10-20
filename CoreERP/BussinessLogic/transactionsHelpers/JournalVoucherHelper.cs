@@ -85,11 +85,14 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
                 using (Repository<TblJournalVoucherMaster> _repo = new Repository<TblJournalVoucherMaster>())
                 {
                     _journalVoucherMaster = _repo.TblJournalVoucherMaster.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.ServerDate).FirstOrDefault();
-
+                    int count = (from JV in _repo.TblJournalVoucherMaster
+                                 where JV.BranchCode== branchCode
+                                 select JV).Count();
                     if (_journalVoucherMaster != null)
                     {
                         var invSplit = _journalVoucherMaster.VoucherNo.Split('-');
-                        billno = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1]) + 1}-{invSplit[2]}";
+                        //billno = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1]) + 1}-{invSplit[2]}";
+                        billno = $"{invSplit[0]}-{Convert.ToDecimal(count) + 1}-{invSplit[2]}";
                     }
                     else
                     {
