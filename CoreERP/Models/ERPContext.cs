@@ -3453,6 +3453,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.QualityCheck).HasMaxLength(5);
 
+                entity.Property(e => e.ReceiptDate).HasColumnType("date");
+
                 entity.Property(e => e.ReceivedBy).HasMaxLength(50);
 
                 entity.Property(e => e.ReceivedDate).HasColumnType("date");
