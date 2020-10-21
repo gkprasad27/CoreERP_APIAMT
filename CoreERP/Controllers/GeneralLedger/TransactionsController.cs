@@ -1280,5 +1280,179 @@ namespace CoreERP.Controllers.GeneralLedger
         }
 
         #endregion
+
+        #region Inspection Checkipt
+
+        [HttpPost("GetInspectionCheck")]
+        public IActionResult GetInspectionCheck([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var icdetails = new TransactionsHelper().GetInpectionCheckMaster(searchCriteria);
+                if (!icdetails.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Inspection Check." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.icdetails = icdetails;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetInspectionCheckDetail/{code}")]
+        public IActionResult GetInspectionCheckDetail(string code)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var iclist = transactions.GetInpectionCheckMasterById(code);
+                if (iclist == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.icmasters = iclist;
+                expdoObj.icDetail = new TransactionsHelper().GetInspectionCheckDetails(code);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddInpectionCheck")]
+        public IActionResult AddInpectionCheck([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var icMaster = obj["icHdr"].ToObject<TblInpectionCheckMaster>();
+                var icdetails = obj["icDtl"].ToObject<List<TblInspectionCheckDetails>>();
+
+                if (!new TransactionsHelper().AddInpectionCheck(icMaster, icdetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = icMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("ReturnInpectionCheck/{code}")]
+        public IActionResult ReturnInpectionCheck(string code)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnInpectionCheckMaster(code))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"InpectionCheck Analysis memo no {code} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        #endregion
+
+        #region Invoiceverification
+
+        [HttpGet("GetInvoiceverification")]
+        public IActionResult GetInvoiceverification()
+        {
+            try
+            {
+                var invdetails = new TransactionsHelper().GetInvoiceVerificationMaster();
+                if (invdetails.Any())
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.invdetails = invdetails;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+     
+
+        [HttpGet("GetInvoiceverificationDetail/{code}")]
+        public IActionResult GetInvoiceverificationDetail(string code)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var iclist = transactions.GetInvoiceVerificationMasterById(code);
+                if (iclist == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.ivcmasters = iclist;
+                expdoObj.ivcDetail = new TransactionsHelper().GetInvoiceVerificationDetails(code);
+                expdoObj.iecDetail = new TransactionsHelper().GetInvoiceVerificationOtherExpensesDetails(code);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddInvoiceverificationDetail")]
+        public IActionResult AddInvoiceverificationDetail([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var ivcMaster = obj["ivcHdr"].ToObject<TblInvoiceVerificationMaster>();
+                var ivcdetails = obj["ivcDtl"].ToObject<List<TblInvoiceVerificationDetails>>();
+                var otherexpences = obj["ioeDtl"].ToObject<List<TblInvoiceVerificationOtherExpenses>>();
+                if (!new TransactionsHelper().AddInvoiceVerification(ivcMaster, ivcdetails, otherexpences))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.invoi = ivcMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("ReturnInvoiceVerification/{code}")]
+        public IActionResult ReturnInvoiceVerification(string code)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.ReturnInvoiceVerification(code))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"InpectionCheck Analysis memo no {code} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        #endregion
     }
 }

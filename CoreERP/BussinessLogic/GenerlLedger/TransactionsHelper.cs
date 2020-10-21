@@ -1714,5 +1714,173 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         #endregion
 
+        #region InspectionCheck
+        public List<TblInpectionCheckMaster> GetInpectionCheckMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblInpectionCheckMaster>();
+            return repo.TblInpectionCheckMaster.AsEnumerable().ToList();
+        }
+        public bool AddInpectionCheck(TblInpectionCheckMaster icdata, List<TblInspectionCheckDetails> icdetails)
+
+        {
+            if (icdata.InspectionCheckNo == null)
+                throw new Exception("InspectionCheckNo Canot be empty/null.");
+
+            using var repo = new Repository<TblInpectionCheckMaster>();
+
+            if (repo.TblInpectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo))
+                throw new Exception("Inspection CheckNo exists.");
+
+            icdetails.ForEach(x =>
+            {
+                x.InspectionCheckNo = icdata.InspectionCheckNo;
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblInpectionCheckMaster.Add(icdata);
+                context.SaveChanges();
+
+                context.TblInspectionCheckDetails.AddRange(icdetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public TblInpectionCheckMaster GetInpectionCheckMasterById(string id)
+        {
+            using var repo = new Repository<TblInpectionCheckMaster>();
+            return repo.TblInpectionCheckMaster
+                .FirstOrDefault(x => x.InspectionCheckNo == id);
+        }
+        public List<TblInspectionCheckDetails> GetInspectionCheckDetails(string number)
+        {
+            using var repo = new Repository<TblInspectionCheckDetails>();
+            return repo.TblInspectionCheckDetails.Where(cd => cd.InspectionCheckNo == number).ToList();
+        }
+        public bool ReturnInpectionCheckMaster(string code)
+        {
+            using var repo = new ERPContext();
+            var poHeader = repo.TblInpectionCheckMaster.FirstOrDefault(im => im.InspectionCheckNo == code);
+
+            if (poHeader != null)
+                throw new Exception($"Analysis Inspection CheckNo memo no {code} already return.");
+
+            if (poHeader != null)
+            {
+                repo.TblInpectionCheckMaster.Update(poHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+        #endregion
+
+        #region Invoice verification
+        public List<TblInvoiceVerificationMaster> GetInvoiceVerificationMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblInvoiceVerificationMaster>();
+            return repo.TblInvoiceVerificationMaster.AsEnumerable().ToList();
+        }
+
+        public bool AddInvoiceVerification(TblInvoiceVerificationMaster invoicedata, List<TblInvoiceVerificationDetails> ivdetails, List<TblInvoiceVerificationOtherExpenses> ioedetails)
+
+        {
+            if (invoicedata.PurchaseOrderNo == null)
+                throw new Exception("Purchase OrderNo Canot be empty/null.");
+
+            using var repo = new Repository<TblInvoiceVerificationMaster>();
+
+            if (repo.TblInvoiceVerificationMaster.Any(v => v.PurchaseOrderNo == invoicedata.PurchaseOrderNo))
+                throw new Exception("Purchase OrderNo  exists.");
+
+            ivdetails.ForEach(x =>
+            {
+                x.PurchaseOrderNo = invoicedata.PurchaseOrderNo;
+            });
+            ioedetails.ForEach(x =>
+            {
+                x.PurchaseOrderNo = invoicedata.PurchaseOrderNo;
+            });
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                context.TblInvoiceVerificationMaster.Add(invoicedata);
+                context.SaveChanges();
+
+                context.TblInvoiceVerificationDetails.AddRange(ivdetails);
+                context.SaveChanges();
+
+                context.TblInvoiceVerificationOtherExpenses.AddRange(ioedetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+        public TblInvoiceVerificationMaster GetInvoiceVerificationMasterById(string id)
+        {
+            using var repo = new Repository<TblInvoiceVerificationMaster>();
+            return repo.TblInvoiceVerificationMaster
+                .FirstOrDefault(x => x.PurchaseOrderNo == id);
+        }
+        public List<TblInvoiceVerificationDetails> GetInvoiceVerificationDetails(string number)
+        {
+            using var repo = new Repository<TblInvoiceVerificationDetails>();
+            return repo.TblInvoiceVerificationDetails.Where(cd => cd.PurchaseOrderNo == number).ToList();
+        }
+        public List<TblInvoiceVerificationOtherExpenses> GetInvoiceVerificationOtherExpensesDetails(string number)
+        {
+            using var repo = new Repository<TblInvoiceVerificationOtherExpenses>();
+            return repo.TblInvoiceVerificationOtherExpenses.Where(cd => cd.PurchaseOrderNo == number).ToList();
+        }
+        public List<TblInvoiceVerificationMaster> GetInvoiceVerificationMaster()
+        {
+            using var repo = new Repository<TblInvoiceVerificationMaster>();
+            return repo.TblInvoiceVerificationMaster.ToList();
+        }
+        public bool ReturnInvoiceVerification(string code)
+        {
+            using var repo = new ERPContext();
+            var poHeader = repo.TblInvoiceVerificationMaster.FirstOrDefault(im => im.PurchaseOrderNo == code);
+
+            if (poHeader != null)
+                throw new Exception($"Analysis PurchaseOrderNo memo no {code} already return.");
+
+            if (poHeader != null)
+            {
+                repo.TblInvoiceVerificationMaster.Update(poHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
+        #endregion
+
     }
 }
