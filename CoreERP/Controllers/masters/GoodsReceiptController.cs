@@ -4,10 +4,8 @@ using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 
-namespace CoreERP.Controllers.GeneralLedger
+namespace CoreERP.Controllers.masters
 {
     [ApiController]
     [Route("api/GoodsReceipt")]

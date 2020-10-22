@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 
-namespace CoreERP.Controllers.GeneralLedger
+namespace CoreERP.Controllers.masters
 {
     [Route("api/Transactions")]
     [ApiController]
@@ -1163,6 +1163,7 @@ namespace CoreERP.Controllers.GeneralLedger
 
                 var poMaster = obj["poHdr"].ToObject<TblPurchaseOrder>();
                 var podetails = obj["poDtl"].ToObject<List<TblPurchaseOrderDetails>>();
+                ///var username = User.Identities.ToList();
 
                 if (!new TransactionsHelper().AddPurchaseOrder(poMaster, podetails))
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });

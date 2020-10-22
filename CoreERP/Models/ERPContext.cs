@@ -3437,6 +3437,10 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.EditWho).HasMaxLength(50);
 
+                entity.Property(e => e.Grndate)
+                    .HasColumnName("GRNDate")
+                    .HasColumnType("date");
+
                 entity.Property(e => e.Grnno)
                     .HasColumnName("GRNNo")
                     .HasMaxLength(50);

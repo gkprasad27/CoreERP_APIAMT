@@ -56,6 +56,8 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblPurchaseOrderDetails> _purchaseOrderDetailsRepository;
         private readonly IRepository<TblQuotationAnalysis> _quotationAnalysisRepository;
         private readonly IRepository<TblPurchaseOrder> _purchaseOrderRepository;
+        private readonly IRepository<TblGoodsReceiptMaster> _goodsReceiptMasterRepository;
+        private readonly IRepository<TblGoodsReceiptDetails> _goodsReceiptDetailsRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
@@ -72,8 +74,12 @@ namespace CoreERP.Controllers
                                 IRepository<TblWbs> wbsRepository, IRepository<TblMaterialRequisitionDetails> materialRequisitionDetailsRepository,
                                 IRepository<TblMaterialRequisitionMaster> materialRequisitionMasterRepository,
                                 IRepository<TblWorkcenterMaster> workcenterMasterRepository, IRepository<TblPurchaseOrder> purchaseOrderRepository,
-                                IRepository<TblQuotationAnalysis> quotationAnalysisRepository)
+                                IRepository<TblQuotationAnalysis> quotationAnalysisRepository,
+                                IRepository<TblGoodsReceiptMaster> goodsReceiptMasterRepository,
+                                IRepository<TblGoodsReceiptDetails> GoodsReceiptDetailsRepository)
         {
+            _goodsReceiptMasterRepository = goodsReceiptMasterRepository;
+            _goodsReceiptDetailsRepository = GoodsReceiptDetailsRepository;
             _purchaseOrderRepository = purchaseOrderRepository;
             _quotationAnalysisRepository = quotationAnalysisRepository;
             _workcenterMasterRepository = workcenterMasterRepository;
@@ -145,6 +151,34 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+        [HttpGet("GetInspectionnoList")]
+        public IActionResult GetInspectionnoList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.inspectionnoList = _goodsReceiptMasterRepository.GetAll().Select(x => new { ID = x.InspectionNoteNo, TEXT = x.InspectionNoteNo });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        [HttpGet("GetGoodsReceiptList")]
+        public IActionResult GetGoodsReceiptList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.grList = _goodsReceiptMasterRepository.GetAll();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
         [HttpGet("GetPurchaseOrdernoList")]
         public IActionResult GetPurchaseOrdernoList()
@@ -181,6 +215,20 @@ namespace CoreERP.Controllers
             {
                 dynamic expando = new ExpandoObject();
                 expando.podetailsList = _purchaseOrderDetailsRepository.GetAll();
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+        [HttpGet("GetInspectiondetailsList")]
+        public IActionResult GetInspectiondetailsList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.inspectiondetailsList = _goodsReceiptDetailsRepository.GetAll();
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

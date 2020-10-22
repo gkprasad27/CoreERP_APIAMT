@@ -28,5 +28,6 @@ namespace CoreERP.Models
         public string EditWho { get; set; }
         public DateTime? EditDate { get; set; }
         public DateTime? ReceiptDate { get; set; }
+        public DateTime? Grndate { get; set; }
     }
 }

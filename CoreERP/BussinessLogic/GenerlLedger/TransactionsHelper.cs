@@ -1655,23 +1655,33 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (grdata.PurchaseOrderNo == null)
                 throw new Exception("PurchaseOrder NumberCanot be empty/null.");
 
-            using var repo = new Repository<TblPurchaseOrder>();
+            using var repo = new Repository<TblGoodsReceiptMaster>();
 
             if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo))
                 throw new Exception("PurchaseOrder Number exists.");
+            
 
             grdetails.ForEach(x =>
             {
                 x.PurchaseOrderNo = grdata.PurchaseOrderNo;
+               
             });
 
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
+                grdata.ReceiptDate = DateTime.Now;
                 context.TblGoodsReceiptMaster.Add(grdata);
                 context.SaveChanges();
-
+                foreach(var item in grdetails)
+                {
+                    TblLotSeries lotseries = new TblLotSeries();
+                    lotseries.CurrentLot =Convert.ToInt32(item.LotNo);
+                    //context.TblLotSeries.UpdateRange(lotseries);
+                    //context.SaveChanges();
+                }
+                
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
                 context.SaveChanges();
 
