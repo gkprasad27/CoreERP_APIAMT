@@ -362,7 +362,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.GetMaterialList = _sizesRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
+                expando.UOMList = _sizesRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

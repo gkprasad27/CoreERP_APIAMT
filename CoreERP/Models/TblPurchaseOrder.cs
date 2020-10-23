@@ -25,5 +25,6 @@ namespace CoreERP.Models
         public DateTime? AddDate { get; set; }
         public DateTime? EditDate { get; set; }
         public decimal? Advance { get; set; }
+        public string FilePath { get; set; }
     }
 }
