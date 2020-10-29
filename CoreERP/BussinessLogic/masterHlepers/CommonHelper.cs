@@ -209,7 +209,7 @@ namespace CoreERP
             using var repo = new Repository<TblLotAssignment>();
             var norange = repo.TblLotSeries.ToList();
             var plant = repo.TblPlant.ToList();
-            var materialtype = repo.TblMaterialMaster.ToList();
+            var materialtype = repo.TblMaterialTypes.ToList();
             var companies = repo.TblCompany.ToList();
             var result = repo.TblLotAssignment.ToList();
 
@@ -218,7 +218,7 @@ namespace CoreERP
                 c.NoRangeName = norange.FirstOrDefault(cur => cur.SeriesKey == c.LotSeries)?.SeriesKey;
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
-                c.MaterialName = materialtype.FirstOrDefault(l => l.MaterialCode == c.MaterialType)?.Description;
+                c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
             });
             return result;
         }
@@ -228,7 +228,7 @@ namespace CoreERP
             using var repo = new Repository<TblGrnassignment>();
             var grnseries = repo.TblGrnnoSeries.ToList();
             var plant = repo.TblPlant.ToList();
-            var materialtype = repo.TblMaterialMaster.ToList();
+            var materialtype = repo.TblMaterialTypes.ToList();
             var companies = repo.TblCompany.ToList();
             var result = repo.TblGrnassignment.ToList();
 
@@ -237,7 +237,7 @@ namespace CoreERP
                 c.GrnseriesName = grnseries.FirstOrDefault(cur => cur.Grnseries == c.Grnseries)?.Grnseries;
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
-                c.MaterialName = materialtype.FirstOrDefault(l => l.MaterialCode == c.MaterialType)?.Description;
+                c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
             });
             return result;
         }
@@ -285,7 +285,7 @@ namespace CoreERP
             using var repo = new Repository<TblMaterialNoAssignment>();
             var numberrange = repo.TblMaterialNoSeries.ToList();
             var plant = repo.TblPlant.ToList();
-            var materialtype = repo.TblMaterialMaster.ToList();
+            var materialtype = repo.TblMaterialTypes.ToList();
             var companies = repo.TblCompany.ToList();
             var result = repo.TblMaterialNoAssignment.ToList();
 
@@ -294,7 +294,7 @@ namespace CoreERP
                 c.NumberRangeName = numberrange.FirstOrDefault(cur => cur.Code == c.NumberRange)?.Code;
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.CompanyCode)?.CompanyName;
-                c.MaterialName = materialtype.FirstOrDefault(l => l.MaterialCode == c.MaterialType)?.Description;
+                c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
             });
             return result;
         }

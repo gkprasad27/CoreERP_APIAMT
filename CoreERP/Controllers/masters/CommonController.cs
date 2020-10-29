@@ -3,6 +3,7 @@ using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,6 +59,8 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblPurchaseOrder> _purchaseOrderRepository;
         private readonly IRepository<TblGoodsReceiptMaster> _goodsReceiptMasterRepository;
         private readonly IRepository<TblGoodsReceiptDetails> _goodsReceiptDetailsRepository;
+        private readonly IRepository<TblHsnsac> _hsnsacRepository;
+        private readonly IRepository<TblMaterialTypes> _materialTypesRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
@@ -76,8 +79,11 @@ namespace CoreERP.Controllers
                                 IRepository<TblWorkcenterMaster> workcenterMasterRepository, IRepository<TblPurchaseOrder> purchaseOrderRepository,
                                 IRepository<TblQuotationAnalysis> quotationAnalysisRepository,
                                 IRepository<TblGoodsReceiptMaster> goodsReceiptMasterRepository,
-                                IRepository<TblGoodsReceiptDetails> GoodsReceiptDetailsRepository)
+                                IRepository<TblGoodsReceiptDetails> GoodsReceiptDetailsRepository,
+                                IRepository<TblHsnsac> hsnsacRepository,IRepository<TblMaterialTypes> materialTypesRepository)
         {
+            _materialTypesRepository = materialTypesRepository;
+            _hsnsacRepository = hsnsacRepository;
             _goodsReceiptMasterRepository = goodsReceiptMasterRepository;
             _goodsReceiptDetailsRepository = GoodsReceiptDetailsRepository;
             _purchaseOrderRepository = purchaseOrderRepository;
@@ -122,6 +128,20 @@ namespace CoreERP.Controllers
             _wbsRepository = wbsRepository;
             _purchaseOrderDetailsRepository = PurchaseOrderDetailsRepository;
             _materialRequisitionDetailsRepository = materialRequisitionDetailsRepository;
+        }
+        [HttpGet("GetHSNSACList")]
+        public IActionResult GetHSNSACList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.HSNSACList = _hsnsacRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
         [HttpGet("GetWorkcenterList")]
         public IActionResult GetWorkcenterList()
@@ -272,6 +292,31 @@ namespace CoreERP.Controllers
             {
                 dynamic expando = new ExpandoObject();
                 expando.materialList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description,ClosingQty=x.ClosingQty });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetMaterialListForCostunits")]
+        public IActionResult GetMaterialListForCostunits()
+        {
+            try
+            {
+                var favouriteCities = new List<string>();
+                List<TblMaterialMaster> mmaster= new List<TblMaterialMaster>();
+
+                dynamic expando = new ExpandoObject();
+                var data = _materialTypesRepository.Where(x => x.Class == "Finished" || x.Class == "Semi-Finished").ToArray();
+                foreach(var item in data)
+                {
+                    expando.mtypeList = _materialMasterRepository.Where(x => x.MaterialType == item.Code || x.MaterialType == item.Code)
+                 .Select(x => new { ID = x.MaterialCode, TEXT = x.Description });
+                }
+               //mmaster.Add(expando.mtypeList);
+                //expando.materialList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, ClosingQty = x.ClosingQty });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

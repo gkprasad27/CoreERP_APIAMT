@@ -4303,7 +4303,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.NetWeightUom)
                     .HasColumnName("NetWeightUOM")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.OpeningQty).HasColumnName("OpeningQTY");
 

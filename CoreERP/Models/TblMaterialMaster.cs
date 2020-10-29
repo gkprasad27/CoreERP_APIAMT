@@ -41,6 +41,10 @@ namespace CoreERP.Models
         public string AddWho { get; set; }
         public DateTime? EditDate { get; set; }
         public DateTime? AddDate { get; set; }
-        public decimal? NetWeightUom { get; set; }
+        public string NetWeightUom { get; set; }
+        public int? OpeningPrice { get; set; }
+        public int? OpeningValue { get; set; }
+        public int? ClosingPrice { get; set; }
+        public int? ClosingValue { get; set; }
     }
 }
