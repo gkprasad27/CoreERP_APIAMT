@@ -306,17 +306,20 @@ namespace CoreERP.Controllers
             try
             {
                 var favouriteCities = new List<string>();
+                List<TblMaterialMaster> mmDetails = new List<TblMaterialMaster>();
                 List<TblMaterialMaster> mmaster= new List<TblMaterialMaster>();
 
                 dynamic expando = new ExpandoObject();
                 var data = _materialTypesRepository.Where(x => x.Class == "Finished" || x.Class == "Semi-Finished").ToArray();
                 foreach(var item in data)
                 {
-                    expando.mtypeList = _materialMasterRepository.Where(x => x.MaterialType == item.Code || x.MaterialType == item.Code)
-                 .Select(x => new { ID = x.MaterialCode, TEXT = x.Description });
+                    mmDetails = _materialMasterRepository.Where(x => x.MaterialType == item.Code || x.MaterialType == item.Code).ToList();
+                    foreach(var item1 in mmDetails)
+                    {
+                        mmaster.Add(item1);
+                    }
                 }
-               //mmaster.Add(expando.mtypeList);
-                //expando.materialList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, ClosingQty = x.ClosingQty });
+                expando.mtypeList = mmaster.Select(x => new { ID = x.MaterialCode, TEXT = x.Description});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
