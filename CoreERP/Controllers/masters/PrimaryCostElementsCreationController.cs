@@ -12,10 +12,15 @@ namespace CoreERP.Controllers.masters
     [Route("api/PrimaryCostElementsCreation")]
     public class PrimaryCostElementsCreationController : ControllerBase
     {
+        private readonly IRepository<GlaccGroup> _glaugRepository;
+        private readonly IRepository<Glaccounts> _glaccountRepository;
         private readonly IRepository<TblPrimaryCostElement> _primaryCostElementRepository;
-        public PrimaryCostElementsCreationController(IRepository<TblPrimaryCostElement> primaryCostElementRepository)
+        public PrimaryCostElementsCreationController(IRepository<TblPrimaryCostElement> primaryCostElementRepository,
+            IRepository<GlaccGroup> glaugRepository, IRepository<Glaccounts> glaccountRepository)
         {
+            _glaugRepository = glaugRepository;
             _primaryCostElementRepository = primaryCostElementRepository;
+            _glaccountRepository = glaccountRepository;
         }
 
         [HttpPost("RegisterPrimaryCostElementsCreation")]
@@ -26,13 +31,32 @@ namespace CoreERP.Controllers.masters
 
             try
             {
+                var GetAccountNamelist = _glaugRepository.Where(x => x.GroupName == "Income" || x.GroupName == "Expenses").ToArray();
+               foreach (var item in GetAccountNamelist)
+                {
+                    var glList = _glaccountRepository.Where(x => x.AccGroup == item.GroupCode || x.AccGroup == item.GroupCode).ToArray();
+                    foreach(var item1 in glList)
+                    {
+                        TblPrimaryCostElement pcost1 = new TblPrimaryCostElement();
+                        pcost1.GeneralLedger = item1.AccountNumber;
+                        pcost1.Company = pcost.Company;
+                        pcost1.ChartofAccount = pcost.ChartofAccount;
+                        pcost1.Description = pcost.Description;
+                        pcost1.Usage = pcost.Usage;
+                        pcost1.Element = pcost.Element;
+                        pcost1.Qty = pcost.Qty;
+                        pcost1.Uom = pcost.Uom;
+                        _primaryCostElementRepository.Add(pcost1);
+                        _primaryCostElementRepository.SaveChanges();
+                    }
+                   
+                }
 
                 APIResponse apiResponse;
-                _primaryCostElementRepository.Add(pcost);
                 if (_primaryCostElementRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = pcost };
                 else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = pcost };
 
                 return Ok(apiResponse);
 
