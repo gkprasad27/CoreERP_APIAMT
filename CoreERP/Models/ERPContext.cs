@@ -4309,7 +4309,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Ouom)
                     .HasColumnName("OUOM")
-                    .HasMaxLength(5);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Plant).HasMaxLength(5);
 
@@ -4331,7 +4331,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Uom)
                     .HasColumnName("UOM")
-                    .HasMaxLength(5);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Valuation).HasMaxLength(50);
             });
