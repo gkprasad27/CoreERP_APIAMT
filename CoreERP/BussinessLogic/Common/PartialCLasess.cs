@@ -284,6 +284,12 @@ namespace CoreERP.Models
         [NotMapped]
         public string UomName { get; set; }
     }
+    partial class TblOrderType
+    {
+        [NotMapped]
+        public string CostUnitName { get; set; }
+
+    }
     partial class TblProcess
     {
         [NotMapped]

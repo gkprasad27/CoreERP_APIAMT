@@ -4728,6 +4728,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.OrderType).HasMaxLength(10);
 
+                entity.Property(e => e.CostUnit).HasMaxLength(50);
+
                 entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.Property(e => e.NatureofOrder).HasMaxLength(50);

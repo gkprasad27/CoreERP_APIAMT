@@ -49,7 +49,8 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var ordertypeList = _orderTypeRepository.GetAll();
+                var ordertypeList = CommonHelper.GetOrderType();
+                    //_orderTypeRepository.GetAll();
                 if (ordertypeList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

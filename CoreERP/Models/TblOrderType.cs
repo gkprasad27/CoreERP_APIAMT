@@ -11,5 +11,6 @@ namespace CoreERP.Models
         public string NatureofOrder { get; set; }
         public int? NumberSeriesFrom { get; set; }
         public int? NumberSeriesTo { get; set; }
+        public string CostUnit { get; set; }
     }
 }

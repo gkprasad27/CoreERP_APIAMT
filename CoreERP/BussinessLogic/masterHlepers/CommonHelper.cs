@@ -247,16 +247,16 @@ namespace CoreERP
             using var repo = new Repository<TblGinseriesAssignment>();
             var ginseries = repo.TblGinnoSeries.ToList();
             var plant = repo.TblPlant.ToList();
-            var materialtype = repo.TblMaterialMaster.ToList();
+            var materialtype = repo.TblMaterialTypes.ToList();
             var companies = repo.TblCompany.ToList();
             var result = repo.TblGinseriesAssignment.ToList();
 
             result.ForEach(c =>
             {
-                c.GinseriesName = ginseries.FirstOrDefault(cur => cur.Ginseries == c.Ginseries)?.Ginseries;
+                c.GinseriesName = ginseries.FirstOrDefault(cur => cur.Ginseries == c.Ginseries)?.Description;
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
-                c.MaterialName = materialtype.FirstOrDefault(l => l.MaterialCode == c.MaterilaType)?.Description;
+                c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterilaType)?.Description;
             });
             return result;
         }
@@ -266,7 +266,7 @@ namespace CoreERP
             using var repo = new Repository<TblMrnnoAssignment>();
             var materialseries = repo.TblMaterialNoSeries.ToList();
             var plant = repo.TblPlant.ToList();
-            var materialtype = repo.TblMaterialMaster.ToList();
+            var materialtype = repo.TblMaterialTypes.ToList();
             var companies = repo.TblCompany.ToList();
             var result = repo.TblMrnnoAssignment.ToList();
 
@@ -275,7 +275,7 @@ namespace CoreERP
                 c.MaterialseriesName = materialseries.FirstOrDefault(cur => cur.Code == c.Mrnseries)?.Code;
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
-                c.MaterialName = materialtype.FirstOrDefault(l => l.MaterialCode == c.MaterialType)?.Description;
+                c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
             });
             return result;
         }
@@ -491,6 +491,18 @@ namespace CoreERP
             {
                 c.ObjectName = objectype.FirstOrDefault(cur => cur.ObjectType == c.ObjectType)?.Description;
                 c.MaterialName = material.FirstOrDefault(l => l.Description == c.Material)?.Description;
+            });
+            return result;
+        }
+
+        public static IEnumerable<TblOrderType> GetOrderType()
+        {
+            using var repo = new Repository<TblOrderType>();
+            var costunit = repo.TblCostingUnitsCreation.ToList();
+            var result = repo.TblOrderType.ToList();
+            result.ForEach(c =>
+            {
+                c.CostUnitName = costunit.FirstOrDefault(cur => cur.ObjectNumber == c.CostUnit)?.Description;
             });
             return result;
         }
