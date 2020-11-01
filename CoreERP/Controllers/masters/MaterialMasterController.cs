@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -31,7 +32,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                int i = Convert.ToInt32(_materialtyperepository.Where(x => x.Code == code).SingleOrDefault()?.Ext1);
+                int i = Convert.ToInt32(_numberRangerepository.Where(x => x.Code == code).SingleOrDefault()?.CurrentNumber);
                 var Getaccnolist = _assignmentrepository.Where(x => x.MaterialType == code).FirstOrDefault();
                 var numrnglist = _numberRangerepository.Where(x => x.Code == Getaccnolist.NumberRange.ToString()).FirstOrDefault();
                 if (i == 0 && Getaccnolist.MaterialType == code)
@@ -92,6 +93,7 @@ namespace CoreERP.Controllers.masters
             {
 
                 APIResponse apiResponse;
+                var result = new CommonHelper().updatemmaterielcode(mmaster);
                 _materialMasterRepository.Add(mmaster);
                 if (_materialMasterRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = mmaster };

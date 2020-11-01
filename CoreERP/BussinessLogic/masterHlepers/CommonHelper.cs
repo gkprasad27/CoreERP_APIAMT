@@ -306,7 +306,7 @@ namespace CoreERP
             var plant = repo.TblPlant.ToList();
             var materialtype = repo.TblMaterialTypes.ToList();
             var employee = repo.TblEmployee.ToList();
-            var uom = repo.Sizes.ToList();
+            var uom = repo.TblUnit.ToList();
             var result = repo.TblBinsCreation.ToList();
 
             result.ForEach(c =>
@@ -315,7 +315,7 @@ namespace CoreERP
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.EmployeeName = employee.FirstOrDefault(l => l.EmployeeCode == c.StoreIncharge)?.EmployeeName;
                 c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.Material)?.Description;
-                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+                c.UomName = uom.FirstOrDefault(l => l.UnitId ==Convert.ToDecimal(c.Uom))?.UnitName;
             });
             return result;
         }
@@ -360,7 +360,7 @@ namespace CoreERP
             var materialtype = repo.TblMaterialTypes.ToList();
             var materialgroup = repo.TblMaterialGroups.ToList();
             var materialsize = repo.TblMaterialSize.ToList();
-            var uom = repo.Sizes.ToList();
+            var uom = repo.TblUnit.ToList();
             var modelpattern = repo.TblModelPattern.ToList();
             var division = repo.Divisions.ToList();
             var purchasegroup = repo.TblMaterialGroups.ToList();
@@ -373,7 +373,7 @@ namespace CoreERP
                 c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
                 c.MaterialGroupName = materialgroup.FirstOrDefault(l => l.GroupKey == c.MaterialGroup)?.Description;
                 c.MaterialSizeName = materialsize.FirstOrDefault(l => l.Sizekey == c.Size)?.Description;
-                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+                c.UomName = uom.FirstOrDefault(l => l.UnitId ==Convert.ToDecimal(c.Uom))?.UnitName;
                 c.ModelPatternName = modelpattern.FirstOrDefault(l => l.Code == c.ModelPattern)?.Description;
                 c.DivisionName = division.FirstOrDefault(l => l.Code == c.Division)?.Description;
                 c.PurchaseGroupName = purchasegroup.FirstOrDefault(l => l.GroupKey == c.PurchasingGroup)?.Description;
@@ -387,7 +387,7 @@ namespace CoreERP
             using var repo = new Repository<TblPrimaryCostElement>();
             var company = repo.TblCompany.ToList();
             var chartaccount = repo.TblChartAccount.ToList();
-            var uom = repo.Sizes.ToList();
+            var uom = repo.TblUnit.ToList();
             var gl = repo.Glaccounts.ToList();
             
             var result = repo.TblPrimaryCostElement.ToList();
@@ -396,7 +396,7 @@ namespace CoreERP
             {
                 c.CompanyName = company.FirstOrDefault(cur => cur.CompanyCode == c.Company)?.CompanyName;
                 c.ChartAccountName = chartaccount.FirstOrDefault(cur => cur.Code == c.ChartofAccount)?.Desctiption;
-                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+                c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
                 c.AccGroupName = gl.FirstOrDefault(l => l.AccountNumber == c.GeneralLedger)?.GlaccountName;
             });
             return result;
@@ -407,7 +407,7 @@ namespace CoreERP
             using var repo = new Repository<TblSecondaryCostElement>();
             var company = repo.TblCompany.ToList();
             var chartaccount = repo.TblChartAccount.ToList();
-            var uom = repo.Sizes.ToList();
+            var uom = repo.TblUnit.ToList();
 
             var result = repo.TblSecondaryCostElement.ToList();
 
@@ -415,7 +415,7 @@ namespace CoreERP
             {
                 c.CompanyName = company.FirstOrDefault(cur => cur.CompanyCode == c.Company)?.CompanyName;
                 c.ChartAccountName = chartaccount.FirstOrDefault(cur => cur.Code == c.ChartofAccount)?.Desctiption;
-                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+                c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
             });
             return result;
         }
@@ -424,14 +424,14 @@ namespace CoreERP
         {
             using var repo = new Repository<TblCostingActivity>();
             var secondarycost = repo.TblSecondaryCostElement.ToList();
-            var uom = repo.Sizes.ToList();
+            var uom = repo.TblUnit.ToList();
 
             var result = repo.TblCostingActivity.ToList();
 
             result.ForEach(c =>
             {
                 c.SecondCostName = secondarycost.FirstOrDefault(cur => cur.SecondaryCostCode == c.CostElement)?.Description;
-                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+                c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
             });
             return result;
         }
@@ -439,26 +439,26 @@ namespace CoreERP
         public static IEnumerable<TblCostingKeyFigures> GetCostingKeyFigures()
         {
             using var repo = new Repository<TblCostingKeyFigures>();
-            var uom = repo.Sizes.ToList();
+            var uom = repo.TblUnit.ToList();
 
             var result = repo.TblCostingKeyFigures.ToList();
 
             result.ForEach(c =>
             {
-                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+                c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
             });
             return result;
         }
         public static IEnumerable<TblStandardRateOutPut> GetStandardRateOutPut()
         {
             using var repo = new Repository<TblStandardRateOutPut>();
-            var uom = repo.Sizes.ToList();
+            var uom = repo.TblUnit.ToList();
 
             var result = repo.TblStandardRateOutPut.ToList();
 
             result.ForEach(c =>
             {
-                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+                c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
             });
             return result;
         }
@@ -512,7 +512,7 @@ namespace CoreERP
             using var repo = new Repository<TblBatchMaster>();
             var company = repo.TblCompany.ToList();
             var plant = repo.TblPlant.ToList();
-            var uom = repo.Sizes.ToList();
+            var uom = repo.TblUnit.ToList();
             var employee = repo.TblEmployee.ToList();
 
             var result = repo.TblBatchMaster.ToList();
@@ -522,7 +522,7 @@ namespace CoreERP
                 c.CompanyName = company.FirstOrDefault(cur => cur.CompanyCode == c.Company)?.CompanyName;
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.EmployeeName = employee.FirstOrDefault(l => l.EmployeeCode == c.CreatedBy)?.EmployeeName;
-                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+                c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
             });
             return result;
         }
@@ -638,7 +638,7 @@ namespace CoreERP
             var objecttype = repo.TblCostingObjectTypes.ToList();
             var employees = repo.TblEmployee.ToList();
             var department = repo.TblFunctionalDepartment.ToList();
-            var uom = repo.Sizes.ToList();
+            var uom = repo.TblUnit.ToList();
             var result = repo.CostCenter.ToList();
 
             result.ForEach(c =>
@@ -646,7 +646,7 @@ namespace CoreERP
                 c.ObjectName = objecttype.FirstOrDefault(cur => cur.ObjectType == c.ObjectType)?.Description;
                 c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
                 c.DepartmentName = department.FirstOrDefault(l => l.Code == c.Department)?.Description;
-                c.UomName = uom.FirstOrDefault(l => l.Code == c.Uom)?.Description;
+                c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
             });
             return result;
         }
@@ -1548,6 +1548,76 @@ namespace CoreERP
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+        //latest
+        public bool updatemmaterielcode(TblMaterialMaster mmaster)
+        {
+            TblMaterialNoSeries mseries;
+            using (var repo = new Repository<TblMaterialNoSeries>())
+            {
+                mseries = repo.TblMaterialNoSeries.FirstOrDefault(c => c.Code == mmaster.MaterialType);
+            }
+            using (ERPContext context = new ERPContext())
+            {
+                using (var dbtrans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        mseries.Code = mmaster.MaterialType;
+                        mseries.FromInterval = mseries.FromInterval;
+                        mseries.ToInterval = mseries.ToInterval;
+                        mseries.CurrentNumber = Convert.ToInt32(mmaster.MaterialCode);
+                        context.TblMaterialNoSeries.Update(mseries);
+                        context.SaveChanges();
+
+                        dbtrans.Commit();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        dbtrans.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+        public bool UpdatePcosts(List<TblPrimaryCostElement> pcostDetails)
+        {
+            TblPrimaryCostElement pcost;
+            using var context = new ERPContext();
+            foreach (var item in pcostDetails)
+            {
+                using (var repo = new Repository<TblPrimaryCostElement>())
+                {
+                    pcost = repo.TblPrimaryCostElement.FirstOrDefault(c => c.Id == item.Id);
+                    pcost.Id = item.Id;
+                    pcost.Company = item.Company;
+                    pcost.ChartofAccount = item.ChartofAccount;
+                    pcost.GeneralLedger = pcost.GeneralLedger;
+                    pcost.Usage = item.Usage;
+                    pcost.Element = item.Element;
+                    pcost.Qty = item.Qty;
+                    context.TblPrimaryCostElement.Update(pcost);
+                }
+            }
+
+
+
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+
+                //context.TblPrimaryCostElement.UpdateRange(pcostDetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
             }
         }
     }

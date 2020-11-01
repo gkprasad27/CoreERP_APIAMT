@@ -5,6 +5,7 @@ using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace CoreERP.Controllers.masters
 {
@@ -21,6 +22,26 @@ namespace CoreERP.Controllers.masters
             _glaugRepository = glaugRepository;
             _primaryCostElementRepository = primaryCostElementRepository;
             _glaccountRepository = glaccountRepository;
+        }
+
+        [HttpPost("UpdatePcost")]
+        public IActionResult UpdatePcost([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+                var pcostdetails = obj["grDtl"].ToObject<List<TblPrimaryCostElement>>();
+                if (!new CommonHelper().UpdatePcosts(pcostdetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
 
         [HttpPost("RegisterPrimaryCostElementsCreation")]

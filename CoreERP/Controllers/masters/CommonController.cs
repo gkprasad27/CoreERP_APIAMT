@@ -23,7 +23,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<Countries> _countryRepository;
         private readonly IRepository<TblLocation> _locationRepository;
         private readonly IRepository<TblEmployee> _employeeRepository;
-        private readonly IRepository<Sizes> _sizesRepository;
+        private readonly IRepository<TblUnit> _unitRepository;
         private readonly IRepository<TblPlant> _plantRepository;
         private readonly IRepository<TblBranch> _branchRepository;
         private readonly IRepository<TblVoucherType> _vtRepository;
@@ -61,13 +61,14 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblGoodsReceiptDetails> _goodsReceiptDetailsRepository;
         private readonly IRepository<TblHsnsac> _hsnsacRepository;
         private readonly IRepository<TblMaterialTypes> _materialTypesRepository;
+        private readonly IRepository<TblPrimaryCostElement> _primaryCostElementRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
                                 IRepository<TblTaxtransactions> ttRepository, IRepository<TblTaxRates> trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
                                 IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
                                 IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository, IRepository<CostCenter> ccRepository,
-                                IRepository<TblBusinessPartnerAccount> bpRepository,IRepository<Sizes> sizesRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
+                                IRepository<TblBusinessPartnerAccount> bpRepository,IRepository<TblUnit> unitRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
                                 IRepository<TblInvoiceMemoHeader> tblInvoiceMemoHeaderRepository,
                                 IRepository<TblSecondaryCostElement> secondaryCostElementRepository,
                                  IRepository<TblCostingObjectTypes> costingObjectTypesRepository, IRepository<TblCostingUnitsCreation> costingUnitsCreationRepository,
@@ -80,8 +81,10 @@ namespace CoreERP.Controllers
                                 IRepository<TblQuotationAnalysis> quotationAnalysisRepository,
                                 IRepository<TblGoodsReceiptMaster> goodsReceiptMasterRepository,
                                 IRepository<TblGoodsReceiptDetails> GoodsReceiptDetailsRepository,
-                                IRepository<TblHsnsac> hsnsacRepository,IRepository<TblMaterialTypes> materialTypesRepository)
+                                IRepository<TblHsnsac> hsnsacRepository, IRepository<TblPrimaryCostElement> primaryCostElementRepository,
+                                IRepository<TblMaterialTypes> materialTypesRepository)
         {
+            _primaryCostElementRepository = primaryCostElementRepository;
             _materialTypesRepository = materialTypesRepository;
             _hsnsacRepository = hsnsacRepository;
             _goodsReceiptMasterRepository = goodsReceiptMasterRepository;
@@ -92,7 +95,7 @@ namespace CoreERP.Controllers
             _materialRequisitionMasterRepository = materialRequisitionMasterRepository;
             _InvoiceMemoHeaderRepository = tblInvoiceMemoHeaderRepository;
             _companyRepository = companyRepository;
-            _sizesRepository = sizesRepository;
+            _unitRepository = unitRepository;
             _stateRepository = stateRepository;
             _currencyRepository = currencyRepository;
             _languageRepository = languageRepository;
@@ -128,6 +131,21 @@ namespace CoreERP.Controllers
             _wbsRepository = wbsRepository;
             _purchaseOrderDetailsRepository = PurchaseOrderDetailsRepository;
             _materialRequisitionDetailsRepository = materialRequisitionDetailsRepository;
+        }
+
+        [HttpGet("GetPrimaryCostElementList")]
+        public IActionResult GetPrimaryCostElementList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.PRCList = _primaryCostElementRepository.GetAll().Select(x => new { ID = x.GeneralLedger, TEXT = x.GeneralLedger });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
         }
         [HttpGet("GetHSNSACList")]
         public IActionResult GetHSNSACList()
@@ -410,7 +428,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.UOMList = _sizesRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Description });
+                expando.UOMList = _unitRepository.GetAll().Select(x => new { ID = x.UnitId, TEXT = x.UnitName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
