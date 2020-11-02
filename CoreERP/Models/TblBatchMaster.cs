@@ -14,7 +14,7 @@ namespace CoreERP.Models
         public DateTime? CreatedDate { get; set; }
         public string Description { get; set; }
         public string BatchSize { get; set; }
-        public string Uom { get; set; }
+        public int? Uom { get; set; }
         public string PlantStart { get; set; }
         public DateTime? PlantEndDate { get; set; }
         public DateTime? ActualStartDate { get; set; }

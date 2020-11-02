@@ -413,9 +413,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Type).HasMaxLength(50);
 
-                entity.Property(e => e.Uom)
-                    .HasColumnName("UOM")
-                    .HasMaxLength(50);
+                entity.Property(e => e.Uom).HasColumnName("UOM");
             });
 
             modelBuilder.Entity<Countries>(entity =>
@@ -2003,9 +2001,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.PlantStart).HasMaxLength(50);
 
-                entity.Property(e => e.Uom)
-                    .HasColumnName("UOM")
-                    .HasMaxLength(10);
+                entity.Property(e => e.Uom).HasColumnName("UOM");
 
                 entity.Property(e => e.Year).HasMaxLength(5);
             });
@@ -2030,10 +2026,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.StoreIncharge).HasMaxLength(50);
 
-                entity.Property(e => e.Uom)
-                    .HasColumnName("UOM")
-                    .HasMaxLength(10)
-                    .IsFixedLength();
+                entity.Property(e => e.Uom).HasColumnName("UOM");
             });
 
             modelBuilder.Entity<TblBomDetails>(entity =>
@@ -2573,9 +2566,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
-                entity.Property(e => e.Uom)
-                    .HasColumnName("UOM")
-                    .HasMaxLength(50);
+                entity.Property(e => e.Uom).HasColumnName("UOM");
             });
 
             modelBuilder.Entity<TblCostingKeyFigures>(entity =>
@@ -2588,9 +2579,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
-                entity.Property(e => e.Uom)
-                    .HasColumnName("UOM")
-                    .HasMaxLength(50);
+                entity.Property(e => e.Uom).HasColumnName("UOM");
             });
 
             modelBuilder.Entity<TblCostingNumberSeries>(entity =>
@@ -6066,9 +6055,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Type).HasMaxLength(50);
 
-                entity.Property(e => e.Uom)
-                    .HasColumnName("UOM")
-                    .HasMaxLength(50);
+                entity.Property(e => e.Uom).HasColumnName("UOM");
             });
 
             modelBuilder.Entity<TblSettings>(entity =>
@@ -6216,9 +6203,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Code).HasMaxLength(10);
 
-                entity.Property(e => e.Uom)
-                    .HasColumnName("UOM")
-                    .HasMaxLength(50);
+                entity.Property(e => e.Uom).HasColumnName("UOM");
             });
 
             modelBuilder.Entity<TblStateWiseGst>(entity =>
@@ -6996,9 +6981,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Formula).HasMaxLength(50);
 
-                entity.Property(e => e.Uom)
-                    .HasColumnName("UOM")
-                    .HasMaxLength(50);
+                entity.Property(e => e.Uom).HasColumnName("UOM");
 
                 entity.Property(e => e.WorkcenterCode).HasMaxLength(10);
             });

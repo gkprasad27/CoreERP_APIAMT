@@ -14,7 +14,7 @@ namespace CoreERP.Models
         public int? MaxLevel { get; set; }
         public int? ReOrderLevel { get; set; }
         public int? OpenQty { get; set; }
-        public string Uom { get; set; }
+        public int? Uom { get; set; }
         public string StoreIncharge { get; set; }
     }
 }

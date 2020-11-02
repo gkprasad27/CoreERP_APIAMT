@@ -7,6 +7,6 @@ namespace CoreERP.Models
     {
         public string Code { get; set; }
         public int? NoofShifts { get; set; }
-        public string Uom { get; set; }
+        public int? Uom { get; set; }
     }
 }

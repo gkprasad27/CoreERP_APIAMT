@@ -11,6 +11,6 @@ namespace CoreERP.Models
         public string Description { get; set; }
         public string Type { get; set; }
         public string RecordQty { get; set; }
-        public string Uom { get; set; }
+        public int? Uom { get; set; }
     }
 }

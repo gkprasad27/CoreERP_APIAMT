@@ -7,7 +7,7 @@ namespace CoreERP.Models
     {
         public string ActivityCode { get; set; }
         public string Description { get; set; }
-        public string Uom { get; set; }
+        public int? Uom { get; set; }
         public string BasisofFixedPrice { get; set; }
         public string CostElement { get; set; }
     }
