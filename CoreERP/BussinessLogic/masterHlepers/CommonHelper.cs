@@ -1598,6 +1598,7 @@ namespace CoreERP
                     pcost.Usage = item.Usage;
                     pcost.Element = item.Element;
                     pcost.Qty = item.Qty;
+                    pcost.Uom = item.Uom;
                     context.TblPrimaryCostElement.Update(pcost);
                 }
             }

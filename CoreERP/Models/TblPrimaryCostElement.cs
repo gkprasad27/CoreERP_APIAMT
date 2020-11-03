@@ -13,6 +13,6 @@ namespace CoreERP.Models
         public string Usage { get; set; }
         public string Element { get; set; }
         public decimal? Qty { get; set; }
-        public string Uom { get; set; }
+        public int? Uom { get; set; }
     }
 }

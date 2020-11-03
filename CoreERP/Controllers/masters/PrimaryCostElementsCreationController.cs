@@ -29,6 +29,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
+               
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
                 var pcostdetails = obj["grDtl"].ToObject<List<TblPrimaryCostElement>>();

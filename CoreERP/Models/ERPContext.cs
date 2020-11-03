@@ -5236,9 +5236,7 @@ namespace CoreERP.Models
                     .HasColumnName("QTY")
                     .HasColumnType("numeric(18, 0)");
 
-                entity.Property(e => e.Uom)
-                    .HasColumnName("UOM")
-                    .HasMaxLength(50);
+                entity.Property(e => e.Uom).HasColumnName("UOM");
 
                 entity.Property(e => e.Usage).HasMaxLength(50);
             });

@@ -90,11 +90,11 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeletePosting/{code}")]
-        public IActionResult DeletePostingByID(string code)
+        public IActionResult DeletePostingByID(int code)
         {
             try
             {
-                if (code == null)
+                if (code ==0)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
