@@ -89,15 +89,15 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeleteAssetBegningAcqusition/{code}")]
-        public IActionResult DeleteAssetBegningAcqusitionbyId(string code)
+        public IActionResult DeleteAssetBegningAcqusitionbyId(int code)
         {
             try
             {
-                if (code == null)
+                if (code == 0)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _assetBeginingAcquisitionRepository.GetSingleOrDefault(x => x.MainAssetNo.Equals(code));
+                var record = _assetBeginingAcquisitionRepository.GetSingleOrDefault(x => x.Id.Equals(code));
                 _assetBeginingAcquisitionRepository.Remove(record);
                 if (_assetBeginingAcquisitionRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
