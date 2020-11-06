@@ -2319,7 +2319,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
-                entity.Property(e => e.CostCenter).HasMaxLength(5);
+                entity.Property(e => e.CostCenter).HasMaxLength(8);
 
                 entity.Property(e => e.EditDate)
                     .HasColumnType("datetime")
@@ -3644,7 +3644,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
-                entity.Property(e => e.CostCenter).HasMaxLength(5);
+                entity.Property(e => e.CostCenter).HasMaxLength(8);
 
                 entity.Property(e => e.EditDate)
                     .HasColumnType("datetime")
@@ -3919,7 +3919,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
-                entity.Property(e => e.CostCenter).HasMaxLength(5);
+                entity.Property(e => e.CostCenter).HasMaxLength(8);
 
                 entity.Property(e => e.EditDate)
                     .HasColumnType("datetime")
@@ -5006,7 +5006,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
-                entity.Property(e => e.CostCenter).HasMaxLength(5);
+                entity.Property(e => e.CostCenter).HasMaxLength(8);
 
                 entity.Property(e => e.EditDate)
                     .HasColumnType("datetime")
