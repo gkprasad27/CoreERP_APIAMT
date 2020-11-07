@@ -497,18 +497,16 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 throw ex;
             }
         }
-        public static List<TblProduct> GetProducts()
+        public List<TblProduct> GetProducts(string productCode = null)
         {
             try
             {
                 using Repository<TblProduct> repo = new Repository<TblProduct>();
-                return repo.TblProduct.ToList();
+                return repo.TblProduct.Where(p=>p.ProductCode.Contains(productCode ?? p.ProductCode)).OrderBy(x=>x.ProductCode).ToList();
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            catch { throw; }
         }
+        
         #endregion
         #region SaleValueReport
         public static (List<dynamic>, List<dynamic>, List<dynamic>) GetSaleValueReportDataList(string userID, string branchCode, DateTime fromDate, DateTime toDate)
@@ -1182,9 +1180,9 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         }
         #endregion
         #region ProductWiseMonthlyPurchaseReport
-        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetProductWiseMonthlyPurchaseReportDataList(string userID, DateTime fromDate, DateTime toDate)
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetProductWiseMonthlyPurchaseReportDataList(string userID, DateTime fromDate, DateTime toDate, string groupName)
         {
-            DataSet dsResult = GetProductWiseMonthlyPurchaseReportDataSet(userID, fromDate,toDate);
+            DataSet dsResult = GetProductWiseMonthlyPurchaseReportDataSet(userID, fromDate,toDate,groupName);
             List<dynamic> saleValue = null;
             List<dynamic> headerList = null;
             List<dynamic> footerList = null;
@@ -1207,7 +1205,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             else return (null, null, null);
         }
 
-        public static DataSet GetProductWiseMonthlyPurchaseReportDataSet(string userID, DateTime fromDate,DateTime toDate)
+        public static DataSet GetProductWiseMonthlyPurchaseReportDataSet(string userID, DateTime fromDate,DateTime toDate, string groupName)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
@@ -1231,11 +1229,16 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             pmToDate.Value = (object)toDate ?? DBNull.Value;
             pmToDate.ParameterName = "toDate";
 
+            DbParameter pmGroupName = command.CreateParameter();
+            pmGroupName.Direction = ParameterDirection.Input;
+            pmGroupName.Value = (object)groupName ?? DBNull.Value;
+            pmGroupName.ParameterName = "groupName";
             #endregion
             // Add parameter as specified in the store procedure
             command.Parameters.Add(UserID);
             command.Parameters.Add(pmFromDate);
             command.Parameters.Add(pmToDate);
+            command.Parameters.Add(pmGroupName);
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
