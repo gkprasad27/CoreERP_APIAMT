@@ -16,7 +16,7 @@ namespace CoreERP.Controllers.Reports
     {
 
         [HttpGet("GetProductMonthWisePurchaseLtrsReportData")]
-        public async Task<IActionResult> GetProductMonthWisePurchaseLtrsReportData(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        public async Task<IActionResult> GetProductMonthWisePurchaseLtrsReportData(string userID, string branchCode, DateTime fromDate, DateTime toDate, string groupName)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace CoreERP.Controllers.Reports
                     toDate = DateTime.Now;
                     // return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                var serviceResult = await Task.FromResult(ReportsHelperClass.GetProductMonthWisePurchaseLtrsReportDataList(userID, branchCode,fromDate,toDate));
+                var serviceResult = await Task.FromResult(ReportsHelperClass.GetProductMonthWisePurchaseLtrsReportDataList(userID, branchCode,fromDate,toDate,groupName));
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.productWiseLtrs = serviceResult.Item1;
                 expdoObj.headerList = serviceResult.Item2;

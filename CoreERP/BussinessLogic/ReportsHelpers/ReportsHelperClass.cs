@@ -2094,9 +2094,9 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         }
         #endregion
         #region ProductWise Monthly Sales Ltrs Report
-        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetProductMonthWisePurchaseLtrsReportDataList(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetProductMonthWisePurchaseLtrsReportDataList(string userID, string branchCode, DateTime fromDate, DateTime toDate, string groupName)
         {
-            DataSet dsResult = GetProductMonthWisePurchaseLtrsReportDataTable(userID, branchCode, fromDate, toDate);
+            DataSet dsResult = GetProductMonthWisePurchaseLtrsReportDataTable(userID, branchCode, fromDate, toDate,groupName);
             List<dynamic> productWiseLtrs = null;
             List<dynamic> headerList = null;
             List<dynamic> footerList = null;
@@ -2118,7 +2118,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             }
             else return (null, null, null);
         }
-        public static DataSet GetProductMonthWisePurchaseLtrsReportDataTable(string userID, string branchCode, DateTime fromDate, DateTime toDate)
+        public static DataSet GetProductMonthWisePurchaseLtrsReportDataTable(string userID, string branchCode, DateTime fromDate, DateTime toDate,string groupName)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
@@ -2142,12 +2142,17 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             pmToDate.Direction = ParameterDirection.Input;
             pmToDate.Value = (object)toDate ?? DBNull.Value;
             pmToDate.ParameterName = "tDate";
+            DbParameter pmGroupName = command.CreateParameter();
+            pmGroupName.Direction = ParameterDirection.Input;
+            pmGroupName.Value = (object)groupName ?? DBNull.Value;
+            pmGroupName.ParameterName = "groupName";
             #endregion
             // Add parameter as specified in the store procedure
             command.Parameters.Add(UserID);
             command.Parameters.Add(dbpBranchCode);
             command.Parameters.Add(pmFromDate);
             command.Parameters.Add(pmToDate);
+            command.Parameters.Add(pmGroupName);
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
