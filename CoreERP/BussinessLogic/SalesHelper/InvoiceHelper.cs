@@ -278,19 +278,30 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 ledgercode = ledgercode?.ToLower();
                 using (Repository<TblAccountLedger> repo=new Repository<TblAccountLedger>())
                 {
-                    var result = (from al in repo.TblAccountLedger
-                              join m in repo.TblMemberMaster on al.LedgerCode equals m.MemberCode.ToString()
-                              where (al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower()) && al.LedgerCode.ToLower().Contains((ledgercode ?? al.LedgerCode.ToLower()))
-                              && m.IsActive == 1)
-                                  select al).ToList();
-
-                    return result;
-
+                    var _member = GetMembersByCode(ledgercode);
+                    if (_member != null)
+                    {
+                        var result = (from al in repo.TblAccountLedger
+                                      join m in repo.TblMemberMaster on al.LedgerCode equals m.MemberCode.ToString()
+                                      where (al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower()) && al.LedgerCode.ToLower().Contains((ledgercode ?? al.LedgerCode.ToLower()))
+                                      && m.IsActive == 1)
+                                      select al).ToList();
+                        return result;
+                    }
+                    else
+                    {
+                        var result= repo.TblAccountLedger
+                        .Where(al => al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower())
+                         && al.LedgerCode.ToLower().Contains((ledgercode ?? al.LedgerCode.ToLower()))
+                         ).OrderBy(o => o.LedgerCode).ToList();
+                        return result;
+                    }
+                    
                     //return repo.TblAccountLedger
                     //    .Where(al => al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower())
                     //     && al.LedgerCode.ToLower().Contains((ledgercode ?? al.LedgerCode.ToLower()))
                     //     )
-                    //    .OrderBy(o=> o.LedgerCode)
+                    //    .OrderBy(o => o.LedgerCode)
                     //    .ToList();
                     //
                 }
