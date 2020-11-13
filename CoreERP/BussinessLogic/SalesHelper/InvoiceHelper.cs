@@ -284,7 +284,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         var result = (from al in repo.TblAccountLedger
                                       join m in repo.TblMemberMaster on al.LedgerCode equals m.MemberCode.ToString()
                                       where (al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower()) && al.LedgerCode.ToLower().Contains((ledgercode ?? al.LedgerCode.ToLower()))
-                                      && m.IsActive == 1)
+                                      && m.IsActive == 1 && al.AccountGroupId == 7580 || al.AccountGroupId == 573 || al.AccountGroupId == 7577 || al.AccountGroupId == 7576)
                                       select al).ToList();
                         return result;
                     }
@@ -292,8 +292,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     {
                         var result= repo.TblAccountLedger
                         .Where(al => al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower())
-                         && al.LedgerCode.ToLower().Contains((ledgercode ?? al.LedgerCode.ToLower()))
-                         ).OrderBy(o => o.LedgerCode).ToList();
+                         && al.LedgerCode.ToLower().Contains((ledgercode ?? al.LedgerCode.ToLower())) && al.AccountGroupId==7580 || al.AccountGroupId==573
+                        || al.AccountGroupId == 7577 || al.AccountGroupId == 7576).OrderBy(o => o.LedgerCode).ToList();
                         return result;
                     }
                     
