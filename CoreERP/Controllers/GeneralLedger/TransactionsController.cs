@@ -9,7 +9,19 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
-
+using Microsoft.AspNetCore.Hosting;
+using System.Net.Http.Headers;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Web;
+using Microsoft.AspNetCore.StaticFiles;
+using System.Threading.Tasks;
+using System.Net.Mime;
 
 namespace CoreERP.Controllers.masters
 {
@@ -1123,7 +1135,7 @@ namespace CoreERP.Controllers.masters
             {
                 var podetails = new TransactionsHelper().GetPurchaseOrder(searchCriteria);
                 if (!podetails.Any())
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Source Supply." });
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for purchase order." });
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.podetails = podetails;
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
@@ -1180,42 +1192,91 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpPost]
-        [Route("SaveIssueImage")]
-        public string SaveIssueImage(IFormFile files)
+
+        [Route("UploadFile")]
+        public IActionResult UploadFile()
         {
-            if (files != null)
+            try
             {
-                if (files.Length > 0)
+                var file = Request.Form.Files[0];
+                var folderName = Path.Combine("Upload");
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+                if (file.Length > 0)
                 {
-                    //Getting FileName
-                    var fileName = Path.GetFileName(files.FileName);
-                    //Getting file Extension
-                    var fileExtension = Path.GetExtension(fileName);
-                    // concatenating  FileName + FileExtension
-                    var newFileName = String.Concat(Convert.ToString(Guid.NewGuid()), fileExtension);
-
-                    //var objfiles = new Files()
-                    //{
-                    //    DocumentId = 0,
-                    //    Name = newFileName,
-                    //    FileType = fileExtension,
-                    //    CreatedOn = DateTime.Now
-                    //};
-
-                    //using (var target = new MemoryStream())
-                    //{
-                    //    files.CopyTo(target);
-                    //    objfiles.DataFiles = target.ToArray();
-                    //}
-
-                    //_context.Files.Add(objfiles);
-                    //_context.SaveChanges();
-//
+                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    var fullPath = Path.Combine(pathToSave, fileName);
+                    var dbPath = Path.Combine(folderName, fileName);
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+                    return Ok(new { dbPath });
+                }
+                else
+                {
+                    return BadRequest();
                 }
             }
-            return null;
-    }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
+        }
+
+        [HttpGet]
+        [Route("GetFile/{filename}")]
+        //download file api  
+        public async System.Threading.Tasks.Task<IActionResult> DownloadAsync(string filename)
+        {
+            if (filename == null)
+                return Content("filename not present");
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(),"Upload/", filename);
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            if (System.IO.File.Exists(path))
+            {
+                //byte[] imageBytes = System.IO.File.ReadAllBytes(path);
+                //string base64String = Convert.ToBase64String(imageBytes);
+                //var filepaths = "data:image/png;base64," + base64String;
+                string filePath = path;
+                byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+                File(fileBytes, "application/force-download", filename);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = File(fileBytes, "application/force-download", filename) });
+            }
+
+            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = path });
+        }
+
+       
+        private string GetContentType(string path)
+        {
+            var types = GetMimeTypes();
+            var ext = Path.GetExtension(path).ToLowerInvariant();
+            return types[ext];
+        }
+
+        private Dictionary<string, string> GetMimeTypes()
+        {
+            return new Dictionary<string, string>
+            {
+                {".txt", "text/plain"},
+                {".pdf", "application/pdf"},
+                {".doc", "application/vnd.ms-word"},
+                {".docx", "application/vnd.ms-word"},
+                {".xls", "application/vnd.ms-excel"},
+                {".xlsx", "application/vnd.openxmlformatsofficedocument.spreadsheetml.sheet"},
+                {".png", "image/png"},
+                {".jpg", "image/jpeg"},
+                {".jpeg", "image/jpeg"},
+                {".gif", "image/gif"},
+                {".csv", "text/csv"}
+            };
+        }
 
         [HttpGet("ReturnPurchaseOrder/{code}")]
         public IActionResult ReturnPurchaseOrder(string code)
