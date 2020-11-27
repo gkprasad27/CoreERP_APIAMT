@@ -684,6 +684,26 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
         }
 
+        public List<TblAccountLedger> GetPAccountLedgers(string ledgercode = null, string ledgerName = null)
+        {
+            try
+            {
+                ledgercode = ledgercode?.ToLower();
+                using (Repository<TblAccountLedger> repo = new Repository<TblAccountLedger>())
+                {
+                    return repo.TblAccountLedger
+                    .Where(al => al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower())
+                     && al.LedgerCode.ToLower().Contains((ledgercode ?? al.LedgerCode.ToLower()))
+                     )
+                    .OrderBy(o => o.LedgerCode)
+                    .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         //public List<TblPurchaseInvoice> GetPurchaseInvoices(string branchCode,SearchCriteria searchCriteria)
         //{
         //    try
