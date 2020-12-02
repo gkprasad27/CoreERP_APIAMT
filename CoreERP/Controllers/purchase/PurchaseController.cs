@@ -133,7 +133,8 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.CashPartyAccount = new InvoiceHelper().GetAccountLedgers(ledgercode).FirstOrDefault();
+                expando.CashPartyAccount = new InvoiceHelper().GetAccountLedgersByCode(ledgercode);
+                //new InvoiceHelper().GetAccountLedgers(ledgercode).FirstOrDefault();
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -300,6 +301,20 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetPCashPartyAccountList/{ledgerCode?}")]
+        public IActionResult GetPCashPartyAccountList(string ledgerCode = null)
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.CashPartyAccountList = new PurchasesHelper().GetPAccountLedgers(ledgerCode).OrderBy(al => al.LedgerCode.Length).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }
 

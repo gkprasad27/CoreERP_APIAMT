@@ -758,6 +758,26 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetAdditionalShareTransferNo")]
+        public async Task<IActionResult> GetAdditionalShareTransferNo()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    string errorMessage = string.Empty;
+                    dynamic expando = new ExpandoObject();
+                    expando.ShareTransferNoList = new MemberMasterHelper().GetAdditionalShareTransferNo(out errorMessage);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetShareMembersList")]
         public async Task<IActionResult> GetShareMembersList()
         {
@@ -805,7 +825,7 @@ namespace CoreERP.Controllers.masters
             var result = await Task.Run(() =>
             {
                 string errorMessage = string.Empty;
-                List<TblAdditionalShareTransfer> _members = null;
+                List<TblShareTransfer> _members = null;
                 try
                 {
                     if (string.IsNullOrEmpty(memberCode))

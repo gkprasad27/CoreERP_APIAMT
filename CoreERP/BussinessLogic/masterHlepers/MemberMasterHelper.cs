@@ -609,7 +609,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
 
                 if (string.IsNullOrEmpty(billno))
                 {
-                    errorMessage = "BankPayment no not gererated please enter manully.";
+                    errorMessage = "Share Transfer no not gererated please enter manully.";
                 }
 
                 return billno;
@@ -646,13 +646,13 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
-        public List<TblAdditionalShareTransfer> GetAdditionalShareTransfer(decimal? memberCode)
+        public List<TblShareTransfer> GetAdditionalShareTransfer(decimal? memberCode)
         {
             try
             {
-                using (Repository<TblAdditionalShareTransfer> _repo = new Repository<TblAdditionalShareTransfer>())
+                using (Repository<TblShareTransfer> _repo = new Repository<TblShareTransfer>())
                 {
-                    return _repo.TblAdditionalShareTransfer.Where(v => v.ToMemberCode == memberCode).ToList();
+                    return _repo.TblShareTransfer.Where(v => v.ToMemberCode == memberCode && v.FromMemberCode==10000).ToList();
                 }
 
             }
@@ -740,6 +740,48 @@ namespace CoreERP.BussinessLogic.masterHlepers
 
                     return null;
                 }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public string GetAdditionalShareTransferNo(out string errorMessage)
+        {
+            try
+            {
+                errorMessage = string.Empty;
+                string suffix = string.Empty, prefix = string.Empty, billno = string.Empty;
+                TblShareTransfer _shareTransfer = null;
+                using (Repository<TblShareTransfer> _repo = new Repository<TblShareTransfer>())
+                {
+                    _shareTransfer = _repo.TblShareTransfer.Where(x => x.FromMemberCode == 10000).OrderByDescending(x => x.TransferDate).FirstOrDefault();
+
+                    if (_shareTransfer != null)
+                    {
+                        var invSplit = _shareTransfer.ShareTransferCode.Split('-');
+                        billno = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1]) + 1}-{invSplit[2]}";
+                    }
+                    else
+                    {
+                        new Common.CommonHelper().GetSuffixPrefix(48, "1", out prefix, out suffix);
+                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                        {
+                            errorMessage = $"No prefix and suffix confugured for branch code: {"1"} ";
+                            return billno = string.Empty;
+                        }
+
+                        billno = $"{prefix}-1-{suffix}";
+                    }
+                }
+
+                if (string.IsNullOrEmpty(billno))
+                {
+                    errorMessage = "Additional Share Transfer no not gererated please enter manully.";
+                }
+
+                return billno;
             }
             catch (Exception ex)
             {
