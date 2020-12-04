@@ -92,6 +92,7 @@ namespace CoreERP.Controllers.masters
             {
 
                 APIResponse apiResponse;
+                var result = new CommonHelper().updateobjectcode(costunits);
                 _costingUnitsCreationRepository.Add(costunits);
                 if (_costingUnitsCreationRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = costunits };

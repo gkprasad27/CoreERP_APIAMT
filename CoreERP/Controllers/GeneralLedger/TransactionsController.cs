@@ -8,20 +8,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Hosting;
 using System.Net.Http.Headers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Web;
-using Microsoft.AspNetCore.StaticFiles;
-using System.Threading.Tasks;
-using System.Net.Mime;
 
 namespace CoreERP.Controllers.masters
 {

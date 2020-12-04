@@ -1582,6 +1582,38 @@ namespace CoreERP
                 }
             }
         }
+        //latest
+        public bool updateobjectcode(TblCostingUnitsCreation costunits)
+        {
+            TblCostingnumberAssigntoObject cunumseries;
+            using (var repo = new Repository<TblCostingnumberAssigntoObject>())
+            {
+                cunumseries = repo.TblCostingnumberAssigntoObject.FirstOrDefault(c => c.ObjectType == costunits.ObjectType);
+            }
+            using (ERPContext context = new ERPContext())
+            {
+                using (var dbtrans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        cunumseries.ObjectType = costunits.ObjectType;
+                        //cunumseries.FromInterval = cunumseries.FromInterval;
+                        //cunumseries.ToInterval = cunumseries.ToInterval;
+                        cunumseries.PresentNumber = Convert.ToInt32(costunits.ObjectNumber);
+                        context.TblCostingnumberAssigntoObject.Update(cunumseries);
+                        context.SaveChanges();
+
+                        dbtrans.Commit();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        dbtrans.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
         public bool UpdatePcosts(List<TblPrimaryCostElement> pcostDetails)
         {
             TblPrimaryCostElement pcost;

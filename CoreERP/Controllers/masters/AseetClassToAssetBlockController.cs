@@ -94,10 +94,10 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteAseetClassToAssetBlock/{code}")]
-        public async Task<IActionResult> DeleteAseetClassToAssetBlock(string code)
+        public async Task<IActionResult> DeleteAseetClassToAssetBlock(int code)
         {
             APIResponse apiResponse = null;
-            if (code == null)
+            if (code == 0)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
