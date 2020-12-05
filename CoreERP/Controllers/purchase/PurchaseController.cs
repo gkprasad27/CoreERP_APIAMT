@@ -134,7 +134,7 @@ namespace CoreERP.Controllers
             {
                 dynamic expando = new ExpandoObject();
                 expando.CashPartyAccount = new InvoiceHelper().GetAccountLedgersByCode(ledgercode);
-                //new PurchasesHelper().GetPAccountLedgers(ledgercode).FirstOrDefault();
+                //new InvoiceHelper().GetAccountLedgers(ledgercode).FirstOrDefault();
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -315,7 +315,6 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
     }
 }
 

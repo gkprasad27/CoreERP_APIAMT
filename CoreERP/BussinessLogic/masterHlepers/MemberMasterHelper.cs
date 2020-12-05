@@ -652,7 +652,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (Repository<TblShareTransfer> _repo = new Repository<TblShareTransfer>())
                 {
-                    return _repo.TblShareTransfer.Where(v => v.ToMemberCode == memberCode).ToList();
+                    return _repo.TblShareTransfer.Where(v => v.ToMemberCode == memberCode && v.FromMemberCode==10000).ToList();
                 }
 
             }
@@ -747,28 +747,6 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
-        public TblMemberMaster UpdateMember(TblMemberMaster member, TblShareTransfer shareTransfer)
-        {
-            try
-            {
-                using (Repository<TblMemberMaster> _repo = new Repository<TblMemberMaster>())
-                {
-                    member.TotalShares = shareTransfer.FromMemberSharesAfter;
-                    member.NoofShares = shareTransfer.FromMemberSharesAfter;
-                    member.IssuedShares = shareTransfer.ToMemberSharesAfter;
-                    _repo.TblMemberMaster.Update(member);
-                    if (_repo.SaveChanges() > 0)
-                        return member;
-
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
         public string GetAdditionalShareTransferNo(out string errorMessage)
         {
             try
@@ -804,6 +782,28 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 }
 
                 return billno;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public TblMemberMaster UpdateMember(TblMemberMaster member, TblShareTransfer shareTransfer)
+        {
+            try
+            {
+                using (Repository<TblMemberMaster> _repo = new Repository<TblMemberMaster>())
+                {
+                    member.TotalShares = shareTransfer.FromMemberSharesAfter;
+                    member.NoofShares = shareTransfer.FromMemberSharesAfter;
+                    member.IssuedShares = shareTransfer.ToMemberSharesAfter;
+                    _repo.TblMemberMaster.Update(member);
+                    if (_repo.SaveChanges() > 0)
+                        return member;
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
