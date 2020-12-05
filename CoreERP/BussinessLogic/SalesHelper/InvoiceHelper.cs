@@ -284,7 +284,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         var result = (from al in repo.TblAccountLedger
                                       join m in repo.TblMemberMaster on al.LedgerCode equals m.MemberCode.ToString()
                                       where (al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower()) && al.LedgerCode.ToLower().Contains((ledgercode ?? al.LedgerCode.ToLower()))
-                                      && m.IsActive == 1 && al.AccountGroupId == 7580 || al.AccountGroupId == 573 || al.AccountGroupId == 7577 || al.AccountGroupId == 7576)
+                                      && m.IsActive == 1 && al.AccountGroupId == 7580 || al.AccountGroupId == 573 || al.AccountGroupId == 7577 || al.AccountGroupId == 7576 || al.AccountGroupId == 7039
+                                      || al.AccountGroupId == 7586)
                                       select al).ToList();
                         return result;
                     }
@@ -293,7 +294,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         var result= repo.TblAccountLedger
                         .Where(al => al.LedgerName.ToLower().Contains((ledgerName ?? al.LedgerName).ToLower())
                          && al.LedgerCode.ToLower().Contains((ledgercode ?? al.LedgerCode.ToLower())) && al.AccountGroupId==7580 || al.AccountGroupId==573
-                        || al.AccountGroupId == 7577 || al.AccountGroupId == 7576).OrderBy(o => o.LedgerCode).ToList();
+                        || al.AccountGroupId == 7577 || al.AccountGroupId == 7576 || al.AccountGroupId == 7586 || al.AccountGroupId == 7039).OrderBy(o => o.LedgerCode).ToList();
                         return result;
                     }
                     
@@ -999,14 +1000,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                     var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName +" "+ "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
                                                    invoice.BranchName +" " + "B.No" +" " + invoice.InvoiceNo +" " + "Amount" +" " + _invAmount +" " + "V.No:" +" " + invoice.VehicleRegNo;
                                     SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", invoice.Mobile, message, "N", "Y");
-                                    AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, _advance.Mobile);
+                                    AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, "0");
                                 }
                                 if (invProduct == "D" && invoice.Mobile != null && invoice.MemberName == null && _invQty >= 25 && _advance == null)
                                 {
                                     var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
                                                   invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
                                     SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", invoice.Mobile, message, "N", "Y");
-                                    AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, _advance.Mobile);
+                                    AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, "0");
                                 }
                                 if (_advance != null){
                                     if (invProduct == "D" && _advance.Mobile != null && invoice.MemberName == null && _advance.Mobile != "0")
