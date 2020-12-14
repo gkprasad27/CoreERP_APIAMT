@@ -56,7 +56,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     {
                         _membermasterList = (from MM in _repo.TblMemberMaster join v in _repo.TblVehicle on MM.MemberCode equals v.MemberCode
                                             where (MM.MemberCode.ToString().Contains((searchCriteria.InvoiceNo == null ? MM.MemberCode.ToString() : searchCriteria.InvoiceNo))
-                                                     && MM.MemberName.ToLower().Contains((searchCriteria.Name ?? MM.MemberName).ToLower()) && v.VehicleRegNo.ToLower().Contains((searchCriteria.Vehicle ?? v.VehicleRegNo).ToLower()))
+                                             && v.IsValid==1  && MM.MemberName.ToLower().Contains((searchCriteria.Name ?? MM.MemberName).ToLower()) && v.VehicleRegNo.ToLower().Contains((searchCriteria.Vehicle ?? v.VehicleRegNo).ToLower()))
                                          select MM).ToList();
                                                         //_membermasterList = (from MM in _repo.TblMemberMaster
                         //                     join Vehicle in _repo.TblVehicle on MM.MemberCode equals Vehicle.MemberCode
