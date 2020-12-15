@@ -343,12 +343,24 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                                 }
                                 else
                                 {
-                                    purInv.TotalAmount = purInv.GrossAmount;
-                                    purInv.Igst = purchaseInvoice.TotalIgst;
-                                    purInv.TotalGst = purInv.TotalAmount*18/100;
-                                    purInv.Cgst = purInv.TotalGst / 2;
-                                    purInv.Sgst = purInv.TotalGst / 2;
-                                    purInv.GrossAmount = purInv.TotalAmount+purInv.TotalGst;
+                                    if ((purInv.ProductCode != "D") || (purInv.ProductCode != "P") || (purInv.ProductCode != "XP"))
+                                    {
+                                        purInv.TotalAmount = purInv.GrossAmount;
+                                        purInv.Igst = 0;
+                                        purInv.TotalGst = 0;
+                                        purInv.Cgst = 0;
+                                        purInv.Sgst = 0;
+                                        purInv.GrossAmount = purInv.TotalAmount + purInv.TotalGst;
+                                    }
+                                    else
+                                    {
+                                        purInv.TotalAmount = purInv.GrossAmount;
+                                        purInv.Igst = purchaseInvoice.TotalIgst;
+                                        purInv.TotalGst = purInv.TotalAmount * 18 / 100;
+                                        purInv.Cgst = purInv.TotalGst / 2;
+                                        purInv.Sgst = purInv.TotalGst / 2;
+                                        purInv.GrossAmount = purInv.TotalAmount + purInv.TotalGst;
+                                    }
                                 }
                                 context.TblPurchaseInvoiceDetail.Add(purInv);
                                 context.SaveChanges();
