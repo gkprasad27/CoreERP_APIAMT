@@ -819,6 +819,25 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetToMemberName/{memberCode}")]
+        public async Task<IActionResult> GetToMemberName(decimal memberCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.memberName = new MemberMasterHelper().GetNoOfShares(memberCode).MemberName;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetAdditionalShareTransfer/{memberCode}")]
         public async Task<IActionResult> GetAdditionalShareTransfer(string memberCode)
         {
