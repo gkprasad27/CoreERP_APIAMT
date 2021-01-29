@@ -35,13 +35,13 @@ namespace CoreERP.BussinessLogic.transactionsHelpers
             }
             catch (Exception ex) { throw ex; }
         }
-        public List<TblPumps> GetPumpList(string branchCode)
+        public List<TblPumps> GetPumpList(decimal name,string branchCode)
         {
             try
             {
                 using (Repository<TblPumps> repo = new Repository<TblPumps>())
                 {
-                    return repo.TblPumps.Where(p=>p.BranchCode==branchCode && p.IsWorking==1).OrderBy(p=>p.PumpNo).ToList();
+                    return repo.TblPumps.Where(p=>p.BranchCode==branchCode &&p.PumpNo.ToString().Contains(name.ToString()) && p.IsWorking==1).OrderBy(p=>p.PumpNo).ToList();
                 }
             }
             catch (Exception ex) { throw ex; }

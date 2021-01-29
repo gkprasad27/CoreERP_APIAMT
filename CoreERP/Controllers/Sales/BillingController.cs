@@ -190,6 +190,24 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+        [HttpGet("GetCustomerGstNumList/{phonenum?}")]
+        public IActionResult GetCustomerGstNumList(string phonenum)
+        {
+            if (string.IsNullOrEmpty(phonenum))
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.CustomerGstNum = new InvoiceHelper().GetCustomerGstNum(phonenum);
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
         [HttpGet("GetCashPartyAccount/{ledgercode}")]
         public IActionResult GetCashPartyAccount(string ledgercode)

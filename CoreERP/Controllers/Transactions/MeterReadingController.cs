@@ -32,8 +32,8 @@ namespace CoreERP.Controllers.Transactions
             return result;
         }
 
-        [HttpGet("GetPump/{branchCode}")]
-        public async Task<IActionResult> GetPump(string branchCode)
+        [HttpGet("GetPump/{name}/{branchCode}")]
+        public async Task<IActionResult> GetPump(int name,string branchCode)
         {
             var result = await Task.Run(() =>
             {
@@ -43,7 +43,7 @@ namespace CoreERP.Controllers.Transactions
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.PumpList = new MeterReadingHelper().GetPumpList(branchCode).Select(x => new { ID = x.PumpNo, TEXT = x.PumpNo });
+                    expando.PumpList = new MeterReadingHelper().GetPumpList(name,branchCode).Select(x => new { ID = x.PumpNo, TEXT = x.PumpNo });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)

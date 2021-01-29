@@ -22,5 +22,6 @@ namespace CoreERP.Models
         public string UnitName { get; set; }
         public decimal? TotalAmount { get; set; }
         public decimal? AvailStock { get; set; }
+        public decimal? Ltrs { get; set; }
     }
 }

@@ -122,6 +122,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     ProductGroupCode = Convert.ToDecimal(_product.ProductGroupCode ?? 0),
                     UnitId = Convert.ToDecimal(_product.UnitId ?? 0),
                     UnitName = _product.UnitName,
+                    Ltrs=_product.PackingSize,
                     AvailStock = Convert.ToDecimal(GetProductQty(branchCode, productCode) ?? 0)
                 };
 
