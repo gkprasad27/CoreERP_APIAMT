@@ -95,6 +95,27 @@ namespace CoreERP.Controllers.Sales
             return result;
         }
 
+
+        [HttpPost("GetLtrs")] 
+        public IActionResult GetLtrs([FromBody]JObject objData)
+        {
+            if (objData == null)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
+            }
+            try
+            {
+                string productCode = objData["code"].ToString();
+                dynamic expando = new ExpandoObject();
+                expando.Ltrs = new InvoiceHelper().GetProducts(productCode).Select(p => new { ID = p.PackingSize, TEXT = p.PackingSize });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPost("GetStockTransferList/{branchCode}")]
         public async Task<IActionResult> GetStockTransferList(string branchCode,[FromBody]SearchCriteria searchCriteria)
         {
@@ -124,6 +145,7 @@ namespace CoreERP.Controllers.Sales
 
         [HttpGet("GetStockTransferDetilsaRecords/{stockTransferMasterId}")]
         public async Task<IActionResult> GetStockTransferList(string stockTransferMasterId)
+        
         {
             var result = await Task.Run(() =>
             {
