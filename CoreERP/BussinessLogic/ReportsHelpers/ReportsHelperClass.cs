@@ -1207,6 +1207,10 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
 
         public static DataSet GetProductWiseMonthlyPurchaseReportDataSet(string userID, DateTime fromDate,DateTime toDate, string groupName)
         {
+            if (groupName == "null")
+            {
+                groupName = null;
+            }
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
             using DbCommand command = scopeRepository.CreateCommand();
@@ -2062,6 +2066,10 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         }
         public static DataSet GetBranchWiseMonthlySalesByLtrsReportDataTable(string userID, string branchCode, DateTime fromDate, DateTime toDate, string groupName)
         {
+            if (groupName == "null")
+            {
+                groupName = null;
+            }
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
             using DbCommand command = scopeRepository.CreateCommand();
