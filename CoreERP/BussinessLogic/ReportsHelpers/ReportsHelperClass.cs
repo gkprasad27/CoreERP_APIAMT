@@ -497,6 +497,19 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 throw ex;
             }
         }
+
+        public static List<TblProductGroup> GetReportProductGroup()
+        {
+            try
+            {
+                using Repository<TblProductGroup> repo = new Repository<TblProductGroup>();
+                return repo.TblProductGroup.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public List<TblProduct> GetProducts(string productCode = null)
         {
             try
@@ -2066,6 +2079,10 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         }
         public static DataSet GetBranchWiseMonthlySalesByLtrsReportDataTable(string userID, string branchCode, DateTime fromDate, DateTime toDate, string groupName)
         {
+            if (branchCode == "null")
+            {
+                branchCode = null;
+            }
             if (groupName == "null")
             {
                 groupName = null;

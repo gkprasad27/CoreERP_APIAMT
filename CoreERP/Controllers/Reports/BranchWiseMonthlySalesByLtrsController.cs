@@ -58,5 +58,25 @@ namespace CoreERP.Controllers.Reports
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpGet("GetReportPGList")]
+        public async Task<IActionResult> GetReportPGList()
+        {
+            try
+            {
+                var reportPGList = await Task.FromResult(ReportsHelperClass.GetReportProductGroup());
+                if (reportPGList != null && reportPGList.Count > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.reportPGList = reportPGList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }
