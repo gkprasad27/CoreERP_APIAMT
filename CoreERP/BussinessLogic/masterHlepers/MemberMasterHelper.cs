@@ -366,7 +366,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 }
                 else
                     accountLedger.LedgerId = 1;
-
+                accountLedger.AccountGroupId = 7577;
                 accountLedger.LedgerCode = memberMaster.MemberCode.ToString();
                 accountLedger.LedgerName = memberMaster.MemberName;
                 accountLedger.Address = memberMaster.Address;
@@ -717,7 +717,12 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 shareTransfer.ToMemberName = memberMaster.MemberName;
                 shareTransfer.ToMemberId = memberMaster.MemberId??0;
                 shareTransfer.FromMemberName = _Frommember.MemberName;
-                shareTransfer.FromMemberId = +_Frommember.MemberId ?? 0;
+                shareTransfer.FromMemberId = _Frommember.MemberId ?? 0;
+                if(shareTransfer.FromMemberCode!= 10000)
+                {
+                    shareTransfer.FromMemberSharesAfter = 0;
+                    shareTransfer.ToMemberSharesAfter = shareTransfer.FromMemberSharesBefore + shareTransfer.ToMemberSharesBefore;
+                }
                 //vehicle.MemberShares = memberMaster.TotalShares;
                 //var _vehicleType = GetVehicleTypes().Where(v => v.VehicleTypeName == vehicle.VehicleTypeName).FirstOrDefault();
                 //vehicle.VehicleTypeId = _vehicleType.VehicleTypeId;
