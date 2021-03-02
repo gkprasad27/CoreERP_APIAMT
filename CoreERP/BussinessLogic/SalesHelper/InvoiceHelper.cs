@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CoreERP.BussinessLogic.SalesHelper
@@ -963,7 +964,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                     {
                                         var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
                                                       invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
-                                        SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", _advance.Mobile, message, "N", "Y");
+                                        SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", _advance.Mobile, message,  "N", "Y");
                                         AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult,_advance.Mobile);
                                     }
                                 }
@@ -974,7 +975,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                     {
                                         var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
                                                       invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
-                                        SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", _accountLedgerNo.Mobile, message, "N", "Y");
+                                        SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", _accountLedgerNo.Mobile, message,  "N", "Y");
                                         AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, _accountLedgerNo.Mobile);
                                     }
                                 }
@@ -1022,7 +1023,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 {
                                     var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
                                                   invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
-                                    SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", invoice.Mobile, message, "N", "Y");
+                                    SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", invoice.Mobile, message,"N", "Y");
                                     AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, "0");
                                 }
                                 if (_advance != null){
@@ -1320,10 +1321,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
             return 6;
         }
 
-        public string SendSMS(string User, string password,string sid, string Mobile_Number, string Message, string Mtype, string DR)
+        public string SendSMS(string User, string password,string sid, string Mobile_Number, string Message,string Mtype, string DR)
         {
             string stringpost = null;
-            stringpost = "username=" + User + "&password=" + password +"&sender="+sid + "&to=" + Mobile_Number + "&message=" + Message;
+            //stringpost = "username=" + User + "&password=" + password + "&senderid=" + sid + "&to_numbers=" + Mobile_Number + "&message=" + Message + "&api_key=" + "oRRS4csr7iUmU5uKdayEffnSdtHgoMrUozc7xSPxd4rSOH3tY7"
+            //    + "&unicode=" + 0 + "&dlrurl=" + "https://en31t2u38ozab.x.pipedream.net&ref_id=A1B2C3";
+
+            stringpost = "to_numbers=" + Mobile_Number + "&message=" + Message + "&senderid=" + sid +  "&api_key=" + "oRRS4csr7iUmU5uKdayEffnSdtHgoMrUozc7xSPxd4rSOH3tY7";
+               
             //+"&MType=" + Mtype + "&DR=" + DR
 
             HttpWebRequest objWebRequest = null;
@@ -1333,40 +1338,60 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
             try
             {
-
                 string stringResult = null;
-
-                //objWebRequest = (HttpWebRequest)WebRequest.Create("http://www.smscountry.com/SMSCwebservice_bulk.aspx");
-                objWebRequest = (HttpWebRequest)WebRequest.Create("http://new.smsdaddy.in/webapi.php");
-                objWebRequest.Method = "POST";
-
-                if ((objProxy1 != null))
+                using (var client = new HttpClient())
                 {
-                    objWebRequest.Proxy = objProxy1;
+                    var response = client.GetAsync("https://api.salesquared.io/sendsms/v1?to_numbers='" + Mobile_Number + "'&message='" + Message + "'&senderid=KDLOMA&api_key=oRRS4csr7iUmU5uKdayEffnSdtHgoMrUozc7xSPxd4rSOH3tY7").Result;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseContent = response.Content;
+
+                        // by calling .Result you are synchronously reading the result
+                        stringResult = responseContent.ReadAsStringAsync().Result;
+                        if (response.IsSuccessStatusCode == true)
+                        {
+                            stringResult = "Success";
+                        }
+                    }
+                    return stringResult;
                 }
+                //string stringResult = null;
+
+                ////objWebRequest = (HttpWebRequest)WebRequest.Create("http://www.smscountry.com/SMSCwebservice_bulk.aspx");
+                ////objWebRequest = (HttpWebRequest)WebRequest.Create("http://new.smsdaddy.in/webapi.php");
+                ////objWebRequest = (HttpWebRequest)WebRequest.Create("https://api.salesquared.io/sendsms/v1");
 
 
-                // Use below code if you want to SETUP PROXY.
-                //Parameters to pass: 1. ProxyAddress 2. Port
-                //You can find both the parameters in Connection settings of your internet explorer.
+                //objWebRequest.Method = "GET";
 
-                //WebProxy myProxy = new WebProxy("YOUR PROXY", PROXPORT);
-                //myProxy.BypassProxyOnLocal = true;
-                //wrGETURL.Proxy = myProxy;
+                //if ((objProxy1 != null))
+                //{
+                //    objWebRequest.Proxy = objProxy1;
+                //}
 
-                objWebRequest.ContentType = "application/x-www-form-urlencoded";
 
-                objStreamWriter = new StreamWriter(objWebRequest.GetRequestStream());
-                objStreamWriter.Write(stringpost);
-                objStreamWriter.Flush();
-                objStreamWriter.Close();
+                //// Use below code if you want to SETUP PROXY.
+                ////Parameters to pass: 1. ProxyAddress 2. Port
+                ////You can find both the parameters in Connection settings of your internet explorer.
 
-                objWebResponse = (HttpWebResponse)objWebRequest.GetResponse();
-                objStreamReader = new StreamReader(objWebResponse.GetResponseStream());
-                stringResult = objStreamReader.ReadToEnd();
+                ////WebProxy myProxy = new WebProxy("YOUR PROXY", PROXPORT);
+                ////myProxy.BypassProxyOnLocal = true;
+                ////wrGETURL.Proxy = myProxy;
 
-                objStreamReader.Close();
-                return stringResult;
+                //objWebRequest.ContentType = "application/x-www-form-urlencoded";
+
+                //objStreamWriter = new StreamWriter(objWebRequest.GetRequestStream());
+                //objStreamWriter.Write(stringpost);
+                //objStreamWriter.Flush();
+                //objStreamWriter.Close();
+
+                //objWebResponse = (HttpWebResponse)objWebRequest.GetResponse();
+                //objStreamReader = new StreamReader(objWebResponse.GetResponseStream());
+                //stringResult = objStreamReader.ReadToEnd();
+
+                //objStreamReader.Close();
+                //return stringResult;
             }
             catch (Exception ex)
             {
