@@ -587,7 +587,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 TblShareTransfer _shareTransfer = null;
                 using (Repository<TblShareTransfer> _repo = new Repository<TblShareTransfer>())
                 {
-                    _shareTransfer = _repo.TblShareTransfer.Where(x => x.FromMemberCode != 10000 ).OrderByDescending(x => x.TransferDate).FirstOrDefault();
+                    _shareTransfer = _repo.TblShareTransfer.Where(x => x.FromMemberCode != 10000 ).OrderByDescending(x => x.ShareId).FirstOrDefault();
 
                     if (_shareTransfer != null)
                     {
