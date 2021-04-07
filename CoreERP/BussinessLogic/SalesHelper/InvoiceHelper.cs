@@ -1327,7 +1327,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
             //stringpost = "username=" + User + "&password=" + password + "&senderid=" + sid + "&to_numbers=" + Mobile_Number + "&message=" + Message + "&api_key=" + "oRRS4csr7iUmU5uKdayEffnSdtHgoMrUozc7xSPxd4rSOH3tY7"
             //    + "&unicode=" + 0 + "&dlrurl=" + "https://en31t2u38ozab.x.pipedream.net&ref_id=A1B2C3";
 
-            stringpost = "to_numbers=" + Mobile_Number + "&message=" + Message + "&senderid=" + sid +  "&api_key=" + "oRRS4csr7iUmU5uKdayEffnSdtHgoMrUozc7xSPxd4rSOH3tY7" + "template_id=" + 112233445566778899 + "&pe_id=" + 112233445566778899;
+            stringpost = "to_numbers=" + Mobile_Number + "&message=" + Message + "&senderid=" + sid +  "&api_key=" + "oRRS4csr7iUmU5uKdayEffnSdtHgoMrUozc7xSPxd4rSOH3tY7" + "&template_id=" + 112233445566778899 + "&pe_id=" + 112233445566778899;
                
             //+"&MType=" + Mtype + "&DR=" + DR
 
