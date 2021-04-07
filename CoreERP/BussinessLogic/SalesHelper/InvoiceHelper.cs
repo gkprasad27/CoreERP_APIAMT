@@ -1341,7 +1341,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 string stringResult = null;
                 using (var client = new HttpClient())
                 {
-                    var response = client.GetAsync("https://api.salesquared.io/sendsms/v1?to_numbers='" + Mobile_Number + "'&message='" + Message + "'&senderid=KDLOMA&api_key=oRRS4csr7iUmU5uKdayEffnSdtHgoMrUozc7xSPxd4rSOH3tY7").Result;
+                    var response = client.GetAsync("https://api.salesquared.io/sendsms/v1?to_numbers='" + Mobile_Number + "'&message='" + Message + "'&senderid=KDLOMA&api_key=oRRS4csr7iUmU5uKdayEffnSdtHgoMrUozc7xSPxd4rSOH3tY7&template_id=112233445566778899&pe_id=112233445566778899").Result;
 
                     if (response.IsSuccessStatusCode)
                     {
