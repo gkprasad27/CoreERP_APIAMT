@@ -39,5 +39,6 @@ namespace CoreERP.Models
         public string AmountInWords { get; set; }
         public string Narration { get; set; }
         public bool? IsPurchaseReturned { get; set; }
+        public decimal? TotalTcsAmount { get; set; }
     }
 }

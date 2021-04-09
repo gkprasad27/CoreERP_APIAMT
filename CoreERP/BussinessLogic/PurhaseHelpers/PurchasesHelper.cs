@@ -387,6 +387,14 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                             //CHech weather igs or sg ,cg st
                             var _stateWiseGsts = GetStateWiseGsts(purchaseInvoice.StateCode).FirstOrDefault();
+                            if (purchaseInvoice.TotalTcsAmount != 0)
+                            {
+                                //Add TCS record
+                                var _accAL = GetAccountLedgers("250");
+                                _accAL.CrOrDr = "Debit";
+                                var voucherDetailTCS = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.TotalTcsAmount, false);
+                                AddAccountLedgerTransactions(context, voucherDetailTCS, purchaseInvoice.PurchaseInvDate);
+                            }
                             if (_stateWiseGsts.Igst == 1)
                             {
                                 //Add IGST record
