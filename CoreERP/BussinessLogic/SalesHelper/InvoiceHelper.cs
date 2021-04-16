@@ -947,14 +947,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 if (invProduct == "D" && invoice.Mobile != null && invoice.MemberName!=null && _advance == null)
                                 {
                                     var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
-                                                  invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
+                                                  invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No" + " " + invoice.VehicleRegNo;
                                     SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", invoice.Mobile, message, "N", "Y");
                                     AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, "0");
                                 }
                                 if (invProduct == "D" && invoice.Mobile != null && invoice.MemberName == null && _invQty >= 25 && _advance == null)
                                 {
                                     var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
-                                                  invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
+                                                  invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No" + " " + invoice.VehicleRegNo;
                                     SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", invoice.Mobile, message, "N", "Y");
                                     AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, "0");
                                 }
@@ -963,7 +963,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                     if (invProduct == "D" && _advance.Mobile != null && invoice.MemberName == null && _advance.Mobile!="0")
                                     {
                                         var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
-                                                      invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
+                                                      invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No" + " " + invoice.VehicleRegNo;
                                         SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", _advance.Mobile, message,  "N", "Y");
                                         AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult,_advance.Mobile);
                                     }
@@ -974,7 +974,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                     if (invProduct == "D" && _accountLedgerNo.Mobile != null && invoice.MemberName == null && _invQty >= 25 && _accountLedgerNo.Mobile!="0")
                                     {
                                         var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
-                                                      invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
+                                                      invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No" + " " + invoice.VehicleRegNo;
                                         SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", _accountLedgerNo.Mobile, message,  "N", "Y");
                                         AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, _accountLedgerNo.Mobile);
                                     }
@@ -1015,14 +1015,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 if (invProduct == "D" && invoice.Mobile != null && invoice.MemberName != null && _advance==null)
                                 {
                                     var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName +" "+ "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
-                                                   invoice.BranchName +" " + "B.No" +" " + invoice.InvoiceNo +" " + "Amount" +" " + _invAmount +" " + "V.No:" +" " + invoice.VehicleRegNo;
+                                                   invoice.BranchName +" " + "B.No" +" " + invoice.InvoiceNo +" " + "Amount" +" " + _invAmount +" " + "V.No" +" " + invoice.VehicleRegNo;
                                     SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", invoice.Mobile, message, "N", "Y");
                                     AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, "0");
                                 }
                                 if (invProduct == "D" && invoice.Mobile != null && invoice.MemberName == null && _invQty >= 25 && _advance == null)
                                 {
                                     var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
-                                                  invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
+                                                  invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No" + " " + invoice.VehicleRegNo;
                                     SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", invoice.Mobile, message,"N", "Y");
                                     AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, "0");
                                 }
@@ -1030,7 +1030,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                     if (invProduct == "D" && _advance.Mobile != null && invoice.MemberName == null && _advance.Mobile != "0")
                                     {
                                         var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
-                                                      invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
+                                                      invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No" + " " + invoice.VehicleRegNo;
                                         SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", _advance.Mobile, message, "N", "Y");
                                         AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, _advance.Mobile);
                                     }
@@ -1040,7 +1040,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                     if (invProduct == "D" && _accountLedgerNo.Mobile != null && invoice.MemberName == null && _invQty >= 25 && _accountLedgerNo.Mobile != "0")
                                     {
                                         var message = "KDLOMACS Thanks for buying" + " " + " " + _invQty + "" + _invUnitName + " " + "Diesel @" + " " + _invRate + " " + "on Date:" + " " + invoice.InvoiceDate + " " + "At" + " " +
-                                                      invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No:" + " " + invoice.VehicleRegNo;
+                                                      invoice.BranchName + " " + "B.No" + " " + invoice.InvoiceNo + " " + "Amount" + " " + _invAmount + " " + "V.No" + " " + invoice.VehicleRegNo;
                                         SmsResult = SendSMS("TKDLOMACS", "123456", "KDLOMA", _accountLedgerNo.Mobile, message, "N", "Y");
                                         AddSmsStatus(repo, invoice, _invRate, _invQty, _invAmount, SmsResult, _accountLedgerNo.Mobile);
                                     }
@@ -1341,7 +1341,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 string stringResult = null;
                 using (var client = new HttpClient())
                 {
-                    var response = client.GetAsync("https://api.salesquared.io/sendsms/v1?to_numbers='" + Mobile_Number + "'&message='" + Message + "'&senderid=KDLOMA&api_key=oRRS4csr7iUmU5uKdayEffnSdtHgoMrUozc7xSPxd4rSOH3tY7&template_id=112233445566778899&pe_id=112233445566778899").Result;
+                    var response = client.GetAsync("https://api.salesquared.io/sendsms/v1?to_numbers=" + Mobile_Number + "&message=" + Message + "&senderid=KDLOMA&api_key=oRRS4csr7iUmU5uKdayEffnSdtHgoMrUozc7xSPxd4rSOH3tY7&template_id=1407161855329747010&pe_id=1401377320000013424").Result;
 
                     if (response.IsSuccessStatusCode)
                     {
