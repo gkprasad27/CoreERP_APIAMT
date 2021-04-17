@@ -387,6 +387,22 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
 
                             //CHech weather igs or sg ,cg st
                             var _stateWiseGsts = GetStateWiseGsts(purchaseInvoice.StateCode).FirstOrDefault();
+                            if (purchaseInvoice.RoundOffPlus != null)
+                            {
+                                //Add Roundoff Plus record
+                                var _accAL = GetAccountLedgers("303");
+                                _accAL.CrOrDr = "Credit";
+                                var voucherDetailRoundOffP = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.RoundOffPlus, false);
+                                AddAccountLedgerTransactions(context, voucherDetailRoundOffP, purchaseInvoice.PurchaseInvDate);
+                            }
+                            if (purchaseInvoice.RoundOffMinus != null)
+                            {
+                                //Add Roundoff Plus record
+                                var _accAL = GetAccountLedgers("303");
+                                _accAL.CrOrDr = "Debit";
+                                var voucherDetailRoundOffM = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.RoundOffMinus, false);
+                                AddAccountLedgerTransactions(context, voucherDetailRoundOffM, purchaseInvoice.PurchaseInvDate);
+                            }
                             if (purchaseInvoice.TotalTcsAmount != 0)
                             {
                                 //Add TCS record
