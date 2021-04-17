@@ -20,7 +20,7 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 errorMessage = string.Empty;
                 string suffix = string.Empty, prefix = string.Empty, billno = string.Empty;
                 TblPurchaseReturn _purchaseReturn = null;
-                using (Repository<TblInvoiceMaster> _repo = new Repository<TblInvoiceMaster>())
+                using (Repository<TblPurchaseInvoice> _repo = new Repository<TblPurchaseInvoice>())
                 {
                     _purchaseReturn = _repo.TblPurchaseReturn.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.PurchaseMasterInvId).FirstOrDefault();
 
@@ -509,21 +509,24 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                 using (Repository<TblPurchaseReturn> repo = new Repository<TblPurchaseReturn>())
                 {
                     List<TblPurchaseReturn> _purchaseList = null;
-                    if (searchCriteria.Role != 1 || searchCriteria.Role != 3 || searchCriteria.Role != 89)
+                    if (searchCriteria.Role == 1 || searchCriteria.Role == 3 || searchCriteria.Role == 89)
                     {
                         if (searchCriteria.FromDate != null && searchCriteria.ToDate != null)
                         {
 
                             _purchaseList = repo.TblPurchaseReturn.AsEnumerable()
-                                                .Where(pur => DateTime.Parse(pur.PurchaseInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate).Value.ToShortDateString())
-                                                         && DateTime.Parse(pur.PurchaseInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate).Value.ToShortDateString())
-                                                         && pur.PurchaseInvNo.Contains(searchCriteria.InvoiceNo ?? pur.PurchaseInvNo))
+                                                .Where(pur => DateTime.Parse(pur.PurchaseReturnInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate).Value.ToShortDateString())
+                                                         && DateTime.Parse(pur.PurchaseReturnInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate).Value.ToShortDateString())
+                                                         && pur.PurchaseReturnInvNo.Contains(searchCriteria.InvoiceNo ?? pur.PurchaseReturnInvNo))
                                                 .ToList();
+
+
                         }
                         else
                         {
-                            _purchaseList = repo.TblPurchaseReturn.AsEnumerable().Where(pur => pur.PurchaseInvNo.Contains(searchCriteria.InvoiceNo ?? pur.PurchaseInvNo)
-                                                                                            && pur.PurchaseReturnInvDate.Value.Year == DateTime.Now.Year).ToList();
+                            _purchaseList = repo.TblPurchaseReturn.AsEnumerable().Where(pur => DateTime.Now.Year == pur.PurchaseInvDate.Value.Year
+                                                                                            && pur.PurchaseReturnInvNo.Contains(searchCriteria.InvoiceNo??pur.PurchaseReturnInvNo)).ToList();
+                            
                         }
                     }
                     else
@@ -533,12 +536,12 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             _purchaseList = repo.TblPurchaseReturn.AsEnumerable()
                                                 .Where(pur => DateTime.Parse(pur.PurchaseReturnInvDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate).Value.ToShortDateString())
                                                          && DateTime.Parse(pur.PurchaseReturnInvDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate).Value.ToShortDateString())
-                                                         && pur.PurchaseInvNo.Contains(searchCriteria.InvoiceNo ?? pur.PurchaseInvNo))
+                                                         && pur.PurchaseInvNo.Contains(searchCriteria.InvoiceNo ?? pur.PurchaseReturnInvNo))
                                                 .ToList();
                         }
                         else
                             _purchaseList = repo.TblPurchaseReturn.AsEnumerable()
-                                                .Where(pur =>pur.PurchaseInvNo.Contains(searchCriteria.InvoiceNo ?? pur.PurchaseInvNo)
+                                                .Where(pur =>pur.PurchaseReturnInvNo.Contains(searchCriteria.InvoiceNo ?? pur.PurchaseReturnInvNo)
                                                           && pur.PurchaseReturnInvDate.Value.Year == DateTime.Now.Year).ToList();
                     }
                    
