@@ -878,7 +878,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         #region StockVerificationReport
         public static (List<dynamic>, List<dynamic>, List<dynamic>) GetStockVerificationReportDataList(string branchCode, string UserID, DateTime fromDate, DateTime toDate,string RO)
         {
-            if (RO != "false")
+            if (RO != "false" && RO!="null")
             {
                 DataSet dsResult = GetStockVerificationReportRODataSet(branchCode, UserID, fromDate, toDate);
                 List<dynamic> saleValue = null;
@@ -2299,6 +2299,47 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             command.Parameters.Add(dbpBranchCode);
             command.Parameters.Add(pmFromDate);
             command.Parameters.Add(pmToDate);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
+        #endregion
+        #region StockInformation
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetStockInformationDashboardDataList(string branchCode)
+        {
+            DataSet dsResult = GetStockInformationDashboardDataTable(branchCode);
+            List<dynamic> stockInfoList = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    stockInfoList = ToDynamic(dsResult.Tables[0]);
+                }
+               
+                return (stockInfoList,headerList,footerList);
+            }
+            else return (null, null, null);
+        }
+
+        public static DataSet GetStockInformationDashboardDataTable(string branchCode)
+        {
+            if (branchCode == "null")
+            {
+                branchCode = null;
+            }
+            ScopeRepository scopeRepository = new ScopeRepository();
+            // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_StockInformationDashboard";
+            #region Parameters
+            DbParameter dbpBranchCode = command.CreateParameter();
+            dbpBranchCode.Direction = ParameterDirection.Input;
+            dbpBranchCode.Value = (object)branchCode ?? DBNull.Value;
+            dbpBranchCode.ParameterName = "branchCode";
+            #endregion
+            // Add parameter as specified in the store procedure
+            command.Parameters.Add(dbpBranchCode);
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
