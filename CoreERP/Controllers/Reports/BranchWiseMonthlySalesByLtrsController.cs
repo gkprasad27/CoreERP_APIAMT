@@ -16,7 +16,7 @@ namespace CoreERP.Controllers.Reports
     {
 
         [HttpGet("GetBranchWiseMonthlySalesByLtrsReportData")]
-        public async Task<IActionResult> GetBranchWiseMonthlySalesByLtrsReportData(string userID, string branchCode, DateTime fromDate, DateTime toDate,string groupName)
+        public async Task<IActionResult> GetBranchWiseMonthlySalesByLtrsReportData(string userID, string branchCode, DateTime fromDate, DateTime toDate,string groupName,string supplierGroup)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace CoreERP.Controllers.Reports
                     toDate = DateTime.Now;
                     // return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
-                var serviceResult = await Task.FromResult(ReportsHelperClass.GetBranchWiseMonthlySalesByLtrsReportData(userID, branchCode,fromDate,toDate,groupName));
+                var serviceResult = await Task.FromResult(ReportsHelperClass.GetBranchWiseMonthlySalesByLtrsReportData(userID, branchCode,fromDate,toDate,groupName,supplierGroup));
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.branchwiseLtrs = serviceResult.Item1;
                 expdoObj.headerList = serviceResult.Item2;
@@ -69,6 +69,26 @@ namespace CoreERP.Controllers.Reports
                 {
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.reportPGList = reportPGList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetSupplierGroupList")]
+        public async Task<IActionResult> GetSupplierGroupList()
+        {
+            try
+            {
+                var reportSGList = await Task.FromResult(ReportsHelperClass.GetSupplierGroupName());
+                if (reportSGList != null && reportSGList.Count > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.reportSGList = reportSGList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });

@@ -20,15 +20,40 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch { throw; }
         }
 
+        public List<TblProduct> GetProduct(string productName = null)
+        {
+            try
+            {
+                using (Repository<TblProduct> repo = new Repository<TblProduct>())
+                {
+                    return repo.TblProduct.AsEnumerable().Where(b => b.PackingName == (productName ?? b.PackingName)).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public TblPumps Register(TblPumps pumps)
         {
             try
             {
                 using Repository<TblPumps> repo = new Repository<TblPumps>();
-                string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo))?.TankId);
+                string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo) && obj.BranchCode == Convert.ToString(pumps.BranchCode))?.TankId);
                 pumps.TankId = int.Parse(name);
                 pumps.BranchId = Convert.ToInt32(pumps.BranchCode);
-                pumps.ProductId = Convert.ToInt32(pumps.ProductCode);
+                if (pumps.ProductName == "DIESEL")
+                {
+                    pumps.ProductCode = "D";
+                    pumps.ProductId = 1840;
+                }
+               else
+                {
+                    var _product = GetProduct(pumps.ProductName).ToArray().FirstOrDefault();
+                    pumps.ProductCode = _product.ProductCode;
+                    pumps.ProductId = Convert.ToInt32(_product.ProductId);
+                }
                 repo.TblPumps.Add(pumps);
                 if (repo.SaveChanges() > 0)
                     return pumps;
@@ -46,10 +71,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblPumps> repo = new Repository<TblPumps>();
-                string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo))?.TankId);
+                string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo) && obj.BranchCode==Convert.ToString(pumps.BranchCode))?.TankId);
                 pumps.TankId = int.Parse(name);
                 pumps.BranchId = Convert.ToInt32(pumps.BranchCode);
-                pumps.ProductId = Convert.ToInt32(pumps.ProductCode);
+                pumps.PumpNo = Convert.ToInt32(pumps.PumpNo);
                 repo.TblPumps.Update(pumps);
                 if (repo.SaveChanges() > 0)
                     return pumps;

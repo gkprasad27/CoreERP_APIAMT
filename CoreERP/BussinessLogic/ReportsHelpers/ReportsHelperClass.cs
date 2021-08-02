@@ -510,6 +510,19 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 throw ex;
             }
         }
+
+        public static List<TblSupplierGroup> GetSupplierGroupName()
+        {
+            try
+            {
+                using Repository<TblSupplierGroup> repo = new Repository<TblSupplierGroup>();
+                return repo.TblSupplierGroup.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public List<TblProduct> GetProducts(string productCode = null)
         {
             try
@@ -2053,9 +2066,9 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         }
         #endregion
         #region BranchWise Monthly Sales Ltrs Report
-        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetBranchWiseMonthlySalesByLtrsReportData(string userID, string branchCode, DateTime fromDate, DateTime toDate, string groupName)
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetBranchWiseMonthlySalesByLtrsReportData(string userID, string branchCode, DateTime fromDate, DateTime toDate, string groupName, string supplierGroup)
         {
-            DataSet dsResult = GetBranchWiseMonthlySalesByLtrsReportDataTable(userID, branchCode, fromDate, toDate,groupName);
+            DataSet dsResult = GetBranchWiseMonthlySalesByLtrsReportDataTable(userID, branchCode, fromDate, toDate,groupName,supplierGroup);
             List<dynamic> branchWiseLtrs = null;
             List<dynamic> headerList = null;
             List<dynamic> footerList = null;
@@ -2077,7 +2090,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             }
             else return (null, null, null);
         }
-        public static DataSet GetBranchWiseMonthlySalesByLtrsReportDataTable(string userID, string branchCode, DateTime fromDate, DateTime toDate, string groupName)
+        public static DataSet GetBranchWiseMonthlySalesByLtrsReportDataTable(string userID, string branchCode, DateTime fromDate, DateTime toDate, string groupName, string supplierGroup)
         {
             if (branchCode == "null")
             {
@@ -2086,6 +2099,10 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             if (groupName == "null")
             {
                 groupName = null;
+            }
+            if(supplierGroup=="null")
+            {
+                supplierGroup = null;
             }
             ScopeRepository scopeRepository = new ScopeRepository();
             // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
@@ -2113,6 +2130,10 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             pmGroupName.Direction = ParameterDirection.Input;
             pmGroupName.Value = (object)groupName ?? DBNull.Value;
             pmGroupName.ParameterName = "groupName";
+            DbParameter pmSupplierGroup = command.CreateParameter();
+            pmSupplierGroup.Direction = ParameterDirection.Input;
+            pmSupplierGroup.Value = (object)supplierGroup ?? DBNull.Value;
+            pmSupplierGroup.ParameterName = "supplierGroup";
             #endregion
             // Add parameter as specified in the store procedure
             command.Parameters.Add(UserID);
@@ -2120,6 +2141,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             command.Parameters.Add(pmFromDate);
             command.Parameters.Add(pmToDate);
             command.Parameters.Add(pmGroupName);
+            command.Parameters.Add(pmSupplierGroup);
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         #endregion
