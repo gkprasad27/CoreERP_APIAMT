@@ -35,6 +35,20 @@ namespace CoreERP.BussinessLogic.masterHlepers
             }
         }
 
+        public List<TblPumps> GetPump(decimal pumpId )
+        {
+            try
+            {
+                using (Repository<TblPumps> repo = new Repository<TblPumps>())
+                {
+                    return repo.TblPumps.AsEnumerable().Where(b => b.PumpId == (pumpId)).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public TblPumps Register(TblPumps pumps)
         {
             try
@@ -72,8 +86,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblPumps> repo = new Repository<TblPumps>();
+                var _pumpNo = GetPump(pumps.PumpId).ToArray().FirstOrDefault();
                 pumps.BranchId = Convert.ToInt32(pumps.BranchCode);
-                pumps.PumpNo = Convert.ToInt32(pumps.PumpNo);
+                pumps.PumpNo = _pumpNo.PumpNo;
                 string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo) && obj.BranchCode == Convert.ToString(pumps.BranchCode) && obj.ProductCode == Convert.ToString(pumps.ProductId))?.TankId);
                 pumps.TankId = int.Parse(name);
                 repo.TblPumps.Update(pumps);
