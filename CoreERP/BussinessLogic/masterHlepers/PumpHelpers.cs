@@ -40,8 +40,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblPumps> repo = new Repository<TblPumps>();
-                string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo) && obj.BranchCode == Convert.ToString(pumps.BranchCode))?.TankId);
-                pumps.TankId = int.Parse(name);
+               
                 pumps.BranchId = Convert.ToInt32(pumps.BranchCode);
                 if (pumps.ProductName == "DIESEL")
                 {
@@ -54,6 +53,8 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     pumps.ProductCode = _product.ProductCode;
                     pumps.ProductId = Convert.ToInt32(_product.ProductId);
                 }
+                string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo) && obj.BranchCode == Convert.ToString(pumps.BranchCode) && obj.ProductCode == Convert.ToString(pumps.ProductId))?.TankId);
+                pumps.TankId = int.Parse(name);
                 repo.TblPumps.Add(pumps);
                 if (repo.SaveChanges() > 0)
                     return pumps;
@@ -71,10 +72,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblPumps> repo = new Repository<TblPumps>();
-                string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo) && obj.BranchCode==Convert.ToString(pumps.BranchCode))?.TankId);
-                pumps.TankId = int.Parse(name);
                 pumps.BranchId = Convert.ToInt32(pumps.BranchCode);
                 pumps.PumpNo = Convert.ToInt32(pumps.PumpNo);
+                string name = Convert.ToString(repo.TblTanks.SingleOrDefault(obj => obj.TankNo == Convert.ToString(pumps.TankNo) && obj.BranchCode == Convert.ToString(pumps.BranchCode) && obj.ProductCode == Convert.ToString(pumps.ProductId))?.TankId);
+                pumps.TankId = int.Parse(name);
                 repo.TblPumps.Update(pumps);
                 if (repo.SaveChanges() > 0)
                     return pumps;
