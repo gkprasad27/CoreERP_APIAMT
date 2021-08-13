@@ -163,7 +163,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 };
                 dbParametersList.Add(parameters);
             }
-            else if (reportID == 4 || reportID == 5)
+            else if (reportID == 4 || reportID == 5 || reportID == 8)
             {
                 parameters = new parametersClass
                 {
@@ -187,6 +187,8 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                     parameters.paramValue = "HDFC";
                 else if (reportID == 5)
                     parameters.paramValue = "Fleet";
+                else if (reportID == 8)
+                    parameters.paramValue = "ICICI SWIPE RECEIVABLES A/c";
                 dbParametersList.Add(parameters);
                 procedureName = "Usp_ShiftWiseFleetOrHDFCreport";
             }
