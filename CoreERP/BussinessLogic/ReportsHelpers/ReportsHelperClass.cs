@@ -395,6 +395,35 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             }
             else return (null, null, null);
         }
+
+        public static (List<dynamic>, List<dynamic>, List<dynamic>) GetAccountLedgerDieselReportDataList(string UserID, string ledgerCode, DateTime fromDate, DateTime toDate, string branchCode)
+        {
+            if (branchCode == "null")
+            {
+                branchCode = null;
+            }
+            DataSet dsResult = GetAccountLedgerDieselReportDataSet(UserID, ledgerCode, fromDate, toDate, branchCode);
+            List<dynamic> accountLedger = null;
+            List<dynamic> headerList = null;
+            List<dynamic> footerList = null;
+            if (dsResult != null)
+            {
+                if (dsResult.Tables.Count > 0 && dsResult.Tables[0].Rows.Count > 0)
+                {
+                    accountLedger = ToDynamic(dsResult.Tables[0]);
+                }
+                if (dsResult.Tables.Count > 1 && dsResult.Tables[1].Rows.Count > 0)
+                {
+                    headerList = ToDynamic(dsResult.Tables[1]);
+                }
+                if (dsResult.Tables.Count > 2 && dsResult.Tables[2].Rows.Count > 0)
+                {
+                    footerList = ToDynamic(dsResult.Tables[2]);
+                }
+                return (accountLedger, headerList, footerList);
+            }
+            else return (null, null, null);
+        }
         public static DataSet GetAccountLedgerReportDataSet(string UserID, string ledgerCode, DateTime fromDate, DateTime toDate, string branchCode)
         {
             if (branchCode != null)
@@ -474,6 +503,87 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
                 return scopeRepository.ExecuteParamerizedCommand(command);
             }
            
+        }
+
+        public static DataSet GetAccountLedgerDieselReportDataSet(string UserID, string ledgerCode, DateTime fromDate, DateTime toDate, string branchCode)
+        {
+            if (branchCode != null)
+            {
+                ScopeRepository scopeRepository = new ScopeRepository();
+                // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+                using DbCommand command = scopeRepository.CreateCommand();
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = "Usp_AccountLedgerDieselReportByBranch";
+                #region Parameters
+                DbParameter pmledgerCode = command.CreateParameter();
+                pmledgerCode.Direction = ParameterDirection.Input;
+                pmledgerCode.Value = (object)ledgerCode ?? DBNull.Value;
+                pmledgerCode.ParameterName = "ledgerCode";
+
+                DbParameter pmfromDate = command.CreateParameter();
+                pmfromDate.Direction = ParameterDirection.Input;
+                pmfromDate.Value = (object)fromDate ?? DBNull.Value;
+                pmfromDate.ParameterName = "fDate";
+
+                DbParameter pmtoDate = command.CreateParameter();
+                pmtoDate.Direction = ParameterDirection.Input;
+                pmtoDate.Value = (object)toDate ?? DBNull.Value;
+                pmtoDate.ParameterName = "tDate";
+
+                DbParameter pmUserID = command.CreateParameter();
+                pmUserID.Direction = ParameterDirection.Input;
+                pmUserID.Value = (object)UserID ?? DBNull.Value;
+                pmUserID.ParameterName = "userName";
+
+                DbParameter pmBranchCode = command.CreateParameter();
+                pmBranchCode.Direction = ParameterDirection.Input;
+                pmBranchCode.Value = (object)branchCode ?? DBNull.Value;
+                pmBranchCode.ParameterName = "branchCode";
+                #endregion
+                // Add parameter as specified in the store procedure
+                command.Parameters.Add(pmledgerCode);
+                command.Parameters.Add(pmfromDate);
+                command.Parameters.Add(pmtoDate);
+                command.Parameters.Add(pmUserID);
+                command.Parameters.Add(pmBranchCode);
+                return scopeRepository.ExecuteParamerizedCommand(command);
+            }
+            else
+            {
+                ScopeRepository scopeRepository = new ScopeRepository();
+                // As we  cannot instantiate a DbCommand because it is an abstract base class created from the repository with context connection.
+                using DbCommand command = scopeRepository.CreateCommand();
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = "Usp_GetAccountLedgerDieselReport";
+                #region Parameters
+                DbParameter pmledgerCode = command.CreateParameter();
+                pmledgerCode.Direction = ParameterDirection.Input;
+                pmledgerCode.Value = (object)ledgerCode ?? DBNull.Value;
+                pmledgerCode.ParameterName = "ledgerCode";
+
+                DbParameter pmfromDate = command.CreateParameter();
+                pmfromDate.Direction = ParameterDirection.Input;
+                pmfromDate.Value = (object)fromDate ?? DBNull.Value;
+                pmfromDate.ParameterName = "fDate";
+
+                DbParameter pmtoDate = command.CreateParameter();
+                pmtoDate.Direction = ParameterDirection.Input;
+                pmtoDate.Value = (object)toDate ?? DBNull.Value;
+                pmtoDate.ParameterName = "tDate";
+
+                DbParameter pmUserID = command.CreateParameter();
+                pmUserID.Direction = ParameterDirection.Input;
+                pmUserID.Value = (object)UserID ?? DBNull.Value;
+                pmUserID.ParameterName = "UserID";
+                #endregion
+                // Add parameter as specified in the store procedure
+                command.Parameters.Add(pmledgerCode);
+                command.Parameters.Add(pmfromDate);
+                command.Parameters.Add(pmtoDate);
+                command.Parameters.Add(pmUserID);
+                return scopeRepository.ExecuteParamerizedCommand(command);
+            }
+
         }
         public static List<TblAccountLedger> GetAccountLedgers()
         {
