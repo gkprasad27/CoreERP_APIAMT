@@ -391,15 +391,15 @@ namespace CoreERP.BussinessLogic.PurhaseHelpers
                             {
                                 //Add Roundoff Plus record
                                 var _accAL = GetAccountLedgers("303");
-                                _accAL.CrOrDr = "Credit";
+                                _accAL.CrOrDr = "Debit";
                                 var voucherDetailRoundOffP = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.RoundOffPlus, false);
                                 AddAccountLedgerTransactions(context, voucherDetailRoundOffP, purchaseInvoice.PurchaseInvDate);
                             }
                             if (purchaseInvoice.RoundOffMinus != null)
                             {
-                                //Add Roundoff Plus record
+                                //Add Roundoff Minus record
                                 var _accAL = GetAccountLedgers("303");
-                                _accAL.CrOrDr = "Debit";
+                                _accAL.CrOrDr = "Credit";
                                 var voucherDetailRoundOffM = AddVoucherDetails(context, purchaseInvoice, _branch, _voucherMaster, _accAL, purchaseInvoice.RoundOffMinus, false);
                                 AddAccountLedgerTransactions(context, voucherDetailRoundOffM, purchaseInvoice.PurchaseInvDate);
                             }
