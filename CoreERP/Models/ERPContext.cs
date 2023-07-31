@@ -246,7 +246,7 @@ namespace CoreERP.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=183.82.48.82;Database=ERP;User Id=sa; pwd=dotnet@!@#; MultipleActiveResultSets=true;");
+                optionsBuilder.UseSqlServer("Server = 103.67.236.159, 7912; Database = ERP; User Id = sa; pwd =)CEEV9BZUv!$; MultipleActiveResultSets = true; TrustServerCertificate = True");
             }
         }
 
@@ -769,7 +769,7 @@ namespace CoreERP.Models
                     .HasColumnName("RoleID")
                     .HasMaxLength(200);
 
-                entity.Property(e => e.ScreenName).HasMaxLength(100);
+                entity.Property(e => e.screenName).HasMaxLength(100);
 
                 entity.Property(e => e.UserId).HasMaxLength(200);
             });
@@ -4891,7 +4891,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.ScreenModule).HasMaxLength(50);
 
-                entity.Property(e => e.ScreenName)
+                entity.Property(e => e.screenName)
                     .IsRequired()
                     .HasMaxLength(50);
 
