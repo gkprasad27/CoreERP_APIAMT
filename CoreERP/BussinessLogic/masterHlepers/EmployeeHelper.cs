@@ -37,52 +37,52 @@ namespace CoreERP.BussinessLogic.masterHlepers
         }
 
 
-        //public static TblEmployee Register(TblEmployee employees)
-        //{
-        //    try
-        //    {
-        //        using Repository<TblEmployee> repo = new Repository<TblEmployee>();
-        //        employees.IsActive = true;
-        //        repo.TblEmployee.Add(employees);
-        //        if (repo.SaveChanges() > 0)
-        //            return employees;
+        public static TblEmployee Register(TblEmployee employees)
+        {
+            try
+            {
+                using Repository<TblEmployee> repo = new Repository<TblEmployee>();
+                employees.IsActive = true;
+                repo.TblEmployee.Add(employees);
+                if (repo.SaveChanges() > 0)
+                    return employees;
 
-        //        return null;
-        //    }
-        //    catch { throw; }
-        //}
-
-
-        //public static TblEmployee Update(TblEmployee employees)
-        //{
-        //    try
-        //    {
-        //        using Repository<TblEmployee> repo = new Repository<TblEmployee>();
-        //        repo.TblEmployee.Update(employees);
-        //        if (repo.SaveChanges() > 0)
-        //            return employees;
-
-        //        return null;
-        //    }
-        //    catch { throw; }
-        //}
+                return null;
+            }
+            catch { throw; }
+        }
 
 
-        //public static TblEmployee Delete(string empCode)
-        //{
-        //    try
-        //    {
-        //        using Repository<TblEmployee> repo = new Repository<TblEmployee>();
-        //        var emp = repo.TblEmployee.Where(e => e.EmployeeId == Convert.ToDecimal(empCode)).FirstOrDefault();
-        //        emp.IsActive = false;
-        //        repo.TblEmployee.Update(emp);
-        //        if (repo.SaveChanges() > 0)
-        //            return emp;
+        public static TblEmployee Update(TblEmployee employees)
+        {
+            try
+            {
+                using Repository<TblEmployee> repo = new Repository<TblEmployee>();
+                repo.TblEmployee.Update(employees);
+                if (repo.SaveChanges() > 0)
+                    return employees;
 
-        //        return null;
-        //    }
-        //    catch { throw; }
-        //}
+                return null;
+            }
+            catch { throw; }
+        }
+
+
+        public static TblEmployee Delete(string empCode)
+        {
+            try
+            {
+                using Repository<TblEmployee> repo = new Repository<TblEmployee>();
+                var emp = repo.TblEmployee.Where(e => e.EmployeeId == Convert.ToDecimal(empCode)).FirstOrDefault();
+                emp.IsActive = false;
+                repo.TblEmployee.Update(emp);
+                if (repo.SaveChanges() > 0)
+                    return emp;
+
+                return null;
+            }
+            catch { throw; }
+        }
 
 
         #region Employee In Branch
@@ -101,53 +101,53 @@ namespace CoreERP.BussinessLogic.masterHlepers
         }
         #endregion
 
-        //public static EmployeeInBranches RegisterEmployeeInBranch(EmployeeInBranches empbr)
-        //{
-        //    try
-        //    {
-        //        using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
-        //        empbr.Active = "Y";
-        //        empbr.AddDate = DateTime.Now;
-        //        repo.EmployeeInBranches.Add(empbr);
-        //        if (repo.SaveChanges() > 0)
-        //            return empbr;
+        public static EmployeeInBranches RegisterEmployeeInBranch(EmployeeInBranches empbr)
+        {
+            try
+            {
+                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                empbr.Active = "Y";
+                empbr.AddDate = DateTime.Now;
+                repo.EmployeeInBranches.Add(empbr);
+                if (repo.SaveChanges() > 0)
+                    return empbr;
 
-        //        return null;
-        //    }
-        //    catch { throw; }
-        //}
-
-
-        //public static EmployeeInBranches UpdateEmployeeInBranches(EmployeeInBranches empbr)
-        //{
-        //    try
-        //    {
-        //        using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
-        //        repo.EmployeeInBranches.Update(empbr);
-        //        if (repo.SaveChanges() > 0)
-        //            return empbr;
-
-        //        return null;
-        //    }
-        //    catch { throw; }
-        //}
+                return null;
+            }
+            catch { throw; }
+        }
 
 
-        //public static EmployeeInBranches DeleteEmployeeInBranches(string empCode)
-        //{
-        //    try
-        //    {
-        //        using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
-        //        var emp = repo.EmployeeInBranches.Where(e => e.SeqId == Convert.ToInt32(empCode)).FirstOrDefault();
-        //        emp.Active = "N";
-        //        repo.EmployeeInBranches.Remove(emp);
-        //        if (repo.SaveChanges() > 0)
-        //            return emp;
+        public static EmployeeInBranches UpdateEmployeeInBranches(EmployeeInBranches empbr)
+        {
+            try
+            {
+                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                repo.EmployeeInBranches.Update(empbr);
+                if (repo.SaveChanges() > 0)
+                    return empbr;
 
-        //        return null;
-        //    }
-        //    catch { throw; }
-        //}
-        //#endregion
+                return null;
+            }
+            catch { throw; }
+        }
+
+
+        public static EmployeeInBranches DeleteEmployeeInBranches(string empCode)
+        {
+            try
+            {
+                using Repository<EmployeeInBranches> repo = new Repository<EmployeeInBranches>();
+                var emp = repo.EmployeeInBranches.Where(e => e.SeqId == Convert.ToInt32(empCode)).FirstOrDefault();
+                emp.Active = "N";
+                repo.EmployeeInBranches.Remove(emp);
+                if (repo.SaveChanges() > 0)
+                    return emp;
+
+                return null;
+            }
+            catch { throw; }
+        }
+//#endregion
     }
 }
