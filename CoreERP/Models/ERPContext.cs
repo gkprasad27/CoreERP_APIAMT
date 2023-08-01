@@ -659,11 +659,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.GroupName).HasMaxLength(50);
 
-                entity.Property(e => e.GroupType).HasMaxLength(50);
-
-                entity.Property(e => e.NumberRangeFrom).HasMaxLength(10);
-
-                entity.Property(e => e.NumberRangeTo).HasMaxLength(10);
             });
 
             modelBuilder.Entity<Glaccounts>(entity =>

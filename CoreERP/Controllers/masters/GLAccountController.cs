@@ -119,10 +119,9 @@ namespace CoreERP.Controllers
             try
             {
                 var getaccnolist = _glagRepository.Where(x => x.GroupCode == code).FirstOrDefault();
-                if (!Enumerable.Range(Convert.ToInt32(getaccnolist?.NumberRangeFrom),
-                    Convert.ToInt32(getaccnolist?.NumberRangeTo)).Contains(code1))
-                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "incorrect data."});
-                if (code1 >= Convert.ToInt32(getaccnolist?.NumberRangeFrom) && code1 <= Convert.ToInt32(getaccnolist.NumberRangeTo))
+                //if (!Enumerable.Range(Convert.ToInt32(getaccnolist?.NumberRange)).Contains(code1))
+                //    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "incorrect data."});
+                if (code1 >= Convert.ToInt32(getaccnolist?.NumberRange) && code1 <= Convert.ToInt32(getaccnolist.NumberRange))
                 {
                     return Ok();
                 }
