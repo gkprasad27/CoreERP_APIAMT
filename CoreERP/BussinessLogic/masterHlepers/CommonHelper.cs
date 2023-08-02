@@ -371,12 +371,12 @@ namespace CoreERP
                 c.CompanyName = company.FirstOrDefault(cur => cur.CompanyCode == c.Company)?.CompanyName;
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
-                c.MaterialGroupName = materialgroup.FirstOrDefault(l => l.GroupKey == c.MaterialGroup)?.Description;
+                c.MaterialGroupName = materialgroup.FirstOrDefault(l => l.groupCode == c.MaterialGroup)?.groupName;
                 c.MaterialSizeName = materialsize.FirstOrDefault(l => l.Sizekey == c.Size)?.Description;
                 c.UomName = uom.FirstOrDefault(l => l.UnitId ==Convert.ToDecimal(c.Uom))?.UnitName;
                 c.ModelPatternName = modelpattern.FirstOrDefault(l => l.Code == c.ModelPattern)?.Description;
                 c.DivisionName = division.FirstOrDefault(l => l.Code == c.Division)?.Description;
-                c.PurchaseGroupName = purchasegroup.FirstOrDefault(l => l.GroupKey == c.PurchasingGroup)?.Description;
+                c.PurchaseGroupName = purchasegroup.FirstOrDefault(l => l.groupCode == c.PurchasingGroup)?.groupName;
             });
             return result;
         }

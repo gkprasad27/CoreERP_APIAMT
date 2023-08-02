@@ -95,7 +95,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _materialGroupsRepository.GetSingleOrDefault(x => x.GroupKey.Equals(code));
+                var record = _materialGroupsRepository.GetSingleOrDefault(x => x.groupCode.Equals(code));
                 _materialGroupsRepository.Remove(record);
                 if (_materialGroupsRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };

@@ -4178,13 +4178,21 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMaterialGroups>(entity =>
             {
-                entity.HasKey(e => e.GroupKey);
-
+                entity.HasKey(e => e.groupId);
+              
                 entity.ToTable("tbl_MaterialGroups");
+                entity.Property(e => e.groupCode).HasMaxLength(50);
 
-                entity.Property(e => e.GroupKey).HasMaxLength(10);
+                entity.Property(e => e.narration).HasMaxLength(50);
 
-                entity.Property(e => e.Description).HasMaxLength(50);
+                entity.Property(e => e.groupName).HasMaxLength(50);
+
+                entity.Property(e => e.extra1).HasMaxLength(50);
+
+                entity.Property(e => e.extra2).HasMaxLength(50);
+                entity.Property(e => e.extraDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
             });
 
             modelBuilder.Entity<TblMaterialMaster>(entity =>
