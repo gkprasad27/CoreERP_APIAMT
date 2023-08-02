@@ -632,9 +632,9 @@ namespace CoreERP
             return result;
         }
 
-        public static IEnumerable<CostCenter> GetCostcenters()
+        public static IEnumerable<CostCenters> GetCostcenters()
         {
-            using var repo = new Repository<CostCenter>();
+            using var repo = new Repository<CostCenters>();
             var objecttype = repo.TblCostingObjectTypes.ToList();
             var employees = repo.TblEmployee.ToList();
             var department = repo.TblFunctionalDepartment.ToList();
@@ -643,7 +643,7 @@ namespace CoreERP
 
             result.ForEach(c =>
             {
-                c.ObjectName = objecttype.FirstOrDefault(cur => cur.ObjectType == c.ObjectType)?.Description;
+                c.ObjectName = objecttype.FirstOrDefault(cur => cur.ObjectType == c.Name)?.Description;
                 c.ResponsibleName = employees.FirstOrDefault(l => l.EmployeeCode == c.ResponsiblePerson)?.EmployeeName;
                 c.DepartmentName = department.FirstOrDefault(l => l.Code == c.Department)?.Description;
                 c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
@@ -677,10 +677,10 @@ namespace CoreERP
 
             result.ForEach(c =>
             {
-                c.CostCenterName = costcenter.FirstOrDefault(cur => cur.Code == c.CostCenter)?.CostCenterName;
+                c.CostCenterName = costcenter.FirstOrDefault(cur => cur.Code == c.CostCenter)?.Name;
                 c.PersonName = employees.FirstOrDefault(l => l.EmployeeCode == c.Person)?.EmployeeName;
                 c.DepartmentName = department.FirstOrDefault(l => l.DepartmentId == c.Department)?.DepartmentName;
-                c.ProfitName = profitcenter.FirstOrDefault(l => l.Code == c.ProfitCenter)?.Description;
+                c.ProfitName = profitcenter.FirstOrDefault(l => l.Code == c.ProfitCenter)?.Name;
                 c.SegmentName = segment.FirstOrDefault(l => l.Id == c.Segment)?.Name;
             });
             return result;
@@ -1247,7 +1247,7 @@ namespace CoreERP
                 c.AssetClassName = tblAssetClasses.FirstOrDefault(l => l.Code == c.Assetclass)?.Description;
                 c.AccountKeyName = tblAssetAccountkeys.FirstOrDefault(cur => cur.Code == c.AccountKey)?.Description;
                 c.BranchName = branches.FirstOrDefault(cur => cur.BranchCode == c.Branch)?.BranchName;
-                c.ProfitCenterName = profitCenters.FirstOrDefault(cur => cur.Code == c.ProfitCenter)?.Description;
+                c.ProfitCenterName = profitCenters.FirstOrDefault(cur => cur.Code == c.ProfitCenter)?.Name;
                 c.SegmentName = segments.FirstOrDefault(cur => cur.Id == c.Segment)?.Name;
                 c.DivisionName = divisions.FirstOrDefault(cur => cur.Code == c.Division)?.Description;
                 c.PlantName = plants.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
@@ -1279,7 +1279,7 @@ namespace CoreERP
                 c.MainAssetName = tblMainAssetMasters.FirstOrDefault(l => l.AssetNumber == c.MainAssetNo)?.Name;
                 c.AccountKeyName = tblAssetAccountkeys.FirstOrDefault(cur => cur.Code == c.AccountKey)?.Description;
                 c.BranchName = branches.FirstOrDefault(cur => cur.BranchCode == c.Branch)?.BranchName;
-                c.ProfitCenterName = profitCenters.FirstOrDefault(cur => cur.Code == c.ProfitCenter)?.Description;
+                c.ProfitCenterName = profitCenters.FirstOrDefault(cur => cur.Code == c.ProfitCenter)?.Name;
                 c.SegmentName = segments.FirstOrDefault(cur => cur.Id == c.Segment)?.Name;
                 c.DivisionName = divisions.FirstOrDefault(cur => cur.Code == c.Division)?.Description;
                 c.PlantName = plants.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;

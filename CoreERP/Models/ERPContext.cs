@@ -21,7 +21,7 @@ namespace CoreERP.Models
         public virtual DbSet<AssignmentSubaccounttoGl> AssignmentSubaccounttoGl { get; set; }
         public virtual DbSet<CashInOutFlow1> CashInOutFlow1 { get; set; }
         public virtual DbSet<ConfigurationTable> ConfigurationTable { get; set; }
-        public virtual DbSet<CostCenter> CostCenter { get; set; }
+        public virtual DbSet<CostCenters> CostCenter { get; set; }
         public virtual DbSet<Countries> Countries { get; set; }
         public virtual DbSet<Department> Department { get; set; }
         public virtual DbSet<Divisions> Divisions { get; set; }
@@ -369,41 +369,14 @@ namespace CoreERP.Models
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<CostCenter>(entity =>
+            modelBuilder.Entity<CostCenters>(entity =>
             {
                 entity.HasKey(e => e.Code)
                     .HasName("PK_CostCenter_1");
 
                 entity.Property(e => e.Code).HasMaxLength(15);
 
-                entity.Property(e => e.Address).HasMaxLength(50);
-
-                entity.Property(e => e.City).HasMaxLength(50);
-
-                entity.Property(e => e.CostCenterName).HasMaxLength(50);
-
-                entity.Property(e => e.CostType).HasMaxLength(50);
-
-                entity.Property(e => e.Department).HasMaxLength(50);
-
                 entity.Property(e => e.Email).HasMaxLength(50);
-
-                entity.Property(e => e.FromDate).HasColumnType("date");
-
-                entity.Property(e => e.Functions).HasMaxLength(50);
-
-                entity.Property(e => e.Location).HasMaxLength(50);
-
-                entity.Property(e => e.ObjectType)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.Phone).HasMaxLength(10);
-
-                entity.Property(e => e.Quantity)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .IsFixedLength();
 
                 entity.Property(e => e.ResponsiblePerson)
                     .HasMaxLength(40)
@@ -411,9 +384,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.State).HasMaxLength(50);
 
-                entity.Property(e => e.Type).HasMaxLength(50);
-
-                entity.Property(e => e.Uom).HasColumnName("UOM");
             });
 
             modelBuilder.Entity<Countries>(entity =>
@@ -972,8 +942,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Country).HasMaxLength(5);
 
                 entity.Property(e => e.Currency).HasMaxLength(5);
-
-                entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.Property(e => e.Email).HasMaxLength(50);
 
@@ -2489,10 +2457,6 @@ namespace CoreERP.Models
                     .HasColumnName("GSTNo")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.HouseNo).HasMaxLength(50);
-
-                entity.Property(e => e.Image).HasColumnType("image");
-
                 entity.Property(e => e.Language).HasMaxLength(5);
 
                 entity.Property(e => e.Location).HasMaxLength(50);
@@ -2505,7 +2469,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Pin)
                     .HasColumnName("PIN")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Region).HasMaxLength(5);
 
@@ -2513,13 +2477,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.State).HasMaxLength(5);
 
-                entity.Property(e => e.Street).HasMaxLength(50);
-
                 entity.Property(e => e.Tanno)
                     .HasColumnName("TANNo")
                     .HasMaxLength(50);
-
-                entity.Property(e => e.Telephone).HasMaxLength(50);
 
                 entity.Property(e => e.WebSite).HasMaxLength(50);
 

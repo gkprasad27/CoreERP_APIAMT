@@ -389,7 +389,7 @@ namespace CoreERP.Models
         [NotMapped]
         public string ResponsibleName { get; set; }
     }
-    partial class CostCenter
+    partial class CostCenters
     {
         [NotMapped]
         public string ResponsibleName { get; set; }
@@ -423,11 +423,13 @@ namespace CoreERP.Models
     partial class CostCenters
     {
         [NotMapped]
-        public string ResponsibleName { get; set; }
-        [NotMapped]
         public string StateName { get; set; }
         [NotMapped]
         public string CompanyName { get; set; }
+        [NotMapped]
+        public string Department { get; set; }
+        [NotMapped]
+        public string Uom { get; set; }
     }
 
     partial class TblPlant

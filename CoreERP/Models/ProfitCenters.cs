@@ -5,8 +5,9 @@ namespace CoreERP.Models
 {
     public partial class ProfitCenters
     {
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+        public int seqID { get; set; }
         public string Code { get; set; }
-        public string Description { get; set; }
         public string Name { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }

@@ -12,8 +12,8 @@ namespace CoreERP.Controllers
     [Route("api/CostCenter")]
     public class CostCenterMasterController : ControllerBase
     {
-        private readonly IRepository<CostCenter> _ccRepository;
-        public CostCenterMasterController(IRepository<CostCenter> ccRepository)
+        private readonly IRepository<CostCenters> _ccRepository;
+        public CostCenterMasterController(IRepository<CostCenters> ccRepository)
         {
             _ccRepository = ccRepository;
         }
@@ -40,7 +40,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("RegisterCostCenter")]
-        public IActionResult RegisterCostCenter([FromBody]CostCenter costCenter)
+        public IActionResult RegisterCostCenter([FromBody]CostCenters costCenter)
         {
             if (costCenter == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(costCenter)} cannot be null" });
@@ -65,7 +65,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateCostCenter")]
-        public IActionResult UpdateCostCenter([FromBody] CostCenter costCenter)
+        public IActionResult UpdateCostCenter([FromBody] CostCenters costCenter)
         {
             if (costCenter == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(costCenter)} cannot be null" });
@@ -96,7 +96,7 @@ namespace CoreERP.Controllers
             try
             {
                 APIResponse apiResponse;
-                var record = _ccRepository.GetSingleOrDefault(x => x.ObjectType.Equals(code));
+                var record = _ccRepository.GetSingleOrDefault(x => x.Name.Equals(code));
                 _ccRepository.Remove(record);
                 if (_ccRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };

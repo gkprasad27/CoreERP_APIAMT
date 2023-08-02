@@ -5,6 +5,8 @@ namespace CoreERP.Models
 {
     public partial class TblBranch
     {
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+        public int BranchID { get; set; }
         public string BranchCode { get; set; }
         public string BranchName { get; set; }
         public string CompanyCode { get; set; }
