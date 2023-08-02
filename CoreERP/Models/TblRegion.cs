@@ -13,7 +13,8 @@ namespace CoreERP.Models
             TblPlant = new HashSet<TblPlant>();
             TblSalesOffice = new HashSet<TblSalesOffice>();
         }
-
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+        public int ID { get; set; }
         public string RegionCode { get; set; }
         public string RegionName { get; set; }
         public string Country { get; set; }

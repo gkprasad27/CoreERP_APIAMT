@@ -428,17 +428,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Currency).HasMaxLength(5);
 
-                entity.Property(e => e.Currency1).HasMaxLength(50);
-
-                entity.Property(e => e.Currency2).HasMaxLength(50);
-
-                entity.Property(e => e.DateFormat).HasMaxLength(50);
-
                 entity.Property(e => e.DecimalFormat).HasMaxLength(50);
 
                 entity.Property(e => e.Language).HasMaxLength(5);
-
-                entity.Property(e => e.TimeFormat).HasMaxLength(50);
 
                 entity.HasOne(d => d.CurrencyNavigation)
                     .WithMany(p => p.Countries)
