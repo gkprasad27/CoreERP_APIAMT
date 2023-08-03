@@ -12,14 +12,14 @@ namespace CoreERP.Controllers.GeneralLedger
     [Route("api/VoucherClass")]
     public class VoucherClassController : ControllerBase
     {
-        private readonly IRepository<TblVoucherclass> _vcRepository;
-        public VoucherClassController(IRepository<TblVoucherclass> vcRepository)
+        private readonly IRepository<Voucherclass> _vcRepository;
+        public VoucherClassController(IRepository<Voucherclass> vcRepository)
         {
             _vcRepository = vcRepository;
         }
 
         [HttpPost("RegisterVoucherClass")]
-        public IActionResult RegisterVoucherClass([FromBody]TblVoucherclass vcclass)
+        public IActionResult RegisterVoucherClass([FromBody] Voucherclass vcclass)
         {
             if (vcclass == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -67,7 +67,7 @@ namespace CoreERP.Controllers.GeneralLedger
         }
 
         [HttpPut("UpdateVoucherClass")]
-        public IActionResult UpdateVoucherClass([FromBody] TblVoucherclass vcclass)
+        public IActionResult UpdateVoucherClass([FromBody] Voucherclass vcclass)
         {
             if (vcclass == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(vcclass)} cannot be null" });
@@ -98,7 +98,7 @@ namespace CoreERP.Controllers.GeneralLedger
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _vcRepository.GetSingleOrDefault(x => x.VoucherKey.Equals(code));
+                var record = _vcRepository.GetSingleOrDefault(x => x.VoucherCode.Equals(code));
                 _vcRepository.Remove(record);
                 if (_vcRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };

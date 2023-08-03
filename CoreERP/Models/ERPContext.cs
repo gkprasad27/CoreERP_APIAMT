@@ -229,7 +229,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblUserNew> TblUserNew { get; set; }
         public virtual DbSet<TblVoucherSeries> TblVoucherSeries { get; set; }
         public virtual DbSet<TblVoucherType> TblVoucherType { get; set; }
-        public virtual DbSet<TblVoucherclass> TblVoucherclass { get; set; }
+        public virtual DbSet<Voucherclass> TblVoucherclass { get; set; }
         public virtual DbSet<TblWbs> TblWbs { get; set; }
         public virtual DbSet<TblWorkCenterCapacity> TblWorkCenterCapacity { get; set; }
         public virtual DbSet<TblWorkcenterActivity> TblWorkcenterActivity { get; set; }
@@ -6839,29 +6839,36 @@ namespace CoreERP.Models
                     .HasColumnName("VoucherTypeID")
                     .HasMaxLength(5);
 
-                entity.Property(e => e.AccountType).HasMaxLength(50);
+                entity.Property(e => e.typeOfVoucher).HasMaxLength(50);
 
-                entity.Property(e => e.PrintText).HasMaxLength(50);
+                entity.Property(e => e.methodOfVoucherNumbering).HasMaxLength(50);
 
-                entity.Property(e => e.VoucherClass).HasMaxLength(5);
+                entity.Property(e => e.isTaxApplicable).HasMaxLength(50);
 
                 entity.Property(e => e.VoucherTypeName)
                     .HasColumnName("voucherTypeName")
                     .HasMaxLength(50);
             });
 
-            modelBuilder.Entity<TblVoucherclass>(entity =>
+            modelBuilder.Entity<Voucherclass>(entity =>
             {
-                entity.HasKey(e => e.VoucherKey)
+                entity.HasKey(e => e.VoucherCode)
                     .HasName("PK__tbl_VoucherTypes");
 
-                entity.ToTable("tbl_Voucherclass");
+                entity.ToTable("Voucherclass");
 
-                entity.Property(e => e.VoucherKey).HasMaxLength(5);
+                entity.Property(e => e.VoucherCode).HasMaxLength(5);
 
-                entity.Property(e => e.Description).HasMaxLength(50);
+                entity.Property(e => e.Class).HasMaxLength(50);
 
-                entity.Property(e => e.VoucherNature).HasMaxLength(50);
+                entity.Property(e => e.Ext1).HasMaxLength(50);
+
+                entity.Property(e => e.Ext2).HasMaxLength(5);
+
+                entity.Property(e => e.VouchrType).HasMaxLength(50);
+
+                entity.Property(e => e.Active).HasMaxLength(1);
+                entity.Property(e => e.AddDate).HasColumnType("date");
             });
 
             modelBuilder.Entity<TblWbs>(entity =>
