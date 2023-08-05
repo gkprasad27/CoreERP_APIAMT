@@ -584,6 +584,24 @@ namespace CoreERP
             return result;
         }
 
+        public static IEnumerable<TblDesignation> GetDesignation()
+        {
+            using var repo = new Repository<TblDesignation>();
+           
+            var result = repo.TblDesignation.ToList();
+
+            return result;
+        }
+
+        public static IEnumerable<Department> GetDepartment()
+        {
+            using var repo = new Repository<Department>();
+
+            var result = repo.Department.ToList();
+
+            return result;
+        }
+
         public static IEnumerable<ProfitCenters> GetProfitcenters()
         {
             using var repo = new Repository<ProfitCenters>();
