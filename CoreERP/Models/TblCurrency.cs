@@ -15,7 +15,6 @@ namespace CoreERP.Models
             TblPlant = new HashSet<TblPlant>();
             TblSalesOffice = new HashSet<TblSalesOffice>();
         }
-
         public string CurrencySymbol { get; set; }
         public string CurrencyName { get; set; }
         public int? NoOfDecimalPlaces { get; set; }

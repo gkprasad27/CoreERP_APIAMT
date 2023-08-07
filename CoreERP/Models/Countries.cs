@@ -16,14 +16,14 @@ namespace CoreERP.Models
             TblRegion = new HashSet<TblRegion>();
             TblSalesOffice = new HashSet<TblSalesOffice>();
         }
-        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; }
-        public string CountryCode { get; set; }
-        public string CountryName { get; set; }
-        public string Language { get; set; }
-        public string Currency { get; set; }
-        public string DecimalFormat { get; set; }
-
+        public string? CountryCode { get; set; }
+        public string? CountryName { get; set; }
+        public string? Language { get; set; }
+        public string? Currency { get; set; }
+        public string? DecimalFormat { get; set; }
+        public string? TimeFormat { get; set; }
+        public string? DatFormat { get; set; }
+        public string? AdditionlCurrencyKey { get; set; }
         public virtual TblCurrency CurrencyNavigation { get; set; }
         public virtual TblLanguage LanguageNavigation { get; set; }
         public virtual ICollection<ProfitCenters> ProfitCenters { get; set; }
