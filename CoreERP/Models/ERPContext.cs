@@ -2045,8 +2045,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Address2).HasMaxLength(50);
 
-                entity.Property(e => e.BranchImage).HasColumnType("image");
-
                 entity.Property(e => e.BranchName)
                     .IsRequired()
                     .HasMaxLength(50);
