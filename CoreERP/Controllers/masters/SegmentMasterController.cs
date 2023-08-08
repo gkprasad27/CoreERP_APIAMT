@@ -90,7 +90,7 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(ID)}can not be null" });
             try
             {
-                var record = _segmentRepository.GetSingleOrDefault(x => x.Id.Equals(ID));
+                var record = _segmentRepository.GetSingleOrDefault(x => x.Name.Equals(ID));
                 _segmentRepository.Remove(record);
                 if (_segmentRepository.SaveChanges() > 0)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = record });
