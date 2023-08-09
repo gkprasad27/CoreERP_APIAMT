@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblPurchaseGroup
     {
-        public string PruchaseGroup { get; set; }
-        public string Description { get; set; }
+        public string? PruchaseGroup { get; set; }
+        public string? Description { get; set; }
     }
 }
