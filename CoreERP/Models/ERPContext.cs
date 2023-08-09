@@ -4179,11 +4179,11 @@ namespace CoreERP.Models
                 entity.HasKey(e => e.groupId);
               
                 entity.ToTable("tbl_MaterialGroups");
-                entity.Property(e => e.groupCode).HasMaxLength(50);
+                entity.Property(e => e.GroupKey).HasMaxLength(50);
 
                 entity.Property(e => e.narration).HasMaxLength(50);
 
-                entity.Property(e => e.groupName).HasMaxLength(50);
+                entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.Property(e => e.extra1).HasMaxLength(50);
 
@@ -4300,13 +4300,13 @@ namespace CoreERP.Models
                 entity.ToTable("tbl_MaterialNoSeries");
 
                 entity.Property(e => e.Code).HasMaxLength(5);
-
-                entity.Property(e => e.NonNumaric)
-                    .HasMaxLength(1)
-                    .IsUnicode(false)
-                    .IsFixedLength();
-
-                entity.Property(e => e.Prefix).HasMaxLength(5);
+                entity.Property(e => e.FromInterval).HasMaxLength(10);
+                entity.Property(e => e.ToInterval).HasMaxLength(10);
+                entity.Property(e => e.CurrentNumber).HasMaxLength(10);
+                entity.Property(e => e.NonNumeric).HasMaxLength(50);
+                entity.Property(e => e.Prefix).HasMaxLength(50);
+                entity.Property(e => e.Autogenerator).HasMaxLength(50);
+                entity.Property(e => e.Ext).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblMaterialPurchasePrice>(entity =>
@@ -4416,16 +4416,16 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMaterialSize>(entity =>
             {
-                entity.HasKey(e => e.Sizekey)
+                entity.HasKey(e => e.unitId)
                     .HasName("PK_MaterialSize");
 
                 entity.ToTable("tbl_MaterialSize");
 
-                entity.Property(e => e.Sizekey)
-                    .HasMaxLength(5)
+                entity.Property(e => e.narration)
+                    .HasMaxLength(50)
                     .IsFixedLength();
 
-                entity.Property(e => e.Description)
+                entity.Property(e => e.unitName)
                     .HasMaxLength(50)
                     .IsUnicode(false);
             });

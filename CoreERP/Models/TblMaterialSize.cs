@@ -5,7 +5,9 @@ namespace CoreERP.Models
 {
     public partial class TblMaterialSize
     {
-        public string Sizekey { get; set; }
-        public string Description { get; set; }
+        public string? unitId { get; set; }
+        public string? unitName { get; set; }
+        public int? noOfDecimalplaces { get; set; }
+        public string? narration { get; set; }
     }
 }
