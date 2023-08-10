@@ -5196,11 +5196,11 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblRequisitionNoRange>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.numberRange);
 
                 entity.ToTable("tbl_RequisitionNoRange");
 
-                entity.Property(e => e.Code).HasMaxLength(10);
+                entity.Property(e => e.numberRange).HasMaxLength(10);
 
                 entity.Property(e => e.Department).HasMaxLength(5);
 

@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblRequisitionNoRange
     {
-        public string? Code { get; set; }
+        public string? numberRange { get; set; }
         public int? FromInterval { get; set; }
         public int? ToInterval { get; set; }
         public int? CurrentNumber { get; set; }

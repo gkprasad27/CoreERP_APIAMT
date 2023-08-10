@@ -159,7 +159,7 @@ namespace CoreERP
 
             result.ForEach(c =>
             {
-                c.NoRangeName = norange.FirstOrDefault(cur => cur.Code == c.numberRange)?.Code;
+                c.NoRangeName = norange.FirstOrDefault(cur => cur.numberRange == c.numberRange)?.numberRange;
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.DepartmentName = dept.FirstOrDefault(cur => cur.DepartmentId == c.Department)?.DepartmentName;
                 c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
