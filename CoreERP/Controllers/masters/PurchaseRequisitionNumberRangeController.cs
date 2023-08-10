@@ -12,14 +12,14 @@ namespace CoreERP.Controllers.masters
     public class PurchaseRequisitionNumberRangeController : ControllerBase
     {
 
-        private readonly IRepository<TblPrnoRange> _prnoRangeRepository;
-        public PurchaseRequisitionNumberRangeController(IRepository<TblPrnoRange> prnoRangeRepository)
+        private readonly IRepository<TblRequisitionNoRange> _prnoRangeRepository;
+        public PurchaseRequisitionNumberRangeController(IRepository<TblRequisitionNoRange> prnoRangeRepository)
         {
             _prnoRangeRepository = prnoRangeRepository;
         }
 
         [HttpPost("RegisterPurchaseRequisitionNumberRange")]
-        public IActionResult RegisterPurchaseRequisitionNumberRange([FromBody]TblPrnoRange norange)
+        public IActionResult RegisterPurchaseRequisitionNumberRange([FromBody] TblRequisitionNoRange norange)
         {
             if (norange == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -65,7 +65,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPut("UpdatePurchaseRequisitionNumberRange")]
-        public IActionResult UpdatePurchaseRequisitionNumberRange([FromBody] TblPrnoRange norange)
+        public IActionResult UpdatePurchaseRequisitionNumberRange([FromBody] TblRequisitionNoRange norange)
         {
             if (norange == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(norange)} cannot be null" });

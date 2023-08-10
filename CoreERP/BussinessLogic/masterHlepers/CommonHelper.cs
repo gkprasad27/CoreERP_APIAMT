@@ -159,7 +159,7 @@ namespace CoreERP
 
             result.ForEach(c =>
             {
-                c.NoRangeName = norange.FirstOrDefault(cur => cur.NumberRange == c.NumberRange)?.NumberRange;
+                c.NoRangeName = norange.FirstOrDefault(cur => cur.Code == c.numberRange)?.Code;
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.DepartmentName = dept.FirstOrDefault(cur => cur.DepartmentId == c.Department)?.DepartmentName;
                 c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
@@ -337,12 +337,12 @@ namespace CoreERP
             return result;
         }
 
-        public static IEnumerable<TblPrnoRange> GetPrnoRange()
+        public static IEnumerable<TblRequisitionNoRange> GetPrnoRange()
         {
-            using var repo = new Repository<TblPrnoRange>();
+            using var repo = new Repository<TblRequisitionNoRange>();
             var plant = repo.TblPlant.ToList();
             var dept = repo.TblFunctionalDepartment.ToList();
-            var result = repo.TblPrnoRange.ToList();
+            var result = repo.TblRequisitionNoRange.ToList();
 
             result.ForEach(c =>
             {

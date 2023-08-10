@@ -222,7 +222,7 @@ namespace CoreERP.Models
         public string UomName { get; set; }
     }
 
-    partial class TblPrnoRange
+    partial class TblRequisitionNoRange
     {
         [NotMapped]
         public string PlantName { get; set; }

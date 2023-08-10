@@ -15,6 +15,7 @@
     <Compile Remove="Controllers\masters\menuAccessController.cs" />
     <Compile Remove="Controllers\masters\MenusController.cs" />
     <Compile Remove="Controllers\masters\VoucherClassController.cs" />
+    <Compile Remove="Models\TblPrnoRange.cs" />
   </ItemGroup>
 
   <ItemGroup>

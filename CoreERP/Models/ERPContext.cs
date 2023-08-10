@@ -165,7 +165,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblPosting> TblPosting { get; set; }
         public virtual DbSet<TblPriceList> TblPriceList { get; set; }
         public virtual DbSet<TblPrimaryCostElement> TblPrimaryCostElement { get; set; }
-        public virtual DbSet<TblPrnoRange> TblPrnoRange { get; set; }
+        //public virtual DbSet<TblPrnoRange> TblPrnoRange { get; set; }
         public virtual DbSet<TblProcess> TblProcess { get; set; }
         public virtual DbSet<TblPurchaseDepartment> TblPurchaseDepartment { get; set; }
         public virtual DbSet<TblPurchaseGroup> TblPurchaseGroup { get; set; }
@@ -4177,7 +4177,7 @@ namespace CoreERP.Models
             modelBuilder.Entity<TblMaterialGroups>(entity =>
             {
                 entity.HasKey(e => e.groupId);
-              
+
                 entity.ToTable("tbl_MaterialGroups");
                 entity.Property(e => e.GroupKey).HasMaxLength(50);
 
@@ -5194,11 +5194,11 @@ namespace CoreERP.Models
                 entity.Property(e => e.Usage).HasMaxLength(50);
             });
 
-            modelBuilder.Entity<TblPrnoRange>(entity =>
+            modelBuilder.Entity<TblRequisitionNoRange>(entity =>
             {
                 entity.HasKey(e => e.Code);
 
-                entity.ToTable("tbl_PRNoRange");
+                entity.ToTable("tbl_RequisitionNoRange");
 
                 entity.Property(e => e.Code).HasMaxLength(10);
 
@@ -5207,6 +5207,10 @@ namespace CoreERP.Models
                 entity.Property(e => e.Plant).HasMaxLength(5);
 
                 entity.Property(e => e.Prefix).HasMaxLength(5);
+                entity.Property(e => e.FromInterval).HasMaxLength(5);
+
+                entity.Property(e => e.ToInterval).HasMaxLength(5);
+                entity.Property(e => e.CurrentNumber).HasMaxLength(5);
             });
 
             modelBuilder.Entity<TblProcess>(entity =>
@@ -5717,12 +5721,12 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblReqNoAssignment>(entity =>
             {
-                entity.HasKey(e => new { e.NumberRange, e.Company })
+                entity.HasKey(e => new { e.numberRange, e.Company })
                     .HasName("PK_tbl_ReqNoAssignment_1");
 
                 entity.ToTable("tbl_ReqNoAssignment");
 
-                entity.Property(e => e.NumberRange).HasMaxLength(5);
+                entity.Property(e => e.numberRange).HasMaxLength(5);
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
@@ -5735,16 +5739,16 @@ namespace CoreERP.Models
                     .HasMaxLength(5);
             });
 
-            modelBuilder.Entity<TblRequisitionNoRange>(entity =>
-            {
-                entity.HasKey(e => e.NumberRange);
+            //modelBuilder.Entity<TblRequisitionNoRange>(entity =>
+            //{
+            //    entity.HasKey(e => e.Code);
 
-                entity.ToTable("tbl_RequisitionNoRange");
+            //    entity.ToTable("tbl_RequisitionNoRange");
 
-                entity.Property(e => e.NumberRange).HasMaxLength(5);
+            //    entity.Property(e => e.Code).HasMaxLength(5);
 
-                entity.Property(e => e.Prefix).HasMaxLength(5);
-            });
+            //    entity.Property(e => e.Prefix).HasMaxLength(5);
+            //});
 
             modelBuilder.Entity<TblRole>(entity =>
             {
