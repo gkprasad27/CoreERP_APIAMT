@@ -8,14 +8,13 @@ namespace CoreERP.Models
     {
         public int? VoucherTypeId { get; set; }
         public string? VoucherTypeName { get; set; }
-        public string? typeOfVoucher { get; set; }
-        public string? methodOfVoucherNumbering { get; set; }
-        public string? isTaxApplicable { get; set; }
+        public string? voucherClass { get; set; }
+        public string? accountType { get; set; }
+        public string? printText { get; set; }
         public string? narration { get; set; }
         public string? isActive { get; set; }
         public int? isDefault { get; set; }
-        public int? masterId { get; set; }
-        public string? declaration { get; set; }
+       
 
 
 

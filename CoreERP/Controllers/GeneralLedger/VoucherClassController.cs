@@ -98,7 +98,7 @@ namespace CoreERP.Controllers.GeneralLedger
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _vcRepository.GetSingleOrDefault(x => x.VoucherCode.Equals(code));
+                var record = _vcRepository.GetSingleOrDefault(x => x.VoucherKey.Equals(code));
                 _vcRepository.Remove(record);
                 if (_vcRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };

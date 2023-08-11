@@ -6841,11 +6841,11 @@ namespace CoreERP.Models
                     .HasColumnName("VoucherTypeID")
                     .HasMaxLength(5);
 
-                entity.Property(e => e.typeOfVoucher).HasMaxLength(50);
+                entity.Property(e => e.voucherClass).HasMaxLength(50);
 
-                entity.Property(e => e.methodOfVoucherNumbering).HasMaxLength(50);
+                entity.Property(e => e.accountType).HasMaxLength(50);
 
-                entity.Property(e => e.isTaxApplicable).HasMaxLength(50);
+                entity.Property(e => e.printText).HasMaxLength(50);
 
                 entity.Property(e => e.VoucherTypeName)
                     .HasColumnName("voucherTypeName")
@@ -6854,20 +6854,18 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<Voucherclass>(entity =>
             {
-                entity.HasKey(e => e.VoucherCode)
+                entity.HasKey(e => e.VoucherKey)
                     .HasName("PK__tbl_VoucherTypes");
 
                 entity.ToTable("Voucherclass");
 
-                entity.Property(e => e.VoucherCode).HasMaxLength(5);
+                entity.Property(e => e.VoucherKey).HasMaxLength(5);
 
-                entity.Property(e => e.Class).HasMaxLength(50);
+                entity.Property(e => e.VoucherNature).HasMaxLength(50);
 
                 entity.Property(e => e.Ext1).HasMaxLength(50);
 
-                entity.Property(e => e.Ext2).HasMaxLength(5);
-
-                entity.Property(e => e.VouchrType).HasMaxLength(50);
+                entity.Property(e => e.Description).HasMaxLength(5);
 
                 entity.Property(e => e.Active).HasMaxLength(1);
                 entity.Property(e => e.AddDate).HasColumnType("date");

@@ -857,8 +857,8 @@ namespace CoreERP
 
             result.ForEach(c =>
             {
-                c.VoucherClassName = voucherclasses.FirstOrDefault(l => l.VoucherCode == c.VoucherClassName)?.VoucherCode;
-                c.VoucherNature = voucherclasses.FirstOrDefault(l => l.VoucherCode == c.VoucherClassName)?.VoucherCode;
+                c.VoucherClassName = voucherclasses.FirstOrDefault(l => l.VoucherKey == c.VoucherClassName)?.VoucherKey;
+                c.VoucherNature = voucherclasses.FirstOrDefault(l => l.VoucherKey == c.VoucherClassName)?.VoucherKey;
             });
             return result;
         }
