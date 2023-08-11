@@ -90,7 +90,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeleteAssiignChartAcctoCompanyCode/{code}")]
-        public IActionResult DeleteAssiignChartAcctoCompanyCodebyID(int code)
+        public IActionResult DeleteAssiignChartAcctoCompanyCodebyID(string code)
         {
             try
             {
