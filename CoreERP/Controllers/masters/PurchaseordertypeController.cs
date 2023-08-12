@@ -11,14 +11,14 @@ namespace CoreERP.Controllers.masters
     [Route("api/Purchaseordertype")]
     public class PurchaseordertypeController : ControllerBase
     {
-        private readonly IRepository<TblPurchaseType> _purchaseTypeRepository;
-        public PurchaseordertypeController(IRepository<TblPurchaseType> purchaseTypeRepository)
+        private readonly IRepository<TblPurchaseOrderType> _purchaseTypeRepository;
+        public PurchaseordertypeController(IRepository<TblPurchaseOrderType> purchaseTypeRepository)
         {
             _purchaseTypeRepository = purchaseTypeRepository;
         }
 
         [HttpPost("RegisterPurchaseordertype")]
-        public IActionResult RegisterPurchaseordertype([FromBody]TblPurchaseType ptype)
+        public IActionResult RegisterPurchaseordertype([FromBody] TblPurchaseOrderType ptype)
         {
             if (ptype == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -64,7 +64,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPut("UpdatePurchaseordertype")]
-        public IActionResult UpdatePurchaseordertype([FromBody] TblPurchaseType ptype)
+        public IActionResult UpdatePurchaseordertype([FromBody] TblPurchaseOrderType ptype)
         {
             if (ptype == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(ptype)} cannot be null" });
@@ -95,7 +95,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _purchaseTypeRepository.GetSingleOrDefault(x => x.PurchaseType.Equals(code));
+                var record = _purchaseTypeRepository.GetSingleOrDefault(x => x.PurchaseOrderType.Equals(code));
                 _purchaseTypeRepository.Remove(record);
                 if (_purchaseTypeRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
