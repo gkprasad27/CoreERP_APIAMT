@@ -2233,11 +2233,8 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblBusinessTransactionTypes>(entity =>
             {
+                entity.HasKey(e => e.Code);
                 entity.ToTable("tbl_BusinessTransactionTypes");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Code).HasMaxLength(10);
 
                 entity.Property(e => e.Description).HasMaxLength(50);
             });
