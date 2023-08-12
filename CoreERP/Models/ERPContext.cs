@@ -1673,11 +1673,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
-                entity.Property(e => e.FromRange).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.FromRange);
 
                 entity.Property(e => e.NonNumeric).HasMaxLength(5);
 
-                entity.Property(e => e.ToRange).HasColumnType("numeric(18, 0)");
+                entity.Property(e => e.ToRange);
             });
 
             modelBuilder.Entity<TblAssetTransactiontype>(entity =>

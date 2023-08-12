@@ -98,7 +98,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteAssignGLaccounttoSubGroup/{code}")]
-        public async Task<IActionResult> DeleteAssignGLaccounttoSubGroup(int code)
+        public async Task<IActionResult> DeleteAssignGLaccounttoSubGroup(string code)
         {
             try
             {

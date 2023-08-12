@@ -5,10 +5,10 @@ namespace CoreERP.Models
 {
     public partial class TblAlternateControlAccTrans
     {
-        public int Code { get; set; }
-        public string NormalControlAccount { get; set; }
-        public string AlternativeControlAccount { get; set; }
-        public string ChartofAccount { get; set; }
-        public string Company { get; set; }
+        public string? Code { get; set; }
+        public string? NormalControlAccount { get; set; }
+        public string? AlternativeControlAccount { get; set; }
+        public string? ChartofAccount { get; set; }
+        public string? Company { get; set; }
     }
 }

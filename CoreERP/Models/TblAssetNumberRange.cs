@@ -5,10 +5,10 @@ namespace CoreERP.Models
 {
     public partial class TblAssetNumberRange
     {
-        public string Code { get; set; }
-        public decimal? FromRange { get; set; }
-        public decimal? ToRange { get; set; }
-        public string NonNumeric { get; set; }
-        public string Description { get; set; }
+        public string? Code { get; set; }
+        public int? FromRange { get; set; }
+        public int? ToRange { get; set; }
+        public string? NonNumeric { get; set; }
+        public string? Description { get; set; }
     }
 }
