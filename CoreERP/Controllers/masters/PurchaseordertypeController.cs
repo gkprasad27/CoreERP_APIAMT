@@ -95,7 +95,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _purchaseTypeRepository.GetSingleOrDefault(x => x.PurchaseOrderType.Equals(code));
+                var record = _purchaseTypeRepository.GetSingleOrDefault(x => x.purchaseType.Equals(code));
                 _purchaseTypeRepository.Remove(record);
                 if (_purchaseTypeRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };

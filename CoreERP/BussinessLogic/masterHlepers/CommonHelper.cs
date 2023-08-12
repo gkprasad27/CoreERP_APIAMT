@@ -199,7 +199,7 @@ namespace CoreERP
                 c.NoRangeName = norange.FirstOrDefault(cur => cur.NumberRange == c.NumberRange)?.NumberRange;
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.CompanyCode)?.CompanyName;
-                c.PorderGroupName = pordertype.FirstOrDefault(l => l.PurchaseOrderType == c.PurchaseOrderType)?.Description;
+                c.PorderGroupName = pordertype.FirstOrDefault(l => l.purchaseType == c.PurchaseOrderType)?.Description;
             });
             return result;
         }

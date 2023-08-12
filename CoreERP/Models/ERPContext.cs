@@ -5410,11 +5410,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblPurchaseOrderType>(entity =>
             {
-                entity.HasKey(e => e.PurchaseOrderType);
+                entity.HasKey(e => e.purchaseType);
 
                 entity.ToTable("tbl_PurchaseOrderType");
-
-                entity.Property(e => e.PurchaseOrderType).HasMaxLength(10);
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
