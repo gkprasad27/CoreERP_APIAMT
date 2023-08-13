@@ -2160,8 +2160,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.City).HasMaxLength(50);
 
-                entity.Property(e => e.Code).HasMaxLength(5);
-
                 entity.Property(e => e.Company).HasMaxLength(5);
 
                 entity.Property(e => e.ContactPersion).HasMaxLength(50);
@@ -6305,9 +6303,8 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblSubAssetMasterTransaction>(entity =>
             {
+                entity.HasNoKey();
                 entity.ToTable("tbl_SubAssetMasterTransaction");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.DepreciationArea).HasMaxLength(50);
 

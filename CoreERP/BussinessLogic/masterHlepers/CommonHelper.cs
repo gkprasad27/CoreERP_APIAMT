@@ -1459,8 +1459,8 @@ namespace CoreERP
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
-                var data = context.TblSubAssetMasterTransaction.FirstOrDefault(obj => obj.SubAssetNumber == assetMaster.SubAssetNumber)?.Id;
-                if (data > 0)
+                var data = context.TblSubAssetMasterTransaction.FirstOrDefault(obj => obj.SubAssetNumber == assetMaster.SubAssetNumber)?.SubAssetNumber;
+                if (!string.IsNullOrEmpty(data))
                 {
                     context.TblSubAssetMaster.Update(assetMaster);
                     context.SaveChanges();
