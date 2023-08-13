@@ -5166,9 +5166,8 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblPrimaryCostElement>(entity =>
             {
+                entity.HasKey(e => e.Code);
                 entity.ToTable("tbl_PrimaryCostElement");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.ChartofAccount).HasMaxLength(5);
 
@@ -6488,9 +6487,8 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblTaskResources>(entity =>
             {
+                entity.HasNoKey();
                 entity.ToTable("tbl_TaskResources");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Activity).HasMaxLength(50);
 
@@ -6900,9 +6898,8 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblWorkCenterCapacity>(entity =>
             {
+                entity.HasKey(e => e.WorkCenterCode);
                 entity.ToTable("tbl_WorkCenterCapacity");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.BreakTime).HasColumnType("numeric(18, 0)");
 
@@ -6921,9 +6918,8 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblWorkcenterActivity>(entity =>
             {
+                entity.HasKey(e => e.WorkcenterCode);
                 entity.ToTable("tbl_WorkcenterActivity");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Activity).HasMaxLength(50);
 

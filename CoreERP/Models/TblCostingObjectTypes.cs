@@ -5,8 +5,8 @@ namespace CoreERP.Models
 {
     public partial class TblCostingObjectTypes
     {
-        public string ObjectType { get; set; }
-        public string Description { get; set; }
-        public string Usage { get; set; }
+        public string? ObjectType { get; set; }
+        public string? Description { get; set; }
+        public string? Usage { get; set; }
     }
 }

@@ -142,7 +142,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _primaryCostElementRepository.GetSingleOrDefault(x => x.Id.Equals(code));
+                var record = _primaryCostElementRepository.GetSingleOrDefault(x => x.Code.Equals(code));
                 _primaryCostElementRepository.Remove(record);
                 if (_primaryCostElementRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
