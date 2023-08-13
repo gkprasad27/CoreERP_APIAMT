@@ -1016,7 +1016,7 @@ namespace CoreERP
                 c.UnderAccountName = result.FirstOrDefault(l => l.AccountGroupId == c.GroupUnder)?.AccountGroupName;
 
             });
-            return result.OrderBy(x => x.Sequence);
+            return result.OrderBy(x => x.AccountGroupId);
         }
 
         public static IEnumerable<AssignmentSubaccounttoGl> GetAssignmentsubaccounttoGl()

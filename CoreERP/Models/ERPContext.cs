@@ -2612,7 +2612,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.PurchaseWithin).HasMaxLength(5);
 
-                entity.Property(e => e.Rate).HasColumnName("%Rate");
+                entity.Property(e => e.Rate).HasColumnName("Rate");
 
                 entity.Property(e => e.Upto1Months).HasColumnName("UPto1Months");
 
