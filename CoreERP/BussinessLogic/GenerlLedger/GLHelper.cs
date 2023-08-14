@@ -12,6 +12,77 @@ namespace CoreERP.BussinessLogic.GenerlLedger
     public class GLHelper
     {
 
+        #region TaxIntegration
+        public static List<TaxIntegration> GetTaxIntegrationList()
+        {
+            try
+            {
+                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
+                return repo.TaxIntegration.AsEnumerable().Where(m => m.Active == "Y").ToList();
+                //return null;
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static List<TaxIntegration> GetTaxIntegrationList(string taxCode)
+        {
+            try
+            {
+                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
+                return repo.TaxIntegration.AsEnumerable().Where(m => m.TaxCode == taxCode).ToList();
+
+                // return null;
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static TaxIntegration RegisterTaxIntegration(TaxIntegration taxintegration, string bcode, string ccode)
+        {
+            try
+            {
+                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
+                taxintegration.BranchCode = bcode;
+                taxintegration.CompanyCode = ccode;
+                taxintegration.Active = "Y";
+                taxintegration.AddDate = DateTime.Now;
+                repo.TaxIntegration.Add(taxintegration);
+                if (repo.SaveChanges() > 0)
+                    return taxintegration;
+
+                return null;
+            }
+            catch { throw; }
+        }
+        public static TaxIntegration UpdateTaxIntegration(TaxIntegration taxintegration, string bcode, string ccode)
+        {
+            try
+            {
+                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
+                taxintegration.BranchCode = bcode;
+                taxintegration.CompanyCode = ccode;
+                repo.TaxIntegration.Update(taxintegration);
+                if (repo.SaveChanges() > 0)
+                    return taxintegration;
+
+                return null;
+            }
+            catch { throw; }
+        }
+        public static TaxIntegration DeleteTaxIntegration(string taxCode)
+        {
+            try
+            {
+                using Repository<TaxIntegration> repo = new Repository<TaxIntegration>();
+                var taxInteCode = repo.TaxIntegration.Where(a => a.TaxCode == taxCode).FirstOrDefault();
+                taxInteCode.Active = "N";
+                repo.TaxIntegration.Update(taxInteCode);
+                if (repo.SaveChanges() > 0)
+                    return taxInteCode;
+
+                return null;
+            }
+            catch { throw; }
+        }
+        #endregion
+
         //public static IEnumerable<GlaccGroup> GetGLAccountGroupList(string accountGroupCode = null)
         //{
         //    try
@@ -370,17 +441,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         //    }
         //    catch { throw; }
         //}
-        //public static List<Glaccounts> GetGLAccountsList()
-        //{
-        //    try
-        //    {
-        //        using Repository<Glaccounts> repo = new Repository<Glaccounts>();
-        //        return repo.Glaccounts.AsEnumerable().Where(gl => gl.Active == "Y").ToList();
+        public static List<Glaccounts> GetGLAccountsList()
+        {
+            try
+            {
+                using Repository<Glaccounts> repo = new Repository<Glaccounts>();
+                return repo.Glaccounts.AsEnumerable().ToList();
 
-        //        //return null;
-        //    }
-        //    catch { throw; }
-        //}
+                //return null;
+            }
+            catch { throw; }
+        }
         //public static List<Glaccounts> GetGLAccountsList(string glCode)
         //{
         //    try
@@ -571,38 +642,38 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         //    catch { throw; }
         //}
         #endregion
-        //public static IEnumerable<TblCompany> GetCompanies()
-        //{
-        //    try
-        //    {
-        //        return Repository<TblCompany>.Instance.GetAll().OrderBy(x => x.CompanyCode);
-        //    }
-        //    catch { throw; }
-        //}
-        //public static IEnumerable<TblBranch> GetBranches()
-        //{
-        //    try
-        //    {
-        //        return Repository<TblBranch>.Instance.GetAll().OrderBy(x => x.BranchCode);
-        //    }
-        //    catch { throw; }
-        //}
-        //public static List<Glaccounts> GetTaxAccounts()
-        //{
-        //    try
-        //    {
-        //        //taxaccounts = (from taxacc in (from glacc in _unitOfWork.GLAccounts.GetAll()
-        //        //                               where glacc.Nactureofaccount != null
-        //        //                               select glacc)
-        //        //               where taxacc.Nactureofaccount.ToLower() == "tax"
-        //        //               select taxacc)
-        //        return (from taxacc in GLHelper.GetGLAccountsList().Where(x => x.Nactureofaccount != null)
-        //                where taxacc.Nactureofaccount.Equals(NATURESOFACCOUNTS.TAX.ToString(), StringComparison.OrdinalIgnoreCase)
-        //                select taxacc).ToList();
-        //    }
+        public static IEnumerable<TblCompany> GetCompanies()
+        {
+            try
+            {
+                return Repository<TblCompany>.Instance.GetAll().OrderBy(x => x.CompanyCode);
+            }
+            catch { throw; }
+        }
+        public static IEnumerable<TblBranch> GetBranches()
+        {
+            try
+            {
+                return Repository<TblBranch>.Instance.GetAll().OrderBy(x => x.BranchCode);
+            }
+            catch { throw; }
+        }
+        public static List<Glaccounts> GetTaxAccounts()
+        {
+            try
+            {
+                //taxaccounts = (from taxacc in (from glacc in _unitOfWork.GLAccounts.GetAll()
+                //                               where glacc.Nactureofaccount != null
+                //                               select glacc)
+                //               where taxacc.Nactureofaccount.ToLower() == "tax"
+                //               select taxacc)
+                return (from taxacc in GLHelper.GetGLAccountsList().Where(x => x.AccountNumber != null)
+                        where taxacc.TaxCategory.Equals(NATURESOFACCOUNTS.TAX.ToString(), StringComparison.OrdinalIgnoreCase)
+                        select taxacc).ToList();
+            }
 
-        //    catch { throw; }
-        //}
+            catch { throw; }
+        }
 
         #region Cash Account to branches
         //public static AsignmentCashAccBranch RegisterCashAccToBranches(AsignmentCashAccBranch assignCashToBranch)
@@ -652,18 +723,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         //}
 
         #endregion
-        //public static List<TaxMasters> GetTaxMastersList()
-        //{
-        //    try
-        //    {
-        //        using Repository<TaxMasters> repo = new Repository<TaxMasters>();
-        //        return repo.TaxMasters.AsEnumerable().Where(x => x.Active == "Y").ToList();
+        public static List<TaxMasters> GetTaxMastersList()
+        {
+            try
+            {
+                using Repository<TaxMasters> repo = new Repository<TaxMasters>();
+                return repo.TaxMasters.AsEnumerable().Where(x => x.Active == "Y").ToList();
 
-        //        //return null;
+                //return null;
 
-        //    }
-        //    catch { throw; }
-        //}
+            }
+            catch { throw; }
+        }
         //public static List<AsignmentCashAccBranch> GetAsignCashAccBranch()
         //{
         //    try
