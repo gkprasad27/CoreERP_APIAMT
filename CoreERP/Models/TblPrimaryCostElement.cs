@@ -5,7 +5,6 @@ namespace CoreERP.Models
 {
     public partial class TblPrimaryCostElement
     {
-        public string? Code { get; set; }
         public string? Company { get; set; }
         public string? ChartofAccount { get; set; }
         public string? GeneralLedger { get; set; }

@@ -1640,8 +1640,7 @@ namespace CoreERP
             {
                 using (var repo = new Repository<TblPrimaryCostElement>())
                 {
-                    pcost = repo.TblPrimaryCostElement.FirstOrDefault(c => c.Code == item.Code);
-                    pcost.Code = item.Code;
+                    pcost = repo.TblPrimaryCostElement.FirstOrDefault(c => c.GeneralLedger == item.GeneralLedger);
                     pcost.Company = item.Company;
                     pcost.ChartofAccount = item.ChartofAccount;
                     pcost.GeneralLedger = pcost.GeneralLedger;

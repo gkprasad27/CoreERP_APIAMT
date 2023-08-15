@@ -40,6 +40,27 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetProfitCenters")]
+        public IActionResult GetProfitCentersList()
+        {
+            try
+            {
+                var profitCenterList = CommonHelper.GetProfitcenters().Select(x => new { code = x.Code, name = x.Name }); ;
+                if (profitCenterList.Count() > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.profitCenterList = profitCenterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception e)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = e.Message });
+            }
+        }
+
         [HttpPost("RegisterProfitCenters")]
         public  IActionResult RegisterProfitCenters([FromBody] ProfitCenters profitCenter)
         {

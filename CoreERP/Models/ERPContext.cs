@@ -5166,7 +5166,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblPrimaryCostElement>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.GeneralLedger);
                 entity.ToTable("tbl_PrimaryCostElement");
 
                 entity.Property(e => e.ChartofAccount).HasMaxLength(5);

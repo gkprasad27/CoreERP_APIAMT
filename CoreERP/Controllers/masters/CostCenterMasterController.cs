@@ -1,3 +1,4 @@
+using CoreERP.BussinessLogic.GenerlLedger;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
@@ -36,6 +37,21 @@ namespace CoreERP.Controllers
             catch (Exception ex)
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetCostCenters")]
+        public IActionResult GetCostCenterSList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.TaxcodesList = CommonHelper.GetCostcenters().Select(x => new { code = x.Code, name = x.Name });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
