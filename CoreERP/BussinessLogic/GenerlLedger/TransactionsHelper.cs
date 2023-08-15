@@ -189,7 +189,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             cashBankDetails.ForEach(csh =>
             {
-                csh.Id = 0;
                 csh.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
             });
             using (ERPContext context = new ERPContext())
