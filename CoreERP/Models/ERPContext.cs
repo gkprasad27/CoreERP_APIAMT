@@ -3725,9 +3725,9 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblInvoiceVerificationDetails>(entity =>
             {
-                entity.ToTable("tbl_InvoiceVerificationDetails");
+                entity.HasKey(e => e.Id);
 
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.ToTable("tbl_InvoiceVerificationDetails");
 
                 entity.Property(e => e.AccountKey).HasMaxLength(50);
 
@@ -3803,9 +3803,8 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblInvoiceVerificationOtherExpenses>(entity =>
             {
+                entity.HasKey(e => e.Id);
                 entity.ToTable("tbl_InvoiceVerificationOtherExpenses");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Account).HasMaxLength(50);
 
