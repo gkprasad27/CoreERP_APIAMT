@@ -5810,9 +5810,8 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblRoutingActiitiesAssignment>(entity =>
             {
+                entity.HasKey(e => e.Id);
                 entity.ToTable("tbl_RoutingActiitiesAssignment");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Activity).HasMaxLength(50);
 
@@ -5833,9 +5832,8 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblRoutingBasicData>(entity =>
             {
+                entity.HasKey(e => e.Id);
                 entity.ToTable("tbl_RoutingBasicData");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Operation).HasMaxLength(50);
 
@@ -5879,9 +5877,8 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblRoutingMaterialAssignment>(entity =>
             {
+                entity.HasKey(e => e.Id);
                 entity.ToTable("tbl_RoutingMaterialAssignment");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
@@ -5898,9 +5895,8 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblRoutingToolsEqupments>(entity =>
             {
+                entity.HasKey(e => e.Id);
                 entity.ToTable("tbl_RoutingToolsEqupments");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
