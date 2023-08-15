@@ -2239,6 +2239,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblCashBankDetails>(entity =>
             {
+                entity.HasKey(e => e.ID);
                 entity.ToTable("tbl_CashBankDetails");
 
                 entity.Property(e => e.AccountingIndicator).HasMaxLength(50);

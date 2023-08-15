@@ -5,6 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblCashBankDetails
     {
+        public int ID { get; set; }
         public string? Company { get; set; }
         public string? Branch { get; set; }
         public string? VoucherNumber { get; set; }
