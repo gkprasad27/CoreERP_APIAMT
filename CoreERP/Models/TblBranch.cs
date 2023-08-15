@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblBranch
     {
-        public int? BranchID { get; set; }
+        //public int? BranchID { get; set; }
         public string? BranchCode { get; set; }
         public string? BranchName { get; set; }
         public string? CompanyCode { get; set; }
