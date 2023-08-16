@@ -5,15 +5,16 @@ namespace CoreERP.Models
 {
     public partial class TblQuotationAnalysisDetails
     {
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string QuotationNumber { get; set; }
-        public string MaterialCode { get; set; }
+        public string? QuotationNumber { get; set; }
+        public string? MaterialCode { get; set; }
         public decimal? UnitPrice { get; set; }
         public decimal? Discount { get; set; }
         public decimal? NetPrice { get; set; }
         public decimal? Tax { get; set; }
         public decimal? Total { get; set; }
-        public string Delivery { get; set; }
+        public string? Delivery { get; set; }
         public decimal? Credit { get; set; }
         public decimal? Advance { get; set; }
     }
