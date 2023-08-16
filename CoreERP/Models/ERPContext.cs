@@ -1573,13 +1573,14 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblAssetBegningAccumulatedDepreciation>(entity =>
             {
+                entity.HasKey(e => e.Id);
                 entity.ToTable("tbl_AssetBegningAccumulatedDepreciation");
 
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.mainAssetNo).HasMaxLength(50);
 
                 entity.Property(e => e.AccumulatedDepreciation).HasMaxLength(50);
 
-                entity.Property(e => e.AcquisitionCode).HasMaxLength(50);
+                entity.Property(e => e.subAssetNo).HasMaxLength(50);
 
                 entity.Property(e => e.DepreciationArea).HasMaxLength(50);
             });
@@ -6296,7 +6297,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblSubAssetMasterTransaction>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.Id);
                 entity.ToTable("tbl_SubAssetMasterTransaction");
 
                 entity.Property(e => e.DepreciationArea).HasMaxLength(50);

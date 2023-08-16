@@ -1353,7 +1353,7 @@ namespace CoreERP
                 context.SaveChanges();
                 astbngdsrpnDetails.ForEach(x =>
                 {
-                    x.AcquisitionCode = bngaqsn.Id.ToString();
+                    x.Id = bngaqsn.Id;
 
                 });
 
@@ -1370,16 +1370,16 @@ namespace CoreERP
             }
         }
 
-        public TblAssetBeginingAcquisition GetmainAqsnById(string code)
+        public TblAssetBeginingAcquisition GetmainAqsnById(int code)
         {
             using var repo = new Repository<TblAssetBeginingAcquisition>();
-            return repo.TblAssetBeginingAcquisition.FirstOrDefault(x => x.Id.ToString() == code);
+            return repo.TblAssetBeginingAcquisition.FirstOrDefault(x => x.Id == code);
         }
 
-        public List<TblAssetBegningAccumulatedDepreciation> GetAqsnDetailDetails(string code)
+        public List<TblAssetBegningAccumulatedDepreciation> GetAqsnDetailDetails(int code)
         {
             using var repo = new Repository<TblAssetBegningAccumulatedDepreciation>();
-            return repo.TblAssetBegningAccumulatedDepreciation.Where(cd => cd.AcquisitionCode == code).ToList();
+            return repo.TblAssetBegningAccumulatedDepreciation.Where(cd => cd.Id == code).ToList();
         }
 
         //Main Asset

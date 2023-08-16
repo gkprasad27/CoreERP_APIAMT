@@ -5,6 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblSubAssetMasterTransaction
     {
+        public int Id { get; set; }
         public string? SubAssetNumber { get; set; }
         public string? MainAssetNumber { get; set; }
         public string? DepreciationArea { get; set; }
