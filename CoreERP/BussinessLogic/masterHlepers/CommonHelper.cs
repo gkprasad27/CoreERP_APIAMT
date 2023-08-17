@@ -857,8 +857,8 @@ namespace CoreERP
 
             result.ForEach(c =>
             {
-                c.VoucherClassName = voucherclasses.FirstOrDefault(l => l.VoucherKey == c.VoucherClassName)?.VoucherKey;
-                c.VoucherNature = voucherclasses.FirstOrDefault(l => l.VoucherKey == c.VoucherClassName)?.VoucherKey;
+                c.voucherClassName = voucherclasses.FirstOrDefault(l => l.VoucherKey == c.voucherClass)?.Description;
+                c.VoucherNature = voucherclasses.FirstOrDefault(l => l.VoucherKey == c.voucherClass)?.VoucherNature;
             });
             return result;
         }
@@ -890,7 +890,7 @@ namespace CoreERP
 
             result.ForEach(c =>
             {
-                c.VoucherTypeName = tblVoucherTypes.FirstOrDefault(l => l.VoucherTypeId == Convert.ToInt16( c.VoucherType))?.VoucherTypeName;
+                c.VoucherTypeName = tblVoucherTypes.FirstOrDefault(l => l.VoucherTypeId ==  c.VoucherType)?.VoucherTypeName;
             });
             return result;
         }

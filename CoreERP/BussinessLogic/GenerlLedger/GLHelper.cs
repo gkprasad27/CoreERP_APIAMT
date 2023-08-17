@@ -849,7 +849,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             try
             {
-                return Repository<TblVoucherType>.Instance.Where(x => x.VoucherTypeId ==Convert.ToInt16( voucherCode));
+                return Repository<TblVoucherType>.Instance.Where(x => x.VoucherTypeId ==voucherCode);
             }
             catch { throw; }
         }

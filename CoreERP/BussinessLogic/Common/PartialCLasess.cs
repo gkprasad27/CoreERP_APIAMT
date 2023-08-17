@@ -509,7 +509,7 @@ namespace CoreERP.Models
     partial class TblVoucherType
     {
         [NotMapped]
-        public string VoucherClassName { get; set; }
+        public string voucherClassName { get; set; }
         [NotMapped]
         public string VoucherNature { get; set; }
     }

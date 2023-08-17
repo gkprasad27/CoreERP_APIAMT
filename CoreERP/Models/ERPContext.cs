@@ -6482,7 +6482,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblTaskResources>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.ID);
                 entity.ToTable("tbl_TaskResources");
 
                 entity.Property(e => e.Activity).HasMaxLength(50);

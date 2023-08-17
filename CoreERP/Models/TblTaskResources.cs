@@ -5,6 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblTaskResources
     {
+       public int ID { get; set; }
         public string? TaskNumber { get; set; }
         public string? Resource { get; set; }
         public string? MaterialCode { get; set; }

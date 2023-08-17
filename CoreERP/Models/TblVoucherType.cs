@@ -6,7 +6,7 @@ namespace CoreERP.Models
 {
     public partial class TblVoucherType
     {
-        public int? VoucherTypeId { get; set; }
+        public string? VoucherTypeId { get; set; }
         public string? VoucherTypeName { get; set; }
         public string? voucherClass { get; set; }
         public string? accountType { get; set; }
