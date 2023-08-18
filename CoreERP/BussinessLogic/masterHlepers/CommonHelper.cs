@@ -196,7 +196,7 @@ namespace CoreERP
 
             result.ForEach(c =>
             {
-                c.NoRangeName = norange.FirstOrDefault(cur => cur.NumberRange == c.NumberRange)?.NumberRange;
+                c.NoRangeName = norange.FirstOrDefault(cur => cur.code == c.NumberRange)?.code;
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.CompanyCode)?.CompanyName;
                 c.PorderGroupName = pordertype.FirstOrDefault(l => l.purchaseType == c.PurchaseOrderType)?.Description;
@@ -337,17 +337,17 @@ namespace CoreERP
             return result;
         }
 
-        public static IEnumerable<TblRequisitionNoRange> GetPrnoRange()
+        public static IEnumerable<TblPurchaseNoRange> GetPrnoRange()
         {
-            using var repo = new Repository<TblRequisitionNoRange>();
+            using var repo = new Repository<TblPurchaseNoRange>();
             var plant = repo.TblPlant.ToList();
             var dept = repo.TblFunctionalDepartment.ToList();
-            var result = repo.TblRequisitionNoRange.ToList();
+            var result = repo.TblPurchaseNoRange.ToList();
 
             result.ForEach(c =>
             {
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
-                c.Departmentname = dept.FirstOrDefault(l => l.Code == c.Department)?.Description;
+                c.departmentname = dept.FirstOrDefault(l => l.Code == c.Department)?.Description;
             });
             return result;
         }

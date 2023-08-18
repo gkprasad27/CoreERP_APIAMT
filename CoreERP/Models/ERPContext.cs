@@ -240,6 +240,7 @@ namespace CoreERP.Models
         public virtual DbSet<VwMaxRate> VwMaxRate { get; set; }
         public virtual DbSet<VwMinRate> VwMinRate { get; set; }
         public virtual DbSet<VwStockQuery> VwStockQuery { get; set; }
+        public virtual DbSet<TblPurchaseOrderNoRange> TblPurchaseOrderNoRange { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -5261,11 +5262,21 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblPurchaseNoRange>(entity =>
             {
-                entity.HasKey(e => e.NumberRange);
+                entity.HasKey(e => e.code);
 
                 entity.ToTable("tbl_PurchaseNoRange");
 
-                entity.Property(e => e.NumberRange).HasMaxLength(5);
+                entity.Property(e => e.code).HasMaxLength(5);
+
+                entity.Property(e => e.Prefix).HasMaxLength(5);
+            });
+            modelBuilder.Entity<TblPurchaseOrderNoRange>(entity =>
+            {
+                entity.HasKey(e => e.numberRange);
+
+                entity.ToTable("tbl_PurchaseOrderNoRange");
+
+                entity.Property(e => e.numberRange).HasMaxLength(5);
 
                 entity.Property(e => e.Prefix).HasMaxLength(5);
             });

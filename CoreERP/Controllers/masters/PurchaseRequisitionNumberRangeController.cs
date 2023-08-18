@@ -12,14 +12,14 @@ namespace CoreERP.Controllers.masters
     public class PurchaseRequisitionNumberRangeController : ControllerBase
     {
 
-        private readonly IRepository<TblRequisitionNoRange> _prnoRangeRepository;
-        public PurchaseRequisitionNumberRangeController(IRepository<TblRequisitionNoRange> prnoRangeRepository)
+        private readonly IRepository<TblPurchaseNoRange> _prnoRangeRepository;
+        public PurchaseRequisitionNumberRangeController(IRepository<TblPurchaseNoRange> prnoRangeRepository)
         {
             _prnoRangeRepository = prnoRangeRepository;
         }
 
         [HttpPost("RegisterPurchaseRequisitionNumberRange")]
-        public IActionResult RegisterPurchaseRequisitionNumberRange([FromBody] TblRequisitionNoRange norange)
+        public IActionResult RegisterPurchaseRequisitionNumberRange([FromBody] TblPurchaseNoRange norange)
         {
             if (norange == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -65,7 +65,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPut("UpdatePurchaseRequisitionNumberRange")]
-        public IActionResult UpdatePurchaseRequisitionNumberRange([FromBody] TblRequisitionNoRange norange)
+        public IActionResult UpdatePurchaseRequisitionNumberRange([FromBody] TblPurchaseNoRange norange)
         {
             if (norange == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(norange)} cannot be null" });
@@ -96,7 +96,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _prnoRangeRepository.GetSingleOrDefault(x => x.numberRange.Equals(code));
+                var record = _prnoRangeRepository.GetSingleOrDefault(x => x.code.Equals(code));
                 _prnoRangeRepository.Remove(record);
                 if (_prnoRangeRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };

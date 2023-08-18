@@ -17,6 +17,14 @@ namespace CoreERP.Models
         public string CountryName { get; set; }
     }
 
+    partial class TblPurchaseNoRange
+    {
+        [NotMapped]
+        public string PlantName { get; set; }
+        [NotMapped]
+        public string departmentname { get; set; }
+    }
+
 
     partial class States
     {

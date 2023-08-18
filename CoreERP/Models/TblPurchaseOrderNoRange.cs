@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace CoreERP.Models
 {
-    public partial class TblPurchaseNoRange
+    public partial class TblPurchaseOrderNoRange
     {
-        public string? code { get; set; }
+        public string? numberRange { get; set; }
         public int? FromInterval { get; set; }
         public int? ToInterval { get; set; }
         public int? CurrentNumber { get; set; }

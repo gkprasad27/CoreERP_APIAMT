@@ -11,14 +11,14 @@ namespace CoreERP.Controllers.masters
     [Route("api/PurchaseOrderNumberRange")]
     public class PurchaseOrderNumberRangeController : ControllerBase
     {
-        private readonly IRepository<TblPurchaseNoRange> _purchaseNoRangeRepository;
-        public PurchaseOrderNumberRangeController(IRepository<TblPurchaseNoRange> purchaseNoRangeRepository)
+        private readonly IRepository<TblPurchaseOrderNoRange> _purchaseNoRangeRepository;
+        public PurchaseOrderNumberRangeController(IRepository<TblPurchaseOrderNoRange> purchaseNoRangeRepository)
         {
             _purchaseNoRangeRepository = purchaseNoRangeRepository;
         }
 
         [HttpPost("RegisterPurchaseOrderNumberRange")]
-        public IActionResult RegisterPurchaseOrderNumberRange([FromBody]TblPurchaseNoRange norange)
+        public IActionResult RegisterPurchaseOrderNumberRange([FromBody] TblPurchaseOrderNoRange norange)
         {
             if (norange == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -64,7 +64,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPut("UpdatePurchaseOrderNumberRange")]
-        public IActionResult UpdatePurchaseOrderNumberRange([FromBody] TblPurchaseNoRange norange)
+        public IActionResult UpdatePurchaseOrderNumberRange([FromBody] TblPurchaseOrderNoRange norange)
         {
             if (norange == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(norange)} cannot be null" });
@@ -95,7 +95,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _purchaseNoRangeRepository.GetSingleOrDefault(x => x.NumberRange.Equals(code));
+                var record = _purchaseNoRangeRepository.GetSingleOrDefault(x => x.numberRange.Equals(code));
                 _purchaseNoRangeRepository.Remove(record);
                 if (_purchaseNoRangeRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
