@@ -41,7 +41,12 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                if (Convert.ToString(ex.HResult) == "-2146233088")
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = state.StateCode + " " + "Already exists" });
+
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
