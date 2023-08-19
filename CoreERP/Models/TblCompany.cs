@@ -35,6 +35,8 @@ namespace CoreERP.Models
         public DateTime? booksBeginingFrom { get; set; }
         public DateTime? currentDate { get; set; }
         public string? extra2 { get; set; }
+
+        public string? street { get; set; }
         public DateTime? extraDate { get; set; }
         public virtual Countries CountryNavigation { get; set; }
         public virtual TblCurrency CurrencyNavigation { get; set; }
