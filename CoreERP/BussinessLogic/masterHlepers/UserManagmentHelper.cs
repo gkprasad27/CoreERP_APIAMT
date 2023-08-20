@@ -168,6 +168,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                                     }
                                     #endregion
                                     dynamic subChild = GetMenustructureObj(subm, subchildList1);
+                                    subchildList1 = new List<ExpandoObject>();
                                     subchildList.Add(subChild);
                                 }
                             }
