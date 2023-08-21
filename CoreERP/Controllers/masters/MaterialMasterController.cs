@@ -34,16 +34,36 @@ namespace CoreERP.Controllers.masters
             {
                 int i = Convert.ToInt32(_numberRangerepository.Where(x => x.Code == code).SingleOrDefault()?.CurrentNumber);
                 var Getaccnolist = _assignmentrepository.Where(x => x.MaterialType == code).FirstOrDefault();
-                var numrnglist = _numberRangerepository.Where(x => x.Code == Getaccnolist.NumberRange.ToString()).FirstOrDefault();
-                if (i == 0 && Getaccnolist.MaterialType == code)
+                if (Getaccnolist != null)
                 {
-                    var x = numrnglist.FromInterval;
+                    var numrnglist = _numberRangerepository.Where(x => x.Code == Getaccnolist.NumberRange.ToString()).FirstOrDefault();
 
-                    if (Enumerable.Range(Convert.ToInt32(numrnglist.FromInterval), Convert.ToInt32(numrnglist.ToInterval)).Contains(Convert.ToInt32(x)))
+                    if (i == 0 && Getaccnolist.MaterialType == code)
                     {
-                        if (x >= Convert.ToInt32(numrnglist.FromInterval) && x <= Convert.ToInt32(numrnglist.ToInterval))
+                        var x = numrnglist.FromInterval;
+
+                        if (Enumerable.Range(Convert.ToInt32(numrnglist.FromInterval), Convert.ToInt32(numrnglist.ToInterval)).Contains(Convert.ToInt32(x)))
                         {
-                            var materialnum = x + 1;
+                            if (x >= Convert.ToInt32(numrnglist.FromInterval) && x <= Convert.ToInt32(numrnglist.ToInterval))
+                            {
+                                var materialnum = x + 1;
+                                if (materialnum != null)
+                                {
+                                    dynamic expdoObj = new ExpandoObject();
+                                    expdoObj.materialnum = materialnum;
+                                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                                }
+                            }
+                            else
+                                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
+                        }
+                    }
+                    else
+                    if (Enumerable.Range(Convert.ToInt32(numrnglist.FromInterval), Convert.ToInt32(numrnglist.ToInterval)).Contains(i))
+                    {
+                        if (i >= Convert.ToInt32(numrnglist.FromInterval) && i <= Convert.ToInt32(numrnglist.ToInterval))
+                        {
+                            var materialnum = i + 1;
                             if (materialnum != null)
                             {
                                 dynamic expdoObj = new ExpandoObject();
@@ -54,26 +74,12 @@ namespace CoreERP.Controllers.masters
                         else
                             return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
                     }
-                }
-                else
-                if (Enumerable.Range(Convert.ToInt32(numrnglist.FromInterval), Convert.ToInt32(numrnglist.ToInterval)).Contains(i))
-                {
-                    if (i >= Convert.ToInt32(numrnglist.FromInterval) && i <= Convert.ToInt32(numrnglist.ToInterval))
-                    {
-                        var materialnum = i + 1;
-                        if (materialnum != null)
-                        {
-                            dynamic expdoObj = new ExpandoObject();
-                            expdoObj.materialnum = materialnum;
-                            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                        }
-                    }
-                    else
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data." });
-                }
 
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data.." });
+                }
                 else
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "incorrect data.." });
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Not Configured Material Number. Continue with Enter Manual Number." });
             }
             catch (Exception ex)
             {
@@ -84,7 +90,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("RegisterMaterialMaster")]
-        public IActionResult RegisterMaterialMaster([FromBody]TblMaterialMaster mmaster)
+        public IActionResult RegisterMaterialMaster([FromBody] TblMaterialMaster mmaster)
         {
             if (mmaster == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
