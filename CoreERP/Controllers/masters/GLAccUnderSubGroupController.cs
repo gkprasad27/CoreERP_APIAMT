@@ -31,6 +31,10 @@ namespace CoreERP.Controllers.GL
                 APIResponse apiResponse;
 
                 //tblAccGrp.IsDefault = false;
+                if(!string.IsNullOrWhiteSpace(tblAccGrp.Undersubaccount))
+                    tblAccGrp.AccountGroupId = tblAccGrp.Undersubaccount + "-" + tblAccGrp.AccountGroupId;
+                else 
+                    tblAccGrp.AccountGroupId = tblAccGrp.GroupUnder + "-" + tblAccGrp.AccountGroupId;
 
                 _glaugRepository.Add(tblAccGrp);
                 if (_glaugRepository.SaveChanges() > 0)
