@@ -1555,7 +1555,7 @@ namespace CoreERP.Models
             {
                 entity.ToTable("tbl_AssetBeginingAcquisition");
 
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.Code).HasColumnName("code");
 
                 entity.Property(e => e.AcquisitionCost).HasColumnType("numeric(18, 0)");
 
