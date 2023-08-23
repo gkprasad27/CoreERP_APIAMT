@@ -404,8 +404,6 @@ namespace CoreERP.Models
         [NotMapped]
         public string ObjectName { get; set; }
         [NotMapped]
-        public string DepartmentName { get; set; }
-        [NotMapped]
         public string UomName { get; set; }
     }
     partial class TblFundCenter
@@ -435,7 +433,7 @@ namespace CoreERP.Models
         [NotMapped]
         public string CompanyName { get; set; }
         [NotMapped]
-        public string Department { get; set; }
+        public string DepartmentName { get; set; }
         [NotMapped]
         public string Uom { get; set; }
     }
