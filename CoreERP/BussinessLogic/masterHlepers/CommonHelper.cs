@@ -1354,7 +1354,7 @@ namespace CoreERP
                 astbngdsrpnDetails.ForEach(x =>
                 {
                     x.Id = bngaqsn.Id;
-
+                    x.Code = bngaqsn.Code;
                 });
 
                 context.TblAssetBegningAccumulatedDepreciation.AddRange(astbngdsrpnDetails);

@@ -9,8 +9,8 @@ namespace CoreERP.Models
         public int? Id { get; set; }
         public string? Code { get; set; }
         public string? mainAssetNo { get; set; }
-        public string? AccumulatedDepreciation { get; set; }
+        public string? accumulatedDepreciation { get; set; }
         public string? subAssetNo { get; set; }
-        public string? DepreciationArea { get; set; }
+        public string? depreciationArea { get; set; }
     }
 }
