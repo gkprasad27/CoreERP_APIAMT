@@ -137,7 +137,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetAssetBegningAcqusitionDetail/{code}")]
-        public IActionResult GetAssetBegningAcqusitionDetail(int code)
+        public IActionResult GetAssetBegningAcqusitionDetail(string code)
         {
             try
             {

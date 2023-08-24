@@ -1370,16 +1370,16 @@ namespace CoreERP
             }
         }
 
-        public TblAssetBeginingAcquisition GetmainAqsnById(int code)
+        public TblAssetBeginingAcquisition GetmainAqsnById(string code)
         {
             using var repo = new Repository<TblAssetBeginingAcquisition>();
-            return repo.TblAssetBeginingAcquisition.FirstOrDefault(x => x.Id == code);
+            return repo.TblAssetBeginingAcquisition.FirstOrDefault(x => x.Code == code);
         }
 
-        public List<TblAssetBegningAccumulatedDepreciation> GetAqsnDetailDetails(int code)
+        public List<TblAssetBegningAccumulatedDepreciation> GetAqsnDetailDetails(string code)
         {
             using var repo = new Repository<TblAssetBegningAccumulatedDepreciation>();
-            return repo.TblAssetBegningAccumulatedDepreciation.Where(cd => cd.Id == code).ToList();
+            return repo.TblAssetBegningAccumulatedDepreciation.Where(cd => cd.Code == code).ToList();
         }
 
         //Main Asset
