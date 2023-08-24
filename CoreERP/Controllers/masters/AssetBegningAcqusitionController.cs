@@ -89,11 +89,11 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeleteAssetBegningAcqusition/{code}")]
-        public IActionResult DeleteAssetBegningAcqusitionbyId(int code)
+        public IActionResult DeleteAssetBegningAcqusitionbyId(string code)
         {
             try
             {
-                if (code == 0)
+                if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
@@ -147,7 +147,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.AqsnMasters = mainAqsn;
-                expdoObj.AqsnDetail = new CommonHelper().GetAqsnDetailDetails(code);
+                expdoObj.AqsnDetail = new CommonHelper().GetAqsnDetailDetails(Convert.ToInt32(code));
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
             }

@@ -94,11 +94,11 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                if (code == null)
+                if (code == 0)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _alterRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                var record = _alterRepository.GetSingleOrDefault(x => x.id.Equals(code));
                 _alterRepository.Remove(record);
                 if (_alterRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };

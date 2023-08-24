@@ -1338,7 +1338,7 @@ namespace CoreERP
                     context.SaveChanges();
                     foreach (var item in astbngdsrpnDetails)
                     {
-                        if (item.Id == 0)
+                        if (item.id == 0)
                         {
                             context.TblAssetBegningAccumulatedDepreciation.UpdateRange(astbngdsrpnDetails);
                             context.SaveChanges();
@@ -1353,8 +1353,7 @@ namespace CoreERP
                 context.SaveChanges();
                 astbngdsrpnDetails.ForEach(x =>
                 {
-                    x.Id = bngaqsn.Id;
-                    x.Code = bngaqsn.Code;
+                    x.id = bngaqsn.Id;
                 });
 
                 context.TblAssetBegningAccumulatedDepreciation.AddRange(astbngdsrpnDetails);
@@ -1376,10 +1375,10 @@ namespace CoreERP
             return repo.TblAssetBeginingAcquisition.FirstOrDefault(x => x.Code == code);
         }
 
-        public List<TblAssetBegningAccumulatedDepreciation> GetAqsnDetailDetails(string code)
+        public List<TblAssetBegningAccumulatedDepreciation> GetAqsnDetailDetails(int code)
         {
             using var repo = new Repository<TblAssetBegningAccumulatedDepreciation>();
-            return repo.TblAssetBegningAccumulatedDepreciation.Where(cd => cd.Code == code).ToList();
+            return repo.TblAssetBegningAccumulatedDepreciation.Where(cd => cd.id == code).ToList();
         }
 
         //Main Asset

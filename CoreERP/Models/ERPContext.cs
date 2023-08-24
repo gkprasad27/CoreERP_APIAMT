@@ -1491,7 +1491,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblAlternateControlAccTrans>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.id);
 
                 entity.ToTable("tbl_AlternateControlAccTrans");
 
@@ -1575,7 +1575,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblAssetBegningAccumulatedDepreciation>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.id);
                 entity.ToTable("tbl_AssetBegningAccumulatedDepreciation");
 
                 entity.Property(e => e.mainAssetNo).HasMaxLength(50);
@@ -3247,7 +3247,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblGlsubAccount>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.GlsubCode);
 
                 entity.ToTable("Tbl_GLSubAccount");
 

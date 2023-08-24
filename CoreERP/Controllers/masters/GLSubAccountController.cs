@@ -87,15 +87,15 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeleteGLSubAccount/{code}")]
-        public IActionResult DeleteGlSubAccountbyId(int code)
+        public IActionResult DeleteGlSubAccountbyId(string code)
         {
             try
             {
-                if (code == 0)
+                if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _glsubAccountRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                var record = _glsubAccountRepository.GetSingleOrDefault(x => x.GlsubCode.Equals(code));
                 _glsubAccountRepository.Remove(record);
                 if (_glsubAccountRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
