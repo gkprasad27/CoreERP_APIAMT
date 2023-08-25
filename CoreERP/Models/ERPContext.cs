@@ -2808,7 +2808,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblEmployee>(entity =>
             {
-                entity.HasKey(e => e.EmployeeId)
+                entity.HasKey(e => e.EmployeeCode)
                     .HasName("PK__tbl_Empl__C134C9C125518C17");
 
                 entity.ToTable("tbl_Employee");
@@ -5429,7 +5429,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblPurchasePerson>(entity =>
             {
-                entity.HasKey(e => new { e.PurchasePerson, e.PurchaseGroup, e.PurchaseTypes });
+                entity.HasKey(e => new { e.id });
 
                 entity.ToTable("tbl_PurchasePerson");
 
