@@ -3230,7 +3230,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblGinseriesAssignment>(entity =>
             {
-                entity.HasKey(e => new { e.Ginseries, e.Company });
+                entity.HasKey(e => new { e.Ginseries, e.Company,e.MaterilaType });
 
                 entity.ToTable("tbl_GINSeriesAssignment");
 
@@ -4276,7 +4276,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMaterialNoAssignment>(entity =>
             {
-                entity.HasKey(e => new { e.NumberRange, e.CompanyCode });
+                entity.HasKey(e => new { e.NumberRange, e.CompanyCode ,e.MaterialType});
 
                 entity.ToTable("tbl_MaterialNoAssignment");
 
@@ -4573,7 +4573,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMrnnoAssignment>(entity =>
             {
-                entity.HasKey(e => new { e.Mrnseries, e.Company });
+                entity.HasKey(e => new { e.Mrnseries, e.Company,e.MaterialType });
 
                 entity.ToTable("tbl_MRNNoAssignment");
 
