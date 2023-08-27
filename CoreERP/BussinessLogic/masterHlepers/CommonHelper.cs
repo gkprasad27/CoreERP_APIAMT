@@ -1325,7 +1325,7 @@ namespace CoreERP
         }
 
         //AssetBeingAquisition
-        public bool AssetBeingAquisition(TblAssetBeginingAcquisition bngaqsn, List<TblAssetBegningAccumulatedDepreciation> astbngdsrpnDetails)
+        public bool AssetBeingAquisition(TblAssetBeginingAcquisition bngaqsn, List<TblAssetBeginingAcquisitionDetail> astbngdsrpnDetails)
         {
            
             using var context = new ERPContext();
@@ -1338,9 +1338,13 @@ namespace CoreERP
                     context.SaveChanges();
                     foreach (var item in astbngdsrpnDetails)
                     {
-                        if (item.id == 0)
+                        if (item.id != 0)
                         {
-                            context.TblAssetBegningAccumulatedDepreciation.UpdateRange(astbngdsrpnDetails);
+                            astbngdsrpnDetails.ForEach(x =>
+                            {
+                                x.Code = bngaqsn.Code;
+                            });
+                            context.TblAssetBeginingAcquisitionDetail.UpdateRange(astbngdsrpnDetails);
                             context.SaveChanges();
                             dbtrans.Commit();
                             return true;
@@ -1353,10 +1357,10 @@ namespace CoreERP
                 context.SaveChanges();
                 astbngdsrpnDetails.ForEach(x =>
                 {
-                    x.id = bngaqsn.Id;
+                    x.Code = bngaqsn.Code;
                 });
 
-                context.TblAssetBegningAccumulatedDepreciation.AddRange(astbngdsrpnDetails);
+                context.TblAssetBeginingAcquisitionDetail.AddRange(astbngdsrpnDetails);
                 context.SaveChanges();
 
                 dbtrans.Commit();

@@ -55,6 +55,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblAlternateControlAccTrans> TblAlternateControlAccTrans { get; set; }
         public virtual DbSet<TblAssetAccountkey> TblAssetAccountkey { get; set; }
         public virtual DbSet<TblAssetBeginingAcquisition> TblAssetBeginingAcquisition { get; set; }
+        public virtual DbSet<TblAssetBeginingAcquisitionDetail> TblAssetBeginingAcquisitionDetail { get; set; }
         public virtual DbSet<TblAssetBegningAccumulatedDepreciation> TblAssetBegningAccumulatedDepreciation { get; set; }
         public virtual DbSet<TblAssetBlock> TblAssetBlock { get; set; }
         public virtual DbSet<TblAssetClass> TblAssetClass { get; set; }
@@ -1573,9 +1574,21 @@ namespace CoreERP.Models
                 entity.Property(e => e.SubAssetNo).HasMaxLength(50);
             });
 
-            modelBuilder.Entity<TblAssetBegningAccumulatedDepreciation>(entity =>
+            modelBuilder.Entity<TblAssetBeginingAcquisitionDetail>(entity =>
             {
                 entity.HasKey(e => e.id);
+                entity.ToTable("tbl_AssetBeginingAcquisitionDetail");
+
+                entity.Property(e => e.Code).HasMaxLength(50);
+
+                entity.Property(e => e.AccumulatedDepreciation).HasMaxLength(50);
+
+                entity.Property(e => e.DepreciationArea).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TblAssetBegningAccumulatedDepreciation>(entity =>
+            {
+                entity.HasKey(e => new { e.accumulatedDepreciation, e.depreciationArea, e.mainAssetNo,e.subAssetNo });
                 entity.ToTable("tbl_AssetBegningAccumulatedDepreciation");
 
                 entity.Property(e => e.mainAssetNo).HasMaxLength(50);

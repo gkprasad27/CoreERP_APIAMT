@@ -14,9 +14,9 @@ namespace CoreERP.Controllers.masters
     public class AssetBegningAcqusitionController : ControllerBase
     {
         private readonly IRepository<TblAssetBeginingAcquisition> _assetBeginingAcquisitionRepository;
-        private readonly IRepository<TblAssetBegningAccumulatedDepreciation> _assetBegningAccumulatedDepreciationRepository;
+        private readonly IRepository<TblAssetBeginingAcquisitionDetail> _assetBegningAccumulatedDepreciationRepository;
         public AssetBegningAcqusitionController(IRepository<TblAssetBeginingAcquisition> assetBeginingAcquisitionRepository,
-            IRepository<TblAssetBegningAccumulatedDepreciation> assetBegningAccumulatedDepreciationRepository)
+            IRepository<TblAssetBeginingAcquisitionDetail> assetBegningAccumulatedDepreciationRepository)
         {
             _assetBeginingAcquisitionRepository = assetBeginingAcquisitionRepository;
             _assetBegningAccumulatedDepreciationRepository = assetBegningAccumulatedDepreciationRepository;
@@ -121,7 +121,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
                 var aqsnHdr = obj["mainaqsnHdr"].ToObject<TblAssetBeginingAcquisition>();
-                var aqsnDetail = obj["mainaqsnDetail"].ToObject<List<TblAssetBegningAccumulatedDepreciation>>();
+                var aqsnDetail = obj["mainaqsnDetail"].ToObject<List<TblAssetBeginingAcquisitionDetail>>();
 
                 if (!new CommonHelper().AssetBeingAquisition(aqsnHdr, aqsnDetail))
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
