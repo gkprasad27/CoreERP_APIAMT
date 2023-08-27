@@ -1379,10 +1379,10 @@ namespace CoreERP
             return repo.TblAssetBeginingAcquisition.FirstOrDefault(x => x.Code == code);
         }
 
-        public List<TblAssetBegningAccumulatedDepreciation> GetAqsnDetailDetails(int code)
+        public List<TblAssetBeginingAcquisitionDetail> GetAqsnDetailDetails(string code)
         {
-            using var repo = new Repository<TblAssetBegningAccumulatedDepreciation>();
-            return repo.TblAssetBegningAccumulatedDepreciation.Where(cd => cd.id == code).ToList();
+            using var repo = new Repository<TblAssetBeginingAcquisitionDetail>();
+            return repo.TblAssetBeginingAcquisitionDetail.Where(cd => cd.Code == code).ToList();
         }
 
         //Main Asset

@@ -147,7 +147,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.AqsnMasters = mainAqsn;
-                expdoObj.AqsnDetail = new CommonHelper().GetAqsnDetailDetails(Convert.ToInt32(code));
+                expdoObj.AqsnDetail = new CommonHelper().GetAqsnDetailDetails(code);
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
             }

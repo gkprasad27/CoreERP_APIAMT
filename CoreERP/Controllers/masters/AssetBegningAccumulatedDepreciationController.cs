@@ -71,6 +71,7 @@ namespace CoreERP.Controllers.masters
             try
             {
                 APIResponse apiResponse;
+                assetbgacqdec.id = 0;
                 _assetBegningAccumulatedDepreciationRepository.Update(assetbgacqdec);
                 if (_assetBegningAccumulatedDepreciationRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assetbgacqdec };
@@ -85,5 +86,28 @@ namespace CoreERP.Controllers.masters
             }
         }
 
+        [HttpDelete("DeleteAssetBegningAcqusition/{code}")]
+        public IActionResult DeleteAssetBegningAcqusitionbyId(int code)
+        {
+            try
+            {
+                if (code == 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
+
+                APIResponse apiResponse;
+                var record = _assetBegningAccumulatedDepreciationRepository.GetSingleOrDefault(x => x.id.Equals(code));
+                _assetBegningAccumulatedDepreciationRepository.Remove(record);
+                if (_assetBegningAccumulatedDepreciationRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
+                else
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }
