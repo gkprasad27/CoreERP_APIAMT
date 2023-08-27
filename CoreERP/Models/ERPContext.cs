@@ -1588,7 +1588,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblAssetBegningAccumulatedDepreciation>(entity =>
             {
-                entity.HasKey(e => new { e.accumulatedDepreciation, e.depreciationArea, e.mainAssetNo,e.subAssetNo });
+                entity.HasKey(e => new { e.id });
                 entity.ToTable("tbl_AssetBegningAccumulatedDepreciation");
 
                 entity.Property(e => e.mainAssetNo).HasMaxLength(50);
@@ -3243,7 +3243,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblGinseriesAssignment>(entity =>
             {
-                entity.HasKey(e => new { e.Ginseries, e.Company,e.MaterilaType });
+                entity.HasKey(e => new { e.id });
 
                 entity.ToTable("tbl_GINSeriesAssignment");
 
@@ -4289,7 +4289,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMaterialNoAssignment>(entity =>
             {
-                entity.HasKey(e => new { e.NumberRange, e.CompanyCode ,e.MaterialType});
+                entity.HasKey(e => new { e.ID});
 
                 entity.ToTable("tbl_MaterialNoAssignment");
 
@@ -4586,7 +4586,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMrnnoAssignment>(entity =>
             {
-                entity.HasKey(e => new { e.Mrnseries, e.Company,e.MaterialType });
+                entity.HasKey(e => new { e.ID });
 
                 entity.ToTable("tbl_MRNNoAssignment");
 

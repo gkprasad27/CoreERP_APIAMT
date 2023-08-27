@@ -41,6 +41,8 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
+                if (ex.HResult.ToString() == "-2146233088")
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Alternate Control Account already Exist, Please use another key " + " " + (alacunt.AlternativeControlAccount) });
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
@@ -85,6 +87,8 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
+                if (ex.HResult.ToString() == "-2146233088")
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Alternate Control Account already Exist, Please use another key " + " " + (alacunt.AlternativeControlAccount) });
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }

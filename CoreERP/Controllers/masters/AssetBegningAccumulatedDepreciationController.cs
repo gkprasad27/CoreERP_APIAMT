@@ -1,6 +1,7 @@
 ﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Dynamic;
 using System.Linq;
@@ -37,6 +38,8 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
+                if (ex.HResult.ToString() == "-2146233088")
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Asset Already Exist, Please use another key " + " " + (assetbgacqanddec.accumulatedDepreciation) });
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
@@ -71,7 +74,6 @@ namespace CoreERP.Controllers.masters
             try
             {
                 APIResponse apiResponse;
-                assetbgacqdec.id = 0;
                 _assetBegningAccumulatedDepreciationRepository.Update(assetbgacqdec);
                 if (_assetBegningAccumulatedDepreciationRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assetbgacqdec };
@@ -82,6 +84,8 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
+                if (ex.HResult.ToString() == "-2146233088")
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Asset Already Exist, Please use another key " + " " + (assetbgacqdec.accumulatedDepreciation) });
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
