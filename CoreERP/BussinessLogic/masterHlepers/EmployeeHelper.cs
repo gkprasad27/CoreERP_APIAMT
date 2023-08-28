@@ -73,7 +73,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblEmployee> repo = new Repository<TblEmployee>();
-                var emp = repo.TblEmployee.Where(e => e.EmployeeId == Convert.ToDecimal(empCode)).FirstOrDefault();
+                var emp = repo.TblEmployee.Where(e => e.EmployeeCode == empCode).FirstOrDefault();
                 emp.IsActive = false;
                 repo.TblEmployee.Update(emp);
                 if (repo.SaveChanges() > 0)

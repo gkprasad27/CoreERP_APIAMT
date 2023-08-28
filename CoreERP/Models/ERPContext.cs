@@ -2826,10 +2826,6 @@ namespace CoreERP.Models
 
                 entity.ToTable("tbl_Employee");
 
-                entity.Property(e => e.EmployeeId)
-                    .HasColumnName("employeeId")
-                    .HasColumnType("numeric(18, 0)")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.AadharNumber)
                     .HasColumnName("aadharNumber")
@@ -2849,37 +2845,18 @@ namespace CoreERP.Models
                     .HasColumnName("bankName")
                     .IsUnicode(false);
 
-                entity.Property(e => e.BankbranchCode)
-                    .HasColumnName("bankbranchCode")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.BankbranchName)
-                    .HasColumnName("bankbranchName")
-                    .IsUnicode(false);
 
                 entity.Property(e => e.BloodGroup)
                     .HasColumnName("bloodGroup")
                     .IsUnicode(false);
 
-                entity.Property(e => e.BranchCode)
-                    .HasColumnName("branchCode")
-                    .HasMaxLength(80);
+
 
                 entity.Property(e => e.BranchId)
-                    .HasColumnName("branchID")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.BranchName)
-                    .HasColumnName("branchName")
-                    .HasMaxLength(250);
-
-                entity.Property(e => e.DefaultPackageId)
-                    .HasColumnName("defaultPackageId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("branchID");
 
                 entity.Property(e => e.DesignationId)
-                    .HasColumnName("designationId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("designationId");
 
                 entity.Property(e => e.Dob)
                     .HasColumnName("dob")
@@ -2901,17 +2878,7 @@ namespace CoreERP.Models
                     .HasColumnName("esiNumber")
                     .IsUnicode(false);
 
-                entity.Property(e => e.Extra1)
-                    .HasColumnName("extra1")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Extra2)
-                    .HasColumnName("extra2")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ExtraDate)
-                    .HasColumnName("extraDate")
-                    .HasColumnType("datetime");
+               
 
                 entity.Property(e => e.Gender)
                     .HasColumnName("gender")
@@ -2923,13 +2890,7 @@ namespace CoreERP.Models
                     .HasColumnName("joiningDate")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.LabourCardExpiryDate)
-                    .HasColumnName("labourCardExpiryDate")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.LabourCardNumber)
-                    .HasColumnName("labourCardNumber")
-                    .IsUnicode(false);
+               
 
                 entity.Property(e => e.MaritalStatus)
                     .HasColumnName("maritalStatus")
@@ -2947,9 +2908,7 @@ namespace CoreERP.Models
                     .HasColumnName("panNumber")
                     .IsUnicode(false);
 
-                entity.Property(e => e.PassportExpiryDate)
-                    .HasColumnName("passportExpiryDate")
-                    .HasColumnType("datetime");
+                
 
                 entity.Property(e => e.PassportNo)
                     .HasColumnName("passportNo")
@@ -2969,17 +2928,10 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.RecomendedBy).IsUnicode(false);
 
-                entity.Property(e => e.RecomendedId).IsUnicode(false);
 
                 entity.Property(e => e.ReportedBy).IsUnicode(false);
 
-                entity.Property(e => e.SalaryType)
-                    .HasColumnName("salaryType")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.TerminationDate)
-                    .HasColumnName("terminationDate")
-                    .HasColumnType("datetime");
+                
             });
 
             modelBuilder.Entity<TblEmployeeMaster>(entity =>
