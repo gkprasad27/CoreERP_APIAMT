@@ -41,9 +41,11 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
+
                 using Repository<TblEmployee> repo = new Repository<TblEmployee>();
                 employees.IsActive = true;
-                repo.TblEmployee.Add(employees);
+                repo.Add(employees);
+
                 if (repo.SaveChanges() > 0)
                     return employees;
 

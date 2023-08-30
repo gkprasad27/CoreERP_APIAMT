@@ -46,6 +46,7 @@ namespace CoreERP.DataAccess
         public virtual int SaveChanges()
         {
             return _context.SaveChanges();
+
         }
 
         public virtual void Update(TEntity entity)
