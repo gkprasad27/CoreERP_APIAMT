@@ -60,7 +60,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblEmployee> repo = new Repository<TblEmployee>();
-                repo.TblEmployee.Update(employees);
+                repo.Update(employees);
                 if (repo.SaveChanges() > 0)
                     return employees;
 
