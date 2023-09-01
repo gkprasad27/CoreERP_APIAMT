@@ -68,7 +68,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblTaxtransactions> ttRepository, IRepository<TblTaxRates> trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
                                 IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
                                 IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository, IRepository<CostCenters> ccRepository,
-                                IRepository<TblBusinessPartnerAccount> bpRepository,IRepository<TblUnit> unitRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
+                                IRepository<TblBusinessPartnerAccount> bpRepository, IRepository<TblUnit> unitRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
                                 IRepository<TblInvoiceMemoHeader> tblInvoiceMemoHeaderRepository,
                                 IRepository<TblSecondaryCostElement> secondaryCostElementRepository,
                                  IRepository<TblCostingObjectTypes> costingObjectTypesRepository, IRepository<TblCostingUnitsCreation> costingUnitsCreationRepository,
@@ -290,7 +290,7 @@ namespace CoreERP.Controllers
         }
         [HttpGet("GetWbsList")]
         public IActionResult GetWbsList()
-{
+        {
             try
             {
                 dynamic expando = new ExpandoObject();
@@ -309,7 +309,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.materialList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description,ClosingQty=x.ClosingQty });
+                expando.materialList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, ClosingQty = x.ClosingQty });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -325,19 +325,19 @@ namespace CoreERP.Controllers
             {
                 var favouriteCities = new List<string>();
                 List<TblMaterialMaster> mmDetails = new List<TblMaterialMaster>();
-                List<TblMaterialMaster> mmaster= new List<TblMaterialMaster>();
+                List<TblMaterialMaster> mmaster = new List<TblMaterialMaster>();
 
                 dynamic expando = new ExpandoObject();
                 var data = _materialTypesRepository.Where(x => x.Class == "Finished" || x.Class == "Semi-Finished").ToArray();
-                foreach(var item in data)
+                foreach (var item in data)
                 {
                     mmDetails = _materialMasterRepository.Where(x => x.MaterialType == item.Code || x.MaterialType == item.Code).ToList();
-                    foreach(var item1 in mmDetails)
+                    foreach (var item1 in mmDetails)
                     {
                         mmaster.Add(item1);
                     }
                 }
-                expando.mtypeList = mmaster.Select(x => new { ID = x.MaterialCode, TEXT = x.Description});
+                expando.mtypeList = mmaster.Select(x => new { ID = x.MaterialCode, TEXT = x.Description });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -352,7 +352,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.cotList = _costingObjectTypesRepository.GetAll().Select(x => new { ID = x.ObjectType, TEXT = x.Description ,Usage=x.Usage});
+                expando.cotList = _costingObjectTypesRepository.GetAll().Select(x => new { ID = x.ObjectType, TEXT = x.Description, Usage = x.Usage });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -544,7 +544,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var costunitList = _costingUnitsCreationRepository.GetAll().Select(x => new { ID = x.ObjectNumber, TEXT = x.Description, MATERIAL = x.Material,CostUnitType=x.CostUnitType });
+                var costunitList = _costingUnitsCreationRepository.GetAll().Select(x => new { ID = x.ObjectNumber, TEXT = x.Description, MATERIAL = x.Material, CostUnitType = x.CostUnitType });
                 if (costunitList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -564,7 +564,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var mmasterList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, MATERIAL = x.MaterialType,AvailQTY=x.ClosingQty });
+                var mmasterList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, MATERIAL = x.MaterialType, AvailQTY = x.ClosingQty });
                 if (mmasterList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -1045,7 +1045,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var purchaseinvoiceList = _InvoiceMemoHeaderRepository.GetAll().Select(x => new { x.PartyAccount,  x.PartyInvoiceNo,  x.TotalAmount,  x.PostingDate, x.Paymentterms, x.DueDate });
+                var purchaseinvoiceList = _InvoiceMemoHeaderRepository.GetAll().Select(x => new { x.PartyAccount, x.PartyInvoiceNo, x.TotalAmount, x.PostingDate, x.Paymentterms, x.DueDate });
                 if (purchaseinvoiceList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -1121,18 +1121,19 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetUserPermissions/{roleId}/{screenName}")]
-        public IActionResult GetUserPermissions(string roleId,string screenName)
+        public IActionResult GetUserPermissions(string roleId, string screenName)
         {
             try
             {
-                var permission = CommonHelper.GetUserPermissions(roleId,screenName);
+                var permission = CommonHelper.GetUserPermissions(roleId, screenName);
                 if (permission == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = null });
-                
 
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.Permissions = permission;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                var showControl = CommonHelper.GetScreenConfig(permission.OperationCode);
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.Permissions = permission;
+                expdoObj.ShowControl = showControl;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
             }
             catch (Exception ex)
             {

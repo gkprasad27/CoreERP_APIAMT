@@ -3077,19 +3077,23 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblFieldsConfiguration>(entity =>
             {
+                entity.HasKey(e => e.OperationCode);
                 entity.ToTable("TBL_FieldsConfiguration");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.ScreenModule).HasMaxLength(50);
 
-                entity.Property(e => e.Screenname)
+                entity.Property(e => e.OperationCode)
                     .IsRequired()
-                    .HasColumnName("screenname")
+                    .HasColumnName("OperationCode")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.UserName).HasMaxLength(50);
+                entity.Property(e => e.ScreenName).HasMaxLength(50);
+
+                entity.Property(e => e.ShowControl).HasMaxLength(4000);
             });
+
+
 
             modelBuilder.Entity<TblFormMenuCollection>(entity =>
             {
