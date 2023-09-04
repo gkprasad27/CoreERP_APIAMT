@@ -3,6 +3,7 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CoreERP
 {
@@ -1514,10 +1515,19 @@ namespace CoreERP
 
                 using (Repository<TblFieldsConfiguration> _repo = new Repository<TblFieldsConfiguration>())
                 {
-                    return _repo.TblFieldsConfiguration.Where(m => m.OperationCode == operationCode).FirstOrDefault().ShowControl;
+                    TblFieldsConfiguration screenConfig = new TblFieldsConfiguration();
+                  screenConfig=   _repo.TblFieldsConfiguration.Where(m => m.OperationCode == operationCode).FirstOrDefault();
+                    if (screenConfig!=null)
+                        return screenConfig.ShowControl;
+                    else
+                      return  null;
                 };
             }
-            catch (Exception)
+            catch ( NullReferenceException Exception)
+            {
+                return null;
+            }
+            catch ( Exception)
             {
                 return null;
             }

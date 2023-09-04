@@ -19,25 +19,25 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public string GetVoucherNumber(string voucherType)
         {
             var voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType, out var startNumber, out var endNumber);
-            
+
             //if (voucerTypeNoseries.LastNumber != startNumber)
             //{
+            if (voucerTypeNoseries != null)
+            {
                 voucerTypeNoseries.LastNumber += 1;
+
                 if (voucerTypeNoseries.LastNumber > endNumber)
                     throw new Exception("No series is ended.");
-            //}
-            //else
-            //{
-            //    voucerTypeNoseries.LastNumber = startNumber;
-            //    if (voucerTypeNoseries.LastNumber > endNumber)
-            //        throw new Exception("No series is ended.");
-            //}
 
-            using var context = new ERPContext();
-            context.TblAssignmentVoucherSeriestoVoucherType.UpdateRange(voucerTypeNoseries);
-            context.SaveChanges();
 
-            return voucerTypeNoseries.Suffix + "-" + voucerTypeNoseries.LastNumber;
+                using var context = new ERPContext();
+                context.TblAssignmentVoucherSeriestoVoucherType.UpdateRange(voucerTypeNoseries);
+                context.SaveChanges();
+
+                return voucerTypeNoseries.Suffix + "-" + voucerTypeNoseries.LastNumber;
+            }
+            else
+                throw new Exception( "Please Configure Voucher Number");
         }
 
         public bool IsVoucherNumberExists(string voucherNo, string voucherType, [Optional] string screenName)
@@ -1069,7 +1069,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblWorkcenterMaster>();
            
             if(repo.TblWorkcenterMaster.Any(v => v.WorkcenterCode == workCenterMaster.WorkcenterCode))
-                throw new Exception("Voucher number exists.");
+                throw new Exception("WorkCenter Already exists.");
 
             workCenterCapacity.ForEach(x =>
             {
