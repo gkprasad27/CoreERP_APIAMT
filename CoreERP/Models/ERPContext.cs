@@ -4141,7 +4141,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMaterialGroups>(entity =>
             {
-                entity.HasKey(e => e.groupId);
+                entity.HasKey(e => e.GroupKey);
 
                 entity.ToTable("tbl_MaterialGroups");
                 entity.Property(e => e.GroupKey).HasMaxLength(50);
