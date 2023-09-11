@@ -328,7 +328,8 @@ namespace CoreERP.Controllers
                 List<TblMaterialMaster> mmaster = new List<TblMaterialMaster>();
 
                 dynamic expando = new ExpandoObject();
-                var data = _materialTypesRepository.Where(x => x.Class == "Finished" || x.Class == "Semi-Finished").ToArray();
+                //var data = _materialTypesRepository.Where(x => x.Class == "Finished" || x.Class == "Semi-Finished").ToArray();
+                var data = _materialTypesRepository.GetAll().ToArray();
                 foreach (var item in data)
                 {
                     mmDetails = _materialMasterRepository.Where(x => x.MaterialType == item.Code || x.MaterialType == item.Code).ToList();
