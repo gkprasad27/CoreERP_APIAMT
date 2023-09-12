@@ -14,7 +14,7 @@ namespace CoreERP.Controllers.masters
     [ApiController]
     public class BillOfMaterialController : ControllerBase
     {
-        [HttpPost("GetBOMMasters")]
+        [HttpGet("GetBOMMasters")]
         public IActionResult GetBOMMasters([FromBody] SearchCriteria searchCriteria)
         {
             try
