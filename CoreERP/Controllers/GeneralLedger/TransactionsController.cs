@@ -331,11 +331,11 @@ namespace CoreERP.Controllers.masters
         #region Asset Sale & Purchase
 
         [HttpGet("GetPSIMAssetMaster")]
-        public IActionResult GetPSIMAssetMaster()
+        public IActionResult GetPSIMAssetMaster([FromBody] SearchCriteria searchCriteria)
         {
             try
             {
-                var assetMasters = new TransactionsHelper().GetPSIMAssetMaster(null);
+                var assetMasters = new TransactionsHelper().GetPSIMAssetMaster(searchCriteria);
                 if (!assetMasters.Any())
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Asset." });
                 dynamic expdoObj = new ExpandoObject();

@@ -14,12 +14,12 @@ namespace CoreERP.Controllers.masters
     [ApiController]
     public class BillOfMaterialController : ControllerBase
     {
-        [HttpGet("GetBOMMasters")]
-        public IActionResult GetBOMMasters()
+        [HttpPost("GetBOMMasters")]
+        public IActionResult GetBOMMasters([FromBody] SearchCriteria searchCriteria)
         {
             try
             {
-                var bomMasters = new TransactionsHelper().GetBOMMasters(null);
+                var bomMasters = new TransactionsHelper().GetBOMMasters(searchCriteria);
                 if (!bomMasters.Any())
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for cash bank." });
                 dynamic expdoObj = new ExpandoObject();

@@ -2204,8 +2204,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
-                entity.Property(e => e.Name1).HasMaxLength(50);
-
                 entity.Property(e => e.Narration).HasMaxLength(50);
 
                 entity.Property(e => e.ObligationFrom).HasMaxLength(50);
