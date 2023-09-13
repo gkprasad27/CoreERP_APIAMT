@@ -15,11 +15,11 @@ namespace CoreERP.Controllers.masters
     public class BillOfMaterialController : ControllerBase
     {
         [HttpGet("GetBOMMasters")]
-        public IActionResult GetBOMMasters([FromBody] SearchCriteria searchCriteria)
+        public IActionResult GetBOMMasters()
         {
             try
             {
-                var bomMasters = new TransactionsHelper().GetBOMMasters(searchCriteria);
+                var bomMasters = new TransactionsHelper().GetBOMMasters(null);
                 if (!bomMasters.Any())
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for cash bank." });
                 dynamic expdoObj = new ExpandoObject();
