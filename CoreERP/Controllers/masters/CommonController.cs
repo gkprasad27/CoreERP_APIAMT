@@ -755,7 +755,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var glList = _glaccountRepository.GetAll().Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName, TAXCategory = x.TaxCategory });
+                    var glList = _glaccountRepository.GetAll().Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName, TAXCategory = x.TaxCategory,ControlAccount=x.ControlAccount });
                     if (glList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
