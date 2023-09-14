@@ -242,7 +242,11 @@ namespace CoreERP.Models
         public virtual DbSet<VwMinRate> VwMinRate { get; set; }
         public virtual DbSet<VwStockQuery> VwStockQuery { get; set; }
         public virtual DbSet<TblPurchaseOrderNoRange> TblPurchaseOrderNoRange { get; set; }
-
+        public virtual DbSet<LeaveTypes> LeaveTypes { get; set; }
+        public virtual DbSet<LeaveBalanceMaster> LeaveBalanceMaster { get; set; }
+        public virtual DbSet<Ptmaster> Ptmaster { get; set; }
+        public virtual DbSet<Pfmaster> Pfmaster { get; set; }
+        public virtual DbSet<ComponentMaster> ComponentMaster { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -7138,7 +7142,153 @@ namespace CoreERP.Models
                     .HasColumnName("voucherTypeName")
                     .IsUnicode(false);
             });
+            modelBuilder.Entity<LeaveTypes>(entity =>
+            {
+                entity.HasKey(e => e.LeaveCode);
+                entity.Property(e => e.CompanyCode).HasMaxLength(40);
 
+                entity.Property(e => e.LeaveCode).HasMaxLength(40);
+
+                entity.Property(e => e.LeaveMaxLimit).HasMaxLength(40);
+
+                entity.Property(e => e.LeaveMinLimit).HasMaxLength(40);
+
+                entity.Property(e => e.LeaveName).HasMaxLength(40);
+            });
+            modelBuilder.Entity<LeaveBalanceMaster>(entity =>
+            {
+                entity.HasKey(e => new { e.EmpCode, e.Year, e.LeaveCode });
+
+                entity.Property(e => e.EmpCode).HasMaxLength(50);
+
+                entity.Property(e => e.Year)
+                    .HasMaxLength(4)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LeaveCode).HasMaxLength(50);
+
+                entity.Property(e => e.CompCode).HasMaxLength(50);
+
+                entity.Property(e => e.Opbal).HasColumnName("OPBAL");
+
+                entity.Property(e => e.TimeStamp).HasColumnType("datetime");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("UserID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+            });
+            modelBuilder.Entity<Ptmaster>(entity =>
+            {
+                entity.HasKey(e => e.Ptslab);
+                entity.ToTable("PTMaster");
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Ext1).HasMaxLength(50);
+
+                entity.Property(e => e.Location).HasMaxLength(50);
+
+                entity.Property(e => e.Month)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Ptamt).HasColumnName("PTAmt");
+
+                entity.Property(e => e.PtlowerLimit).HasColumnName("PTLowerLimit");
+
+                entity.Property(e => e.Ptslab)
+                    .IsRequired()
+                    .HasColumnName("PTSlab")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PtupperLimit).HasColumnName("PTUpperLimit");
+
+                entity.Property(e => e.Year)
+                    .HasMaxLength(4)
+                    .IsFixedLength();
+            });
+            modelBuilder.Entity<Pfmaster>(entity =>
+            {
+                entity.HasKey(e=>e.Id);
+                entity.ToTable("PFMaster");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.BranchCode)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CompanyCode)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ComponentCode)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ComponentName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ContributionType)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Limit)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PftypeName)
+                    .HasColumnName("PFTypeName")
+                    .HasMaxLength(50);
+            });
+            modelBuilder.Entity<ComponentMaster>(entity =>
+            {
+                entity.HasKey(e => e.ComponentCode);
+
+                entity.Property(e => e.ComponentCode)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.CompanyCode)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ComponentName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ComponentType)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Duration)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Remarks)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SpecificMonth)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
             OnModelCreatingPartial(modelBuilder);
         }
 
