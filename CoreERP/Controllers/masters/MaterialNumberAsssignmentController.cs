@@ -1,6 +1,9 @@
 ﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Dynamic;
 using System.Linq;
@@ -18,7 +21,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("RegisterMaterialNumberAsssignment")]
-        public IActionResult RegisterMaterialNumberAsssignment([FromBody]TblMaterialNoAssignment massignmnt)
+        public IActionResult RegisterMaterialNumberAsssignment([FromBody] TblMaterialNoAssignment massignmnt)
         {
             if (massignmnt == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -38,7 +41,10 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                if (ex.HResult.ToString() =="-2146233088")
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Number Range already Exist" + " " + (massignmnt.NumberRange) + " " + "Please use another key" });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 

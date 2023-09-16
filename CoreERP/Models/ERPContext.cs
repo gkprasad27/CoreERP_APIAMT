@@ -55,6 +55,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblAlternateControlAccTrans> TblAlternateControlAccTrans { get; set; }
         public virtual DbSet<TblAssetAccountkey> TblAssetAccountkey { get; set; }
         public virtual DbSet<TblAssetBeginingAcquisition> TblAssetBeginingAcquisition { get; set; }
+        public virtual DbSet<TblAssetBeginingAcquisitionDetail> TblAssetBeginingAcquisitionDetail { get; set; }
         public virtual DbSet<TblAssetBegningAccumulatedDepreciation> TblAssetBegningAccumulatedDepreciation { get; set; }
         public virtual DbSet<TblAssetBlock> TblAssetBlock { get; set; }
         public virtual DbSet<TblAssetClass> TblAssetClass { get; set; }
@@ -241,7 +242,15 @@ namespace CoreERP.Models
         public virtual DbSet<VwMinRate> VwMinRate { get; set; }
         public virtual DbSet<VwStockQuery> VwStockQuery { get; set; }
         public virtual DbSet<TblPurchaseOrderNoRange> TblPurchaseOrderNoRange { get; set; }
-
+        public virtual DbSet<LeaveTypes> LeaveTypes { get; set; }
+        public virtual DbSet<LeaveBalanceMaster> LeaveBalanceMaster { get; set; }
+        public virtual DbSet<Ptmaster> Ptmaster { get; set; }
+        public virtual DbSet<Pfmaster> Pfmaster { get; set; }
+        public virtual DbSet<ComponentMaster> ComponentMaster { get; set; }
+        public virtual DbSet<LeaveApplDetails> LeaveApplDetails { get; set; }
+        public virtual DbSet<ApplyOddata> ApplyOddata { get; set; }
+        public virtual DbSet<PermissionRequest> PermissionRequest { get; set; }
+        public virtual DbSet<VehicleRequisition> VehicleRequisition { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -1491,7 +1500,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblAlternateControlAccTrans>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.id);
 
                 entity.ToTable("tbl_AlternateControlAccTrans");
 
@@ -1553,9 +1562,10 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblAssetBeginingAcquisition>(entity =>
             {
+                entity.HasKey(e => e.Code);
                 entity.ToTable("tbl_AssetBeginingAcquisition");
 
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.Code).HasColumnName("code");
 
                 entity.Property(e => e.AcquisitionCost).HasColumnType("numeric(18, 0)");
 
@@ -1572,18 +1582,30 @@ namespace CoreERP.Models
                 entity.Property(e => e.SubAssetNo).HasMaxLength(50);
             });
 
+            modelBuilder.Entity<TblAssetBeginingAcquisitionDetail>(entity =>
+            {
+                entity.HasKey(e => e.id);
+                entity.ToTable("tbl_AssetBeginingAcquisitionDetail");
+
+                entity.Property(e => e.Code).HasMaxLength(50);
+
+                entity.Property(e => e.AccumulatedDepreciation).HasMaxLength(50);
+
+                entity.Property(e => e.DepreciationArea).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<TblAssetBegningAccumulatedDepreciation>(entity =>
             {
-                entity.HasKey(e => e.Id);
+                entity.HasKey(e => new { e.id });
                 entity.ToTable("tbl_AssetBegningAccumulatedDepreciation");
 
                 entity.Property(e => e.mainAssetNo).HasMaxLength(50);
 
-                entity.Property(e => e.AccumulatedDepreciation).HasMaxLength(50);
+                entity.Property(e => e.accumulatedDepreciation).HasMaxLength(50);
 
                 entity.Property(e => e.subAssetNo).HasMaxLength(50);
 
-                entity.Property(e => e.DepreciationArea).HasMaxLength(50);
+                entity.Property(e => e.depreciationArea).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblAssetBlock>(entity =>
@@ -2189,8 +2211,6 @@ namespace CoreERP.Models
                 entity.Property(e => e.Mobile).HasMaxLength(20);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
-
-                entity.Property(e => e.Name1).HasMaxLength(50);
 
                 entity.Property(e => e.Narration).HasMaxLength(50);
 
@@ -2807,15 +2827,11 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblEmployee>(entity =>
             {
-                entity.HasKey(e => e.EmployeeId)
+                entity.HasKey(e => e.EmployeeCode)
                     .HasName("PK__tbl_Empl__C134C9C125518C17");
 
                 entity.ToTable("tbl_Employee");
 
-                entity.Property(e => e.EmployeeId)
-                    .HasColumnName("employeeId")
-                    .HasColumnType("numeric(18, 0)")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.AadharNumber)
                     .HasColumnName("aadharNumber")
@@ -2835,37 +2851,18 @@ namespace CoreERP.Models
                     .HasColumnName("bankName")
                     .IsUnicode(false);
 
-                entity.Property(e => e.BankbranchCode)
-                    .HasColumnName("bankbranchCode")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.BankbranchName)
-                    .HasColumnName("bankbranchName")
-                    .IsUnicode(false);
 
                 entity.Property(e => e.BloodGroup)
                     .HasColumnName("bloodGroup")
                     .IsUnicode(false);
 
-                entity.Property(e => e.BranchCode)
-                    .HasColumnName("branchCode")
-                    .HasMaxLength(80);
+
 
                 entity.Property(e => e.BranchId)
-                    .HasColumnName("branchID")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.BranchName)
-                    .HasColumnName("branchName")
-                    .HasMaxLength(250);
-
-                entity.Property(e => e.DefaultPackageId)
-                    .HasColumnName("defaultPackageId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("branchID");
 
                 entity.Property(e => e.DesignationId)
-                    .HasColumnName("designationId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("designationId");
 
                 entity.Property(e => e.Dob)
                     .HasColumnName("dob")
@@ -2887,17 +2884,7 @@ namespace CoreERP.Models
                     .HasColumnName("esiNumber")
                     .IsUnicode(false);
 
-                entity.Property(e => e.Extra1)
-                    .HasColumnName("extra1")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Extra2)
-                    .HasColumnName("extra2")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ExtraDate)
-                    .HasColumnName("extraDate")
-                    .HasColumnType("datetime");
+               
 
                 entity.Property(e => e.Gender)
                     .HasColumnName("gender")
@@ -2909,13 +2896,7 @@ namespace CoreERP.Models
                     .HasColumnName("joiningDate")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.LabourCardExpiryDate)
-                    .HasColumnName("labourCardExpiryDate")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.LabourCardNumber)
-                    .HasColumnName("labourCardNumber")
-                    .IsUnicode(false);
+               
 
                 entity.Property(e => e.MaritalStatus)
                     .HasColumnName("maritalStatus")
@@ -2933,9 +2914,7 @@ namespace CoreERP.Models
                     .HasColumnName("panNumber")
                     .IsUnicode(false);
 
-                entity.Property(e => e.PassportExpiryDate)
-                    .HasColumnName("passportExpiryDate")
-                    .HasColumnType("datetime");
+                
 
                 entity.Property(e => e.PassportNo)
                     .HasColumnName("passportNo")
@@ -2955,17 +2934,10 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.RecomendedBy).IsUnicode(false);
 
-                entity.Property(e => e.RecomendedId).IsUnicode(false);
 
                 entity.Property(e => e.ReportedBy).IsUnicode(false);
 
-                entity.Property(e => e.SalaryType)
-                    .HasColumnName("salaryType")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.TerminationDate)
-                    .HasColumnName("terminationDate")
-                    .HasColumnType("datetime");
+                
             });
 
             modelBuilder.Entity<TblEmployeeMaster>(entity =>
@@ -3111,19 +3083,23 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblFieldsConfiguration>(entity =>
             {
+                entity.HasKey(e => e.OperationCode);
                 entity.ToTable("TBL_FieldsConfiguration");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.ScreenModule).HasMaxLength(50);
 
-                entity.Property(e => e.Screenname)
+                entity.Property(e => e.OperationCode)
                     .IsRequired()
-                    .HasColumnName("screenname")
+                    .HasColumnName("OperationCode")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.UserName).HasMaxLength(50);
+                entity.Property(e => e.ScreenName).HasMaxLength(50);
+
+                entity.Property(e => e.ShowControl).HasMaxLength(4000);
             });
+
+
 
             modelBuilder.Entity<TblFormMenuCollection>(entity =>
             {
@@ -3229,7 +3205,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblGinseriesAssignment>(entity =>
             {
-                entity.HasKey(e => new { e.Ginseries, e.Company });
+                entity.HasKey(e => new { e.id });
 
                 entity.ToTable("tbl_GINSeriesAssignment");
 
@@ -3246,7 +3222,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblGlsubAccount>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.GlsubCode);
 
                 entity.ToTable("Tbl_GLSubAccount");
 
@@ -4171,7 +4147,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMaterialGroups>(entity =>
             {
-                entity.HasKey(e => e.groupId);
+                entity.HasKey(e => e.GroupKey);
 
                 entity.ToTable("tbl_MaterialGroups");
                 entity.Property(e => e.GroupKey).HasMaxLength(50);
@@ -4275,7 +4251,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMaterialNoAssignment>(entity =>
             {
-                entity.HasKey(e => new { e.NumberRange, e.CompanyCode });
+                entity.HasKey(e => new { e.ID});
 
                 entity.ToTable("tbl_MaterialNoAssignment");
 
@@ -4572,7 +4548,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMrnnoAssignment>(entity =>
             {
-                entity.HasKey(e => new { e.Mrnseries, e.Company });
+                entity.HasKey(e => new { e.ID });
 
                 entity.ToTable("tbl_MRNNoAssignment");
 
@@ -5428,7 +5404,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblPurchasePerson>(entity =>
             {
-                entity.HasKey(e => new { e.PurchasePerson, e.PurchaseGroup, e.PurchaseTypes });
+                entity.HasKey(e => new { e.id });
 
                 entity.ToTable("tbl_PurchasePerson");
 
@@ -7170,7 +7146,650 @@ namespace CoreERP.Models
                     .HasColumnName("voucherTypeName")
                     .IsUnicode(false);
             });
+            modelBuilder.Entity<LeaveTypes>(entity =>
+            {
+                entity.HasKey(e => e.LeaveCode);
+                entity.Property(e => e.CompanyCode).HasMaxLength(40);
 
+                entity.Property(e => e.LeaveCode).HasMaxLength(40);
+
+                entity.Property(e => e.LeaveMaxLimit).HasMaxLength(40);
+
+                entity.Property(e => e.LeaveMinLimit).HasMaxLength(40);
+
+                entity.Property(e => e.LeaveName).HasMaxLength(40);
+            });
+            modelBuilder.Entity<LeaveBalanceMaster>(entity =>
+            {
+                entity.HasKey(e => new { e.EmpCode, e.Year, e.LeaveCode });
+
+                entity.Property(e => e.EmpCode).HasMaxLength(50);
+
+                entity.Property(e => e.Year)
+                    .HasMaxLength(4)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LeaveCode).HasMaxLength(50);
+
+                entity.Property(e => e.CompCode).HasMaxLength(50);
+
+                entity.Property(e => e.Opbal).HasColumnName("OPBAL");
+
+                entity.Property(e => e.TimeStamp).HasColumnType("datetime");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("UserID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+            });
+            modelBuilder.Entity<Ptmaster>(entity =>
+            {
+                entity.HasKey(e => e.Ptslab);
+                entity.ToTable("PTMaster");
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Ext1).HasMaxLength(50);
+
+                entity.Property(e => e.Location).HasMaxLength(50);
+
+                entity.Property(e => e.Month)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Ptamt).HasColumnName("PTAmt");
+
+                entity.Property(e => e.PtlowerLimit).HasColumnName("PTLowerLimit");
+
+                entity.Property(e => e.Ptslab)
+                    .IsRequired()
+                    .HasColumnName("PTSlab")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PtupperLimit).HasColumnName("PTUpperLimit");
+
+                entity.Property(e => e.Year)
+                    .HasMaxLength(4)
+                    .IsFixedLength();
+            });
+            modelBuilder.Entity<Pfmaster>(entity =>
+            {
+                entity.HasKey(e=>e.Id);
+                entity.ToTable("PFMaster");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.BranchCode)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CompanyCode)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ComponentCode)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ComponentName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ContributionType)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Limit)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PftypeName)
+                    .HasColumnName("PFTypeName")
+                    .HasMaxLength(50);
+            });
+            modelBuilder.Entity<ComponentMaster>(entity =>
+            {
+                entity.HasKey(e => e.ComponentCode);
+
+                entity.Property(e => e.ComponentCode)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Active)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.CompanyCode)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ComponentName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ComponentType)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Duration)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Remarks)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SpecificMonth)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+            modelBuilder.Entity<LeaveApplDetails>(entity =>
+            {
+                entity.HasKey(e => e.Sno)
+                    .HasName("PK_Leave_Appl_Details_1");
+
+                entity.ToTable("Leave_Appl_Details");
+
+                entity.Property(e => e.AccDate)
+                    .HasColumnName("Acc_Date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.AcceptedRemarks)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AccptedId)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApplDate)
+                    .HasColumnName("Appl_Date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ApprDate)
+                    .HasColumnName("appr_date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ApproveName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApprovedId)
+                    .HasColumnName("ApprovedID")
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AuthDate)
+                    .HasColumnName("auth_date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.AuthorizedId)
+                    .HasColumnName("AuthorizedID")
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AuthorizedStatus)
+                    .HasColumnName("Authorized_status")
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ChkAcceptReject)
+                    .HasColumnName("chkAcceptReject")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.CompanyCode)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CompanyName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EmpCode)
+                    .IsRequired()
+                    .HasColumnName("Emp_Code")
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.EmpName)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Formno)
+                    .HasColumnName("FORMNO")
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.LeaveCode)
+                    .HasColumnName("Leave_Code")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LeaveDays).HasColumnName("Leave_Days");
+
+                entity.Property(e => e.LeaveFrom)
+                    .HasColumnName("Leave_From")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.LeaveRemarks)
+                    .HasColumnName("Leave_Remarks")
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LeaveTo)
+                    .HasColumnName("Leave_To")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.Lopdays).HasColumnName("LOPdays");
+
+                entity.Property(e => e.Reason)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Recomendedby)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RejectedId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RejectedName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportId)
+                    .HasColumnName("ReportID")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Session1)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Session2)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Skip)
+                    .HasMaxLength(5)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Trmno)
+                    .HasColumnName("TRMNO")
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+            });
+            modelBuilder.Entity<ApplyOddata>(entity =>
+            {
+                entity.HasKey(e => e.Sno);
+
+                entity.ToTable("ApplyODData");
+
+                entity.Property(e => e.AcceptedBy)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApplDate)
+                    .HasColumnName("Appl_Date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ApprBy)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApprDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ApprStatus)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApproveName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApprovedId)
+                    .HasColumnName("ApprovedID")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Department)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EmpCode)
+                    .IsRequired()
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EmpName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FromDate)
+                    .HasColumnName("From_Date")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.FromTime)
+                    .HasColumnName("From_Time")
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Reason)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RecBy)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RecDate).HasColumnType("datetime");
+
+                entity.Property(e => e.RecStatus)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RejectedId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RejectedName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Remarks)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportId)
+                    .HasColumnName("ReportID")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Skip)
+                    .HasColumnName("skip")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TimeStamp).HasColumnType("datetime");
+
+                entity.Property(e => e.ToDate)
+                    .HasColumnName("To_Date")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.ToTime)
+                    .HasColumnName("To_Time")
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Transport)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VisitingPlace)
+                    .HasColumnName("Visiting_Place")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VisitingPlacePurpus)
+                    .HasColumnName("Visiting_PlacePurpus")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+            modelBuilder.Entity<PermissionRequest>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ApprovedId)
+                    .HasColumnName("ApprovedID")
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApprovedName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CompanyCode)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Department)
+                    .HasMaxLength(6)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EmpCode)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.EmpName)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FromTime)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Fromdate).HasColumnType("datetime");
+
+                entity.Property(e => e.PermissionDate).HasColumnType("date");
+
+                entity.Property(e => e.Purpose)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Reason)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RecommendedBy)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RejectReason)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RejectedId)
+                    .HasColumnName("RejectedID")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RejectedName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportId)
+                    .HasColumnName("ReportID")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ToTime)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Todate).HasColumnType("datetime");
+            });
+            modelBuilder.Entity<VehicleRequisition>(entity =>
+            {
+                entity.HasKey(e => e.Sno)
+                    .HasName("PK_VehicleRequisition_1");
+
+                entity.Property(e => e.AccDate)
+                    .HasColumnName("Acc_date")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.AccptedId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApplDate)
+                    .HasColumnName("Appl_Date")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.ApprDate)
+                    .HasColumnName("appr_date")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.ApproveName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApprovedId)
+                    .HasColumnName("ApprovedID")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Approvedby)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Company)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CompanyGroupCode)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.CompanyGroupName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ContactPersonNo).HasMaxLength(12);
+
+                entity.Property(e => e.Department)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EmpCode)
+                    .IsRequired()
+                    .HasColumnName("Emp_Code")
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.EmpName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FromDate).HasColumnType("date");
+
+                entity.Property(e => e.FromTime)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Place)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Purpose)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Reason)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RecDate)
+                    .HasColumnName("rec_date")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.RejectedId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RejectedName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportId)
+                    .HasColumnName("ReportID")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportingTime)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReprtingAddress).HasMaxLength(50);
+
+                entity.Property(e => e.Skip)
+                    .HasColumnName("skip")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TimeStamp).HasColumnType("date");
+
+                entity.Property(e => e.Todate).HasColumnType("date");
+
+                entity.Property(e => e.Totime)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
             OnModelCreatingPartial(modelBuilder);
         }
 

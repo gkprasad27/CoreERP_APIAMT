@@ -8,28 +8,27 @@ using System.Linq;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/GLSubAccount")]
-    public class GLSubAccountController : ControllerBase
+    [Route("api/Component")]
+    public class ComponentController : ControllerBase
     {
-        private readonly IRepository<TblGlsubAccount> _glsubAccountRepository;
-        public GLSubAccountController(IRepository<TblGlsubAccount> glsubAccountRepository)
+        private readonly IRepository<ComponentMaster> _componentRepository;
+        public ComponentController(IRepository<ComponentMaster> ComponentRepository)
         {
-            _glsubAccountRepository = glsubAccountRepository;
+            _componentRepository = ComponentRepository;
         }
-       
-        [HttpPost("RegisterGLSubAccount")]
-        public IActionResult RegisterGlSubAccount([FromBody]TblGlsubAccount glsub)
+
+        [HttpPost("RegistercomponentTypes")]
+        public IActionResult RegistercomponentTypes([FromBody] ComponentMaster Component)
         {
-            if (glsub == null)
+            if (Component == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-
                 APIResponse apiResponse;
-                _glsubAccountRepository.Add(glsub);
-                if (_glsubAccountRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = glsub };
+                _componentRepository.Add(Component);
+                if (_componentRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = Component };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -42,20 +41,18 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetGLSubAccountList")]
-        public IActionResult GetGlSubAccountList()
+        [HttpGet("GetcomponentTypesList")]
+        public IActionResult GetcomponentTypesList()
         {
             try
             {
-                var subAccountList = CommonHelper.GetGlSubAccounts();
-                if (subAccountList.Any())
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.SubAccountList = subAccountList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                var ComponentTypesList = _componentRepository.GetAll();
+                if (!ComponentTypesList.Any())
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.ComponentTypesList = ComponentTypesList;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -63,21 +60,21 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpPut("UpdateGLSubAccount")]
-        public IActionResult UpdateGlSubAccount([FromBody] TblGlsubAccount glsub)
+        [HttpPut("UpdatecomponentTypes")]
+        public IActionResult UpdatecomponentTypes([FromBody] ComponentMaster Component)
         {
-            if (glsub == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(glsub)} cannot be null" });
+            if (Component == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(Component)} cannot be null" });
 
             try
             {
                 APIResponse apiResponse;
-                _glsubAccountRepository.Update(glsub);
-                if (_glsubAccountRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = glsub };
+                _componentRepository.Update(Component);
+                if (_componentRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = Component };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -86,8 +83,8 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpDelete("DeleteGLSubAccount/{code}")]
-        public IActionResult DeleteGlSubAccountbyId(string code)
+        [HttpDelete("DeletecomponentTypes/{code}")]
+        public IActionResult DeletecomponentTypes(string code)
         {
             try
             {
@@ -95,19 +92,19 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _glsubAccountRepository.GetSingleOrDefault(x => x.GlsubCode.Equals(code));
-                _glsubAccountRepository.Remove(record);
-                if (_glsubAccountRepository.SaveChanges() > 0)
+                var record = _componentRepository.GetSingleOrDefault(x => x.ComponentCode.Equals(code));
+                _componentRepository.Remove(record);
+                if (_componentRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-        }
+        }        
     }
 }

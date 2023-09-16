@@ -5,7 +5,6 @@ namespace CoreERP.Models
 {
     public partial class TblMaterialGroups
     {
-        public int groupId { get; set; }
         public string? GroupKey { get; set; }
         public string? Description { get; set; }
         public string? narration { get; set; }

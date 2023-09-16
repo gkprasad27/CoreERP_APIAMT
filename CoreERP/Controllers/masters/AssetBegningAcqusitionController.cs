@@ -14,9 +14,9 @@ namespace CoreERP.Controllers.masters
     public class AssetBegningAcqusitionController : ControllerBase
     {
         private readonly IRepository<TblAssetBeginingAcquisition> _assetBeginingAcquisitionRepository;
-        private readonly IRepository<TblAssetBegningAccumulatedDepreciation> _assetBegningAccumulatedDepreciationRepository;
+        private readonly IRepository<TblAssetBeginingAcquisitionDetail> _assetBegningAccumulatedDepreciationRepository;
         public AssetBegningAcqusitionController(IRepository<TblAssetBeginingAcquisition> assetBeginingAcquisitionRepository,
-            IRepository<TblAssetBegningAccumulatedDepreciation> assetBegningAccumulatedDepreciationRepository)
+            IRepository<TblAssetBeginingAcquisitionDetail> assetBegningAccumulatedDepreciationRepository)
         {
             _assetBeginingAcquisitionRepository = assetBeginingAcquisitionRepository;
             _assetBegningAccumulatedDepreciationRepository = assetBegningAccumulatedDepreciationRepository;
@@ -89,15 +89,15 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeleteAssetBegningAcqusition/{code}")]
-        public IActionResult DeleteAssetBegningAcqusitionbyId(int code)
+        public IActionResult DeleteAssetBegningAcqusitionbyId(string code)
         {
             try
             {
-                if (code == 0)
+                if (code == null)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _assetBeginingAcquisitionRepository.GetSingleOrDefault(x => x.Id.Equals(code));
+                var record = _assetBeginingAcquisitionRepository.GetSingleOrDefault(x => x.Code.Equals(code));
                 _assetBeginingAcquisitionRepository.Remove(record);
                 if (_assetBeginingAcquisitionRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
@@ -121,7 +121,7 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
                 var aqsnHdr = obj["mainaqsnHdr"].ToObject<TblAssetBeginingAcquisition>();
-                var aqsnDetail = obj["mainaqsnDetail"].ToObject<List<TblAssetBegningAccumulatedDepreciation>>();
+                var aqsnDetail = obj["mainaqsnDetail"].ToObject<List<TblAssetBeginingAcquisitionDetail>>();
 
                 if (!new CommonHelper().AssetBeingAquisition(aqsnHdr, aqsnDetail))
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -137,7 +137,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetAssetBegningAcqusitionDetail/{code}")]
-        public IActionResult GetAssetBegningAcqusitionDetail(int code)
+        public IActionResult GetAssetBegningAcqusitionDetail(string code)
         {
             try
             {

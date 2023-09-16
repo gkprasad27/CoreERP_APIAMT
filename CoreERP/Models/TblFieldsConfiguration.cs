@@ -6,9 +6,9 @@ namespace CoreERP.Models
     public partial class TblFieldsConfiguration
     {
         public int Id { get; set; }
-        public string ScreenModule { get; set; }
-        public string Screenname { get; set; }
-        public string Configuration { get; set; }
-        public string UserName { get; set; }
+        public string OperationCode { get; set; }
+        public string ScreenName { get; set; }
+        public string ShowControl { get; set; }
+        public string CompanyCode { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Dynamic;
 using System.Linq;
@@ -37,6 +38,8 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
+                if (ex.HResult.ToString() == "-2146233088")
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Asset Already Exist, Please use another key " + " " + (assetbgacqanddec.accumulatedDepreciation) });
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
@@ -81,9 +84,34 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
+                if (ex.HResult.ToString() == "-2146233088")
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Asset Already Exist, Please use another key " + " " + (assetbgacqdec.accumulatedDepreciation) });
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
+        [HttpDelete("DeleteAssetBegningAcqusition/{code}")]
+        public IActionResult DeleteAssetBegningAcqusitionbyId(int code)
+        {
+            try
+            {
+                if (code == 0)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
+
+                APIResponse apiResponse;
+                var record = _assetBegningAccumulatedDepreciationRepository.GetSingleOrDefault(x => x.id.Equals(code));
+                _assetBegningAccumulatedDepreciationRepository.Remove(record);
+                if (_assetBegningAccumulatedDepreciationRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
+                else
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }

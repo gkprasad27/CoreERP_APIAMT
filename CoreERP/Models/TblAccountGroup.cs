@@ -13,7 +13,8 @@ namespace CoreERP.Models
         public string? AccountGroupName { get; set; }
         public string? Narration { get; set; }
         public int? IsDefault { get; set; }
-       
-       
+        public string? Note { get; set; }
+        public string? StructureType { get; set; }
+
     }
 }

@@ -8,28 +8,27 @@ using System.Linq;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/GLSubAccount")]
-    public class GLSubAccountController : ControllerBase
+    [Route("api/ODController")]
+    public class ODController : ControllerBase
     {
-        private readonly IRepository<TblGlsubAccount> _glsubAccountRepository;
-        public GLSubAccountController(IRepository<TblGlsubAccount> glsubAccountRepository)
+        private readonly IRepository<ApplyOddata> _otRepository;
+        public ODController(IRepository<ApplyOddata> otRepository)
         {
-            _glsubAccountRepository = glsubAccountRepository;
+            _otRepository = otRepository;
         }
-       
-        [HttpPost("RegisterGLSubAccount")]
-        public IActionResult RegisterGlSubAccount([FromBody]TblGlsubAccount glsub)
+
+        [HttpPost("RegisterotTypes")]
+        public IActionResult RegisterotTypes([FromBody] ApplyOddata ottypes)
         {
-            if (glsub == null)
+            if (ottypes == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
             {
-
                 APIResponse apiResponse;
-                _glsubAccountRepository.Add(glsub);
-                if (_glsubAccountRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = glsub };
+                _otRepository.Add(ottypes);
+                if (_otRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = ottypes };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -42,20 +41,18 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetGLSubAccountList")]
-        public IActionResult GetGlSubAccountList()
+        [HttpGet("GetotTypesList")]
+        public IActionResult GetotTypesList()
         {
             try
             {
-                var subAccountList = CommonHelper.GetGlSubAccounts();
-                if (subAccountList.Any())
-                {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.SubAccountList = subAccountList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                var OTTypesList = _otRepository.GetAll();
+                if (!OTTypesList.Any())
+                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.OTTypesList = OTTypesList;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
@@ -63,21 +60,21 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpPut("UpdateGLSubAccount")]
-        public IActionResult UpdateGlSubAccount([FromBody] TblGlsubAccount glsub)
+        [HttpPut("UpdateotTypes")]
+        public IActionResult UpdateotTypes([FromBody] ApplyOddata ottypes)
         {
-            if (glsub == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(glsub)} cannot be null" });
+            if (ottypes == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(ottypes)} cannot be null" });
 
             try
             {
                 APIResponse apiResponse;
-                _glsubAccountRepository.Update(glsub);
-                if (_glsubAccountRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = glsub };
+                _otRepository.Update(ottypes);
+                if (_otRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = ottypes };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-
+               
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -86,8 +83,8 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpDelete("DeleteGLSubAccount/{code}")]
-        public IActionResult DeleteGlSubAccountbyId(string code)
+        [HttpDelete("DeleteotTypes/{code}")]
+        public IActionResult DeleteotTypes(string code)
         {
             try
             {
@@ -95,19 +92,19 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _glsubAccountRepository.GetSingleOrDefault(x => x.GlsubCode.Equals(code));
-                _glsubAccountRepository.Remove(record);
-                if (_glsubAccountRepository.SaveChanges() > 0)
+                var record = _otRepository.GetSingleOrDefault(x => x.Sno.Equals(code));
+                _otRepository.Remove(record);
+                if (_otRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-
+                
                 return Ok(apiResponse);
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-        }
+        }        
     }
 }

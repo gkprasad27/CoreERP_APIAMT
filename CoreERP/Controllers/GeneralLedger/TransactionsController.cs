@@ -330,7 +330,7 @@ namespace CoreERP.Controllers.masters
 
         #region Asset Sale & Purchase
 
-        [HttpPost("GetPSIMAssetMaster")]
+        [HttpGet("GetPSIMAssetMaster")]
         public IActionResult GetPSIMAssetMaster([FromBody] SearchCriteria searchCriteria)
         {
             try

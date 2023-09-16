@@ -3,6 +3,7 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CoreERP
 {
@@ -315,7 +316,7 @@ namespace CoreERP
                 c.PlantName = plant.FirstOrDefault(cur => cur.PlantCode == c.Plant)?.Plantname;
                 c.EmployeeName = employee.FirstOrDefault(l => l.EmployeeCode == c.StoreIncharge)?.EmployeeName;
                 c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.Material)?.Description;
-                c.UomName = uom.FirstOrDefault(l => l.UnitId ==Convert.ToDecimal(c.Uom))?.UnitName;
+                c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
             });
             return result;
         }
@@ -373,7 +374,7 @@ namespace CoreERP
                 c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
                 c.MaterialGroupName = materialgroup.FirstOrDefault(l => l.GroupKey == c.MaterialGroup)?.Description;
                 c.MaterialSizeName = materialsize.FirstOrDefault(l => l.unitId == c.Size)?.unitName;
-                c.UomName = uom.FirstOrDefault(l => l.UnitId ==Convert.ToDecimal(c.Uom))?.UnitName;
+                c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
                 c.ModelPatternName = modelpattern.FirstOrDefault(l => l.Code == c.ModelPattern)?.Description;
                 c.DivisionName = division.FirstOrDefault(l => l.Code == c.Division)?.Description;
                 c.PurchaseGroupName = purchasegroup.FirstOrDefault(l => l.GroupKey == c.PurchasingGroup)?.Description;
@@ -389,7 +390,7 @@ namespace CoreERP
             var chartaccount = repo.TblChartAccount.ToList();
             var uom = repo.TblUnit.ToList();
             var gl = repo.Glaccounts.ToList();
-            
+
             var result = repo.TblPrimaryCostElement.ToList();
 
             result.ForEach(c =>
@@ -587,7 +588,7 @@ namespace CoreERP
         public static IEnumerable<TblDesignation> GetDesignation()
         {
             using var repo = new Repository<TblDesignation>();
-           
+
             var result = repo.TblDesignation.ToList();
 
             return result;
@@ -890,7 +891,7 @@ namespace CoreERP
 
             result.ForEach(c =>
             {
-                c.VoucherTypeName = tblVoucherTypes.FirstOrDefault(l => l.VoucherTypeId ==  c.VoucherType)?.VoucherTypeName;
+                c.VoucherTypeName = tblVoucherTypes.FirstOrDefault(l => l.VoucherTypeId == c.VoucherType)?.VoucherTypeName;
             });
             return result;
         }
@@ -1325,9 +1326,9 @@ namespace CoreERP
         }
 
         //AssetBeingAquisition
-        public bool AssetBeingAquisition(TblAssetBeginingAcquisition bngaqsn, List<TblAssetBegningAccumulatedDepreciation> astbngdsrpnDetails)
+        public bool AssetBeingAquisition(TblAssetBeginingAcquisition bngaqsn, List<TblAssetBeginingAcquisitionDetail> astbngdsrpnDetails)
         {
-           
+
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             try
@@ -1338,9 +1339,13 @@ namespace CoreERP
                     context.SaveChanges();
                     foreach (var item in astbngdsrpnDetails)
                     {
-                        if (item.Id == 0)
+                        if (item.id != 0)
                         {
-                            context.TblAssetBegningAccumulatedDepreciation.UpdateRange(astbngdsrpnDetails);
+                            astbngdsrpnDetails.ForEach(x =>
+                            {
+                                x.Code = bngaqsn.Code;
+                            });
+                            context.TblAssetBeginingAcquisitionDetail.UpdateRange(astbngdsrpnDetails);
                             context.SaveChanges();
                             dbtrans.Commit();
                             return true;
@@ -1353,11 +1358,10 @@ namespace CoreERP
                 context.SaveChanges();
                 astbngdsrpnDetails.ForEach(x =>
                 {
-                    x.Id = bngaqsn.Id;
-
+                    x.Code = bngaqsn.Code;
                 });
 
-                context.TblAssetBegningAccumulatedDepreciation.AddRange(astbngdsrpnDetails);
+                context.TblAssetBeginingAcquisitionDetail.AddRange(astbngdsrpnDetails);
                 context.SaveChanges();
 
                 dbtrans.Commit();
@@ -1370,16 +1374,16 @@ namespace CoreERP
             }
         }
 
-        public TblAssetBeginingAcquisition GetmainAqsnById(int code)
+        public TblAssetBeginingAcquisition GetmainAqsnById(string code)
         {
             using var repo = new Repository<TblAssetBeginingAcquisition>();
-            return repo.TblAssetBeginingAcquisition.FirstOrDefault(x => x.Id == code);
+            return repo.TblAssetBeginingAcquisition.FirstOrDefault(x => x.Code == code);
         }
 
-        public List<TblAssetBegningAccumulatedDepreciation> GetAqsnDetailDetails(int code)
+        public List<TblAssetBeginingAcquisitionDetail> GetAqsnDetailDetails(string code)
         {
-            using var repo = new Repository<TblAssetBegningAccumulatedDepreciation>();
-            return repo.TblAssetBegningAccumulatedDepreciation.Where(cd => cd.Id == code).ToList();
+            using var repo = new Repository<TblAssetBeginingAcquisitionDetail>();
+            return repo.TblAssetBeginingAcquisitionDetail.Where(cd => cd.Code == code).ToList();
         }
 
         //Main Asset
@@ -1444,7 +1448,7 @@ namespace CoreERP
             using var repo = new Repository<TblMainAssetMasterTransaction>();
             return repo.TblMainAssetMasterTransaction.Where(cd => cd.AssetNumber == assetNumber).ToList();
         }
-       
+
         //subassets
         public bool SubAssetsdatas(TblSubAssetMaster assetMaster, List<TblSubAssetMasterTransaction> assetDetails)
         {
@@ -1500,33 +1504,30 @@ namespace CoreERP
             return repo.TblSubAssetMasterTransaction.Where(cd => cd.SubAssetNumber == assetNumber).ToList();
         }
 
-        //public static string GetScreenConfig(string screenmodel, string screenName, string username)
-        //{
-        //    try
-        //    {
-        //        using var repo = new Repository<TblFieldsConfiguration>();
-        //        return repo.TblFieldsConfiguration
-        //            .FirstOrDefault(fc => fc.Screenname == screenName
-        //                                  && fc.ScreenModule == screenmodel
-        //                                  && fc.UserName == username).Configuration;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return null;
-        //    }
-        //}
-        public static string GetScreenConfig(string screenmodel, string screenName, string username)
+        public static string GetScreenConfig(string operationCode)
         {
             try
             {
-                using var repo = new Repository<TblFieldsConfiguration>();
-                return repo.TblFieldsConfiguration
-                         .Where(fc => fc.Screenname == screenName
-                                  && fc.ScreenModule == screenmodel
-                                  && fc.UserName == username)
-                         .FirstOrDefault().Configuration;
+                //using var repo = new Repository<TblFieldsConfiguration>();
+                //return repo.TblFieldsConfiguration
+                //         .Where(fc => fc.OperationCode == operationCode)
+                //         .FirstOrDefault().OperationCode;
+
+                using (Repository<TblFieldsConfiguration> _repo = new Repository<TblFieldsConfiguration>())
+                {
+                    TblFieldsConfiguration screenConfig = new TblFieldsConfiguration();
+                  screenConfig=   _repo.TblFieldsConfiguration.Where(m => m.OperationCode == operationCode).FirstOrDefault();
+                    if (screenConfig!=null)
+                        return screenConfig.ShowControl;
+                    else
+                      return  null;
+                };
             }
-            catch (Exception)
+            catch ( NullReferenceException Exception)
+            {
+                return null;
+            }
+            catch ( Exception)
             {
                 return null;
             }

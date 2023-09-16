@@ -38,6 +38,8 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
+                if (ex.HResult.ToString() == "-2146233088")
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "MRN already Exist, Please use another key " + " " + (assgnmnt.Mrnseries) });
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
@@ -82,6 +84,8 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
+                if (ex.HResult.ToString() == "-2146233088")
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "MRN already Exist, Please use another key " + " " + (assgnmnt.Mrnseries) });
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }

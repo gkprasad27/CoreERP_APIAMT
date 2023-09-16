@@ -38,6 +38,8 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
+                if (ex.HResult.ToString() == "-2146233088")
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Purchase Person already Exist, Please use another key " + " " + (pcperson.PurchasePerson) });
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
@@ -82,20 +84,22 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
+                if (ex.HResult.ToString() == "-2146233088")
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Purchase Person already Exist, Please use another key " + " " + (pcperson.PurchasePerson) });
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
         [HttpDelete("DeletePurchasingperson/{code}")]
-        public IActionResult DeletePurchasingpersonbyId(string code)
+        public IActionResult DeletePurchasingpersonbyId(int code)
         {
             try
             {
-                if (code == null)
+                if (code ==0)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _purchasingpersonRepository.GetSingleOrDefault(x => x.PurchasePerson.Equals(code));
+                var record = _purchasingpersonRepository.GetSingleOrDefault(x => x.id.Equals(code));
                 _purchasingpersonRepository.Remove(record);
                 if (_purchasingpersonRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };

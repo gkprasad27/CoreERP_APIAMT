@@ -75,14 +75,17 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateAssignGLaccounttoSubGroup")]
-        public async Task<IActionResult> UpdateAssignGLaccounttoSubGroup([FromBody] AssignmentSubaccounttoGl assnacckey)
+        public async Task<IActionResult> UpdateAssignGLaccounttoSubGroup([FromBody] JObject obj)
         {
-            if (assnacckey == null)
+            if (obj == null)
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request cannot be null" });
 
             try
             {
-                _assignmentSubaccounttoGlRepository.Update(assnacckey);
+                List<AssignmentSubaccounttoGl> assnacckey;
+                assnacckey = obj["GLS"].ToObject<IList<AssignmentSubaccounttoGl>>().ToList();
+
+                _assignmentSubaccounttoGlRepository.UpdateRange(assnacckey);
                 APIResponse apiResponse;
                 if (_assignmentSubaccounttoGlRepository.SaveChanges() <= 0)
                     apiResponse = new APIResponse() {status = APIStatus.FAIL.ToString(), response = "Updation Failed."};

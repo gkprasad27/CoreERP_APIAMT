@@ -10,7 +10,6 @@ namespace CoreERP.Models
         public string? Bpgroup { get; set; }
         public string? Bpnumber { get; set; }
         public string? Name { get; set; }
-        public string? Name1 { get; set; }
         public string? Search { get; set; }
         public string? Address { get; set; }
         public string? Address1 { get; set; }
