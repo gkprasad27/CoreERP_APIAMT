@@ -251,6 +251,8 @@ namespace CoreERP.Models
         public virtual DbSet<ApplyOddata> ApplyOddata { get; set; }
         public virtual DbSet<PermissionRequest> PermissionRequest { get; set; }
         public virtual DbSet<VehicleRequisition> VehicleRequisition { get; set; }
+        public virtual DbSet<TblSaleOrderMaster> SaleorderMaster { get; set; }
+        public virtual DbSet<TblSaleOrderDetail> SaleOrderDetails { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -7789,6 +7791,61 @@ namespace CoreERP.Models
                 entity.Property(e => e.UserId)
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+            modelBuilder.Entity<TblSaleOrderDetail>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+
+                entity.Property(e => e.SaleOrderNo)
+                .HasMaxLength(50);
+
+                entity.Property(e => e.QTY);
+
+                entity.Property(e => e.Rate);
+
+                entity.Property(e => e.MaterialCode);
+
+                entity.Property(e => e.Discount);
+
+                entity.Property(e => e.Total);
+
+                entity.Property(e => e.DeliveryDate);
+
+            });
+
+            modelBuilder.Entity<TblSaleOrderMaster>(entity =>
+            {
+                entity.HasKey(e => e.SaleOrderNo);
+
+                entity.Property(e => e.CustomerCode)
+                .HasMaxLength(50);
+
+                entity.Property(e => e.OrderDate);
+
+                entity.Property(e => e.PONumber)
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.PODate);
+
+                entity.Property(e => e.DateofSupply);
+
+                entity.Property(e => e.PlaceofSupply)
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.DocumentURL)
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50);
+                entity.Property(e => e.TaxCode)
+                    .HasMaxLength(50);
+                entity.Property(e => e.ICST);
+                entity.Property(e => e.UGST);
+                entity.Property(e => e.CGST);
+                entity.Property(e => e.SGST);
+                entity.Property(e => e.Total);
+                entity.Property(e => e.CreatedDate);
+                entity.Property(e => e.CreatedBy);
             });
             OnModelCreatingPartial(modelBuilder);
         }
