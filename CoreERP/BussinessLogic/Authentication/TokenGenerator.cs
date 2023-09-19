@@ -23,7 +23,7 @@ namespace CoreERP.BussinessLogic.Authentication
         public static readonly  string Key= "COREERPSECURITYKEY";
         public static readonly string issUser= "COREERPSECURITYKEY";
 
-        public string GenerateToken(Erpuser user,List<string> branchCodes)
+        public string GenerateToken(Erpuser user)
         {
            
             try
@@ -35,7 +35,7 @@ namespace CoreERP.BussinessLogic.Authentication
                 {
                     new Claim(Convert.ToString(CalimsKeys.UserId),user.SeqId.ToString()),
                     new Claim(Convert.ToString(CalimsKeys.UserName),user.UserName),
-                    new Claim(Convert.ToString(CalimsKeys.BRANCHES),String.Join(",",branchCodes))
+                    //new Claim(Convert.ToString(CalimsKeys.BRANCHES),String.Join(",",branchCodes))
                 };
 
                 var token = new JwtSecurityToken(

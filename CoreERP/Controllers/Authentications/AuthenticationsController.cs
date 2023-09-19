@@ -26,11 +26,11 @@ namespace CoreERP.Controllers
 
                     if (user != null)
                     {
-                        var _branch = UserManagmentHelper.GetBranchesByUser(user.SeqId).ToList();
+                        //var _branch = UserManagmentHelper.GetBranchesByUser(user.SeqId).ToList();
                        // var shiftId = new UserManagmentHelper().GetShiftId(user.SeqId, _branch.FirstOrDefault());
                         dynamic expando = new ExpandoObject();
                         expando.User = user;
-                        expando.Token= new BussinessLogic.Authentication.TokenGenerator().GenerateToken(user, _branch);
+                        expando.Token= new BussinessLogic.Authentication.TokenGenerator().GenerateToken(user);
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
 

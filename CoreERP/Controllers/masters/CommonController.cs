@@ -62,6 +62,8 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblHsnsac> _hsnsacRepository;
         private readonly IRepository<TblMaterialTypes> _materialTypesRepository;
         private readonly IRepository<TblPrimaryCostElement> _primaryCostElementRepository;
+        private readonly IRepository<LeaveTypes> _leaveTyperepository;
+        private readonly IRepository<ConfigurationTable> _configurationRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
@@ -82,7 +84,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblGoodsReceiptMaster> goodsReceiptMasterRepository,
                                 IRepository<TblGoodsReceiptDetails> GoodsReceiptDetailsRepository,
                                 IRepository<TblHsnsac> hsnsacRepository, IRepository<TblPrimaryCostElement> primaryCostElementRepository,
-                                IRepository<TblMaterialTypes> materialTypesRepository)
+                                IRepository<TblMaterialTypes> materialTypesRepository, IRepository<ConfigurationTable> configurationRepository,IRepository<LeaveTypes> leaveTypeRepository)
         {
             _primaryCostElementRepository = primaryCostElementRepository;
             _materialTypesRepository = materialTypesRepository;
@@ -131,6 +133,8 @@ namespace CoreERP.Controllers
             _wbsRepository = wbsRepository;
             _purchaseOrderDetailsRepository = PurchaseOrderDetailsRepository;
             _materialRequisitionDetailsRepository = materialRequisitionDetailsRepository;
+            _configurationRepository = configurationRepository;
+            _leaveTyperepository = leaveTypeRepository;
         }
 
         [HttpGet("GetPrimaryCostElementList")]
@@ -1135,6 +1139,46 @@ namespace CoreERP.Controllers
                 expdoObj.Permissions = permission;
                 expdoObj.ShowControl = showControl;
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetConfigurationList")]
+        public IActionResult GetConfigurationList()
+        {
+            try
+            {
+                var ConfigurationList = _configurationRepository.GetAll();
+                if (!ConfigurationList.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.ComponentTypesList = ConfigurationList;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetLeaveTypeList/{companyCode}")]
+        public IActionResult GetLeaveTypeList(string companyCode)
+        {
+            try
+            {
+                var leaveTypeList = _leaveTyperepository.GetAll().Select(x => new { ID = x.LeaveCode, TEXT = x.LeaveName });
+                if (leaveTypeList.Any())
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.leaveTypeList = leaveTypeList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
             }
             catch (Exception ex)
             {
