@@ -1542,5 +1542,76 @@ namespace CoreERP.Controllers.masters
         }
 
         #endregion
+
+        #region  Sale Order 
+
+        [HttpPost("GetSaleOrder")]
+        public IActionResult GetSaleOrder([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var saleOrderMaster = new TransactionsHelper().GetSaleOrderMasters(searchCriteria);
+                if (!saleOrderMaster.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Sale Order." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.saleOrderMaster = saleOrderMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetSaleOrderDetail/{saleOrderNumber}")]
+        public IActionResult GetSaleOrderDetail(int saleOrderNumber)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var SaleOrderMasters = transactions.GetSaleOrderMastersById(saleOrderNumber);
+                if (SaleOrderMasters == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.SaleOrderMasters = SaleOrderMasters;
+                expdoObj.SaleOrderDetails = new TransactionsHelper().GetSaleOrdersDetails(saleOrderNumber);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("AddSaleOrder")]
+        public IActionResult AddSaleOrder([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var saleOrderMaster = obj["saleOrderHdr"].ToObject<TblSaleOrderMaster>();
+                var saleOrderDetails = obj["saleOrderDtl"].ToObject<List<TblSaleOrderDetail>>();
+
+                if (!new TransactionsHelper().AddSaleOrder(saleOrderMaster, saleOrderDetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.saleOrderMaster = saleOrderMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+       
+
+
+        #endregion
     }
 }

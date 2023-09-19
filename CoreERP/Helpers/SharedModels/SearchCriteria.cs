@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Html;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace CoreERP.Helpers.SharedModels
         private DateTime? _toDate;
         private string _invoiceNo;
         private string _name;
+        private int _saleOrderNo=0;
         public DateTime? FromDate
         {
             get
@@ -70,6 +72,19 @@ namespace CoreERP.Helpers.SharedModels
             }
         }
 
-       
+        public int SaleOrderNo
+        {
+            get
+            {
+                return _saleOrderNo;
+            }
+            set
+            {
+                if (value==0)
+                    _saleOrderNo = 0;
+                else
+                    _saleOrderNo = value;
+            }
+        }
     }
 }
