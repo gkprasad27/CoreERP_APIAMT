@@ -1039,8 +1039,8 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetBPList")]
-        public IActionResult GetBpList()
+        [HttpGet("GetCustomerList")]
+        public IActionResult GetCustomerList()
         {
             try
             {
