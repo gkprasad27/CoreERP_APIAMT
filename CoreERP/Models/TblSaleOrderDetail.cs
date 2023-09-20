@@ -14,5 +14,6 @@ namespace CoreERP.Models
         public decimal? Discount { get; set; }
         public decimal? Total { get; set; }
         public DateTime? DeliveryDate { get; set; }
+        public string? TaxCode { get; set; }
     }
 }

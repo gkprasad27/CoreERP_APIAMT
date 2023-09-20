@@ -165,6 +165,21 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpGet("GetBPList")]
+        public IActionResult GetBPList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.BPList = _bpRepository.GetAll().Select(x => new { ID = x.Bpnumber, TEXT = x.Name });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
         [HttpGet("GetWorkcenterList")]
         public IActionResult GetWorkcenterList()
         {
@@ -1029,7 +1044,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var bpList = _bpRepository.GetAll().Select(x => new { ID = x.Bpnumber, TEXT = x.Name, BPTYPE = x.Bptype });
+                var bpList = CommonHelper.BPList().Select(x => new { ID = x.Bpnumber, TEXT = x.Name, BPTYPE = x.BpTypeName ,BPGROUP=x.BpGroupName});
                 if (bpList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

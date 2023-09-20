@@ -1174,6 +1174,22 @@ namespace CoreERP
             return result;
         }
 
+        public static IEnumerable<TblBusinessPartnerAccount> BPList()
+        {
+            using Repository<TblBusinessPartnerAccount> repo = new Repository<TblBusinessPartnerAccount>();
+            var BpGroup = repo.TblBpgroup.ToList();
+            var BpType = repo.PartnerType.ToList();
+
+            var result = repo.TblBusinessPartnerAccount.ToList();
+
+            result.ForEach(c =>
+            {
+                c.BpGroupName = BpGroup.FirstOrDefault(cur => cur.Bpgroup == c.Bpgroup)?.Description;
+                c.BpTypeName = BpType.FirstOrDefault(cur => cur.Code == c.Bptype)?.Bpcategory;
+            });
+            return result;
+        }
+
         public static IEnumerable<Glaccounts> GetGlAccounts()
         {
             using var repo = new Repository<Glaccounts>();
