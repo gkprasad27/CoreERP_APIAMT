@@ -1545,7 +1545,7 @@ namespace CoreERP.Controllers.masters
 
         #region  Sale Order 
 
-        [HttpPost("GetSaleOrder")]
+        [HttpGet("GetSaleOrder")]
         public IActionResult GetSaleOrder([FromBody] SearchCriteria searchCriteria)
         {
             try
@@ -1593,8 +1593,8 @@ namespace CoreERP.Controllers.masters
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                var saleOrderMaster = obj["saleOrderHdr"].ToObject<TblSaleOrderMaster>();
-                var saleOrderDetails = obj["saleOrderDtl"].ToObject<List<TblSaleOrderDetail>>();
+                var saleOrderMaster = obj["qsHdr"].ToObject<TblSaleOrderMaster>();
+                var saleOrderDetails = obj["qsDtl"].ToObject<List<TblSaleOrderDetail>>();
 
                 if (!new TransactionsHelper().AddSaleOrder(saleOrderMaster, saleOrderDetails))
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });

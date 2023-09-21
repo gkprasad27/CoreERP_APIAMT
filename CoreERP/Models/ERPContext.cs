@@ -251,8 +251,8 @@ namespace CoreERP.Models
         public virtual DbSet<ApplyOddata> ApplyOddata { get; set; }
         public virtual DbSet<PermissionRequest> PermissionRequest { get; set; }
         public virtual DbSet<VehicleRequisition> VehicleRequisition { get; set; }
-        public virtual DbSet<TblSaleOrderMaster> SaleorderMaster { get; set; }
-        public virtual DbSet<TblSaleOrderDetail> SaleOrderDetails { get; set; }
+        public virtual DbSet<TblSaleOrderMaster> TblSaleOrderMaster { get; set; }
+        public virtual DbSet<TblSaleOrderDetail> TblSaleOrderDetail { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -7818,19 +7818,19 @@ namespace CoreERP.Models
                 entity.HasKey(e => e.SaleOrderNo);
 
                 entity.Property(e => e.CustomerCode)
-                .HasMaxLength(50);
+                .HasMaxLength(50).IsUnicode(false);
 
                 entity.Property(e => e.OrderDate);
 
                 entity.Property(e => e.PONumber)
-                    .HasMaxLength(50);
+                    .HasMaxLength(50).IsUnicode(false);
 
                 entity.Property(e => e.PODate);
 
                 entity.Property(e => e.DateofSupply);
 
                 entity.Property(e => e.PlaceofSupply)
-                    .HasMaxLength(50);
+                    .HasMaxLength(50).IsUnicode(false);
 
                 entity.Property(e => e.DocumentURL)
                     .HasMaxLength(500);

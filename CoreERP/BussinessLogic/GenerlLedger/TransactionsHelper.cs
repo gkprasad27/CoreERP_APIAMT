@@ -67,7 +67,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 case "SaleOrder":
                     {
                         using var repo = new Repository<TblSaleOrderMaster>();
-                        return repo.SaleorderMaster.Any(v => v.PONumber == voucherNo);
+                        return repo.TblSaleOrderMaster.Any(v => v.PONumber == voucherNo);
                     }
                 default:
                     return false;
@@ -1904,68 +1904,59 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
             searchCriteria.ToDate ??= DateTime.Today;
 
+            //using var repo = new Repository<TblSaleOrderMaster>();
+            //return repo.TblSaleOrderMaster.AsEnumerable()
+            //    .Where(x =>
+            //    {
+            //        Debug.Assert(x.OrderDate != null, "x.OrderDate != null");
+            //        return x.Status == "N"
+            //               && x.SaleOrderNo.Equals(searchCriteria.searchCriteria)
+            //               && Convert.ToDateTime(x.OrderDate.Value) >=
+            //               Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+            //               && Convert.ToDateTime(x.OrderDate.Value.ToShortDateString()) <=
+            //               Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+            //    })
+            //    .ToList();
             using var repo = new Repository<TblSaleOrderMaster>();
-            return repo.SaleorderMaster.AsEnumerable()
-                .Where(x =>
-                {
-                    Debug.Assert(x.OrderDate != null, "x.OrderDate != null");
-                    return x.Status == "N"
-                           && x.SaleOrderNo.Equals(searchCriteria.searchCriteria)
-                           && Convert.ToDateTime(x.OrderDate.Value) >=
-                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                           && Convert.ToDateTime(x.OrderDate.Value.ToShortDateString()) <=
-                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
-                })
-                .ToList();
+            return repo.TblSaleOrderMaster.AsEnumerable().ToList();
         }
 
         public TblSaleOrderMaster GetSaleOrderMastersById(int saleOrderNo)
         {
             using var repo = new Repository<TblSaleOrderMaster>();
-            return repo.SaleorderMaster
+            return repo.TblSaleOrderMaster
                 .FirstOrDefault(x => x.SaleOrderNo == saleOrderNo);
         }
 
         public List<TblSaleOrderDetail> GetSaleOrdersDetails(int saleOrderNo)
         {
             using var repo = new Repository<TblSaleOrderDetail>();
-            return repo.SaleOrderDetails.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
+            return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
         }
         public bool AddSaleOrder(TblSaleOrderMaster saleOrderMaster, List<TblSaleOrderDetail> saleOrderDetails)
         {
             if (saleOrderMaster.OrderDate == null)
                 throw new Exception("Sale Order Date Canot be empty/null.");
 
-            if (saleOrderMaster.SaleOrderNo == 0)
-                throw new Exception("Sale Order Number Canot be empty/null.");
-
+            
             if (this.IsVoucherNumberExists(saleOrderMaster.PONumber, "SaleOrder"))
                 throw new Exception("Po number exists.");
 
             saleOrderMaster.CreatedDate ??= DateTime.Now;
-
-           
-
-            //saleOrderDetails.ForEach(x =>
-            //{
-            //    x.VoucherNumber = saleOrderMaster.VoucherNumber;
-            //    x.VoucherDate = saleOrderMaster.VoucherDate;
-            //    x.Company = saleOrderMaster.Company;
-            //    x.Branch = saleOrderMaster.Branch;
-            //    x.PostingDate = saleOrderMaster.PostingDate;
-            //    x.LineItemNo = Convert.ToString(lineno++);
-            //    x.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
-            //});
 
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
                 saleOrderMaster.Status = "Created";
-                context.SaleorderMaster.Add(saleOrderMaster);
+                context.TblSaleOrderMaster.Add(saleOrderMaster);
                 context.SaveChanges();
 
-                context.SaleOrderDetails.AddRange(saleOrderDetails);
+                saleOrderDetails.ForEach(x =>
+                {
+                    x.SaleOrderNo = saleOrderMaster.SaleOrderNo;
+                });
+                context.TblSaleOrderDetail.AddRange(saleOrderDetails);
                 context.SaveChanges();
 
                 dbtrans.Commit();
