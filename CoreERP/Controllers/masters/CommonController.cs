@@ -559,6 +559,27 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetEmployeeCode/{Code}")]
+        public IActionResult GetEmployeeCode(string Code)
+        {
+            try
+            {
+                var empList = _employeeRepository.Where(x =>x.EmployeeCode==Code).Select(x=> new{ ID = x.EmployeeCode, TEXT = x.EmployeeName });
+                if (empList.Any())
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.emplist = empList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetCostUnitList")]
         public IActionResult GetCostUnitList()
         {
