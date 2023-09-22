@@ -1545,7 +1545,7 @@ namespace CoreERP.Controllers.masters
 
         #region  Sale Order 
 
-        [HttpGet("GetSaleOrder")]
+        [HttpPost("GetSaleOrder")]
         public IActionResult GetSaleOrder([FromBody] SearchCriteria searchCriteria)
         {
             try

@@ -1904,21 +1904,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
             searchCriteria.ToDate ??= DateTime.Today;
 
-            //using var repo = new Repository<TblSaleOrderMaster>();
-            //return repo.TblSaleOrderMaster.AsEnumerable()
-            //    .Where(x =>
-            //    {
-            //        Debug.Assert(x.OrderDate != null, "x.OrderDate != null");
-            //        return x.Status == "N"
-            //               && x.SaleOrderNo.Equals(searchCriteria.searchCriteria)
-            //               && Convert.ToDateTime(x.OrderDate.Value) >=
-            //               Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-            //               && Convert.ToDateTime(x.OrderDate.Value.ToShortDateString()) <=
-            //               Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
-            //    })
-            //    .ToList();
             using var repo = new Repository<TblSaleOrderMaster>();
-            return repo.TblSaleOrderMaster.AsEnumerable().ToList();
+            return repo.TblSaleOrderMaster.AsEnumerable()
+                .Where(x =>
+                {
+                    Debug.Assert(x.OrderDate != null, "x.OrderDate != null");
+                    return x.Status == "Created";
+                           //&& x.SaleOrderNo.Equals(searchCriteria.searchCriteria)
+                           //&& Convert.ToDateTime(x.OrderDate.Value) >=
+                           //Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                           //&& Convert.ToDateTime(x.OrderDate.Value.ToShortDateString()) <=
+                           //Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                })
+                .ToList();
         }
 
         public TblSaleOrderMaster GetSaleOrderMastersById(int saleOrderNo)
