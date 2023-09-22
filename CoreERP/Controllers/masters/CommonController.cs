@@ -559,12 +559,12 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetEmployeeCode/{Code}")]
-        public IActionResult GetEmployeeCode(string Code)
+        [HttpPost("GetEmployeeCode")]
+        public IActionResult GetEmployeeCode()
         {
             try
             {
-                var empList = _employeeRepository.Where(x =>x.EmployeeCode==Code).Select(x=> new{ ID = x.EmployeeCode, TEXT = x.EmployeeName });
+                var empList = _employeeRepository.GetAll().Select(x=> new{ ID = x.EmployeeCode, TEXT = x.EmployeeName });
                 if (empList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

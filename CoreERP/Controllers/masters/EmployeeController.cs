@@ -27,7 +27,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var employeesList = EmployeeHelper.GetEmployes();
+                    var employeesList = _employeeRepository.GetAll();
                     if (employeesList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
