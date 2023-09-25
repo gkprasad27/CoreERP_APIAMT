@@ -14,7 +14,12 @@ namespace CoreERP.Models
         public int? QTY { get; set; }
         public decimal? Rate { get; set; }
         public decimal? Discount { get; set; }
+        public decimal? ICST { get; set; }
+        public decimal? UGST { get; set; }
+        public decimal? CGST { get; set; }
+        public decimal? SGST { get; set; }
         public decimal? Total { get; set; }
+        public decimal? Amount { get; set; }
         public DateTime? DeliveryDate { get; set; }
         public string? TaxCode { get; set; }
     }

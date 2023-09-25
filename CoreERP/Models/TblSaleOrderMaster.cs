@@ -22,6 +22,7 @@ namespace CoreERP.Models
         public decimal? CGST { get; set; }
         public decimal? SGST { get; set; }
         public decimal? Total { get; set; }
+        public decimal? Amount { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string? CreatedBy { get; set; }
     }
