@@ -5275,7 +5275,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Advance).HasColumnType("numeric(18, 2)");
 
-                entity.Property(e => e.Branch).HasMaxLength(5);
+                entity.Property(e => e.CustPONumber).HasMaxLength(50);
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
@@ -5287,7 +5287,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.EditWho).HasMaxLength(50);
 
-                entity.Property(e => e.FilePath)
+                entity.Property(e => e.SaleOrderNo)
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
@@ -5295,25 +5295,22 @@ namespace CoreERP.Models
                     .HasColumnName("GSTNo")
                     .HasMaxLength(15);
 
-                entity.Property(e => e.PaymentTerms).HasMaxLength(50);
-
-                entity.Property(e => e.Plant).HasMaxLength(5);
-
-                entity.Property(e => e.ProfitCenter).HasMaxLength(5);
+                entity.Property(e => e.TaxCode).HasMaxLength(50);
 
                 entity.Property(e => e.PurchaseOrderDate).HasColumnType("date");
 
                 entity.Property(e => e.PurchaseOrderType).HasMaxLength(50);
 
-                entity.Property(e => e.QuotationDate).HasColumnType("date");
-
-                entity.Property(e => e.QuotationNumber)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
                 entity.Property(e => e.SupplierCode).HasMaxLength(50);
 
-                entity.Property(e => e.TermsofDelivery).HasMaxLength(50);
+                entity.Property(e => e.IGST).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.UGST).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.CGST).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.SGST).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.Total).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.ProfitCenter).HasMaxLength(50);
+                entity.Property(e => e.Location).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblPurchaseOrderDetails>(entity =>
@@ -5322,31 +5319,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.ApprovedBy).HasMaxLength(50);
-
-                entity.Property(e => e.Branch).HasMaxLength(50);
-
-                entity.Property(e => e.Commitment).HasMaxLength(50);
-
-                entity.Property(e => e.CostCenter).HasMaxLength(50);
-
-                entity.Property(e => e.Department).HasMaxLength(50);
-
-                entity.Property(e => e.Description).HasMaxLength(50);
-
                 entity.Property(e => e.Discount).HasColumnType("numeric(18, 2)");
 
-                entity.Property(e => e.FundCenter).HasMaxLength(50);
-
-                entity.Property(e => e.Location).HasMaxLength(50);
-
                 entity.Property(e => e.MaterialCode).HasMaxLength(50);
-
-                entity.Property(e => e.Plant).HasMaxLength(50);
-
-                entity.Property(e => e.PreparedBy).HasMaxLength(50);
-
-                entity.Property(e => e.ProfitCenter).HasMaxLength(50);
 
                 entity.Property(e => e.PurchaseOrderNumber).HasMaxLength(50);
 
@@ -5354,13 +5329,15 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Rate).HasColumnType("numeric(18, 2)");
 
-                entity.Property(e => e.RecommendedBy).HasMaxLength(50);
-
                 entity.Property(e => e.Tax).HasColumnType("numeric(18, 2)");
 
-                entity.Property(e => e.Wbs)
-                    .HasColumnName("WBS")
-                    .HasMaxLength(50);
+                entity.Property(e => e.IGST).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.UGST).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.CGST).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.SGST).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.Total).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
+
             });
 
             modelBuilder.Entity<TblPurchaseOrderNoAssignment>(entity =>
