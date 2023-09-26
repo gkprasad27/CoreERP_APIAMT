@@ -17,7 +17,7 @@ namespace CoreERP.Models
         public string? DocumentURL { get; set; }
         public string? Status { get; set; }
         public string? TaxCode { get; set; }
-        public decimal? ICST { get; set; }
+        public decimal? IGST { get; set; }
         public decimal? UGST { get; set; }
         public decimal? CGST { get; set; }
         public decimal? SGST { get; set; }

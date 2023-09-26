@@ -7839,7 +7839,7 @@ namespace CoreERP.Models
                     .HasMaxLength(50);
                 entity.Property(e => e.TaxCode)
                     .HasMaxLength(50);
-                entity.Property(e => e.ICST);
+                entity.Property(e => e.IGST);
                 entity.Property(e => e.UGST);
                 entity.Property(e => e.CGST);
                 entity.Property(e => e.SGST);
