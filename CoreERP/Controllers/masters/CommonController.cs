@@ -41,6 +41,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<ProfitCenters> _profitCentersRepository;
         private readonly IRepository<CostCenters> _ccRepository;
         private readonly IRepository<TblBusinessPartnerAccount> _bpRepository;
+        private readonly IRepository<TblSaleOrderMaster> _somRepository;
         private readonly IRepository<TblInvoiceMemoHeader> _InvoiceMemoHeaderRepository;
         private readonly IRepository<TblMainAssetMaster> _tblMainAssetRepository;
         private readonly IRepository<TblSubAssetMaster> _tblsubAssetRepository;
@@ -70,7 +71,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblTaxtransactions> ttRepository, IRepository<TblTaxRates> trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
                                 IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
                                 IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository, IRepository<CostCenters> ccRepository,
-                                IRepository<TblBusinessPartnerAccount> bpRepository, IRepository<TblUnit> unitRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
+                                IRepository<TblBusinessPartnerAccount> bpRepository, IRepository<TblSaleOrderMaster> somRepository,IRepository<TblUnit> unitRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
                                 IRepository<TblInvoiceMemoHeader> tblInvoiceMemoHeaderRepository,
                                 IRepository<TblSecondaryCostElement> secondaryCostElementRepository,
                                  IRepository<TblCostingObjectTypes> costingObjectTypesRepository, IRepository<TblCostingUnitsCreation> costingUnitsCreationRepository,
@@ -122,6 +123,7 @@ namespace CoreERP.Controllers
             _profitCentersRepository = profitCentersRepository;
             _ccRepository = ccRepository;
             _bpRepository = bpRepository;
+            _somRepository = somRepository;
             _tblMainAssetRepository = tblMainAssetRepository;
             _tblsubAssetRepository = tblsubAssetRepository;
             _departmentRepository = departmentRepository;
@@ -172,7 +174,22 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BPList = _bpRepository.GetAll().Select(x => new { ID = x.Bpnumber, TEXT = x.Name });
+                expando.BPList = _bpRepository.GetAll().Select(x => new { ID = x.Bpnumber, TEXT = x.Name,GSTno=x.Gstno });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetSaleOrderList")]
+        public IActionResult GetSaleOrderList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.BPList = _somRepository.Where(x => x.Status == "Created").Select(x => new { SaleOrderNo = x.SaleOrderNo }); 
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
