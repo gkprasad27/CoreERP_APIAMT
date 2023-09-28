@@ -16,12 +16,12 @@ namespace CoreERP.Models
         public string? PlaceofSupply { get; set; }
         public string? DocumentURL { get; set; }
         public string? Status { get; set; }
-        public string? TaxCode { get; set; }
+        public string? TotalTax { get; set; }
         public decimal? IGST { get; set; }
         public decimal? UGST { get; set; }
         public decimal? CGST { get; set; }
         public decimal? SGST { get; set; }
-        public decimal? Total { get; set; }
+        public decimal? TotalAmount { get; set; }
         public decimal? Amount { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string? CreatedBy { get; set; }
