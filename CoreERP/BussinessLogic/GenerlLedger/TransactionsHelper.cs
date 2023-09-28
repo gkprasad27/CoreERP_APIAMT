@@ -1900,22 +1900,21 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblSaleOrderMaster> GetSaleOrderMasters(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-30), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-30);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblSaleOrderMaster>();
             return repo.TblSaleOrderMaster.AsEnumerable()
                 .Where(x =>
                 {
-                    Debug.Assert(x.OrderDate != null, "x.OrderDate != null");
-                    return x.Status == "Created";
-                           //&& x.SaleOrderNo.Equals(searchCriteria.searchCriteria)
-                           //&& Convert.ToDateTime(x.OrderDate.Value) >=
-                           //Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                           //&& Convert.ToDateTime(x.OrderDate.Value.ToShortDateString()) <=
-                           //Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
-                })
+
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                 return  Convert.ToString( x.SaleOrderNo) != null
+                           && Convert.ToString(x.SaleOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleOrderNo))
+                           && Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                           && Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                }).OrderByDescending(x => x.SaleOrderNo)
                 .ToList();
         }
 
