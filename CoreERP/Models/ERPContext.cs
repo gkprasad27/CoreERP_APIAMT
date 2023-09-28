@@ -4168,7 +4168,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMaterialMaster>(entity =>
             {
-                entity.HasKey(e => e.MaterialCode);
+                entity.HasKey(e => new { e.MaterialCode, e.Description });
 
                 entity.ToTable("tbl_MaterialMaster");
 
@@ -7814,13 +7814,13 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Status)
                     .HasMaxLength(50);
-                entity.Property(e => e.TaxCode)
+                entity.Property(e => e.TotalTax)
                     .HasMaxLength(50);
                 entity.Property(e => e.IGST);
                 entity.Property(e => e.UGST);
                 entity.Property(e => e.CGST);
                 entity.Property(e => e.SGST);
-                entity.Property(e => e.Total);
+                entity.Property(e => e.TotalAmount);
                 entity.Property(e => e.CreatedDate);
                 entity.Property(e => e.CreatedBy);
             });
