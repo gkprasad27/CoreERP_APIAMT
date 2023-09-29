@@ -1135,7 +1135,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetPurchaseOrderDetail/{code}")]
-        public IActionResult GetPurchaseOrderDetail(string code)
+        public IActionResult GetPurchaseOrderDetail(int code)
         {
             try
             {
@@ -1266,7 +1266,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("ReturnPurchaseOrder/{code}")]
-        public IActionResult ReturnPurchaseOrder(string code)
+        public IActionResult ReturnPurchaseOrder(int code)
         {
             try
             {

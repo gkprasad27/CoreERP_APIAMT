@@ -9,7 +9,7 @@ namespace CoreERP.Models
         public string? Company { get; set; }
         public string? SaleOrderNo { get; set; }
         public string? PurchaseOrderType { get; set; }
-        public string? PurchaseOrderNumber { get; set; }
+        public int PurchaseOrderNumber { get; set; }
         public DateTime? DeliveryDate { get; set; }
         public string? SupplierCode { get; set; }
         public string? Gstno { get; set; }
@@ -28,6 +28,7 @@ namespace CoreERP.Models
         public decimal? Amount { get; set; }
         public string? Location { get; set; }
         public string? ProfitCenter { get; set; }
+        public string? Status { get; set; }
 
     }
 }

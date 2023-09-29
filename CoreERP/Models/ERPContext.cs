@@ -5311,6 +5311,7 @@ namespace CoreERP.Models
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
                 entity.Property(e => e.ProfitCenter).HasMaxLength(50);
                 entity.Property(e => e.Location).HasMaxLength(50);
+                entity.Property(e => e.Status).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblPurchaseOrderDetails>(entity =>
@@ -5323,7 +5324,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.MaterialCode).HasMaxLength(50);
 
-                entity.Property(e => e.PurchaseOrderNumber).HasMaxLength(50);
+                entity.Property(e => e.PurchaseOrderNumber);
 
                 entity.Property(e => e.Qty).HasColumnName("QTY");
 

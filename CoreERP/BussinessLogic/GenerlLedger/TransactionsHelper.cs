@@ -1571,12 +1571,24 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         #region PurchaseOrder
         public List<TblPurchaseOrder> GetPurchaseOrder(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-30), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-30);
             searchCriteria.ToDate ??= DateTime.Today;
-
             using var repo = new Repository<TblPurchaseOrder>();
-            return repo.TblPurchaseOrder.AsEnumerable().ToList();
+            return repo.TblPurchaseOrder.AsEnumerable()
+                .Where(x =>
+                {
+
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.PurchaseOrderNumber) != null
+                              && Convert.ToString(x.PurchaseOrderNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNumber))
+                              && Convert.ToDateTime(x.AddDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                              && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                }).OrderByDescending(x => x.PurchaseOrderNumber)
+                .ToList();
+
+            //using var repo = new Repository<TblPurchaseOrder>();
+            //return repo.TblPurchaseOrder.AsEnumerable().ToList();
         }
         public bool AddPurchaseOrder(TblPurchaseOrder podata, List<TblPurchaseOrderDetails> podetails)
 
@@ -1598,6 +1610,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
+                podata.Status = "Created";
+                podata.AddDate=System.DateTime.Now;
                 context.TblPurchaseOrder.Add(podata);
                 context.SaveChanges();
 
@@ -1613,18 +1627,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw;
             }
         }
-        public TblPurchaseOrder GetPurchaseOrderMasterById(string id)
+        public TblPurchaseOrder GetPurchaseOrderMasterById(int id)
         {
             using var repo = new Repository<TblPurchaseOrder>();
             return repo.TblPurchaseOrder
                 .FirstOrDefault(x => x.PurchaseOrderNumber == id);
         }
-        public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(string number)
+        public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(int number)
         {
             using var repo = new Repository<TblPurchaseOrderDetails>();
             return repo.TblPurchaseOrderDetails.Where(cd => cd.PurchaseOrderNumber == number).ToList();
         }
-        public bool ReturnPurchaseOrderDetails(string code)
+        public bool ReturnPurchaseOrderDetails(int code)
         {
             using var repo = new ERPContext();
             var poHeader = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == code);
