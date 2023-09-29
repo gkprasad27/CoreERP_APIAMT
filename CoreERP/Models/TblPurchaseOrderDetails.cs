@@ -11,7 +11,7 @@ namespace CoreERP.Models
         public int? Qty { get; set; }
         public decimal? Rate { get; set; }
         public decimal? Discount { get; set; }
-        public decimal? Tax { get; set; }
+        public decimal? TaxCode { get; set; }
         public decimal? IGST { get; set; }
         public decimal? UGST { get; set; }
         public decimal? CGST { get; set; }
