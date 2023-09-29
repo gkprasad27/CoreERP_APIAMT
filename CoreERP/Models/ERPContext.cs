@@ -5307,7 +5307,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.UGST).HasColumnType("numeric(18, 2)");
                 entity.Property(e => e.CGST).HasColumnType("numeric(18, 2)");
                 entity.Property(e => e.SGST).HasColumnType("numeric(18, 2)");
-                entity.Property(e => e.Total).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.TotalAmount).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.TotalTax).HasColumnType("numeric(18, 2)");
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
                 entity.Property(e => e.ProfitCenter).HasMaxLength(50);
                 entity.Property(e => e.Location).HasMaxLength(50);

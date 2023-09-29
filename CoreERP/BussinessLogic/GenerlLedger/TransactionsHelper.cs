@@ -1601,10 +1601,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
                 throw new Exception("PurchaseOrder Number exists.");
 
-            podetails.ForEach(x =>
-            {
-                x.PurchaseOrderNumber = podata.PurchaseOrderNumber;
-            });
+            
 
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
@@ -1614,6 +1611,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 podata.AddDate=System.DateTime.Now;
                 context.TblPurchaseOrder.Add(podata);
                 context.SaveChanges();
+
+                podetails.ForEach(x =>
+                {
+                    x.PurchaseOrderNumber = podata.PurchaseOrderNumber;
+                });
 
                 context.TblPurchaseOrderDetails.AddRange(podetails);
                 context.SaveChanges();
