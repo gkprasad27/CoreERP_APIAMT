@@ -5331,7 +5331,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Rate).HasColumnType("numeric(18, 2)");
 
-                entity.Property(e => e.Tax).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.TaxCode).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.IGST).HasColumnType("numeric(18, 2)");
                 entity.Property(e => e.UGST).HasColumnType("numeric(18, 2)");
