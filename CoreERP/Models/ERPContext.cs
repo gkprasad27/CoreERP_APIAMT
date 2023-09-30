@@ -7790,6 +7790,8 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.DeliveryDate);
 
+                entity.Property(e => e.NetWeight);
+
             });
 
             modelBuilder.Entity<TblSaleOrderMaster>(entity =>
