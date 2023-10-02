@@ -5331,7 +5331,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Rate).HasColumnType("numeric(18, 2)");
 
-                entity.Property(e => e.TaxCode).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.TaxCode).HasMaxLength(50); ;
 
                 entity.Property(e => e.IGST).HasColumnType("numeric(18, 2)");
                 entity.Property(e => e.UGST).HasColumnType("numeric(18, 2)");
@@ -5339,8 +5339,9 @@ namespace CoreERP.Models
                 entity.Property(e => e.SGST).HasColumnType("numeric(18, 2)");
                 entity.Property(e => e.Total).HasColumnType("numeric(18, 2)");
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.NetWeight).HasColumnType("numeric(18, 4)");
 
-            });
+    });
 
             modelBuilder.Entity<TblPurchaseOrderNoAssignment>(entity =>
             {

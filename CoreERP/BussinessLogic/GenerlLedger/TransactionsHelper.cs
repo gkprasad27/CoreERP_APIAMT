@@ -1598,8 +1598,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             using var repo = new Repository<TblPurchaseOrder>();
 
-            if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
-                throw new Exception("PurchaseOrder Number exists.");
+            //if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
+            //    throw new Exception("PurchaseOrder Number exists.");
 
             
 
