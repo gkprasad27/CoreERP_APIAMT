@@ -5,7 +5,6 @@ namespace CoreERP.Models
 {
     public partial class TblGoodsReceiptDetails
     {
-        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string? PurchaseOrderNo { get; set; }
         public string? MaterialCode { get; set; }
@@ -20,5 +19,7 @@ namespace CoreERP.Models
         public string? MovementType { get; set; }
         public string? LotNo { get; set; }
         public DateTime? LotDate { get; set; }
+        public int? RejectQty { get; set; }
+        public decimal? NetWeight { get; set; }
     }
 }

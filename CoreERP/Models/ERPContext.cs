@@ -3321,6 +3321,8 @@ namespace CoreERP.Models
                 entity.Property(e => e.ReceivedQty).HasColumnName("ReceivedQTY");
 
                 entity.Property(e => e.StorageLocation).HasMaxLength(50);
+                entity.Property(e => e.NetWeight);
+                entity.Property(e => e.RejectQty);
             });
 
             modelBuilder.Entity<TblGoodsReceiptMaster>(entity =>
@@ -3386,6 +3388,7 @@ namespace CoreERP.Models
                 entity.Property(e => e.SupplierReferenceNo).HasMaxLength(50);
 
                 entity.Property(e => e.VehicleNo).HasMaxLength(15);
+                entity.Property(e => e.TotalAmount);
             });
 
             modelBuilder.Entity<TblGrnassignment>(entity =>
@@ -4168,7 +4171,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMaterialMaster>(entity =>
             {
-                entity.HasKey(e => new { e.MaterialCode, e.Description });
+                entity.HasKey(e => new {e.Description });
 
                 entity.ToTable("tbl_MaterialMaster");
 

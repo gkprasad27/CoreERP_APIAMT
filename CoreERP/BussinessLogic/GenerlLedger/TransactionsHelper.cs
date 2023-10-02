@@ -1677,17 +1677,27 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             using var repo = new Repository<TblGoodsReceiptMaster>();
 
+            using var Material = new Repository<TblMaterialMaster>();
+
+            using var context = new ERPContext();
+
             if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo))
-                throw new Exception("PurchaseOrder Number exists.");
+            {
+            }
             
 
             grdetails.ForEach(x =>
             {
                 x.PurchaseOrderNo = grdata.PurchaseOrderNo;
-               
+                x.LotNo = grdata.LotNo;
+
+                var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.Description ==x.MaterialCode);
+                mathdr.ClosingQty = mathdr.ClosingQty+ x.ReceivedQty;
+                context.TblMaterialMaster.Update(mathdr);
+
             });
 
-            using var context = new ERPContext();
+          
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
@@ -1701,7 +1711,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     //context.TblLotSeries.UpdateRange(lotseries);
                     //context.SaveChanges();
                 }
-                
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
                 context.SaveChanges();
 
