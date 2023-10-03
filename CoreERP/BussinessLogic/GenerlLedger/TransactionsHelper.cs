@@ -2,6 +2,8 @@
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
+using Humanizer;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -39,7 +41,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 return voucerTypeNoseries.Suffix + "-" + voucerTypeNoseries.LastNumber;
             }
             else
-                throw new Exception( "Please Configure Voucher Number");
+                throw new Exception("Please Configure Voucher Number");
         }
 
         public bool IsVoucherNumberExists(string voucherNo, string voucherType, [Optional] string screenName)
@@ -657,7 +659,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         #region Party Cash Bank /Payments/Receipts
 
-        public double CalculateDiscount(Dictionary<string,string> parameters)
+        public double CalculateDiscount(Dictionary<string, string> parameters)
         {
             double discount = 0;
             using var repo = new Repository<TblPaymentTermDetails>();
@@ -668,10 +670,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 foreach (var item in tabledata)
                 {
-                  string  postingDate = DateTime.Parse(parameters["postingDate"]).AddDays(Convert.ToInt32(item.Days)).ToShortDateString();
+                    string postingDate = DateTime.Parse(parameters["postingDate"]).AddDays(Convert.ToInt32(item.Days)).ToShortDateString();
                     if (DateTime.Parse(postingDate) >= System.DateTime.Today)
                     {
-                      return  discount = Convert.ToDouble(parameters["totalAmount"]) * Convert.ToDouble(item.Discount) / 100;
+                        return discount = Convert.ToDouble(parameters["totalAmount"]) * Convert.ToDouble(item.Discount) / 100;
                     }
 
                 }
@@ -708,13 +710,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return repo.TblPartyCashBankMaster
                 .FirstOrDefault(x => x.VoucherNumber == voucherNumber);
         }
-        
+
         public List<TblParyCashBankDetails> GetPaymentsReceiptsDetail(string voucherNumber)
         {
             using var repo = new Repository<TblParyCashBankDetails>();
             return repo.TblParyCashBankDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
         }
-        
+
         public bool AddPaymentsReceipts(TblPartyCashBankMaster cbmaster, List<TblParyCashBankDetails> pcbDetails)
         {
             if (cbmaster.VoucherDate == null)
@@ -981,18 +983,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             using var repo = new Repository<TbBommaster>();
             return repo.TbBommaster.AsEnumerable().ToList();
-                //.Where(x =>
-                //{
-                //    Debug.Assert(x.Bomnumber != null, "x.VoucherDate != null");
-                //    return
-                //    "x.Bomnumber != null"
-                //    && x.Bomnumber.Contains(searchCriteria.searchCriteria ?? x.Bomnumber)
-                //    //&& Convert.ToDateTime(x.date.Value) >=
-                //    //Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                //    //&& Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
-                //    //Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
-                //})
-                //.ToList();
+            //.Where(x =>
+            //{
+            //    Debug.Assert(x.Bomnumber != null, "x.VoucherDate != null");
+            //    return
+            //    "x.Bomnumber != null"
+            //    && x.Bomnumber.Contains(searchCriteria.searchCriteria ?? x.Bomnumber)
+            //    //&& Convert.ToDateTime(x.date.Value) >=
+            //    //Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+            //    //&& Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
+            //    //Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+            //})
+            //.ToList();
         }
 
         public TbBommaster GetBommasterById(string bomNumber)
@@ -1045,7 +1047,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.TbBommaster.Update(bomMaster);
                         context.SaveChanges();
 
-                       // context.TblBomDetails.Add(bomDetails);
+                        // context.TblBomDetails.Add(bomDetails);
                         context.SaveChanges();
 
                         //bomDetails.ForEach(csh => { csh.VoucherNumber = cashBankMaster1.VoucherNumber; });
@@ -1072,10 +1074,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             if (workCenterMaster.WorkcenterCode == null)
                 throw new Exception("WorkCenter Code Canot be empty/null.");
-            
+
             using var repo = new Repository<TblWorkcenterMaster>();
-           
-            if(repo.TblWorkcenterMaster.Any(v => v.WorkcenterCode == workCenterMaster.WorkcenterCode))
+
+            if (repo.TblWorkcenterMaster.Any(v => v.WorkcenterCode == workCenterMaster.WorkcenterCode))
                 throw new Exception("WorkCenter Already exists.");
 
             workCenterCapacity.ForEach(x =>
@@ -1603,14 +1605,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             //if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
             //    throw new Exception("PurchaseOrder Number exists.");
 
-            
+
 
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
                 podata.Status = "Created";
-                podata.AddDate=System.DateTime.Now;
+                podata.AddDate = System.DateTime.Now;
                 context.TblPurchaseOrder.Add(podata);
                 context.SaveChanges();
 
@@ -1677,15 +1679,52 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (grdata.PurchaseOrderNo == null)
                 throw new Exception("PurchaseOrder NumberCanot be empty/null.");
 
+            int receivedqty = 0;
+            int rejectedqty = 0;
+            int totalqty = 0;
+            int currqtyrec = 0;
+            int currqtyrej = 0;
+            int poqty = 0;
+
             using var repo = new Repository<TblGoodsReceiptMaster>();
             using var Material = new Repository<TblMaterialMaster>();
             //using var purchasehdr = new Repository<TblPurchaseOrder>();
             using var context = new ERPContext();
             using var Matdtl = new Repository<TblGoodsReceiptDetails>();
             List<TblGoodsReceiptDetails> GoosQTY;
+
             if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo))
+            { }
+            else
             {
+                grdata.ReceiptDate = DateTime.Now;
+                context.TblGoodsReceiptMaster.Add(grdata);
+                context.SaveChanges();
             }
+            currqtyrec = grdetails.Sum(v => v.ReceivedQty) ?? 0;// current received qty
+            currqtyrej = grdetails.Sum(v => v.RejectQty) ?? 0;//current rejected qty
+
+            // already received qty
+            GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == grdata.PurchaseOrderNo).ToList();
+
+            if (GoosQTY.Count > 0)
+            {
+                receivedqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
+                rejectedqty = (GoosQTY.Sum(i => i.RejectQty) ?? 0);
+            }
+            //poqty
+            poqty = grdetails.Sum(v => v.Qty) ?? 0;
+
+            totalqty = (receivedqty + rejectedqty) + (currqtyrec + currqtyrej);
+
+            var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == Convert.ToInt16(grdata.PurchaseOrderNo));
+
+            if (totalqty > poqty)
+                throw new Exception($"Cannot Received MoreQty for  {grdata.PurchaseOrderNo} QTY Exceeded.");
+            else if (poqty == totalqty)
+                purchase.Status = "Completed";
+            else if (totalqty < poqty)
+                purchase.Status = "Partial Received";
 
             using var dbtrans = context.Database.BeginTransaction();
 
@@ -1693,47 +1732,22 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 x.PurchaseOrderNo = grdata.PurchaseOrderNo;
                 x.LotNo = grdata.LotNo;
-               
 
             });
 
-          
+
             try
             {
-                grdata.ReceiptDate = DateTime.Now;
-                context.TblGoodsReceiptMaster.Add(grdata);
-                context.SaveChanges();
-                foreach(var item in grdetails)
+
+                foreach (var item in grdetails)
                 {
-                    int receivedqty = 0;
-                    int rejectedqty = 0;
-                    int totalqty = 0;
-                    int currqty = 0;
-                    currqty = Convert.ToInt32(item.RejectQty ?? 0 + item.ReceivedQty ?? 0);
 
                     var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.Description == item.MaterialCode);
-                    var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == Convert.ToInt16(item.PurchaseOrderNo));
-
-                    GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == item.PurchaseOrderNo && cd.MaterialCode == item.MaterialCode).ToList();
-
-                    if (GoosQTY.Count > 0)
-                    {
-                        receivedqty = ((int)(GoosQTY.Sum(i => i.ReceivedQty) + (int)item.ReceivedQty));
-                        rejectedqty = ((int)(GoosQTY.Sum(i => i.RejectQty) + (int)item.RejectQty));
-                    }
-
-                    totalqty = receivedqty + rejectedqty;
-                    if (currqty > totalqty)
-                        throw new Exception($"Cannot Received MoreQty for  {item.MaterialCode} QTY Exceeded.");
-                    else if (currqty == totalqty)
-                        purchase.Status = "Completed";
-                    else if (currqty < totalqty)
-                        purchase.Status = "Partial Received";
-
-                    mathdr.ClosingQty = mathdr.ClosingQty ?? 0 + item.ReceivedQty ?? 0;
+                    mathdr.ClosingQty = ((mathdr.ClosingQty + item.ReceivedQty));
                     context.TblMaterialMaster.Update(mathdr);
-                    context.TblPurchaseOrder.Update(purchase);
+                    context.SaveChanges();
                 }
+                context.TblPurchaseOrder.Update(purchase);
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
                 context.SaveChanges();
 
@@ -1958,10 +1972,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
 
                     //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
-                 return  Convert.ToString( x.SaleOrderNo) != null
-                           && Convert.ToString(x.SaleOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleOrderNo))
-                           && Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                           && Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                    return Convert.ToString(x.SaleOrderNo) != null
+                              && Convert.ToString(x.SaleOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleOrderNo))
+                              && Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                              && Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
                 }).OrderByDescending(x => x.SaleOrderNo)
                 .ToList();
         }
@@ -1983,7 +1997,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (saleOrderMaster.OrderDate == null)
                 throw new Exception("Sale Order Date Canot be empty/null.");
 
-            
+
             if (this.IsVoucherNumberExists(saleOrderMaster.PONumber, "SaleOrder"))
                 throw new Exception("Po number exists.");
 
