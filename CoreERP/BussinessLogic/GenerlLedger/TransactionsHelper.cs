@@ -1693,34 +1693,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 x.PurchaseOrderNo = grdata.PurchaseOrderNo;
                 x.LotNo = grdata.LotNo;
-                int receivedqty = 0;
-                int rejectedqty = 0;
-                int totalqty = 0;
-                int currqty = 0;
-                currqty = Convert.ToInt32(x.RejectQty??0 + x.ReceivedQty??0);
-
-            var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.Description ==x.MaterialCode);
-                var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber ==Convert.ToInt16( x.PurchaseOrderNo));
-
-                GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == x.PurchaseOrderNo && cd.MaterialCode==x.MaterialCode).ToList();
-
-                if (GoosQTY.Count > 0)
-                {
-                    receivedqty = ((int)(GoosQTY.Sum(i => i.ReceivedQty) + (int)x.ReceivedQty));
-                    rejectedqty = ((int)(GoosQTY.Sum(i => i.RejectQty) + (int)x.RejectQty));
-                }
-
-                totalqty = receivedqty + rejectedqty;
-                if(currqty> totalqty)
-                    throw new Exception($"Cannot Received MoreQty for  {x.MaterialCode} QTY Exceeded.");
-                else if(currqty == totalqty)
-                    purchase.Status = "Completed";
-                else if (currqty < totalqty)
-                    purchase.Status = "Partial Received";
-
-                mathdr.ClosingQty = mathdr.ClosingQty??0+ x.ReceivedQty??0;
-                context.TblMaterialMaster.Update(mathdr);
-                context.TblPurchaseOrder.Update(purchase);
+               
 
             });
 
@@ -1732,10 +1705,34 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.SaveChanges();
                 foreach(var item in grdetails)
                 {
-                    TblLotSeries lotseries = new TblLotSeries();
-                    lotseries.CurrentLot =Convert.ToInt32(item.LotNo);
-                    //context.TblLotSeries.UpdateRange(lotseries);
-                    //context.SaveChanges();
+                    int receivedqty = 0;
+                    int rejectedqty = 0;
+                    int totalqty = 0;
+                    int currqty = 0;
+                    currqty = Convert.ToInt32(item.RejectQty ?? 0 + item.ReceivedQty ?? 0);
+
+                    var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.Description == item.MaterialCode);
+                    var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == Convert.ToInt16(item.PurchaseOrderNo));
+
+                    GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == item.PurchaseOrderNo && cd.MaterialCode == item.MaterialCode).ToList();
+
+                    if (GoosQTY.Count > 0)
+                    {
+                        receivedqty = ((int)(GoosQTY.Sum(i => i.ReceivedQty) + (int)item.ReceivedQty));
+                        rejectedqty = ((int)(GoosQTY.Sum(i => i.RejectQty) + (int)item.RejectQty));
+                    }
+
+                    totalqty = receivedqty + rejectedqty;
+                    if (currqty > totalqty)
+                        throw new Exception($"Cannot Received MoreQty for  {item.MaterialCode} QTY Exceeded.");
+                    else if (currqty == totalqty)
+                        purchase.Status = "Completed";
+                    else if (currqty < totalqty)
+                        purchase.Status = "Partial Received";
+
+                    mathdr.ClosingQty = mathdr.ClosingQty ?? 0 + item.ReceivedQty ?? 0;
+                    context.TblMaterialMaster.Update(mathdr);
+                    context.TblPurchaseOrder.Update(purchase);
                 }
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
                 context.SaveChanges();

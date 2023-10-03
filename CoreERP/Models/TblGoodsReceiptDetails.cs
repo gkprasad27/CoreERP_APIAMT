@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblGoodsReceiptDetails
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         public string? PurchaseOrderNo { get; set; }
         public string? MaterialCode { get; set; }
         public string? Description { get; set; }
