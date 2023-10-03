@@ -9,6 +9,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CoreERP.BussinessLogic.GenerlLedger
 {
@@ -1676,29 +1678,53 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw new Exception("PurchaseOrder NumberCanot be empty/null.");
 
             using var repo = new Repository<TblGoodsReceiptMaster>();
-
             using var Material = new Repository<TblMaterialMaster>();
-
+            //using var purchasehdr = new Repository<TblPurchaseOrder>();
             using var context = new ERPContext();
-
+            using var Matdtl = new Repository<TblGoodsReceiptDetails>();
+            List<TblGoodsReceiptDetails> GoosQTY;
             if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo))
             {
             }
-            
+
+            using var dbtrans = context.Database.BeginTransaction();
 
             grdetails.ForEach(x =>
             {
                 x.PurchaseOrderNo = grdata.PurchaseOrderNo;
                 x.LotNo = grdata.LotNo;
+                int receivedqty = 0;
+                int rejectedqty = 0;
+                int totalqty = 0;
+                int currqty = 0;
+                currqty = Convert.ToInt32(x.RejectQty??0 + x.ReceivedQty??0);
 
-                var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.Description ==x.MaterialCode);
-                mathdr.ClosingQty = mathdr.ClosingQty+ x.ReceivedQty;
+            var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.Description ==x.MaterialCode);
+                var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber ==Convert.ToInt16( x.PurchaseOrderNo));
+
+                GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == x.PurchaseOrderNo && cd.MaterialCode==x.MaterialCode).ToList();
+
+                if (GoosQTY.Count > 0)
+                {
+                    receivedqty = ((int)(GoosQTY.Sum(i => i.ReceivedQty) + (int)x.ReceivedQty));
+                    rejectedqty = ((int)(GoosQTY.Sum(i => i.RejectQty) + (int)x.RejectQty));
+                }
+
+                totalqty = receivedqty + rejectedqty;
+                if(currqty> totalqty)
+                    throw new Exception($"Cannot Received MoreQty for  {x.MaterialCode} QTY Exceeded.");
+                else if(currqty == totalqty)
+                    purchase.Status = "Completed";
+                else if (currqty < totalqty)
+                    purchase.Status = "Partial Received";
+
+                mathdr.ClosingQty = mathdr.ClosingQty??0+ x.ReceivedQty??0;
                 context.TblMaterialMaster.Update(mathdr);
+                context.TblPurchaseOrder.Update(purchase);
 
             });
 
           
-            using var dbtrans = context.Database.BeginTransaction();
             try
             {
                 grdata.ReceiptDate = DateTime.Now;
