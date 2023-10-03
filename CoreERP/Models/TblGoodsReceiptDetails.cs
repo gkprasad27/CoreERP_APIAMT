@@ -21,5 +21,6 @@ namespace CoreERP.Models
         public DateTime? LotDate { get; set; }
         public int? RejectQty { get; set; }
         public decimal? NetWeight { get; set; }
+        public int? Qty { get; set; }
     }
 }
