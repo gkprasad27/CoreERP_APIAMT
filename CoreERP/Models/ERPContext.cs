@@ -3389,6 +3389,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.VehicleNo).HasMaxLength(15);
                 entity.Property(e => e.TotalAmount);
+                entity.Property(e => e.Status);
             });
 
             modelBuilder.Entity<TblGrnassignment>(entity =>

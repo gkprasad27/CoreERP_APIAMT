@@ -2,17 +2,12 @@
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
-using Humanizer;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CoreERP.BussinessLogic.GenerlLedger
 {
@@ -1674,8 +1669,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return repo.TblGoodsReceiptMaster.AsEnumerable().ToList();
         }
         public bool AddGoodsReceipt(TblGoodsReceiptMaster grdata, List<TblGoodsReceiptDetails> grdetails)
-
         {
+
             if (grdata.PurchaseOrderNo == null)
                 throw new Exception("PurchaseOrder NumberCanot be empty/null.");
 
@@ -1685,80 +1680,94 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             int currqtyrec = 0;
             int currqtyrej = 0;
             int poqty = 0;
-
+            int mtqty = 0;
+            int mtrejqty = 0;
+            int currqty = 0;
             using var repo = new Repository<TblGoodsReceiptMaster>();
             using var Material = new Repository<TblMaterialMaster>();
-            //using var purchasehdr = new Repository<TblPurchaseOrder>();
             using var context = new ERPContext();
             using var Matdtl = new Repository<TblGoodsReceiptDetails>();
             List<TblGoodsReceiptDetails> GoosQTY;
-
-            if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo))
-            { }
-            else
-            {
-                grdata.ReceiptDate = DateTime.Now;
-                context.TblGoodsReceiptMaster.Add(grdata);
-                context.SaveChanges();
-            }
-            currqtyrec = grdetails.Sum(v => v.ReceivedQty) ?? 0;// current received qty
-            currqtyrej = grdetails.Sum(v => v.RejectQty) ?? 0;//current rejected qty
-
-            // already received qty
-            GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == grdata.PurchaseOrderNo).ToList();
-
-            if (GoosQTY.Count > 0)
-            {
-                receivedqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
-                rejectedqty = (GoosQTY.Sum(i => i.RejectQty) ?? 0);
-            }
-            //poqty
-            poqty = grdetails.Sum(v => v.Qty) ?? 0;
-
-            totalqty = (receivedqty + rejectedqty) + (currqtyrec + currqtyrej);
-
-            var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == Convert.ToInt16(grdata.PurchaseOrderNo));
-
-            if (totalqty > poqty)
-                throw new Exception($"Cannot Received MoreQty for  {grdata.PurchaseOrderNo} QTY Exceeded.");
-            else if (poqty == totalqty)
-                purchase.Status = "Completed";
-            else if (totalqty < poqty)
-                purchase.Status = "Partial Received";
-
             using var dbtrans = context.Database.BeginTransaction();
-
-            grdetails.ForEach(x =>
-            {
-                x.PurchaseOrderNo = grdata.PurchaseOrderNo;
-                x.LotNo = grdata.LotNo;
-
-            });
-
-
             try
             {
 
+                currqtyrec = grdetails.Sum(v => v.ReceivedQty) ?? 0;// current received qty
+                currqtyrej = grdetails.Sum(v => v.RejectQty) ?? 0;//current rejected qty
+
+                // already received qty
+                GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == grdata.PurchaseOrderNo).ToList();
+
+                if (GoosQTY.Count > 0)
+                {
+                    receivedqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
+                    rejectedqty = (GoosQTY.Sum(i => i.RejectQty) ?? 0);
+                }
+                //poqty
+                poqty = grdetails.Sum(v => v.Qty) ?? 0;
+
+                totalqty = (receivedqty + rejectedqty) + (currqtyrec + currqtyrej);
+
+                var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == Convert.ToInt16(grdata.PurchaseOrderNo));
+
+                if (totalqty > poqty)
+                    throw new Exception($"Cannot Received MoreQty for  {grdata.PurchaseOrderNo} QTY Exceeded.");
+                else if (poqty == totalqty)
+                {
+                    purchase.Status = "Completed";
+                    grdata.Status = "Completed";
+                }
+                else if (totalqty < poqty)
+                {
+                    purchase.Status = "Partial Received";
+                    grdata.Status = "Partial Received";
+                }
                 foreach (var item in grdetails)
                 {
+                    GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == grdata.PurchaseOrderNo && cd.MaterialCode == item.MaterialCode).ToList();
+                    mtqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
+                    mtrejqty = (GoosQTY.Sum(i => i.RejectQty) ?? 0);
+                    totalqty = (mtqty + mtrejqty) + (item.ReceivedQty ?? 0 + item.RejectQty ?? 0);
 
-                    var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.Description == item.MaterialCode);
-                    mathdr.ClosingQty = ((mathdr.ClosingQty + item.ReceivedQty));
-                    context.TblMaterialMaster.Update(mathdr);
-                    context.SaveChanges();
+                    if (totalqty > item.Qty)
+                        throw new Exception($"Cannot Received MoreQty for  {item.MaterialCode} QTY Exceeded.");
                 }
+
                 context.TblPurchaseOrder.Update(purchase);
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
                 context.SaveChanges();
 
                 dbtrans.Commit();
-                return true;
             }
             catch (Exception)
             {
                 dbtrans.Rollback();
                 throw;
             }
+            if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo))
+            {
+                grdata.EditDate = DateTime.Now;
+                context.TblGoodsReceiptMaster.Update(grdata);
+                context.SaveChanges();
+            }
+            else
+            {
+                grdata.ReceiptDate = DateTime.Now;
+                context.TblGoodsReceiptMaster.Add(grdata);
+                context.SaveChanges();
+            }
+            grdetails.ForEach(x =>
+            {
+                x.PurchaseOrderNo = grdata.PurchaseOrderNo;
+                x.LotNo = grdata.LotNo;
+                var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.Description == x.MaterialCode);
+                mathdr.ClosingQty = ((mathdr.ClosingQty + x.ReceivedQty));
+                context.TblMaterialMaster.Update(mathdr);
+                context.SaveChanges();
+
+            });
+            return true;
+
         }
         public TblGoodsReceiptMaster GetGoodsReceiptMasterById(string id)
         {

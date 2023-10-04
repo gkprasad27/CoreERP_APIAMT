@@ -30,6 +30,6 @@ namespace CoreERP.Models
         public DateTime? ReceiptDate { get; set; }
         public DateTime? Grndate { get; set; }
         public decimal? TotalAmount { get; set; }
-
+        public string? Status { get; set; }
     }
 }
