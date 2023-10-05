@@ -1724,6 +1724,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 foreach (var item in grdetails)
                 {
+                    item.PurchaseOrderNo = grdata.PurchaseOrderNo;
+                    item.LotNo = grdata.LotNo;
                     GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == grdata.PurchaseOrderNo && cd.MaterialCode == item.MaterialCode).ToList();
                     mtqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
                     mtrejqty = (GoosQTY.Sum(i => i.RejectQty) ?? 0);
@@ -1758,10 +1760,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             grdetails.ForEach(x =>
             {
-                x.PurchaseOrderNo = grdata.PurchaseOrderNo;
-                x.LotNo = grdata.LotNo;
+                
                 var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.Description == x.MaterialCode);
-                mathdr.ClosingQty = ((mathdr.ClosingQty + x.ReceivedQty));
+                mathdr.ClosingQty = ((mathdr.ClosingQty??0) + (x.ReceivedQty));
                 context.TblMaterialMaster.Update(mathdr);
                 context.SaveChanges();
 

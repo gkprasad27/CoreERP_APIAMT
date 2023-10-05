@@ -31,5 +31,6 @@ namespace CoreERP.Models
         public DateTime? Grndate { get; set; }
         public decimal? TotalAmount { get; set; }
         public string? Status { get; set; }
+        public string? LotNo { get; set; }
     }
 }

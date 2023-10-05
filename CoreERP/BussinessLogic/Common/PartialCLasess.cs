@@ -11,11 +11,7 @@ namespace CoreERP.Models
 
     }
 
-    partial class TblGoodsReceiptMaster
-    {
-        [NotMapped]
-        public string LotNo { get; set; }
-    }
+   
     partial class TblRegion
     {
         [NotMapped]
