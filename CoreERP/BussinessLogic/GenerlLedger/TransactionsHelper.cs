@@ -2000,7 +2000,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblSaleOrderDetail> GetSaleOrdersDetails(int saleOrderNo)
         {
             using var repo = new Repository<TblSaleOrderDetail>();
-            return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
+            var MaterialCodes = repo.TblMaterialMaster.ToList();
+
+            repo.TblSaleOrderDetail.ToList()
+                .ForEach(c =>
+                {
+                    c.AvailableQTY = Convert.ToInt32( MaterialCodes.FirstOrDefault(l => l.Description == c.MaterialCode).ClosingQty);
+                    
+                });
+            return repo.TblSaleOrderDetail.Where(x => x.SaleOrderNo == saleOrderNo).ToList();
         }
         public bool AddSaleOrder(TblSaleOrderMaster saleOrderMaster, List<TblSaleOrderDetail> saleOrderDetails)
         {
@@ -2012,20 +2020,56 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw new Exception("Po number exists.");
 
             saleOrderMaster.CreatedDate ??= DateTime.Now;
-
+            using var repo = new Repository<TblSaleOrderMaster>();
+            List<TblSaleOrderDetail> saleOrderDetailsNew;
+            List<TblSaleOrderDetail> saleOrderDetailsExist;
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
-                saleOrderMaster.Status = "Created";
-                context.TblSaleOrderMaster.Add(saleOrderMaster);
-                context.SaveChanges();
-
+                //saleOrderMaster.Status = "Created";
+                //context.TblSaleOrderMaster.Add(saleOrderMaster);
+                //context.SaveChanges();
+                if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
+                {
+                    saleOrderMaster.Status = "Created";
+                    saleOrderMaster.CreatedDate = DateTime.Now;
+                    context.TblSaleOrderMaster.Update(saleOrderMaster);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    saleOrderMaster.Status = "Created";
+                    saleOrderMaster.CreatedDate = DateTime.Now;
+                    context.TblSaleOrderMaster.Add(saleOrderMaster);
+                    context.SaveChanges();
+                }
                 saleOrderDetails.ForEach(x =>
                 {
                     x.SaleOrderNo = saleOrderMaster.SaleOrderNo;
                 });
-                context.TblSaleOrderDetail.AddRange(saleOrderDetails);
+                saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID >= 0).ToList();
+                saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
+                //foreach (var item in saleOrderDetails)
+                //{
+                //    if(item.ID>0)
+                //    {
+                //        saleOrderDetailsExist = saleOrderDetails.Where(x=>x.ID>=0).ToList();
+                //        saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
+                //    }
+                //    else
+                //    {
+
+                //    }
+                //}
+                if (saleOrderDetailsExist.Count>0)
+                {
+                    context.TblSaleOrderDetail.UpdateRange(saleOrderDetailsExist);
+                }
+                else
+                {
+                    context.TblSaleOrderDetail.AddRange(saleOrderDetailsNew);
+                }
                 context.SaveChanges();
 
                 dbtrans.Commit();

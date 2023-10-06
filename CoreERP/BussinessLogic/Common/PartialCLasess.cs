@@ -11,7 +11,11 @@ namespace CoreERP.Models
 
     }
 
-   
+   partial class TblSaleOrderDetail
+    {
+        [NotMapped]
+        public int AvailableQTY { get; set; }
+    }
     partial class TblRegion
     {
         [NotMapped]

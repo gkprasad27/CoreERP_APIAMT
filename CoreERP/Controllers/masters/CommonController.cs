@@ -174,7 +174,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BPList = _bpRepository.GetAll().Select(x => new { ID = x.Bpnumber, TEXT = x.Name,GSTno=x.Gstno });
+                expando.BPList = _bpRepository.GetAll().Select(x => new { ID = x.Bpnumber, TEXT = x.Name,GSTno=x.Gstno, bptype = x.Bptype });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

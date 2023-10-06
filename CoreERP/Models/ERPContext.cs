@@ -1890,7 +1890,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblAssignmentVoucherSeriestoVoucherType>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.ID);
 
                 entity.ToTable("tbl_AssignmentVoucherSeriestoVoucherType");
 
@@ -3367,11 +3367,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.QualityCheck).HasMaxLength(5);
 
-                entity.Property(e => e.ReceiptDate).HasColumnType("date");
+                entity.Property(e => e.ReceiptDate);
 
                 entity.Property(e => e.ReceivedBy).HasMaxLength(50);
 
-                entity.Property(e => e.ReceivedDate).HasColumnType("date");
+                entity.Property(e => e.ReceivedDate);
 
                 entity.Property(e => e.Rrno)
                     .HasColumnName("RRNo")
@@ -7823,8 +7823,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Status)
                     .HasMaxLength(50);
-                entity.Property(e => e.TotalTax)
-                    .HasMaxLength(50);
+                entity.Property(e => e.TotalTax);
                 entity.Property(e => e.IGST);
                 entity.Property(e => e.UGST);
                 entity.Property(e => e.CGST);

@@ -16,7 +16,7 @@ namespace CoreERP.Models
         public string? PlaceofSupply { get; set; }
         public string? DocumentURL { get; set; }
         public string? Status { get; set; }
-        public string? TotalTax { get; set; }
+        public decimal? TotalTax { get; set; }
         public decimal? IGST { get; set; }
         public decimal? UGST { get; set; }
         public decimal? CGST { get; set; }

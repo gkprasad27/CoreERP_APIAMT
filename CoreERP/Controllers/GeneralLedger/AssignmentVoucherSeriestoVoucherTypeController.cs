@@ -100,7 +100,7 @@ namespace CoreERP.Controllers.GeneralLedger
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _vsvtRepository.GetSingleOrDefault(x => x.Code.Equals(code));
+                var record = _vsvtRepository.GetSingleOrDefault(x => x.ID.Equals(code));
                 _vsvtRepository.Remove(record);
                 if (_vsvtRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
