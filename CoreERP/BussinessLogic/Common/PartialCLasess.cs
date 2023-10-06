@@ -71,6 +71,14 @@ namespace CoreERP.Models
         public string PlantName { get; set; }
        
     }
+
+    partial class TblPurchaseOrder
+    {
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string PurchaseOrderName { get; set; }
+    }
     partial class TblPurchaseOrderNoAssignment
     {
         [NotMapped]

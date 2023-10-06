@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
 
 namespace CoreERP.BussinessLogic.GenerlLedger
 {
@@ -1574,6 +1575,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.FromDate ??= DateTime.Today.AddDays(-30);
             searchCriteria.ToDate ??= DateTime.Today;
             using var repo = new Repository<TblPurchaseOrder>();
+
+            var Company = repo.TblCompany.ToList();
+            var PoType = repo.TblPurchaseOrderType.ToList();
+
+            repo.TblPurchaseOrder.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.PurchaseOrderName = PoType.FirstOrDefault(l => l.purchaseType == c.PurchaseOrderType).Description;
+
+                });
+
             return repo.TblPurchaseOrder.AsEnumerable()
                 .Where(x =>
                 {
@@ -1586,8 +1599,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }).OrderByDescending(x => x.PurchaseOrderNumber)
                 .ToList();
 
-            //using var repo = new Repository<TblPurchaseOrder>();
-            //return repo.TblPurchaseOrder.AsEnumerable().ToList();
+            //var MaterialCodes = repo.TblMaterialMaster.ToList();
+
+            //repo.TblSaleOrderDetail.ToList()
+            //    .ForEach(c =>
+            //    {
+            //        c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.Description == c.MaterialCode).ClosingQty);
+
+            //    });
         }
         public bool AddPurchaseOrder(TblPurchaseOrder podata, List<TblPurchaseOrderDetails> podetails)
 
@@ -1599,23 +1618,25 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             //if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
             //    throw new Exception("PurchaseOrder Number exists.");
-
+            var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == Convert.ToInt16(podata.SaleOrderNo));
 
 
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
+                SaleOrder.Status = "PO Created";
                 podata.Status = "Created";
                 podata.AddDate = System.DateTime.Now;
                 context.TblPurchaseOrder.Add(podata);
+                context.TblSaleOrderMaster.Update(SaleOrder);
                 context.SaveChanges();
 
                 podetails.ForEach(x =>
                 {
                     x.PurchaseOrderNumber = podata.PurchaseOrderNumber;
                 });
-
+               
                 context.TblPurchaseOrderDetails.AddRange(podetails);
                 context.SaveChanges();
 
