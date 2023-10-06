@@ -260,7 +260,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.purchaseordernoList = _purchaseOrderRepository.GetAll().Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.PurchaseOrderNumber });
+                expando.purchaseordernoList = _purchaseOrderRepository.GetAll().Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.SupplierCode });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

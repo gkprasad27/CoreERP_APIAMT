@@ -72,6 +72,11 @@ namespace CoreERP.Models
        
     }
 
+    partial class TblGoodsReceiptMaster
+    {
+        [NotMapped]
+        public string CompanyName { get; set; }
+    }
     partial class TblPurchaseOrder
     {
         [NotMapped]

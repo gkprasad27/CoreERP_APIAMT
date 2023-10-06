@@ -1597,16 +1597,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                               && Convert.ToDateTime(x.AddDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                               && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
                 }).OrderByDescending(x => x.PurchaseOrderNumber)
-                .ToList();
-
-            //var MaterialCodes = repo.TblMaterialMaster.ToList();
-
-            //repo.TblSaleOrderDetail.ToList()
-            //    .ForEach(c =>
-            //    {
-            //        c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.Description == c.MaterialCode).ClosingQty);
-
-            //    });
+                .ToList();           
         }
         public bool AddPurchaseOrder(TblPurchaseOrder podata, List<TblPurchaseOrderDetails> podetails)
 
@@ -1682,12 +1673,31 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         #region GoodsReceipt
         public List<TblGoodsReceiptMaster> GetGoodsReceiptMaster(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+           
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-30), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-30);
             searchCriteria.ToDate ??= DateTime.Today;
-
             using var repo = new Repository<TblGoodsReceiptMaster>();
-            return repo.TblGoodsReceiptMaster.AsEnumerable().ToList();
+
+            var Company = repo.TblCompany.ToList();
+            var PoType = repo.TblPurchaseOrderType.ToList();
+
+            repo.TblGoodsReceiptMaster.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+
+                });
+
+            return repo.TblGoodsReceiptMaster.AsEnumerable()
+               .Where(x =>
+               {
+                   return Convert.ToString(x.PurchaseOrderNo) != null
+                             && Convert.ToString(x.PurchaseOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNo))
+                             && Convert.ToDateTime(x.ReceivedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                             && Convert.ToDateTime(x.ReceivedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+               }).OrderByDescending(x => x.PurchaseOrderNo)
+               .ToList();
         }
         public bool AddGoodsReceipt(TblGoodsReceiptMaster grdata, List<TblGoodsReceiptDetails> grdetails)
         {
@@ -2037,8 +2047,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw new Exception("Sale Order Date Canot be empty/null.");
 
 
-            if (this.IsVoucherNumberExists(saleOrderMaster.PONumber, "SaleOrder"))
-                throw new Exception("Po number exists.");
+            if (this.IsVoucherNumberExists(saleOrderMaster.PONumber, "SaleOrder","SaleOrder"))
+                throw new Exception("Po number Already exists. "+ saleOrderMaster.PONumber +" Please use another PO Number.");
 
             saleOrderMaster.CreatedDate ??= DateTime.Now;
             using var repo = new Repository<TblSaleOrderMaster>();
