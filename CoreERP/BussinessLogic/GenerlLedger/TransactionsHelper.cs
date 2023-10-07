@@ -2047,8 +2047,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw new Exception("Sale Order Date Canot be empty/null.");
 
 
-            if (this.IsVoucherNumberExists(saleOrderMaster.PONumber, "SaleOrder","SaleOrder"))
-                throw new Exception("Po number Already exists. "+ saleOrderMaster.PONumber +" Please use another PO Number.");
+           
 
             saleOrderMaster.CreatedDate ??= DateTime.Now;
             using var repo = new Repository<TblSaleOrderMaster>();
@@ -2070,6 +2069,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 else
                 {
+                    if (this.IsVoucherNumberExists(saleOrderMaster.PONumber, "SaleOrder", "SaleOrder"))
+                        throw new Exception("Po number Already exists. " + saleOrderMaster.PONumber + " Please use another PO Number.");
+
                     saleOrderMaster.Status = "Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
                     context.TblSaleOrderMaster.Add(saleOrderMaster);
