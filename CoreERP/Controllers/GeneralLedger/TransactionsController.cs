@@ -33,6 +33,36 @@ namespace CoreERP.Controllers.masters
             }
         }
 
+        [HttpGet("GetSaleOrderNumber/{profitCenter}")]
+        public IActionResult GetSaleOrderNumber(string profitCenter)
+        {
+            try
+            {
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.SaleOrderNumber = new TransactionsHelper().GetSaleOrderNumber(profitCenter);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpGet("GetPurchaseOrderNumber/{profitCenter}")]
+        public IActionResult GetPurchaseOrderNumber(string profitCenter)
+        {
+            try
+            {
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.PurchaseOrderNumber = new TransactionsHelper().GetSaleOrderNumber(profitCenter);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetTransactionTypes")]
         public IActionResult GetTransactionTypes()
         {
@@ -1135,7 +1165,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetPurchaseOrderDetail/{code}")]
-        public IActionResult GetPurchaseOrderDetail(int code)
+        public IActionResult GetPurchaseOrderDetail(string code)
         {
             try
             {
@@ -1266,7 +1296,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("ReturnPurchaseOrder/{code}")]
-        public IActionResult ReturnPurchaseOrder(int code)
+        public IActionResult ReturnPurchaseOrder(string code)
         {
             try
             {
@@ -1565,7 +1595,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetSaleOrderDetail/{saleOrderNumber}")]
-        public IActionResult GetSaleOrderDetail(int saleOrderNumber)
+        public IActionResult GetSaleOrderDetail(string saleOrderNumber)
         {
             try
             {

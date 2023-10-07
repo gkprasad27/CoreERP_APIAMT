@@ -957,7 +957,10 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Email).HasMaxLength(50);
 
-                entity.Property(e => e.Ext).HasMaxLength(50);
+                entity.Property(e => e.PONumber);
+                entity.Property(e => e.POPrefix).HasMaxLength(5);
+                entity.Property(e => e.SONumber);
+                entity.Property(e => e.SOPrefix).HasMaxLength(5);
 
                 entity.Property(e => e.Language).HasMaxLength(5);
 
@@ -7831,6 +7834,7 @@ namespace CoreERP.Models
                 entity.Property(e => e.TotalAmount);
                 entity.Property(e => e.CreatedDate);
                 entity.Property(e => e.CreatedBy);
+                entity.Property(e => e.ProfitCenter);
             });
             OnModelCreatingPartial(modelBuilder);
         }

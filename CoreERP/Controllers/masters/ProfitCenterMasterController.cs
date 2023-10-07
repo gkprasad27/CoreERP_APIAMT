@@ -45,7 +45,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var profitCenterList = CommonHelper.GetProfitcenters().Select(x => new { code = x.Code, name = x.Name }); ;
+                var profitCenterList = CommonHelper.GetProfitcenters().Select(x => new { code = x.Code, name = x.Name, PONumber = x.PONumber, POPrefix = x.POPrefix, SONumber = x.SONumber, SOPrefix = x.SOPrefix }); ;
                 if (profitCenterList.Count() > 0)
                 {
                     dynamic expando = new ExpandoObject();

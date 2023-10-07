@@ -9,7 +9,7 @@ namespace CoreERP.Models
     {
 
         public int ID { get; set; }
-        public int? SaleOrderNo { get; set; }
+        public string? SaleOrderNo { get; set; }
         public string? MaterialCode { get; set; }
         public int? QTY { get; set; }
         public decimal? Rate { get; set; }

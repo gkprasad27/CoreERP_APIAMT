@@ -29,7 +29,10 @@ namespace CoreERP.Models
         public string? Language { get; set; }
 
         public string? Location { get; set; }
-        public string? Ext { get; set; }
+        public int? PONumber { get; set; }
+        public string? POPrefix { get; set; }
+        public int? SONumber { get; set; }
+        public string? SOPrefix { get; set; }
 
         public virtual Countries CountryNavigation { get; set; }
         public virtual TblCurrency CurrencyNavigation { get; set; }

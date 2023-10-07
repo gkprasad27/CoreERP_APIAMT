@@ -1040,7 +1040,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var profitCenterList = _profitCentersRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Name });
+                var profitCenterList = _profitCentersRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Name,PONumber=x.PONumber,POPrefix=x.POPrefix,SONumber=x.SONumber,SOPrefix=x.SOPrefix });
                 if (profitCenterList.Any())
                 {
                     dynamic expando = new ExpandoObject();

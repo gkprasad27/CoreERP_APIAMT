@@ -40,6 +40,48 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw new Exception("Please Configure Voucher Number");
         }
 
+        public string GetSaleOrderNumber(string ProfitCenter)
+        {
+            using var repo = new Repository<ProfitCenters>();
+            var Pcenter = repo.ProfitCenters.Where(x => x.Code == ProfitCenter).FirstOrDefault();
+
+            //if (voucerTypeNoseries.LastNumber != startNumber)
+            //{
+            if (Pcenter != null)
+            {
+                Pcenter.SONumber= (Pcenter.SONumber + 1);
+
+                using var context = new ERPContext();
+                context.ProfitCenters.UpdateRange(Pcenter);
+                context.SaveChanges();
+
+                return Pcenter.SOPrefix + "-" + Pcenter.SONumber;
+            }
+            else
+                throw new Exception("Please Configure SaleOrder Number");
+        }
+
+        public string GetPurchaseOrderNumber(string ProfitCenter)
+        {
+            using var repo = new Repository<ProfitCenters>();
+            var Pcenter = repo.ProfitCenters.Where(x => x.Code == ProfitCenter).FirstOrDefault();
+
+            //if (voucerTypeNoseries.LastNumber != startNumber)
+            //{
+            if (Pcenter != null)
+            {
+                Pcenter.PONumber = (Pcenter.PONumber + 1);
+
+                using var context = new ERPContext();
+                context.ProfitCenters.UpdateRange(Pcenter);
+                context.SaveChanges();
+
+                return Pcenter.POPrefix + "-" + Pcenter.PONumber;
+            }
+            else
+                throw new Exception("Please Configure Purchase Order Number");
+        }
+
         public bool IsVoucherNumberExists(string voucherNo, string voucherType, [Optional] string screenName)
         {
             switch (screenName)
@@ -1609,7 +1651,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             //if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
             //    throw new Exception("PurchaseOrder Number exists.");
-            var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == Convert.ToInt16(podata.SaleOrderNo));
+            var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == podata.SaleOrderNo);
 
 
             using var context = new ERPContext();
@@ -1640,18 +1682,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw;
             }
         }
-        public TblPurchaseOrder GetPurchaseOrderMasterById(int id)
+        public TblPurchaseOrder GetPurchaseOrderMasterById(string id)
         {
             using var repo = new Repository<TblPurchaseOrder>();
             return repo.TblPurchaseOrder
                 .FirstOrDefault(x => x.PurchaseOrderNumber == id);
         }
-        public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(int number)
+        public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(string number)
         {
             using var repo = new Repository<TblPurchaseOrderDetails>();
             return repo.TblPurchaseOrderDetails.Where(cd => cd.PurchaseOrderNumber == number).ToList();
         }
-        public bool ReturnPurchaseOrderDetails(int code)
+        public bool ReturnPurchaseOrderDetails(string code)
         {
             using var repo = new ERPContext();
             var poHeader = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == code);
@@ -1739,7 +1781,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 totalqty = (receivedqty + rejectedqty) + (currqtyrec + currqtyrej);
 
-                var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == Convert.ToInt16(grdata.PurchaseOrderNo));
+                var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == grdata.PurchaseOrderNo);
 
                 if (totalqty > poqty)
                     throw new Exception($"Cannot Received MoreQty for  {grdata.PurchaseOrderNo} QTY Exceeded.");
@@ -2021,14 +2063,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .ToList();
         }
 
-        public TblSaleOrderMaster GetSaleOrderMastersById(int saleOrderNo)
+        public TblSaleOrderMaster GetSaleOrderMastersById(string saleOrderNo)
         {
             using var repo = new Repository<TblSaleOrderMaster>();
             return repo.TblSaleOrderMaster
                 .FirstOrDefault(x => x.SaleOrderNo == saleOrderNo);
         }
 
-        public List<TblSaleOrderDetail> GetSaleOrdersDetails(int saleOrderNo)
+        public List<TblSaleOrderDetail> GetSaleOrdersDetails(string saleOrderNo)
         {
             using var repo = new Repository<TblSaleOrderDetail>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();

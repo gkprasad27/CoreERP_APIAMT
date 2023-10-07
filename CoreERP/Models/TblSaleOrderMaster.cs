@@ -7,7 +7,7 @@ namespace CoreERP.Models
     [Table("Tbl_SaleOrderMaster")]
     public partial class TblSaleOrderMaster
     {
-        public int SaleOrderNo { get; set; }
+        public string? SaleOrderNo { get; set; }
         public string? CustomerCode { get; set; }
         public DateTime? OrderDate { get; set; }
         public string? PONumber { get; set; }
@@ -25,5 +25,6 @@ namespace CoreERP.Models
         public decimal? Amount { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string? CreatedBy { get; set; }
+        public string? ProfitCenter { get; set; }
     }
 }
