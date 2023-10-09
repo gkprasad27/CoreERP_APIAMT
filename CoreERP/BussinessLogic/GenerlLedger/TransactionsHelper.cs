@@ -55,7 +55,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.ProfitCenters.UpdateRange(Pcenter);
                 context.SaveChanges();
 
-                return Pcenter.SOPrefix + "-" + Pcenter.SONumber;
+                return Pcenter.SOPrefix + " - " + Pcenter.SONumber;
             }
             else
                 throw new Exception("Please Configure SaleOrder Number");
