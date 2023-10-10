@@ -10,8 +10,8 @@ namespace CoreERP.Models
         public string? PurchaseRequisitionNumber { get; set; }
         public string? MaterialCode { get; set; }
         public string? Description { get; set; }
-        public int? RequiredQty { get; set; }
-        public int? StockQty { get; set; }
+        public int? Qty { get; set; }
+        public decimal? Rate { get; set; }
         public DateTime? RequiredDate { get; set; }
         public string? PurchaseGroup { get; set; }
         public string? ProductionOrder { get; set; }
@@ -26,5 +26,7 @@ namespace CoreERP.Models
         public string? ApprovedBy { get; set; }
         public DateTime? ApprovedDate { get; set; }
         public string? Status { get; set; }
+        public decimal? NetWeight { get; set; }
+        public decimal? Total { get; set; }
     }
 }

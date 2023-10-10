@@ -5450,13 +5450,13 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.RequiredDate).HasColumnType("date");
 
-                entity.Property(e => e.RequiredQty).HasColumnName("RequiredQTY");
+                entity.Property(e => e.Rate).HasColumnName("Rate");
 
                 entity.Property(e => e.ReservationNumber).HasMaxLength(50);
 
                 entity.Property(e => e.Status).HasMaxLength(20);
 
-                entity.Property(e => e.StockQty).HasColumnName("StockQTY");
+                entity.Property(e => e.Qty).HasColumnName("QTY");
             });
 
             modelBuilder.Entity<TblPurchaseRequisitionMaster>(entity =>

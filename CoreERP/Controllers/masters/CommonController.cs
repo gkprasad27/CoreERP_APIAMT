@@ -64,6 +64,8 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblMaterialTypes> _materialTypesRepository;
         private readonly IRepository<TblPrimaryCostElement> _primaryCostElementRepository;
         private readonly IRepository<LeaveTypes> _leaveTyperepository;
+        private readonly IRepository<TblPurchaseRequisitionMaster> _tblPurchaseRequisitionMaster;
+        private readonly IRepository<TblPurchaseRequisitionDetails> _tblPurchaseRequisitionDetails;
         private readonly IRepository<ConfigurationTable> _configurationRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
@@ -85,7 +87,8 @@ namespace CoreERP.Controllers
                                 IRepository<TblGoodsReceiptMaster> goodsReceiptMasterRepository,
                                 IRepository<TblGoodsReceiptDetails> GoodsReceiptDetailsRepository,
                                 IRepository<TblHsnsac> hsnsacRepository, IRepository<TblPrimaryCostElement> primaryCostElementRepository,
-                                IRepository<TblMaterialTypes> materialTypesRepository, IRepository<ConfigurationTable> configurationRepository,IRepository<LeaveTypes> leaveTypeRepository)
+                                IRepository<TblMaterialTypes> materialTypesRepository, IRepository<ConfigurationTable> configurationRepository,IRepository<LeaveTypes> leaveTypeRepository,
+                                IRepository<TblPurchaseRequisitionMaster> TblPurchaseRequisitionMaster, IRepository<TblPurchaseRequisitionDetails> TblPurchaseRequisitionDetails)
         {
             _primaryCostElementRepository = primaryCostElementRepository;
             _materialTypesRepository = materialTypesRepository;
@@ -137,6 +140,8 @@ namespace CoreERP.Controllers
             _materialRequisitionDetailsRepository = materialRequisitionDetailsRepository;
             _configurationRepository = configurationRepository;
             _leaveTyperepository = leaveTypeRepository;
+            _tblPurchaseRequisitionMaster = TblPurchaseRequisitionMaster;
+            _tblPurchaseRequisitionDetails = TblPurchaseRequisitionDetails;
         }
 
         [HttpGet("GetPrimaryCostElementList")]
@@ -197,6 +202,23 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+
+        [HttpGet("GetPRList")]
+        public IActionResult GetPRList()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.BPList = _tblPurchaseRequisitionMaster.Where(x => x.Status == "Created").Select(x => new { SaleOrderNo = x.RequisitionNumber });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetWorkcenterList")]
         public IActionResult GetWorkcenterList()
         {
