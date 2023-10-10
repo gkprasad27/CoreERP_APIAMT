@@ -95,6 +95,9 @@ namespace CoreERP.Controllers.masters
             if (mmaster == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
+            if (mmaster.MaterialCode == null || mmaster.Description == null)
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Please Enter Material Code or Description" }); 
+
             try
             {
 
