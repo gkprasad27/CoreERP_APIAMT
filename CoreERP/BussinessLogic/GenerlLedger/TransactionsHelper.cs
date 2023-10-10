@@ -1323,7 +1323,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblPurchaseRequisitionMaster>();
 
             if (repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
-                throw new Exception("Requisition Number  exists.");
+                throw new Exception("Requisition Number " +reqmasterdata.RequisitionNumber+ " Already Exists.");
 
             reqdetails.ForEach(x =>
             {
@@ -1334,6 +1334,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
+                reqmasterdata.Status = "Created";
+                reqmasterdata.AddDate = System.DateTime.Now;
                 context.TblPurchaseRequisitionMaster.Add(reqmasterdata);
                 context.SaveChanges();
 
@@ -1760,7 +1762,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var Material = new Repository<TblMaterialMaster>();
             using var context = new ERPContext();
             using var Matdtl = new Repository<TblGoodsReceiptDetails>();
+            using var PRM = new Repository<TblPurchaseRequisitionMaster>();
             List<TblGoodsReceiptDetails> GoosQTY;
+
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
@@ -1770,6 +1774,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 // already received qty
                 GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == grdata.PurchaseOrderNo).ToList();
+
 
                 if (GoosQTY.Count > 0)
                 {
@@ -1782,6 +1787,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 totalqty = (receivedqty + rejectedqty) + (currqtyrec + currqtyrej);
 
                 var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == grdata.PurchaseOrderNo);
+                var purchaseReq = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == grdata.PurchaseOrderNo);
 
                 if (totalqty > poqty)
                     throw new Exception($"Cannot Received MoreQty for  {grdata.PurchaseOrderNo} QTY Exceeded.");
@@ -1789,11 +1795,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     purchase.Status = "Completed";
                     grdata.Status = "Completed";
+                    purchaseReq.Status = "Completed";
                 }
                 else if (totalqty < poqty)
                 {
                     purchase.Status = "Partial Received";
                     grdata.Status = "Partial Received";
+                    purchaseReq.Status = "Partial Received";
                 }
                 foreach (var item in grdetails)
                 {
@@ -1809,6 +1817,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
 
                 context.TblPurchaseOrder.Update(purchase);
+                context.TblPurchaseRequisitionMaster.Update(purchaseReq);
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
                 context.SaveChanges();
 

@@ -1211,7 +1211,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [Route("UploadFile")]
-        public IActionResult UploadFile()
+        public IActionResult UploadFile([FromBody] JObject obj)
         {
             try
             {
