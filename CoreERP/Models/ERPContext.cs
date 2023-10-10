@@ -4175,7 +4175,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMaterialMaster>(entity =>
             {
-                entity.HasKey(e => new {e.Description });
+                entity.HasKey(e => new {e.MaterialCode });
 
                 entity.ToTable("tbl_MaterialMaster");
 
