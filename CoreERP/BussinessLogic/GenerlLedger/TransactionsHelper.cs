@@ -55,7 +55,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.ProfitCenters.UpdateRange(Pcenter);
                 context.SaveChanges();
 
-                return Pcenter.SOPrefix + " - " + Pcenter.SONumber;
+                return Pcenter.SOPrefix + "-" + Pcenter.SONumber;
             }
             else
                 throw new Exception("Please Configure SaleOrder Number");
@@ -1295,8 +1295,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblPurchaseRequisitionMaster> GetPurchaseRequisitionMaster(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-30), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-30);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblPurchaseRequisitionMaster>();

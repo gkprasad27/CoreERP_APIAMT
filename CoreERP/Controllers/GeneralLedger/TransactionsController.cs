@@ -9,6 +9,9 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Web;
+using System.Web.Http;
 
 namespace CoreERP.Controllers.masters
 {
@@ -1209,9 +1212,9 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-
+        [HttpPost]
         [Route("UploadFile")]
-        public IActionResult UploadFile([FromBody] JObject obj)
+        public IActionResult UploadFile()
         {
             try
             {
