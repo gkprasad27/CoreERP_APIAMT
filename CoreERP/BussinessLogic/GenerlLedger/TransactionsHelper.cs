@@ -49,7 +49,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             //{
             if (Pcenter != null)
             {
-                Pcenter.SONumber= (Pcenter.SONumber + 1);
+                Pcenter.SONumber = (Pcenter.SONumber + 1);
 
                 using var context = new ERPContext();
                 context.ProfitCenters.UpdateRange(Pcenter);
@@ -1325,7 +1325,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             List<TblPurchaseRequisitionDetails> prDetailsNew;
             List<TblPurchaseRequisitionDetails> prDetailsExist;
-                        
+
             if (repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
             {
                 reqmasterdata.Status = "Created";
@@ -1335,8 +1335,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             else
             {
-               if( repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
-                throw new Exception("Requisition Number " +reqmasterdata.RequisitionNumber+ " Already Exists.");
+                if (repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
+                    throw new Exception("Requisition Number " + reqmasterdata.RequisitionNumber + " Already Exists.");
 
                 reqmasterdata.Status = "Created";
                 reqmasterdata.EditDate = DateTime.Now;
@@ -1661,38 +1661,68 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                               && Convert.ToDateTime(x.AddDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                               && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
                 }).OrderByDescending(x => x.PurchaseOrderNumber)
-                .ToList();           
+                .ToList();
         }
         public bool AddPurchaseOrder(TblPurchaseOrder podata, List<TblPurchaseOrderDetails> podetails)
-
         {
             if (podata.PurchaseOrderNumber == null)
                 throw new Exception("PurchaseOrder NumberCanot be empty/null.");
 
             using var repo = new Repository<TblPurchaseOrder>();
-
-            //if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
-            //    throw new Exception("PurchaseOrder Number exists.");
-            var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == podata.SaleOrderNo);
-
-
             using var context = new ERPContext();
+            List<TblPurchaseOrderDetails> poDetailsNew;
+            List<TblPurchaseOrderDetails> poDetailsExist;
             using var dbtrans = context.Database.BeginTransaction();
+            if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
+            {
+                podata.Status = "Created";
+                podata.EditDate = DateTime.Now;
+                context.TblPurchaseOrder.Update(podata);
+                context.SaveChanges();
+            }
+            else
+            {
+                if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
+                    throw new Exception("Purchase Order Number " + podata.PurchaseOrderNumber + " Already Exists.");
+
+                podata.Status = "Created";
+                podata.AddDate = DateTime.Now;
+                context.TblPurchaseOrder.Add(podata);
+                context.SaveChanges();
+            }
+            var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == podata.SaleOrderNo);
+            var PRdata = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == podata.SaleOrderNo);
+
             try
             {
-                SaleOrder.Status = "PO Created";
-                podata.Status = "Created";
-                podata.AddDate = System.DateTime.Now;
-                context.TblPurchaseOrder.Add(podata);
-                context.TblSaleOrderMaster.Update(SaleOrder);
-                context.SaveChanges();
+                if (SaleOrder != null)
+                {
+                    SaleOrder.Status = "PO Created";
+                    context.TblSaleOrderMaster.Update(SaleOrder);
+                }
+
+                if (PRdata!=null)
+                {
+                    PRdata.Status = "PO Created";
+                    context.TblPurchaseRequisitionMaster.Update(PRdata);
+                }
 
                 podetails.ForEach(x =>
                 {
                     x.PurchaseOrderNumber = podata.PurchaseOrderNumber;
                 });
-               
-                context.TblPurchaseOrderDetails.AddRange(podetails);
+                poDetailsExist = podetails.Where(x => x.Id >= 0).ToList();
+                poDetailsNew = podetails.Where(x => x.Id == 0).ToList();
+
+
+                if (poDetailsExist.Count > 0)
+                {
+                    context.TblPurchaseOrderDetails.UpdateRange(podetails);
+                }
+                else
+                {
+                    context.TblPurchaseOrderDetails.AddRange(podetails);
+                }
                 context.SaveChanges();
 
                 dbtrans.Commit();
@@ -1704,6 +1734,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw;
             }
         }
+
         public TblPurchaseOrder GetPurchaseOrderMasterById(string id)
         {
             using var repo = new Repository<TblPurchaseOrder>();
@@ -1737,7 +1768,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         #region GoodsReceipt
         public List<TblGoodsReceiptMaster> GetGoodsReceiptMaster(SearchCriteria searchCriteria)
         {
-           
+
             searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-30), ToDate = DateTime.Today };
             searchCriteria.FromDate ??= DateTime.Today.AddDays(-30);
             searchCriteria.ToDate ??= DateTime.Today;
@@ -1862,9 +1893,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             grdetails.ForEach(x =>
             {
-                
+
                 var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.Description == x.MaterialCode);
-                mathdr.ClosingQty = ((mathdr.ClosingQty??0) + (x.ReceivedQty));
+                mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
                 context.TblMaterialMaster.Update(mathdr);
                 context.SaveChanges();
 
@@ -2107,8 +2138,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             repo.TblSaleOrderDetail.ToList()
                 .ForEach(c =>
                 {
-                    c.AvailableQTY = Convert.ToInt32( MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode).ClosingQty);
-                    
+                    c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode).ClosingQty);
+
                 });
             return repo.TblSaleOrderDetail.Where(x => x.SaleOrderNo == saleOrderNo).ToList();
         }
@@ -2148,8 +2179,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 });
                 saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID >= 0).ToList();
                 saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
-                
-                if (saleOrderDetailsExist.Count>0)
+
+                if (saleOrderDetailsExist.Count > 0)
                 {
                     context.TblSaleOrderDetail.UpdateRange(saleOrderDetailsExist);
                 }
