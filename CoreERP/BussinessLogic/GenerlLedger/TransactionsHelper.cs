@@ -1321,27 +1321,47 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw new Exception("Requisition Number Code Canot be empty/null.");
 
             using var repo = new Repository<TblPurchaseRequisitionMaster>();
-
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            List<TblPurchaseRequisitionDetails> prDetailsNew;
+            List<TblPurchaseRequisitionDetails> prDetailsExist;
+                        
             if (repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
+            {
+                reqmasterdata.Status = "Created";
+                reqmasterdata.AddDate = DateTime.Now;
+                context.TblPurchaseRequisitionMaster.Update(reqmasterdata);
+                context.SaveChanges();
+            }
+            else
+            {
+               if( repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
                 throw new Exception("Requisition Number " +reqmasterdata.RequisitionNumber+ " Already Exists.");
 
+                reqmasterdata.Status = "Created";
+                reqmasterdata.EditDate = DateTime.Now;
+                context.TblPurchaseRequisitionMaster.Add(reqmasterdata);
+                context.SaveChanges();
+            }
             reqdetails.ForEach(x =>
             {
                 x.PurchaseRequisitionNumber = reqmasterdata.RequisitionNumber;
             });
 
-            using var context = new ERPContext();
-            using var dbtrans = context.Database.BeginTransaction();
+            prDetailsExist = reqdetails.Where(x => x.Id >= 0).ToList();
+            prDetailsNew = reqdetails.Where(x => x.Id == 0).ToList();
+
             try
             {
-                reqmasterdata.Status = "Created";
-                reqmasterdata.AddDate = System.DateTime.Now;
-                context.TblPurchaseRequisitionMaster.Add(reqmasterdata);
+                if (prDetailsExist.Count > 0)
+                {
+                    context.TblPurchaseRequisitionDetails.UpdateRange(reqdetails);
+                }
+                else
+                {
+                    context.TblPurchaseRequisitionDetails.AddRange(reqdetails);
+                }
                 context.SaveChanges();
-
-                context.TblPurchaseRequisitionDetails.AddRange(reqdetails);
-                context.SaveChanges();
-
                 dbtrans.Commit();
                 return true;
             }
@@ -2097,9 +2117,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (saleOrderMaster.OrderDate == null)
                 throw new Exception("Sale Order Date Canot be empty/null.");
 
-
-           
-
             saleOrderMaster.CreatedDate ??= DateTime.Now;
             using var repo = new Repository<TblSaleOrderMaster>();
             List<TblSaleOrderDetail> saleOrderDetailsNew;
@@ -2108,9 +2125,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
-                //saleOrderMaster.Status = "Created";
-                //context.TblSaleOrderMaster.Add(saleOrderMaster);
-                //context.SaveChanges();
                 if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
                 {
                     saleOrderMaster.Status = "Created";
@@ -2134,18 +2148,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 });
                 saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID >= 0).ToList();
                 saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
-                //foreach (var item in saleOrderDetails)
-                //{
-                //    if(item.ID>0)
-                //    {
-                //        saleOrderDetailsExist = saleOrderDetails.Where(x=>x.ID>=0).ToList();
-                //        saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
-                //    }
-                //    else
-                //    {
-
-                //    }
-                //}
+                
                 if (saleOrderDetailsExist.Count>0)
                 {
                     context.TblSaleOrderDetail.UpdateRange(saleOrderDetailsExist);
