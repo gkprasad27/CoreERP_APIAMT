@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace CoreERP.Controllers.masters
 {
@@ -1215,38 +1216,50 @@ namespace CoreERP.Controllers.masters
         }
         [HttpPost]
         [Route("UploadFile")]
-        public IActionResult UploadFile([FromQuery] string fileUrl)
+        public IActionResult UploadFile(string uploadfileName)
         {
             try
             {
+                var fullPath = string.Empty ;
                 var rootfile = Request.Form.Files[0];
-                var folderName = Path.Combine("Upload");
-                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-               
-                if(!Directory.Exists(pathToSave))
+                //var folderName = Path.Combine("Upload");
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory());
+
+                if (!Directory.Exists(pathToSave))
                 {
                     Directory.CreateDirectory(pathToSave);
                 }
                 if (rootfile.Length > 0)
                 {
                     var fileName = ContentDispositionHeaderValue.Parse(rootfile.ContentDisposition).FileName.Trim('"');
-                    var fullPath = Path.Combine(pathToSave, fileName);
-                    var dbPath = Path.Combine(folderName, fileName);
+                     fullPath = Path.Combine(pathToSave, fileName);
+                    //var dbPath = Path.Combine(folderName, fileName);
 
-                   if( System.IO.File.Exists(fullPath))
+                    if (System.IO.File.Exists(fullPath))
                         System.IO.File.Delete(fullPath);
-
 
                     using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
                         rootfile.CopyTo(stream);
                     }
-                    return Ok(new { dbPath });
                 }
-                else
-                {
-                    return BadRequest();
-                }
+               
+
+                string strUploadPath = "ftp://amtpowertransmission.com/portal.amtpowertransmission.com/Doc/SaleOrder/"+ uploadfileName;
+                byte[] buffer = System.IO.File.ReadAllBytes(rootfile.FileName);
+                var requestObj = FtpWebRequest.Create(strUploadPath) as FtpWebRequest;
+                requestObj.Method = WebRequestMethods.Ftp.UploadFile;
+                requestObj.Credentials = new NetworkCredential("amtpowertransm", "Zxan44*6");
+                Stream requestStream = requestObj.GetRequestStream();
+                requestStream.Write(buffer, 0, buffer.Length);
+                requestStream.Flush();
+                requestStream.Close();
+                requestObj = null;
+
+                if (System.IO.File.Exists(fullPath))
+                    System.IO.File.Delete(fullPath);
+
+                return Ok();
             }
             catch (Exception ex)
             {
