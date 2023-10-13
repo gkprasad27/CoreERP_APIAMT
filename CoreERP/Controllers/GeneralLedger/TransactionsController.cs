@@ -1245,7 +1245,7 @@ namespace CoreERP.Controllers.masters
                 }
                
 
-                string strUploadPath = "ftp://amtpowertransmission.com/portal.amtpowertransmission.com/Doc/SaleOrder/"+ uploadfileName;
+                string strUploadPath = "ftp://amtpowertransmission.com/portal.amtpowertransmission.com/Doc/SaleOrder/"+ uploadfileName+".pdf";
                 byte[] buffer = System.IO.File.ReadAllBytes(rootfile.FileName);
                 var requestObj = FtpWebRequest.Create(strUploadPath) as FtpWebRequest;
                 requestObj.Method = WebRequestMethods.Ftp.UploadFile;
@@ -1275,7 +1275,7 @@ namespace CoreERP.Controllers.masters
             if (filename == null)
                 return Content("filename not present");
 
-            var path = Path.Combine(Directory.GetCurrentDirectory(), filename);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), filename+".pdf");
             var memory = new MemoryStream();
             using (var stream = new FileStream(path, FileMode.Open))
             {
