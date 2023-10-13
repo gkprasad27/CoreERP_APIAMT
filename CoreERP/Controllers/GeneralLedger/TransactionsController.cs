@@ -1275,7 +1275,7 @@ namespace CoreERP.Controllers.masters
             if (filename == null)
                 return Content("filename not present");
 
-            var path = Path.Combine(Directory.GetCurrentDirectory(),"Upload/", filename);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), filename);
             var memory = new MemoryStream();
             using (var stream = new FileStream(path, FileMode.Open))
             {

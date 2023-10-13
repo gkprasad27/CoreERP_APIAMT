@@ -1912,16 +1912,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             grdetails.ForEach(x =>
             {
 
-                var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.Description == x.MaterialCode);
+                var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == x.MaterialCode);
 
                 if (Convert.ToString(mathdr.ClosingQty) == null)
                     mathdr.ClosingQty = 0;
 
                 mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
                 context.TblMaterialMaster.Update(mathdr);
-                context.SaveChanges();
 
             });
+            context.SaveChanges();
+
             return true;
 
         }
