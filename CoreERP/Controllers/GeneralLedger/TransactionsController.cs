@@ -1219,7 +1219,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var file = Request.Form.Files[0];
+                var rootfile = Request.Form.Files[0];
                 var folderName = Path.Combine("Upload");
                 var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
                
@@ -1227,14 +1227,19 @@ namespace CoreERP.Controllers.masters
                 {
                     Directory.CreateDirectory(pathToSave);
                 }
-                if (file.Length > 0)
+                if (rootfile.Length > 0)
                 {
-                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    var fileName = ContentDispositionHeaderValue.Parse(rootfile.ContentDisposition).FileName.Trim('"');
                     var fullPath = Path.Combine(pathToSave, fileName);
                     var dbPath = Path.Combine(folderName, fileName);
+
+                   if( System.IO.File.Exists(fullPath))
+                        System.IO.File.Delete(fullPath);
+
+
                     using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
-                        file.CopyTo(stream);
+                        rootfile.CopyTo(stream);
                     }
                     return Ok(new { dbPath });
                 }
