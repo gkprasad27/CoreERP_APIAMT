@@ -1844,15 +1844,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     throw new Exception($"Cannot Received MoreQty for  {grdata.PurchaseOrderNo} QTY Exceeded.");
                 else if (poqty == totalqty)
                 {
+                    if(purchase!=null)
                     purchase.Status = "Completed";
+
                     grdata.Status = "Completed";
-                    purchaseReq.Status = "Completed";
+
+                    if (purchaseReq != null)
+                        purchaseReq.Status = "Completed";
                 }
                 else if (totalqty < poqty)
                 {
-                    purchase.Status = "Partial Received";
+                    if (purchase != null)
+                        purchase.Status = "Partial Received";
+
                     grdata.Status = "Partial Received";
-                    purchaseReq.Status = "Partial Received";
+
+                    if (purchaseReq != null)
+                        purchaseReq.Status = "Partial Received";
                 }
                 foreach (var item in grdetails)
                 {
