@@ -1701,7 +1701,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     context.TblSaleOrderMaster.Update(SaleOrder);
                 }
 
-                if (PRdata!=null)
+                if (PRdata != null)
                 {
                     PRdata.Status = "PO Created";
                     context.TblPurchaseRequisitionMaster.Update(PRdata);
@@ -1844,23 +1844,35 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     throw new Exception($"Cannot Received MoreQty for  {grdata.PurchaseOrderNo} QTY Exceeded.");
                 else if (poqty == totalqty)
                 {
-                    if(purchase!=null)
-                    purchase.Status = "Completed";
+                    if (purchase != null)
+                    {
+                        purchase.Status = "Completed";
+                        context.TblPurchaseOrder.Update(purchase);
+                    }
 
                     grdata.Status = "Completed";
 
                     if (purchaseReq != null)
+                    {
                         purchaseReq.Status = "Completed";
+                        context.TblPurchaseRequisitionMaster.Update(purchaseReq);
+                    }
                 }
                 else if (totalqty < poqty)
                 {
                     if (purchase != null)
+                    {
                         purchase.Status = "Partial Received";
+                        context.TblPurchaseOrder.Update(purchase);
+                    }
 
                     grdata.Status = "Partial Received";
 
                     if (purchaseReq != null)
+                    {
                         purchaseReq.Status = "Partial Received";
+                        context.TblPurchaseRequisitionMaster.Update(purchaseReq);
+                    }
                 }
                 foreach (var item in grdetails)
                 {
@@ -1875,8 +1887,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         throw new Exception($"Cannot Received MoreQty for  {item.MaterialCode} QTY Exceeded.");
                 }
 
-                context.TblPurchaseOrder.Update(purchase);
-                context.TblPurchaseRequisitionMaster.Update(purchaseReq);
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
                 context.SaveChanges();
 
@@ -1903,6 +1913,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
 
                 var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.Description == x.MaterialCode);
+
+                if (Convert.ToString(mathdr.ClosingQty) == null)
+                    mathdr.ClosingQty = 0;
+
                 mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
                 context.TblMaterialMaster.Update(mathdr);
                 context.SaveChanges();
