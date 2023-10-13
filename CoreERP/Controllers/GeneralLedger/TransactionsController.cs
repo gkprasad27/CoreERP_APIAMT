@@ -12,6 +12,7 @@ using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace CoreERP.Controllers.masters
 {
@@ -57,7 +58,7 @@ namespace CoreERP.Controllers.masters
             try
             {
                 dynamic expdoObj = new ExpandoObject();
-                expdoObj.PurchaseOrderNumber = new TransactionsHelper().GetSaleOrderNumber(profitCenter);
+                expdoObj.PurchaseOrderNumber = new TransactionsHelper().GetPurchaseOrderNumber(profitCenter);
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
             }
             catch (Exception ex)
@@ -1214,13 +1215,18 @@ namespace CoreERP.Controllers.masters
         }
         [HttpPost]
         [Route("UploadFile")]
-        public IActionResult UploadFile()
+        public IActionResult UploadFile([FromQuery] string fileUrl)
         {
             try
             {
                 var file = Request.Form.Files[0];
                 var folderName = Path.Combine("Upload");
                 var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+               
+                if(!Directory.Exists(pathToSave))
+                {
+                    Directory.CreateDirectory(pathToSave);
+                }
                 if (file.Length > 0)
                 {
                     var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
