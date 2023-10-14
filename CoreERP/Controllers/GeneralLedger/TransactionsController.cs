@@ -1307,7 +1307,7 @@ namespace CoreERP.Controllers.masters
                 //return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = File(fileBytes, "application/force-download", filename) });
             //    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = fileBytes });
             //}
-            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "http://portal.amtpowertransmission.com/Doc/SaleOrder/"+ filename });
+            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "http://portal.amtpowertransmission.com/Doc/SaleOrder/"+ filename+".pdf" });
         }
 
        
