@@ -1275,39 +1275,39 @@ namespace CoreERP.Controllers.masters
             if (filename == null)
                 return Content("filename not present");
 
-            string downloadURL = "ftp://amtpowertransmission.com/portal.amtpowertransmission.com/Doc/SaleOrder/" + filename + ".pdf";
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(downloadURL);
-            request.Method = WebRequestMethods.Ftp.DownloadFile;
-            request.Credentials = new NetworkCredential("amtpowertransm", "Zxan44*6");
-            request.UsePassive = true;
-            request.UseBinary = true;
-            request.KeepAlive = false;
+            //string downloadURL = "ftp://amtpowertransmission.com/portal.amtpowertransmission.com/Doc/SaleOrder/" + filename + ".pdf";
+            //FtpWebRequest request = (FtpWebRequest)WebRequest.Create(downloadURL);
+            //request.Method = WebRequestMethods.Ftp.DownloadFile;
+            //request.Credentials = new NetworkCredential("amtpowertransm", "Zxan44*6");
+            //request.UsePassive = true;
+            //request.UseBinary = true;
+            //request.KeepAlive = false;
 
-            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-            Stream responseStream = response.GetResponseStream();
+            //FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+            //Stream responseStream = response.GetResponseStream();
 
-            var pathToSave = Path.Combine(Directory.GetCurrentDirectory() +"\\"+ filename + ".pdf");
-            Directory.CreateDirectory(Path.GetDirectoryName(pathToSave));
-            FileStream file = System.IO.File.Create(pathToSave);
-            byte[] buffer = new byte[2 * 1024];
-            int read;
-            while ((read = responseStream.Read(buffer, 0, buffer.Length)) > 0) { file.Write(buffer, 0, read); }
-            file.Close();
-            responseStream.Close();
-            response.Close();
-            if (System.IO.File.Exists(pathToSave))
-            {
-                string filePath = pathToSave;
-                byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
-                File(fileBytes, "application/force-download", filename);
+            //var pathToSave = Path.Combine(Directory.GetCurrentDirectory() +"\\"+ filename + ".pdf");
+            //Directory.CreateDirectory(Path.GetDirectoryName(pathToSave));
+            //FileStream file = System.IO.File.Create(pathToSave);
+            //byte[] buffer = new byte[2 * 1024];
+            //int read;
+            //while ((read = responseStream.Read(buffer, 0, buffer.Length)) > 0) { file.Write(buffer, 0, read); }
+            //file.Close();
+            //responseStream.Close();
+            //response.Close();
+            //if (System.IO.File.Exists(pathToSave))
+            //{
+            //    string filePath = pathToSave;
+            //    byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+            //    File(fileBytes, "application/force-download", filename);
 
-                if (System.IO.File.Exists(pathToSave))
-                    System.IO.File.Delete(pathToSave);
+            //    if (System.IO.File.Exists(pathToSave))
+            //        System.IO.File.Delete(pathToSave);
 
                 //return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = File(fileBytes, "application/force-download", filename) });
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = fileBytes });
-            }
-            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "fileBytes" });
+            //    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = fileBytes });
+            //}
+            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "http://portal.amtpowertransmission.com/Doc/SaleOrder/"+ filename });
         }
 
        
