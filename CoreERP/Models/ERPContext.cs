@@ -22,6 +22,7 @@ namespace CoreERP.Models
         public virtual DbSet<CashInOutFlow1> CashInOutFlow1 { get; set; }
         public virtual DbSet<ConfigurationTable> ConfigurationTable { get; set; }
         public virtual DbSet<CostCenters> CostCenter { get; set; }
+        public virtual DbSet<Ctcbreakup> Ctcbreakup { get; set; }
         public virtual DbSet<Countries> Countries { get; set; }
         public virtual DbSet<Department> Department { get; set; }
         public virtual DbSet<Divisions> Divisions { get; set; }

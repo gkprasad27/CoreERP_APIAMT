@@ -47,11 +47,21 @@ namespace CoreERP.Controllers.masters
             try
             {
                 var ctcTypesList = _ctcRepository.GetAll();
-                if (!ctcTypesList.Any())
-                    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.ctcTypesList = ctcTypesList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                if (ctcTypesList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.ctcTypesList = ctcTypesList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+                //var ctcTypesList = _ctcRepository.GetAll();
+                //if (!ctcTypesList.Any())
+                //    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
+                //dynamic expdoObj = new ExpandoObject();
+                //expdoObj.ctcTypesList = ctcTypesList;
+                //return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
             }
             catch (Exception ex)

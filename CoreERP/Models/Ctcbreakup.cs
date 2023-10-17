@@ -10,8 +10,8 @@ namespace CoreERP.Models
         public string? EmpCode { get; set; }
         public DateTime? EffectFrom { get; set; }
         public string? EarnDednCode { get; set; }
-        public double? EarnDednAmount { get; set; }
-        public double? Ctc { get; set; }
+        public decimal? EarnDednAmount { get; set; }
+        public decimal? Ctc { get; set; }
         public string? Usrid { get; set; }
         public DateTime? TimeStamp { get; set; }
         public string? Upload { get; set; }
