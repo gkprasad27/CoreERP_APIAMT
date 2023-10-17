@@ -111,6 +111,8 @@ namespace CoreERP.Models
         public virtual DbSet<TblGlsubAccount> TblGlsubAccount { get; set; }
         public virtual DbSet<TblGoodsIssueDetails> TblGoodsIssueDetails { get; set; }
         public virtual DbSet<TblGoodsIssueMaster> TblGoodsIssueMaster { get; set; }
+        public virtual DbSet<TblProductionMaster> TblProductionMaster { get; set; }
+        public virtual DbSet<TblProductionDetails> TblProductionDetails { get; set; }
         public virtual DbSet<TblGoodsReceiptDetails> TblGoodsReceiptDetails { get; set; }
         public virtual DbSet<TblGoodsReceiptMaster> TblGoodsReceiptMaster { get; set; }
         public virtual DbSet<TblGrnassignment> TblGrnassignment { get; set; }
