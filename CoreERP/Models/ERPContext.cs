@@ -3283,7 +3283,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Department).HasMaxLength(50);
 
-                entity.Property(e => e.MovementType).HasMaxLength(50);
+                entity.Property(e => e.ProductionPerson).HasMaxLength(50);
 
                 entity.Property(e => e.Plant).HasMaxLength(5);
 

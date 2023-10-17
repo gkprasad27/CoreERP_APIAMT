@@ -2161,7 +2161,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             repo.TblSaleOrderDetail.ToList()
                 .ForEach(c =>
                 {
-                    c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode).ClosingQty);
+                    c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode.TrimEnd()).ClosingQty);
 
                 });
             return repo.TblSaleOrderDetail.Where(x => x.SaleOrderNo == saleOrderNo).ToList();
