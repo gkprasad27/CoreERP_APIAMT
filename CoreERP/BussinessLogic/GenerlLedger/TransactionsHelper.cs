@@ -936,14 +936,30 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
-
-            var tblProduction=new TblProductionMaster();
+            using var repogim = new Repository<TblGoodsIssueMaster>();
+            using var repogidetail = new Repository<TblGoodsIssueDetails>();
+            using var tblprod = new Repository<TblGoodsIssueDetails>();
+            var tblProduction = new TblProductionMaster();
             var ProductionDetails = new List<TblProductionDetails>();
+            List<TblGoodsIssueDetails> goodsOrderDetailsNew;
+            List<TblGoodsIssueDetails> goodsOrderDetailsExist;
+
 
             try
             {
-                context.TblGoodsIssueMaster.Add(gimaster);
-                context.SaveChanges();
+                if (repogim.TblGoodsIssueMaster.Any(v => v.SaleOrderNumber == gimaster.SaleOrderNumber))
+                {
+                    gimaster.Status = "Production Released";
+                    context.TblGoodsIssueMaster.Update(gimaster);
+                    context.SaveChanges();
+                }
+                else
+                {
+
+                    gimaster.Status = "Production Released";
+                    context.TblGoodsIssueMaster.Add(gimaster);
+                    context.SaveChanges();
+                }
                 gibDetails.ForEach(x =>
                 {
                     x.GoodsIssueId = gimaster.GoodsIssueId;
@@ -953,25 +969,69 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 tblProduction.Company = gimaster.Company;
                 tblProduction.SaleOrderNumber = gimaster.SaleOrderNumber;
                 context.TblProductionMaster.Add(tblProduction);
-                int tagnum= 0;
-                if (ProductionDetails.Count == 0)
+                int tagnum = 0;
+                if (tblprod.TblProductionMaster.Any())
+                {
+                    tagnum = (Convert.ToInt16(tblprod.TblProductionMaster.Max(i => i.ID)))+1;
+                }
+                else
                     tagnum = 1;
-                
+
                 foreach (var item in gibDetails)
                 {
-                    int qty = item.AllocatedQTY??0;
-                    if (qty > 0) 
+
+                    int qty = item.AllocatedQTY ?? 0;
+                    if (qty > 0)
                     {
-                        for(var i = 0; i < qty; i++)
+                        for (var i = 0; i < qty; i++)
                         {
-                            ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released",MaterialCode=item.MaterialCode });
-                            tagnum= tagnum + 1;
+                            ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released", MaterialCode = item.MaterialCode });
+                            tagnum = tagnum + 1;
                         }
                     }
+                    //    if (repogidetail.TblGoodsIssueDetails.Any(z => z.SaleOrderNumber == gimaster.SaleOrderNumber && z.MaterialCode==item.MaterialCode))
+                    //    {
+                    //        int alloqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
+
+                    //            int qty = item.AllocatedQTY ?? 0;
+                    //        if (qty > 0)
+                    //        {
+                    //            for (var i = 0; i < qty; i++)
+                    //            {
+                    //                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released", MaterialCode = item.MaterialCode });
+                    //                tagnum = tagnum + 1;
+                    //            }
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        int qty = item.AllocatedQTY ?? 0;
+                    //        if (qty > 0)
+                    //        {
+                    //            for (var i = 0; i < qty; i++)
+                    //            {
+                    //                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released", MaterialCode = item.MaterialCode });
+                    //                tagnum = tagnum + 1;
+                    //            }
+                    //        }
+                    //    }
+
                 }
 
-                
+
                 context.TblProductionDetails.AddRange(ProductionDetails);
+
+                goodsOrderDetailsExist = gibDetails.Where(x => x.Id >= 0).ToList();
+                goodsOrderDetailsNew = gibDetails.Where(x => x.Id == 0).ToList();
+
+                if (goodsOrderDetailsExist.Count > 0)
+                {
+                    context.TblGoodsIssueDetails.UpdateRange(goodsOrderDetailsExist);
+                }
+                else
+                {
+                    context.TblGoodsIssueDetails.AddRange(goodsOrderDetailsNew);
+                }
 
                 context.TblGoodsIssueDetails.AddRange(gibDetails);
                 context.SaveChanges();
