@@ -972,15 +972,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 int tagnum = 0;
                 if (tblprod.TblProductionMaster.Any())
                 {
-                    tagnum = (Convert.ToInt16(tblprod.TblProductionMaster.Max(i => i.ID)))+1;
+                    tagnum = (tblprod.TblProductionMaster.Max(i => i.ID))+(1);
                 }
                 else
                     tagnum = 1;
 
                 foreach (var item in gibDetails)
                 {
-
-                    int qty = item.AllocatedQTY ?? 0;
+                    int receivedqty = 0;
+                    if (item.AllocatedQTY>0)
+                    {
+                      receivedqty=   Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
+                        item.AllocatedQTY = (item.AllocatedQTY + receivedqty);
+                    }
+                    int qty = (item.AllocatedQTY ?? 0)-(receivedqty);
                     if (qty > 0)
                     {
                         for (var i = 0; i < qty; i++)
