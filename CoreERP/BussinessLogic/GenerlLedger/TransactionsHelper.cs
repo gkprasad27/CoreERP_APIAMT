@@ -936,6 +936,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
+
+            var tblProduction=new TblProductionMaster();
+            var ProductionDetails = new List<TblProductionDetails>();
+
             try
             {
                 context.TblGoodsIssueMaster.Add(gimaster);
@@ -943,7 +947,32 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 gibDetails.ForEach(x =>
                 {
                     x.GoodsIssueId = gimaster.GoodsIssueId;
+                    x.SaleOrderNumber = gimaster.SaleOrderNumber;
                 });
+
+                tblProduction.Company = gimaster.Company;
+                tblProduction.SaleOrderNumber = gimaster.SaleOrderNumber;
+                context.TblProductionMaster.Add(tblProduction);
+                int tagnum= 0;
+                if (ProductionDetails.Count == 0)
+                    tagnum = 1;
+                
+                foreach (var item in gibDetails)
+                {
+                    int qty = item.AllocatedQTY??0;
+                    if (qty > 0) 
+                    {
+                        for(var i = 0; i < qty; i++)
+                        {
+                            ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released",MaterialCode=item.MaterialCode });
+                            tagnum= tagnum + 1;
+                        }
+                    }
+                }
+
+                
+                context.TblProductionDetails.AddRange(ProductionDetails);
+
                 context.TblGoodsIssueDetails.AddRange(gibDetails);
                 context.SaveChanges();
 
@@ -960,7 +989,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public bool ReturnGoodsIssue(string RequisitionNumber)
         {
             using var repo = new ERPContext();
-            var goodissueHeader = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.RequisitionNumber == RequisitionNumber);
+            var goodissueHeader = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == RequisitionNumber);
 
             if (goodissueHeader != null)
                 throw new Exception($"Invoice memo no {RequisitionNumber} already return.");

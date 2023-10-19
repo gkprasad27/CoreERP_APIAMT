@@ -3289,7 +3289,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Plant).HasMaxLength(5);
 
-                entity.Property(e => e.RequisitionNumber).HasMaxLength(50);
+                entity.Property(e => e.SaleOrderNumber).HasMaxLength(50);
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 

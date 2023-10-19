@@ -10,7 +10,7 @@ namespace CoreERP.Models
         public string? Plant { get; set; }
         public string? StoresPerson { get; set; }
         public string? Department { get; set; }
-        public string? RequisitionNumber { get; set; }
+        public string? SaleOrderNumber { get; set; }
         public string? ProductionPerson { get; set; }
         public string? Status { get; set; }
     }

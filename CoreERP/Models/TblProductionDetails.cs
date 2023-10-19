@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
 {
+    [Table("tbl_productiondetails")]
     public partial class TblProductionDetails
     {
         public int ID { get; set; }
@@ -15,5 +17,7 @@ namespace CoreERP.Models
         public string? TypeofWork { get; set; }
         public string? Remarks  { get; set; }
         public decimal Duration { get; set; }
+
+        public string MaterialCode { get; set; }
     }
 }
