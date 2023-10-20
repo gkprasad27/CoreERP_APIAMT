@@ -680,7 +680,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetGoodsissueDetail/{GSNumber}")]
-        public IActionResult GetGoodsissueDetail(int GSNumber)
+        public IActionResult GetGoodsissueDetail(string GSNumber)
         {
             try
             {
@@ -700,18 +700,18 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetTagsissueDetail/{GSNumber}")]
-        public IActionResult GetGoodsissueDetail(string GSNumber)
+        [HttpGet("GetTagsissueDetail/{GSNumber}/{Materialcode}")]
+        public IActionResult GetTagsissueDetail(string GSNumber,string Materialcode)
         {
             try
             {
                 var transactions = new TransactionsHelper();
-                var tagsData = transactions.GetTagsIssueMasterById(GSNumber);
-                if (tagsData == null)
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                //var tagsData = transactions.GetTagsIssueMasterById(GSNumber);
+                //if (tagsData == null)
+                //    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 dynamic expdoObj = new ExpandoObject();
-                expdoObj.tagsData = tagsData;
-                expdoObj.tagsDetail = new TransactionsHelper().GetTagsIssueDetails(GSNumber);
+                //expdoObj.tagsData = tagsData;
+                expdoObj.tagsDetail = new TransactionsHelper().GetTagsIssueDetails(GSNumber, Materialcode);
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
             }

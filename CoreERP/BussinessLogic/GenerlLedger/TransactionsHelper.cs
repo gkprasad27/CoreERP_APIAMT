@@ -938,11 +938,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         }
 
-        public TblGoodsIssueMaster GetGoodsIssueMasterById(int GoodsIssueId)
+        public TblGoodsIssueMaster GetGoodsIssueMasterById(string GoodsIssueId)
         {
             using var repo = new Repository<TblGoodsIssueMaster>();
             return repo.TblGoodsIssueMaster
-                .FirstOrDefault(x => x.GoodsIssueId == GoodsIssueId);
+                .FirstOrDefault(x => x.SaleOrderNumber == GoodsIssueId);
         }
 
         public TblProductionMaster GetTagsIssueMasterById(string GoodsIssueId)
@@ -952,16 +952,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.SaleOrderNumber == GoodsIssueId);
         }
 
-        public List<TblGoodsIssueDetails> GetGoodsIssueDetails(int GoodsIssueId)
+        public List<TblGoodsIssueDetails> GetGoodsIssueDetails(string GoodsIssueId)
         {
             using var repo = new Repository<TblGoodsIssueDetails>();
-            return repo.TblGoodsIssueDetails.Where(cd => cd.GoodsIssueId == GoodsIssueId).ToList();
+            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
         }
 
-        public List<TblProductionDetails> GetTagsIssueDetails(string GoodsIssueId)
+        public List<TblProductionDetails> GetTagsIssueDetails(string GoodsIssueId,string Materialcode)
         {
             using var repo = new Repository<TblProductionDetails>();
-            return repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
+            return repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode==Materialcode).ToList();
         }
 
         public bool AddGoodsIssue(TblGoodsIssueMaster gimaster, List<TblGoodsIssueDetails> gibDetails)
