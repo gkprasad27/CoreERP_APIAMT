@@ -17,7 +17,11 @@ namespace CoreERP.Models
         public string? TypeofWork { get; set; }
         public string? Remarks  { get; set; }
         public decimal Duration { get; set; }
-
         public string MaterialCode { get; set; }
+        public bool IsReject { get; set; }
+        public string WorkStatus { get; set; }    
+        public string Mechine { get; set; }
+
+
     }
 }

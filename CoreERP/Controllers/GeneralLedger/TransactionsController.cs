@@ -746,6 +746,30 @@ namespace CoreERP.Controllers.masters
             }
         }
 
+        [HttpPost("AddProductionissue")]
+        public IActionResult AddProductionissue([FromBody] JObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                var prodissueMaster = obj["prodHdr"].ToObject<TblProductionMaster>();
+                var prodissueetails = obj["prodDtl"].ToObject<List<TblProductionDetails>>();
+
+                if (!new TransactionsHelper().AddProdIssue(prodissueMaster, prodissueetails))
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.prodmaster = prodissueMaster;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("ReturnGoodsissue/{RequisitionNumber}")]
         public IActionResult ReturnGoodsissue(string RequisitionNumber)
         {

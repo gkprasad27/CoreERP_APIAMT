@@ -12,8 +12,6 @@ namespace CoreERP.Models
         public string? ProfitCenter { get; set; }
         public string? SaleOrderNumber { get; set; }
         public string? Status { get; set; }
-        public DateTime? ProductionPlanDate { get; set; }
-        public DateTime? ProductionEndDate { get; set; }
         public string? Product { get; set; }
     }
 }

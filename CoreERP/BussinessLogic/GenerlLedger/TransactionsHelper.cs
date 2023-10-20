@@ -990,6 +990,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     tblProduction.Company = gimaster.Company;
                     tblProduction.SaleOrderNumber = gimaster.SaleOrderNumber;
                     tblProduction.Status = "Production Released";
+                    tblProduction.ProfitCenter = gimaster.ProfitCenter;
+
                     context.TblProductionMaster.Add(tblProduction);
 
                     context.SaveChanges();
@@ -1091,6 +1093,39 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
+        public bool AddProdIssue(TblProductionMaster prodmaster, List<TblProductionDetails> prodDetails)
+        {
+
+            int lineno = 1;
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            using var repogim = new Repository<TblProductionMaster>();
+           
+
+            try
+            {
+                if (repogim.TblProductionMaster.Any(v => v.SaleOrderNumber == prodmaster.SaleOrderNumber))
+                {
+                    prodmaster.Status = "Production Released";
+                    context.TblProductionMaster.Update(prodmaster);
+
+                    context.SaveChanges();
+                }
+                
+                context.TblProductionDetails.UpdateRange(prodDetails);
+
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
         public bool ReturnGoodsIssue(string RequisitionNumber)
         {
             using var repo = new ERPContext();
