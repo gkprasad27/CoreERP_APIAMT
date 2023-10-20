@@ -951,11 +951,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     gimaster.Status = "Production Released";
                     context.TblGoodsIssueMaster.Update(gimaster);
+
+                    tblProduction.Company = gimaster.Company;
+                    tblProduction.SaleOrderNumber = gimaster.SaleOrderNumber;
+                    tblProduction.Status = "Production Released";
+                    context.TblProductionMaster.Add(tblProduction);
+
                     context.SaveChanges();
                 }
                 else
                 {
-
                     gimaster.Status = "Production Released";
                     context.TblGoodsIssueMaster.Add(gimaster);
                     context.SaveChanges();
@@ -966,26 +971,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.SaleOrderNumber = gimaster.SaleOrderNumber;
                 });
 
-                tblProduction.Company = gimaster.Company;
-                tblProduction.SaleOrderNumber = gimaster.SaleOrderNumber;
-                context.TblProductionMaster.Add(tblProduction);
+               
                 int tagnum = 0;
-                if (tblprod.TblProductionMaster.Any())
+                if (tblprod.TblProductionDetails.Any())
                 {
-                    tagnum = (tblprod.TblProductionMaster.Max(i => i.ID))+(1);
+                    tagnum = tblprod.TblProductionDetails.Max(i => i.ID);
                 }
                 else
                     tagnum = 1;
 
                 foreach (var item in gibDetails)
                 {
-                    int receivedqty = 0;
-                    if (item.AllocatedQTY>0)
-                    {
-                      receivedqty=   Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
-                        item.AllocatedQTY = (item.AllocatedQTY + receivedqty);
-                    }
-                    int qty = (item.AllocatedQTY ?? 0)-(receivedqty);
+                    
+                    // int qty = (item.AllocatedQTY ?? 0)-(receivedqty);
+                    int qty = item.AllocatedQTY ?? 0;
                     if (qty > 0)
                     {
                         for (var i = 0; i < qty; i++)
@@ -993,6 +992,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released", MaterialCode = item.MaterialCode });
                             tagnum = tagnum + 1;
                         }
+                    }
+                    int receivedqty = 0;
+                    if (item.AllocatedQTY > 0)
+                    {
+                        receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
+                        item.AllocatedQTY = (item.AllocatedQTY) + (receivedqty);
                     }
                     //    if (repogidetail.TblGoodsIssueDetails.Any(z => z.SaleOrderNumber == gimaster.SaleOrderNumber && z.MaterialCode==item.MaterialCode))
                     //    {
