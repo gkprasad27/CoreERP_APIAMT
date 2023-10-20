@@ -896,12 +896,34 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public List<TblGoodsIssueMaster> GetGoodsIssueMaster(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-30), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-30);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblGoodsIssueMaster>();
             return repo.TblGoodsIssueMaster.AsEnumerable().ToList();
+            //.Where(x =>
+            //{
+            //    Debug.Assert(x.GoodsIssueId != null, "x.VoucherDate != null");
+            //    return
+            //    x.GoodsIssueId != null
+            //           && x.GoodsIssueId.ToString().Contains(searchCriteria.searchCriteria ?? x.GoodsIssueId.ToString())
+            //          //// && Convert.ToDateTime(x.RequisitionNumber.Value) >=
+            //          //Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+            //           ///&& Convert.ToDateTime(x.RequisitionNumber.Value.ToShortDateString()) <=
+            //           //Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+            //})
+
+        }
+
+        public List<TblProductionMaster> GetProductionIssueMaster(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-30), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-30);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblProductionMaster>();
+            return repo.TblProductionMaster.AsEnumerable().ToList();
             //.Where(x =>
             //{
             //    Debug.Assert(x.GoodsIssueId != null, "x.VoucherDate != null");
@@ -923,10 +945,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.GoodsIssueId == GoodsIssueId);
         }
 
+        public TblProductionMaster GetTagsIssueMasterById(string GoodsIssueId)
+        {
+            using var repo = new Repository<TblGoodsIssueMaster>();
+            return repo.TblProductionMaster
+                .FirstOrDefault(x => x.SaleOrderNumber == GoodsIssueId);
+        }
+
         public List<TblGoodsIssueDetails> GetGoodsIssueDetails(int GoodsIssueId)
         {
             using var repo = new Repository<TblGoodsIssueDetails>();
             return repo.TblGoodsIssueDetails.Where(cd => cd.GoodsIssueId == GoodsIssueId).ToList();
+        }
+
+        public List<TblProductionDetails> GetTagsIssueDetails(string GoodsIssueId)
+        {
+            using var repo = new Repository<TblProductionDetails>();
+            return repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
         }
 
         public bool AddGoodsIssue(TblGoodsIssueMaster gimaster, List<TblGoodsIssueDetails> gibDetails)

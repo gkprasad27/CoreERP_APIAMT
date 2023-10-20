@@ -659,6 +659,26 @@ namespace CoreERP.Controllers.masters
             }
         }
 
+
+        [HttpPost("GetProductionissue")]
+        public IActionResult GetProductionissue([FromBody] SearchCriteria searchCriteria)
+        {
+            try
+            {
+                var Productionissue = new TransactionsHelper().GetProductionIssueMaster(searchCriteria);
+                if (!Productionissue.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Productionissue." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.Productionissue = Productionissue;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetGoodsissueDetail/{GSNumber}")]
         public IActionResult GetGoodsissueDetail(int GSNumber)
         {
@@ -679,6 +699,28 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpGet("GetTagsissueDetail/{GSNumber}")]
+        public IActionResult GetGoodsissueDetail(string GSNumber)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var tagsData = transactions.GetTagsIssueMasterById(GSNumber);
+                if (tagsData == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.tagsData = tagsData;
+                expdoObj.tagsDetail = new TransactionsHelper().GetTagsIssueDetails(GSNumber);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
 
         [HttpPost("AddGoodsissue")]
         public IActionResult AddGoodsissue([FromBody] JObject obj)
