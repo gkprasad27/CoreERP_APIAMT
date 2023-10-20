@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
@@ -7,6 +8,8 @@ namespace CoreERP.Models
     [Table("tbl_productiondetails")]
     public partial class TblProductionDetails
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         public string? SaleOrderNumber { get; set; }
         public string? ProductionTag { get; set; }

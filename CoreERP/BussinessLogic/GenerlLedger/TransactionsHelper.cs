@@ -987,19 +987,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     gimaster.Status = "Production Released";
                     context.TblGoodsIssueMaster.Update(gimaster);
 
-                    tblProduction.Company = gimaster.Company;
-                    tblProduction.SaleOrderNumber = gimaster.SaleOrderNumber;
-                    tblProduction.Status = "Production Released";
-                    tblProduction.ProfitCenter = gimaster.ProfitCenter;
-
-                    context.TblProductionMaster.Add(tblProduction);
-
                     context.SaveChanges();
                 }
                 else
                 {
                     gimaster.Status = "Production Released";
                     context.TblGoodsIssueMaster.Add(gimaster);
+
+                    tblProduction.Company = gimaster.Company;
+                    tblProduction.SaleOrderNumber = gimaster.SaleOrderNumber;
+                    tblProduction.Status = "Production Released";
+                    tblProduction.ProfitCenter = gimaster.ProfitCenter;
+                    context.TblProductionMaster.Add(tblProduction);
+
                     context.SaveChanges();
                 }
                 gibDetails.ForEach(x =>
@@ -1012,7 +1012,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 int tagnum = 0;
                 if (tblprod.TblProductionDetails.Any())
                 {
-                    tagnum = tblprod.TblProductionDetails.Max(i => i.ID);
+                    tagnum = tblprod.TblProductionDetails.Max(i => i.ID)+1;
                 }
                 else
                     tagnum = 1;
@@ -1080,7 +1080,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     context.TblGoodsIssueDetails.AddRange(goodsOrderDetailsNew);
                 }
 
-                context.TblGoodsIssueDetails.AddRange(gibDetails);
                 context.SaveChanges();
 
                 dbtrans.Commit();
