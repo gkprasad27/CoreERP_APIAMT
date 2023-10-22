@@ -84,7 +84,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpDelete("DeletepfTypes/{code}")]
-        public IActionResult DeletepfTypes(string code)
+        public IActionResult DeletepfTypes(int code)
         {
             try
             {
