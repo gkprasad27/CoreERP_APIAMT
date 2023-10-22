@@ -955,13 +955,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblGoodsIssueDetails> GetGoodsIssueDetails(string GoodsIssueId)
         {
             using var repo = new Repository<TblGoodsIssueDetails>();
+            var material = repo.TblMaterialMaster.ToList();
+
+            repo.TblGoodsIssueDetails.ToList().ForEach(c =>
+               {
+                   c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+               });
             return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
+
         }
 
-        public List<TblProductionDetails> GetTagsIssueDetails(string GoodsIssueId,string Materialcode)
+        public List<TblProductionDetails> GetTagsIssueDetails(string GoodsIssueId, string Materialcode)
         {
             using var repo = new Repository<TblProductionDetails>();
-            return repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode==Materialcode).ToList();
+            return repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
         }
 
         public bool AddGoodsIssue(TblGoodsIssueMaster gimaster, List<TblGoodsIssueDetails> gibDetails)
@@ -1008,18 +1015,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.SaleOrderNumber = gimaster.SaleOrderNumber;
                 });
 
-               
+
                 int tagnum = 0;
                 if (tblprod.TblProductionDetails.Any())
                 {
-                    tagnum = tblprod.TblProductionDetails.Max(i => i.ID)+1;
+                    tagnum = tblprod.TblProductionDetails.Max(i => i.ID) + 1;
                 }
                 else
                     tagnum = 1;
 
                 foreach (var item in gibDetails)
                 {
-                    
+
                     // int qty = (item.AllocatedQTY ?? 0)-(receivedqty);
                     int qty = item.AllocatedQTY ?? 0;
                     if (qty > 0)
@@ -1100,7 +1107,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             using var repogim = new Repository<TblProductionMaster>();
-           
+
 
             try
             {
@@ -1111,7 +1118,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     context.SaveChanges();
                 }
-                
+
                 context.TblProductionDetails.UpdateRange(prodDetails);
 
                 context.SaveChanges();

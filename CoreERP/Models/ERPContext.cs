@@ -4198,7 +4198,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
-                entity.Property(e => e.Description).HasMaxLength(50);
+                entity.Property(e => e.Description).HasMaxLength(500);
 
                 entity.Property(e => e.Division).HasMaxLength(5);
 
