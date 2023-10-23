@@ -754,7 +754,7 @@ namespace CoreERP.Controllers.masters
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                var prodissueMaster = obj["prodHdr"].ToObject<TblProductionMaster>();
+               // var prodissueMaster = obj["prodHdr"].ToObject<TblProductionMaster>();
                 var prodissueetails = obj["prodDtl"].ToObject<List<TblProductionDetails>>();
 
                 if (!new TransactionsHelper().AddProdIssue(prodissueMaster, prodissueetails))
