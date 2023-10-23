@@ -1106,7 +1106,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
-        public bool AddProdIssue(TblProductionMaster prodmaster, List<TblProductionDetails> prodDetails)
+        public bool AddProdIssue(List<TblProductionDetails> prodDetails)
         {
 
             int lineno = 1;
@@ -1118,13 +1118,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             try
             {
-                if (repogim.TblProductionMaster.Any(v => v.SaleOrderNumber == prodmaster.SaleOrderNumber))
-                {
-                    prodmaster.Status = "Production Released";
-                    context.TblProductionMaster.Update(prodmaster);
+                //if (repogim.TblProductionMaster.Any(v => v.SaleOrderNumber == prodmaster.SaleOrderNumber))
+                //{
+                //    prodmaster.Status = "Production Released";
+                //    context.TblProductionMaster.Update(prodmaster);
 
-                    context.SaveChanges();
-                }
+                //    context.SaveChanges();
+                //}
 
                 context.TblProductionDetails.UpdateRange(prodDetails);
 

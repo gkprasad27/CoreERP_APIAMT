@@ -757,10 +757,10 @@ namespace CoreERP.Controllers.masters
                // var prodissueMaster = obj["prodHdr"].ToObject<TblProductionMaster>();
                 var prodissueetails = obj["prodDtl"].ToObject<List<TblProductionDetails>>();
 
-                if (!new TransactionsHelper().AddProdIssue(prodissueMaster, prodissueetails))
+                if (!new TransactionsHelper().AddProdIssue( prodissueetails))
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 dynamic expdoObj = new ExpandoObject();
-                expdoObj.prodmaster = prodissueMaster;
+                expdoObj.prodissueetails = prodissueetails;
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
             }
