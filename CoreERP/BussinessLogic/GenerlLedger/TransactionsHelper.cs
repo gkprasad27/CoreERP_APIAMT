@@ -968,7 +968,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblProductionDetails> GetTagsIssueDetails(string GoodsIssueId, string Materialcode)
         {
             using var repo = new Repository<TblProductionDetails>();
+            var material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
+
+            repo.TblProductionDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            });
             return repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
+            // return repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
         }
 
         public bool AddGoodsIssue(TblGoodsIssueMaster gimaster, List<TblGoodsIssueDetails> gibDetails)

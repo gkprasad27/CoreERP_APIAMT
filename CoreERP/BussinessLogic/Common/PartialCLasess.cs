@@ -227,6 +227,12 @@ namespace CoreERP.Models
         [NotMapped]
         public string MaterialName { get; set; }
     }
+    partial class TblProductionDetails
+    {
+        [NotMapped]
+        public string MaterialName { get; set; }
+    }
+    
     partial class TblMaterialNoAssignment
     {
         [NotMapped]
