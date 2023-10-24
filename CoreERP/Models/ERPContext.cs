@@ -1288,7 +1288,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Bomnumber)
                     .HasColumnName("BOMNumber")
-                    .HasMaxLength(10);
+                    .HasMaxLength(0);
 
                 entity.Property(e => e.Batch).HasMaxLength(50);
 
@@ -1298,17 +1298,17 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
-                entity.Property(e => e.CostUnit).HasMaxLength(50);
+                entity.Property(e => e.ProfitCenter).HasMaxLength(50);
 
                 entity.Property(e => e.CreatedBy).HasMaxLength(50);
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
-                entity.Property(e => e.LevelType).HasMaxLength(50);
+                entity.Property(e => e.TotalTax);
 
                 entity.Property(e => e.Material).HasMaxLength(50);
 
-                entity.Property(e => e.Plant).HasMaxLength(5);
+                entity.Property(e => e.TotalAmount);
             });
 
             modelBuilder.Entity<TblAccountGroup>(entity =>
@@ -2022,11 +2022,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.AboveLevel).HasMaxLength(50);
+                entity.Property(e => e.TaxCode).HasMaxLength(50);
 
                 entity.Property(e => e.BomKey).HasMaxLength(10);
 
-                entity.Property(e => e.BomLevel).HasMaxLength(50);
+                entity.Property(e => e.Amount);
 
                 entity.Property(e => e.Component).HasMaxLength(50);
 
@@ -2038,9 +2038,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Type).HasMaxLength(50);
 
-                entity.Property(e => e.Uom)
-                    .HasColumnName("UOM")
-                    .HasMaxLength(50);
+                entity.Property(e => e.TaxAmount);
             });
 
             modelBuilder.Entity<TblBpgroup>(entity =>
