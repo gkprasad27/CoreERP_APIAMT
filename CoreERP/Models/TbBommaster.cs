@@ -20,5 +20,9 @@ namespace CoreERP.Models
         public decimal? UGST { get; set; }
         public decimal? CGST { get; set; }
         public decimal? SGST { get; set; }
+        public string? CostCenter { get; set; }
+        public string? SaleOrder { get; set; }
+        public string? Product { get; set; }
+
     }
 }
