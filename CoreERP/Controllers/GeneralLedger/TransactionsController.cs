@@ -1281,7 +1281,7 @@ namespace CoreERP.Controllers.masters
             }
         }
         [HttpPost]
-        [Route("UploadFile")]
+        [Route("UploadFile/{uploadfileName}")]
         public IActionResult UploadFile(string uploadfileName)
         {
             try
