@@ -1163,16 +1163,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
 
             int lineno = 1;
-
+            bomMaster.Status = "Created";
+            bomMaster.CreatedDate = System.DateTime.Now;
             bomDetails.ForEach(x =>
             {
                 x.BomKey = bomMaster.Bomnumber;
-                //x.VoucherDate = bomMaster.VoucherDate;
-                //x.Company = bomMaster.Company;
-                //x.Branch = bomMaster.Branch;
-                //x.PostingDate = bomMaster.PostingDate;
-                //x.LineItemNo = Convert.ToString(lineno++);
-                //x.AccountingIndicator = bomMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
             });
 
             using var context = new ERPContext();
@@ -1197,24 +1192,22 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TbBommaster> GetBOMMasters(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-30), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-30);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TbBommaster>();
-            return repo.TbBommaster.AsEnumerable().ToList();
-            //.Where(x =>
-            //{
-            //    Debug.Assert(x.Bomnumber != null, "x.VoucherDate != null");
-            //    return
-            //    "x.Bomnumber != null"
-            //    && x.Bomnumber.Contains(searchCriteria.searchCriteria ?? x.Bomnumber)
-            //    //&& Convert.ToDateTime(x.date.Value) >=
-            //    //Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-            //    //&& Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
-            //    //Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
-            //})
-            //.ToList();
+            return repo.TbBommaster.AsEnumerable()
+                .Where(x =>
+                {
+
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.Bomnumber) != null
+                              && Convert.ToString(x.Bomnumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.Bomnumber))
+                              && Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                              && Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                }).OrderByDescending(x => x.Bomnumber)
+                .ToList();
         }
 
         public TbBommaster GetBommasterById(string bomNumber)

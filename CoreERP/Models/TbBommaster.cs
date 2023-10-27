@@ -23,6 +23,8 @@ namespace CoreERP.Models
         public string? CostCenter { get; set; }
         public string? SaleOrder { get; set; }
         public string? Product { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public string? Status { get; set; }
 
     }
 }
