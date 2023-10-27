@@ -367,7 +367,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.materialList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, ClosingQty = x.ClosingQty,Rate=x.ClosingPrice, netWeight = x.NetWeight});
+                expando.materialList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty,Rate=x.ClosingPrice, netWeight = x.NetWeight});
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -644,7 +644,7 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var mmasterList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, MATERIAL = x.MaterialType, AvailQTY = x.ClosingQty });
+                var mmasterList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight });
                 if (mmasterList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();
