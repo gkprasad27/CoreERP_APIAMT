@@ -22,5 +22,10 @@ namespace CoreERP.Models
         public int? RejectQty { get; set; }
         public decimal? NetWeight { get; set; }
         public int? Qty { get; set; }
+        public DateTime? ReceivedDate { get; set; }
+        public string? VehicleNumber { get; set; }
+        public string? SupplierRefno { get; set;}
+        public decimal? BillAmount { get; set; }
+
     }
 }
