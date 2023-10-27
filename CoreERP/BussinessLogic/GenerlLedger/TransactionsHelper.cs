@@ -1848,7 +1848,28 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             List<TblPurchaseOrderDetails> poDetailsNew;
             List<TblPurchaseOrderDetails> poDetailsExist;
             using var dbtrans = context.Database.BeginTransaction();
-            if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
+            string purchaseordernumber = string.Empty;
+            //using var repo = new Repository<ProfitCenters>();
+            var Pcenter = repo.ProfitCenters.Where(x => x.Code == podata.ProfitCenter).FirstOrDefault();
+
+            //if (voucerTypeNoseries.LastNumber != startNumber)
+            //{
+            if (Pcenter != null)
+            {
+                Pcenter.PONumber = (Pcenter.PONumber + 1);
+
+               // using var context = new ERPContext();
+                context.ProfitCenters.UpdateRange(Pcenter);
+                context.SaveChanges();
+
+                //return Pcenter.POPrefix + "-" + Pcenter.PONumber;
+
+                purchaseordernumber= Pcenter.POPrefix + "-" + Pcenter.PONumber;
+            }
+            else
+                throw new Exception("Please Configure Purchase Order Number");
+
+            if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == purchaseordernumber))
             {
                 podata.Status = "Created";
                 podata.EditDate = DateTime.Now;
@@ -1857,8 +1878,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             else
             {
-                if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
-                    throw new Exception("Purchase Order Number " + podata.PurchaseOrderNumber + " Already Exists.");
+                if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == purchaseordernumber))
+                    throw new Exception("Purchase Order Number " + purchaseordernumber + " Already Exists.");
 
                 podata.Status = "Created";
                 podata.AddDate = DateTime.Now;
@@ -1884,7 +1905,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 podetails.ForEach(x =>
                 {
-                    x.PurchaseOrderNumber = podata.PurchaseOrderNumber;
+                    x.PurchaseOrderNumber = purchaseordernumber;
                 });
                 poDetailsExist = podetails.Where(x => x.Id >= 0).ToList();
                 poDetailsNew = podetails.Where(x => x.Id == 0).ToList();
@@ -2345,15 +2366,38 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (saleOrderMaster.OrderDate == null)
                 throw new Exception("Sale Order Date Canot be empty/null.");
 
+            
+
             saleOrderMaster.CreatedDate ??= DateTime.Now;
             using var repo = new Repository<TblSaleOrderMaster>();
             List<TblSaleOrderDetail> saleOrderDetailsNew;
             List<TblSaleOrderDetail> saleOrderDetailsExist;
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
+            string SaleOrderNumber = string.Empty;
+            //string SaleOrderNumber = GetSaleOrderNumber(saleOrderMaster.ProfitCenter);
+            //using var repo = new Repository<ProfitCenters>();
+            var Pcenter = repo.ProfitCenters.Where(x => x.Code == saleOrderMaster.ProfitCenter).FirstOrDefault();
+
+            //if (voucerTypeNoseries.LastNumber != startNumber)
+            //{
+            if (Pcenter != null)
+            {
+                Pcenter.SONumber = (Pcenter.SONumber + 1);
+
+                //using var context = new ERPContext();
+                context.ProfitCenters.UpdateRange(Pcenter);
+                context.SaveChanges();
+
+                //return Pcenter.SOPrefix + "-" + Pcenter.SONumber;
+                SaleOrderNumber = Pcenter.SOPrefix + "-" + Pcenter.SONumber;
+            }
+            else
+                throw new Exception("Please Configure SaleOrder Number");
+
             try
             {
-                if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
+                if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == SaleOrderNumber))
                 {
                     saleOrderMaster.Status = "Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
@@ -2372,7 +2416,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 saleOrderDetails.ForEach(x =>
                 {
-                    x.SaleOrderNo = saleOrderMaster.SaleOrderNo;
+                    x.SaleOrderNo = SaleOrderNumber;
                 });
                 saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID >= 0).ToList();
                 saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
