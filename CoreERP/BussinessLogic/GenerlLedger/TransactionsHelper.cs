@@ -2340,13 +2340,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblSaleOrderDetail>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
 
-            repo.TblSaleOrderDetail.ToList()
-                .ForEach(c =>
-                {
-                    c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode.TrimEnd()).ClosingQty);
+            repo.TblSaleOrderDetail.ToList().ForEach(c =>
+            {
+                c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
+            });
+            return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
 
-                });
-            return repo.TblSaleOrderDetail.Where(x => x.SaleOrderNo == saleOrderNo).ToList();
         }
         public bool AddSaleOrder(TblSaleOrderMaster saleOrderMaster, List<TblSaleOrderDetail> saleOrderDetails)
         {
