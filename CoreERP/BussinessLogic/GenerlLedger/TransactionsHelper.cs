@@ -6,7 +6,9 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 
@@ -1500,6 +1502,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             List<TblPurchaseRequisitionDetails> prDetailsNew;
             List<TblPurchaseRequisitionDetails> prDetailsExist;
+            string masternumber = string.Empty;
+            var Pcenter = repo.Counters.Where(x => x.CounterName == "Master Sale Order").FirstOrDefault();
+           
 
             if (repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
             {
@@ -1510,17 +1515,27 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             else
             {
-                if (repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
-                    throw new Exception("Requisition Number " + reqmasterdata.RequisitionNumber + " Already Exists.");
+                if (Pcenter != null)
+                {
+                    Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                    context.Counters.UpdateRange(Pcenter);
+                    context.SaveChanges();
+                    masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                }
 
                 reqmasterdata.Status = "Created";
                 reqmasterdata.EditDate = DateTime.Now;
+                reqmasterdata.RequisitionNumber = masternumber;
                 context.TblPurchaseRequisitionMaster.Add(reqmasterdata);
                 context.SaveChanges();
             }
+
+            if (string.IsNullOrEmpty(masternumber))
+                masternumber = reqmasterdata.RequisitionNumber;
+
             reqdetails.ForEach(x =>
             {
-                x.PurchaseRequisitionNumber = reqmasterdata.RequisitionNumber;
+                x.PurchaseRequisitionNumber = masternumber;
             });
 
             prDetailsExist = reqdetails.Where(x => x.Id >= 0).ToList();
@@ -1852,24 +1867,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             //using var repo = new Repository<ProfitCenters>();
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == podata.ProfitCenter).FirstOrDefault();
 
-            //if (voucerTypeNoseries.LastNumber != startNumber)
-            //{
-            if (Pcenter != null)
-            {
-                Pcenter.PONumber = (Pcenter.PONumber + 1);
+            
 
-                // using var context = new ERPContext();
-                context.ProfitCenters.UpdateRange(Pcenter);
-                context.SaveChanges();
-
-                //return Pcenter.POPrefix + "-" + Pcenter.PONumber;
-
-                purchaseordernumber = Pcenter.POPrefix + "-" + Pcenter.PONumber;
-            }
-            else
-                throw new Exception("Please Configure Purchase Order Number");
-
-            if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == purchaseordernumber))
+            if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
             {
                 podata.Status = "Created";
                 podata.EditDate = DateTime.Now;
@@ -1878,11 +1878,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             else
             {
-                if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == purchaseordernumber))
-                    throw new Exception("Purchase Order Number " + purchaseordernumber + " Already Exists.");
+                //if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == purchaseordernumber))
+                //    throw new Exception("Purchase Order Number " + purchaseordernumber + " Already Exists.");
+
+                if (Pcenter != null)
+                {
+                    Pcenter.PONumber = (Pcenter.PONumber + 1);
+                    context.ProfitCenters.UpdateRange(Pcenter);
+                    context.SaveChanges();
+                    purchaseordernumber = Pcenter.POPrefix + "-" + Pcenter.PONumber;
+                }
 
                 podata.Status = "Created";
                 podata.AddDate = DateTime.Now;
+                podata.PurchaseOrderNumber= purchaseordernumber;
                 context.TblPurchaseOrder.Add(podata);
                 context.SaveChanges();
             }
@@ -1902,6 +1911,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     PRdata.Status = "PO Created";
                     context.TblPurchaseRequisitionMaster.Update(PRdata);
                 }
+
+                if (string.IsNullOrWhiteSpace(purchaseordernumber))
+                    purchaseordernumber = podata.PurchaseOrderNumber;
 
                 podetails.ForEach(x =>
                 {
