@@ -1509,7 +1509,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
             {
                 reqmasterdata.Status = "Created";
-                reqmasterdata.AddDate = DateTime.Now;
+                reqmasterdata.EditDate = DateTime.Now;
                 context.TblPurchaseRequisitionMaster.Update(reqmasterdata);
                 context.SaveChanges();
             }
@@ -1524,7 +1524,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
 
                 reqmasterdata.Status = "Created";
-                reqmasterdata.EditDate = DateTime.Now;
+                reqmasterdata.AddDate = DateTime.Now;
                 reqmasterdata.RequisitionNumber = masternumber;
                 context.TblPurchaseRequisitionMaster.Add(reqmasterdata);
                 context.SaveChanges();
@@ -2052,7 +2052,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 totalqty = (receivedqty + rejectedqty) + (currqtyrec + currqtyrej);
 
                 var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == grdata.PurchaseOrderNo);
-                var purchaseReq = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == grdata.PurchaseOrderNo);
+                //var purchaseReq = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == grdata.PurchaseOrderNo);
 
                 if (totalqty > poqty)
                     throw new Exception($"Cannot Received MoreQty for  {grdata.PurchaseOrderNo} QTY Exceeded.");
@@ -2060,17 +2060,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     if (purchase != null)
                     {
-                        purchase.Status = "Completed";
+                        purchase.Status = "Received";
                         context.TblPurchaseOrder.Update(purchase);
                     }
 
-                    grdata.Status = "Completed";
+                    grdata.Status = "Received";
 
-                    if (purchaseReq != null)
-                    {
-                        purchaseReq.Status = "Completed";
-                        context.TblPurchaseRequisitionMaster.Update(purchaseReq);
-                    }
+                    //if (purchaseReq != null)
+                    //{
+                    //    purchaseReq.Status = "Received";
+                    //    context.TblPurchaseRequisitionMaster.Update(purchaseReq);
+                    //}
                 }
                 else if (totalqty < poqty)
                 {
@@ -2082,11 +2082,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     grdata.Status = "Partial Received";
 
-                    if (purchaseReq != null)
-                    {
-                        purchaseReq.Status = "Partial Received";
-                        context.TblPurchaseRequisitionMaster.Update(purchaseReq);
-                    }
+                    //if (purchaseReq != null)
+                    //{
+                    //    purchaseReq.Status = "Partial Received";
+                    //    context.TblPurchaseRequisitionMaster.Update(purchaseReq);
+                    //}
                 }
                 foreach (var item in grdetails)
                 {

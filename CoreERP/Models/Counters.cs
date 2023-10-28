@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
@@ -7,6 +8,8 @@ namespace CoreERP.Models
     [Table("Counters")]
     public partial class Counters
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Code { get; set; }
         public string? CounterName { get; set; }
         public string? NumberRange { get; set; }
