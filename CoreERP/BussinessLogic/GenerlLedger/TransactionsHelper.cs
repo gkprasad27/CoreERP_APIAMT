@@ -1858,13 +1858,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 Pcenter.PONumber = (Pcenter.PONumber + 1);
 
-               // using var context = new ERPContext();
+                // using var context = new ERPContext();
                 context.ProfitCenters.UpdateRange(Pcenter);
                 context.SaveChanges();
 
                 //return Pcenter.POPrefix + "-" + Pcenter.PONumber;
 
-                purchaseordernumber= Pcenter.POPrefix + "-" + Pcenter.PONumber;
+                purchaseordernumber = Pcenter.POPrefix + "-" + Pcenter.PONumber;
             }
             else
                 throw new Exception("Please Configure Purchase Order Number");
@@ -1940,6 +1940,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(string number)
         {
             using var repo = new Repository<TblPurchaseOrderDetails>();
+            var material = repo.TblMaterialMaster.ToList();
+
+            repo.TblPurchaseOrderDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            });
             return repo.TblPurchaseOrderDetails.Where(cd => cd.PurchaseOrderNumber == number).ToList();
         }
         public bool ReturnPurchaseOrderDetails(string code)
@@ -2131,6 +2137,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblGoodsReceiptDetails> GetGoodsReceiptDetails(string number)
         {
             using var repo = new Repository<TblGoodsReceiptDetails>();
+            var material = repo.TblMaterialMaster.ToList();
+
+            repo.TblGoodsReceiptDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            });
+
             return repo.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == number).ToList();
         }
         public bool ReturnGoodsReceiptMaster(string code)
@@ -2366,7 +2379,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (saleOrderMaster.OrderDate == null)
                 throw new Exception("Sale Order Date Canot be empty/null.");
 
-            
+
 
             saleOrderMaster.CreatedDate ??= DateTime.Now;
             using var repo = new Repository<TblSaleOrderMaster>();
@@ -2379,25 +2392,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             //using var repo = new Repository<ProfitCenters>();
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == saleOrderMaster.ProfitCenter).FirstOrDefault();
 
-            //if (voucerTypeNoseries.LastNumber != startNumber)
-            //{
-            if (Pcenter != null)
-            {
-                Pcenter.SONumber = (Pcenter.SONumber + 1);
-
-                //using var context = new ERPContext();
-                context.ProfitCenters.UpdateRange(Pcenter);
-                context.SaveChanges();
-
-                //return Pcenter.SOPrefix + "-" + Pcenter.SONumber;
-                SaleOrderNumber = Pcenter.SOPrefix + "-" + Pcenter.SONumber;
-            }
-            else
-                throw new Exception("Please Configure SaleOrder Number");
 
             try
             {
-                if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == SaleOrderNumber))
+                if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
                 {
                     saleOrderMaster.Status = "Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
@@ -2409,14 +2407,26 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (this.IsVoucherNumberExists(saleOrderMaster.PONumber, "SaleOrder", "SaleOrder"))
                         throw new Exception("Po number Already exists. " + saleOrderMaster.PONumber + " Please use another PO Number.");
 
+                    if (Pcenter != null)
+                    {
+                        Pcenter.SONumber = (Pcenter.SONumber + 1);
+                        context.ProfitCenters.UpdateRange(Pcenter);
+                        context.SaveChanges();
+                        SaleOrderNumber = Pcenter.SOPrefix + "-" + Pcenter.SONumber;
+                    }
+
                     saleOrderMaster.Status = "Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
+                    saleOrderMaster.SaleOrderNo = SaleOrderNumber;
                     context.TblSaleOrderMaster.Add(saleOrderMaster);
                     context.SaveChanges();
                 }
+                if (string.IsNullOrWhiteSpace(SaleOrderNumber))
+                    SaleOrderNumber = saleOrderMaster.SaleOrderNo;
+
                 saleOrderDetails.ForEach(x =>
                 {
-                    x.SaleOrderNo = SaleOrderNumber;
+                    x.SaleOrderNo = (SaleOrderNumber);
                 });
                 saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID >= 0).ToList();
                 saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
