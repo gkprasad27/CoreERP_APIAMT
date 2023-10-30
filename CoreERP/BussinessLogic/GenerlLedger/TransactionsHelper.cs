@@ -2134,6 +2134,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     item.PurchaseOrderNo = grdata.PurchaseOrderNo;
                     item.LotNo = grdata.LotNo;
+                    item.SupplierRefno = grdata.SupplierReferenceNo;
+                    item.VehicleNumber = grdata.VehicleNo;
+                    item.ReceivedDate=grdata.ReceivedDate;
+                    item.ReceivedBy=grdata.ReceivedBy;
+                    item.BillAmount = grdata.TotalAmount;
                     GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == grdata.PurchaseOrderNo && cd.MaterialCode == item.MaterialCode).ToList();
                     mtqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
                     mtrejqty = (GoosQTY.Sum(i => i.RejectQty) ?? 0);
@@ -2142,7 +2147,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     //if (totalqty > item.Qty)
                     //    throw new Exception($"Cannot Received MoreQty for  {item.MaterialCode} QTY Exceeded.");
                 }
-
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
                 context.SaveChanges();
 
@@ -2155,7 +2159,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo))
             {
+                var totalamount = repo.TblGoodsReceiptMaster.Where(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo).FirstOrDefault();
                 grdata.EditDate = DateTime.Now;
+                grdata.TotalAmount = (totalamount.TotalAmount + grdata.TotalAmount);
                 context.TblGoodsReceiptMaster.Update(grdata);
                 context.SaveChanges();
             }
