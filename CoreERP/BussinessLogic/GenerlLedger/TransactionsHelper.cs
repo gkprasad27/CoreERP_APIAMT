@@ -1163,23 +1163,60 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public bool AddBOM(TbBommaster bomMaster, List<TblBomDetails> bomDetails)
         {
-
-            int lineno = 1;
-            bomMaster.Status = "Created";
-            bomMaster.CreatedDate = System.DateTime.Now;
-            bomDetails.ForEach(x =>
-            {
-                x.BomKey = bomMaster.Bomnumber;
-            });
-
             using var context = new ERPContext();
+            string masternumber = string.Empty;
+            using var repo = new Repository<Counters>();
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "BOM");
             using var dbtrans = context.Database.BeginTransaction();
-            try
+            List<TblBomDetails> prDetailsNew;
+            List<TblBomDetails> prDetailsExist;
+
+            if (repo.TbBommaster.Any(v => v.Bomnumber == bomMaster.Bomnumber))
             {
+                int lineno = 1;
+                bomMaster.Status = "Created";
+                bomMaster.CreatedDate = System.DateTime.Now;
+                context.TbBommaster.Update(bomMaster);
+                context.SaveChanges();
+            }
+            else
+            {
+                if (Pcenter != null)
+                {
+                    Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                    context.Counters.UpdateRange(Pcenter);
+                    context.SaveChanges();
+                    masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                }
+
+                bomMaster.Status = "Created";
+                bomMaster.CreatedDate = DateTime.Now;
+                bomMaster.Bomnumber = masternumber;
                 context.TbBommaster.Add(bomMaster);
                 context.SaveChanges();
+            }
 
-                context.TblBomDetails.AddRange(bomDetails);
+            if (string.IsNullOrEmpty(masternumber))
+                masternumber = bomMaster.Bomnumber;
+
+
+            bomDetails.ForEach(x =>
+            {
+                x.BomKey = masternumber;
+            });
+
+            prDetailsExist = bomDetails.Where(x => x.Id >= 0).ToList();
+            prDetailsNew = bomDetails.Where(x => x.Id == 0).ToList();
+            try
+            {
+                if (prDetailsExist.Count > 0)
+                {
+                    context.TblBomDetails.UpdateRange(bomDetails);
+                }
+                else
+                {
+                    context.TblBomDetails.AddRange(bomDetails);
+                }
                 context.SaveChanges();
 
                 dbtrans.Commit();
@@ -1492,19 +1529,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .ToList();
         }
         public bool AddPurchaseRequisitionMaster(TblPurchaseRequisitionMaster reqmasterdata, List<TblPurchaseRequisitionDetails> reqdetails)
-
         {
-            if (reqmasterdata.RequisitionNumber == null)
-                throw new Exception("Requisition Number Code Canot be empty/null.");
-
             using var repo = new Repository<TblPurchaseRequisitionMaster>();
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             List<TblPurchaseRequisitionDetails> prDetailsNew;
             List<TblPurchaseRequisitionDetails> prDetailsExist;
             string masternumber = string.Empty;
-            var Pcenter = repo.Counters.Where(x => x.CounterName == "Master Sale Order").FirstOrDefault();
-           
+
+
+            using var repocoun = new Repository<Counters>();
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Master Sale Order");
 
             if (repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
             {
@@ -2054,9 +2089,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == grdata.PurchaseOrderNo);
                 //var purchaseReq = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == grdata.PurchaseOrderNo);
 
-                if (totalqty > poqty)
-                    throw new Exception($"Cannot Received MoreQty for  {grdata.PurchaseOrderNo} QTY Exceeded.");
-                else if (poqty == totalqty)
+                //if (totalqty > poqty)
+                //    throw new Exception($"Cannot Received MoreQty for  {grdata.PurchaseOrderNo} QTY Exceeded.");
+                if (poqty == totalqty)
                 {
                     if (purchase != null)
                     {
@@ -2097,8 +2132,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     mtrejqty = (GoosQTY.Sum(i => i.RejectQty) ?? 0);
                     totalqty = (mtqty + mtrejqty) + (item.ReceivedQty ?? 0 + item.RejectQty ?? 0);
 
-                    if (totalqty > item.Qty)
-                        throw new Exception($"Cannot Received MoreQty for  {item.MaterialCode} QTY Exceeded.");
+                    //if (totalqty > item.Qty)
+                    //    throw new Exception($"Cannot Received MoreQty for  {item.MaterialCode} QTY Exceeded.");
                 }
 
                 context.TblGoodsReceiptDetails.AddRange(grdetails);

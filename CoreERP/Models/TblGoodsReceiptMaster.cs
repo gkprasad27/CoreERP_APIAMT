@@ -32,5 +32,7 @@ namespace CoreERP.Models
         public decimal? TotalAmount { get; set; }
         public string? Status { get; set; }
         public string? LotNo { get; set; }
+
+        public string? customerName { get; set; }
     }
 }
