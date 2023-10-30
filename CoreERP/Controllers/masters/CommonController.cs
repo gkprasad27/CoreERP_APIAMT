@@ -205,13 +205,28 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetSaleOrderData")]
+        public IActionResult GetSaleOrderData()
+        {
+            try
+            {
+                dynamic expando = new ExpandoObject();
+                expando.BPList = _somRepository.Where(x => x.Status != "Created").Select(x => new { saleOrderNo = x.SaleOrderNo });
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetBOMList")]
         public IActionResult GetBOMList()
         {
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BOMList = _bommasterRepository.Where(x => x.Status == "Created").Select(x => new { BomNumber = x.Bomnumber });
+                expando.BOMList = _bommasterRepository.Where(x => x.Status == "Created").Select(x => new { saleOrderNo = x.Bomnumber });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)

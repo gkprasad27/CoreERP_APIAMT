@@ -1259,7 +1259,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblBomDetails> GetlBomDetails(string bomNumber)
         {
             using var repo = new Repository<TblBomDetails>();
+            var material = repo.TblMaterialMaster.ToList();
+
+            repo.TblBomDetails.ToList().ForEach(c =>
+            {
+                c.Description = material.FirstOrDefault(l => l.MaterialCode == c.Component)?.Description;
+            });
             return repo.TblBomDetails.Where(cd => cd.BomKey == bomNumber).ToList();
+
         }
 
         public bool ReturnBommaster(string bomNumber)
@@ -2191,7 +2198,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
             });
 
-            return repo.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == number).ToList();
+            return repo.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == number).OrderByDescending(x=>x.ReceivedDate).ToList();
+
         }
         public bool ReturnGoodsReceiptMaster(string code)
         {
