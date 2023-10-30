@@ -1211,11 +1211,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (prDetailsExist.Count > 0)
                 {
-                    context.TblBomDetails.UpdateRange(bomDetails);
+                    context.TblBomDetails.UpdateRange(prDetailsExist);
                 }
                 else
                 {
-                    context.TblBomDetails.AddRange(bomDetails);
+                    context.TblBomDetails.AddRange(prDetailsNew);
                 }
                 context.SaveChanges();
 
@@ -1587,11 +1587,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (prDetailsExist.Count > 0)
                 {
-                    context.TblPurchaseRequisitionDetails.UpdateRange(reqdetails);
+                    context.TblPurchaseRequisitionDetails.UpdateRange(prDetailsExist);
                 }
                 else
                 {
-                    context.TblPurchaseRequisitionDetails.AddRange(reqdetails);
+                    context.TblPurchaseRequisitionDetails.AddRange(prDetailsNew);
                 }
                 context.SaveChanges();
                 dbtrans.Commit();
@@ -1716,8 +1716,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblSupplierQuotationsMaster> GetSupplierQuotationsMasterr(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-30), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-30);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblSupplierQuotationsMaster>();
@@ -1726,28 +1726,61 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public bool AddSupplierQuotationsMaster(TblSupplierQuotationsMaster msdata, List<TblSupplierQuotationDetails> qsdetails)
 
         {
-            if (msdata.QuotationNumber == null)
-                throw new Exception("Supplier Code Canot be empty/null.");
-
+            using var repo1 = new Repository<Counters>();
+            var Pcenter = repo1.Counters.FirstOrDefault(x => x.CounterName == "Quotation");
+            using var context = new ERPContext();
             using var repo = new Repository<TblSupplierQuotationsMaster>();
+            using var dbtrans = context.Database.BeginTransaction();
+            string masternumber = string.Empty;
+            List<TblSupplierQuotationDetails> prDetailsNew;
+            List<TblSupplierQuotationDetails> prDetailsExist;
 
             if (repo.TblSupplierQuotationsMaster.Any(v => v.QuotationNumber == msdata.QuotationNumber))
-                throw new Exception("Quotation Number  exists.");
+            {
+                msdata.Status = "Created";
+                msdata.QuotationDate = DateTime.Now;
+                context.TblSupplierQuotationsMaster.Update(msdata);
+                context.SaveChanges();
+            }
+            else
+            {
+                if (Pcenter != null)
+                {
+                    Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                    context.Counters.UpdateRange(Pcenter);
+                    context.SaveChanges();
+                    masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                }
+
+                msdata.Status = "Created";
+                msdata.QuotationDate = DateTime.Now;
+                msdata.QuotationNumber = masternumber;
+                context.TblSupplierQuotationsMaster.Add(msdata);
+                context.SaveChanges();
+            }
+
+            if (string.IsNullOrEmpty(masternumber))
+                masternumber = msdata.QuotationNumber;
 
             qsdetails.ForEach(x =>
             {
-                x.QuotationNumber = msdata.QuotationNumber;
+                x.QuotationNumber = masternumber;
             });
 
-            using var context = new ERPContext();
-            using var dbtrans = context.Database.BeginTransaction();
+            prDetailsExist = qsdetails.Where(x => x.Id >= 0).ToList();
+            prDetailsNew = qsdetails.Where(x => x.Id == 0).ToList();
+
+
             try
             {
-                context.TblSupplierQuotationsMaster.Add(msdata);
-                context.SaveChanges();
-
-                context.TblSupplierQuotationDetails.AddRange(qsdetails);
-                context.SaveChanges();
+                if (prDetailsExist.Count > 0)
+                {
+                    context.TblSupplierQuotationDetails.UpdateRange(prDetailsExist);
+                }
+                else
+                {
+                    context.TblSupplierQuotationDetails.AddRange(prDetailsNew);
+                }
 
                 dbtrans.Commit();
                 return true;

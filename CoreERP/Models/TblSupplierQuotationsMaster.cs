@@ -18,5 +18,6 @@ namespace CoreERP.Models
         public string? Branch { get; set; }
         public string? ProfitCenter { get; set; }
         public DateTime? QuotationDate { get; set; }
+        public string? Status { get; set; }
     }
 }
