@@ -1930,9 +1930,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public bool AddPurchaseOrder(TblPurchaseOrder podata, List<TblPurchaseOrderDetails> podetails)
         {
-            if (podata.PurchaseOrderNumber == null)
-                throw new Exception("PurchaseOrder NumberCanot be empty/null.");
-
             using var repo = new Repository<TblPurchaseOrder>();
             using var context = new ERPContext();
             List<TblPurchaseOrderDetails> poDetailsNew;
