@@ -196,7 +196,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-                expando.BPList = _somRepository.Where(x => x.Status == "Created").Select(x => new { SaleOrderNo = x.SaleOrderNo }); 
+                expando.BPList = _somRepository.Where(x => x.Status != "Completed").Select(x => new { SaleOrderNo = x.SaleOrderNo }); 
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
