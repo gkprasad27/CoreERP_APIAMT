@@ -1259,12 +1259,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblBomDetails> GetlBomDetails(string bomNumber)
         {
             using var repo = new Repository<TblBomDetails>();
-            var material = repo.TblMaterialMaster.ToList();
-
-            repo.TblBomDetails.ToList().ForEach(c =>
-            {
-                c.Description = material.FirstOrDefault(l => l.MaterialCode == c.Component)?.Description;
-            });
+            
             return repo.TblBomDetails.Where(cd => cd.BomKey == bomNumber).ToList();
 
         }
@@ -1611,7 +1606,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public List<TblPurchaseRequisitionDetails> GetPurchaseRequisitionDetails(string number)
         {
-            using var repo = new Repository<TblPurchaseRequisitionDetails>();
+            using var repo = new Repository<TblPurchaseRequisitionDetails>();          
+
             return repo.TblPurchaseRequisitionDetails.Where(cd => cd.PurchaseRequisitionNumber == number).ToList();
         }
 
@@ -2456,12 +2452,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblSaleOrderDetail> GetSaleOrdersDetails(string saleOrderNo)
         {
             using var repo = new Repository<TblSaleOrderDetail>();
-            var MaterialCodes = repo.TblMaterialMaster.ToList();
+            //var MaterialCodes = repo.TblMaterialMaster.ToList();
 
-            repo.TblSaleOrderDetail.ToList().ForEach(c =>
-            {
-                c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
-            });
+            //repo.TblSaleOrderDetail.ToList().ForEach(c =>
+            //{
+            //    c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
+            //    c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+            //});
             return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
 
         }

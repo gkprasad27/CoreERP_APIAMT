@@ -9,6 +9,7 @@ namespace CoreERP.Models
         public int Id { get; set; }
         public string? PurchaseRequisitionNumber { get; set; }
         public string? MaterialCode { get; set; }
+        public string? MaterialName { get; set; }
         public string? Description { get; set; }
         public int? Qty { get; set; }
         public decimal? Rate { get; set; }

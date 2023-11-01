@@ -15,6 +15,7 @@ namespace CoreERP.Models
     {
         [NotMapped]
         public int AvailableQTY { get; set; }
+        
     }
     partial class TblRegion
     {
@@ -233,18 +234,17 @@ namespace CoreERP.Models
         public string MaterialName { get; set; }
     }
 
-    partial class TblPurchaseOrderDetails
-    {
-        [NotMapped]
-        public string MaterialName { get; set; }
-    }
-
     partial class TblGoodsReceiptDetails
     {
         [NotMapped]
         public string MaterialName { get; set; }
     }
-
+    partial class TblGoodsReceiptDetails
+    {
+        [NotMapped]
+        public string TblPurchaseRequisitionDetails { get; set; }
+    }
+   
     partial class TblMaterialNoAssignment
     {
         [NotMapped]
