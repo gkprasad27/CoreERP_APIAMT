@@ -1777,7 +1777,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     context.TblSupplierQuotationDetails.AddRange(prDetailsNew);
                 }
-
+                context.SaveChanges();
                 dbtrans.Commit();
                 return true;
             }
@@ -2169,7 +2169,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     mtqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
                     mtrejqty = (GoosQTY.Sum(i => i.RejectQty) ?? 0);
                     totalqty = (mtqty + mtrejqty) + (item.ReceivedQty ?? 0 + item.RejectQty ?? 0);
-
+                    item.InvoiceURL = grdata.InvoiceURL;
+                    item.DocumentURL = grdata.DocumentURL;
                     //if (totalqty > item.Qty)
                     //    throw new Exception($"Cannot Received MoreQty for  {item.MaterialCode} QTY Exceeded.");
                 }

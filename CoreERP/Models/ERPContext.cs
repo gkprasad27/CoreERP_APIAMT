@@ -6368,11 +6368,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Description).HasMaxLength(50);
 
-                entity.Property(e => e.DiscountAmount).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.Discount).HasColumnType("numeric(18, 2)");
 
-                entity.Property(e => e.ItemCode).HasMaxLength(50);
+                entity.Property(e => e.MaterialCode).HasMaxLength(50);
 
-                entity.Property(e => e.Price).HasColumnType("numeric(18, 2)");
+                entity.Property(e => e.Rate).HasColumnType("numeric(18, 2)");
 
                 entity.Property(e => e.Qty).HasColumnName("QTY");
 
