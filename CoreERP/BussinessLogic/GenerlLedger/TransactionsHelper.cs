@@ -1733,7 +1733,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             if (repo.TblSupplierQuotationsMaster.Any(v => v.QuotationNumber == msdata.QuotationNumber))
             {
-                msdata.Status = "Created";
+                msdata.Status = "Quotation Created";
                 msdata.QuotationDate = DateTime.Now;
                 context.TblSupplierQuotationsMaster.Update(msdata);
                 context.SaveChanges();
@@ -2465,11 +2465,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public bool AddSaleOrder(TblSaleOrderMaster saleOrderMaster, List<TblSaleOrderDetail> saleOrderDetails)
         {
-            if (saleOrderMaster.OrderDate == null)
-                throw new Exception("Sale Order Date Canot be empty/null.");
-
-
-
             saleOrderMaster.CreatedDate ??= DateTime.Now;
             using var repo = new Repository<TblSaleOrderMaster>();
             List<TblSaleOrderDetail> saleOrderDetailsNew;
@@ -2480,6 +2475,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             //string SaleOrderNumber = GetSaleOrderNumber(saleOrderMaster.ProfitCenter);
             //using var repo = new Repository<ProfitCenters>();
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == saleOrderMaster.ProfitCenter).FirstOrDefault();
+            var Quotation = repo.TblSupplierQuotationsMaster.Where(x => x.QuotationNumber == saleOrderMaster.PONumber).FirstOrDefault();
 
 
             try
@@ -2508,6 +2504,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.CreatedDate = DateTime.Now;
                     saleOrderMaster.SaleOrderNo = SaleOrderNumber;
                     context.TblSaleOrderMaster.Add(saleOrderMaster);
+                    Quotation.Status = "Sale Order Created";
+                    context.TblSupplierQuotationsMaster.Update(Quotation);
                     context.SaveChanges();
                 }
                 if (string.IsNullOrWhiteSpace(SaleOrderNumber))
