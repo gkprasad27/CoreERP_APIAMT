@@ -1258,11 +1258,11 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var ConfigurationList = _configurationRepository.GetAll();
+                var ConfigurationList = _configurationRepository.GetAll().Select(x => new { ID = x.Value, TEXT = x.ConfigurationType });
                 if (!ConfigurationList.Any())
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 dynamic expdoObj = new ExpandoObject();
-                expdoObj.ComponentTypesList = ConfigurationList;
+                expdoObj.ConfigurationList = ConfigurationList;
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
             }
