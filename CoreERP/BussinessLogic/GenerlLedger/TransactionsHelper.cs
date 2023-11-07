@@ -2472,18 +2472,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             string SaleOrderNumber = string.Empty;
-            //string SaleOrderNumber = GetSaleOrderNumber(saleOrderMaster.ProfitCenter);
-            //using var repo = new Repository<ProfitCenters>();
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == saleOrderMaster.ProfitCenter).FirstOrDefault();
             var Quotation = repo.TblSupplierQuotationsMaster.Where(x => x.QuotationNumber == saleOrderMaster.PONumber).FirstOrDefault();
-
-
+            var supplier = repo.TblBusinessPartnerAccount.Where(z => z.Bpnumber == Quotation.Supplier).FirstOrDefault();
             try
             {
                 if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
                 {
                     saleOrderMaster.Status = "Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
+                    saleOrderMaster.CustomerCode = supplier.Name;
                     context.TblSaleOrderMaster.Update(saleOrderMaster);
                     context.SaveChanges();
                 }
@@ -2503,6 +2501,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.Status = "Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
                     saleOrderMaster.SaleOrderNo = SaleOrderNumber;
+                    saleOrderMaster.CustomerCode = supplier.Name;
                     context.TblSaleOrderMaster.Add(saleOrderMaster);
                     Quotation.Status = "Sale Order Created";
                     context.TblSupplierQuotationsMaster.Update(Quotation);
