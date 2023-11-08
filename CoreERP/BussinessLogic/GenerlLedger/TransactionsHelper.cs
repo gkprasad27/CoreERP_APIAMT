@@ -2,6 +2,7 @@
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -1259,7 +1260,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblBomDetails> GetlBomDetails(string bomNumber)
         {
             using var repo = new Repository<TblBomDetails>();
-            
+
             return repo.TblBomDetails.Where(cd => cd.BomKey == bomNumber).ToList();
 
         }
@@ -1606,7 +1607,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public List<TblPurchaseRequisitionDetails> GetPurchaseRequisitionDetails(string number)
         {
-            using var repo = new Repository<TblPurchaseRequisitionDetails>();          
+            using var repo = new Repository<TblPurchaseRequisitionDetails>();
 
             return repo.TblPurchaseRequisitionDetails.Where(cd => cd.PurchaseRequisitionNumber == number).ToList();
         }
@@ -1935,7 +1936,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             //using var repo = new Repository<ProfitCenters>();
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == podata.ProfitCenter).FirstOrDefault();
 
-            
+
 
             if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
             {
@@ -1959,7 +1960,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 podata.Status = "Created";
                 podata.AddDate = DateTime.Now;
-                podata.PurchaseOrderNumber= purchaseordernumber;
+                podata.PurchaseOrderNumber = purchaseordernumber;
                 context.TblPurchaseOrder.Add(podata);
                 context.SaveChanges();
             }
@@ -2162,8 +2163,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     item.LotNo = grdata.LotNo;
                     item.SupplierRefno = grdata.SupplierReferenceNo;
                     item.VehicleNumber = grdata.VehicleNo;
-                    item.ReceivedDate=grdata.ReceivedDate;
-                    item.ReceivedBy=grdata.ReceivedBy;
+                    item.ReceivedDate = grdata.ReceivedDate;
+                    item.ReceivedBy = grdata.ReceivedBy;
                     item.BillAmount = grdata.TotalAmount;
                     GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == grdata.PurchaseOrderNo && cd.MaterialCode == item.MaterialCode).ToList();
                     mtqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
@@ -2231,7 +2232,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
             });
 
-            return repo.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == number).OrderByDescending(x=>x.ReceivedDate).ToList();
+            return repo.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == number).OrderByDescending(x => x.ReceivedDate).ToList();
 
         }
         public bool ReturnGoodsReceiptMaster(string code)
@@ -2465,6 +2466,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public bool AddSaleOrder(TblSaleOrderMaster saleOrderMaster, List<TblSaleOrderDetail> saleOrderDetails)
         {
+            string suppliername=string.Empty;
             saleOrderMaster.CreatedDate ??= DateTime.Now;
             using var repo = new Repository<TblSaleOrderMaster>();
             List<TblSaleOrderDetail> saleOrderDetailsNew;
@@ -2474,14 +2476,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             string SaleOrderNumber = string.Empty;
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == saleOrderMaster.ProfitCenter).FirstOrDefault();
             var Quotation = repo.TblSupplierQuotationsMaster.Where(x => x.QuotationNumber == saleOrderMaster.PONumber).FirstOrDefault();
-            var supplier = repo.TblBusinessPartnerAccount.Where(z => z.Bpnumber == Quotation.Supplier).FirstOrDefault();
+            if (Quotation!=null)
+            {
+              var  supplierCode = repo.TblBusinessPartnerAccount.Where(z => z.Bpnumber == Quotation.Supplier).FirstOrDefault();
+                suppliername = supplierCode.Name;
+            }
             try
             {
                 if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
                 {
                     saleOrderMaster.Status = "Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
-                    saleOrderMaster.CustomerCode = supplier.Name;
+                    saleOrderMaster.CustomerCode = suppliername;
                     context.TblSaleOrderMaster.Update(saleOrderMaster);
                     context.SaveChanges();
                 }
@@ -2501,7 +2507,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.Status = "Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
                     saleOrderMaster.SaleOrderNo = SaleOrderNumber;
-                    saleOrderMaster.CustomerCode = supplier.Name;
+                    saleOrderMaster.CustomerCode = suppliername;
                     context.TblSaleOrderMaster.Add(saleOrderMaster);
                     Quotation.Status = "Sale Order Created";
                     context.TblSupplierQuotationsMaster.Update(Quotation);
