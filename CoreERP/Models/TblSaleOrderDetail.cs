@@ -24,5 +24,6 @@ namespace CoreERP.Models
         public DateTime? DeliveryDate { get; set; }
         public string? TaxCode { get; set; }
         public decimal? NetWeight { get; set; }
+        public string? DocumentURL { get; set; }
     }
 }
