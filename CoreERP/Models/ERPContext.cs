@@ -2029,9 +2029,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Amount);
 
-                entity.Property(e => e.Component).HasMaxLength(50);
+                entity.Property(e => e.MaterialCode).HasMaxLength(50);
 
-                entity.Property(e => e.Description).HasMaxLength(50);
+                entity.Property(e => e.MaterialName).HasMaxLength(50);
 
                 entity.Property(e => e.ManufacturingType).HasMaxLength(50);
 

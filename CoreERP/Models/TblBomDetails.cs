@@ -9,8 +9,8 @@ namespace CoreERP.Models
         public int Id { get; set; }
         public string? BomKey { get; set; }
         public decimal? Rate { get; set; }
-        public string? Component { get; set; }
-        public string? Description { get; set; }
+        public string? MaterialCode { get; set; }
+        public string? MaterialName { get; set; }
         public string? ManufacturingType { get; set; }
         public string? Type { get; set; }
         public decimal? Amount { get; set; }
@@ -22,5 +22,6 @@ namespace CoreERP.Models
         public decimal? CGST { get; set; }
         public decimal? SGST { get; set; }
         public decimal? NetWeight { get; set; }
+       public DateTime? DeliveryDate { get; set; }
     }
 }
