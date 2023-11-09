@@ -958,12 +958,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblGoodsIssueDetails> GetGoodsIssueDetails(string GoodsIssueId)
         {
             using var repo = new Repository<TblGoodsIssueDetails>();
-            var material = repo.TblMaterialMaster.ToList();
+            //var material = repo.TblMaterialMaster.ToList();
 
-            repo.TblGoodsIssueDetails.ToList().ForEach(c =>
-               {
-                   c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
-               });
+            //repo.TblGoodsIssueDetails.ToList().ForEach(c =>
+            //   {
+            //       c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            //   });
             return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
 
         }
@@ -971,12 +971,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblProductionDetails> GetTagsIssueDetails(string GoodsIssueId, string Materialcode)
         {
             using var repo = new Repository<TblProductionDetails>();
-            var material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
+            //var material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
 
-            repo.TblProductionDetails.ToList().ForEach(c =>
-            {
-                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
-            });
+            //repo.TblProductionDetails.ToList().ForEach(c =>
+            //{
+            //    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            //});
             return repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
             // return repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
         }
@@ -2021,12 +2021,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(string number)
         {
             using var repo = new Repository<TblPurchaseOrderDetails>();
-            var material = repo.TblMaterialMaster.ToList();
+            //var material = repo.TblMaterialMaster.ToList();
 
-            repo.TblPurchaseOrderDetails.ToList().ForEach(c =>
-            {
-                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
-            });
+            //repo.TblPurchaseOrderDetails.ToList().ForEach(c =>
+            //{
+            //    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            //});
             return repo.TblPurchaseOrderDetails.Where(cd => cd.PurchaseOrderNumber == number).ToList();
         }
         public bool ReturnPurchaseOrderDetails(string code)
@@ -2225,12 +2225,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblGoodsReceiptDetails> GetGoodsReceiptDetails(string number)
         {
             using var repo = new Repository<TblGoodsReceiptDetails>();
-            var material = repo.TblMaterialMaster.ToList();
+            //var material = repo.TblMaterialMaster.ToList();
 
-            repo.TblGoodsReceiptDetails.ToList().ForEach(c =>
-            {
-                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
-            });
+            //repo.TblGoodsReceiptDetails.ToList().ForEach(c =>
+            //{
+            //    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            //});
 
             return repo.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == number).OrderByDescending(x => x.ReceivedDate).ToList();
 
@@ -2466,7 +2466,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public bool AddSaleOrder(TblSaleOrderMaster saleOrderMaster, List<TblSaleOrderDetail> saleOrderDetails)
         {
-            string suppliername=string.Empty;
+           // string suppliername=string.Empty;
             saleOrderMaster.CreatedDate ??= DateTime.Now;
             using var repo = new Repository<TblSaleOrderMaster>();
             List<TblSaleOrderDetail> saleOrderDetailsNew;
@@ -2476,18 +2476,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             string SaleOrderNumber = string.Empty;
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == saleOrderMaster.ProfitCenter).FirstOrDefault();
             var Quotation = repo.TblSupplierQuotationsMaster.Where(x => x.QuotationNumber == saleOrderMaster.PONumber).FirstOrDefault();
-            if (Quotation!=null)
-            {
-              var  supplierCode = repo.TblBusinessPartnerAccount.Where(z => z.Bpnumber == Quotation.Supplier).FirstOrDefault();
-                suppliername = supplierCode.Name;
-            }
+            //if (Quotation!=null)
+            //{
+            //  var  supplierCode = repo.TblBusinessPartnerAccount.Where(z => z.Bpnumber == Quotation.Supplier).FirstOrDefault();
+            //    suppliername = supplierCode.Name;
+            //}
             try
             {
                 if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
                 {
                     saleOrderMaster.Status = "Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
-                    saleOrderMaster.CustomerCode = suppliername;
+                   // saleOrderMaster.CustomerCode = suppliername;
                     context.TblSaleOrderMaster.Update(saleOrderMaster);
                     context.SaveChanges();
                 }
@@ -2507,7 +2507,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.Status = "Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
                     saleOrderMaster.SaleOrderNo = SaleOrderNumber;
-                    saleOrderMaster.CustomerCode = suppliername;
+                   // saleOrderMaster.CustomerCode = suppliername;
                     context.TblSaleOrderMaster.Add(saleOrderMaster);
                     Quotation.Status = "Sale Order Created";
                     context.TblSupplierQuotationsMaster.Update(Quotation);
