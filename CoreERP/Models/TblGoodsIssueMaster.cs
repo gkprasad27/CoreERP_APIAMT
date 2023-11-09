@@ -18,6 +18,8 @@ namespace CoreERP.Models
         public string? ProductionPersonName { get; set; }
         public string? CompanyName { get; set; }
         public string? DepartmentName { get; set; }
+        public string? ProfitcenterName { get; set; }
+        
 
     }
 }
