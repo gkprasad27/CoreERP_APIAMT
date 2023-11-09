@@ -26,5 +26,9 @@ namespace CoreERP.Models
         public string? ApprovedBy { get; set; }
         public DateTime? ApprovedDate { get; set; }
         public string? Status { get; set; }
+        public string? DepartmentName { get; set; }
+        public string? ProfitcenterName { get; set; }
+        public string? CompanyName { get; set; }
+
     }
 }

@@ -25,6 +25,8 @@ namespace CoreERP.Models
         public string? Product { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string? Status { get; set; }
-
+        public string? ProfitcenterName { get; set; }
+        public string? CompanyName { get; set; }
+        public string? MaterialName { get; set; }
     }
 }

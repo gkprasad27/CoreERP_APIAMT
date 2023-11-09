@@ -29,6 +29,6 @@ namespace CoreERP.Models
         public string? ReceivedBy { get; set; }
         public string? InvoiceURL { get; set; }
         public string? DocumentURL { get; set; }
-
+        public string? MaterialName { get; set; }
     }
 }

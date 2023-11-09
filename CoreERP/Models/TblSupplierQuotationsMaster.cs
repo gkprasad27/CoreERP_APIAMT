@@ -19,5 +19,9 @@ namespace CoreERP.Models
         public string? ProfitCenter { get; set; }
         public DateTime? QuotationDate { get; set; }
         public string? Status { get; set; }
+        public string? SupplierName { get; set; }
+        public string? CompanyName { get; set; }
+        public string? ProfitcenterName { get; set; }
+
     }
 }

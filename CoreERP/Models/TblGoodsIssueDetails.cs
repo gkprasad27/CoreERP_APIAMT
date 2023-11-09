@@ -17,5 +17,6 @@ namespace CoreERP.Models
         public int? AllocatedQTY { get; set; }
         public string? MaterialCode { get; set; }
          public string? SaleOrderNumber { get; set; }
+        public string? MaterialName { get; set; }
     }
 }

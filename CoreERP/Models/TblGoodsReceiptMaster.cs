@@ -35,5 +35,8 @@ namespace CoreERP.Models
         public string? customerName { get; set; }
         public string? InvoiceURL { get; set; }
         public string? DocumentURL { get; set; }
+        public string? CompanyName { get; set; }
+        public string? ProfitcenterName { get; set; }
+
     }
 }

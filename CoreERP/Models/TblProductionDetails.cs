@@ -24,7 +24,6 @@ namespace CoreERP.Models
         public bool IsReject { get; set; }
         public string WorkStatus { get; set; }    
         public string Mechine { get; set; }
-
-
+        public string MaterialName { get; set; }
     }
 }

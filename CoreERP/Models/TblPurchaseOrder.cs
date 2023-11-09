@@ -31,6 +31,10 @@ namespace CoreERP.Models
         public string? ProfitCenter { get; set; }
         public string? Status { get; set; }
         public string? saleOrderType { get; set; }
+        public string? CompanyName { get; set; }
+        public string? ProfitcenterName { get; set; }
+        public string? SupplierName { get; set; }
+
 
     }
 }

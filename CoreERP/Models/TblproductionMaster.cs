@@ -13,5 +13,6 @@ namespace CoreERP.Models
         public string? SaleOrderNumber { get; set; }
         public string? Status { get; set; }
         public string? Product { get; set; }
+        public string? CompanyName { get; set; }
     }
 }

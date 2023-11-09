@@ -27,5 +27,9 @@ namespace CoreERP.Models
         public string? CreatedBy { get; set; }
         public string? ProfitCenter { get; set; }
         public string? Company { get; set; }
+        public string? SupplierName { get; set; }
+        public string? ProfircenterName { get; set; }
+        public string? CompanyName { get; set; }
+
     }
 }

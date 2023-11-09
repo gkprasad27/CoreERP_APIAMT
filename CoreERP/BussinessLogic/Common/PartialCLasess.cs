@@ -73,15 +73,9 @@ namespace CoreERP.Models
        
     }
 
-    partial class TblGoodsReceiptMaster
-    {
-        [NotMapped]
-        public string CompanyName { get; set; }
-    }
+   
     partial class TblPurchaseOrder
     {
-        [NotMapped]
-        public string CompanyName { get; set; }
         [NotMapped]
         public string PurchaseOrderName { get; set; }
     }
@@ -223,22 +217,7 @@ namespace CoreERP.Models
         public string MaterialName { get; set; }
     }
 
-    partial class TblGoodsIssueDetails
-    {
-        [NotMapped]
-        public string MaterialName { get; set; }
-    }
-    partial class TblProductionDetails
-    {
-        [NotMapped]
-        public string MaterialName { get; set; }
-    }
-
-    partial class TblGoodsReceiptDetails
-    {
-        [NotMapped]
-        public string MaterialName { get; set; }
-    }
+    
     partial class TblGoodsReceiptDetails
     {
         [NotMapped]
