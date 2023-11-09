@@ -22,6 +22,9 @@ namespace CoreERP.Models
         public string? SupplierName { get; set; }
         public string? CompanyName { get; set; }
         public string? ProfitcenterName { get; set; }
+        public decimal? TotalAmount { get; set; }
+        public decimal? Amount { get; set; }
+        public decimal? TotalTax { get; set; }
 
     }
 }
