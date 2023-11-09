@@ -2466,7 +2466,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public bool AddSaleOrder(TblSaleOrderMaster saleOrderMaster, List<TblSaleOrderDetail> saleOrderDetails)
         {
-           // string suppliername=string.Empty;
+            // string suppliername=string.Empty;
             saleOrderMaster.CreatedDate ??= DateTime.Now;
             using var repo = new Repository<TblSaleOrderMaster>();
             List<TblSaleOrderDetail> saleOrderDetailsNew;
@@ -2487,7 +2487,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     saleOrderMaster.Status = "Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
-                   // saleOrderMaster.CustomerCode = suppliername;
+                    // saleOrderMaster.CustomerCode = suppliername;
                     context.TblSaleOrderMaster.Update(saleOrderMaster);
                     context.SaveChanges();
                 }
@@ -2507,10 +2507,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.Status = "Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
                     saleOrderMaster.SaleOrderNo = SaleOrderNumber;
-                   // saleOrderMaster.CustomerCode = suppliername;
+                    // saleOrderMaster.CustomerCode = suppliername;
                     context.TblSaleOrderMaster.Add(saleOrderMaster);
-                    Quotation.Status = "Sale Order Created";
-                    context.TblSupplierQuotationsMaster.Update(Quotation);
+
+                    if (Quotation != null)
+                    {
+                        Quotation.Status = "Sale Order Created";
+
+                        context.TblSupplierQuotationsMaster.Update(Quotation);
+                    }
                     context.SaveChanges();
                 }
                 if (string.IsNullOrWhiteSpace(SaleOrderNumber))
