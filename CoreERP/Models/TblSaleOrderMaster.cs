@@ -30,6 +30,7 @@ namespace CoreERP.Models
         public string? SupplierName { get; set; }
         public string? ProfitcenterName { get; set; }
         public string? CompanyName { get; set; }
+        public string? Gstno { get; set; }
 
     }
 }
