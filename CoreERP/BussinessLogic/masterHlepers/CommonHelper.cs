@@ -450,17 +450,17 @@ namespace CoreERP
             });
             return result;
         }
-        public static IEnumerable<TblStandardRateOutPut> GetStandardRateOutPut()
+        public static IEnumerable<tblQCMaster> GetStandardRateOutPut()
         {
-            using var repo = new Repository<TblStandardRateOutPut>();
-            var uom = repo.TblUnit.ToList();
+            using var repo = new Repository<tblQCMaster>();
+            //var uom = repo.TblUnit.ToList();
 
-            var result = repo.TblStandardRateOutPut.ToList();
+            var result = repo.tblQCMaster.ToList();
 
-            result.ForEach(c =>
-            {
-                c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
-            });
+            //result.ForEach(c =>
+            //{
+            //    c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
+            //});
             return result;
         }
 

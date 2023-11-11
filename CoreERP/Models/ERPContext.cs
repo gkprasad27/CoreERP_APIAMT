@@ -207,7 +207,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblShift> TblShift { get; set; }
         public virtual DbSet<TblShiftTimings> TblShiftTimings { get; set; }
         public virtual DbSet<TblSize> TblSize { get; set; }
-        public virtual DbSet<TblStandardRateOutPut> TblStandardRateOutPut { get; set; }
+        public virtual DbSet<tblQCMaster> tblQCMaster { get; set; }
         public virtual DbSet<TblStateWiseGst> TblStateWiseGst { get; set; }
         public virtual DbSet<TblStockInformation> TblStockInformation { get; set; }
         public virtual DbSet<TblStorageLocation> TblStorageLocation { get; set; }
@@ -6115,11 +6115,11 @@ namespace CoreERP.Models
                     .HasMaxLength(50);
             });
 
-            modelBuilder.Entity<TblStandardRateOutPut>(entity =>
+            modelBuilder.Entity<tblQCMaster>(entity =>
             {
                 entity.HasKey(e => e.Code);
 
-                entity.ToTable("tbl_StandardRateOutPut");
+                entity.ToTable("tbl_QCMaster");
 
                 entity.Property(e => e.Code).HasMaxLength(10);
 

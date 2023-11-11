@@ -11,14 +11,14 @@ namespace CoreERP.Controllers.masters
     [Route("api/StandardRate")]
     public class StandardRateController : ControllerBase
     {
-        private readonly IRepository<TblStandardRateOutPut> _standardrateRepository;
-        public StandardRateController(IRepository<TblStandardRateOutPut> standardrateRepository)
+        private readonly IRepository<tblQCMaster> _standardrateRepository;
+        public StandardRateController(IRepository<tblQCMaster> standardrateRepository)
         {
             _standardrateRepository = standardrateRepository;
         }
 
         [HttpPost("RegisterStandardRate")]
-        public IActionResult RegisterStandardRate([FromBody]TblStandardRateOutPut sroutput)
+        public IActionResult RegisterStandardRate([FromBody] tblQCMaster sroutput)
         {
             if (sroutput == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -64,7 +64,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPut("UpdateStandardRate")]
-        public IActionResult UpdateStandardRate([FromBody] TblStandardRateOutPut sroutput)
+        public IActionResult UpdateStandardRate([FromBody] tblQCMaster sroutput)
         {
             if (sroutput == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(sroutput)} cannot be null" });

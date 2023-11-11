@@ -335,7 +335,7 @@ namespace CoreERP.Models
         [NotMapped]
         public string UomName { get; set; }
     }
-    partial class TblStandardRateOutPut
+    partial class tblQCMaster
     {
         [NotMapped]
         public string UomName { get; set; }
