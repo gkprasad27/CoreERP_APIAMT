@@ -31,6 +31,9 @@ namespace CoreERP.Models
         public string? ProfitcenterName { get; set; }
         public string? CompanyName { get; set; }
         public string? Gstno { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime EditDate { get; set; }
+        public string? EditWho { get; set; }
 
     }
 }

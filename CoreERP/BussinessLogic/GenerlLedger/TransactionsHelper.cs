@@ -2486,15 +2486,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
                 {
                     saleOrderMaster.Status = "Created";
-                    saleOrderMaster.CreatedDate = DateTime.Now;
+                    //saleOrderMaster.CreatedDate = DateTime.Now;
                     // saleOrderMaster.CustomerCode = suppliername;
                     context.TblSaleOrderMaster.Update(saleOrderMaster);
                     context.SaveChanges();
                 }
                 else
                 {
-                    if (this.IsVoucherNumberExists(saleOrderMaster.PONumber, "SaleOrder", "SaleOrder"))
-                        throw new Exception("Po number Already exists. " + saleOrderMaster.PONumber + " Please use another PO Number.");
+                    //if (this.IsVoucherNumberExists(saleOrderMaster.PONumber, "SaleOrder", "SaleOrder"))
+                    //    throw new Exception("Po number Already exists. " + saleOrderMaster.PONumber + " Please use another PO Number.");
 
                     if (Pcenter != null)
                     {
@@ -2541,8 +2541,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 dbtrans.Commit();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                TblApi_Error_Log icdata = new TblApi_Error_Log();
+                using var context1 = new ERPContext();
+                icdata.ScreenName = "Sale Order";
+                icdata.ErrorID = ex.HResult.ToString();
+                icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                context1.TblApi_Error_Log.Add(icdata);
+                context1.SaveChanges();
+
                 dbtrans.Rollback();
                 throw;
             }

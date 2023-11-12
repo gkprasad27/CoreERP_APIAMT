@@ -14,6 +14,7 @@ using System.Web;
 using System.Web.Http;
 using Microsoft.AspNetCore.Http;
 using System.Net;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace CoreERP.Controllers.masters
 {
@@ -539,10 +540,10 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-               
-                
+
+
                 var discount = new TransactionsHelper().CalculateDiscount(obj.ToObject<Dictionary<string, string>>());
-                if (discount==0)
+                if (discount == 0)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Discount." });
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.discount = discount;
@@ -701,7 +702,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetTagsissueDetail/{GSNumber}/{Materialcode}")]
-        public IActionResult GetTagsissueDetail(string GSNumber,string Materialcode)
+        public IActionResult GetTagsissueDetail(string GSNumber, string Materialcode)
         {
             try
             {
@@ -754,10 +755,10 @@ namespace CoreERP.Controllers.masters
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-               // var prodissueMaster = obj["prodHdr"].ToObject<TblProductionMaster>();
+                // var prodissueMaster = obj["prodHdr"].ToObject<TblProductionMaster>();
                 var prodissueetails = obj["mreqDtl"].ToObject<List<TblProductionDetails>>();
 
-                if (!new TransactionsHelper().AddProdIssue( prodissueetails))
+                if (!new TransactionsHelper().AddProdIssue(prodissueetails))
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 dynamic expdoObj = new ExpandoObject();
                 expdoObj.prodissueetails = prodissueetails;
@@ -1286,7 +1287,7 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var fullPath = string.Empty ;
+                var fullPath = string.Empty;
                 var rootfile = Request.Form.Files[0];
                 //var folderName = Path.Combine("Upload");
                 var pathToSave = Path.Combine(Directory.GetCurrentDirectory());
@@ -1298,7 +1299,7 @@ namespace CoreERP.Controllers.masters
                 if (rootfile.Length > 0)
                 {
                     var fileName = ContentDispositionHeaderValue.Parse(rootfile.ContentDisposition).FileName.Trim('"');
-                     fullPath = Path.Combine(pathToSave, fileName);
+                    fullPath = Path.Combine(pathToSave, fileName);
                     //var dbPath = Path.Combine(folderName, fileName);
 
                     if (System.IO.File.Exists(fullPath))
@@ -1309,9 +1310,9 @@ namespace CoreERP.Controllers.masters
                         rootfile.CopyTo(stream);
                     }
                 }
-               
 
-                string strUploadPath = "ftp://amtpowertransmission.com/portal.amtpowertransmission.com/Doc/SaleOrder/"+ uploadfileName+".pdf";
+
+                string strUploadPath = "ftp://amtpowertransmission.com/portal.amtpowertransmission.com/Doc/SaleOrder/" + uploadfileName + ".pdf";
                 byte[] buffer = System.IO.File.ReadAllBytes(rootfile.FileName);
                 var requestObj = FtpWebRequest.Create(strUploadPath) as FtpWebRequest;
                 requestObj.Method = WebRequestMethods.Ftp.UploadFile;
@@ -1370,13 +1371,13 @@ namespace CoreERP.Controllers.masters
             //    if (System.IO.File.Exists(pathToSave))
             //        System.IO.File.Delete(pathToSave);
 
-                //return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = File(fileBytes, "application/force-download", filename) });
+            //return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = File(fileBytes, "application/force-download", filename) });
             //    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = fileBytes });
             //}
-            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "http://portal.amtpowertransmission.com/Doc/SaleOrder/"+ filename+".pdf" });
+            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = "http://portal.amtpowertransmission.com/Doc/SaleOrder/" + filename + ".pdf" });
         }
 
-       
+
         private string GetContentType(string path)
         {
             var types = GetMimeTypes();
@@ -1613,7 +1614,7 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-     
+
 
         [HttpGet("GetInvoiceverificationDetail/{code}")]
         public IActionResult GetInvoiceverificationDetail(string code)
@@ -1725,12 +1726,13 @@ namespace CoreERP.Controllers.masters
         [HttpPost("AddSaleOrder")]
         public IActionResult AddSaleOrder([FromBody] JObject obj)
         {
+            var saleOrderMaster = new TblSaleOrderMaster(); ;
             try
             {
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                var saleOrderMaster = obj["qsHdr"].ToObject<TblSaleOrderMaster>();
+                saleOrderMaster = obj["qsHdr"].ToObject<TblSaleOrderMaster>();
                 var saleOrderDetails = obj["qsDtl"].ToObject<List<TblSaleOrderDetail>>();
 
                 if (!new TransactionsHelper().AddSaleOrder(saleOrderMaster, saleOrderDetails))
@@ -1742,11 +1744,14 @@ namespace CoreERP.Controllers.masters
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                if (ex.HResult.ToString() == "-2146233088")
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "PO Number Already Exist, Please use another key " + " " + saleOrderMaster.PONumber });
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
 
-       
+
 
 
         #endregion

@@ -25,5 +25,11 @@ namespace CoreERP.Models
         public string? TaxCode { get; set; }
         public decimal? NetWeight { get; set; }
         public string? DocumentURL { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime EditDate { get; set; }
+        public string? EditWho { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime CreatedDate { get; set; }
+        public string? AddWho { get; set; }
     }
 }
