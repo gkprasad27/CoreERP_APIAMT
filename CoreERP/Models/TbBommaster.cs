@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
 {
@@ -23,10 +24,15 @@ namespace CoreERP.Models
         public string? CostCenter { get; set; }
         public string? SaleOrder { get; set; }
         public string? Product { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? CreatedDate { get; set; }
         public string? Status { get; set; }
         public string? ProfitcenterName { get; set; }
         public string? CompanyName { get; set; }
         public string? MaterialName { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime? EditDate { get; set; }
+        public string? Addwho { get; set; }
+        public string? Editwho { get; set; }
     }
 }

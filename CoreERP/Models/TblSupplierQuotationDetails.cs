@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
 {
@@ -23,6 +24,15 @@ namespace CoreERP.Models
         public decimal? UGST { get; set; }
         public decimal? CGST { get; set; }
         public decimal? SGST { get; set; }
+
+        public string? Addwho { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime EditDate { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime CreatedDate { get; set; }
+      
+        public string? EditWho { get; set; }
 
 
     }

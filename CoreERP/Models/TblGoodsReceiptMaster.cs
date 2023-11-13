@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
 {
     public partial class TblGoodsReceiptMaster
     {
         public int Id { get; set; }
-        public string? PurchaseOrderNo { get; set; }
+        public string PurchaseOrderNo { get; set; }
         public string? Company { get; set; }
         public string? Plant { get; set; }
         public string? Branch { get; set; }
@@ -16,6 +17,7 @@ namespace CoreERP.Models
         public string? Rrno { get; set; }
         public string? VehicleNo { get; set; }
         public string? SupplierGinno { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? ReceivedDate { get; set; }
         public string? ReceivedBy { get; set; }
         public string? MovementType { get; set; }
@@ -24,9 +26,12 @@ namespace CoreERP.Models
         public string? StorageLocation { get; set; }
         public string? InspectionNoteNo { get; set; }
         public string? AddWho { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? AddDate { get; set; }
         public string? EditWho { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? EditDate { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? ReceiptDate { get; set; }
         public DateTime? Grndate { get; set; }
         public decimal? TotalAmount { get; set; }

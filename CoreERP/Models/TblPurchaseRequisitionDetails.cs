@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
 {
@@ -19,8 +20,12 @@ namespace CoreERP.Models
         public string? ReservationNumber { get; set; }
         public string? Narration { get; set; }
         public string? AddWho { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? AddDate { get; set; }
         public string? EditWho { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? EditDate { get; set; }
         public string? RecommendedBy { get; set; }
         public DateTime? RecommendedDate { get; set; }

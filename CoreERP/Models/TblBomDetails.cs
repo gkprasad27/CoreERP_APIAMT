@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
 {
@@ -23,5 +24,11 @@ namespace CoreERP.Models
         public decimal? SGST { get; set; }
         public decimal? NetWeight { get; set; }
        public DateTime? DeliveryDate { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime? EditDate { get; set; }
+        public string? Addwho { get; set; }
+        public string? Editwho { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime? CreatedDate { get; set; }
     }
 }
