@@ -9,10 +9,14 @@ namespace CoreERP.Models
         public string? InspectionCheckNo { get; set; }
         public string? MaterialCode { get; set; }
         public string? Description { get; set; }
-        public int? ReceivedQty { get; set; }
-        public int? RejectedQty { get; set; }
-        public string? Location { get; set; }
-        public string? MovementTo { get; set; }
-        public string? RejectReason { get; set; }
+        public string? ProductTag { get; set; }
+        public string? Status { get; set; }
+        public string? SaleorderNo { get; set; }
+        public string? CompletedBy { get; set; }
+        public string? Addwho { get; set; }
+        public string? Editwho { get; set; }
+        public DateTime? AddDate { get; set; }
+        public DateTime? CompletionDate { get; set; }
+        public DateTime? EditDate { get; set; }
     }
 }

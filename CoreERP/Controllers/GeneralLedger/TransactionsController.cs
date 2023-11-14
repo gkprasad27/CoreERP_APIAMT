@@ -1558,7 +1558,7 @@ namespace CoreERP.Controllers.masters
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                var icMaster = obj["icHdr"].ToObject<TblInpectionCheckMaster>();
+                var icMaster = obj["icHdr"].ToObject<TblInspectionCheckMaster>();
                 var icdetails = obj["icDtl"].ToObject<List<TblInspectionCheckDetails>>();
 
                 if (!new TransactionsHelper().AddInpectionCheck(icMaster, icdetails))

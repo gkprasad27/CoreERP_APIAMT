@@ -122,7 +122,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblHideTableColumns> TblHideTableColumns { get; set; }
         public virtual DbSet<TblHsnsac> TblHsnsac { get; set; }
         public virtual DbSet<TblIncomeTypes> TblIncomeTypes { get; set; }
-        public virtual DbSet<TblInpectionCheckMaster> TblInpectionCheckMaster { get; set; }
+        public virtual DbSet<TblInspectionCheckMaster> TblInspectionCheckMaster { get; set; }
         public virtual DbSet<TblInspectionCheckDetails> TblInspectionCheckDetails { get; set; }
         public virtual DbSet<TblInvoiceMemoDetails> TblInvoiceMemoDetails { get; set; }
         public virtual DbSet<TblInvoiceMemoHeader> TblInvoiceMemoHeader { get; set; }
@@ -3490,11 +3490,11 @@ namespace CoreERP.Models
                 entity.Property(e => e.ThresholdLimit).HasColumnType("numeric(18, 0)");
             });
 
-            modelBuilder.Entity<TblInpectionCheckMaster>(entity =>
+            modelBuilder.Entity<TblInspectionCheckMaster>(entity =>
             {
                 entity.HasKey(e => e.InspectionCheckNo);
 
-                entity.ToTable("tbl_InpectionCheckMaster");
+                entity.ToTable("tbl_InspectionCheckMaster");
 
                 entity.Property(e => e.InspectionCheckNo).HasMaxLength(50);
 
@@ -3504,7 +3504,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AddWho).HasMaxLength(50);
 
-                entity.Property(e => e.Branch).HasMaxLength(5);
+                entity.Property(e => e.InspectionType).HasMaxLength(5);
 
                 entity.Property(e => e.Company).HasMaxLength(5);
 
@@ -3514,7 +3514,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.EditWho).HasMaxLength(50);
 
-                entity.Property(e => e.Plant).HasMaxLength(5);
+                entity.Property(e => e.SaleorderNo).HasMaxLength(5);
 
                 entity.Property(e => e.ProfitCenter).HasMaxLength(5);
 
@@ -3527,21 +3527,18 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.Description).HasMaxLength(50);
+                entity.Property(e => e.Description).HasMaxLength(500);
 
                 entity.Property(e => e.InspectionCheckNo).HasMaxLength(50);
 
-                entity.Property(e => e.Location).HasMaxLength(50);
+                entity.Property(e => e.ProductTag).HasMaxLength(50);
 
                 entity.Property(e => e.MaterialCode).HasMaxLength(50);
 
-                entity.Property(e => e.MovementTo).HasMaxLength(50);
+                entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.Property(e => e.ReceivedQty).HasColumnName("ReceivedQTY");
+                entity.Property(e => e.SaleorderNo).HasMaxLength(50);
 
-                entity.Property(e => e.RejectReason).HasMaxLength(50);
-
-                entity.Property(e => e.RejectedQty).HasColumnName("RejectedQTY");
             });
 
             modelBuilder.Entity<TblInvoiceMemoDetails>(entity =>

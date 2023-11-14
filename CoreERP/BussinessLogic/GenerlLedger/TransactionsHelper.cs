@@ -2279,39 +2279,68 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         #endregion
 
         #region InspectionCheck
-        public List<TblInpectionCheckMaster> GetInpectionCheckMaster(SearchCriteria searchCriteria)
+        public List<TblInspectionCheckMaster> GetInpectionCheckMaster(SearchCriteria searchCriteria)
         {
             searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
             searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
             searchCriteria.ToDate ??= DateTime.Today;
 
-            using var repo = new Repository<TblInpectionCheckMaster>();
-            return repo.TblInpectionCheckMaster.AsEnumerable().ToList();
+            using var repo = new Repository<TblInspectionCheckMaster>();
+            return repo.TblInspectionCheckMaster.AsEnumerable().ToList();
         }
-        public bool AddInpectionCheck(TblInpectionCheckMaster icdata, List<TblInspectionCheckDetails> icdetails)
-
+        public bool AddInpectionCheck(TblInspectionCheckMaster icdata, List<TblInspectionCheckDetails> icdetails)
         {
-            if (icdata.InspectionCheckNo == null)
-                throw new Exception("InspectionCheckNo Canot be empty/null.");
-
-            using var repo = new Repository<TblInpectionCheckMaster>();
-
-            if (repo.TblInpectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo))
-                throw new Exception("Inspection CheckNo exists.");
-
-            icdetails.ForEach(x =>
-            {
-                x.InspectionCheckNo = icdata.InspectionCheckNo;
-            });
-
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
+            using var repo = new Repository<TblInspectionCheckMaster>();
+            string masternumber = string.Empty;
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
+            List<TblInspectionCheckDetails> prDetailsNew;
+            List<TblInspectionCheckDetails> prDetailsExist;
             try
             {
-                context.TblInpectionCheckMaster.Add(icdata);
-                context.SaveChanges();
+                if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo))
+                {
+                    icdata.Status = "QC Start";
+                    context.TblInspectionCheckMaster.Update(icdata);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    if (Pcenter != null)
+                    {
+                        Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                        context.Counters.UpdateRange(Pcenter);
+                        context.SaveChanges();
+                        masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                    }
 
-                context.TblInspectionCheckDetails.AddRange(icdetails);
+                    icdata.Status = "QC Started";
+                    icdata.InspectionCheckNo = masternumber;
+                    context.TblInspectionCheckMaster.Add(icdata);
+                    context.SaveChanges();
+                }
+
+                if (string.IsNullOrEmpty(masternumber))
+                    masternumber = icdata.InspectionCheckNo;
+
+
+                icdetails.ForEach(x =>
+                {
+                    x.InspectionCheckNo = icdata.InspectionCheckNo;
+                });
+
+                prDetailsExist = icdetails.Where(x => x.Id >= 0).ToList();
+                prDetailsNew = icdetails.Where(x => x.Id == 0).ToList();
+                if (prDetailsExist.Count > 0)
+                {
+                    context.TblInspectionCheckDetails.UpdateRange(icdetails);
+                }
+                else
+                {
+                    context.TblInspectionCheckDetails.AddRange(icdetails);
+                }
+
                 context.SaveChanges();
 
                 dbtrans.Commit();
@@ -2323,10 +2352,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 throw;
             }
         }
-        public TblInpectionCheckMaster GetInpectionCheckMasterById(string id)
+        public TblInspectionCheckMaster GetInpectionCheckMasterById(string id)
         {
-            using var repo = new Repository<TblInpectionCheckMaster>();
-            return repo.TblInpectionCheckMaster
+            using var repo = new Repository<TblInspectionCheckMaster>();
+            return repo.TblInspectionCheckMaster
                 .FirstOrDefault(x => x.InspectionCheckNo == id);
         }
         public List<TblInspectionCheckDetails> GetInspectionCheckDetails(string number)
@@ -2337,14 +2366,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public bool ReturnInpectionCheckMaster(string code)
         {
             using var repo = new ERPContext();
-            var poHeader = repo.TblInpectionCheckMaster.FirstOrDefault(im => im.InspectionCheckNo == code);
+            var poHeader = repo.TblInspectionCheckMaster.FirstOrDefault(im => im.InspectionCheckNo == code);
 
             if (poHeader != null)
                 throw new Exception($"Analysis Inspection CheckNo memo no {code} already return.");
 
             if (poHeader != null)
             {
-                repo.TblInpectionCheckMaster.Update(poHeader);
+                repo.TblInspectionCheckMaster.Update(poHeader);
             }
 
             repo.SaveChanges();
