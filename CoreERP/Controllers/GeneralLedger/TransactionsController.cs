@@ -15,6 +15,7 @@ using System.Web.Http;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -1684,9 +1685,11 @@ namespace CoreERP.Controllers.masters
         #region  Sale Order 
 
         [HttpPost("GetSaleOrder")]
-        public IActionResult GetSaleOrder([FromBody] SearchCriteria searchCriteria)
+        public async Task<IActionResult> GetSaleOrder([FromBody] SearchCriteria searchCriteria)
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 var saleOrderMaster = new TransactionsHelper().GetSaleOrderMasters(searchCriteria);
                 if (!saleOrderMaster.Any())
@@ -1700,6 +1703,8 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("GetSaleOrderDetail/{saleOrderNumber}")]

@@ -1904,12 +1904,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             var Company = repo.TblCompany.ToList();
             var PoType = repo.TblPurchaseOrderType.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            var customer = repo.TblBusinessPartnerAccount.ToList();
 
             repo.TblPurchaseOrder.ToList()
                 .ForEach(c =>
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.PurchaseOrderName = PoType.FirstOrDefault(l => l.purchaseType == c.PurchaseOrderType).Description;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode).Name;
 
                 });
 
@@ -2058,12 +2062,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblGoodsReceiptMaster>();
 
             var Company = repo.TblCompany.ToList();
-            var PoType = repo.TblPurchaseOrderType.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
 
             repo.TblGoodsReceiptMaster.ToList()
                 .ForEach(c =>
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(l => l.Code == c.ProfitCenter).Name;
 
                 });
 
@@ -2431,6 +2436,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblSaleOrderMaster>();
+            
+            var Company = repo.TblCompany.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            var customer = repo.TblBusinessPartnerAccount.ToList();
+
+            repo.TblSaleOrderMaster.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
+
+                });
+
             return repo.TblSaleOrderMaster.AsEnumerable()
                 .Where(x =>
                 {
@@ -2438,7 +2457,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
                     return Convert.ToString(x.SaleOrderNo) != null
                               && Convert.ToString(x.SaleOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleOrderNo))
-                              && Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                              || Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                               && Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
                 }).OrderByDescending(x => x.SaleOrderNo)
                 .ToList();
