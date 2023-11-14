@@ -958,27 +958,45 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblGoodsIssueDetails> GetGoodsIssueDetails(string GoodsIssueId)
         {
             using var repo = new Repository<TblGoodsIssueDetails>();
-            //var material = repo.TblMaterialMaster.ToList();
 
-            //repo.TblGoodsIssueDetails.ToList().ForEach(c =>
-            //   {
-            //       c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
-            //   });
+            var material = repo.TblMaterialMaster.ToList();
+
+            repo.TblGoodsIssueDetails.ToList().ForEach(c =>
+               {
+                   c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+               });
             return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
 
         }
 
         public List<TblProductionDetails> GetTagsIssueDetails(string GoodsIssueId, string Materialcode)
         {
-            using var repo = new Repository<TblProductionDetails>();
-            //var material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
+            using var repo = new ERPContext();
+            var material = new List<TblMaterialMaster>();
+            var tblProduction = new List<TblProductionDetails>();
 
-            //repo.TblProductionDetails.ToList().ForEach(c =>
-            //{
-            //    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
-            //});
-            return repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
-            // return repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
+            if (!string.IsNullOrEmpty(Materialcode))
+            {
+                tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
+                material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
+            }
+            else
+            {
+                tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
+                material = repo.TblMaterialMaster.ToList();
+            }
+
+            repo.TblProductionDetails.ToList().ForEach(c =>
+        {
+            foreach (var item in tblProduction)
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == item.MaterialCode)?.Description;
+            }
+        });
+
+
+            return tblProduction.ToList();
+
         }
 
         public bool AddGoodsIssue(TblGoodsIssueMaster gimaster, List<TblGoodsIssueDetails> gibDetails)
@@ -2437,7 +2455,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblSaleOrderMaster>();
-            
+
             var Company = repo.TblCompany.ToList();
             var profitCenters = repo.ProfitCenters.ToList();
             var customer = repo.TblBusinessPartnerAccount.ToList();
@@ -2476,11 +2494,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblSaleOrderDetail>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
 
-            repo.TblSaleOrderDetail.ToList().ForEach (c =>
+            repo.TblSaleOrderDetail.ToList().ForEach(c =>
             {
                 c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
                 c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
-            }) ;
+            });
             return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
 
         }

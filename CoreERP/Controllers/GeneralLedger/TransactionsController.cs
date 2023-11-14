@@ -703,7 +703,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetTagsissueDetail/{GSNumber}/{Materialcode}")]
-        public IActionResult GetTagsissueDetail(string GSNumber, string Materialcode)
+        public IActionResult GetTagsissueDetail(string GSNumber, string Materialcode=null)
         {
             try
             {
