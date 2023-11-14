@@ -2043,12 +2043,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(string number)
         {
             using var repo = new Repository<TblPurchaseOrderDetails>();
-            //var material = repo.TblMaterialMaster.ToList();
+            var material = repo.TblMaterialMaster.ToList();
 
-            //repo.TblPurchaseOrderDetails.ToList().ForEach(c =>
-            //{
-            //    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
-            //});
+            repo.TblPurchaseOrderDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            });
             return repo.TblPurchaseOrderDetails.Where(cd => cd.PurchaseOrderNumber == number).ToList();
         }
         public bool ReturnPurchaseOrderDetails(string code)
@@ -2249,12 +2249,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblGoodsReceiptDetails> GetGoodsReceiptDetails(string number)
         {
             using var repo = new Repository<TblGoodsReceiptDetails>();
-            //var material = repo.TblMaterialMaster.ToList();
+            var material = repo.TblMaterialMaster.ToList();
 
-            //repo.TblGoodsReceiptDetails.ToList().ForEach(c =>
-            //{
-            //    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
-            //});
+            repo.TblGoodsReceiptDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            });
 
             return repo.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == number).OrderByDescending(x => x.ReceivedDate).ToList();
 
@@ -2324,11 +2324,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (string.IsNullOrEmpty(masternumber))
                     masternumber = icdata.InspectionCheckNo;
 
+                var production = repo.TblProductionDetails.Where(x => x.SaleOrderNumber == icdata.SaleorderNo);
 
                 icdetails.ForEach(x =>
                 {
                     x.InspectionCheckNo = icdata.InspectionCheckNo;
+
+                    foreach (var item in production)
+                    {
+                        item.Status = x.Status;
+                    }
                 });
+
+                context.TblProductionDetails.UpdateRange(production);
+
 
                 prDetailsExist = icdetails.Where(x => x.Id >= 0).ToList();
                 prDetailsNew = icdetails.Where(x => x.Id == 0).ToList();
