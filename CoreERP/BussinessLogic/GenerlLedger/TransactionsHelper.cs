@@ -2175,6 +2175,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     mtqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
                     mtrejqty = (GoosQTY.Sum(i => i.RejectQty) ?? 0);
                     totalqty = (mtqty + mtrejqty) + (item.ReceivedQty ?? 0 + item.RejectQty ?? 0);
+                    item.InvoiceNo = grdata.SupplierReferenceNo;
                     item.InvoiceURL = grdata.InvoiceURL;
                     item.DocumentURL = grdata.DocumentURL;
                     //if (totalqty > item.Qty)
@@ -2473,13 +2474,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblSaleOrderDetail> GetSaleOrdersDetails(string saleOrderNo)
         {
             using var repo = new Repository<TblSaleOrderDetail>();
-            //var MaterialCodes = repo.TblMaterialMaster.ToList();
+            var MaterialCodes = repo.TblMaterialMaster.ToList();
 
-            //repo.TblSaleOrderDetail.ToList().ForEach(c =>
-            //{
-            //    c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
-            //    c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
-            //});
+            repo.TblSaleOrderDetail.ToList().ForEach (c =>
+            {
+                c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
+                c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+            }) ;
             return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
 
         }
