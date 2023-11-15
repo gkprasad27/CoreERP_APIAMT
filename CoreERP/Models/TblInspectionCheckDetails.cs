@@ -18,5 +18,6 @@ namespace CoreERP.Models
         public DateTime? AddDate { get; set; }
         public DateTime? CompletionDate { get; set; }
         public DateTime? EditDate { get; set; }
+        public string? InspectionType { get; set; }
     }
 }
