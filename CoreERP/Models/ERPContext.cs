@@ -6402,7 +6402,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.QuotationDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Supplier).HasMaxLength(50);
+                entity.Property(e => e.CustomerCode).HasMaxLength(50);
 
                 entity.Property(e => e.SupplierQuoteDate).HasColumnType("date");
 

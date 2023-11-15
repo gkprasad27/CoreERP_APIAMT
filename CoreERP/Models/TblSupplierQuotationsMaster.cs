@@ -10,7 +10,7 @@ namespace CoreERP.Models
         public string? Plant { get; set; }
         public string? QuotationNumber { get; set; }
         public DateTime? SupplierQuoteDate { get; set; }
-        public string? Supplier { get; set; }
+        public string? CustomerCode { get; set; }
         public int? DeliveryPeriod { get; set; }
         public int? CreditDays { get; set; }
         public string? DeliveryMethod { get; set; }
