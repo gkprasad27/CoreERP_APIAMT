@@ -2213,7 +2213,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 var totalamount = repo.TblGoodsReceiptMaster.Where(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo).FirstOrDefault();
                 grdata.EditDate = DateTime.Now;
-                grdata.TotalAmount = (totalamount.TotalAmount + grdata.TotalAmount);
+                grdata.TotalAmount = (totalamount.TotalAmount??0  + grdata.TotalAmount);
                 context.TblGoodsReceiptMaster.Update(grdata);
                 context.SaveChanges();
             }
