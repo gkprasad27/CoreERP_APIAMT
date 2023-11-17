@@ -1732,6 +1732,7 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+
         [HttpPost("AddSaleOrder")]
         public async Task<IActionResult> AddSaleOrder([FromBody] JObject obj)
         {

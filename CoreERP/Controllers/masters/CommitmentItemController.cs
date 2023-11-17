@@ -5,6 +5,7 @@ using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -19,7 +20,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("RegisterCommitmentItem")]
-        public IActionResult RegisterCommitmentItem([FromBody]TblCommitmentItem citem)
+        public IActionResult RegisterCommitmentItem([FromBody] TblCommitmentItem citem)
         {
             if (citem == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -44,24 +45,53 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetCommitmentItemList")]
-        public IActionResult GetCommitmentItemList()
+        public async Task<IActionResult> GetCommitmentItemList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var citemList = _commitmentItemRepository.GetAll();
-                if (citemList.Any())
+                try
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.citemList = citemList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                    var citemList = _commitmentItemRepository.GetAll();
+                    if (citemList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.citemList = citemList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetCommitmentItemList/{type}")]
+        public async Task<IActionResult> GetCommitmentItemList(string Type)
+        {
+            var result = await Task.Run(() =>
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    var citemList = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
+                    if (citemList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.citemList = citemList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPut("UpdateCommitmentItem")]

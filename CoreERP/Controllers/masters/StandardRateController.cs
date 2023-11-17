@@ -4,6 +4,9 @@ using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;
 using System.Linq;
+using System.Threading.Tasks;
+using CoreERP.DataAccess;
+using System.Collections.Generic;
 
 namespace CoreERP.Controllers.masters
 {
@@ -12,9 +15,12 @@ namespace CoreERP.Controllers.masters
     public class StandardRateController : ControllerBase
     {
         private readonly IRepository<tblQCMaster> _standardrateRepository;
-        public StandardRateController(IRepository<tblQCMaster> standardrateRepository)
+        private readonly IRepository<tblQCDetails> _qcdetails;
+
+        public StandardRateController(IRepository<tblQCMaster> standardrateRepository, IRepository<tblQCDetails> tblQCDetails)
         {
             _standardrateRepository = standardrateRepository;
+            _qcdetails = tblQCDetails;
         }
 
         [HttpPost("RegisterStandardRate")]
@@ -43,9 +49,11 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetStandardRateList")]
-        public IActionResult GetStandardRateList()
+        public async Task<IActionResult> GetStandardRateList()
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 var sropList = CommonHelper.GetStandardRateOutPut();
                 if (sropList.Any())
@@ -61,7 +69,55 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
+
+        [HttpGet("GetQCConfigDetail/{materialcode}")]
+        public async Task<IActionResult> GetSaleOrderDetail(string materialcode)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    //var transactions = new TransactionsHelper();
+                    var ConfigDetail = GetQCMastersById(materialcode);
+                    if (ConfigDetail == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.QCConfigDetailMaster = ConfigDetail;
+                    expdoObj.QCConfigDetail = GetQCDetails(materialcode);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        public List<tblQCDetails> GetQCDetails(string materialCode)
+        {
+            using var repo = new Repository<tblQCDetails>();
+            var MaterialCodes = repo.TblMaterialMaster.ToList();
+
+            //repo.TblSaleOrderDetail.ToList().ForEach(c =>
+            //{
+            //    c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
+            //    c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+            //});
+            return repo.tblQCDetails.Where(cd => cd.MaterialCode == materialCode).ToList();
+
+        }
+        public tblQCMaster GetQCMastersById(string MaterialCode)
+        {
+            using var repo = new Repository<tblQCMaster>();
+            return repo.tblQCMaster
+                .FirstOrDefault(x => x.MaterialCode == MaterialCode);
+        }
+
 
         [HttpPut("UpdateStandardRate")]
         public IActionResult UpdateStandardRate([FromBody] tblQCMaster sroutput)
