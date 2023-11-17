@@ -191,9 +191,11 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetSaleOrderList")]
-        public IActionResult GetSaleOrderList()
+        public async Task<IActionResult> GetSaleOrderList()
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 dynamic expando = new ExpandoObject();
                 expando.BPList = _somRepository.Where(x => x.Status != "Completed").Select(x => new { SaleOrderNo = x.SaleOrderNo }); 
@@ -203,12 +205,16 @@ namespace CoreERP.Controllers
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("GetSaleOrderData")]
-        public IActionResult GetSaleOrderData()
+        public async Task<IActionResult> GetSaleOrderData()
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 dynamic expando = new ExpandoObject();
                 expando.BPList = _somRepository.Where(x => x.Status != "Created").Select(x => new { saleOrderNo = x.SaleOrderNo });
@@ -218,12 +224,16 @@ namespace CoreERP.Controllers
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("GetBOMList")]
-        public IActionResult GetBOMList()
+        public async Task<IActionResult> GetBOMList()
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 dynamic expando = new ExpandoObject();
                 expando.BOMList = _bommasterRepository.Where(x => x.Status == "Created").Select(x => new { saleOrderNo = x.Bomnumber });
@@ -233,6 +243,8 @@ namespace CoreERP.Controllers
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
 
@@ -266,9 +278,11 @@ namespace CoreERP.Controllers
             }
         }
         [HttpGet("GetQuotationnoList")]
-        public IActionResult GetQuotationnoList()
+        public async Task<IActionResult> GetQuotationnoList()
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 dynamic expando = new ExpandoObject();
                 expando.qnoList = _quotationAnalysisRepository.GetAll().Select(x => new { ID = x.QuotationNumber, TEXT = x.QuotationNumber });
@@ -278,6 +292,8 @@ namespace CoreERP.Controllers
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
         [HttpGet("GetInspectionnoList")]
         public IActionResult GetInspectionnoList()
@@ -610,9 +626,11 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetEmployeeList")]
-        public IActionResult GetEmployeesList()
+        public async Task<IActionResult> GetEmployeesList()
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 var empList = _employeeRepository.GetAll().Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
                 if (empList.Any())
@@ -628,12 +646,16 @@ namespace CoreERP.Controllers
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpPost("GetEmployeeCode")]
-        public IActionResult GetEmployeeCode()
+        public async Task<IActionResult> GetEmployeeCode()
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 var empList = _employeeRepository.GetAll().Select(x=> new{ ID = x.EmployeeCode, TEXT = x.EmployeeName });
                 if (empList.Any())
@@ -649,6 +671,8 @@ namespace CoreERP.Controllers
             {
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("GetCostUnitList")]
@@ -1090,9 +1114,11 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetProfitCentersList")]
-        public IActionResult GetProfitCentersList()
+        public async Task<IActionResult> GetProfitCentersList()
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 var profitCenterList = _profitCentersRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Name,PONumber=x.PONumber,POPrefix=x.POPrefix,SONumber=x.SONumber,SOPrefix=x.SOPrefix });
                 if (profitCenterList.Any())
@@ -1108,6 +1134,8 @@ namespace CoreERP.Controllers
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = e.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("GetCostCentersList")]

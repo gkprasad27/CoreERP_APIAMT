@@ -703,73 +703,85 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetTagsissueDetail/{GSNumber}/{Materialcode}")]
-        public IActionResult GetTagsissueDetail(string GSNumber, string Materialcode = null)
+        public async Task<IActionResult> GetTagsissueDetail(string GSNumber, string Materialcode = null)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var transactions = new TransactionsHelper();
-                //var tagsData = transactions.GetTagsIssueMasterById(GSNumber);
-                //if (tagsData == null)
-                //    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                dynamic expdoObj = new ExpandoObject();
-                //expdoObj.tagsData = tagsData;
-                expdoObj.tagsDetail = new TransactionsHelper().GetTagsIssueDetails(GSNumber, Materialcode);
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    //var tagsData = transactions.GetTagsIssueMasterById(GSNumber);
+                    //if (tagsData == null)
+                    //    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    //expdoObj.tagsData = tagsData;
+                    expdoObj.tagsDetail = new TransactionsHelper().GetTagsIssueDetails(GSNumber, Materialcode);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
 
         [HttpPost("AddGoodsissue")]
-        public IActionResult AddGoodsissue([FromBody] JObject obj)
+        public async Task<IActionResult> AddGoodsissue([FromBody] JObject obj)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                if (obj == null)
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                var goodsissueMaster = obj["gibHdr"].ToObject<TblGoodsIssueMaster>();
-                var goodsissueetails = obj["gibDtl"].ToObject<List<TblGoodsIssueDetails>>();
+                    var goodsissueMaster = obj["gibHdr"].ToObject<TblGoodsIssueMaster>();
+                    var goodsissueetails = obj["gibDtl"].ToObject<List<TblGoodsIssueDetails>>();
 
-                if (!new TransactionsHelper().AddGoodsIssue(goodsissueMaster, goodsissueetails))
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.invoi = goodsissueMaster;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    if (!new TransactionsHelper().AddGoodsIssue(goodsissueMaster, goodsissueetails))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.invoi = goodsissueMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("AddProductionissue")]
-        public IActionResult AddProductionissue([FromBody] JObject obj)
+        public async Task<IActionResult> AddProductionissue([FromBody] JObject obj)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                if (obj == null)
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                // var prodissueMaster = obj["prodHdr"].ToObject<TblProductionMaster>();
-                var prodissueetails = obj["mreqDtl"].ToObject<List<TblProductionDetails>>();
+                    // var prodissueMaster = obj["prodHdr"].ToObject<TblProductionMaster>();
+                    var prodissueetails = obj["mreqDtl"].ToObject<List<TblProductionDetails>>();
 
-                if (!new TransactionsHelper().AddProdIssue(prodissueetails))
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.prodissueetails = prodissueetails;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    if (!new TransactionsHelper().AddProdIssue(prodissueetails))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.prodissueetails = prodissueetails;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("ReturnGoodsissue/{RequisitionNumber}")]
@@ -834,9 +846,11 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("AddMaterialRequisition")]
-        public IActionResult AddMaterialRequisition([FromBody] JObject obj)
+        public async Task<IActionResult> AddMaterialRequisition([FromBody] JObject obj)
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
@@ -855,6 +869,8 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("ReturnMaterialRequisition/{RequisitionNumber}")]
@@ -919,9 +935,11 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("AddPurchaseRequisition")]
-        public IActionResult AddPurchaseRequisition([FromBody] JObject obj)
+        public async Task<IActionResult> AddPurchaseRequisition([FromBody] JObject obj)
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
@@ -940,6 +958,8 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("ReturnPurchaseRequisition/{Number}")]
@@ -1089,9 +1109,11 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("AddQuotationSupplier")]
-        public IActionResult AddQuotationSupplier([FromBody] JObject obj)
+        public async Task<IActionResult> AddQuotationSupplier([FromBody] JObject obj)
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
@@ -1110,6 +1132,8 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("ReturnQuotationSupplier/{code}")]
@@ -1174,9 +1198,11 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("AddQuotationAnalysis")]
-        public IActionResult AddQuotationAnalysis([FromBody] JObject obj)
+        public async Task<IActionResult> AddQuotationAnalysis([FromBody] JObject obj)
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
@@ -1195,6 +1221,8 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("ReturnQuotationAnalysis/{code}")]
@@ -1259,9 +1287,11 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("AddPurchaseOrder")]
-        public IActionResult AddPurchaseOrder([FromBody] JObject obj)
+        public async Task<IActionResult> AddPurchaseOrder([FromBody] JObject obj)
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
@@ -1281,12 +1311,16 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
         [HttpPost]
         [Route("UploadFile/{uploadfileName}")]
-        public IActionResult UploadFile(string uploadfileName)
+        public async Task<IActionResult> UploadFile(string uploadfileName)
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 var fullPath = string.Empty;
                 var rootfile = Request.Form.Files[0];
@@ -1327,18 +1361,20 @@ namespace CoreERP.Controllers.masters
                 if (System.IO.File.Exists(fullPath))
                     System.IO.File.Delete(fullPath);
 
-                return Ok();
-            }
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString()});
+                }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex}");
             }
+            });
+            return result;
         }
 
         [HttpGet]
         [Route("GetFile/{filename}")]
         //download file api  
-        public async System.Threading.Tasks.Task<IActionResult> DownloadAsync(string filename)
+        public async Task<IActionResult> DownloadAsync(string filename)
         {
             if (filename == null)
                 return Content("filename not present");
@@ -1466,9 +1502,11 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("AddGoodsReceipt")]
-        public IActionResult AddGoodsReceipt([FromBody] JObject obj)
+        public async Task<IActionResult> AddGoodsReceipt([FromBody] JObject obj)
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
@@ -1487,6 +1525,8 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("ReturnGoodsReceipt/{code}")]
@@ -1551,9 +1591,11 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("AddInpectionCheck")]
-        public IActionResult AddInpectionCheck([FromBody] JObject obj)
+        public async Task<IActionResult> AddInpectionCheck([FromBody] JObject obj)
         {
-            try
+            var result = await Task.Run(() =>
+            {
+                try
             {
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
@@ -1572,6 +1614,8 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("ReturnInpectionCheck/{code}")]

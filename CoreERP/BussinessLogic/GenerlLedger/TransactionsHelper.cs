@@ -241,7 +241,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 csh.AccountingIndicator = cashBankMaster.AccountingIndicator == CRDRINDICATORS.Debit.ToString() ? CRDRINDICATORS.Credit.ToString() : CRDRINDICATORS.Debit.ToString();
             });
-            using (ERPContext context = new ERPContext())
+            using (ERPContext context = new())
             {
                 using (var dbtrans = context.Database.BeginTransaction())
                 {
@@ -1120,8 +1120,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 dbtrans.Commit();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                TblApi_Error_Log icdata = new();
+                using var context1 = new ERPContext();
+                icdata.ScreenName = "Goods Issue";
+                icdata.ErrorID = ex.HResult.ToString();
+                icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                context1.TblApi_Error_Log.Add(icdata);
+                context1.SaveChanges();
                 dbtrans.Rollback();
                 throw;
             }
@@ -1154,8 +1161,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 dbtrans.Commit();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+                TblApi_Error_Log icdata = new TblApi_Error_Log();
+                using var context1 = new ERPContext();
+                icdata.ScreenName = "Production Issue";
+                icdata.ErrorID = ex.HResult.ToString();
+                icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                context1.TblApi_Error_Log.Add(icdata);
+                context1.SaveChanges();
                 dbtrans.Rollback();
                 throw;
             }
@@ -1611,8 +1626,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 dbtrans.Commit();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+                TblApi_Error_Log icdata = new TblApi_Error_Log();
+                using var context1 = new ERPContext();
+                icdata.ScreenName = "Mastersale Order";
+                icdata.ErrorID = ex.HResult.ToString();
+                icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                context1.TblApi_Error_Log.Add(icdata);
+                context1.SaveChanges();
+
                 dbtrans.Rollback();
                 throw;
             }
@@ -1813,8 +1837,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 dbtrans.Commit();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+                TblApi_Error_Log icdata = new TblApi_Error_Log();
+                using var context1 = new ERPContext();
+                icdata.ScreenName = "Quotation";
+                icdata.ErrorID = ex.HResult.ToString();
+                icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                context1.TblApi_Error_Log.Add(icdata);
+                context1.SaveChanges();
+
                 dbtrans.Rollback();
                 throw;
             }
@@ -1889,8 +1922,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 dbtrans.Commit();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+                TblApi_Error_Log icdata = new TblApi_Error_Log();
+                using var context1 = new ERPContext();
+                icdata.ScreenName = "Quotation";
+                icdata.ErrorID = ex.HResult.ToString();
+                icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                context1.TblApi_Error_Log.Add(icdata);
+                context1.SaveChanges();
+
                 dbtrans.Rollback();
                 throw;
             }
