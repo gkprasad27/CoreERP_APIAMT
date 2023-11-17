@@ -703,7 +703,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetTagsissueDetail/{GSNumber}/{Materialcode}")]
-        public IActionResult GetTagsissueDetail(string GSNumber, string Materialcode=null)
+        public IActionResult GetTagsissueDetail(string GSNumber, string Materialcode = null)
         {
             try
             {
@@ -1690,70 +1690,78 @@ namespace CoreERP.Controllers.masters
             var result = await Task.Run(() =>
             {
                 try
-            {
-                var saleOrderMaster = new TransactionsHelper().GetSaleOrderMasters(searchCriteria);
-                if (!saleOrderMaster.Any())
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Sale Order." });
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.saleOrderMaster = saleOrderMaster;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                {
+                    var saleOrderMaster = new TransactionsHelper().GetSaleOrderMasters(searchCriteria);
+                    if (!saleOrderMaster.Any())
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Sale Order." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.saleOrderMaster = saleOrderMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
             });
             return result;
         }
 
         [HttpGet("GetSaleOrderDetail/{saleOrderNumber}")]
-        public IActionResult GetSaleOrderDetail(string saleOrderNumber)
+        public async Task<IActionResult> GetSaleOrderDetail(string saleOrderNumber)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var transactions = new TransactionsHelper();
-                var SaleOrderMasters = transactions.GetSaleOrderMastersById(saleOrderNumber);
-                if (SaleOrderMasters == null)
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.SaleOrderMasters = SaleOrderMasters;
-                expdoObj.SaleOrderDetails = new TransactionsHelper().GetSaleOrdersDetails(saleOrderNumber);
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    var SaleOrderMasters = transactions.GetSaleOrderMastersById(saleOrderNumber);
+                    if (SaleOrderMasters == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.SaleOrderMasters = SaleOrderMasters;
+                    expdoObj.SaleOrderDetails = new TransactionsHelper().GetSaleOrdersDetails(saleOrderNumber);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpPost("AddSaleOrder")]
-        public IActionResult AddSaleOrder([FromBody] JObject obj)
+        public async Task<IActionResult> AddSaleOrder([FromBody] JObject obj)
         {
-            var saleOrderMaster = new TblSaleOrderMaster(); ;
-            try
+            var result = await Task.Run(() =>
             {
-                if (obj == null)
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+                var saleOrderMaster = new TblSaleOrderMaster(); ;
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                saleOrderMaster = obj["qsHdr"].ToObject<TblSaleOrderMaster>();
-                var saleOrderDetails = obj["qsDtl"].ToObject<List<TblSaleOrderDetail>>();
+                    saleOrderMaster = obj["qsHdr"].ToObject<TblSaleOrderMaster>();
+                    var saleOrderDetails = obj["qsDtl"].ToObject<List<TblSaleOrderDetail>>();
 
-                if (!new TransactionsHelper().AddSaleOrder(saleOrderMaster, saleOrderDetails))
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.saleOrderMaster = saleOrderMaster;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    if (!new TransactionsHelper().AddSaleOrder(saleOrderMaster, saleOrderDetails))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.saleOrderMaster = saleOrderMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-            }
-            catch (Exception ex)
-            {
-                if (ex.HResult.ToString() == "-2146233088")
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "PO Number Already Exist, Please use another key " + " " + saleOrderMaster.PONumber });
-                else
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                }
+                catch (Exception ex)
+                {
+                    if (ex.HResult.ToString() == "-2146233088")
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "PO Number Already Exist, Please use another key " + " " + saleOrderMaster.PONumber });
+                    else
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
 

@@ -1736,6 +1736,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblSupplierQuotationsMaster>();
+            var Company = repo.TblCompany.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            var customer = repo.TblBusinessPartnerAccount.ToList();
+
+            repo.TblSupplierQuotationsMaster.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
+
+                });
+
             return repo.TblSupplierQuotationsMaster.AsEnumerable().ToList();
         }
         public bool AddSupplierQuotationsMaster(TblSupplierQuotationsMaster msdata, List<TblSupplierQuotationDetails> qsdetails)
@@ -2514,9 +2527,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
                     return Convert.ToString(x.SaleOrderNo) != null
                               && Convert.ToString(x.SaleOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleOrderNo))
-                              || Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                              && Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                               && Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
-                }).OrderByDescending(x => x.SaleOrderNo)
+                }).OrderByDescending(x => x.CreatedDate)
                 .ToList();
         }
 

@@ -209,6 +209,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblShift> TblShift { get; set; }
         public virtual DbSet<TblShiftTimings> TblShiftTimings { get; set; }
         public virtual DbSet<TblSize> TblSize { get; set; }
+        public virtual DbSet<tblQCDetails> tblQCDetails { get; set; }
         public virtual DbSet<tblQCMaster> tblQCMaster { get; set; }
         public virtual DbSet<TblStateWiseGst> TblStateWiseGst { get; set; }
         public virtual DbSet<TblStockInformation> TblStockInformation { get; set; }
@@ -6121,6 +6122,13 @@ namespace CoreERP.Models
                 entity.ToTable("tbl_QCMaster");
 
                 entity.Property(e => e.Code).HasMaxLength(10);
+
+            });
+
+            modelBuilder.Entity<tblQCDetails>(entity =>
+            {
+               
+                entity.ToTable("tbl_QCMaster");
 
                 entity.Property(e => e.Uom).HasColumnName("UOM");
             });
