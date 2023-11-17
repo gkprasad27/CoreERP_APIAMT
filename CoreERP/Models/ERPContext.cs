@@ -6127,8 +6127,8 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<tblQCDetails>(entity =>
             {
-               
-                entity.ToTable("tbl_QCMaster");
+                entity.HasKey(e => e.Id);
+                entity.ToTable("tbl_QCDetails");
 
                 entity.Property(e => e.Uom).HasColumnName("UOM");
             });
