@@ -24,9 +24,11 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("RegisterStandardRate")]
-        public IActionResult RegisterStandardRate([FromBody] tblQCMaster sroutput)
+        public async Task<IActionResult> RegisterStandardRate([FromBody] tblQCMaster sroutput)
         {
-            if (sroutput == null)
+            var result = await Task.Run(() =>
+            {
+                if (sroutput == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             try
@@ -46,6 +48,8 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("GetStandardRateList")]
