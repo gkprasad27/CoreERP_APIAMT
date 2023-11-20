@@ -11,11 +11,17 @@ namespace CoreERP.Models
 
     }
 
-   partial class TblSaleOrderDetail
+    partial class TblPurchaseOrderDetails
     {
         [NotMapped]
         public int AvailableQTY { get; set; }
-        
+
+    }
+    partial class TblSaleOrderDetail
+    {
+        [NotMapped]
+        public int AvailableQTY { get; set; }
+
     }
     partial class TblRegion
     {
@@ -60,7 +66,7 @@ namespace CoreERP.Models
         public string PlantName { get; set; }
         [NotMapped]
         public string DepartmentName { get; set; }
-       
+
     }
     partial class TblQuotationNoAssignment
     {
@@ -70,10 +76,10 @@ namespace CoreERP.Models
         public string CompanyName { get; set; }
         [NotMapped]
         public string PlantName { get; set; }
-       
+
     }
 
-   
+
     partial class TblPurchaseOrder
     {
         [NotMapped]
@@ -217,13 +223,13 @@ namespace CoreERP.Models
         public string MaterialName { get; set; }
     }
 
-    
+
     partial class TblGoodsReceiptDetails
     {
         [NotMapped]
         public string TblPurchaseRequisitionDetails { get; set; }
     }
-   
+
     partial class TblMaterialNoAssignment
     {
         [NotMapped]
@@ -622,7 +628,7 @@ namespace CoreERP.Models
         public string OchartAccountName { get; set; }
         [NotMapped]
         public string GchartAccountName { get; set; }
-       
+
     }
 
     partial class TblAccountGroup
@@ -708,7 +714,7 @@ namespace CoreERP.Models
         public string ScrapGLName { get; set; }
         [NotMapped]
         public string DepreciationGLName { get; set; }
-       
+
     }
 
     partial class TblBankMaster
@@ -720,7 +726,7 @@ namespace CoreERP.Models
         [NotMapped]
         public string CountryName { get; set; }
         [NotMapped]
-        public string CurrencyName { get; set; }       
+        public string CurrencyName { get; set; }
     }
 
     partial class Glaccounts
@@ -756,7 +762,7 @@ namespace CoreERP.Models
         [NotMapped]
         public string RegionName { get; set; }
         [NotMapped]
-        public string CountryName { get; set; }         
+        public string CountryName { get; set; }
         [NotMapped]
         public string ControlAccountName { get; set; }
         [NotMapped]
@@ -764,7 +770,7 @@ namespace CoreERP.Models
         [NotMapped]
         public string TdsTypeName { get; set; }
         [NotMapped]
-        public string TdsStateName { get; set; }          
+        public string TdsStateName { get; set; }
     }
 
     partial class TblMainAssetMaster

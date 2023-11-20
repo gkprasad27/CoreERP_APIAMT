@@ -2105,6 +2105,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             repo.TblPurchaseOrderDetails.ToList().ForEach(c =>
             {
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+                c.AvailableQTY = Convert.ToInt32(material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
             });
             return repo.TblPurchaseOrderDetails.Where(cd => cd.PurchaseOrderNumber == number).ToList();
         }
