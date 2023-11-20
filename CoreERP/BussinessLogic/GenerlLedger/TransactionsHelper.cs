@@ -2095,6 +2095,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return repo.TblPurchaseOrder
                 .FirstOrDefault(x => x.PurchaseOrderNumber == id);
         }
+
+       
         public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(string number)
         {
             using var repo = new Repository<TblPurchaseOrderDetails>();
@@ -2268,7 +2270,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 var totalamount = repo.TblGoodsReceiptMaster.Where(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo).FirstOrDefault();
                 grdata.EditDate = DateTime.Now;
-                grdata.TotalAmount = (totalamount.TotalAmount??0  + grdata.TotalAmount);
+                grdata.TotalAmount = (totalamount.TotalAmount??0)  + (grdata.TotalAmount);
                 context.TblGoodsReceiptMaster.Update(grdata);
                 context.SaveChanges();
             }

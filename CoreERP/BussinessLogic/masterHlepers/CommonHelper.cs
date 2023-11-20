@@ -59,6 +59,20 @@ namespace CoreERP
             return repo.TblPaymentTerms.FirstOrDefault(x => x.Code == code);
         }
 
+        public static IEnumerable<TblPurchaseOrder> GetPurchaseOrderMaster()
+        {
+            using var repo = new Repository<TblPurchaseOrder>();
+            var BP = repo.TblBusinessPartnerAccount.ToList();
+
+            var result = repo.TblPurchaseOrder.ToList();
+
+            repo.TblPurchaseOrder.ToList().ForEach(c =>
+            {
+                c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.SupplierCode)?.Name;
+            });
+            return result;
+        }
+       
         public List<TblPaymentTermDetails> GetTblPaymentTermDetails(string code)
         {
             using var repo = new Repository<TblPaymentTermDetails>();
