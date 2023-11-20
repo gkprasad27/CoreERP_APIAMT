@@ -74,7 +74,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblTaxtransactions> ttRepository, IRepository<TblTaxRates> trRepository, IRepository<Glaccounts> glaccountRepository, IRepository<TblTdsRates> tdsRatesRepository,
                                 IRepository<TblBpgroup> bpgroupRepository, IRepository<TblAssetClass> assetClassRepository, IRepository<TblAssetBlock> assetBlockRepository, IRepository<TblAssetAccountkey> assetAccountkeyRepository,
                                 IRepository<TblBankMaster> bankMasterRepository, IRepository<TblPaymentTerms> paymentTermsRepository, IRepository<ProfitCenters> profitCentersRepository, IRepository<CostCenters> ccRepository,
-                                IRepository<TblBusinessPartnerAccount> bpRepository, IRepository<TblSaleOrderMaster> somRepository,IRepository<TblUnit> unitRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
+                                IRepository<TblBusinessPartnerAccount> bpRepository, IRepository<TblSaleOrderMaster> somRepository, IRepository<TblUnit> unitRepository, IRepository<TblMainAssetMaster> tblMainAssetRepository, IRepository<TblSubAssetMaster> tblsubAssetRepository,
                                 IRepository<TblInvoiceMemoHeader> tblInvoiceMemoHeaderRepository,
                                 IRepository<TblSecondaryCostElement> secondaryCostElementRepository,
                                  IRepository<TblCostingObjectTypes> costingObjectTypesRepository, IRepository<TblCostingUnitsCreation> costingUnitsCreationRepository,
@@ -88,7 +88,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblGoodsReceiptMaster> goodsReceiptMasterRepository,
                                 IRepository<TblGoodsReceiptDetails> GoodsReceiptDetailsRepository,
                                 IRepository<TblHsnsac> hsnsacRepository, IRepository<TblPrimaryCostElement> primaryCostElementRepository,
-                                IRepository<TblMaterialTypes> materialTypesRepository, IRepository<ConfigurationTable> configurationRepository,IRepository<LeaveTypes> leaveTypeRepository,
+                                IRepository<TblMaterialTypes> materialTypesRepository, IRepository<ConfigurationTable> configurationRepository, IRepository<LeaveTypes> leaveTypeRepository,
                                 IRepository<TblPurchaseRequisitionMaster> TblPurchaseRequisitionMaster, IRepository<TblPurchaseRequisitionDetails> TblPurchaseRequisitionDetails, IRepository<TbBommaster> TbbomMaster)
         {
             _primaryCostElementRepository = primaryCostElementRepository;
@@ -176,18 +176,22 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetBPList")]
-        public IActionResult GetBPList()
+        public async Task<IActionResult> GetBPList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.BPList = _bpRepository.GetAll().Select(x => new { ID = x.Bpnumber, TEXT = x.Name,GSTno=x.Gstno, bptype = x.Bptype });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BPList = _bpRepository.GetAll().Select(x => new { ID = x.Bpnumber, TEXT = x.Name, GSTno = x.Gstno, bptype = x.Bptype });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetSaleOrderList")]
@@ -196,15 +200,15 @@ namespace CoreERP.Controllers
             var result = await Task.Run(() =>
             {
                 try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.BPList = _somRepository.Where(x => x.Status != "Completed").Select(x => new { SaleOrderNo = x.SaleOrderNo }); 
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BPList = _somRepository.Where(x => x.Status != "Completed").Select(x => new { SaleOrderNo = x.SaleOrderNo });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
             });
             return result;
         }
@@ -215,15 +219,15 @@ namespace CoreERP.Controllers
             var result = await Task.Run(() =>
             {
                 try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.BPList = _somRepository.Where(x => x.Status != "Created").Select(x => new { saleOrderNo = x.SaleOrderNo });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BPList = _somRepository.Where(x => x.Status != "Created").Select(x => new { saleOrderNo = x.SaleOrderNo });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
             });
             return result;
         }
@@ -234,33 +238,37 @@ namespace CoreERP.Controllers
             var result = await Task.Run(() =>
             {
                 try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.BOMList = _bommasterRepository.Where(x => x.Status == "Created").Select(x => new { saleOrderNo = x.Bomnumber });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BOMList = _bommasterRepository.Where(x => x.Status == "Created").Select(x => new { saleOrderNo = x.Bomnumber });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
             });
             return result;
         }
 
 
         [HttpGet("GetPRList")]
-        public IActionResult GetPRList()
+        public async Task<IActionResult> GetPRList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.BPList = _tblPurchaseRequisitionMaster.Where(x => x.Status == "Created").Select(x => new { SaleOrderNo = x.RequisitionNumber });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BPList = _tblPurchaseRequisitionMaster.Where(x => x.Status == "Created").Select(x => new { SaleOrderNo = x.RequisitionNumber });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetWorkcenterList")]
@@ -283,15 +291,15 @@ namespace CoreERP.Controllers
             var result = await Task.Run(() =>
             {
                 try
-            {
-                dynamic expando = new ExpandoObject();
-                expando.qnoList = _quotationAnalysisRepository.GetAll().Select(x => new { ID = x.QuotationNumber, TEXT = x.QuotationNumber });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.qnoList = _quotationAnalysisRepository.GetAll().Select(x => new { ID = x.QuotationNumber, TEXT = x.QuotationNumber });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
             });
             return result;
         }
@@ -310,76 +318,98 @@ namespace CoreERP.Controllers
             }
         }
         [HttpGet("GetGoodsReceiptList")]
-        public IActionResult GetGoodsReceiptList()
+        public async Task<IActionResult> GetGoodsReceiptList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.grList = _goodsReceiptMasterRepository.GetAll();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.grList = _goodsReceiptMasterRepository.GetAll();
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetPurchaseOrdernoList")]
-        public IActionResult GetPurchaseOrdernoList()
+        public async Task<IActionResult> GetPurchaseOrdernoList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                var vouchertypeList = CommonHelper.GetPurchaseOrderMaster();
-                expando.purchaseordernoList = vouchertypeList.Where(x => x.Status == "Created").Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.SupplierName, SupplierCode=x.SupplierCode });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    var vouchertypeList = CommonHelper.GetPurchaseOrderMaster();
+                    expando.purchaseordernoList = vouchertypeList.Where(x => x.Status == "Created").Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.SupplierName, SupplierCode = x.SupplierCode });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+
+            });
+            return result;
         }
         [HttpGet("GetMaterialreqdetailsList")]
-        public IActionResult GetMaterialreqdetailsList()
+        public async Task<IActionResult> GetMaterialreqdetailsList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.mreqdetailsList = _materialRequisitionDetailsRepository.GetAll();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.mreqdetailsList = _materialRequisitionDetailsRepository.GetAll();
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+
+            });
+            return result;
         }
         [HttpGet("GetPOdetailsList")]
-        public IActionResult GetPOdetailsList()
+        public async Task<IActionResult> GetPOdetailsList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.podetailsList = _purchaseOrderDetailsRepository.GetAll();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.podetailsList = _purchaseOrderDetailsRepository.GetAll();
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
         [HttpGet("GetInspectiondetailsList")]
-        public IActionResult GetInspectiondetailsList()
+        public async Task<IActionResult> GetInspectiondetailsList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.inspectiondetailsList = _goodsReceiptDetailsRepository.GetAll();
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.inspectiondetailsList = _goodsReceiptDetailsRepository.GetAll();
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
         [HttpGet("GetMaterialreqList")]
         public IActionResult GetMaterialreqList()
@@ -411,18 +441,22 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetMaterialList")]
-        public IActionResult GetMaterialList()
+        public async Task<IActionResult> GetMaterialList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.materialList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty,Rate=x.ClosingPrice, netWeight = x.NetWeight});
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.materialList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetMaterialListForCostunits")]
@@ -501,78 +535,100 @@ namespace CoreERP.Controllers
 
 
         [HttpGet("GetDepartmentList")]
-        public IActionResult GetDepartmentList()
+        public async Task<IActionResult> GetDepartmentList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.deptList = _departmentRepository.GetAll().Select(x => new { ID = x.DepartmentId, TEXT = x.DepartmentName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.deptList = _departmentRepository.GetAll().Select(x => new { ID = x.DepartmentId, TEXT = x.DepartmentName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetLanguageList")]
-        public IActionResult GetLanguageList()
+        public async Task<IActionResult> GetLanguageList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.LanguageList = _languageRepository.GetAll().Select(x => new { ID = x.LanguageCode, TEXT = x.LanguageName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.LanguageList = _languageRepository.GetAll().Select(x => new { ID = x.LanguageCode, TEXT = x.LanguageName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+
+            });
+            return result;
         }
 
         [HttpGet("GetUOMList")]
-        public IActionResult GetUOMList()
+        public async Task<IActionResult> GetUOMList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.UOMList = _unitRepository.GetAll().Select(x => new { ID = x.UnitId, TEXT = x.UnitName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.UOMList = _unitRepository.GetAll().Select(x => new { ID = x.UnitId, TEXT = x.UnitName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+
+            });
+            return result;
         }
 
         [HttpGet("GetCurrencyList")]
-        public IActionResult GetCurrencyList()
+        public async Task<IActionResult> GetCurrencyList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.CurrencyList = _currencyRepository.GetAll().Select(x => new { ID = x.CurrencySymbol, TEXT = x.CurrencyName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.CurrencyList = _currencyRepository.GetAll().Select(x => new { ID = x.CurrencySymbol, TEXT = x.CurrencyName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetCountrysList")]
-        public IActionResult GetCountrysList()
+        public async Task<IActionResult> GetCountrysList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.CountryList = _countryRepository.GetAll().Select(x => new { ID = x.CountryCode, TEXT = x.CountryName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.CountryList = _countryRepository.GetAll().Select(x => new { ID = x.CountryCode, TEXT = x.CountryName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetRegionList")]
@@ -591,39 +647,47 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetStatesList")]
-        public IActionResult GetStatesList()
+        public async Task<IActionResult> GetStatesList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                dynamic expando = new ExpandoObject();
-                expando.StatesList = _stateRepository.GetAll().Select(x => new { ID = x.StateCode, TEXT = x.StateName });
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.StatesList = _stateRepository.GetAll().Select(x => new { ID = x.StateCode, TEXT = x.StateName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetCompanyList")]
-        public IActionResult GetCompanysList()
+        public async Task<IActionResult> GetCompanysList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var companiesList = _companyRepository.GetAll().Select(x => new { ID = x.CompanyCode, TEXT = x.CompanyName });
-                if (companiesList.Any())
+                try
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.companiesList = companiesList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                    var companiesList = _companyRepository.GetAll().Select(x => new { ID = x.CompanyCode, TEXT = x.CompanyName });
+                    if (companiesList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.companiesList = companiesList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetEmployeeList")]
@@ -632,21 +696,21 @@ namespace CoreERP.Controllers
             var result = await Task.Run(() =>
             {
                 try
-            {
-                var empList = _employeeRepository.GetAll().Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
-                if (empList.Any())
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.emplist = empList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                    var empList = _employeeRepository.GetAll().Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
+                    if (empList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.emplist = empList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
             });
             return result;
         }
@@ -657,21 +721,21 @@ namespace CoreERP.Controllers
             var result = await Task.Run(() =>
             {
                 try
-            {
-                var empList = _employeeRepository.GetAll().Select(x=> new{ ID = x.EmployeeCode, TEXT = x.EmployeeName });
-                if (empList.Any())
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.emplist = empList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                    var empList = _employeeRepository.GetAll().Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
+                    if (empList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.emplist = empList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
             });
             return result;
         }
@@ -697,24 +761,28 @@ namespace CoreERP.Controllers
             }
         }
         [HttpGet("GetMaterialMasterList")]
-        public IActionResult GetMaterialMasterList()
+        public async Task<IActionResult> GetMaterialMasterList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var mmasterList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight });
-                if (mmasterList.Any())
+                try
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.mmasterList = mmasterList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                    var mmasterList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight });
+                    if (mmasterList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.mmasterList = mmasterList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetLocationsList")]
@@ -891,7 +959,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var glList = _glaccountRepository.GetAll().Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName, TAXCategory = x.TaxCategory,ControlAccount=x.ControlAccount });
+                    var glList = _glaccountRepository.GetAll().Select(x => new { ID = x.AccountNumber, TEXT = x.GlaccountName, TAXCategory = x.TaxCategory, ControlAccount = x.ControlAccount });
                     if (glList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -981,24 +1049,28 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetBusienessPartnersGroupsList")]
-        public IActionResult GetBusienessPartnersGroupsList()
+        public async Task<IActionResult> GetBusienessPartnersGroupsList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var bpgList = _bpgroupRepository.GetAll().Select(x => new { ID = x.Bpgroup, TEXT = x.Description, BPTYPE = x.Bptype });
-                if (bpgList.Any())
+                try
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.bpgList = bpgList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                    var bpgList = _bpgroupRepository.GetAll().Select(x => new { ID = x.Bpgroup, TEXT = x.Description, BPTYPE = x.Bptype });
+                    if (bpgList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.bpgList = bpgList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetAssetsBlockList")]
@@ -1120,21 +1192,21 @@ namespace CoreERP.Controllers
             var result = await Task.Run(() =>
             {
                 try
-            {
-                var profitCenterList = _profitCentersRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Name,PONumber=x.PONumber,POPrefix=x.POPrefix,SONumber=x.SONumber,SOPrefix=x.SOPrefix });
-                if (profitCenterList.Any())
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.profitCenterList = profitCenterList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var profitCenterList = _profitCentersRepository.GetAll().Select(x => new { ID = x.Code, TEXT = x.Name, PONumber = x.PONumber, POPrefix = x.POPrefix, SONumber = x.SONumber, SOPrefix = x.SOPrefix });
+                    if (profitCenterList.Any())
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.profitCenterList = profitCenterList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception e)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = e.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception e)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = e.Message });
+                }
             });
             return result;
         }
@@ -1161,45 +1233,53 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetCustomerList")]
-        public IActionResult GetCustomerList()
+        public async Task<IActionResult> GetCustomerList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var bpList = CommonHelper.BPList().Select(x => new { ID = x.Bpnumber, TEXT = x.Name, BPTYPE = x.BpTypeName ,BPGROUP=x.BpGroupName, GstNo=x.Gstno});
-                if (bpList.Any())
+                try
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.bpList = bpList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                    var bpList = CommonHelper.BPList().Select(x => new { ID = x.Bpnumber, TEXT = x.Name, BPTYPE = x.BpTypeName, BPGROUP = x.BpGroupName, GstNo = x.Gstno });
+                    if (bpList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.bpList = bpList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found" });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found" });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetPurchaseInvoiceList")]
-        public IActionResult GetPurchaseInvoiceList()
+        public async Task<IActionResult> GetPurchaseInvoiceList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var purchaseinvoiceList = _InvoiceMemoHeaderRepository.GetAll().Select(x => new { x.PartyAccount, x.PartyInvoiceNo, x.TotalAmount, x.PostingDate, x.Paymentterms, x.DueDate });
-                if (purchaseinvoiceList.Any())
+                try
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.purchaseinvoiceList = purchaseinvoiceList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                    var purchaseinvoiceList = _InvoiceMemoHeaderRepository.GetAll().Select(x => new { x.PartyAccount, x.PartyInvoiceNo, x.TotalAmount, x.PostingDate, x.Paymentterms, x.DueDate });
+                    if (purchaseinvoiceList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.purchaseinvoiceList = purchaseinvoiceList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found" });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found" });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
 
@@ -1262,64 +1342,76 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetUserPermissions/{roleId}/{screenName}")]
-        public IActionResult GetUserPermissions(string roleId, string screenName)
+        public async Task<IActionResult> GetUserPermissions(string roleId, string screenName)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var permission = CommonHelper.GetUserPermissions(roleId, screenName);
-                if (permission == null)
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = null });
+                try
+                {
+                    var permission = CommonHelper.GetUserPermissions(roleId, screenName);
+                    if (permission == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = null });
 
-                var showControl = CommonHelper.GetScreenConfig(permission.OperationCode);
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.Permissions = permission;
-                expdoObj.ShowControl = showControl;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    var showControl = CommonHelper.GetScreenConfig(permission.OperationCode);
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.Permissions = permission;
+                    expdoObj.ShowControl = showControl;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetConfigurationList")]
-        public IActionResult GetConfigurationList()
+        public async Task<IActionResult> GetConfigurationList()
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var ConfigurationList = _configurationRepository.GetAll().Select(x => new { ID = x.Value, TEXT = x.ConfigurationType });
-                if (!ConfigurationList.Any())
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                dynamic expdoObj = new ExpandoObject();
-                expdoObj.ConfigurationList = ConfigurationList;
-                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                try
+                {
+                    var ConfigurationList = _configurationRepository.GetAll().Select(x => new { ID = x.Value, TEXT = x.ConfigurationType });
+                    if (!ConfigurationList.Any())
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.ConfigurationList = ConfigurationList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetLeaveTypeList/{companyCode}")]
-        public IActionResult GetLeaveTypeList(string companyCode)
+        public async Task<IActionResult> GetLeaveTypeList(string companyCode)
         {
-            try
+            var result = await Task.Run(() =>
             {
-                var leaveTypeList = _leaveTyperepository.GetAll().Select(x => new { ID = x.LeaveCode, TEXT = x.LeaveName });
-                if (leaveTypeList.Any())
+                try
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.leaveTypeList = leaveTypeList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                    var leaveTypeList = _leaveTyperepository.GetAll().Select(x => new { ID = x.LeaveCode, TEXT = x.LeaveName });
+                    if (leaveTypeList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.leaveTypeList = leaveTypeList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
     }
 }

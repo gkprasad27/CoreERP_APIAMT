@@ -904,18 +904,29 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblGoodsIssueMaster>();
-            return repo.TblGoodsIssueMaster.AsEnumerable().ToList();
-            //.Where(x =>
-            //{
-            //    Debug.Assert(x.GoodsIssueId != null, "x.VoucherDate != null");
-            //    return
-            //    x.GoodsIssueId != null
-            //           && x.GoodsIssueId.ToString().Contains(searchCriteria.searchCriteria ?? x.GoodsIssueId.ToString())
-            //          //// && Convert.ToDateTime(x.RequisitionNumber.Value) >=
-            //          //Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-            //           ///&& Convert.ToDateTime(x.RequisitionNumber.Value.ToShortDateString()) <=
-            //           //Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
-            //})
+
+            var Company = repo.TblCompany.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            var customer = repo.TblBusinessPartnerAccount.ToList();
+
+            repo.TblGoodsIssueMaster.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+
+                });
+
+
+            return repo.TblGoodsIssueMaster.AsEnumerable().Where(x =>
+            {
+                Debug.Assert(x.GoodsIssueId != null, "x.VoucherDate != null");
+                return
+                x.GoodsIssueId != null
+                       && x.GoodsIssueId.ToString().Contains(searchCriteria.searchCriteria ?? x.GoodsIssueId.ToString())
+                       && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+            }).ToList();
 
         }
 
@@ -926,18 +937,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblProductionMaster>();
-            return repo.TblProductionMaster.AsEnumerable().ToList();
-            //.Where(x =>
-            //{
-            //    Debug.Assert(x.GoodsIssueId != null, "x.VoucherDate != null");
-            //    return
-            //    x.GoodsIssueId != null
-            //           && x.GoodsIssueId.ToString().Contains(searchCriteria.searchCriteria ?? x.GoodsIssueId.ToString())
-            //          //// && Convert.ToDateTime(x.RequisitionNumber.Value) >=
-            //          //Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-            //           ///&& Convert.ToDateTime(x.RequisitionNumber.Value.ToShortDateString()) <=
-            //           //Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
-            //})
+            return repo.TblProductionMaster.AsEnumerable().Where(x =>
+            {
+                Debug.Assert(x.ID != null, "x.ID != null");
+                return
+                x.ID != null
+                       && x.ID.ToString().Contains(searchCriteria.searchCriteria ?? x.ID.ToString())
+                       && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                && Convert.ToDateTime(x.AddDate) <=Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+            }).ToList();
+
 
         }
 
