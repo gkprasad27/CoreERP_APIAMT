@@ -17,7 +17,6 @@ namespace CoreERP.Models
         public string? Rrno { get; set; }
         public string? VehicleNo { get; set; }
         public string? SupplierGinno { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? ReceivedDate { get; set; }
         public string? ReceivedBy { get; set; }
         public string? MovementType { get; set; }
