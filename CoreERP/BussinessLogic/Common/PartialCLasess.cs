@@ -14,7 +14,7 @@ namespace CoreERP.Models
     partial class TblPurchaseOrderDetails
     {
         [NotMapped]
-        public int AvailableQTY { get; set; }
+        public int? AvailableQTY { get; set; }
 
     }
     partial class TblSaleOrderDetail

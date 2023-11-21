@@ -2008,7 +2008,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                               && Convert.ToString(x.PurchaseOrderNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNumber))
                               && Convert.ToDateTime(x.AddDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                               && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
-                }).OrderByDescending(x => x.PurchaseOrderNumber)
+                }).OrderByDescending(x => x.AddDate)
                 .ToList();
         }
         public bool AddPurchaseOrder(TblPurchaseOrder podata, List<TblPurchaseOrderDetails> podetails)
