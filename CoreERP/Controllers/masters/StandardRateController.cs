@@ -7,6 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.DataAccess;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.Helpers.SharedModels;
 
 namespace CoreERP.Controllers.masters
 {
@@ -24,73 +27,69 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("RegisterStandardRate")]
-        public async Task<IActionResult> RegisterStandardRate([FromBody] tblQCMaster sroutput)
+        public async Task<IActionResult> RegisterStandardRate([FromBody] JObject obj)
         {
             var result = await Task.Run(() =>
             {
-                if (sroutput == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
+               var QCMaster = obj["qcdHdr"].ToObject<tblQCMaster>();
+                var QCDetails = obj["qcdDtl"].ToObject<List<tblQCDetails>>();
 
-            try
-            {
+                try
+                {
+                    if (!new TransactionsHelper().AddQCConfig(QCMaster, QCDetails))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.QCMaster = QCMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-                APIResponse apiResponse;
-                _standardrateRepository.Add(sroutput);
-                if (_standardrateRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = sroutput };
-                else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
-                return Ok(apiResponse);
-
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
             });
             return result;
         }
 
         [HttpGet("GetStandardRateList")]
-        public async Task<IActionResult> GetStandardRateList()
+        public async Task<IActionResult> GetStandardRateList([FromBody] SearchCriteria searchCriteria)
         {
             var result = await Task.Run(() =>
             {
                 try
-            {
-                var sropList = CommonHelper.GetStandardRateOutPut();
-                if (sropList.Any())
                 {
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.sropList = sropList;
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                }
+                    var sropList = CommonHelper.GetStandardRateOutPut(searchCriteria);
+                    if (sropList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.sropList = sropList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
             });
             return result;
         }
 
-        [HttpGet("GetQCConfigDetail/{materialcode}")]
-        public async Task<IActionResult> GetSaleOrderDetail(string materialcode)
+        [HttpGet("GetQCConfigDetail/{code}")]
+        public async Task<IActionResult> GetSaleOrderDetail(string code)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    //var transactions = new TransactionsHelper();
-                    var ConfigDetail = GetQCMastersById(materialcode);
+                    var ConfigDetail = GetQCMastersById(code);
                     if (ConfigDetail == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.QCConfigDetailMaster = ConfigDetail;
-                    expdoObj.QCConfigDetail = GetQCDetails(materialcode);
+                    expdoObj.QCConfigDetail = GetQCDetails(code);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -102,24 +101,19 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        public List<tblQCDetails> GetQCDetails(string materialCode)
+        public List<tblQCDetails> GetQCDetails(string Code)
         {
             using var repo = new Repository<tblQCDetails>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
 
-            //repo.TblSaleOrderDetail.ToList().ForEach(c =>
-            //{
-            //    c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
-            //    c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
-            //});
-            return repo.tblQCDetails.Where(cd => cd.MaterialCode == materialCode).ToList();
+            return repo.tblQCDetails.Where(cd => cd.Code == Code).ToList();
 
         }
-        public tblQCMaster GetQCMastersById(string MaterialCode)
+        public tblQCMaster GetQCMastersById(string Code)
         {
             using var repo = new Repository<tblQCMaster>();
             return repo.tblQCMaster
-                .FirstOrDefault(x => x.MaterialCode == MaterialCode);
+                .FirstOrDefault(x => x.Code == Code);
         }
 
 

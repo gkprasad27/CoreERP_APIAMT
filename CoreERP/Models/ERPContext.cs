@@ -6129,7 +6129,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<tblQCDetails>(entity =>
             {
-                entity.HasKey(e => e.Id);
+                entity.HasKey(e => e.ID);
                 entity.ToTable("tbl_QCDetails");
 
                 entity.Property(e => e.Uom).HasColumnName("UOM");

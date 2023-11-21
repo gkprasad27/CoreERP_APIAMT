@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
 {
     public partial class tblQCDetails
     {
-        public string Id { get; set; }
+        public int ID { get; set; }
         public string? Code { get; set; }
         public string? Parameter { get; set; }
         public string? Uom { get; set; }
@@ -17,6 +18,12 @@ namespace CoreERP.Models
         public bool? IsActive { get; set; }
         public string? MaterialCode { get; set; }
         public string? TagName { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime EditDate { get; set; }
+        public string? EditWho { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime AddDate { get; set; }
+        public string? AddWho { get; set; }
 
     }
 }

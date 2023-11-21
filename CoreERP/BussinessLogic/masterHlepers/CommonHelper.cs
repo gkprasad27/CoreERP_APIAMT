@@ -1,4 +1,5 @@
 ﻿using CoreERP.DataAccess;
+using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
@@ -72,7 +73,7 @@ namespace CoreERP
             });
             return result;
         }
-       
+
         public List<TblPaymentTermDetails> GetTblPaymentTermDetails(string code)
         {
             using var repo = new Repository<TblPaymentTermDetails>();
@@ -464,18 +465,25 @@ namespace CoreERP
             });
             return result;
         }
-        public static IEnumerable<tblQCMaster> GetStandardRateOutPut()
+        public static IEnumerable<tblQCMaster> GetStandardRateOutPut(SearchCriteria searchCriteria)
         {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-30), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-30);
+            searchCriteria.ToDate ??= DateTime.Today;
+
             using var repo = new Repository<tblQCMaster>();
-            //var uom = repo.TblUnit.ToList();
 
-            var result = repo.tblQCMaster.ToList();
+            return repo.tblQCMaster.AsEnumerable()
+                .Where(x =>
+                {
 
-            //result.ForEach(c =>
-            //{
-            //    c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
-            //});
-            return result;
+                    // Debug.Assert(x.CreatedDate != null, "x.AddDate != null");
+                    return Convert.ToString(x.MaterialCode) != null
+                              && Convert.ToString(x.MaterialCode).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.MaterialCode))
+                              && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                              && Convert.ToDateTime(x.EditDate.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                }).OrderByDescending(x => x.AddDate)
+                .ToList();
         }
 
         public static IEnumerable<TblCostingnumberAssigntoObject> GetCostingnumberAssigntoObject()
@@ -1546,18 +1554,18 @@ namespace CoreERP
                 using (Repository<TblFieldsConfiguration> _repo = new Repository<TblFieldsConfiguration>())
                 {
                     TblFieldsConfiguration screenConfig = new TblFieldsConfiguration();
-                  screenConfig=   _repo.TblFieldsConfiguration.Where(m => m.OperationCode == operationCode).FirstOrDefault();
-                    if (screenConfig!=null)
+                    screenConfig = _repo.TblFieldsConfiguration.Where(m => m.OperationCode == operationCode).FirstOrDefault();
+                    if (screenConfig != null)
                         return screenConfig.ShowControl;
                     else
-                      return  null;
+                        return null;
                 };
             }
-            catch ( NullReferenceException Exception)
+            catch (NullReferenceException Exception)
             {
                 return null;
             }
-            catch ( Exception)
+            catch (Exception)
             {
                 return null;
             }

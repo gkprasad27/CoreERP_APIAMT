@@ -944,7 +944,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 x.ID != null
                        && x.ID.ToString().Contains(searchCriteria.searchCriteria ?? x.ID.ToString())
                        && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                && Convert.ToDateTime(x.AddDate) <=Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                && Convert.ToDateTime(x.AddDate) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
             }).ToList();
 
 
@@ -2105,7 +2105,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.PurchaseOrderNumber == id);
         }
 
-       
+
         public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(string number)
         {
             using var repo = new Repository<TblPurchaseOrderDetails>();
@@ -2280,7 +2280,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 var totalamount = repo.TblGoodsReceiptMaster.Where(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo).FirstOrDefault();
                 grdata.EditDate = DateTime.Now;
-                grdata.TotalAmount = (totalamount.TotalAmount??0)  + (grdata.TotalAmount);
+                grdata.TotalAmount = (totalamount.TotalAmount ?? 0) + (grdata.TotalAmount);
                 context.TblGoodsReceiptMaster.Update(grdata);
                 context.SaveChanges();
             }
@@ -2689,6 +2689,65 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 TblApi_Error_Log icdata = new TblApi_Error_Log();
                 using var context1 = new ERPContext();
                 icdata.ScreenName = "Sale Order";
+                icdata.ErrorID = ex.HResult.ToString();
+                icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                context1.TblApi_Error_Log.Add(icdata);
+                context1.SaveChanges();
+
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public bool AddQCConfig(tblQCMaster QCMaster, List<tblQCDetails> QCDetails)
+        {
+
+            using var repo = new Repository<tblQCMaster>();
+            List<tblQCDetails> QCDetailsNew;
+            List<tblQCDetails> QCDetailsExist;
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+
+            try
+            {
+                if (repo.tblQCMaster.Any(v => v.Code == QCMaster.Code))
+                {
+                    context.tblQCMaster.Update(QCMaster);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    context.tblQCMaster.Add(QCMaster);
+                    context.SaveChanges();
+                }
+
+                QCDetails.ForEach(x =>
+                {
+                    x.Code = QCMaster.Code;
+                    x.Type = QCMaster.Type;
+                    x.MaterialCode = QCMaster.MaterialCode;
+                });
+                QCDetailsExist = QCDetails.Where(x => x.ID >= 0).ToList();
+                QCDetailsNew = QCDetails.Where(x => x.ID == 0).ToList();
+
+                if (QCDetailsExist.Count > 0)
+                {
+                    context.tblQCDetails.UpdateRange(QCDetailsExist);
+                }
+                else
+                {
+                    context.tblQCDetails.AddRange(QCDetailsNew);
+                }
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                TblApi_Error_Log icdata = new TblApi_Error_Log();
+                using var context1 = new ERPContext();
+                icdata.ScreenName = "QC Config";
                 icdata.ErrorID = ex.HResult.ToString();
                 icdata.ErrorMessage = ex.InnerException.Message.ToString();
                 context1.TblApi_Error_Log.Add(icdata);
