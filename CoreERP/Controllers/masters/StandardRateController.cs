@@ -52,7 +52,7 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetStandardRateList")]
+        [HttpPost("GetStandardRateList")]
         public async Task<IActionResult> GetStandardRateList([FromBody] SearchCriteria searchCriteria)
         {
             var result = await Task.Run(() =>
