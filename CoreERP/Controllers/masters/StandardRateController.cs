@@ -126,7 +126,7 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetQCConfigDetail/{materialcode}")]
+        [HttpGet("GetSaleOrderDetailbymaterialcode/{materialcode}")]
         public async Task<IActionResult> GetSaleOrderDetailbymaterialcode(string materialcode)
         {
             var result = await Task.Run(() =>
