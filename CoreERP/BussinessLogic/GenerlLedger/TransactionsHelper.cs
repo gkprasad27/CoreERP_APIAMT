@@ -937,15 +937,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblProductionMaster>();
-            return repo.TblProductionMaster.AsEnumerable().Where(x =>
-            {
-                Debug.Assert(x.ID != null, "x.ID != null");
-                return
-                x.ID != null
-                       && x.ID.ToString().Contains(searchCriteria.searchCriteria ?? x.ID.ToString())
-                       && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                && Convert.ToDateTime(x.AddDate) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
-            }).ToList();
+
+            return repo.TblProductionMaster.AsEnumerable()
+                .Where(x =>
+                {
+
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.ID) != null
+                              && Convert.ToString(x.ID).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.ID))
+                              && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                              && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                }).OrderByDescending(x => x.AddDate)
+                .ToList();
 
 
         }
