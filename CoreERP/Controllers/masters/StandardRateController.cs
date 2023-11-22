@@ -52,6 +52,31 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpPost("RegisterQCResults")]
+        public async Task<IActionResult> RegisterQCResults([FromBody] JObject obj)
+        {
+            var result = await Task.Run(() =>
+            {
+                var QCResults = obj["qcdDtl"].ToObject<List<tblQCResults>>();
+
+                try
+                {
+                    if (!new TransactionsHelper().AddQCResult(QCResults))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.QCResults = QCResults;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpPost("GetStandardRateList")]
         public async Task<IActionResult> GetStandardRateList([FromBody] SearchCriteria searchCriteria)
         {
@@ -99,6 +124,35 @@ namespace CoreERP.Controllers.masters
                 }
             });
             return result;
+        }
+
+        [HttpGet("GetQCConfigDetail/{materialcode}")]
+        public async Task<IActionResult> GetSaleOrderDetailbymaterialcode(string materialcode)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.QCConfigDetail = GetQCDetail(materialcode);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        public List<tblQCDetails> GetQCDetail(string materialcode)
+        {
+            using var repo = new Repository<tblQCDetails>();
+            var MaterialCodes = repo.TblMaterialMaster.ToList();
+
+            return repo.tblQCDetails.Where(cd => cd.MaterialCode == materialcode).ToList();
+
         }
 
         public List<tblQCDetails> GetQCDetails(string Code)

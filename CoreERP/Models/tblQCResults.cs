@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class tblQCResults
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string? Result { get; set; }
         public string? Parameter { get; set; }
         public string? Uom { get; set; }

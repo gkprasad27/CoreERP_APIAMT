@@ -2761,6 +2761,49 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
+        public bool AddQCResult(List<tblQCResults> QCResults)
+        {
+
+            using var repo = new Repository<tblQCResults>();
+            List<tblQCResults> QCDetailsNew;
+            List<tblQCResults> QCDetailsExist;
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+
+            try
+            {
+              
+                QCDetailsExist = QCResults.Where(x => x.Id >= 0).ToList();
+                QCDetailsNew = QCResults.Where(x => x.Id == 0).ToList();
+
+                if (QCDetailsExist.Count > 0)
+                {
+                    context.tblQCResults.UpdateRange(QCDetailsExist);
+                }
+                else
+                {
+                    context.tblQCResults.AddRange(QCDetailsNew);
+                }
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                TblApi_Error_Log icdata = new TblApi_Error_Log();
+                using var context1 = new ERPContext();
+                icdata.ScreenName = "QC Results";
+                icdata.ErrorID = ex.HResult.ToString();
+                icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                context1.TblApi_Error_Log.Add(icdata);
+                context1.SaveChanges();
+
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
         #endregion
 
     }
