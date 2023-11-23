@@ -19,6 +19,7 @@ namespace CoreERP.Controllers.masters
     {
         private readonly IRepository<tblQCMaster> _standardrateRepository;
         private readonly IRepository<tblQCDetails> _qcdetails;
+        private readonly IRepository<TblProductionDetails> _proddetails;
 
         public StandardRateController(IRepository<tblQCMaster> standardrateRepository, IRepository<tblQCDetails> tblQCDetails)
         {
@@ -57,11 +58,12 @@ namespace CoreERP.Controllers.masters
         {
             var result = await Task.Run(() =>
             {
-                var QCResults = obj["qcdDtl"].ToObject<List<tblQCResults>>();
+                var QCResults = obj["qtyResult"].ToObject<List<tblQCResults>>();
+                var QcConfig = obj["qtyDtl"].ToObject<List<TblInspectionCheckMaster>>();
 
                 try
                 {
-                    if (!new TransactionsHelper().AddQCResult(QCResults))
+                    if (!new TransactionsHelper().AddQCResult(QCResults, QcConfig))
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.QCResults = QCResults;

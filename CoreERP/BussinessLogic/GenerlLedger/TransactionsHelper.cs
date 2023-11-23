@@ -1115,7 +1115,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 context.TblProductionDetails.AddRange(ProductionDetails);
 
-                goodsOrderDetailsExist = gibDetails.Where(x => x.Id >= 0).ToList();
+                goodsOrderDetailsExist = gibDetails.Where(x => x.Id > 0).ToList();
                 goodsOrderDetailsNew = gibDetails.Where(x => x.Id == 0).ToList();
 
                 if (goodsOrderDetailsExist.Count > 0)
@@ -1251,7 +1251,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 x.BomKey = masternumber;
             });
 
-            prDetailsExist = bomDetails.Where(x => x.Id >= 0).ToList();
+            prDetailsExist = bomDetails.Where(x => x.Id > 0).ToList();
             prDetailsNew = bomDetails.Where(x => x.Id == 0).ToList();
             try
             {
@@ -1621,7 +1621,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 x.PurchaseRequisitionNumber = masternumber;
             });
 
-            prDetailsExist = reqdetails.Where(x => x.Id >= 0).ToList();
+            prDetailsExist = reqdetails.Where(x => x.Id > 0).ToList();
             prDetailsNew = reqdetails.Where(x => x.Id == 0).ToList();
 
             try
@@ -1831,7 +1831,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 x.QuotationNumber = masternumber;
             });
 
-            prDetailsExist = qsdetails.Where(x => x.Id >= 0).ToList();
+            prDetailsExist = qsdetails.Where(x => x.Id > 0).ToList();
             prDetailsNew = qsdetails.Where(x => x.Id == 0).ToList();
 
 
@@ -2077,7 +2077,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     x.PurchaseOrderNumber = purchaseordernumber;
                 });
-                poDetailsExist = podetails.Where(x => x.Id >= 0).ToList();
+                poDetailsExist = podetails.Where(x => x.Id > 0).ToList();
                 poDetailsNew = podetails.Where(x => x.Id == 0).ToList();
 
 
@@ -2385,7 +2385,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
 
-                    icdata.Status = "QC Started";
+                    //icdata.Status = "QC Started";
                     icdata.InspectionCheckNo = masternumber;
                     context.TblInspectionCheckMaster.Add(icdata);
                     context.SaveChanges();
@@ -2394,12 +2394,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (string.IsNullOrEmpty(masternumber))
                     masternumber = icdata.InspectionCheckNo;
 
-                var production = repo.TblProductionDetails.Where(x => x.SaleOrderNumber == icdata.SaleorderNo);
+                var production = repo.TblProductionDetails.Where(x => x.SaleOrderNumber == icdata.saleOrderNumber);
 
                 icdetails.ForEach(x =>
                 {
                     x.InspectionCheckNo = icdata.InspectionCheckNo;
-
+                    x.Status = icdata.Status;
+                    x.Description = icdata.description;
+                    x.InspectionType = icdata.InspectionType;
+                    x.CompletionDate = icdata.completionDate;
+                    x.CompletedBy = icdata.completedBy;
+                    x.Status = icdata.Status;
                     foreach (var item in production)
                     {
                         item.Status = x.Status;
@@ -2409,7 +2414,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.TblProductionDetails.UpdateRange(production);
 
 
-                prDetailsExist = icdetails.Where(x => x.Id >= 0).ToList();
+                prDetailsExist = icdetails.Where(x => x.Id > 0).ToList();
                 prDetailsNew = icdetails.Where(x => x.Id == 0).ToList();
                 if (prDetailsExist.Count > 0)
                 {
@@ -2671,7 +2676,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     x.SaleOrderNo = (SaleOrderNumber);
                 });
-                saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID >= 0).ToList();
+                saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID > 0).ToList();
                 saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
 
                 if (saleOrderDetailsExist.Count > 0)
@@ -2730,7 +2735,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.Type = QCMaster.Type;
                     x.MaterialCode = QCMaster.MaterialCode;
                 });
-                QCDetailsExist = QCDetails.Where(x => x.ID >= 0).ToList();
+                QCDetailsExist = QCDetails.Where(x => x.ID > 0).ToList();
                 QCDetailsNew = QCDetails.Where(x => x.ID == 0).ToList();
 
                 if (QCDetailsExist.Count > 0)
@@ -2761,32 +2766,46 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
-        public bool AddQCResult(List<tblQCResults> QCResults)
+        public bool AddQCResult(List<tblQCResults> QCResults, List<TblInspectionCheckMaster> QCMaster)
         {
 
             using var repo = new Repository<tblQCResults>();
             List<tblQCResults> QCDetailsNew;
             List<tblQCResults> QCDetailsExist;
             using var context = new ERPContext();
-            using var dbtrans = context.Database.BeginTransaction();
 
             try
             {
-              
-                QCDetailsExist = QCResults.Where(x => x.Id >= 0).ToList();
-                QCDetailsNew = QCResults.Where(x => x.Id == 0).ToList();
 
-                if (QCDetailsExist.Count > 0)
+                foreach (var item in QCMaster)
                 {
-                    context.tblQCResults.UpdateRange(QCDetailsExist);
-                }
-                else
-                {
-                    context.tblQCResults.AddRange(QCDetailsNew);
-                }
-                context.SaveChanges();
+                    foreach (var item1 in QCResults)
+                    {
+                        item1.MaterialCode = item.MaterialCode;
+                        item1.TagName = item.productionTag;
+                        item1.saleOrderNumber = item.saleOrderNumber;
+                        item1.Id = 0;
+                    }
 
-                dbtrans.Commit();
+
+                    QCDetailsExist = QCResults.Where(x => x.Id > 0).ToList();
+                    QCDetailsNew = QCResults.Where(x => x.Id == 0).ToList();
+
+                    if (QCDetailsExist.Count > 0)
+                    {
+                        context.tblQCResults.UpdateRange(QCDetailsExist);
+                    }
+                    else
+                    {
+                        context.tblQCResults.AddRange(QCDetailsNew);
+                    }
+                    using var dbtrans = context.Database.BeginTransaction();
+                    context.SaveChanges();
+                    dbtrans.Commit();
+                    QCDetailsNew=new List<tblQCResults>() ;
+                    QCDetailsExist =new List<tblQCResults>();
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -2799,7 +2818,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context1.TblApi_Error_Log.Add(icdata);
                 context1.SaveChanges();
 
-                dbtrans.Rollback();
+                //dbtrans.Rollback();
                 throw;
             }
         }

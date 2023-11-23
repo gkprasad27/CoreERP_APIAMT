@@ -3517,7 +3517,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.EditWho).HasMaxLength(50);
 
-                entity.Property(e => e.SaleorderNo).HasMaxLength(5);
+                entity.Property(e => e.saleOrderNumber).HasMaxLength(5);
 
                 entity.Property(e => e.ProfitCenter).HasMaxLength(5);
 
@@ -3534,13 +3534,13 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.InspectionCheckNo).HasMaxLength(50);
 
-                entity.Property(e => e.ProductTag).HasMaxLength(50);
+                entity.Property(e => e.productionTag).HasMaxLength(50);
 
                 entity.Property(e => e.MaterialCode).HasMaxLength(50);
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.Property(e => e.SaleorderNo).HasMaxLength(50);
+                entity.Property(e => e.saleOrderNumber).HasMaxLength(50);
 
             });
 

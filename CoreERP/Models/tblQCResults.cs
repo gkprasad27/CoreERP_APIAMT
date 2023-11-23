@@ -17,6 +17,7 @@ namespace CoreERP.Models
         public bool? IsActive { get; set; }
         public string? MaterialCode { get; set; }
         public string? TagName { get; set; }
+        public string? saleOrderNumber { get; set; }
 
     }
 }
