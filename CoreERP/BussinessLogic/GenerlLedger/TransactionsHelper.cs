@@ -967,6 +967,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.SaleOrderNumber == GoodsIssueId);
         }
 
+        public TblInspectionCheckMaster GetQcIssueMasterById(string GoodsIssueId)
+        {
+            using var repo = new Repository<TblInspectionCheckMaster>();
+            return repo.TblInspectionCheckMaster
+                .FirstOrDefault(x => x.saleOrderNumber == GoodsIssueId);
+        }
+
         public List<TblGoodsIssueDetails> GetGoodsIssueDetails(string GoodsIssueId)
         {
             using var repo = new Repository<TblGoodsIssueDetails>();
@@ -1005,6 +1012,36 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == item.MaterialCode)?.Description;
             }
         });
+
+
+            return tblProduction.ToList();
+
+        }
+
+        public List<TblInspectionCheckDetails> GetQcIssueDetails(string GoodsIssueId, string Materialcode)
+        {
+            using var repo = new ERPContext();
+            var material = new List<TblMaterialMaster>();
+            var tblProduction = new List<TblInspectionCheckDetails>();
+
+            if (!string.IsNullOrEmpty(Materialcode))
+            {
+                tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
+                material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
+            }
+            else
+            {
+                tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId).ToList();
+                material = repo.TblMaterialMaster.ToList();
+            }
+
+            repo.TblInspectionCheckDetails.ToList().ForEach(c =>
+            {
+                foreach (var item in tblProduction)
+                {
+                    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == item.MaterialCode)?.Description;
+                }
+            });
 
 
             return tblProduction.ToList();
@@ -1148,26 +1185,55 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public bool AddProdIssue(List<TblProductionDetails> prodDetails)
         {
-
+            string masternumber = string.Empty;
             int lineno = 1;
-
+            using var repo = new Repository<TblInspectionCheckMaster>();
+            var InspectionCheckMaster = new TblInspectionCheckMaster();
+            var InspectionCheckDetails = new List<TblInspectionCheckDetails>();
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             using var repogim = new Repository<TblProductionMaster>();
-
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
 
             try
             {
-                //if (repogim.TblProductionMaster.Any(v => v.SaleOrderNumber == prodmaster.SaleOrderNumber))
-                //{
-                //    prodmaster.Status = "Production Released";
-                //    context.TblProductionMaster.Update(prodmaster);
+                if (repogim.TblInspectionCheckMaster.Any(v => v.saleOrderNumber == prodDetails.Select(x => x.SaleOrderNumber).FirstOrDefault()))
+                {
+                    InspectionCheckMaster.Status = "Production Start";
+                    context.TblInspectionCheckMaster.Update(InspectionCheckMaster);
 
-                //    context.SaveChanges();
-                //}
+                    context.SaveChanges();
+
+                }
+                else
+                {
+                    if (Pcenter != null)
+                    {
+                        Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                        context.Counters.UpdateRange(Pcenter);
+                        context.SaveChanges();
+                        masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                    }
+
+                    //icdata.Status = "QC Started";
+                    InspectionCheckMaster.InspectionCheckNo = masternumber;
+                    InspectionCheckMaster.saleOrderNumber = prodDetails.Select(x => x.SaleOrderNumber).FirstOrDefault();
+                    InspectionCheckMaster.completionDate = System.DateTime.Now;
+                    context.TblInspectionCheckMaster.Add(InspectionCheckMaster);
+                    context.SaveChanges();
+                }
+                foreach (var item in prodDetails)
+                {
+                    InspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.Status, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber });
+
+                }
+                var insp = repo.TblInspectionCheckDetails.Where(x => x.InspectionCheckNo == masternumber).FirstOrDefault();
+                if (insp == null)
+                    context.TblInspectionCheckDetails.AddRange(InspectionCheckDetails);
+                else
+                    context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
 
                 context.TblProductionDetails.UpdateRange(prodDetails);
-
                 context.SaveChanges();
 
                 dbtrans.Commit();
@@ -2735,6 +2801,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.Type = QCMaster.Type;
                     x.MaterialCode = QCMaster.MaterialCode;
                 });
+
                 QCDetailsExist = QCDetails.Where(x => x.ID > 0).ToList();
                 QCDetailsNew = QCDetails.Where(x => x.ID == 0).ToList();
 
@@ -2802,8 +2869,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     using var dbtrans = context.Database.BeginTransaction();
                     context.SaveChanges();
                     dbtrans.Commit();
-                    QCDetailsNew=new List<tblQCResults>() ;
-                    QCDetailsExist =new List<tblQCResults>();
+                    QCDetailsNew = new List<tblQCResults>();
+                    QCDetailsExist = new List<tblQCResults>();
                 }
 
                 return true;

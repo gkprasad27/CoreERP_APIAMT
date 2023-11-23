@@ -751,6 +751,31 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetQCissueDetail/{GSNumber}/{Materialcode}")]
+        public async Task<IActionResult> GetQCissueDetail(string GSNumber, string Materialcode = null)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    var tagsData = transactions.GetQcIssueMasterById(GSNumber);
+                    if (tagsData == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.tagsData = tagsData;
+                    expdoObj.tagsDetail = new TransactionsHelper().GetQcIssueDetails(GSNumber, Materialcode);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
 
         [HttpPost("AddGoodsissue")]
         public async Task<IActionResult> AddGoodsissue([FromBody] JObject obj)

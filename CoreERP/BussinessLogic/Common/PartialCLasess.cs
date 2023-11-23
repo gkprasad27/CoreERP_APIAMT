@@ -108,7 +108,10 @@ namespace CoreERP.Models
         [NotMapped]
         public string MaterialName { get; set; }
     }
-
+    partial class TblInspectionCheckDetails
+    {
+        public string MaterialName { get; set; }
+    }
     partial class TblGrnassignment
     {
         [NotMapped]
