@@ -1187,17 +1187,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             string masternumber = string.Empty;
             int lineno = 1;
-            using var repo = new Repository<TblInspectionCheckMaster>();
+            using var repo = new Repository <TblInspectionCheckMaster>();
             var InspectionCheckMaster = new TblInspectionCheckMaster();
             var InspectionCheckDetails = new List<TblInspectionCheckDetails>();
             using var context = new ERPContext();
+            string saleordernumber = prodDetails.FirstOrDefault().SaleOrderNumber;
             using var dbtrans = context.Database.BeginTransaction();
             using var repogim = new Repository<TblProductionMaster>();
             var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
-
+            InspectionCheckMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber).FirstOrDefault();
             try
             {
-                if (repogim.TblInspectionCheckMaster.Any(v => v.saleOrderNumber == prodDetails.Select(x => x.SaleOrderNumber).FirstOrDefault()))
+                if (InspectionCheckMaster!=null)
                 {
                     InspectionCheckMaster.Status = "Production Start";
                     context.TblInspectionCheckMaster.Update(InspectionCheckMaster);
@@ -1214,7 +1215,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.SaveChanges();
                         masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
-
+                    if (string.IsNullOrEmpty(masternumber))
+                        masternumber = InspectionCheckMaster.InspectionCheckNo;
                     //icdata.Status = "QC Started";
                     InspectionCheckMaster.InspectionCheckNo = masternumber;
                     InspectionCheckMaster.saleOrderNumber = prodDetails.Select(x => x.SaleOrderNumber).FirstOrDefault();
@@ -1222,6 +1224,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     context.TblInspectionCheckMaster.Add(InspectionCheckMaster);
                     context.SaveChanges();
                 }
+
+              
                 foreach (var item in prodDetails)
                 {
                     InspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.Status, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber });
