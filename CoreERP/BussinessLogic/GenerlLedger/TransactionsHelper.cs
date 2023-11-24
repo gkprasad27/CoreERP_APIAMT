@@ -1228,7 +1228,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
               
                 foreach (var item in prodDetails)
                 {
-                    InspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.Status, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber });
+                    InspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber });
 
                 }
                 var insp = repo.TblInspectionCheckDetails.Where(x => x.InspectionCheckNo == masternumber).FirstOrDefault();
