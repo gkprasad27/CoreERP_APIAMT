@@ -1048,6 +1048,36 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         }
 
+        public List<tblQCResults> GetQcDetails(string GoodsIssueId, string Materialcode)
+        {
+            using var repo = new ERPContext();
+           // var material = new List<TblMaterialMaster>();
+            var tblProduction = new List<tblQCResults>();
+
+            if (!string.IsNullOrEmpty(Materialcode))
+            {
+                tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
+                //material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
+            }
+            //else
+            //{
+            //    tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId).ToList();
+            //    material = repo.TblMaterialMaster.ToList();
+            //}
+
+            //repo.TblInspectionCheckDetails.ToList().ForEach(c =>
+            //{
+            //    foreach (var item in tblProduction)
+            //    {
+            //        c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == item.MaterialCode)?.Description;
+            //    }
+            //});
+
+
+            return tblProduction.ToList();
+
+        }
+
         public bool AddGoodsIssue(TblGoodsIssueMaster gimaster, List<TblGoodsIssueDetails> gibDetails)
         {
 
@@ -2672,6 +2702,26 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.SaleOrderNo == saleOrderNo);
         }
 
+
+        public TblSaleOrderMaster GetSaleOrderMaster(string saleOrderNo)
+        {
+            using var repo = new Repository<TblSaleOrderMaster>();
+
+            var Company = repo.TblCompany.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            var customer = repo.TblBusinessPartnerAccount.ToList();
+
+            repo.TblSaleOrderMaster.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
+
+                });
+            return repo.TblSaleOrderMaster
+                .FirstOrDefault(x => x.SaleOrderNo == saleOrderNo);
+        }
         public List<TblSaleOrderDetail> GetSaleOrdersDetails(string saleOrderNo)
         {
             using var repo = new Repository<TblSaleOrderDetail>();

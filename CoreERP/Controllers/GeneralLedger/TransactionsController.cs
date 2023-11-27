@@ -776,6 +776,31 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetQCReportDetail/{SaleorderNumber}/{Materialcode}")]
+        public async Task<IActionResult> GetQCReportDetail(string SaleorderNumber, string Materialcode = null)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    var tagsData = transactions.GetSaleOrderMaster(SaleorderNumber);
+                    if (tagsData == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.SaleorderMaster = tagsData;
+                    expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
 
         [HttpPost("AddGoodsissue")]
         public async Task<IActionResult> AddGoodsissue([FromBody] JObject obj)
