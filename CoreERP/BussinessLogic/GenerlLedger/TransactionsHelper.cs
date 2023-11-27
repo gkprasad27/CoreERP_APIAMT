@@ -1056,7 +1056,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             if (!string.IsNullOrEmpty(Materialcode))
             {
-                tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
+                tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type== "Inspection").ToList();
                 //material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
             }
             //else
