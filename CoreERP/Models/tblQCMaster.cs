@@ -17,5 +17,6 @@ namespace CoreERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime AddDate { get; set; }
         public string? AddWho { get; set; }
+        public string? InspectionType { get; set; }
     }
 }

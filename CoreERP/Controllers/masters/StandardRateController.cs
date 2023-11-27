@@ -32,7 +32,7 @@ namespace CoreERP.Controllers.masters
         {
             var result = await Task.Run(() =>
             {
-               var QCMaster = obj["qcdHdr"].ToObject<tblQCMaster>();
+                var QCMaster = obj["qcdHdr"].ToObject<tblQCMaster>();
                 var QCDetails = obj["qcdDtl"].ToObject<List<tblQCDetails>>();
 
                 try
@@ -128,15 +128,23 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetSaleOrderDetailbymaterialcode/{materialcode}")]
-        public async Task<IActionResult> GetSaleOrderDetailbymaterialcode(string materialcode)
+        [HttpGet("GetSaleOrderDetailbymaterialcode/{materialcode}/{tagname}")]
+        public async Task<IActionResult> GetSaleOrderDetailbymaterialcode(string materialcode,string tagname)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.QCConfigDetail = GetQCDetail(materialcode);
+                    var tagsData = GetQCResult(materialcode, tagname);
+                    if (tagsData.Count==0)
+                    {
+                        var tagsData1 = GetQCDetail(materialcode);
+                        expdoObj.QCConfigDetail = tagsData1;
+                    }
+                    else
+                        expdoObj.QCConfigDetail = tagsData;
+
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -151,9 +159,18 @@ namespace CoreERP.Controllers.masters
         public List<tblQCDetails> GetQCDetail(string materialcode)
         {
             using var repo = new Repository<tblQCDetails>();
-            var MaterialCodes = repo.TblMaterialMaster.ToList();
+            //var MaterialCodes = repo.TblMaterialMaster.ToList();
 
             return repo.tblQCDetails.Where(cd => cd.MaterialCode == materialcode).ToList();
+
+        }
+
+        public List<tblQCResults> GetQCResult(string materialcode,string tagname)
+        {
+            using var repo = new Repository<tblQCResults>();
+            //var MaterialCodes = repo.TblMaterialMaster.ToList();
+
+            return repo.tblQCResults.Where(cd => cd.MaterialCode == materialcode && cd.TagName== tagname && cd.Type == "Inspection").ToList();
 
         }
 
