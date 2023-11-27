@@ -1051,12 +1051,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<tblQCResults> GetQcDetails(string GoodsIssueId, string Materialcode)
         {
             using var repo = new ERPContext();
-           // var material = new List<TblMaterialMaster>();
+            // var material = new List<TblMaterialMaster>();
             var tblProduction = new List<tblQCResults>();
 
             if (!string.IsNullOrEmpty(Materialcode))
             {
-                tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type== "Inspection").ToList();
+                tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type == "Inspection").ToList();
                 //material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
             }
             //else
@@ -1217,9 +1217,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             string masternumber = string.Empty;
             int lineno = 1;
-            using var repo = new Repository <TblInspectionCheckMaster>();
+            using var repo = new Repository<TblInspectionCheckMaster>();
             var InspectionCheckMaster = new TblInspectionCheckMaster();
             var InspectionCheckDetails = new List<TblInspectionCheckDetails>();
+            List<TblInspectionCheckDetails> prDetailsNew;
+            List<TblInspectionCheckDetails> prDetailsExist;
             using var context = new ERPContext();
             string saleordernumber = prodDetails.FirstOrDefault().SaleOrderNumber;
             using var dbtrans = context.Database.BeginTransaction();
@@ -1228,7 +1230,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             InspectionCheckMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber).FirstOrDefault();
             try
             {
-                if (InspectionCheckMaster!=null)
+                if (InspectionCheckMaster != null)
                 {
                     InspectionCheckMaster.Status = "Production Start";
                     context.TblInspectionCheckMaster.Update(InspectionCheckMaster);
@@ -1255,17 +1257,21 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     context.SaveChanges();
                 }
 
-              
                 foreach (var item in prodDetails)
                 {
-                    InspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber });
+                    InspectionCheckDetails = repo.TblInspectionCheckDetails.Where(x => x.InspectionCheckNo == masternumber && x.productionTag == item.ProductionTag).ToList();
+                    if (InspectionCheckDetails.Count == 0)
+                        InspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber });
 
                 }
-                var insp = repo.TblInspectionCheckDetails.Where(x => x.InspectionCheckNo == masternumber).FirstOrDefault();
-                if (insp == null)
-                    context.TblInspectionCheckDetails.AddRange(InspectionCheckDetails);
-                else
+                prDetailsExist = InspectionCheckDetails.Where(x => x.Id > 0).ToList();
+                prDetailsNew = InspectionCheckDetails.Where(x => x.Id == 0).ToList();
+                if (prDetailsExist.Count > 0)
                     context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
+                else
+                    context.TblInspectionCheckDetails.AddRange(InspectionCheckDetails);
+
+
 
                 context.TblProductionDetails.UpdateRange(prodDetails);
                 context.SaveChanges();
