@@ -2128,42 +2128,38 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             List<TblPurchaseOrderDetails> poDetailsExist;
             using var dbtrans = context.Database.BeginTransaction();
             string purchaseordernumber = string.Empty;
-            //using var repo = new Repository<ProfitCenters>();
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == podata.ProfitCenter).FirstOrDefault();
 
-
-
-            if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
-            {
-                podata.Status = "Created";
-                podata.EditDate = DateTime.Now;
-                context.TblPurchaseOrder.Update(podata);
-                context.SaveChanges();
-            }
-            else
-            {
-                //if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == purchaseordernumber))
-                //    throw new Exception("Purchase Order Number " + purchaseordernumber + " Already Exists.");
-
-                if (Pcenter != null)
-                {
-                    Pcenter.PONumber = (Pcenter.PONumber + 1);
-                    context.ProfitCenters.UpdateRange(Pcenter);
-                    context.SaveChanges();
-                    purchaseordernumber = Pcenter.POPrefix + "-" + Pcenter.PONumber;
-                }
-
-                podata.Status = "Created";
-                podata.AddDate = DateTime.Now;
-                podata.PurchaseOrderNumber = purchaseordernumber;
-                context.TblPurchaseOrder.Add(podata);
-                context.SaveChanges();
-            }
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == podata.SaleOrderNo);
             var PRdata = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == podata.SaleOrderNo);
-
             try
             {
+                if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
+                {
+                    podata.Status = "PO Created";
+                    podata.EditDate = DateTime.Now;
+                    context.TblPurchaseOrder.Update(podata);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    if (Pcenter != null)
+                    {
+                        Pcenter.PONumber = (Pcenter.PONumber + 1);
+                        context.ProfitCenters.UpdateRange(Pcenter);
+                        context.SaveChanges();
+                        purchaseordernumber = Pcenter.POPrefix + "-" + Pcenter.PONumber;
+                    }
+
+                    podata.Status = "PO Created";
+                    podata.AddDate = DateTime.Now;
+                    podata.PurchaseOrderNumber = purchaseordernumber;
+                    podata.CustPONumber = SaleOrder.PONumber;
+                    context.TblPurchaseOrder.Add(podata);
+                    context.SaveChanges();
+                }
+
+
                 if (SaleOrder != null)
                 {
                     SaleOrder.Status = "PO Created";
@@ -2320,6 +2316,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 totalqty = (receivedqty + rejectedqty) + (currqtyrec + currqtyrej);
 
                 var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == grdata.PurchaseOrderNo);
+                var saleorder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == purchase.SaleOrderNo);
                 //var purchaseReq = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == grdata.PurchaseOrderNo);
 
                 //if (totalqty > poqty)
@@ -2328,11 +2325,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     if (purchase != null)
                     {
-                        purchase.Status = "Received";
+                        purchase.Status = "Material Received";
+                        saleorder.Status = "Material Received";
                         context.TblPurchaseOrder.Update(purchase);
+                        context.TblSaleOrderMaster.Update(saleorder);
                     }
 
-                    grdata.Status = "Received";
+                    grdata.Status = "Material Received";
 
                     //if (purchaseReq != null)
                     //{
@@ -2344,11 +2343,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     if (purchase != null)
                     {
-                        purchase.Status = "Partial Received";
+                        purchase.Status = "Material Partial Received";
+                        saleorder.Status = "Material Partial Received";
                         context.TblPurchaseOrder.Update(purchase);
+                        context.TblSaleOrderMaster.Update(saleorder);
                     }
 
-                    grdata.Status = "Partial Received";
+                    grdata.Status = "Material Partial Received";
 
                     //if (purchaseReq != null)
                     //{
@@ -2762,7 +2763,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
                 {
-                    saleOrderMaster.Status = "Created";
+                    saleOrderMaster.Status = "SO Created";
                     //saleOrderMaster.CreatedDate = DateTime.Now;
                     // saleOrderMaster.CustomerCode = suppliername;
                     context.TblSaleOrderMaster.Update(saleOrderMaster);
@@ -2781,7 +2782,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         SaleOrderNumber = Pcenter.SOPrefix + "-" + Pcenter.SONumber;
                     }
 
-                    saleOrderMaster.Status = "Created";
+                    saleOrderMaster.Status = "SO Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
                     saleOrderMaster.SaleOrderNo = SaleOrderNumber;
                     // saleOrderMaster.CustomerCode = suppliername;
@@ -2789,7 +2790,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     if (Quotation != null)
                     {
-                        Quotation.Status = "Sale Order Created";
+                        Quotation.Status = "SO Created";
 
                         context.TblSupplierQuotationsMaster.Update(Quotation);
                     }
