@@ -7189,6 +7189,19 @@ namespace CoreERP.Models
                     .HasMaxLength(10)
                     .IsUnicode(false);
             });
+
+            modelBuilder.Entity<StructureCreation>(entity =>
+            {
+                entity.HasKey(e => new { e.StructureCode });
+
+                entity.Property(e => e.StructureName).HasMaxLength(50);
+
+                entity.Property(e => e.CompanyCode).HasMaxLength(50);
+
+                entity.Property(e => e.Active).HasMaxLength(50);
+               
+            });
+
             modelBuilder.Entity<Ptmaster>(entity =>
             {
                 entity.HasKey(e => e.Ptslab);
