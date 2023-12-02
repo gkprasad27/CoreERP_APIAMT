@@ -5,6 +5,7 @@ namespace CoreERP.Models
 {
     public partial class Ptmaster
     {
+        public int Id { get; set; }
         public string Ptslab { get; set; }
         public string? Year { get; set; }
         public string? Month { get; set; }
