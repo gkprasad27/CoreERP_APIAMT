@@ -4,6 +4,7 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CoreERP
@@ -1268,7 +1269,7 @@ namespace CoreERP
             result.ForEach(c =>
             {
                 c.CompanyName = companies.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
-                c.BpTypeName = partnerTypes.FirstOrDefault(l => l.Code == c.Bptype)?.Description;
+                c.BpTypeName = partnerTypes.FirstOrDefault(l => l.Code == c.Bptype)?.Bpcategory;
                 c.BpGroupName = tblBpgroups.FirstOrDefault(cur => cur.Bpgroup == c.Bpgroup)?.Description;
                 c.StateName = states.FirstOrDefault(cur => cur.StateCode == c.State)?.StateName;
                 c.RegionName = regions.FirstOrDefault(cur => cur.RegionCode == c.Region)?.RegionName;
@@ -1278,6 +1279,7 @@ namespace CoreERP
                 c.TdsTypeName = tblTdstypes.FirstOrDefault(cur => cur.TdsCode == c.Tdstype)?.Desctiption;
                 c.TdsStateName = tblTdsRates.FirstOrDefault(cur => cur.Code == c.Tdsrate)?.Desctiption;
             });
+
             return result;
         }
 
