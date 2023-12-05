@@ -11,6 +11,11 @@ namespace CoreERP.Models
 
     }
 
+    public partial class tblQCResults
+    {
+        [NotMapped]
+        public string MaterialName { get; set; }
+    }
     partial class TblPurchaseOrderDetails
     {
         [NotMapped]
@@ -349,6 +354,9 @@ namespace CoreERP.Models
     {
         [NotMapped]
         public string UomName { get; set; }
+        [NotMapped]
+        public string MaterialName { get; set; }
+     
     }
 
     partial class TblMaterialMaster

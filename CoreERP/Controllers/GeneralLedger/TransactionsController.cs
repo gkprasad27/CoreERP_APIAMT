@@ -785,9 +785,11 @@ namespace CoreERP.Controllers.masters
                 {
                     var transactions = new TransactionsHelper();
                     var tagsData = transactions.GetSaleOrderMaster(SaleorderNumber);
+                    var QCData = transactions.GetQCMaster(Materialcode);
                     if (tagsData == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
+                    expdoObj.QCData = QCData;
                     expdoObj.SaleorderMaster = tagsData;
                     expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
