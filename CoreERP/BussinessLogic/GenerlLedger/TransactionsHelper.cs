@@ -1227,10 +1227,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             using var repogim = new Repository<TblProductionMaster>();
             var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
-            InspectionCheckMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber).FirstOrDefault();
+           var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber).FirstOrDefault();
             try
             {
-                if (InspectionCheckMaster != null)
+                if (InspectionMaster != null)
                 {
                     InspectionCheckMaster.Status = "Production Start";
                     context.TblInspectionCheckMaster.Update(InspectionCheckMaster);
