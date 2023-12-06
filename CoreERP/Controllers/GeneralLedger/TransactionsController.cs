@@ -761,10 +761,13 @@ namespace CoreERP.Controllers.masters
                     var transactions = new TransactionsHelper();
                     var tagsData = transactions.GetQcIssueMasterById(GSNumber);
                     if (tagsData == null)
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Production Not Completed." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.tagsData = tagsData;
-                    expdoObj.tagsDetail = new TransactionsHelper().GetQcIssueDetails(GSNumber, Materialcode);
+                    var tagsDetail= new TransactionsHelper().GetQcIssueDetails(GSNumber, Materialcode);
+                    if (tagsDetail.Count == 0)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Production Not Completed." });
+                    expdoObj.tagsDetail = tagsDetail;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }

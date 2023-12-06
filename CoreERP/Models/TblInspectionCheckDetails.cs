@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
 {
@@ -15,8 +16,10 @@ namespace CoreERP.Models
         public string? CompletedBy { get; set; }
         public string? Addwho { get; set; }
         public string? Editwho { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? AddDate { get; set; }
         public DateTime? CompletionDate { get; set; }
+       [ DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? EditDate { get; set; }
         public string? InspectionType { get; set; }
 

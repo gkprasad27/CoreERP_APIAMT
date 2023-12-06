@@ -1220,23 +1220,24 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblInspectionCheckMaster>();
             var InspectionCheckMaster = new TblInspectionCheckMaster();
             var InspectionCheckDetails = new List<TblInspectionCheckDetails>();
-            List<TblInspectionCheckDetails> prDetailsNew;
-            List<TblInspectionCheckDetails> prDetailsExist;
+            var NewInspectionCheckDetails = new List<TblInspectionCheckDetails>();
+            //List<TblInspectionCheckDetails> prDetailsNew;
+            //List<TblInspectionCheckDetails> prDetailsExist;
             using var context = new ERPContext();
             string saleordernumber = prodDetails.FirstOrDefault().SaleOrderNumber;
             using var dbtrans = context.Database.BeginTransaction();
-            using var repogim = new Repository<TblProductionMaster>();
+            var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault(); 
+            var goodsissue= new TblGoodsIssueDetails();
             var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
-           var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber).FirstOrDefault();
+            var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber).FirstOrDefault();
             try
             {
                 if (InspectionMaster != null)
                 {
-                    InspectionCheckMaster.Status = "Production Start";
-                    context.TblInspectionCheckMaster.Update(InspectionCheckMaster);
-
+                    InspectionCheckMaster.Status = "Production Started";
+                    context.TblInspectionCheckMaster.Update(InspectionMaster);
                     context.SaveChanges();
-
+                    masternumber = InspectionMaster.InspectionCheckNo;
                 }
                 else
                 {
@@ -1247,34 +1248,54 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.SaveChanges();
                         masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
-                    if (string.IsNullOrEmpty(masternumber))
-                        masternumber = InspectionCheckMaster.InspectionCheckNo;
-                    //icdata.Status = "QC Started";
+                    if (string.IsNullOrEmpty(InspectionCheckMaster.InspectionCheckNo))
+                        InspectionCheckMaster.InspectionCheckNo = masternumber;
+
+
+                    InspectionCheckMaster.Status = "Production Started";
                     InspectionCheckMaster.InspectionCheckNo = masternumber;
                     InspectionCheckMaster.saleOrderNumber = prodDetails.Select(x => x.SaleOrderNumber).FirstOrDefault();
                     InspectionCheckMaster.completionDate = System.DateTime.Now;
                     context.TblInspectionCheckMaster.Add(InspectionCheckMaster);
                     context.SaveChanges();
                 }
-
                 foreach (var item in prodDetails)
                 {
                     InspectionCheckDetails = repo.TblInspectionCheckDetails.Where(x => x.InspectionCheckNo == masternumber && x.productionTag == item.ProductionTag).ToList();
+
                     if (InspectionCheckDetails.Count == 0)
-                        InspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber });
+                        NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks });
+                    else
+                    {
+                        InspectionCheckDetails.ForEach(x =>
+                        {
+                            x.Status = item.WorkStatus;
+                            x.CompletedBy = item.AllocatedPerson;
+                            x.CompletionDate = item.EndDate;
+                            x.Description = item.Remarks;
+                            
+                        });
+                        context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
+                    }
+                    goodsissue =repo.TblGoodsIssueDetails.Where(g=>g.SaleOrderNumber==item.SaleOrderNumber && g.MaterialCode==item.MaterialCode).FirstOrDefault();
+                    goodsissue.Status = item.WorkStatus;
 
                 }
-                prDetailsExist = InspectionCheckDetails.Where(x => x.Id > 0).ToList();
-                prDetailsNew = InspectionCheckDetails.Where(x => x.Id == 0).ToList();
-                if (prDetailsExist.Count > 0)
-                    context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
-                else
-                    context.TblInspectionCheckDetails.AddRange(InspectionCheckDetails);
+                //prDetailsExist = InspectionCheckDetails.Where(x => x.Id > 0).ToList();
+                //prDetailsNew = InspectionCheckDetails.Where(x => x.Id == 0).ToList();
+               //if( InspectionCheckDetails.Count>0)
+               //     context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
+                if(NewInspectionCheckDetails.Count>0)
+                    context.TblInspectionCheckDetails.AddRange(NewInspectionCheckDetails);
 
+                repogim.Status = "Production Started";
 
+                context.TblProductionMaster.UpdateRange(repogim);
+                context.TblGoodsIssueDetails.Update(goodsissue);
 
                 context.TblProductionDetails.UpdateRange(prodDetails);
                 context.SaveChanges();
+
 
                 dbtrans.Commit();
                 return true;
