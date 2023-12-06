@@ -1668,6 +1668,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblPurchaseRequisitionMaster>();
+
+            var Company = repo.TblCompany.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            var Department = repo.TblFunctionalDepartment.ToList();
+
+            repo.TblPurchaseRequisitionMaster.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+                    c.DepartmentName = Department.FirstOrDefault(m => m.Code ==c.Department).Description;
+
+                });
+
             return repo.TblPurchaseRequisitionMaster.AsEnumerable()
                 .Where(x =>
                 {
@@ -1697,7 +1711,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             if (repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
             {
-                reqmasterdata.Status = "Created";
+                reqmasterdata.Status = "MSO Created";
                 reqmasterdata.EditDate = DateTime.Now;
                 context.TblPurchaseRequisitionMaster.Update(reqmasterdata);
                 context.SaveChanges();
@@ -1712,7 +1726,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                 }
 
-                reqmasterdata.Status = "Created";
+                reqmasterdata.Status = "MSO Created";
                 reqmasterdata.AddDate = DateTime.Now;
                 reqmasterdata.RequisitionNumber = masternumber;
                 context.TblPurchaseRequisitionMaster.Add(reqmasterdata);

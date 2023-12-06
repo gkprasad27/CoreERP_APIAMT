@@ -260,7 +260,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BPList = _tblPurchaseRequisitionMaster.Where(x => x.Status == "Created").Select(x => new { SaleOrderNo = x.RequisitionNumber });
+                    expando.BPList = _tblPurchaseRequisitionMaster.Where(x => x.Status == "MSO Created").Select(x => new { SaleOrderNo = x.RequisitionNumber });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
