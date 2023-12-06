@@ -2126,6 +2126,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             List<TblPurchaseOrderDetails> poDetailsNew;
             List<TblPurchaseOrderDetails> poDetailsExist;
+            int totalqty;
+            totalqty = (int)podetails.Sum(a => a.Qty);
             using var dbtrans = context.Database.BeginTransaction();
             string purchaseordernumber = string.Empty;
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == podata.ProfitCenter).FirstOrDefault();
@@ -2138,6 +2140,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     podata.Status = "PO Created";
                     podata.EditDate = DateTime.Now;
+                    podata.TotalQty = totalqty;
                     context.TblPurchaseOrder.Update(podata);
                     context.SaveChanges();
                 }
@@ -2155,6 +2158,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     podata.AddDate = DateTime.Now;
                     podata.PurchaseOrderNumber = purchaseordernumber;
                     podata.CustPONumber = SaleOrder.PONumber;
+                    podata.TotalQty = totalqty;
                     context.TblPurchaseOrder.Add(podata);
                     context.SaveChanges();
                 }
@@ -2769,6 +2773,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             string SaleOrderNumber = string.Empty;
+            int totalqty;
+            totalqty = (int)saleOrderDetails.Sum(a => a.QTY);
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == saleOrderMaster.ProfitCenter).FirstOrDefault();
             var Quotation = repo.TblSupplierQuotationsMaster.Where(x => x.QuotationNumber == saleOrderMaster.PONumber).FirstOrDefault();
             //if (Quotation!=null)
@@ -2781,6 +2787,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
                 {
                     saleOrderMaster.Status = "SO Created";
+                    saleOrderMaster.TotalQty = totalqty;
                     //saleOrderMaster.CreatedDate = DateTime.Now;
                     // saleOrderMaster.CustomerCode = suppliername;
                     context.TblSaleOrderMaster.Update(saleOrderMaster);
@@ -2802,6 +2809,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.Status = "SO Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
                     saleOrderMaster.SaleOrderNo = SaleOrderNumber;
+                    saleOrderMaster.TotalQty = totalqty;
                     // saleOrderMaster.CustomerCode = suppliername;
                     context.TblSaleOrderMaster.Add(saleOrderMaster);
 

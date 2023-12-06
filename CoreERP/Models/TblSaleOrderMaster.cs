@@ -34,6 +34,7 @@ namespace CoreERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime EditDate { get; set; }
         public string? EditWho { get; set; }
+        public int TotalQty { get; set; }
 
     }
 }
