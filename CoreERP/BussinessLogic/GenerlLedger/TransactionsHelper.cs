@@ -1051,7 +1051,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<tblQCResults> GetQcDetails(string GoodsIssueId, string Materialcode)
         {
             using var repo = new ERPContext();
-             var material = new List<TblMaterialMaster>();
+            var material = new List<TblMaterialMaster>();
             var tblProduction = new List<tblQCResults>();
 
             if (!string.IsNullOrEmpty(Materialcode))
@@ -1678,7 +1678,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
-                    c.DepartmentName = Department.FirstOrDefault(m => m.Code ==c.Department).Description;
+                    c.DepartmentName = Department.FirstOrDefault(m => m.Code == c.Department).Description;
 
                 });
 
@@ -2145,9 +2145,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             string purchaseordernumber = string.Empty;
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == podata.ProfitCenter).FirstOrDefault();
-
+            string CustPONumber;
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == podata.SaleOrderNo);
             var PRdata = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == podata.SaleOrderNo);
+            var Bomdata = repo.TbBommaster.FirstOrDefault(im => im.Bomnumber == podata.SaleOrderNo);
+            if (SaleOrder != null)
+                CustPONumber = SaleOrder.PONumber;
+            else if (PRdata != null)
+                CustPONumber = PRdata.RequisitionNumber;
+            else
+                CustPONumber = Bomdata.Bomnumber;
             try
             {
                 if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
@@ -2171,7 +2178,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     podata.Status = "PO Created";
                     podata.AddDate = DateTime.Now;
                     podata.PurchaseOrderNumber = purchaseordernumber;
-                    podata.CustPONumber = SaleOrder.PONumber;
+                    podata.CustPONumber = CustPONumber;
                     podata.TotalQty = totalqty;
                     context.TblPurchaseOrder.Add(podata);
                     context.SaveChanges();
