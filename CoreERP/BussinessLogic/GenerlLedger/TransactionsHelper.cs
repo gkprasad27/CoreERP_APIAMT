@@ -2524,7 +2524,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo))
                 {
-                    icdata.Status = "QC Start";
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
                 }
@@ -2538,7 +2537,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
 
-                    //icdata.Status = "QC Started";
                     icdata.InspectionCheckNo = masternumber;
                     context.TblInspectionCheckMaster.Add(icdata);
                     context.SaveChanges();
@@ -2547,10 +2545,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (string.IsNullOrEmpty(masternumber))
                     masternumber = icdata.InspectionCheckNo;
 
-                var production = repo.TblProductionDetails.Where(x => x.SaleOrderNumber == icdata.saleOrderNumber);
 
+                var production = new TblProductionDetails() ;
                 icdetails.ForEach(x =>
                 {
+                    production = repo.TblProductionDetails.Where(z => z.SaleOrderNumber == icdata.saleOrderNumber && z.ProductionTag==x.productionTag).FirstOrDefault();
                     x.InspectionCheckNo = icdata.InspectionCheckNo;
                     x.Status = icdata.Status;
                     x.Description = icdata.description;
@@ -2558,10 +2557,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.CompletionDate = icdata.completionDate;
                     x.CompletedBy = icdata.completedBy;
                     x.Status = icdata.Status;
-                    foreach (var item in production)
-                    {
-                        item.Status = x.Status;
-                    }
+                    production.Status = icdata.Status;
+                    //foreach (var item in production)
+                    //{
+                    //    item.Status = icdata.Status;
+                    //}
                 });
 
                 context.TblProductionDetails.UpdateRange(production);
