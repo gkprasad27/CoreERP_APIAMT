@@ -2980,7 +2980,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         item1.TagName = item.productionTag;
                         item1.saleOrderNumber = item.saleOrderNumber;
                         item1.Type = "Inspection";
-                        item1.Id = 0;
+                        //item1.Id = 0;
                     }
 
 

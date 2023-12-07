@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreERP.DataAccess;
 
 namespace CoreERP.Controllers.masters
 {
@@ -68,21 +69,37 @@ namespace CoreERP.Controllers.masters
             });
             return result;
         }
+        public List<tblQCResults> GetQCResult(string materialcode, string tagname,string type)
+        {
+            using var repo = new Repository<tblQCResults>();
+            //var MaterialCodes = repo.TblMaterialMaster.ToList();
 
-        [HttpGet("GetCommitmentItemList/{type}")]
-        public async Task<IActionResult> GetCommitmentItemList(string Type)
+            return repo.tblQCResults.Where(cd => cd.MaterialCode == materialcode && cd.TagName == tagname && cd.Type == type).ToList();
+
+        }
+        [HttpGet("GetCommitmentItemList/{type}/{materialcode}/{tagname}")]
+        public async Task<IActionResult> GetCommitmentItemList(string Type, string materialcode, string tagname)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var citemList = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
-                    if (citemList.Any())
+                    dynamic expdoObj = new ExpandoObject();
+                    var tagsData = GetQCResult(materialcode, tagname, Type);
+                    if (tagsData.Count == 0)
                     {
-                        dynamic expdoObj = new ExpandoObject();
-                        expdoObj.citemList = citemList;
-                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                        var tagsData1 = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
+                        expdoObj.citemList = tagsData1;
                     }
+                    else
+                        expdoObj.citemList = tagsData;
+                    //var citemList = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
+                    //if (citemList.Any())
+                    //{
+                    //    dynamic expdoObj = new ExpandoObject();
+                    //    expdoObj.citemList = citemList;
+                    //    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    //}
 
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 }
