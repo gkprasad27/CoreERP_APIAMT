@@ -77,8 +77,8 @@ namespace CoreERP.Controllers.masters
             return repo.tblQCResults.Where(cd => cd.MaterialCode == materialcode && cd.TagName == tagname && cd.Type == type).ToList();
 
         }
-        [HttpGet("GetCommitmentItemList/{type}/{materialcode}/{tagname}")]
-        public async Task<IActionResult> GetCommitmentItemList(string Type, string materialcode, string tagname)
+        [HttpGet("GetCommitmentItemList/{materialcode}/{tagname}/{type}")]
+        public async Task<IActionResult> GetCommitmentItemList(string materialcode, string tagname, string Type)
         {
             var result = await Task.Run(() =>
             {
@@ -101,7 +101,7 @@ namespace CoreERP.Controllers.masters
                     //    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     //}
 
-                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
                 catch (Exception ex)
                 {

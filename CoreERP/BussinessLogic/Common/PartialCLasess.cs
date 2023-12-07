@@ -358,7 +358,11 @@ namespace CoreERP.Models
         public string MaterialName { get; set; }
      
     }
-
+    partial class TblInspectionCheckMaster
+    {
+        [NotMapped]
+        public string Type { get; set; }
+    }
     partial class TblMaterialMaster
     {
         [NotMapped]

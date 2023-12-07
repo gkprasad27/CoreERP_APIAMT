@@ -1226,8 +1226,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             string saleordernumber = prodDetails.FirstOrDefault().SaleOrderNumber;
             using var dbtrans = context.Database.BeginTransaction();
-            var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault(); 
-            var goodsissue= new TblGoodsIssueDetails();
+            var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault();
+            var goodsissue = new TblGoodsIssueDetails();
             var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
             var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber).FirstOrDefault();
             try
@@ -1273,19 +1273,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             x.CompletedBy = item.AllocatedPerson;
                             x.CompletionDate = item.EndDate;
                             x.Description = item.Remarks;
-                            
+
                         });
                         context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
                     }
-                    goodsissue =repo.TblGoodsIssueDetails.Where(g=>g.SaleOrderNumber==item.SaleOrderNumber && g.MaterialCode==item.MaterialCode).FirstOrDefault();
+                    goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode).FirstOrDefault();
                     goodsissue.Status = item.WorkStatus;
 
                 }
                 //prDetailsExist = InspectionCheckDetails.Where(x => x.Id > 0).ToList();
                 //prDetailsNew = InspectionCheckDetails.Where(x => x.Id == 0).ToList();
-               //if( InspectionCheckDetails.Count>0)
-               //     context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
-                if(NewInspectionCheckDetails.Count>0)
+                //if( InspectionCheckDetails.Count>0)
+                //     context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
+                if (NewInspectionCheckDetails.Count > 0)
                     context.TblInspectionCheckDetails.AddRange(NewInspectionCheckDetails);
 
                 repogim.Status = "Production Started";
@@ -2546,10 +2546,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     masternumber = icdata.InspectionCheckNo;
 
 
-                var production = new TblProductionDetails() ;
+                var production = new TblProductionDetails();
                 icdetails.ForEach(x =>
                 {
-                    production = repo.TblProductionDetails.Where(z => z.SaleOrderNumber == icdata.saleOrderNumber && z.ProductionTag==x.productionTag).FirstOrDefault();
+                    production = repo.TblProductionDetails.Where(z => z.SaleOrderNumber == icdata.saleOrderNumber && z.ProductionTag == x.productionTag).FirstOrDefault();
                     x.InspectionCheckNo = icdata.InspectionCheckNo;
                     x.Status = icdata.Status;
                     x.Description = icdata.description;
@@ -2979,8 +2979,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         item1.MaterialCode = item.MaterialCode;
                         item1.TagName = item.productionTag;
                         item1.saleOrderNumber = item.saleOrderNumber;
-                        item1.Type = "Inspection";
-                        //item1.Id = 0;
+                        if (item.Type != "edit")
+                            item1.Id = 0;
                     }
 
 

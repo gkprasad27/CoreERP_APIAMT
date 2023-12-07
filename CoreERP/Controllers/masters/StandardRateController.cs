@@ -128,15 +128,15 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetSaleOrderDetailbymaterialcode/{materialcode}/{tagname}")]
-        public async Task<IActionResult> GetSaleOrderDetailbymaterialcode(string materialcode,string tagname)
+        [HttpGet("GetSaleOrderDetailbymaterialcode/{materialcode}/{tagname}/{type}")]
+        public async Task<IActionResult> GetSaleOrderDetailbymaterialcode(string materialcode,string tagname, string type)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    var tagsData = GetQCResult(materialcode, tagname);
+                    var tagsData = GetQCResult(materialcode, tagname, type);
                     if (tagsData.Count==0)
                     {
                         var tagsData1 = GetQCDetail(materialcode);
@@ -165,12 +165,12 @@ namespace CoreERP.Controllers.masters
 
         }
 
-        public List<tblQCResults> GetQCResult(string materialcode,string tagname)
+        public List<tblQCResults> GetQCResult(string materialcode,string tagname, string Type)
         {
             using var repo = new Repository<tblQCResults>();
             //var MaterialCodes = repo.TblMaterialMaster.ToList();
 
-            return repo.tblQCResults.Where(cd => cd.MaterialCode == materialcode && cd.TagName== tagname && cd.Type == "Inspection").ToList();
+            return repo.tblQCResults.Where(cd => cd.MaterialCode == materialcode && cd.TagName== tagname && cd.Type == Type).ToList();
 
         }
 
