@@ -110,6 +110,31 @@ namespace CoreERP.Controllers.masters
             });
             return result;
         }
+        [HttpGet("GetCommitmentItemList/{type}")]
+        public async Task<IActionResult> GetCommitmentItemList(string Type)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+
+                    var citemList = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
+                    if (citemList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.citemList = citemList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
 
         [HttpPut("UpdateCommitmentItem")]
         public IActionResult UpdateCommitmentItem([FromBody] TblCommitmentItem citem)
