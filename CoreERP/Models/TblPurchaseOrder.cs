@@ -40,7 +40,6 @@ namespace CoreERP.Models
         public string? ProfitcenterName { get; set; }
         public string? SupplierName { get; set; }
         public int TotalQty { get; set; }
-
-
+        public string? Material { get; set; }
     }
 }
