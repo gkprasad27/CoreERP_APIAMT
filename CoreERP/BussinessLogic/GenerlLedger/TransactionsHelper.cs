@@ -2979,7 +2979,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         item1.MaterialCode = item.MaterialCode;
                         item1.TagName = item.productionTag;
                         item1.saleOrderNumber = item.saleOrderNumber;
-                        item1.Type = item.InspectionType;
+                        item1.Type = item.Type;
                         if (item.Type != "edit")
                             item1.Id = 0;
                     }
