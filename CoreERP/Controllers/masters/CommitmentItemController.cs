@@ -85,8 +85,8 @@ namespace CoreERP.Controllers.masters
                 try
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    var tagsData = GetQCResult(materialcode, tagname, Type);
-                    if (tagsData.Count == 0)
+                    var tagsData = GetQCResult(materialcode, tagname, Type).Select(x => new { code = x.Id, description = x.Parameter , type =x.Type,result=x.Result}); ;
+                    if (tagsData == null )
                     {
                         var tagsData1 = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
                         expdoObj.citemList = tagsData1;
@@ -118,7 +118,7 @@ namespace CoreERP.Controllers.masters
                 try
                 {
 
-                    var citemList = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
+                    var citemList = _commitmentItemRepository.Where(x => x.Type.Equals(Type)).OrderBy(z=>z.SortOrder);
                     if (citemList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();

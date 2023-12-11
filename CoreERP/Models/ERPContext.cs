@@ -115,6 +115,7 @@ namespace CoreERP.Models
 
         public virtual DbSet<TblApi_Error_Log> TblApi_Error_Log { get; set; }
         public virtual DbSet<TblProductionDetails> TblProductionDetails { get; set; }
+        public virtual DbSet<TblProductionStatus> TblProductionStatus { get; set; }
         public virtual DbSet<TblGoodsReceiptDetails> TblGoodsReceiptDetails { get; set; }
         public virtual DbSet<TblGoodsReceiptMaster> TblGoodsReceiptMaster { get; set; }
         public virtual DbSet<TblGrnassignment> TblGrnassignment { get; set; }
