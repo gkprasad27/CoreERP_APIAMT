@@ -1413,5 +1413,24 @@ namespace CoreERP.Controllers
             });
             return result;
         }
+
+        [HttpGet("GetEmployeeattendance")]
+        public async Task<IActionResult> GetEmployeeattendance()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.AttendanceData = CommonHelper.getEmployeeattendance();
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
     }
 }

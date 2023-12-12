@@ -3,6 +3,8 @@ using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -1710,6 +1712,18 @@ namespace CoreERP
                 dbtrans.Rollback();
                 throw;
             }
+        }
+
+
+        public static string getEmployeeattendance()
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "usp_employeeattendance";
+           
+            DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
+            return null;
         }
     }
 }
