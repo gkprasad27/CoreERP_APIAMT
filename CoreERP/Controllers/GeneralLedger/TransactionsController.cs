@@ -751,6 +751,27 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetProductionStatus/{Saleorder}/{Materialcode}/GSTag")]
+        public async Task<IActionResult> GetProductionStatus(string GSNumber, string GSTag, string Materialcode = null)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.tagsDetailStatus = new TransactionsHelper().GetProductionStatus(GSNumber, Materialcode, GSTag);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetQCissueDetail/{GSNumber}/{Materialcode}")]
         public async Task<IActionResult> GetQCissueDetail(string GSNumber, string Materialcode = null)
         {

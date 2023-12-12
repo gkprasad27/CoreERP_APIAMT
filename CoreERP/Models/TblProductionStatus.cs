@@ -19,12 +19,11 @@ namespace CoreERP.Models
         public string? AllocatedPerson { get; set; }
         public string? TypeofWork { get; set; }
         public string? Remarks  { get; set; }
-        public decimal Duration { get; set; }
-        public string MaterialCode { get; set; }
-        public bool IsReject { get; set; }
-        public string WorkStatus { get; set; }    
-        public string Mechine { get; set; }
-        public string MaterialName { get; set; }
+        public decimal? Duration { get; set; }
+        public string? MaterialCode { get; set; }
+        public string? WorkStatus { get; set; }    
+        public string? Mechine { get; set; }
+        public string? MaterialName { get; set; }
         public string? AddWho { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? AddDate { get; set; }

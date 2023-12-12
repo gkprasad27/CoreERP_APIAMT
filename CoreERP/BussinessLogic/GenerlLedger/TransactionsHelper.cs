@@ -1018,6 +1018,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         }
 
+        public List<TblProductionStatus> GetProductionStatus(string GoodsIssueId, string gstag, string Materialcode)
+        {
+            using var repo = new ERPContext();
+            var tblProduction = new List<TblProductionStatus>();
+
+            tblProduction = repo.TblProductionStatus.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.ProductionTag == gstag).ToList();
+
+            return tblProduction.ToList();
+
+        }
+
         public List<TblInspectionCheckDetails> GetQcIssueDetails(string GoodsIssueId, string Materialcode)
         {
             using var repo = new ERPContext();
@@ -1090,9 +1101,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var tblprod = new Repository<TblGoodsIssueDetails>();
             var tblProduction = new TblProductionMaster();
             var ProductionDetails = new List<TblProductionDetails>();
+            var ProductionStatus = new List<TblProductionStatus>();
             List<TblGoodsIssueDetails> goodsOrderDetailsNew;
             List<TblGoodsIssueDetails> goodsOrderDetailsExist;
-
+            using var commitmentitem = new Repository<TblCommitmentItem>();
 
             try
             {
@@ -1178,10 +1190,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     //    }
 
                 }
+                var result = commitmentitem.Where(x => x.Type.Equals("Production")).OrderBy(z => z.SortOrder);
 
-
+                foreach (var resultcommitment in ProductionDetails)
+                {
+                    if (result.Any())
+                    {
+                        foreach (var commit in result)
+                        {
+                            ProductionStatus.Add(new TblProductionStatus { SaleOrderNumber = resultcommitment.SaleOrderNumber, ProductionTag = resultcommitment.ProductionTag, Status = "Production Released", WorkStatus = "Production Released", MaterialCode = resultcommitment.MaterialCode, TypeofWork = commit.Description });
+                        }
+                    }
+                }
                 context.TblProductionDetails.AddRange(ProductionDetails);
-
+                context.TblProductionStatus.AddRange(ProductionStatus);
                 goodsOrderDetailsExist = gibDetails.Where(x => x.Id > 0).ToList();
                 goodsOrderDetailsNew = gibDetails.Where(x => x.Id == 0).ToList();
 
@@ -1221,6 +1243,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var InspectionCheckMaster = new TblInspectionCheckMaster();
             var InspectionCheckDetails = new List<TblInspectionCheckDetails>();
             var NewInspectionCheckDetails = new List<TblInspectionCheckDetails>();
+            var ProductionStatus = new List<TblProductionStatus>();
             //List<TblInspectionCheckDetails> prDetailsNew;
             //List<TblInspectionCheckDetails> prDetailsExist;
             using var context = new ERPContext();
@@ -1228,6 +1251,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault();
             var goodsissue = new TblGoodsIssueDetails();
+
             var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
             var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber).FirstOrDefault();
             try
@@ -1279,6 +1303,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode).FirstOrDefault();
                     goodsissue.Status = item.WorkStatus;
+                    var goodsissuestatus = new TblProductionStatus();
+                    goodsissuestatus = repo.TblProductionStatus.Where(s => s.SaleOrderNumber == item.SaleOrderNumber && s.MaterialCode == item.MaterialCode && s.ProductionTag == item.ProductionTag && s.TypeofWork == item.TypeofWork).FirstOrDefault();
+                    if (goodsissuestatus != null)
+                    {
+                        goodsissuestatus.Status = "Production Started";
+                        goodsissuestatus.WorkStatus = item.WorkStatus;
+                        context.TblProductionStatus.UpdateRange(goodsissuestatus);
+                    }
 
                 }
                 //prDetailsExist = InspectionCheckDetails.Where(x => x.Id > 0).ToList();
