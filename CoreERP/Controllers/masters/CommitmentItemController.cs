@@ -85,7 +85,7 @@ namespace CoreERP.Controllers.masters
                 try
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    var tagsData = GetQCResult(materialcode, tagname, Type).Select(x => new { code = x.Id, description = x.Parameter , type =x.Type,result=x.Result}); ;
+                    var tagsData = GetQCResult(materialcode, tagname, Type).Select(x => new { id = x.Id, description = x.Parameter , type =x.Type,result=x.Result}); ;
                     if (tagsData == null )
                     {
                         var tagsData1 = _commitmentItemRepository.Where(x => x.Type.Equals(Type));

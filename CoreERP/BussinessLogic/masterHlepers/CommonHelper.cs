@@ -1715,7 +1715,7 @@ namespace CoreERP
         }
 
 
-        public static string getEmployeeattendance()
+        public static DataTable getEmployeeattendance()
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -1723,7 +1723,11 @@ namespace CoreERP
             command.CommandText = "usp_employeeattendance";
            
             DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
-            return null;
+            if (dt.Rows.Count > 0)
+            {
+                return dt;
+            }
+            else return null;
         }
     }
 }
