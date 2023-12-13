@@ -1018,7 +1018,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         }
 
-        public List<TblProductionStatus> GetProductionStatus(string GoodsIssueId, string gstag, string Materialcode)
+        public List<TblProductionStatus> GetProductionStatus(string GoodsIssueId, string Materialcode, string gstag)
         {
             using var repo = new ERPContext();
             var tblProduction = new List<TblProductionStatus>();

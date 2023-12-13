@@ -752,7 +752,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetProductionStatus/{Saleorder}/{Materialcode}/{GSTag}")]
-        public async Task<IActionResult> GetProductionStatus(string GSNumber, string GSTag, string Materialcode = null)
+        public async Task<IActionResult> GetProductionStatus(string Saleorder, string Materialcode , string GSTag)
         {
             var result = await Task.Run(() =>
             {
@@ -760,7 +760,7 @@ namespace CoreERP.Controllers.masters
                 {
                     var transactions = new TransactionsHelper();
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.tagsDetailStatus = new TransactionsHelper().GetProductionStatus(GSNumber, Materialcode, GSTag);
+                    expdoObj.tagsDetailStatus = new TransactionsHelper().GetProductionStatus(Saleorder, Materialcode, GSTag);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
