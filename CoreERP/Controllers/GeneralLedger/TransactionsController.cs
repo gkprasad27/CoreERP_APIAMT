@@ -751,7 +751,7 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetProductionStatus/{Saleorder}/{Materialcode}/GSTag")]
+        [HttpGet("GetProductionStatus/{Saleorder}/{Materialcode}/{GSTag}")]
         public async Task<IActionResult> GetProductionStatus(string GSNumber, string GSTag, string Materialcode = null)
         {
             var result = await Task.Run(() =>
