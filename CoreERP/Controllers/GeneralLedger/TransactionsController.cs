@@ -800,8 +800,8 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetQCReportDetail/{SaleorderNumber}/{Materialcode}")]
-        public async Task<IActionResult> GetQCReportDetail(string SaleorderNumber, string Materialcode = null)
+        [HttpGet("GetQCReportDetail/{SaleorderNumber}/{Materialcode}/{Type}")]
+        public async Task<IActionResult> GetQCReportDetail(string SaleorderNumber, string Materialcode, string Type)
         {
             var result = await Task.Run(() =>
             {
@@ -815,7 +815,7 @@ namespace CoreERP.Controllers.masters
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.QCData = QCData;
                     expdoObj.SaleorderMaster = tagsData;
-                    expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode);
+                    expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }

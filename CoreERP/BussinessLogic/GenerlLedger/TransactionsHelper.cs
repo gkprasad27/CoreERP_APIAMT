@@ -1059,7 +1059,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         }
 
-        public List<tblQCResults> GetQcDetails(string GoodsIssueId, string Materialcode)
+        public List<tblQCResults> GetQcDetails(string GoodsIssueId, string Materialcode, string Type)
         {
             using var repo = new ERPContext();
             var material = new List<TblMaterialMaster>();
@@ -1067,7 +1067,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             if (!string.IsNullOrEmpty(Materialcode))
             {
-                tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type == "Inspection").ToList();
+                tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type == Type).ToList();
                 material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
             }
             //else
