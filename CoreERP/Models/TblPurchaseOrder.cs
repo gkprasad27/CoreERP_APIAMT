@@ -41,5 +41,7 @@ namespace CoreERP.Models
         public string? SupplierName { get; set; }
         public int TotalQty { get; set; }
         public string? Material { get; set; }
+        public string? RecomendedBy { get; set; }
+        public string? ApprovedBy { get; set; }
     }
 }

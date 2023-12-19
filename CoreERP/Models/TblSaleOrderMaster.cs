@@ -35,6 +35,8 @@ namespace CoreERP.Models
         public DateTime EditDate { get; set; }
         public string? EditWho { get; set; }
         public int TotalQty { get; set; }
+        public string? RecomendedBy { get; set; }
+        public string? ApprovedBy { get; set; }
 
     }
 }
