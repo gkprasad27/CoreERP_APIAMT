@@ -67,6 +67,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblPurchaseRequisitionMaster> _tblPurchaseRequisitionMaster;
         private readonly IRepository<TblPurchaseRequisitionDetails> _tblPurchaseRequisitionDetails;
         private readonly IRepository<ConfigurationTable> _configurationRepository;
+        private readonly IRepository<TblForm> _TblForm;
         private readonly IRepository<TbBommaster> _bommasterRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
@@ -88,7 +89,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblGoodsReceiptMaster> goodsReceiptMasterRepository,
                                 IRepository<TblGoodsReceiptDetails> GoodsReceiptDetailsRepository,
                                 IRepository<TblHsnsac> hsnsacRepository, IRepository<TblPrimaryCostElement> primaryCostElementRepository,
-                                IRepository<TblMaterialTypes> materialTypesRepository, IRepository<ConfigurationTable> configurationRepository, IRepository<LeaveTypes> leaveTypeRepository,
+                                IRepository<TblMaterialTypes> materialTypesRepository, IRepository<ConfigurationTable> configurationRepository, IRepository<TblForm> TblForm, IRepository<LeaveTypes> leaveTypeRepository,
                                 IRepository<TblPurchaseRequisitionMaster> TblPurchaseRequisitionMaster, IRepository<TblPurchaseRequisitionDetails> TblPurchaseRequisitionDetails, IRepository<TbBommaster> TbbomMaster)
         {
             _primaryCostElementRepository = primaryCostElementRepository;
@@ -140,6 +141,7 @@ namespace CoreERP.Controllers
             _purchaseOrderDetailsRepository = PurchaseOrderDetailsRepository;
             _materialRequisitionDetailsRepository = materialRequisitionDetailsRepository;
             _configurationRepository = configurationRepository;
+            _TblForm = TblForm;
             _leaveTyperepository = leaveTypeRepository;
             _tblPurchaseRequisitionMaster = TblPurchaseRequisitionMaster;
             _tblPurchaseRequisitionDetails = TblPurchaseRequisitionDetails;
@@ -1374,6 +1376,29 @@ namespace CoreERP.Controllers
                 try
                 {
                     var ConfigurationList = _configurationRepository.GetAll().Select(x => new { ID = x.Value, TEXT = x.ConfigurationType });
+                    if (!ConfigurationList.Any())
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.ConfigurationList = ConfigurationList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetFormList")]
+        public async Task<IActionResult> GetFormList()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var ConfigurationList = _TblForm.GetAll();
                     if (!ConfigurationList.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();

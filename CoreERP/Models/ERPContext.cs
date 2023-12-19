@@ -29,6 +29,7 @@ namespace CoreERP.Models
         public virtual DbSet<EmployeeInBranches> EmployeeInBranches { get; set; }
         public virtual DbSet<ErpConfiguration> ErpConfiguration { get; set; }
         public virtual DbSet<Erpuser> Erpuser { get; set; }
+        public virtual DbSet<ApprovalType> ApprovalType { get; set; }
         public virtual DbSet<FourCoulmnRoundOff> FourCoulmnRoundOff { get; set; }
         public virtual DbSet<GeneralLedgerAccounts> GeneralLedgerAccounts { get; set; }
         public virtual DbSet<GlaccGroup> GlaccGroup { get; set; }
@@ -126,6 +127,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblInspectionCheckMaster> TblInspectionCheckMaster { get; set; }
         public virtual DbSet<TblInspectionCheckDetails> TblInspectionCheckDetails { get; set; }
         public virtual DbSet<TblInvoiceMemoDetails> TblInvoiceMemoDetails { get; set; }
+        public virtual DbSet<TblForm> TblForm { get; set; }
         public virtual DbSet<TblInvoiceMemoHeader> TblInvoiceMemoHeader { get; set; }
         public virtual DbSet<TblInvoiceVerificationDetails> TblInvoiceVerificationDetails { get; set; }
         public virtual DbSet<TblInvoiceVerificationMaster> TblInvoiceVerificationMaster { get; set; }
@@ -4665,6 +4667,38 @@ namespace CoreERP.Models
                 entity.Property(e => e.PrintText).HasMaxLength(50);
             });
 
+            modelBuilder.Entity<ApprovalType>(entity =>
+            {
+                entity.Property(e => e.Approval)
+                    .HasColumnName("Approval")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+               
+
+                entity.Property(e => e.ApprovedBy)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Company)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+              
+
+                entity.Property(e => e.Department)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+
+                entity.Property(e => e.ImmediateReporting)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RecomendedBy)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<TblPartyCashBankMaster>(entity =>
             {
                 entity.HasKey(e => e.VoucherNumber);
@@ -5980,6 +6014,19 @@ namespace CoreERP.Models
                 entity.Property(e => e.Type).HasMaxLength(50);
 
                 entity.Property(e => e.Uom).HasColumnName("UOM");
+            });
+
+            modelBuilder.Entity<TblForm>(entity =>
+            {
+                entity.HasKey(e => e.FormId);
+
+                entity.ToTable("tbl_Form");
+
+                entity.Property(e => e.FormId).HasColumnName("formId");
+
+                entity.Property(e => e.FormName)
+                    .HasColumnName("formName")
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<TblSettings>(entity =>
