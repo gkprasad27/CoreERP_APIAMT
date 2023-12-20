@@ -51,10 +51,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     return null;
                 }
                
-                var _userNew = _repo.TblUserNew.Where(u=> u.UserName  == erpuser.UserName)
+                var _userNew = _repo.Erpuser.Where(u=> u.UserName  == erpuser.UserName)
                                  .FirstOrDefault();
                
-                user.Role = _userNew?.RoleId.ToString();
+                user.Role = _userNew?.Role.ToString();
 
                 if(_userNew.Active == false)
                 {

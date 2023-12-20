@@ -1,21 +1,26 @@
 ﻿using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess;
+using CoreERP.DataAccess.Repositories;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
     [Route("api/UserCreation")]
-    public class UserCreationController : ControllerBase
+    public class UserCreationController : Controller
     {
+        private readonly IRepository<Erpuser> _epruserRepository;
+        public UserCreationController(IRepository<Erpuser> ErpuserRepository)
+        {
+            _epruserRepository = ErpuserRepository;
+        }
         [HttpPost("RegisterUserCreation")]
-        public IActionResult RegisterUserCreation([FromBody]Erpuser user)
+        public IActionResult RegisterUserCreation([FromBody] Erpuser user)
         {
             if (user == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -99,16 +104,13 @@ namespace CoreERP.Controllers.masters
 
             try
             {
-                var rs = UserHelper.Update(user);
                 APIResponse apiResponse;
-                if (rs != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = rs };
-                }
+                _epruserRepository.Update(user);
+                if (_epruserRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = user };
                 else
-                {
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                }
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
