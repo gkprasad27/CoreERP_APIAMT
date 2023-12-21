@@ -37,7 +37,7 @@ namespace CoreERP.Models
         public int TotalQty { get; set; }
         public string? RecomendedBy { get; set; }
         public string? ApprovedBy { get; set; }
-        public DateTime DispatchedDate { get; set; }
+        public DateTime? DispatchedDate { get; set; }
 
     }
 }
