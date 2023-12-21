@@ -2404,6 +2404,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (purchase != null)
                     {
                         purchase.Status = "Material Received";
+                        purchase.ReceivedDate = DateTime.Now;
                         saleorder.Status = "Material Received";
                         context.TblPurchaseOrder.Update(purchase);
                         context.TblSaleOrderMaster.Update(saleorder);

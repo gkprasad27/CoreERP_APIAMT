@@ -43,5 +43,7 @@ namespace CoreERP.Models
         public string? Material { get; set; }
         public string? RecomendedBy { get; set; }
         public string? ApprovedBy { get; set; }
+
+        public DateTime? ReceivedDate { get;set; }
     }
 }
