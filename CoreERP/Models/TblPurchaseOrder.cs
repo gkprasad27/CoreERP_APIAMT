@@ -43,7 +43,9 @@ namespace CoreERP.Models
         public string? Material { get; set; }
         public string? RecomendedBy { get; set; }
         public string? ApprovedBy { get; set; }
-
+        public string? DispatchMode { get; set; }
+        public string? TermsOfDelivery { get; set; }
+        public string? TermsOfPayment { get; set; }
         public DateTime? ReceivedDate { get;set; }
     }
 }
