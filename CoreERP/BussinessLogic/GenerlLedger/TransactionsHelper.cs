@@ -1248,12 +1248,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             //List<TblInspectionCheckDetails> prDetailsExist;
             using var context = new ERPContext();
             string saleordernumber = prodDetails.FirstOrDefault().SaleOrderNumber;
+            string material = prodDetails.FirstOrDefault().MaterialCode;
             using var dbtrans = context.Database.BeginTransaction();
             var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault();
             var goodsissue = new TblGoodsIssueDetails();
 
             var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
-            var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber).FirstOrDefault();
+            var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode== material).FirstOrDefault();
             try
             {
                 if (InspectionMaster != null)
@@ -1278,7 +1279,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     InspectionCheckMaster.Status = "Production Started";
                     InspectionCheckMaster.InspectionCheckNo = masternumber;
-                    InspectionCheckMaster.saleOrderNumber = prodDetails.Select(x => x.SaleOrderNumber).FirstOrDefault();
+                    InspectionCheckMaster.saleOrderNumber = saleordernumber;
+                    InspectionCheckMaster.MaterialCode = material;
                     InspectionCheckMaster.completionDate = System.DateTime.Now;
                     context.TblInspectionCheckMaster.Add(InspectionCheckMaster);
                     context.SaveChanges();
@@ -2555,7 +2557,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             List<TblInspectionCheckDetails> prDetailsExist;
             try
             {
-                if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo))
+                if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode==icdata.MaterialCode))
                 {
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
@@ -2627,6 +2629,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblInspectionCheckMaster>();
             return repo.TblInspectionCheckMaster
                 .FirstOrDefault(x => x.InspectionCheckNo == id);
+        }
+
+        public TblInspectionCheckMaster GetInpectionCheckMasterById(string materialcode , string saleorder)
+        {
+            using var repo = new Repository<TblInspectionCheckMaster>();
+            return repo.TblInspectionCheckMaster
+                .FirstOrDefault(x => x.saleOrderNumber == materialcode && x.saleOrderNumber== saleorder);
         }
         public List<TblInspectionCheckDetails> GetInspectionCheckDetails(string number)
         {

@@ -33,6 +33,7 @@ namespace CoreERP.Models
         public string? POPrefix { get; set; }
         public int? SONumber { get; set; }
         public string? SOPrefix { get; set; }
+        public string? GstNo { get; set; }
 
         public virtual Countries CountryNavigation { get; set; }
         public virtual TblCurrency CurrencyNavigation { get; set; }
