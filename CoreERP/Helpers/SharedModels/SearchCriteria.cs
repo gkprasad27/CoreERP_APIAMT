@@ -13,6 +13,21 @@ namespace CoreERP.Helpers.SharedModels
         private string _invoiceNo;
         private string _name;
         private int _saleOrderNo=0;
+
+        public string searchCriteria
+        {
+            get
+            {
+                return _invoiceNo;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    _invoiceNo = null;
+                else
+                    _invoiceNo = value;
+            }
+        }
         public DateTime? FromDate
         {
             get
@@ -41,7 +56,7 @@ namespace CoreERP.Helpers.SharedModels
                 _toDate = value;
             }
         }
-        public string searchCriteria 
+        public string InvoiceNo
         {
             get
             {
@@ -86,5 +101,7 @@ namespace CoreERP.Helpers.SharedModels
                     _saleOrderNo = value;
             }
         }
+
+        
     }
 }
