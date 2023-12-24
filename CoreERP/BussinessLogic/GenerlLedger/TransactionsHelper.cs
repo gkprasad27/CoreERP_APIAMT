@@ -2635,7 +2635,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblInspectionCheckMaster>();
             return repo.TblInspectionCheckMaster
-                .FirstOrDefault(x => x.saleOrderNumber == materialcode && x.saleOrderNumber== saleorder);
+                .FirstOrDefault(x => x.MaterialCode == materialcode && x.saleOrderNumber== saleorder);
         }
         public List<TblInspectionCheckDetails> GetInspectionCheckDetails(string number)
         {
