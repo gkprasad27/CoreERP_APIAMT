@@ -7,6 +7,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreERP.DataAccess;
+using Microsoft.Extensions.Logging;
 
 namespace CoreERP.Controllers.masters
 {
@@ -74,8 +75,8 @@ namespace CoreERP.Controllers.masters
             using var repo = new Repository<tblQCResults>();
             //var MaterialCodes = repo.TblMaterialMaster.ToList();
 
-            return repo.tblQCResults.Where(cd => cd.MaterialCode == materialcode && cd.TagName == tagname && cd.Type == type).ToList();
-
+           return repo.tblQCResults.Where(cd => cd.MaterialCode == materialcode && cd.TagName == tagname && cd.Type == type).ToList();
+            
         }
         [HttpGet("GetCommitmentItemList/{materialcode}/{tagname}/{type}")]
         public async Task<IActionResult> GetCommitmentItemList(string materialcode, string tagname, string Type)
@@ -85,14 +86,16 @@ namespace CoreERP.Controllers.masters
                 try
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    var tagsData = GetQCResult(materialcode, tagname, Type).Select(x => new { id = x.Id, description = x.Parameter , type =x.Type,result=x.Result}); ;
-                    if (tagsData == null )
+                    var tagsData = GetQCResult(materialcode, tagname, Type).Select(x => new { id = x.Id, description = x.Parameter , type =x.Type,result=x.Result});
+                    int count=tagsData.Count();
+                    if (count==0)
                     {
                         var tagsData1 = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
                         expdoObj.citemList = tagsData1;
                     }
                     else
                         expdoObj.citemList = tagsData;
+
                     //var citemList = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
                     //if (citemList.Any())
                     //{
