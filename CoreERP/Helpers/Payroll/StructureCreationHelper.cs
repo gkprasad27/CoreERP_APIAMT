@@ -33,19 +33,67 @@ namespace CoreERP
             catch { throw; }
         }
 
-        public static StructureCreation Register(StructureCreation structureCreation)
+        //public static StructureCreation Register(StructureCreation structureCreation)
+        //{
+        //    try
+        //    {
+        //        using Repository<StructureCreation> repo = new Repository<StructureCreation>();
+        //        structureCreation.Active = "Y";
+        //        repo.StructureCreation.Add(structureCreation);
+        //        if (repo.SaveChanges() > 0)
+        //            return structureCreation;
+
+        //        return null;
+        //    }
+        //    catch { throw; }
+        //}
+        public bool Register(StructureCreation stdata, List<StructureComponents> stdetails)
         {
+            using var repo = new Repository<StructureCreation>();
+            using var context = new ERPContext();
+            
+            string structureCode = string.Empty;
+            string structureName = string.Empty;
             try
             {
-                //using Repository<StructureCreation> repo = new Repository<StructureCreation>();
-                //structureCreation.Active = "Y";
-                //repo.StructureCreation.Add(structureCreation);
-                //if (repo.SaveChanges() > 0)
-                //    return structureCreation;
+               
+                    stdata.Active = "Y";
+                    context.StructureCreation.Add(stdata);
+                    context.SaveChanges();
+               
+              if (string.IsNullOrWhiteSpace(structureCode))
+                    structureCode = stdata.StructureCode;
+              if (string.IsNullOrWhiteSpace(structureName))
+                    structureName = stdata.StructureName;
 
-                return null;
+                stdetails.ForEach(x =>
+                {
+                    x.StructureCode = structureCode;
+                    x.StructureName = structureName;
+                });
+                context.StructureComponents.AddRange(stdetails);
+                //stDetailsExist = stdetails.Where(x => x.StructureCode > 0).ToList();
+                //stDetailsNew = stdetails.Where(x => x.StructureCode == 0).ToList();
+
+
+                //if (stDetailsExist.Count > 0)
+                //{
+                //    context.TblPurchaseOrderDetails.UpdateRange(podetails);
+                //}
+                //else
+                //{
+                //    context.TblPurchaseOrderDetails.AddRange(podetails);
+                //}
+                context.SaveChanges();
+
+
+                return true;
             }
-            catch { throw; }
+            catch (Exception)
+            {
+                
+                throw;
+            }
         }
 
         public static StructureCreation Update(StructureCreation structureCreation)

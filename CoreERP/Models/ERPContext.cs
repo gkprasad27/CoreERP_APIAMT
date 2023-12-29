@@ -259,6 +259,7 @@ namespace CoreERP.Models
         public virtual DbSet<Pfmaster> Pfmaster { get; set; }
         public virtual DbSet<ComponentMaster> ComponentMaster { get; set; }
         public virtual DbSet<StructureCreation> StructureCreation { get; set; }
+        public virtual DbSet<StructureComponents> StructureComponents { get; set; }
         public virtual DbSet<LeaveApplDetails> LeaveApplDetails { get; set; }
         public virtual DbSet<ApplyOddata> ApplyOddata { get; set; }
         public virtual DbSet<PermissionRequest> PermissionRequest { get; set; }

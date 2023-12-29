@@ -5,7 +5,8 @@ namespace CoreERP.Models
 {
     public partial class StructureComponents
     {
-        public int StructureCode { get; set; }
+        public int Id { get; set; }
+        public string StructureCode { get; set; }
         public string CompanyCode { get; set; }
         public string BranchCode { get; set; }
         public string ComponentCode { get; set; }
