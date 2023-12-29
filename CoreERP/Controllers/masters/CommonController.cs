@@ -69,6 +69,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<ConfigurationTable> _configurationRepository;
         private readonly IRepository<TblForm> _TblForm;
         private readonly IRepository<TbBommaster> _bommasterRepository;
+        private readonly IRepository<StructureCreation> _structureRepository;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
                                 IRepository<TblRegion> regionRepository, IRepository<Countries> countryRepository, IRepository<TblEmployee> employeeRepository, IRepository<TblLocation> locationRepository,
                                 IRepository<TblPlant> plantRepository, IRepository<TblBranch> branchRepository, IRepository<TblVoucherType> vtRepository, IRepository<TblVoucherSeries> vsRepository,
@@ -90,7 +91,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblGoodsReceiptDetails> GoodsReceiptDetailsRepository,
                                 IRepository<TblHsnsac> hsnsacRepository, IRepository<TblPrimaryCostElement> primaryCostElementRepository,
                                 IRepository<TblMaterialTypes> materialTypesRepository, IRepository<ConfigurationTable> configurationRepository, IRepository<TblForm> TblForm, IRepository<LeaveTypes> leaveTypeRepository,
-                                IRepository<TblPurchaseRequisitionMaster> TblPurchaseRequisitionMaster, IRepository<TblPurchaseRequisitionDetails> TblPurchaseRequisitionDetails, IRepository<TbBommaster> TbbomMaster)
+                                IRepository<TblPurchaseRequisitionMaster> TblPurchaseRequisitionMaster, IRepository<TblPurchaseRequisitionDetails> TblPurchaseRequisitionDetails, IRepository<TbBommaster> TbbomMaster, IRepository<StructureCreation> structureCreation)
         {
             _primaryCostElementRepository = primaryCostElementRepository;
             _materialTypesRepository = materialTypesRepository;
@@ -146,6 +147,7 @@ namespace CoreERP.Controllers
             _tblPurchaseRequisitionMaster = TblPurchaseRequisitionMaster;
             _tblPurchaseRequisitionDetails = TblPurchaseRequisitionDetails;
             _bommasterRepository = TbbomMaster;
+            _structureRepository = structureCreation;
         }
 
         [HttpGet("GetPrimaryCostElementList")]
@@ -679,6 +681,31 @@ namespace CoreERP.Controllers
                     {
                         dynamic expdoObj = new ExpandoObject();
                         expdoObj.companiesList = companiesList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetStructuresList")]
+        public async Task<IActionResult> GetStructuresList()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var structuresList = _structureRepository.GetAll().Select(x => new { ID = x.StructureCode, TEXT = x.StructureName });
+                    if (structuresList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.structuresList = structuresList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
 

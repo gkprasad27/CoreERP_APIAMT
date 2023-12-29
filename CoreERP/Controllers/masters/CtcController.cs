@@ -1,9 +1,11 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.BussinessLogic.Payroll;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Dynamic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -39,6 +41,25 @@ namespace CoreERP.Controllers.masters
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+        }
+
+        [HttpGet("GetEmployeeList/{empCode}")]
+        public async Task<IActionResult> GetEmployeeList(string empCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.EmployeeList = new CTCHelper().GetEmployeesList(empCode).OrderBy(emp => emp.EmployeeCode.Length).Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetctcTypesList")]

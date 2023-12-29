@@ -33,14 +33,13 @@ namespace CoreERP.BussinessLogic.Payroll
             catch { throw; }
         }
 
-        public static List<TblEmployee> GetEmployeesList()
+        public List<TblEmployee> GetEmployeesList(string empCode = null)
         {
             try
             {
-                //using Repository<Employees> repo = new Repository<Employees>();
-                //return repo.Employees.AsEnumerable().Where(m => m.Active == "Y").ToList();
+                using Repository<TblEmployee> repo = new Repository<TblEmployee>();
+                return repo.TblEmployee.Where(emp => emp.EmployeeCode.Contains(empCode ?? emp.EmployeeCode)).OrderBy(x => x.EmployeeCode).ToList();
 
-                return null;
             }
             catch (Exception ex) { throw ex; }
         }
