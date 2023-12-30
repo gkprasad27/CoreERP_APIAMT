@@ -401,13 +401,16 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("GetInvoiceList")]
-        public IActionResult GetInvoiceList([FromBody] SearchCriteria searchCriteria)
+        public async Task<IActionResult>  GetInvoiceList([FromBody] SearchCriteria searchCriteria)
         {
 
-            if (searchCriteria == null)
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
-            try
+            //if (searchCriteria == null)
+            //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            var result = await Task.Run(() =>
             {
+
+                try
+                {
                 var invoiceMasterList = new InvoiceHelper().GetInvoiceMasters(searchCriteria);
                 if (invoiceMasterList.Count > 0)
                 {
@@ -422,6 +425,8 @@ namespace CoreERP.Controllers
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+            });
+            return result;
         }
 
         [HttpGet("GetInvoiceDeatilList/{invoiceNo}")]
