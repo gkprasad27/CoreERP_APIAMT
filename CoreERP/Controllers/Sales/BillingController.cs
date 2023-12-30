@@ -400,6 +400,30 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpPost("GetInvoiceList")]
+        public IActionResult GetInvoiceList([FromBody] SearchCriteria searchCriteria)
+        {
+
+            if (searchCriteria == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var invoiceMasterList = new InvoiceHelper().GetInvoiceMasters(searchCriteria);
+                if (invoiceMasterList.Count > 0)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.InvoiceList = invoiceMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetInvoiceDeatilList/{invoiceNo}")]
         public IActionResult GetInvoiceDeatilList(string invoiceNo)
         {
