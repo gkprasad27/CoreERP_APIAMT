@@ -230,8 +230,11 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     {
                         if (searchCriteria.FromDate == null)
                         {
-                            searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
-                            searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-10000), ToDate = DateTime.Today };
+                            searchCriteria.FromDate ??= DateTime.Today.AddDays(-10000);
+                            searchCriteria.ToDate ??= DateTime.Today;
+                           // searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                           // searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
                         }
                         _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
                           .Where(inv =>
