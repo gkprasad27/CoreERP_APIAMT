@@ -1254,7 +1254,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var goodsissue = new TblGoodsIssueDetails();
 
             var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
-            var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode== material).FirstOrDefault();
+            var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == material).FirstOrDefault();
             try
             {
                 if (InspectionMaster != null)
@@ -1282,7 +1282,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     InspectionCheckMaster.saleOrderNumber = saleordernumber;
                     InspectionCheckMaster.MaterialCode = material;
                     InspectionCheckMaster.completionDate = System.DateTime.Now;
-                    context.TblInspectionCheckMaster.Add(InspectionCheckMaster);
+                    if (masternumber.Length > 1)
+                        context.TblInspectionCheckMaster.Add(InspectionCheckMaster);
+                    else
+                        throw new Exception("InspectionCheckNo Not Valid. " + masternumber + " Please check .");
+
+                   
                     context.SaveChanges();
                 }
                 foreach (var item in prodDetails)
@@ -1399,7 +1404,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 bomMaster.Status = "Created";
                 bomMaster.CreatedDate = DateTime.Now;
                 bomMaster.Bomnumber = masternumber;
-                context.TbBommaster.Add(bomMaster);
+                if (masternumber.Length > 1)
+                    context.TbBommaster.Add(bomMaster);
+                else
+                    throw new Exception("Bomnumber Not Valid. " + masternumber + " Please check .");
+
+               
                 context.SaveChanges();
             }
 
@@ -1784,7 +1794,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 reqmasterdata.Status = "MSO Created";
                 reqmasterdata.AddDate = DateTime.Now;
                 reqmasterdata.RequisitionNumber = masternumber;
-                context.TblPurchaseRequisitionMaster.Add(reqmasterdata);
+                if (masternumber.Length > 1)
+                    context.TblPurchaseRequisitionMaster.Add(reqmasterdata);
+                else
+                    throw new Exception("Master Sale Order Number Not Valid. " + masternumber + " Please check .");
+
+               
                 context.SaveChanges();
             }
 
@@ -1994,7 +2009,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 msdata.Status = "Created";
                 msdata.QuotationDate = DateTime.Now;
                 msdata.QuotationNumber = masternumber;
-                context.TblSupplierQuotationsMaster.Add(msdata);
+                if (masternumber.Length > 1)
+                    context.TblSupplierQuotationsMaster.Add(msdata);
+                else
+                    throw new Exception("Quotation Number Not Valid. " + masternumber + " Please check .");
+
+              
                 context.SaveChanges();
             }
 
@@ -2235,7 +2255,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     podata.PurchaseOrderNumber = purchaseordernumber;
                     podata.CustPONumber = CustPONumber;
                     podata.TotalQty = totalqty;
-                    context.TblPurchaseOrder.Add(podata);
+                    if (purchaseordernumber.Length > 1)
+                        context.TblPurchaseOrder.Add(podata);
+                    else
+                        throw new Exception("Purchaseorder Number Not Valid. " + purchaseordernumber + " Please check .");
+
                     context.SaveChanges();
                 }
 
@@ -2557,7 +2581,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             List<TblInspectionCheckDetails> prDetailsExist;
             try
             {
-                if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode==icdata.MaterialCode))
+                if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == icdata.MaterialCode))
                 {
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
@@ -2571,9 +2595,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.SaveChanges();
                         masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
-
+                    
                     icdata.InspectionCheckNo = masternumber;
-                    context.TblInspectionCheckMaster.Add(icdata);
+                    if (masternumber.Length > 1)
+                        context.TblInspectionCheckMaster.Add(icdata);
+                    else
+                        throw new Exception("Inspectioncheck Number Not Valid. " + masternumber + " Please check .");
+
+
                     context.SaveChanges();
                 }
 
@@ -2631,11 +2660,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.InspectionCheckNo == id);
         }
 
-        public TblInspectionCheckMaster GetInpectionCheckMasterById(string materialcode , string saleorder)
+        public TblInspectionCheckMaster GetInpectionCheckMasterById(string materialcode, string saleorder)
         {
             using var repo = new Repository<TblInspectionCheckMaster>();
             return repo.TblInspectionCheckMaster
-                .FirstOrDefault(x => x.MaterialCode == materialcode && x.saleOrderNumber== saleorder);
+                .FirstOrDefault(x => x.MaterialCode == materialcode && x.saleOrderNumber == saleorder);
         }
         public List<TblInspectionCheckDetails> GetInspectionCheckDetails(string number)
         {
@@ -2894,8 +2923,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.CreatedDate = DateTime.Now;
                     saleOrderMaster.SaleOrderNo = SaleOrderNumber;
                     saleOrderMaster.TotalQty = totalqty;
-                    // saleOrderMaster.CustomerCode = suppliername;
-                    context.TblSaleOrderMaster.Add(saleOrderMaster);
+                    if (SaleOrderNumber.Length > 1)
+                        context.TblSaleOrderMaster.Add(saleOrderMaster);
+                    else
+                        throw new Exception("Saleorder Number Not Valid. " + SaleOrderNumber + " Please check .");
+
 
                     if (Quotation != null)
                     {
