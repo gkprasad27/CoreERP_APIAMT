@@ -360,6 +360,28 @@ namespace CoreERP.Controllers
             });
             return result;
         }
+
+        [HttpGet("GetsaleOrdernoList")]
+        public async Task<IActionResult> GetsaleOrdernoList()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    var vouchertypeList = CommonHelper.GetsaleOrdernoList();
+                    expando.saleordernoList = vouchertypeList.Where(x => x.Status == "SO Created").Select(x => new { ID = x.SaleOrderNo, TEXT = x.SupplierName, SupplierCode = x.CustomerCode });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+
+            });
+            return result;
+        }
+
         [HttpGet("GetMaterialreqdetailsList")]
         public async Task<IActionResult> GetMaterialreqdetailsList()
         {
