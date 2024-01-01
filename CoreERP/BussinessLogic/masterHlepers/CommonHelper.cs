@@ -77,18 +77,18 @@ namespace CoreERP
             return result;
         }
 
-        public static IEnumerable<TblSaleOrderMaster> GetsaleOrdernoList()
+        public static IEnumerable<TblSaleOrderDetail> GetsaleOrdernoList(string saleorderno)
         {
-            using var repo = new Repository<TblSaleOrderMaster>();
-            var BP = repo.TblBusinessPartnerAccount.ToList();
+            using var repo = new Repository<TblSaleOrderDetail>();
+           // var BP = repo.TblBusinessPartnerAccount.ToList();
 
-            var result = repo.TblSaleOrderMaster.ToList();
+            var result = repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleorderno).ToList();
 
-            repo.TblSaleOrderMaster.ToList().ForEach(c =>
-            {
-                c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.CustomerCode)?.Name;
-            });
-            return result;
+            //repo.TblSaleOrderDetail.ToList().ForEach(c =>
+            //{
+            //    c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.CustomerCode)?.Name;
+            //});
+            return result.ToList();
         }
 
         public List<TblPaymentTermDetails> GetTblPaymentTermDetails(string code)

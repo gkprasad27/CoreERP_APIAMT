@@ -361,16 +361,16 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetsaleOrdernoList")]
-        public async Task<IActionResult> GetsaleOrdernoList()
+        [HttpGet("GetsaleOrdernoListe/{saleorderno}")]
+        public async Task<IActionResult> GetsaleOrdernoList(string saleorderno)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    var vouchertypeList = CommonHelper.GetsaleOrdernoList();
-                    expando.saleordernoList = vouchertypeList.Where(x => x.Status == "SO Created").Select(x => new { ID = x.SaleOrderNo, TEXT = x.SupplierName, SupplierCode = x.CustomerCode });
+                    var vouchertypeList = CommonHelper.GetsaleOrdernoList(saleorderno);
+                    expando.saleordernoList = vouchertypeList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
