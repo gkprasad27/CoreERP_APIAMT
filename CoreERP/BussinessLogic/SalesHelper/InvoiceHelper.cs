@@ -977,7 +977,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                // invdtl.AvailStock -= _qty;
 
                                 //invdtl.EmployeeId = invoice.EmployeeId;
-                                invdtl.InvoiceMasterId = invoice.InvoiceMasterId;
+                               // invdtl.InvoiceMasterId = invoice.InvoiceMasterId;
                                // invdtl.VoucherNo = invoice.VoucherNo;
                                 invdtl.InvoiceNo = invoice.InvoiceNo;
                                // invdtl.StateCode = invoice.StateCode;

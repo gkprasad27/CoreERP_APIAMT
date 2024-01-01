@@ -6643,13 +6643,10 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.InvoiceDetailId)
                     .HasColumnName("invoiceDetailId")
-                    .HasColumnType("numeric(18, 0)")
-                    .ValueGeneratedOnAdd();
+                    .HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.AvailStock)
-                    .HasColumnName("availStock")
-                    .HasColumnType("numeric(18, 2)")
-                    .HasDefaultValueSql("((0.00))");
+                    .HasColumnName("availStock");
 
                 entity.Property(e => e.Cgst)
                     .HasColumnName("cgst")
@@ -6662,13 +6659,10 @@ namespace CoreERP.Models
                     .HasDefaultValueSql("((0.00))");
 
                 entity.Property(e => e.EmployeeId)
-                    .HasColumnName("employeeId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("employeeId");
 
                 entity.Property(e => e.FQty)
-                    .HasColumnName("fQty")
-                    .HasColumnType("numeric(18, 2)")
-                    .HasDefaultValueSql("((0.00))");
+                    .HasColumnName("fQty");
 
                 entity.Property(e => e.GrossAmount)
                     .HasColumnName("grossAmount")
@@ -6676,8 +6670,7 @@ namespace CoreERP.Models
                     .HasDefaultValueSql("((0.00))");
 
                 entity.Property(e => e.HsnNo)
-                    .HasColumnName("hsnNo")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("hsnNo");
 
                 entity.Property(e => e.Igst)
                     .HasColumnName("igst")
@@ -6690,8 +6683,7 @@ namespace CoreERP.Models
                     .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.InvoiceMasterId)
-                    .HasColumnName("invoiceMasterId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("invoiceMasterId");
 
                 entity.Property(e => e.InvoiceNo)
                     .HasColumnName("invoiceNo")
@@ -6703,37 +6695,25 @@ namespace CoreERP.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.ProductGroupCode)
-                    .HasColumnName("productGroupCode")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("productGroupCode");
 
                 entity.Property(e => e.ProductGroupId)
-                    .HasColumnName("productGroupId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("productGroupId");
 
                 entity.Property(e => e.ProductId)
-                    .HasColumnName("productId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("productId");
 
                 entity.Property(e => e.ProductName)
                     .IsRequired()
                     .HasColumnName("productName")
                     .IsUnicode(false);
 
-                entity.Property(e => e.PumpId).HasColumnName("pumpID");
-
-                entity.Property(e => e.PumpNo)
-                    .HasColumnName("pumpNo")
-                    .HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.Qty)
-                    .HasColumnName("qty")
-                    .HasColumnType("numeric(18, 2)")
-                    .HasDefaultValueSql("((0.00))");
+                    .HasColumnName("qty");
 
                 entity.Property(e => e.Rate)
-                    .HasColumnName("rate")
-                    .HasColumnType("decimal(18, 2)")
-                    .HasDefaultValueSql("((0.00))");
+                    .HasColumnName("rate");
 
                 entity.Property(e => e.ServerDateTime)
                     .HasColumnName("serverDateTime")
@@ -6741,21 +6721,16 @@ namespace CoreERP.Models
                     .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Sgst)
-                    .HasColumnName("sgst")
-                    .HasColumnType("numeric(18, 2)")
-                    .HasDefaultValueSql("((0.00))");
+                    .HasColumnName("sgst");
 
                 entity.Property(e => e.ShiftId)
-                    .HasColumnName("shiftId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("shiftId");
 
                 entity.Property(e => e.SlipNo)
-                    .HasColumnName("slipNo")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("slipNo");
 
                 entity.Property(e => e.StateCode)
-                    .HasMaxLength(20)
-                    .HasDefaultValueSql("((37))");
+                    .HasMaxLength(20);
 
                 entity.Property(e => e.TaxGroupCode)
                     .IsRequired()
@@ -6763,8 +6738,7 @@ namespace CoreERP.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.TaxGroupId)
-                    .HasColumnName("taxGroupId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("taxGroupId");
 
                 entity.Property(e => e.TaxGroupName)
                     .IsRequired()
@@ -6772,12 +6746,10 @@ namespace CoreERP.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.TaxStructureCode)
-                    .HasColumnName("taxStructureCode")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("taxStructureCode");
 
                 entity.Property(e => e.TaxStructureId)
-                    .HasColumnName("taxStructureId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("taxStructureId");
 
                 entity.Property(e => e.TotalGst)
                     .HasColumnName("totalGST")
@@ -6785,8 +6757,7 @@ namespace CoreERP.Models
                     .HasDefaultValueSql("((0.00))");
 
                 entity.Property(e => e.UnitId)
-                    .HasColumnName("unitId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("unitId");
 
                 entity.Property(e => e.UnitName)
                     .IsRequired()
@@ -6794,8 +6765,7 @@ namespace CoreERP.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.UserId)
-                    .HasColumnName("userId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("userId");
 
                 entity.Property(e => e.VoucherNo)
                     .HasColumnName("voucherNo")

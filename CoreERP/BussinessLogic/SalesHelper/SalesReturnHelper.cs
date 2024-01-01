@@ -133,12 +133,12 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-        public List<TblInvoiceDetail> GetInvoiceDetail(decimal invoiceMasterId)
+        public List<TblInvoiceDetail> GetInvoiceDetail(string invoiceMasterId)
         {
             try
             {
                 using Repository<TblInvoiceDetail> repo = new Repository<TblInvoiceDetail>();
-                return repo.TblInvoiceDetail.Where(x => x.InvoiceMasterId == invoiceMasterId).ToList();
+                return repo.TblInvoiceDetail.Where(x => x.InvoiceNo == invoiceMasterId).ToList();
             }
             catch (Exception ex)
             {
