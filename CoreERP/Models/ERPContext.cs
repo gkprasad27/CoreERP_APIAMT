@@ -6811,7 +6811,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.InvoiceMasterId)
                     .HasColumnName("invoiceMasterId")
-                    .HasColumnType("numeric(18, 0)")
                     .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.AccountBalance)
@@ -6820,14 +6819,14 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.AmountInWords).HasMaxLength(250);
 
-                entity.Property(e => e.BranchCode)
+                entity.Property(e => e.Company)
                     .IsRequired()
-                    .HasColumnName("branchCode")
+                    .HasColumnName("company")
                     .HasMaxLength(80);
 
-                entity.Property(e => e.BranchName)
+                entity.Property(e => e.Profitcenter)
                     .IsRequired()
-                    .HasColumnName("branchName")
+                    .HasColumnName("Profitcenter")
                     .HasMaxLength(250);
 
                 entity.Property(e => e.CustomerGstin)
@@ -6841,8 +6840,7 @@ namespace CoreERP.Models
                 entity.Property(e => e.Discount).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.EmployeeId)
-                    .HasColumnName("employeeId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("employeeId");
 
                 entity.Property(e => e.GeneralNo).HasMaxLength(250);
 
@@ -6871,18 +6869,16 @@ namespace CoreERP.Models
                     .HasMaxLength(100);
 
                 entity.Property(e => e.LedgerId)
-                    .HasColumnName("ledgerId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("ledgerId");
 
                 entity.Property(e => e.LedgerName)
                     .HasColumnName("ledgerName")
                     .IsUnicode(false);
 
-                entity.Property(e => e.ManualInvoiceNo).IsUnicode(false);
+                entity.Property(e => e.SaleOrderNo).IsUnicode(false);
 
                 entity.Property(e => e.MemberCode)
-                    .HasColumnName("memberCode")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("memberCode");
 
                 entity.Property(e => e.MemberName)
                     .HasColumnName("memberName")
@@ -6898,8 +6894,7 @@ namespace CoreERP.Models
                 entity.Property(e => e.OtherAmount2).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.PaymentMode)
-                    .HasColumnName("paymentMode")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("paymentMode");
 
                 entity.Property(e => e.RoundOffMinus)
                     .HasColumnName("roundOffMinus")
@@ -6917,8 +6912,7 @@ namespace CoreERP.Models
                     .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.ShiftId)
-                    .HasColumnName("shiftId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("shiftId");
 
                 entity.Property(e => e.StateCode).HasMaxLength(20);
 
@@ -6948,8 +6942,7 @@ namespace CoreERP.Models
                     .HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.UserId)
-                    .HasColumnName("userId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("userId");
 
                 entity.Property(e => e.UserName)
                     .IsRequired()
@@ -6958,8 +6951,7 @@ namespace CoreERP.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.VehicleId)
-                    .HasColumnName("vehicleId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("vehicleId");
 
                 entity.Property(e => e.VehicleRegNo)
                     .HasColumnName("vehicleRegNo")

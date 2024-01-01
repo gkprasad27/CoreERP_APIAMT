@@ -66,9 +66,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         if (fromDate != null && toDate != null)
                         {
                             _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
-                                                                .Where(inv =>
-                                                                         inv.BranchCode == branchCode
-                                                                         && inv.InvoiceDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
+                                                                .Where(inv =>inv.InvoiceDate >= Convert.ToDateTime(DateTime.Now.Date.ToString("yyyy/MM/dd"))
                                                                          && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((fromDate).Value.ToShortDateString())
                                                                          && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((toDate).Value.ToShortDateString())
                                                                          && inv.InvoiceNo.Contains(invoiceNo ?? inv.InvoiceNo)
@@ -78,8 +76,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         }
                         else
                         {
-                            _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable().Where(inv => inv.BranchCode == branchCode
-                                                                                                && inv.InvoiceNo.Contains(invoiceNo ?? inv.InvoiceNo)
+                            _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable().Where(inv => inv.InvoiceNo.Contains(invoiceNo ?? inv.InvoiceNo)
                                                                                                 && !inv.IsSalesReturned.Value
                                                                                                 && inv.InvoiceDate.Value.Year == DateTime.Now.Year
                                                                                               )
@@ -142,35 +139,47 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
-        public string GenerateInvoiceNo(string branchCode,out string  errorMessage)
+        public string GenerateInvoiceNo(out string  errorMessage)
         {
             try
             {
+                using var context = new ERPContext();
                 errorMessage = string.Empty;
                 string suffix = string.Empty, prefix = string.Empty, billno=string.Empty;
-                TblInvoiceMaster _invoiceMaster = null;
-                using (Repository<TblInvoiceMaster> _repo = new Repository<TblInvoiceMaster>())
+                using var repo = new Repository<Counters>();
+                var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Sales Invoice");
+
+                if (Pcenter != null)
                 {
-                    _invoiceMaster= _repo.TblInvoiceMaster.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.ServerDateTime).FirstOrDefault();
-
-                    if(_invoiceMaster != null)
-                    {
-                        var invSplit = _invoiceMaster.InvoiceNo.Split('-');
-                        billno = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1])+1}-{invSplit[2]}";
-                    }
-                    else
-                    {
-                       // new Common.CommonHelper().GetSuffixPrefix(19, branchCode, out prefix, out suffix);
-                        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
-                        {
-                            errorMessage = $"No prefix and suffix confugured for branch code: {branchCode} ";
-                            return billno = string.Empty;
-                        }
-
-                        billno = $"{prefix}-1-{suffix}";
-                    }
+                    Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                    context.Counters.UpdateRange(Pcenter);
+                    context.SaveChanges();
+                    billno = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                 }
-                
+
+                //TblInvoiceMaster _invoiceMaster = null;
+                //using (Repository<TblInvoiceMaster> _repo = new Repository<TblInvoiceMaster>())
+                //{
+                //    _invoiceMaster= _repo.TblInvoiceMaster.OrderByDescending(x => x.ServerDateTime).FirstOrDefault();
+
+                //    if(_invoiceMaster != null)
+                //    {
+                //        var invSplit = _invoiceMaster.InvoiceNo.Split('-');
+                //        billno = $"{invSplit[0]}-{Convert.ToDecimal(invSplit[1])+1}-{invSplit[2]}";
+                //    }
+                //    else
+                //    {
+                //       // new Common.CommonHelper().GetSuffixPrefix(19, branchCode, out prefix, out suffix);
+                //        if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(suffix))
+                //        {
+                //            errorMessage = $"No prefix and suffix confugured. ";
+                //            return billno = string.Empty;
+                //        }
+
+                //        billno = $"{prefix}-1-{suffix}";
+                //    }
+                //}
+
                 if (string.IsNullOrEmpty(billno))
                 {
                     errorMessage = "Invoice no not gererated please enter manully.";
@@ -315,7 +324,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                               .Where(inv =>
                                          DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
                                        && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString())<= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
-                                       && inv.BranchCode == branchCode
                                        && !inv.IsSalesReturned.Value
                                  )
                                .ToList();
@@ -823,13 +831,13 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
         /*************************   Helper methods For invoice*******************************************/
 
-        public bool IsInvoiceNoExists(string branchCode,string invoiceNo)
+        public bool IsInvoiceNoExists(string invoiceNo)
         {
             try
             {
                 using (Repository<TblInvoiceMaster> _repo = new Repository<TblInvoiceMaster>())
                 {
-                    return _repo.TblInvoiceMaster.Where(inv => inv.BranchCode == branchCode && inv.InvoiceNo == invoiceNo).Count() > 0;
+                    return _repo.TblInvoiceMaster.Where(inv => inv.InvoiceNo == invoiceNo).Count() > 0;
                 }
             }
             catch (Exception ex)
@@ -847,18 +855,18 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 TblUserNew userNew = null;
                 TblAccountLedger _accountLedger = null;
                 //check no of record allowed 
-                int allowedRecorsCount = NoOfrecordsAllowed(configuration, invoice.BranchCode);
-                if (allowedRecorsCount < invoiceDetails.Count())
-                {
-                    errorMessage = $"maximum  {allowedRecorsCount} records are allowed for branchCode :{invoice.BranchCode}";
-                    return false;
-                }
+               // int allowedRecorsCount = NoOfrecordsAllowed(configuration, invoice.BranchCode);
+                //if (allowedRecorsCount < invoiceDetails.Count())
+                //{
+                //    errorMessage = $"maximum  {allowedRecorsCount} records are allowed for branchCode :{invoice.BranchCode}";
+                //    return false;
+                //}
 
 
-                userNew = new UserManagmentHelper().GetUserNew(Convert.ToDecimal(invoice.UserId));
-                decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(Convert.ToDecimal(invoice.UserId), null));
+               // userNew = new UserManagmentHelper().GetUserNew(Convert.ToDecimal(invoice.UserId));
+               // decimal shifId = Convert.ToDecimal(new UserManagmentHelper().GetShiftId(Convert.ToDecimal(invoice.UserId), null));
                
-                invoice.EmployeeId = userNew?.EmployeeId ?? -1;
+                //invoice.EmployeeId = userNew?.EmployeeId ?? -1;
                 invoice.IsSalesReturned = false;
                 invoice.IsManualEntry = false;
                 //TblTaxStructure _taxStructure = null;
@@ -875,34 +883,34 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     {
                         try
                         {
-                            if (IsInvoiceNoExists(invoice.BranchCode, invoice.InvoiceNo))
-                            {
+                            //if (IsInvoiceNoExists(invoice.InvoiceNo))
+                            //{
 
-                                var invoice_No = GenerateInvoiceNo(invoice.BranchCode, out errorMessage);
+                                var invoice_No = GenerateInvoiceNo(out errorMessage);
                                 if (string.IsNullOrEmpty(invoice_No))
-                                    invoice_No = GenerateInvoiceNo(invoice.BranchCode, out errorMessage);
+                                    invoice_No = GenerateInvoiceNo(out errorMessage);
 
                                 if (!string.IsNullOrEmpty(invoice_No))
                                     invoice.InvoiceNo = invoice_No;
-                            }
+                           // }
 
-                            var _branch = GetBranches(invoice.BranchCode).ToArray().FirstOrDefault();
-                             _accountLedger = GetAccountLedgersByCode(invoice.LedgerCode);
+                            //var _branch = GetBranches(invoice.BranchCode).ToArray().FirstOrDefault();
+                            // _accountLedger = GetAccountLedgersByCode(invoice.LedgerCode);
                            // var _vouchertType = GetVoucherType(19).FirstOrDefault();
-                            var _user = new UserManagmentHelper().GetEmployeeID(invoice.UserName);
+                           // var _user = new UserManagmentHelper().GetEmployeeID(invoice.UserName);
 
                            // var paymentType = new Common.CommonHelper().GetPaymentType(_accountLedger.CrOrDr);
                            // invoice.PaymentMode = paymentType == null ? -1: paymentType.PaymentTypeId;
-                            invoice.LedgerId = _accountLedger.LedgerId;
+                            //invoice.LedgerId = _accountLedger.LedgerId;
                             //if (invoice.VehicleRegNo != null && invoice.MemberCode != null)
                             //{
                             //    var vehicleId = GetVehicles(invoice.VehicleRegNo, Convert.ToString(invoice.MemberCode)).ToArray().FirstOrDefault();
                             //    invoice.VehicleId = vehicleId.VehicleId == null ? -1 : vehicleId.VehicleId; //vehicleId.VehicleId;
                             //}
-                            invoice.MemberCode = invoice.MemberCode == null ? -1 : invoice.MemberCode;
-                            invoice.ShiftId = shifId;
-                            invoice.BranchName = _branch.BranchName;
-                            invoice.VoucherTypeId = 19;
+                           // invoice.MemberCode = invoice.MemberCode == null ? -1 : invoice.MemberCode;
+                            //invoice.ShiftId = shifId;
+                           // invoice.BranchName = _branch.BranchName;
+                            //invoice.VoucherTypeId = 19;
                            // invoice.EmployeeId = _user.EmployeeId;
                            // invoice.UserId = _user.UserId;
                             invoice.ServerDateTime = DateTime.Now;
@@ -921,66 +929,66 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                // _product = GetProducts(invdtl.ProductCode).FirstOrDefault();
                                // _taxStructure = GetTaxStructure(Convert.ToDecimal(_product.TaxStructureCode));
                                 //_accountLedger = GetAccountLedgersByLedgerId((decimal)_taxStructure?.SalesAccount).FirstOrDefault();
-                                if (invdtl.ProductCode == "D")
-                                {
-                                     invProduct = "D";
-                                    _invRate = invdtl.Rate ?? 0;
-                                    _invQty = invdtl.Qty ?? 0;
-                                    _invAmount = System.Math.Round(_invRate * _invQty,2);
-                                    _invUnitName = invdtl.UnitName;
-                                }
-                                if (invdtl.PumpNo != null)
-                                {
-                                   // _pumpId = GetPumpID(Convert.ToInt32(invdtl.PumpNo), invoice.BranchCode).FirstOrDefault();
-                                   // invdtl.PumpId = Convert.ToInt32(_pumpId.PumpId);
-                                }
+                                //if (invdtl.ProductCode == "D")
+                                //{
+                                //     invProduct = "D";
+                                //    _invRate = invdtl.Rate ?? 0;
+                                //    _invQty = invdtl.Qty ?? 0;
+                                //    _invAmount = System.Math.Round(_invRate * _invQty,2);
+                                //    _invUnitName = invdtl.UnitName;
+                                //}
+                                //if (invdtl.PumpNo != null)
+                                //{
+                                //   // _pumpId = GetPumpID(Convert.ToInt32(invdtl.PumpNo), invoice.BranchCode).FirstOrDefault();
+                                //   // invdtl.PumpId = Convert.ToInt32(_pumpId.PumpId);
+                                //}
                                 #region Add voucher Details
-                                decimal? _amountWithoutTax= invdtl.GrossAmount;
-                                if(invdtl.Cgst > 0 && invdtl.Sgst > 0)
-                                {
-                                    _amountWithoutTax = (_amountWithoutTax * 100) / (100 + invdtl.Cgst + invdtl.Sgst);
-                                }
-                                else if (invdtl.Igst > 0)
-                                {
-                                    _amountWithoutTax = (_amountWithoutTax * 100) / (100 + invdtl.Igst);
-                                }
+                                //decimal? _amountWithoutTax= invdtl.GrossAmount;
+                                //if(invdtl.Cgst > 0 && invdtl.Sgst > 0)
+                                //{
+                                //    _amountWithoutTax = (_amountWithoutTax * 100) / (100 + invdtl.Cgst + invdtl.Sgst);
+                                //}
+                                //else if (invdtl.Igst > 0)
+                                //{
+                                //    _amountWithoutTax = (_amountWithoutTax * 100) / (100 + invdtl.Igst);
+                                //}
 
-                                _amountWithoutTax = Math.Round(Convert.ToDecimal(_amountWithoutTax), 2, MidpointRounding.ToEven);
+                                //_amountWithoutTax = Math.Round(Convert.ToDecimal(_amountWithoutTax), 2, MidpointRounding.ToEven);
                                 //var _voucherDetail = AddVoucherDetails(repo, invoice, _branch, _voucherMaster, _accountLedger, _amountWithoutTax, "Credit");
                                 #endregion
 
                                 #region InvioceDetail
-                                _qty = null;
-                                if (invdtl.Qty != null)
-                                {
-                                    _qty = invdtl.Qty;
-                                }
-                                else
-                                {
-                                    if (_qty != null)
-                                        _qty += invdtl.FQty;
-                                    else
-                                        _qty = invdtl.FQty;
-                                }
+                                //_qty = null;
+                                //if (invdtl.Qty != null)
+                                //{
+                                //    _qty = invdtl.Qty;
+                                //}
+                                //else
+                                //{
+                                //    if (_qty != null)
+                                //        _qty += invdtl.FQty;
+                                //    else
+                                //        _qty = invdtl.FQty;
+                                //}
                                 //get product avilable qty
                                 //var stocInfoList = repo.TblStockInformation
                                 //                   .Where(stock => stock.ProductCode == invdtl.ProductCode && stock.BranchCode == invoice.BranchCode);
                                 //invdtl.AvailStock = stocInfoList.Sum(x => x.InwardQty) - stocInfoList.Sum(x => x.OutwardQty);
-                                invdtl.AvailStock -= _qty;
+                               // invdtl.AvailStock -= _qty;
 
-                                invdtl.EmployeeId = invoice.EmployeeId;
+                                //invdtl.EmployeeId = invoice.EmployeeId;
                                 invdtl.InvoiceMasterId = invoice.InvoiceMasterId;
-                                invdtl.VoucherNo = invoice.VoucherNo;
+                               // invdtl.VoucherNo = invoice.VoucherNo;
                                 invdtl.InvoiceNo = invoice.InvoiceNo;
-                                invdtl.StateCode = invoice.StateCode;
-                                invdtl.ShiftId = invoice.ShiftId;
-                                invdtl.UserId = invoice.UserId;
-                                invdtl.EmployeeId = invoice.EmployeeId;
+                               // invdtl.StateCode = invoice.StateCode;
+                               // invdtl.ShiftId = invoice.ShiftId;
+                                //invdtl.UserId = invoice.UserId;
+                                //invdtl.EmployeeId = invoice.EmployeeId;
                                 invdtl.ServerDateTime = DateTime.Now;
-                                invdtl.ShiftId = shifId;
-                                invdtl.PumpId = invdtl.PumpId ?? 0;
-                                invdtl.PumpNo = invdtl.PumpNo ?? 0;
-                                invdtl.SlipNo = invdtl.SlipNo ?? 0;
+                               // invdtl.ShiftId = shifId;
+                                //invdtl.PumpId = invdtl.PumpId ?? 0;
+                                //invdtl.PumpNo = invdtl.PumpNo ?? 0;
+                                //invdtl.SlipNo = invdtl.SlipNo ?? 0;
                                 invdtl.InvoiceDate = invoice.InvoiceDate;
 
                                 repo.TblInvoiceDetail.Add(invdtl);
@@ -1344,7 +1352,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 var _smsStatus = new Smsstatus();
                 _smsStatus.InvoiceNo=invoice.InvoiceNo;
                 _smsStatus.InvoiceDate = invoice.InvoiceDate;
-                _smsStatus.Branch = invoice.BranchName;
+               // _smsStatus.Branch = invoice.BranchName;
                 if (invoice.Mobile == null)
                 {
                     _smsStatus.Mobile = advanceMobile;

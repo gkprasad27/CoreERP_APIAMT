@@ -87,7 +87,7 @@ namespace CoreERP.Controllers
             {
                 string errorMessage = string.Empty;
 
-                var billno = new InvoiceHelper().GenerateInvoiceNo(branchCode, out errorMessage);
+                var billno = new InvoiceHelper().GenerateInvoiceNo(out errorMessage);
                 if (billno != null)
                 {
                     dynamic expando = new ExpandoObject();
@@ -463,8 +463,8 @@ namespace CoreERP.Controllers
             {
                 string errorMessage = string.Empty;
 
-                var _invoiceHdr = objData["InvoiceHdr"].ToObject<TblInvoiceMaster>();
-                var _invoiceDtl = objData["InvoiceDetail"].ToObject<TblInvoiceDetail[]>();
+                var _invoiceHdr = objData["grHdr"].ToObject<TblInvoiceMaster>();
+                var _invoiceDtl = objData["grDtl"].ToObject<TblInvoiceDetail[]>();
 
                 if(_invoiceHdr == null)
                 {
