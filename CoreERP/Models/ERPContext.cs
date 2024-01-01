@@ -6642,8 +6642,7 @@ namespace CoreERP.Models
                 entity.ToTable("tbl_InvoiceDetail");
 
                 entity.Property(e => e.InvoiceDetailId)
-                    .HasColumnName("invoiceDetailId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("invoiceDetailId");
 
                 entity.Property(e => e.AvailStock)
                     .HasColumnName("availStock");
