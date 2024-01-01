@@ -476,10 +476,10 @@ namespace CoreERP.Controllers
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "In request no product found in to save" });
                 }
                
-                if (string.IsNullOrEmpty(_invoiceHdr.InvoiceNo))
-                {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Invoice no canontbe null/empty." });
-                }
+                //if (string.IsNullOrEmpty(_invoiceHdr.InvoiceNo))
+                //{
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Invoice no canontbe null/empty." });
+                //}
 
 
                 var result = new InvoiceHelper().RegisterBill(_configuration ,_invoiceHdr, _invoiceDtl.ToList(), out errorMessage);

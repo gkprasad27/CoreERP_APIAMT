@@ -249,7 +249,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                           .Where(inv =>
                                      DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
                                    && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
-                                   && !inv.IsSalesReturned.Value
                              )
                            .ToList();
                     }
