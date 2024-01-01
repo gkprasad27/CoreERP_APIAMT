@@ -6689,7 +6689,6 @@ namespace CoreERP.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.ProductCode)
-                    .IsRequired()
                     .HasColumnName("productCode")
                     .IsUnicode(false);
 
@@ -6703,7 +6702,6 @@ namespace CoreERP.Models
                     .HasColumnName("productId");
 
                 entity.Property(e => e.ProductName)
-                    .IsRequired()
                     .HasColumnName("productName")
                     .IsUnicode(false);
 
@@ -6732,7 +6730,6 @@ namespace CoreERP.Models
                     .HasMaxLength(20);
 
                 entity.Property(e => e.TaxGroupCode)
-                    .IsRequired()
                     .HasColumnName("taxGroupCode")
                     .IsUnicode(false);
 
@@ -6740,7 +6737,6 @@ namespace CoreERP.Models
                     .HasColumnName("taxGroupId");
 
                 entity.Property(e => e.TaxGroupName)
-                    .IsRequired()
                     .HasColumnName("taxGroupName")
                     .IsUnicode(false);
 
@@ -6759,7 +6755,6 @@ namespace CoreERP.Models
                     .HasColumnName("unitId");
 
                 entity.Property(e => e.UnitName)
-                    .IsRequired()
                     .HasColumnName("unitName")
                     .IsUnicode(false);
 
@@ -6789,12 +6784,10 @@ namespace CoreERP.Models
                 entity.Property(e => e.AmountInWords).HasMaxLength(250);
 
                 entity.Property(e => e.Company)
-                    .IsRequired()
                     .HasColumnName("company")
                     .HasMaxLength(80);
 
                 entity.Property(e => e.Profitcenter)
-                    .IsRequired()
                     .HasColumnName("Profitcenter")
                     .HasMaxLength(250);
 
@@ -6914,7 +6907,6 @@ namespace CoreERP.Models
                     .HasColumnName("userId");
 
                 entity.Property(e => e.UserName)
-                    .IsRequired()
                     .HasColumnName("userName")
                     .HasMaxLength(50)
                     .IsUnicode(false);
