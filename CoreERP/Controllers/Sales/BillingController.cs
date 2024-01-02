@@ -437,11 +437,13 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
             try
             {
-                var invoiceMasterList = new InvoiceHelper().GetInvoiceDetails(invoiceNo);
-                if (invoiceMasterList.Count > 0)
+                var invoiceMasterList = new InvoiceHelper().GetInvoiceMaster(invoiceNo);
+                if (invoiceMasterList != null)
                 {
+                    var invoiceDetailsList = new InvoiceHelper().GetInvoiceDetails(invoiceNo);
                     dynamic expando = new ExpandoObject();
-                    expando.InvoiceDetailList = invoiceMasterList;
+                    expando.InvoiceMasterList = invoiceMasterList;
+                    expando.invoiceDetailsList = invoiceDetailsList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 

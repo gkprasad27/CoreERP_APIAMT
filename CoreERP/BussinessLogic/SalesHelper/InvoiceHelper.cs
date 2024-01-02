@@ -812,6 +812,26 @@ namespace CoreERP.BussinessLogic.SalesHelper
         //        throw ex;
         //    }
         //}
+        public TblInvoiceMaster GetInvoiceMaster(string invoiceNo)
+        {
+            try
+            {
+                //using (Repository<TblInvoiceMaster> repo = new Repository<TblInvoiceMaster>())
+                //{
+                //    return repo.TblInvoiceMaster.Where(x => x.InvoiceNo == invoiceNo);
+                //}
+
+                using var repo = new Repository<TblInvoiceMaster>();
+                return repo.TblInvoiceMaster
+                    .FirstOrDefault(x => x.InvoiceNo == invoiceNo);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public List<TblInvoiceDetail> GetInvoiceDetails(string invoiceNo)
         {
             try
