@@ -908,13 +908,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var Company = repo.TblCompany.ToList();
             var profitCenters = repo.ProfitCenters.ToList();
             var customer = repo.TblBusinessPartnerAccount.ToList();
-
+            var FunctionalDepartment = repo.TblFunctionalDepartment.ToList();
             repo.TblGoodsIssueMaster.ToList()
                 .ForEach(c =>
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
-
+                    c.DepartmentName = FunctionalDepartment.FirstOrDefault(f => f.Code == c.Department).Description;
                 });
 
 
@@ -2949,12 +2949,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 if (saleOrderDetailsExist.Count > 0)
                 {
-                    context.TblSaleOrderDetail.UpdateRange(saleOrderDetailsExist);
+                    context.TblSaleOrderDetail.UpdateRange(saleOrderDetails);
                 }
-                else
+                else if (saleOrderDetailsNew.Count > 0)
                 {
-                    context.TblSaleOrderDetail.AddRange(saleOrderDetailsNew);
+                    context.TblSaleOrderDetail.AddRange(saleOrderDetails);
                 }
+
                 context.SaveChanges();
 
                 dbtrans.Commit();
