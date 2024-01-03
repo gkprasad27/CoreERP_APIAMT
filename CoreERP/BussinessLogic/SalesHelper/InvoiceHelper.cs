@@ -832,6 +832,26 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
+        public TblInvoiceMaster GetInvoiceMasterbysaeorder(string saleorder)
+        {
+            try
+            {
+                //using (Repository<TblInvoiceMaster> repo = new Repository<TblInvoiceMaster>())
+                //{
+                //    return repo.TblInvoiceMaster.Where(x => x.InvoiceNo == invoiceNo);
+                //}
+
+                using var repo = new Repository<TblInvoiceMaster>();
+                return repo.TblInvoiceMaster
+                    .FirstOrDefault(x => x.SaleOrderNo == saleorder);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public List<TblInvoiceDetail> GetInvoiceDetails(string invoiceNo)
         {
             try
@@ -839,6 +859,21 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using (Repository<TblInvoiceDetail> repo = new Repository<TblInvoiceDetail>())
                 {
                     return repo.TblInvoiceDetail.Where(x => x.InvoiceNo == invoiceNo).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<TblInvoiceDetail> GetInvoiceDetailsbysaleorder(string saleorder)
+        {
+            try
+            {
+                using (Repository<TblInvoiceDetail> repo = new Repository<TblInvoiceDetail>())
+                {
+                    return repo.TblInvoiceDetail.Where(x => x.Saleorder == saleorder).ToList();
                 }
             }
             catch (Exception ex)

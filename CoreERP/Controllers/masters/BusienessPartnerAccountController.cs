@@ -131,7 +131,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpDelete("GetBusienessPartnerAccount/{code}")]
+        [HttpGet("GetBusienessPartnerAccount/{code}")]
         public async Task<IActionResult> GetBusienessPartnerAccount(string code)
         {
             APIResponse apiResponse = null;

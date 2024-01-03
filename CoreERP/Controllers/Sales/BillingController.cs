@@ -455,6 +455,33 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetInvoiceDeatilListsaleorder/{saleorder}")]
+        public IActionResult GetInvoiceDeatilListsaleorder(string saleorder)
+        {
+
+            if (string.IsNullOrEmpty(saleorder))
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                var invoiceMasterList = new InvoiceHelper().GetInvoiceMasterbysaeorder(saleorder);
+                if (invoiceMasterList != null)
+                {
+                    var invoiceDetailsList = new InvoiceHelper().GetInvoiceDetailsbysaleorder(saleorder);
+                    dynamic expando = new ExpandoObject();
+                    expando.InvoiceMasterList = invoiceMasterList;
+                    expando.invoiceDetailsList = invoiceDetailsList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+
         [HttpPost("RegisterInvoice")]
         public IActionResult RegisterBilling([FromBody]JObject objData)
         {

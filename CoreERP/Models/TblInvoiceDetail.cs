@@ -39,5 +39,6 @@ namespace CoreERP.Models
         public decimal? GrossAmount { get; set; }
         public decimal? TotalGst { get; set; }
         public int? AvailStock { get; set; }
+        public string? Saleorder { get; set; }
     }
 }
