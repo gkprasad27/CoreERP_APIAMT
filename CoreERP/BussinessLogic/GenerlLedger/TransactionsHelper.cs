@@ -1064,7 +1064,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new ERPContext();
             var material = new List<TblMaterialMaster>();
             var tblProduction = new List<tblQCResults>();
-
+            var sizes = repo.TblMaterialSize.ToList();
             if (!string.IsNullOrEmpty(Materialcode))
             {
                 tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type == Type).ToList();
@@ -1081,7 +1081,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 foreach (var item in tblProduction)
                 {
                     c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == item.MaterialCode)?.Description;
+                   
                 }
+                c.UOMName = sizes.FirstOrDefault(s => s.unitId == c.Uom)?.unitName;
             });
 
 
@@ -1132,6 +1134,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     x.GoodsIssueId = gimaster.GoodsIssueId;
                     x.SaleOrderNumber = gimaster.SaleOrderNumber;
+                    x.AddDate = System.DateTime.Now;
+                    x.EditDate = System.DateTime.Now;
+                    x.Status = "Production Released";
                 });
 
 
@@ -1209,11 +1214,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 if (goodsOrderDetailsExist.Count > 0)
                 {
-                    context.TblGoodsIssueDetails.UpdateRange(goodsOrderDetailsExist);
+                    context.TblGoodsIssueDetails.UpdateRange(gibDetails);
                 }
                 else
                 {
-                    context.TblGoodsIssueDetails.AddRange(goodsOrderDetailsNew);
+                    context.TblGoodsIssueDetails.AddRange(gibDetails);
                 }
 
                 context.SaveChanges();

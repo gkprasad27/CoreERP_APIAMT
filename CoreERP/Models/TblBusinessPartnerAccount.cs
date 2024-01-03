@@ -43,5 +43,11 @@ namespace CoreERP.Models
         public string? ContactPersionMobile { get; set; }
         public string? Narration { get; set; }
         public string? Ext { get; set; }
+        public string? ShiptoAddress1 { get; set; }
+        public string? ShiptoAddress2 { get; set; }
+        public string? ShiptoState { get; set; }
+        public string? ShiptoCity { get; set; }
+        public string? ShiptoZip { get; set; }
+        public string? ShiptoPhone { get; set; }
     }
 }

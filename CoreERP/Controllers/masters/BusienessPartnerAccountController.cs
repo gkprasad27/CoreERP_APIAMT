@@ -131,6 +131,31 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpDelete("GetBusienessPartnerAccount/{code}")]
+        public async Task<IActionResult> GetBusienessPartnerAccount(string code)
+        {
+            APIResponse apiResponse = null;
+            if (code == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)}can not be null" });
+
+            try
+            {
+                var bpaList = _businessPartnerAccountRepository.GetSingleOrDefault(x => x.Bpnumber.Equals(code));
+                if (bpaList !=null)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.bpaList = bpaList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for BusienessPartnerAccount." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetBPtNumberList/{code}/{code1}")]
         public IActionResult GetBPtNumberList(string code, int code1)
         {

@@ -14,6 +14,17 @@ namespace CoreERP.Models
     public partial class tblQCResults
     {
         [NotMapped]
+        public string UOMName { get; set; }
+    }
+
+    public partial class tblQCDetails
+    {
+        [NotMapped]
+        public string UOMName { get; set; }
+    }
+    public partial class tblQCResults
+    {
+        [NotMapped]
         public string MaterialName { get; set; }
     }
     partial class TblPurchaseOrderDetails

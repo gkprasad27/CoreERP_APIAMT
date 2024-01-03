@@ -178,8 +178,18 @@ namespace CoreERP.Controllers.masters
         {
             using var repo = new Repository<tblQCDetails>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
+            var sizes = repo.TblMaterialSize.ToList();
 
-            return repo.tblQCDetails.Where(cd => cd.Code == Code).ToList();
+
+           var result=  repo.tblQCDetails.Where(cd => cd.Code == Code).ToList();
+
+            result.ForEach(c =>
+            {
+                c.UOMName = sizes.FirstOrDefault(s => s.unitId == c.Uom)?.unitName;
+            });
+
+
+            return result.ToList();
 
         }
         public tblQCMaster GetQCMastersById(string Code)

@@ -3269,7 +3269,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.CostCenter).HasMaxLength(50);
 
-                entity.Property(e => e.GoodsIssueId).HasColumnName("GoodsIssueID");
+                entity.Property(e => e.GoodsIssueId);
 
                 entity.Property(e => e.JobOrder).HasMaxLength(50);
 
@@ -3279,10 +3279,9 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Plant).HasMaxLength(50);
 
-                entity.Property(e => e.Qty).HasColumnName("QTY");
+                entity.Property(e => e.Qty);
 
                 entity.Property(e => e.Wbs)
-                    .HasColumnName("WBS")
                     .HasMaxLength(50);
             });
 
