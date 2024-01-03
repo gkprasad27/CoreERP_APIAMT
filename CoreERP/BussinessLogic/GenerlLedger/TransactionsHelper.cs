@@ -1081,7 +1081,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 foreach (var item in tblProduction)
                 {
                     c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == item.MaterialCode)?.Description;
-                   
+
                 }
                 c.UOMName = sizes.FirstOrDefault(s => s.unitId == c.Uom)?.unitName;
             });
@@ -1292,7 +1292,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     else
                         throw new Exception("InspectionCheckNo Not Valid. " + masternumber + " Please check .");
 
-                   
+
                     context.SaveChanges();
                 }
                 foreach (var item in prodDetails)
@@ -1414,7 +1414,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 else
                     throw new Exception("Bomnumber Not Valid. " + masternumber + " Please check .");
 
-               
+
                 context.SaveChanges();
             }
 
@@ -1804,7 +1804,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 else
                     throw new Exception("Master Sale Order Number Not Valid. " + masternumber + " Please check .");
 
-               
+
                 context.SaveChanges();
             }
 
@@ -2019,7 +2019,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 else
                     throw new Exception("Quotation Number Not Valid. " + masternumber + " Please check .");
 
-              
+
                 context.SaveChanges();
             }
 
@@ -2287,7 +2287,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 podetails.ForEach(x =>
                 {
                     x.PurchaseOrderNumber = purchaseordernumber;
+                    x.SaleOrder = podata.SaleOrderNo;
                 });
+                foreach (var item in podetails)
+                {
+                    var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrder && im.MaterialCode == item.MaterialCode);
+                    if (sodata != null)
+                    {
+                        sodata.POQty = item.Qty;
+                        context.TblSaleOrderDetail.Update(sodata);
+                    }
+                }
+
                 poDetailsExist = podetails.Where(x => x.Id > 0).ToList();
                 poDetailsNew = podetails.Where(x => x.Id == 0).ToList();
 
@@ -2320,6 +2331,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
 
 
+
         public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(string number)
         {
             using var repo = new Repository<TblPurchaseOrderDetails>();
@@ -2331,6 +2343,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 c.AvailableQTY = Convert.ToInt32(material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
             });
             return repo.TblPurchaseOrderDetails.Where(cd => cd.PurchaseOrderNumber == number).ToList();
+        }
+
+        public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(string saleorder, string materialcode)
+        {
+            using var repo = new Repository<TblPurchaseOrderDetails>();
+            var material = repo.TblMaterialMaster.ToList();
+
+            repo.TblPurchaseOrderDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+                c.AvailableQTY = Convert.ToInt32(material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
+            });
+            return repo.TblPurchaseOrderDetails.Where(cd => cd.SaleOrder == saleorder && cd.MaterialCode == materialcode).ToList();
         }
         public bool ReturnPurchaseOrderDetails(string code)
         {
@@ -2600,7 +2625,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.SaveChanges();
                         masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
-                    
+
                     icdata.InspectionCheckNo = masternumber;
                     if (masternumber.Length > 1)
                         context.TblInspectionCheckMaster.Add(icdata);

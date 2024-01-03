@@ -91,6 +91,21 @@ namespace CoreERP
             return result.ToList();
         }
 
+        public static TblSaleOrderMaster GetSaleOrderMastersById(string saleorderno)
+        {
+            using var repo = new Repository<TblSaleOrderMaster>();
+            var BP = repo.TblBusinessPartnerAccount.ToList();
+
+            var result= repo.TblSaleOrderMaster
+                .FirstOrDefault(x => x.SaleOrderNo == saleorderno);
+
+
+            repo.TblSaleOrderMaster.ToList().ForEach(c =>
+            {
+                c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.CustomerCode)?.Name;
+            });
+            return result;
+        }
         public List<TblPaymentTermDetails> GetTblPaymentTermDetails(string code)
         {
             using var repo = new Repository<TblPaymentTermDetails>();

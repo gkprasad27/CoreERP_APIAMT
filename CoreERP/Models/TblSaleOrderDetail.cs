@@ -31,5 +31,6 @@ namespace CoreERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedDate { get; set; }
         public string? AddWho { get; set; }
+        public int? POQty { get; set; }
     }
 }

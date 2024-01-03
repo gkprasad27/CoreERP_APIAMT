@@ -1427,6 +1427,28 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetPurchaseOrderData/{Saleorder}/{Materialcode}")]
+        public async Task<IActionResult> GetPurchaseOrderData(string Saleorder,string Materialcode)
+        {
+            var result = await Task.Run(() =>
+            {
+
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.poDetailwithso = new TransactionsHelper().GetPurchaseOrderDetails(Saleorder, Materialcode);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpPost("AddPurchaseOrder")]
         public async Task<IActionResult> AddPurchaseOrder([FromBody] JObject obj)
         {
