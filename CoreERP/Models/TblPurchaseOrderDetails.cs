@@ -31,5 +31,6 @@ namespace CoreERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? EditDate { get; set; }
         public string? SaleOrder { get; set; }
+        public int? SOQty { get; set; }
     }
 }

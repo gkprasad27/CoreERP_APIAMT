@@ -2294,7 +2294,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrder && im.MaterialCode == item.MaterialCode);
                     if (sodata != null)
                     {
-                        sodata.POQty = item.Qty;
+                        sodata.POQty = (sodata.POQty+ item.Qty);
                         context.TblSaleOrderDetail.Update(sodata);
                     }
                 }
