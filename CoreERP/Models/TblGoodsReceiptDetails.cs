@@ -39,6 +39,6 @@ namespace CoreERP.Models
         public DateTime? EditDate { get; set; }
 
         public string? InvoiceNo { get; set; }
-
+        public string? SaleorderNo { get; set; }
     }
 }

@@ -41,6 +41,7 @@ namespace CoreERP.Models
         public string? DocumentURL { get; set; }
         public string? CompanyName { get; set; }
         public string? ProfitcenterName { get; set; }
+        public string? SaleorderNo { get; set; }
 
     }
 }

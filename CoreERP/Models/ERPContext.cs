@@ -126,6 +126,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblIncomeTypes> TblIncomeTypes { get; set; }
         public virtual DbSet<TblInspectionCheckMaster> TblInspectionCheckMaster { get; set; }
         public virtual DbSet<TblInspectionCheckDetails> TblInspectionCheckDetails { get; set; }
+        public virtual DbSet<TblRejectionMaster> TblRejectionMaster { get; set; }
         public virtual DbSet<TblInvoiceMemoDetails> TblInvoiceMemoDetails { get; set; }
         public virtual DbSet<TblForm> TblForm { get; set; }
         public virtual DbSet<TblInvoiceMemoHeader> TblInvoiceMemoHeader { get; set; }
@@ -257,6 +258,7 @@ namespace CoreERP.Models
         public virtual DbSet<LeaveBalanceMaster> LeaveBalanceMaster { get; set; }
         public virtual DbSet<Ptmaster> Ptmaster { get; set; }
         public virtual DbSet<Pfmaster> Pfmaster { get; set; }
+        public virtual DbSet<TblPoQueue> TblPoQueue { get; set; }
         public virtual DbSet<ComponentMaster> ComponentMaster { get; set; }
         public virtual DbSet<StructureCreation> StructureCreation { get; set; }
         public virtual DbSet<StructureComponents> StructureComponents { get; set; }
