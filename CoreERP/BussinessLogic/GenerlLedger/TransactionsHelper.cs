@@ -1122,7 +1122,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     if (repogim.TblGoodsIssueMaster.Any(v => v.SaleOrderNumber == gimaster.SaleOrderNumber))
                     {
-                        throw new Exception("Already Allocated Goods Issue for this Saleorder."+gimaster.SaleOrderNumber);
+                        throw new Exception("Already Allocated Goods Issue for this Saleorder." + gimaster.SaleOrderNumber);
                     }
                     gimaster.Status = "Production Released";
                     context.TblGoodsIssueMaster.Add(gimaster);
@@ -1276,7 +1276,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == saleordernumber);
             var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
             var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == material).FirstOrDefault();
-            var materialmaster =  repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == material);
+            var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == material);
             try
             {
                 if (InspectionMaster != null)
@@ -1345,9 +1345,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         ProductionStatus.Mechine = item.Mechine;
                         context.TblProductionStatus.UpdateRange(ProductionStatus);
                     }
-                    if(item.WorkStatus=="Rejected")
+                    if (item.WorkStatus == "Rejected")
                     {
-                        materialmaster.ClosingQty =((materialmaster.ClosingQty)-1);
+                        materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
                         context.TblMaterialMaster.UpdateRange(materialmaster);
 
                         RejectionMaster.SaleOrderNo = item.SaleOrderNumber;
@@ -2639,7 +2639,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             List<TblInspectionCheckDetails> prDetailsNew;
             List<TblInspectionCheckDetails> prDetailsExist;
             var RejectionMaster = new TblRejectionMaster();
-           
+
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == icdata.saleOrderNumber);
@@ -2723,17 +2723,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     Purcaseorder.Status = "QC Started";
                     context.TblPurchaseOrder.Update(Purcaseorder);
                 }
-                if (goodsreceipt != null) 
+                if (goodsreceipt != null)
                 {
                     goodsreceipt.Status = "QC Started";
                     context.TblGoodsReceiptMaster.Update(goodsreceipt);
                 }
-                if (goodsissue != null) 
+                if (goodsissue != null)
                 {
                     goodsissue.Status = "QC Started";
                     context.TblGoodsIssueMaster.Update(goodsissue);
                 }
-                if (Production != null) 
+                if (Production != null)
                 {
                     Production.Status = "QC Started";
                     context.TblProductionMaster.Update(Production);
@@ -3091,7 +3091,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 else
                 {
-                    context.tblQCMaster.Add(QCMaster);
+                    if (repo.tblQCMaster.Any(v => v.MaterialCode == QCMaster.MaterialCode && v.Type == QCMaster.Type))
+                        throw new Exception("Material Code Already Registered " + QCMaster.MaterialCode);
+                    else
+                        context.tblQCMaster.Add(QCMaster);
                     context.SaveChanges();
                 }
 
@@ -3124,7 +3127,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using var context1 = new ERPContext();
                 icdata.ScreenName = "QC Config";
                 icdata.ErrorID = ex.HResult.ToString();
-                icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                if (ex.InnerException != null)
+                    icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                else
+                    icdata.ErrorMessage = ex.Message;
+
                 context1.TblApi_Error_Log.Add(icdata);
                 context1.SaveChanges();
 
