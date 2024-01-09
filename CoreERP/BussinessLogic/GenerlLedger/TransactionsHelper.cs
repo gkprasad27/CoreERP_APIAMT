@@ -2639,7 +2639,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             List<TblInspectionCheckDetails> prDetailsNew;
             List<TblInspectionCheckDetails> prDetailsExist;
             var RejectionMaster = new TblRejectionMaster();
-
+            string Materialcode = icdetails.FirstOrDefault().MaterialCode;
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == icdata.saleOrderNumber);
@@ -2647,7 +2647,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
             try
             {
-                if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == icdata.MaterialCode))
+                if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
                 {
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
@@ -2663,6 +2663,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
 
                     icdata.InspectionCheckNo = masternumber;
+                    icdata.MaterialCode = Materialcode;
                     if (masternumber.Length > 1)
                         context.TblInspectionCheckMaster.Add(icdata);
                     else
@@ -2687,6 +2688,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.CompletionDate = icdata.completionDate;
                     x.CompletedBy = icdata.completedBy;
                     x.Status = icdata.Status;
+                    x.HeatNumber = icdata.HeatNumber;
+                    x.PartDrgNo = icdata.PartDrgNo;
                     production.Status = icdata.Status;
                     if (x.Status == "QC Rejected")
                     {

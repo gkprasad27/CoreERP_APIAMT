@@ -22,7 +22,9 @@ namespace CoreERP.Models
        [ DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? EditDate { get; set; }
         public string? InspectionType { get; set; }
-
+        public string? HeatNumber { get; set; }
+        public string? PartDrgNo { get; set; }
+        public string? DrawingRevNo { get; set; }
 
     }
 }
