@@ -2691,7 +2691,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.Status = icdata.Status;
                     x.HeatNumber = icdata.HeatNumber;
                     x.PartDrgNo = icdata.PartDrgNo;
-                    x.DrawingRevNo= "QC-F-005 Dated: 01-Apr-2018"
+                    x.DrawingRevNo = "QC-F-005 Dated: 01-Apr-2018";
                     production.Status = icdata.Status;
                     if (x.Status == "QC Rejected")
                     {
