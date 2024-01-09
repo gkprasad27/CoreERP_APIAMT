@@ -2649,6 +2649,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
                 {
+                    icdata.DrawingRevNo = "QC-F-005 Dated: 01-Apr-2018";
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
                 }
@@ -2661,7 +2662,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.SaveChanges();
                         masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
-
+                    icdata.DrawingRevNo = "QC-F-005 Dated: 01-Apr-2018";
                     icdata.InspectionCheckNo = masternumber;
                     icdata.MaterialCode = Materialcode;
                     if (masternumber.Length > 1)
@@ -2690,6 +2691,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.Status = icdata.Status;
                     x.HeatNumber = icdata.HeatNumber;
                     x.PartDrgNo = icdata.PartDrgNo;
+                    x.DrawingRevNo= "QC-F-005 Dated: 01-Apr-2018"
                     production.Status = icdata.Status;
                     if (x.Status == "QC Rejected")
                     {
