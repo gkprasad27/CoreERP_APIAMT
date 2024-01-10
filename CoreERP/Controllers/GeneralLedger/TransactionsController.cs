@@ -816,6 +816,7 @@ namespace CoreERP.Controllers.masters
                     expdoObj.QCData = QCData;
                     expdoObj.SaleorderMaster = tagsData;
                     expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
+                    expdoObj.InsoectionCheck = new TransactionsHelper().GetInpectionCheckMasterById(Materialcode,SaleorderNumber );
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }

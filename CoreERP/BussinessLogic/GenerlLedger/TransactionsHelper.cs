@@ -3164,6 +3164,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         item1.TagName = item.productionTag;
                         item1.saleOrderNumber = item.saleOrderNumber;
                         item1.Type = item.InspectionType;
+                        item1.UOMName = item1.Uom;
                         if (item.Type != "edit")
                             item1.Id = 0;
                     }

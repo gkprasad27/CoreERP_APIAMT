@@ -159,10 +159,15 @@ namespace CoreERP.Controllers.masters
         public List<tblQCDetails> GetQCDetail(string materialcode)
         {
             using var repo = new Repository<tblQCDetails>();
-            //var MaterialCodes = repo.TblMaterialMaster.ToList();
+            var sizes = repo.TblMaterialSize.ToList();
 
-            return repo.tblQCDetails.Where(cd => cd.MaterialCode == materialcode).ToList();
+            var result = repo.tblQCDetails.Where(cd => cd.MaterialCode == materialcode).ToList();
 
+            result.ForEach(c =>
+            {
+                c.UOMName = sizes.FirstOrDefault(s => s.unitId == c.Uom)?.unitName;
+            });
+            return result.ToList();
         }
 
         public List<tblQCResults> GetQCResult(string materialcode,string tagname, string Type)
@@ -177,7 +182,7 @@ namespace CoreERP.Controllers.masters
         public List<tblQCDetails> GetQCDetails(string Code)
         {
             using var repo = new Repository<tblQCDetails>();
-            var MaterialCodes = repo.TblMaterialMaster.ToList();
+           // var MaterialCodes = repo.TblMaterialMaster.ToList();
             var sizes = repo.TblMaterialSize.ToList();
 
 
