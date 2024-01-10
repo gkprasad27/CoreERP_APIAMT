@@ -6,6 +6,7 @@ namespace CoreERP.Models
 {
     public partial class TblGoodsIssueMaster
     {
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
         public int GoodsIssueId { get; set; }
         public string? Company { get; set; }
         public string? StoresPerson { get; set; }

@@ -11,6 +11,13 @@ namespace CoreERP.Models
 
     }
 
+    public partial class TblProductionMaster
+    {
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string ProfitcenterName { get; set; }
+    }
     public partial class tblQCResults
     {
         [NotMapped]

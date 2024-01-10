@@ -665,7 +665,7 @@ namespace CoreERP.Controllers.masters
                     if (!Goodsissue.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for GoodsIssue." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.Goodsissue = Goodsissue;
+                    expdoObj.Goodsissue = Goodsissue.OrderByDescending(x=>x.GoodsIssueId);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }

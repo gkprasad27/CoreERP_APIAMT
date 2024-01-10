@@ -907,7 +907,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             var Company = repo.TblCompany.ToList();
             var profitCenters = repo.ProfitCenters.ToList();
-            var customer = repo.TblBusinessPartnerAccount.ToList();
+            var Employee = repo.TblEmployee.ToList();
             var FunctionalDepartment = repo.TblFunctionalDepartment.ToList();
             repo.TblGoodsIssueMaster.ToList()
                 .ForEach(c =>
@@ -915,6 +915,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
                     c.DepartmentName = FunctionalDepartment.FirstOrDefault(f => f.Code == c.Department).Description;
+                    c.StoresPersonName= Employee.FirstOrDefault(f => f.EmployeeCode == c.StoresPerson).EmployeeName;
+                    c.ProductionPersonName = Employee.FirstOrDefault(f => f.EmployeeCode == c.ProductionPerson).EmployeeName;
                 });
 
 
@@ -938,6 +940,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             using var repo = new Repository<TblProductionMaster>();
 
+            var Company = repo.TblCompany.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            repo.TblProductionMaster.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+                });
             return repo.TblProductionMaster.AsEnumerable()
                 .Where(x =>
                 {
@@ -947,7 +957,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                               && Convert.ToString(x.ID).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.ID))
                               && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                               && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
-                }).OrderByDescending(x => x.AddDate)
+                }).OrderByDescending(x => x.ID)
                 .ToList();
 
 
