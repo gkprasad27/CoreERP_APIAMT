@@ -7,6 +7,8 @@ namespace CoreERP.Models
     [Table("Tbl_SaleOrderMaster")]
     public partial class TblSaleOrderMaster
     {
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         public string? SaleOrderNo { get; set; }
         public string? CustomerCode { get; set; }
         public DateTime? OrderDate { get; set; }

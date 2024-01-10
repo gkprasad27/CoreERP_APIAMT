@@ -6,6 +6,9 @@ namespace CoreERP.Models
 {
     public partial class TblPurchaseOrder
     {
+
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         public string? CustPONumber { get; set; }
         public string? Company { get; set; }
         public string? SaleOrderNo { get; set; }
@@ -46,6 +49,6 @@ namespace CoreERP.Models
         public string? DispatchMode { get; set; }
         public string? TermsOfDelivery { get; set; }
         public string? TermsOfPayment { get; set; }
-        public DateTime? ReceivedDate { get;set; }
+        public DateTime? ReceivedDate { get; set; }
     }
 }
