@@ -7,7 +7,7 @@ namespace CoreERP.Models
     public partial class TblPurchaseOrder
     {
 
-        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Computed)]
         public int Id { get; set; }
         public string? CustPONumber { get; set; }
         public string? Company { get; set; }
