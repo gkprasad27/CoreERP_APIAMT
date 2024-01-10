@@ -367,6 +367,30 @@ namespace CoreERP.Controllers
             return result;
         }
 
+        [HttpDelete("DeletePurchaseOrder/{id}")]
+        public IActionResult DeletePurchaseOrder(string id)
+        {
+            try
+            {
+                if (id == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
+
+                APIResponse apiResponse;
+                var record = _purchaseOrderDetailsRepository.GetSingleOrDefault(x => x.Id.Equals(id));
+                _purchaseOrderDetailsRepository.Remove(record);
+                if (_purchaseOrderDetailsRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
+                else
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetsaleOrdernoListe/{saleorderno}")]
         public async Task<IActionResult> GetsaleOrdernoList(string saleorderno)
         {

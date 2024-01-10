@@ -371,8 +371,6 @@ namespace CoreERP.Models
     partial class tblQCMaster
     {
         [NotMapped]
-        public string UomName { get; set; }
-        [NotMapped]
         public string MaterialName { get; set; }
      
     }
