@@ -1745,6 +1745,31 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetInspectionCheckDetailbySaleorder/{saleorder}")]
+        public async Task<IActionResult> GetInspectionCheckDetailbySaleorder(string saleorder)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    var iclist = transactions.GetInpectionCheckMaster(saleorder);
+                    if (iclist == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.icmasters = iclist;
+                    expdoObj.icDetail = new TransactionsHelper().GetInspectionCheckDetailsBySaleorder(saleorder);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetInspectionCheckDetail/{code}")]
         public async Task<IActionResult> GetInspectionCheckDetail(string code)
         {

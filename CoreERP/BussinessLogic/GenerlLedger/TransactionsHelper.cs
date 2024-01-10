@@ -2773,6 +2773,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblInspectionCheckDetails>();
             return repo.TblInspectionCheckDetails.Where(cd => cd.InspectionCheckNo == number).ToList();
         }
+
+        public TblInspectionCheckMaster GetInpectionCheckMaster(string saleorder)
+        {
+            using var repo = new Repository<TblInspectionCheckMaster>();
+            return repo.TblInspectionCheckMaster
+                .FirstOrDefault(x => x.saleOrderNumber == saleorder);
+        }
+        public List<TblInspectionCheckDetails> GetInspectionCheckDetailsBySaleorder(string saleorder)
+        {
+            using var repo = new Repository<TblInspectionCheckDetails>();
+            return repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == saleorder).ToList();
+        }
+
         public bool ReturnInpectionCheckMaster(string code)
         {
             using var repo = new ERPContext();
