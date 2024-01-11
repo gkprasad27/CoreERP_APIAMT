@@ -11,8 +11,8 @@ namespace CoreERP.Models
         public string? QuotationNumber { get; set; }
         public DateTime? SupplierQuoteDate { get; set; }
         public string? CustomerCode { get; set; }
-        public int? DeliveryPeriod { get; set; }
-        public int? CreditDays { get; set; }
+        public string? DeliveryPeriod { get; set; }
+        public string? CreditDays { get; set; }
         public string? DeliveryMethod { get; set; }
         public decimal? Advance { get; set; }
         public string? TransportMethod { get; set; }
