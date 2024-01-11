@@ -915,7 +915,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
                     c.DepartmentName = FunctionalDepartment.FirstOrDefault(f => f.Code == c.Department).Description;
-                    c.StoresPersonName= Employee.FirstOrDefault(f => f.EmployeeCode == c.StoresPerson).EmployeeName;
+                    c.StoresPersonName = Employee.FirstOrDefault(f => f.EmployeeCode == c.StoresPerson).EmployeeName;
                     c.ProductionPersonName = Employee.FirstOrDefault(f => f.EmployeeCode == c.ProductionPerson).EmployeeName;
                 });
 
@@ -2660,6 +2660,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
                 {
                     icdata.DrawingRevNo = "QC-F-005 Dated: 01-Apr-2018";
+                    icdata.MaterialCode= Materialcode;
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
                 }
@@ -3067,6 +3068,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 saleOrderDetails.ForEach(x =>
                 {
+                    var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == x.SaleOrderNo && z.MaterialCode == x.MaterialCode);
+                    if (pod != null)
+                    {
+                        pod.SOQty = x.QTY;
+                        context.TblPurchaseOrderDetails.Update(pod);
+                        context.SaveChanges();
+                    }
                     x.SaleOrderNo = (SaleOrderNumber);
                 });
                 saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID > 0).ToList();
@@ -3080,7 +3088,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     context.TblSaleOrderDetail.AddRange(saleOrderDetails);
                 }
-
                 context.SaveChanges();
 
                 dbtrans.Commit();
@@ -3187,7 +3194,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         item1.TagName = item.productionTag;
                         item1.saleOrderNumber = item.saleOrderNumber;
                         item1.Type = item.InspectionType;
-                        item1.UOMName = item1.Uom;
+                        item1.Uom = item1.UOMName;
                         if (item.Type != "edit")
                             item1.Id = 0;
                     }
