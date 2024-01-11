@@ -780,7 +780,7 @@ namespace CoreERP.Controllers.masters
                 try
                 {
                     var transactions = new TransactionsHelper();
-                    var tagsData = transactions.GetQcIssueMasterById(GSNumber);
+                    var tagsData = transactions.GetQcIssueMasterById(GSNumber, Materialcode);
                     if (tagsData == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Production Not Completed." });
                     dynamic expdoObj = new ExpandoObject();

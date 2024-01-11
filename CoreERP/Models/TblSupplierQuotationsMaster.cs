@@ -39,5 +39,6 @@ namespace CoreERP.Models
         public string? EditWho { get; set; }
         public string? RecomendedBy { get; set; }
         public string? ApprovedBy { get; set; }
+        public string? Material { get; set; }
     }
 }

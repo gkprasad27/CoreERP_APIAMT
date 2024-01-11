@@ -977,11 +977,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.SaleOrderNumber == GoodsIssueId);
         }
 
-        public TblInspectionCheckMaster GetQcIssueMasterById(string GoodsIssueId)
+        public TblInspectionCheckMaster GetQcIssueMasterById(string GoodsIssueId, string Materialcode)
         {
             using var repo = new Repository<TblInspectionCheckMaster>();
             return repo.TblInspectionCheckMaster
-                .FirstOrDefault(x => x.saleOrderNumber == GoodsIssueId);
+                .FirstOrDefault(x => x.saleOrderNumber == GoodsIssueId && x.MaterialCode == Materialcode);
         }
 
         public List<TblGoodsIssueDetails> GetGoodsIssueDetails(string GoodsIssueId)
@@ -1268,146 +1268,154 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public bool AddProdIssue(List<TblProductionDetails> prodDetails)
         {
-            string masternumber = string.Empty;
-            int lineno = 1;
-            using var repo = new Repository<TblInspectionCheckMaster>();
-            var InspectionCheckMaster = new TblInspectionCheckMaster();
-            var InspectionCheckDetails = new List<TblInspectionCheckDetails>();
-            var NewInspectionCheckDetails = new List<TblInspectionCheckDetails>();
-            var goodsissue = new TblGoodsIssueDetails();
-            var RejectionMaster = new TblRejectionMaster();
-            using var context = new ERPContext();
-            string saleordernumber = prodDetails.FirstOrDefault().SaleOrderNumber;
-            string material = prodDetails.FirstOrDefault().MaterialCode;
-            using var dbtrans = context.Database.BeginTransaction();
-            var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault();
-            var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
-            var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
-            var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == saleordernumber);
-            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
-            var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == material).FirstOrDefault();
-            var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == material);
-            try
+            if (prodDetails.Count > 0)
             {
-                if (InspectionMaster != null)
+                string masternumber = string.Empty;
+                int lineno = 1;
+                using var repo = new Repository<TblInspectionCheckMaster>();
+                var InspectionCheckMaster = new TblInspectionCheckMaster();
+                var InspectionCheckDetails = new List<TblInspectionCheckDetails>();
+                var NewInspectionCheckDetails = new List<TblInspectionCheckDetails>();
+                var goodsissue = new TblGoodsIssueDetails();
+                var RejectionMaster = new TblRejectionMaster();
+                using var context = new ERPContext();
+                string saleordernumber = prodDetails.FirstOrDefault().SaleOrderNumber;
+                string material = prodDetails.FirstOrDefault().MaterialCode;
+                var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault();
+                var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == material).FirstOrDefault();
+                var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
+                var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
+                var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == saleordernumber);
+                var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
+                var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == material);
+
+
+                using var dbtrans = context.Database.BeginTransaction();
+
+
+                try
                 {
-                    InspectionCheckMaster.Status = "Production Started";
-                    context.TblInspectionCheckMaster.Update(InspectionMaster);
-                    context.SaveChanges();
-                    masternumber = InspectionMaster.InspectionCheckNo;
-                }
-                else
-                {
-                    if (Pcenter != null)
+                    if (InspectionMaster != null)
                     {
-                        Pcenter.LastNumber = (Pcenter.LastNumber + 1);
-                        context.Counters.UpdateRange(Pcenter);
+                        InspectionCheckMaster.Status = "Production Started";
+                        context.TblInspectionCheckMaster.Update(InspectionMaster);
                         context.SaveChanges();
-                        masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                        masternumber = InspectionMaster.InspectionCheckNo;
                     }
-                    if (string.IsNullOrEmpty(InspectionCheckMaster.InspectionCheckNo))
-                        InspectionCheckMaster.InspectionCheckNo = masternumber;
-
-
-                    InspectionCheckMaster.Status = "Production Started";
-                    InspectionCheckMaster.InspectionCheckNo = masternumber;
-                    InspectionCheckMaster.saleOrderNumber = saleordernumber;
-                    InspectionCheckMaster.MaterialCode = material;
-                    InspectionCheckMaster.completionDate = System.DateTime.Now;
-                    if (masternumber.Length > 1)
-                        context.TblInspectionCheckMaster.Add(InspectionCheckMaster);
                     else
-                        throw new Exception("InspectionCheckNo Not Valid. " + masternumber + " Please check .");
+                    {
+                        if (Pcenter != null)
+                        {
+                            Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                            context.Counters.UpdateRange(Pcenter);
+                            context.SaveChanges();
+                            masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                        }
+                        if (string.IsNullOrEmpty(InspectionCheckMaster.InspectionCheckNo))
+                            InspectionCheckMaster.InspectionCheckNo = masternumber;
 
+
+                        InspectionCheckMaster.Status = "Production Started";
+                        InspectionCheckMaster.InspectionCheckNo = masternumber;
+                        InspectionCheckMaster.saleOrderNumber = saleordernumber;
+                        InspectionCheckMaster.MaterialCode = material;
+                        InspectionCheckMaster.completionDate = System.DateTime.Now;
+                        if (masternumber.Length > 1)
+                            context.TblInspectionCheckMaster.Add(InspectionCheckMaster);
+                        else
+                            throw new Exception("InspectionCheckNo Not Valid. " + masternumber + " Please check .");
+
+
+                        context.SaveChanges();
+                    }
+                    foreach (var item in prodDetails)
+                    {
+                        InspectionCheckDetails = repo.TblInspectionCheckDetails.Where(x => x.InspectionCheckNo == masternumber && x.productionTag == item.ProductionTag).ToList();
+
+                        if (InspectionCheckDetails.Count == 0)
+                            NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks });
+                        else
+                        {
+                            InspectionCheckDetails.ForEach(x =>
+                            {
+                                x.Status = item.WorkStatus;
+                                x.CompletedBy = item.AllocatedPerson;
+                                x.CompletionDate = item.EndDate;
+                                x.Description = item.Remarks;
+
+                            });
+                            context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
+                        }
+                        goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode).FirstOrDefault();
+                        goodsissue.Status = item.WorkStatus;
+                        var ProductionStatus = new TblProductionStatus();
+                        ProductionStatus = repo.TblProductionStatus.Where(s => s.SaleOrderNumber == item.SaleOrderNumber && s.MaterialCode == item.MaterialCode && s.ProductionTag == item.ProductionTag && s.TypeofWork == item.TypeofWork).FirstOrDefault();
+                        if (ProductionStatus != null)
+                        {
+                            ProductionStatus.Status = "Production Started";
+                            ProductionStatus.WorkStatus = item.WorkStatus;
+                            ProductionStatus.AllocatedPerson = item.AllocatedPerson;
+                            ProductionStatus.Remarks = item.Remarks;
+                            ProductionStatus.StartDate = item.StartDate;
+                            ProductionStatus.EndDate = item.EndDate;
+                            ProductionStatus.Mechine = item.Mechine;
+                            context.TblProductionStatus.UpdateRange(ProductionStatus);
+                        }
+                        if (item.WorkStatus == "Rejected")
+                        {
+                            materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
+                            context.TblMaterialMaster.UpdateRange(materialmaster);
+
+                            RejectionMaster.SaleOrderNo = item.SaleOrderNumber;
+                            RejectionMaster.MaterialCode = item.MaterialCode;
+                            RejectionMaster.TagNo = item.ProductionTag;
+                            RejectionMaster.Reason = item.Remarks;
+                            context.TblRejectionMaster.Add(RejectionMaster);
+                        }
+                    }
+                    if (NewInspectionCheckDetails.Count > 0)
+                        context.TblInspectionCheckDetails.AddRange(NewInspectionCheckDetails);
+
+                    repogim.Status = "Production Started";
+
+                    context.TblProductionMaster.UpdateRange(repogim);
+                    context.TblGoodsIssueDetails.Update(goodsissue);
+                    context.TblProductionDetails.UpdateRange(prodDetails);
+
+                    SaleOrder.Status = "Production Started";
+                    context.TblSaleOrderMaster.Update(SaleOrder);
+                    if (Purcaseorder != null)
+                    {
+                        Purcaseorder.Status = "Production Started";
+                        context.TblPurchaseOrder.Update(Purcaseorder);
+                    }
+                    if (goodsreceipt != null)
+                    {
+                        goodsreceipt.Status = "Production Started";
+                        context.TblGoodsReceiptMaster.Update(goodsreceipt);
+                    }
 
                     context.SaveChanges();
+
+
+                    dbtrans.Commit();
+                    return true;
                 }
-                foreach (var item in prodDetails)
+                catch (Exception ex)
                 {
-                    InspectionCheckDetails = repo.TblInspectionCheckDetails.Where(x => x.InspectionCheckNo == masternumber && x.productionTag == item.ProductionTag).ToList();
 
-                    if (InspectionCheckDetails.Count == 0)
-                        NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks });
-                    else
-                    {
-                        InspectionCheckDetails.ForEach(x =>
-                        {
-                            x.Status = item.WorkStatus;
-                            x.CompletedBy = item.AllocatedPerson;
-                            x.CompletionDate = item.EndDate;
-                            x.Description = item.Remarks;
-
-                        });
-                        context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
-                    }
-                    goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode).FirstOrDefault();
-                    goodsissue.Status = item.WorkStatus;
-                    var ProductionStatus = new TblProductionStatus();
-                    ProductionStatus = repo.TblProductionStatus.Where(s => s.SaleOrderNumber == item.SaleOrderNumber && s.MaterialCode == item.MaterialCode && s.ProductionTag == item.ProductionTag && s.TypeofWork == item.TypeofWork).FirstOrDefault();
-                    if (ProductionStatus != null)
-                    {
-                        ProductionStatus.Status = "Production Started";
-                        ProductionStatus.WorkStatus = item.WorkStatus;
-                        ProductionStatus.AllocatedPerson = item.AllocatedPerson;
-                        ProductionStatus.Remarks = item.Remarks;
-                        ProductionStatus.StartDate = item.StartDate;
-                        ProductionStatus.EndDate = item.EndDate;
-                        ProductionStatus.Mechine = item.Mechine;
-                        context.TblProductionStatus.UpdateRange(ProductionStatus);
-                    }
-                    if (item.WorkStatus == "Rejected")
-                    {
-                        materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
-                        context.TblMaterialMaster.UpdateRange(materialmaster);
-
-                        RejectionMaster.SaleOrderNo = item.SaleOrderNumber;
-                        RejectionMaster.MaterialCode = item.MaterialCode;
-                        RejectionMaster.TagNo = item.ProductionTag;
-                        RejectionMaster.Reason = item.Remarks;
-                        context.TblRejectionMaster.Add(RejectionMaster);
-                    }
+                    TblApi_Error_Log icdata = new TblApi_Error_Log();
+                    using var context1 = new ERPContext();
+                    icdata.ScreenName = "Production Issue";
+                    icdata.ErrorID = ex.HResult.ToString();
+                    icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                    context1.TblApi_Error_Log.Add(icdata);
+                    context1.SaveChanges();
+                    dbtrans.Rollback();
+                    throw;
                 }
-                if (NewInspectionCheckDetails.Count > 0)
-                    context.TblInspectionCheckDetails.AddRange(NewInspectionCheckDetails);
-
-                repogim.Status = "Production Started";
-
-                context.TblProductionMaster.UpdateRange(repogim);
-                context.TblGoodsIssueDetails.Update(goodsissue);
-                context.TblProductionDetails.UpdateRange(prodDetails);
-
-                SaleOrder.Status = "Production Started";
-                context.TblSaleOrderMaster.Update(SaleOrder);
-                if (Purcaseorder != null)
-                {
-                    Purcaseorder.Status = "Production Started";
-                    context.TblPurchaseOrder.Update(Purcaseorder);
-                }
-                if (goodsreceipt != null)
-                {
-                    goodsreceipt.Status = "Production Started";
-                    context.TblGoodsReceiptMaster.Update(goodsreceipt);
-                }
-
-                context.SaveChanges();
-
-
-                dbtrans.Commit();
-                return true;
             }
-            catch (Exception ex)
-            {
-
-                TblApi_Error_Log icdata = new TblApi_Error_Log();
-                using var context1 = new ERPContext();
-                icdata.ScreenName = "Production Issue";
-                icdata.ErrorID = ex.HResult.ToString();
-                icdata.ErrorMessage = ex.InnerException.Message.ToString();
-                context1.TblApi_Error_Log.Add(icdata);
-                context1.SaveChanges();
-                dbtrans.Rollback();
-                throw;
-            }
+            return true;
         }
         public bool ReturnGoodsIssue(string RequisitionNumber)
         {
@@ -2660,7 +2668,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
                 {
                     icdata.DrawingRevNo = "QC-F-005 Dated: 01-Apr-2018";
-                    icdata.MaterialCode= Materialcode;
+                    icdata.MaterialCode = Materialcode;
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
                 }
@@ -3016,11 +3024,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             totalqty = (int)saleOrderDetails.Sum(a => a.QTY);
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == saleOrderMaster.ProfitCenter).FirstOrDefault();
             var Quotation = repo.TblSupplierQuotationsMaster.Where(x => x.QuotationNumber == saleOrderMaster.PONumber).FirstOrDefault();
-            //if (Quotation!=null)
-            //{
-            //  var  supplierCode = repo.TblBusinessPartnerAccount.Where(z => z.Bpnumber == Quotation.Supplier).FirstOrDefault();
-            //    suppliername = supplierCode.Name;
-            //}
+
             try
             {
                 if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
@@ -3034,8 +3038,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 else
                 {
-                    //if (this.IsVoucherNumberExists(saleOrderMaster.PONumber, "SaleOrder", "SaleOrder"))
-                    //    throw new Exception("Po number Already exists. " + saleOrderMaster.PONumber + " Please use another PO Number.");
+                    if (repo.TblSaleOrderMaster.Any(z => z.PONumber == saleOrderMaster.PONumber))
+                    {
+                        throw new Exception("PO Number Already Exist. " + saleOrderMaster.PONumber + " Please check .");
+                    }
 
                     if (Pcenter != null)
                     {
@@ -3068,15 +3074,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 saleOrderDetails.ForEach(x =>
                 {
-                    var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == x.SaleOrderNo && z.MaterialCode == x.MaterialCode);
-                    if (pod != null)
-                    {
-                        pod.SOQty = x.QTY;
-                        context.TblPurchaseOrderDetails.Update(pod);
-                        context.SaveChanges();
-                    }
+
                     x.SaleOrderNo = (SaleOrderNumber);
                 });
+
+                foreach (var item in saleOrderDetails)
+                {
+                    var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
+                    if (pod != null)
+                    {
+                        pod.SOQty = item.QTY;
+                        context.TblPurchaseOrderDetails.Update(pod);
+                    }
+                }
+
                 saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID > 0).ToList();
                 saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
 
@@ -3088,6 +3099,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     context.TblSaleOrderDetail.AddRange(saleOrderDetails);
                 }
+
                 context.SaveChanges();
 
                 dbtrans.Commit();
@@ -3099,7 +3111,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using var context1 = new ERPContext();
                 icdata.ScreenName = "Sale Order";
                 icdata.ErrorID = ex.HResult.ToString();
-                icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                icdata.ErrorMessage = ex.ToString();
                 context1.TblApi_Error_Log.Add(icdata);
                 context1.SaveChanges();
 
