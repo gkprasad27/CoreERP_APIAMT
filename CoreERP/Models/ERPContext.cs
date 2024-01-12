@@ -97,6 +97,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblDepreciationDetails> TblDepreciationDetails { get; set; }
         public virtual DbSet<TblDepreciationcodeDetails> TblDepreciationcodeDetails { get; set; }
         public virtual DbSet<TblDesignation> TblDesignation { get; set; }
+        public virtual DbSet<TblHoliday> TblHoliday { get; set; }
         public virtual DbSet<TblDistributionChannel> TblDistributionChannel { get; set; }
         public virtual DbSet<TblDownTimeReasons> TblDownTimeReasons { get; set; }
         public virtual DbSet<TblDynamicPages> TblDynamicPages { get; set; }
@@ -2781,6 +2782,42 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Narration)
                     .HasColumnName("narration")
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblHoliday>(entity =>
+            {
+                entity.HasKey(e => e.HolidayId);
+                    
+
+                entity.ToTable("tbl_Holiday");
+
+                entity.Property(e => e.HolidayId)
+                    .HasColumnName("holidayId")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.HolidayName)
+                    .HasColumnName("holidayName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Date)
+                    .HasColumnName("date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ExtraDate)
+                    .HasColumnName("extraDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Extra1)
+                    .HasColumnName("extra1")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Extra2)
+                    .HasColumnName("extra2")
                     .IsUnicode(false);
             });
 
