@@ -40,5 +40,8 @@ namespace CoreERP.Models
         public decimal? TotalGst { get; set; }
         public int? AvailStock { get; set; }
         public string? Saleorder { get; set; }
+        public string? Status { get; set; }
+        public string? MaterialCode { get; set; }
+        public string? TagName { get; set; }
     }
 }

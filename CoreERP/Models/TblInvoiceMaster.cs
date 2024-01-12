@@ -48,7 +48,7 @@ namespace CoreERP.Models
         public bool? IsManualEntry { get; set; }
         public string? SaleOrderNo { get; set; }
         public int? InvoiceQty { get; set; }
-
+        public string? Status { get; set; }
         public string? ShiptoAddress1 { get; set; }
         public string? ShiptoAddress2 { get; set; }
         public string? ShiptoState { get; set; }
