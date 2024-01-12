@@ -43,5 +43,6 @@ namespace CoreERP.Models
         public string? Status { get; set; }
         public string? MaterialCode { get; set; }
         public string? TagName { get; set; }
+        public string? InspectionChecno { get; set; }
     }
 }
