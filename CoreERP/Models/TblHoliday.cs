@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CoreERP.Models
 {
     public partial class TblHoliday
     {
+        
         public decimal HolidayId { get; set; }
         public DateTime? Date { get; set; }
         public string HolidayName { get; set; }

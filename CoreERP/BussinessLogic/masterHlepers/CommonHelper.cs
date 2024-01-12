@@ -639,6 +639,15 @@ namespace CoreERP
             return result;
         }
 
+        public static IEnumerable<TblHoliday> GetHolidays()
+        {
+            using var repo = new Repository<TblHoliday>();
+
+            var result = repo.TblHoliday.ToList();
+
+            return result;
+        }
+
         public static IEnumerable<TblDesignation> GetDesignation()
         {
             using var repo = new Repository<TblDesignation>();
