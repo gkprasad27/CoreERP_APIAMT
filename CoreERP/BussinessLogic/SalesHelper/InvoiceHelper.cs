@@ -945,7 +945,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             foreach (var invdtl in invoiceDetails)
                             {
 
-
+                                var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
                                 #region InvioceDetail
                                 invdtl.Qty = 1;
                                 invdtl.Status = "Invoice Generated";
@@ -954,6 +954,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 invdtl.ServerDateTime = DateTime.Now;
                                 invdtl.UserId=invoice.UserId;
                                 repo.TblInvoiceDetail.Add(invdtl);
+                                inspection.Status = "Invoice Generated";
+                                repo.TblInspectionCheckDetails.Add(inspection);
                                 repo.SaveChanges();
 
                                 #endregion
