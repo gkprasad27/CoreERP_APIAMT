@@ -2802,6 +2802,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblInspectionCheckDetails> GetInspectionCheckDetailsBySaleorder(string saleorder)
         {
             using var repo = new Repository<TblInspectionCheckDetails>();
+
+            var MaterialCodes = repo.TblMaterialMaster.ToList();
+
+            repo.TblInspectionCheckDetails.ToList()
+                .ForEach(c =>
+                {
+                    c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+
+                });
             return repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == saleorder).ToList();
         }
 
@@ -3157,11 +3166,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 if (QCDetailsExist.Count > 0)
                 {
-                    context.tblQCDetails.UpdateRange(QCDetailsExist);
+                    context.tblQCDetails.UpdateRange(QCDetails);
                 }
                 else
                 {
-                    context.tblQCDetails.AddRange(QCDetailsNew);
+                    context.tblQCDetails.AddRange(QCDetails);
                 }
                 context.SaveChanges();
 
