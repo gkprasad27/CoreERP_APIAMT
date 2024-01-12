@@ -44,5 +44,6 @@ namespace CoreERP.Models
         public string? MaterialCode { get; set; }
         public string? TagName { get; set; }
         public string? InspectionChecno { get; set; }
+        public decimal? NetWeight { get; set; }
     }
 }
