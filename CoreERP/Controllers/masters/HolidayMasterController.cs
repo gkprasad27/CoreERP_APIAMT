@@ -90,9 +90,9 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteHoliday/{code}")]
-        public IActionResult DeleteHoliday(string code)
+        public IActionResult DeleteHoliday(int code)
         {
-            if (code == null)
+            if (code ==0)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"{nameof(code)}can not be null" });
 
             try
