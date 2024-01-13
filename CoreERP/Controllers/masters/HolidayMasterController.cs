@@ -42,7 +42,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("RegisterHoliday")]
-        public IActionResult RegisterCompany([FromBody] TblHoliday holiday)
+        public IActionResult RegisterHoliday([FromBody] TblHoliday holiday)
         {
 
             if (holiday == null)
@@ -53,7 +53,7 @@ namespace CoreERP.Controllers
                 APIResponse apiResponse;
                 _holidayRepository.Add(holiday);
                 if (_holidayRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = _holidayRepository };
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = holiday };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
 
@@ -66,7 +66,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPut("UpdateHoliday")]
-        public IActionResult UpdateCompany([FromBody] TblHoliday holiday)
+        public IActionResult UpdateHoliday([FromBody] TblHoliday holiday)
         {
 
             if (holiday == null)
