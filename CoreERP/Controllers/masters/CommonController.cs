@@ -233,7 +233,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.SOL = _TblInspectionCheckMaster.Where(x => x.Status != "Invoice Generated").Select(x => new { SaleOrderNo = x.saleOrderNumber });
+                    expando.SOL = _TblInspectionCheckMaster.Where(x => x.Status != "Invoice Generated").Select(x => new { SaleOrderNo = x.saleOrderNumber }).Distinct();
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
