@@ -11,6 +11,12 @@ namespace CoreERP.Models
 
     }
 
+    public partial class TblInvoiceDetail
+    {
+        [NotMapped]
+        public string MaterialName { get; set; }
+    }
+
     public partial class TblProductionMaster
     {
         [NotMapped]

@@ -859,6 +859,15 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 using (Repository<TblInvoiceDetail> repo = new Repository<TblInvoiceDetail>())
                 {
+                    var materialtype = repo.TblMaterialMaster.ToList();
+
+                    repo.TblInvoiceDetail.ToList()
+                    .ForEach(c =>
+                    {
+                        c.MaterialName = materialtype.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+
+                    });
+
                     return repo.TblInvoiceDetail.Where(x => x.InvoiceNo == invoiceNo).ToList();
                 }
             }
@@ -928,7 +937,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     {
                         try
                         {
-                            
+
                             var invoice_No = GenerateInvoiceNo(out errorMessage);
                             if (string.IsNullOrEmpty(invoice_No))
                                 invoice_No = GenerateInvoiceNo(out errorMessage);
@@ -938,7 +947,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                             invoice.ServerDateTime = DateTime.Now;
                             invoice.IsSalesReturned = false;
-                            invoice.InvoiceQty = invoiceDetails.Sum(x => x.Qty);
+                            invoice.InvoiceQty = invoiceDetails.Count(); //invoiceDetails.Sum(x => x.Qty);
                             repo.TblInvoiceMaster.Add(invoice);
                             repo.SaveChanges();
 
@@ -952,15 +961,22 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 invdtl.InvoiceNo = invoice.InvoiceNo;
                                 invdtl.InvoiceDate = invoice.InvoiceDate;
                                 invdtl.ServerDateTime = DateTime.Now;
-                                invdtl.UserId=invoice.UserId;
+                                invdtl.UserId = invoice.UserId;
                                 repo.TblInvoiceDetail.Add(invdtl);
+
                                 inspection.Status = "Invoice Generated";
-                                repo.TblInspectionCheckDetails.Add(inspection);
+                                repo.TblInspectionCheckDetails.UpdateRange(inspection);
+
+                                var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.MaterialCode);
+                                materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
+                                repo.TblMaterialMaster.UpdateRange(materialmaster);
+
                                 repo.SaveChanges();
 
                                 #endregion
 
                             }
+
 
                             SaleOrder.Status = "Invoice Generated";
                             repo.TblSaleOrderMaster.Update(SaleOrder);
