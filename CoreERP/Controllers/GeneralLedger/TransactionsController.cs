@@ -1478,6 +1478,36 @@ namespace CoreERP.Controllers.masters
             });
             return result;
         }
+
+        [HttpPost("SavePurchaseOrder")]
+        public async Task<IActionResult> SavePurchaseOrder([FromBody] JObject obj)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                    var poMaster = obj["poHdr"].ToObject < List<TblPurchaseOrder>>();
+                    //var podetails = obj["poDtl"].ToObject<List<TblPurchaseOrderDetails>>();
+                    ///var username = User.Identities.ToList();
+
+                    if (!new TransactionsHelper().SavePurchaseOrder(poMaster))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.invoi = poMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpPost]
         [Route("UploadFile/{uploadfileName}")]
         public async Task<IActionResult> UploadFile(string uploadfileName)

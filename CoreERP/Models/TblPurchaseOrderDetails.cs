@@ -10,7 +10,7 @@ namespace CoreERP.Models
         public string? PurchaseOrderNumber { get; set; }
         public string? MaterialCode { get; set; }
         public string? MaterialName { get; set; }
-        public int? Qty { get; set; }
+        public int Qty { get; set; }
         public decimal? Rate { get; set; }
         public decimal? Discount { get; set; }
         public string? TaxCode { get; set; }
@@ -32,5 +32,6 @@ namespace CoreERP.Models
         public DateTime? EditDate { get; set; }
         public string? SaleOrder { get; set; }
         public int? SOQty { get; set; }
+        public string? Status { get; set; }
     }
 }

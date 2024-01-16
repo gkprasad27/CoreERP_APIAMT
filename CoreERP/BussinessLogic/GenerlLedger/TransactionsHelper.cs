@@ -1384,11 +1384,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     SaleOrder.Status = "Production Started";
                     context.TblSaleOrderMaster.Update(SaleOrder);
-                    if (Purcaseorder != null)
-                    {
-                        Purcaseorder.Status = "Production Started";
-                        context.TblPurchaseOrder.Update(Purcaseorder);
-                    }
+                    //if (Purcaseorder != null)
+                    //{
+                    //    Purcaseorder.Status = "Production Started";
+                    //    context.TblPurchaseOrder.Update(Purcaseorder);
+                    //}
                     if (goodsreceipt != null)
                     {
                         goodsreceipt.Status = "Production Started";
@@ -2350,14 +2350,26 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 });
                 foreach (var item in podetails)
                 {
-
+                    int poqty = 0;
+                    int soqty = 0;
+                    int matqty = 0;
                     var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrder && im.MaterialCode == item.MaterialCode);
                     if (sodata != null)
                     {
-                        //int qty = 0;
-                        //qty = Convert.ToInt16(sodata.POQty);
-                        sodata.POQty = (Convert.ToInt16(sodata.POQty) + item.Qty);
-                        context.TblSaleOrderDetail.Update(sodata);
+
+                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.Status == "PO Created").ToList();
+                        //var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.SaleOrder && z.MaterialCode == item.MaterialCode);
+                        //var material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode);
+                        var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrder && z.MaterialCode == item.MaterialCode && z.Status == "New");
+                        poq.Qty = (poq.Qty - item.Qty);
+                        if (poq.Qty >= 0)
+                            context.TblPoQueue.Update(poq);
+                        else
+                        {
+                            poq.Qty = 0;
+                            context.TblPoQueue.Update(poq);
+                        }
+                        
                     }
                 }
 
@@ -2373,6 +2385,35 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     context.TblPurchaseOrderDetails.AddRange(podetails);
                 }
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public bool SavePurchaseOrder(List<TblPurchaseOrder> podata)
+        {
+            using var repo = new Repository<TblPurchaseOrder>();
+            using var context = new ERPContext();
+            string ponumber = podata.FirstOrDefault().PurchaseOrderNumber;
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                foreach (var item in podata)
+                {
+                    if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == ponumber))
+                    {
+                        context.TblPurchaseOrder.Update(item);
+                        context.SaveChanges();
+                    }
+                }
+               
                 context.SaveChanges();
 
                 dbtrans.Commit();
@@ -2659,7 +2700,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var RejectionMaster = new TblRejectionMaster();
             string Materialcode = icdetails.FirstOrDefault().MaterialCode;
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
-            var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
+            //var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == icdata.saleOrderNumber);
             var goodsissue = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
             var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
@@ -2742,11 +2783,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 SaleOrder.Status = "QC Started";
                 context.TblSaleOrderMaster.Update(SaleOrder);
-                if (Purcaseorder != null)
-                {
-                    Purcaseorder.Status = "QC Started";
-                    context.TblPurchaseOrder.Update(Purcaseorder);
-                }
+                //if (Purcaseorder != null)
+                //{
+                //    Purcaseorder.Status = "QC Started";
+                //    context.TblPurchaseOrder.Update(Purcaseorder);
+                //}
                 if (goodsreceipt != null)
                 {
                     goodsreceipt.Status = "QC Started";
@@ -2809,7 +2850,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .ForEach(c =>
                 {
                     c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
-                    c.hsnNo= MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Hsnsac;
+                    c.hsnNo = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Hsnsac;
 
                 });
             return repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == saleorder).ToList();
@@ -3043,6 +3084,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.TotalQty = totalqty;
                     //saleOrderMaster.CreatedDate = DateTime.Now;
                     // saleOrderMaster.CustomerCode = suppliername;
+                    //invoiceDetails.Sum(x => x.Qty);
                     context.TblSaleOrderMaster.Update(saleOrderMaster);
                     context.SaveChanges();
                 }
@@ -3090,11 +3132,40 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 foreach (var item in saleOrderDetails)
                 {
+                    int poqty = 0;
+                    int soqty = 0;
+                    int matqty = 0;
+                    var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.Status == "PO Created").ToList();
                     var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
+                    var material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode);
+                    var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
                     if (pod != null)
                     {
                         pod.SOQty = item.QTY;
                         context.TblPurchaseOrderDetails.Update(pod);
+                    }
+                    poqty = purchaseorder.Sum(x => x.Qty);
+                    soqty = saleOrderDetails.Sum(s => s.QTY);
+                    if (material.ClosingQty == null)
+                        material.ClosingQty = 0;
+
+                    matqty = Convert.ToInt16(material.ClosingQty);
+                    if (poq == null)
+                    {
+                        poq = new TblPoQueue();
+                        poq.Qty = Math.Abs((matqty + poqty) - soqty);
+                        poq.Status = "New";
+                        poq.SaleOrderNo = item.SaleOrderNo;
+                        poq.MaterialCode = item.MaterialCode;
+                        context.TblPoQueue.AddRange(poq);
+                    }
+                    else
+                    {
+                        poq.Qty = Math.Abs((matqty + poqty) - soqty);
+                        poq.Status = "New";
+                        poq.SaleOrderNo = item.SaleOrderNo;
+                        poq.MaterialCode = item.MaterialCode;
+                        context.TblPoQueue.UpdateRange(poq);
                     }
                 }
 
