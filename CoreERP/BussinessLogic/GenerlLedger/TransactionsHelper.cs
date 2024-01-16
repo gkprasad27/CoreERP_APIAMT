@@ -1364,9 +1364,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (item.WorkStatus == "Rejected")
                         {
                             var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNumber && z.MaterialCode == item.MaterialCode);
-                                poq.Qty = 1;
-                                context.TblPoQueue.Update(poq);
-                            
+                            poq.Qty = 1;
+                            poq.Status = "New";
+                            context.TblPoQueue.Update(poq);
+
                             materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
                             context.TblMaterialMaster.UpdateRange(materialmaster);
 
@@ -2371,9 +2372,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         else
                         {
                             poq.Qty = 0;
+                            poq.Status = "PO Created";
                             context.TblPoQueue.Update(poq);
                         }
-                        
+
                     }
                 }
 
@@ -2417,7 +2419,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.SaveChanges();
                     }
                 }
-               
+
                 context.SaveChanges();
 
                 dbtrans.Commit();
@@ -2790,6 +2792,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == icdata.saleOrderNumber && z.MaterialCode == icdata.MaterialCode);
                         poq.Qty = 1;
+                        poq.Status = "New";
                         context.TblPoQueue.Update(poq);
 
                         var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == x.MaterialCode);
