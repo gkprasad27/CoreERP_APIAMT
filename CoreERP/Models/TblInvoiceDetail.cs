@@ -45,5 +45,9 @@ namespace CoreERP.Models
         public string? TagName { get; set; }
         public string? InspectionCheckNo { get; set; }
         public decimal? NetWeight { get; set; }
+        public int? cgstcode { get; set; }
+        public int? sgstcode { get; set; }
+        public int? igstcode { get; set; }
+
     }
 }

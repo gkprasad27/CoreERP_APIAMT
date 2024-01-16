@@ -2809,6 +2809,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .ForEach(c =>
                 {
                     c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+                    c.hsnNo= MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Hsnsac;
 
                 });
             return repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == saleorder).ToList();

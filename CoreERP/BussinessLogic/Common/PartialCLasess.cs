@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
 {
@@ -141,6 +142,22 @@ namespace CoreERP.Models
     {
         [NotMapped]
         public string MaterialName { get; set; }
+
+        [NotMapped]
+        public string hsnNo { get; set; }
+
+    }
+
+    partial class TblInvoiceMaster
+    {
+        [NotMapped]
+        public string poNo { get; set; }
+
+        [NotMapped]
+        public DateTime? poDate { get; set; }
+        [NotMapped]
+        public DateTime? dateOfSupply { get; set; }
+
     }
     partial class TblGrnassignment
     {
@@ -378,7 +395,7 @@ namespace CoreERP.Models
     {
         [NotMapped]
         public string MaterialName { get; set; }
-     
+
     }
     partial class TblInspectionCheckMaster
     {
