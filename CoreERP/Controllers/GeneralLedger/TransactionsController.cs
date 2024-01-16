@@ -1508,6 +1508,35 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpPost("SaveGoodsReceipt")]
+        public async Task<IActionResult> SaveGoodsReceipt([FromBody] JObject obj)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                    var grMaster = obj["grHdr"].ToObject<TblGoodsReceiptMaster>();
+                    //var podetails = obj["poDtl"].ToObject<List<TblPurchaseOrderDetails>>();
+                    ///var username = User.Identities.ToList();
+
+                    if (!new TransactionsHelper().SaveGoodsReceipt(grMaster))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.invoi = grMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpPost]
         [Route("UploadFile/{uploadfileName}")]
         public async Task<IActionResult> UploadFile(string uploadfileName)

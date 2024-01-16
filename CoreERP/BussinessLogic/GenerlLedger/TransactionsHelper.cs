@@ -2426,6 +2426,35 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
+        public bool SaveGoodsReceipt(List<TblGoodsReceiptMaster> podata)
+        {
+            using var repo = new Repository<TblGoodsReceiptMaster>();
+            using var context = new ERPContext();
+            string ponumber = podata.FirstOrDefault().r;
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                foreach (var item in podata)
+                {
+                    if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNumber == ponumber))
+                    {
+                        context.TblGoodsReceiptMaster.Update(item);
+                        context.SaveChanges();
+                    }
+                }
+
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
         public TblPurchaseOrder GetPurchaseOrderMasterById(string id)
         {
             using var repo = new Repository<TblPurchaseOrder>();

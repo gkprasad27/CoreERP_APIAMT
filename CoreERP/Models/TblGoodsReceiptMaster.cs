@@ -42,6 +42,9 @@ namespace CoreERP.Models
         public string? CompanyName { get; set; }
         public string? ProfitcenterName { get; set; }
         public string? SaleorderNo { get; set; }
+        public string? ApprovedBy { get; set; }
+        public string? RecommendedBy { get; set; }
+        public string? ApprovalStatus { get; set; }
 
     }
 }

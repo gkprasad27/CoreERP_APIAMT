@@ -50,5 +50,6 @@ namespace CoreERP.Models
         public string? TermsOfDelivery { get; set; }
         public string? TermsOfPayment { get; set; }
         public DateTime? ReceivedDate { get; set; }
+        public string? ApprovalStatus { get; set; }
     }
 }
