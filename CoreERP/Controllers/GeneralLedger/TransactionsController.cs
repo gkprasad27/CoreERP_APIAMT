@@ -1518,7 +1518,7 @@ namespace CoreERP.Controllers.masters
                     if (obj == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                    var grMaster = obj["grHdr"].ToObject<TblGoodsReceiptMaster>();
+                    var grMaster = obj["grHdr"].ToObject  < List<TblGoodsReceiptMaster >> ();
                     //var podetails = obj["poDtl"].ToObject<List<TblPurchaseOrderDetails>>();
                     ///var username = User.Identities.ToList();
 

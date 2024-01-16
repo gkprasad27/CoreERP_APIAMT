@@ -2430,13 +2430,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblGoodsReceiptMaster>();
             using var context = new ERPContext();
-            string ponumber = podata.FirstOrDefault().r;
+            string ponumber = podata.FirstOrDefault().PurchaseOrderNo;
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
                 foreach (var item in podata)
                 {
-                    if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNumber == ponumber))
+                    if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == ponumber))
                     {
                         context.TblGoodsReceiptMaster.Update(item);
                         context.SaveChanges();
