@@ -1363,6 +1363,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                         if (item.WorkStatus == "Rejected")
                         {
+                            var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNumber && z.MaterialCode == item.MaterialCode);
+                                poq.Qty = 1;
+                                context.TblPoQueue.Update(poq);
+                            
                             materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
                             context.TblMaterialMaster.UpdateRange(materialmaster);
 
@@ -2784,6 +2788,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     production.Status = icdata.Status;
                     if (x.Status == "QC Rejected")
                     {
+                        var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == icdata.saleOrderNumber && z.MaterialCode == icdata.MaterialCode);
+                        poq.Qty = 1;
+                        context.TblPoQueue.Update(poq);
+
                         var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == x.MaterialCode);
                         materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
                         context.TblMaterialMaster.UpdateRange(materialmaster);
