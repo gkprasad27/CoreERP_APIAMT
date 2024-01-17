@@ -444,7 +444,7 @@ namespace CoreERP.Controllers
                     if (invoiceMasterList.Any())
                     {
                         dynamic expando = new ExpandoObject();
-                        expando.InvoiceList = invoiceMasterList.Select(x => new { InvoiceNo = x.InvoiceNo, SaleOrderNo = x.SaleOrderNo}); 
+                        expando.InvoiceList = invoiceMasterList.Select(x => new { InvoiceNo = x.InvoiceNo, SaleOrderNo = x.SaleOrderNo, PONumber=x.PONumber}); 
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
 
