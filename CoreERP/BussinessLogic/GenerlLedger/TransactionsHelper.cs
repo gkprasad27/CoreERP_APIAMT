@@ -2362,21 +2362,24 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (sodata != null)
                     {
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrder && z.MaterialCode == item.MaterialCode && z.Status == "New");
-                        poq.Qty = Math.Abs(Convert.ToInt16(poq.Qty) - (item.Qty));
-                        if (poq.Qty >= 0)
+                        if (poq != null)
                         {
-                            poq.Status = "PO Created";
-                            context.TblPoQueue.Update(poq);
-                        }
-                        else if (poq.Qty < 0)
-                        {
-                            poq.Qty = 0;
-                            poq.Status = "PO Created";
-                            context.TblPoQueue.Update(poq);
-                        }
-                        else 
-                        {
-                            context.TblPoQueue.Update(poq);
+                            poq.Qty = Math.Abs(Convert.ToInt16(poq.Qty) - (item.Qty));
+                            if (poq.Qty >= 0)
+                            {
+                                poq.Status = "PO Created";
+                                context.TblPoQueue.Update(poq);
+                            }
+                            else if (poq.Qty < 0)
+                            {
+                                poq.Qty = 0;
+                                poq.Status = "PO Created";
+                                context.TblPoQueue.Update(poq);
+                            }
+                            else
+                            {
+                                context.TblPoQueue.Update(poq);
+                            }
                         }
                     }
                 }
