@@ -1077,7 +1077,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var sizes = repo.TblMaterialSize.ToList();
             if (!string.IsNullOrEmpty(Materialcode))
             {
-                tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type == Type).ToList();
+                tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type == Type && cd.Parameter!=null).ToList();
                 material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
             }
             //else
