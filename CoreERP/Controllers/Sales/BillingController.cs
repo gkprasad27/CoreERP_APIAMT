@@ -429,6 +429,35 @@ namespace CoreERP.Controllers
             return result;
         }
 
+        [HttpPost("GetInvoiceList")]
+        public async Task<IActionResult> GetInvoiceList()
+        {
+
+            //if (searchCriteria == null)
+            //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            var result = await Task.Run(() =>
+            {
+
+                try
+                {
+                    var invoiceMasterList = new InvoiceHelper().GetInvoiceList();
+                    if (invoiceMasterList.Any())
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.InvoiceList = invoiceMasterList.Select(x => new { InvoiceNo = x.InvoiceNo, SaleOrderNo = x.SaleOrderNo}); 
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetInvoiceDeatilList/{invoiceNo}")]
         public IActionResult GetInvoiceDeatilList(string invoiceNo)
         {

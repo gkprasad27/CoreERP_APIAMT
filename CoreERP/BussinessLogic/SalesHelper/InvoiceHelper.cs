@@ -848,6 +848,24 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
+        public IEnumerable<TblInvoiceMaster>  GetInvoiceList()
+        {
+            try
+            {
+          
+
+                using var repo = new Repository<TblInvoiceMaster>();
+                return repo.TblInvoiceMaster.ToList().Where(x => x.Status != "Dispatched");
+
+            
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public TblInvoiceMaster GetInvoiceMasterbysaeorder(string saleorder)
         {
             try
@@ -891,6 +909,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 throw ex;
             }
         }
+
+
 
         public List<TblInvoiceDetail> GetInvoiceDetailsbysaleorder(string saleorder)
         {
