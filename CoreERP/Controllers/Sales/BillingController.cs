@@ -429,8 +429,8 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpPost("GetInvoiceList")]
-        public async Task<IActionResult> GetInvoiceList()
+        [HttpPost("GetInvoiceData")]
+        public async Task<IActionResult> GetInvoiceData()
         {
 
             //if (searchCriteria == null)

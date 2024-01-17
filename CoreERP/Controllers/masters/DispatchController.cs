@@ -1,6 +1,8 @@
-﻿using CoreERP.DataAccess.Repositories;
+﻿using CoreERP.DataAccess;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Dynamic;
 using System.Linq;
@@ -26,14 +28,58 @@ namespace CoreERP.Controllers.masters
             try
             {
                 APIResponse apiResponse;
-                //if (LanguageHelper.GetList(language.LanguageCode).Count() > 0)
-                //    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"language Code {nameof(language.LanguageCode)} is already exists ,Please Use Different Code " });
                 _dispatchRepository.Add(dispatch);
                 if (_dispatchRepository.SaveChanges() > 0)
+                {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = dispatch };
+                    using var repo = new Repository<TblDispatch>();
+                    var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder);
+                    var Inspection = repo.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == dispatch.SaleOrder);
+                    var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == dispatch.SaleOrder);
+                    var goodsissue = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == dispatch.SaleOrder);
+                    var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == dispatch.SaleOrder);
+                    var Invoice = repo.TblInvoiceMaster.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder);
+                    int sqty = 0;
+                    int invqty = 0;
+                    string message = null;
+                    sqty = SaleOrder.TotalQty;
+                    invqty =Convert.ToInt16(Invoice.InvoiceQty);
+                    if (sqty == invqty)
+                        message = "Dispatched";
+                    else
+                        message = "Partially Dispatched";
+
+                    SaleOrder.Status = message;
+                    repo.TblSaleOrderMaster.Update(SaleOrder);
+                    if (Inspection != null)
+                    {
+                        Inspection.Status = message;
+                        repo.TblInspectionCheckMaster.Update(Inspection);
+                    }
+                    if (goodsreceipt != null)
+                    {
+                        goodsreceipt.Status = message;
+                        repo.TblGoodsReceiptMaster.Update(goodsreceipt);
+                    }
+                    if (goodsissue != null)
+                    {
+                        goodsissue.Status = message;
+                        repo.TblGoodsIssueMaster.Update(goodsissue);
+                    }
+                    if (Production != null)
+                    {
+                        Production.Status = message;
+                        repo.TblProductionMaster.Update(Production);
+                    }
+                    if (Invoice != null)
+                    {
+                        Invoice.Status = message;
+                        repo.TblInvoiceMaster.Update(Invoice);
+                    }
+                }
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Recored Added Failed." };
-                
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -70,14 +116,14 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(dispatch)} cannot be null" });
 
             try
-            {   
+            {
                 APIResponse apiResponse;
                 _dispatchRepository.Update(dispatch);
                 if (_dispatchRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = dispatch };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -94,10 +140,10 @@ namespace CoreERP.Controllers.masters
                 APIResponse apiResponse;
                 if (code == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(code)} cannot be null" });
-                var record = _dispatchRepository.GetSingleOrDefault( x => x.ID.Equals(code));
+                var record = _dispatchRepository.GetSingleOrDefault(x => x.ID.Equals(code));
                 _dispatchRepository.Remove(record);
-                if(_dispatchRepository.SaveChanges() > 0)                
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };                
+                if (_dispatchRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
 

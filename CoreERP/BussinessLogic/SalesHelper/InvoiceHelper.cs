@@ -825,7 +825,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using var repo = new Repository<TblInvoiceMaster>();
                 var invoice = repo.TblInvoiceMaster.FirstOrDefault(x => x.InvoiceNo == invoiceNo);
 
-                var saleorder = repo.TblSaleOrderMaster.FirstOrDefault(d=>d.SaleOrderNo== invoice.SaleOrderNo);
+                var saleorder = repo.TblSaleOrderMaster.FirstOrDefault(d => d.SaleOrderNo == invoice.SaleOrderNo);
 
                 repo.TblInvoiceMaster.ToList()
                     .ForEach(c =>
@@ -848,16 +848,16 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
-        public IEnumerable<TblInvoiceMaster>  GetInvoiceList()
+        public IEnumerable<TblInvoiceMaster> GetInvoiceList()
         {
             try
             {
-          
+
 
                 using var repo = new Repository<TblInvoiceMaster>();
                 return repo.TblInvoiceMaster.ToList().Where(x => x.Status != "Dispatched");
 
-            
+
 
             }
             catch (Exception ex)
@@ -962,7 +962,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 string _invUnitName = "";
                 using var repo1 = new Repository<TblInvoiceMaster>();
                 var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo);
-                var Purcaseorder = repo1.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo);
+                var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo);
                 var goodsreceipt = repo1.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == invoice.SaleOrderNo);
                 var goodsissue = repo1.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
                 var Production = repo1.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
@@ -972,6 +972,15 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     {
                         try
                         {
+                            int sqty = 0;
+                            int invqty = 0;
+                            string message = null;
+                            sqty = SaleOrder.TotalQty;
+                            invqty = Convert.ToInt16(invoiceDetails.Sum(x => x.Qty));
+                            if (sqty == invqty)
+                                message = "Invoice Generated";
+                            else
+                                message = "Invoice Partially Generated";
 
                             var invoice_No = GenerateInvoiceNo(out errorMessage);
                             if (string.IsNullOrEmpty(invoice_No))
@@ -983,6 +992,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             invoice.ServerDateTime = DateTime.Now;
                             invoice.IsSalesReturned = false;
                             invoice.InvoiceQty = invoiceDetails.Count(); //invoiceDetails.Sum(x => x.Qty);
+                            invoice.PONumber = SaleOrder.PONumber;
+                            invoice.Status = message;
                             repo.TblInvoiceMaster.Add(invoice);
                             repo.SaveChanges();
 
@@ -1011,28 +1022,28 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 #endregion
 
                             }
+                            
 
-
-                            SaleOrder.Status = "Invoice Generated";
+                            SaleOrder.Status = message;
                             repo.TblSaleOrderMaster.Update(SaleOrder);
-                            if (Purcaseorder != null)
+                            if (Inspection != null)
                             {
-                                Purcaseorder.Status = "Invoice Generated";
-                                repo.TblPurchaseOrder.Update(Purcaseorder);
+                                Inspection.Status = message;
+                                repo.TblInspectionCheckMaster.Update(Inspection);
                             }
                             if (goodsreceipt != null)
                             {
-                                goodsreceipt.Status = "Invoice Generated";
+                                goodsreceipt.Status = message;
                                 repo.TblGoodsReceiptMaster.Update(goodsreceipt);
                             }
                             if (goodsissue != null)
                             {
-                                goodsissue.Status = "Invoice Generated";
+                                goodsissue.Status = message;
                                 repo.TblGoodsIssueMaster.Update(goodsissue);
                             }
                             if (Production != null)
                             {
-                                Production.Status = "Invoice Generated";
+                                Production.Status = message;
                                 repo.TblProductionMaster.Update(Production);
                             }
 
