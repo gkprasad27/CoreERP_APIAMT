@@ -2416,7 +2416,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == ponumber))
                     {
                         context.TblPurchaseOrder.Update(item);
-                        context.SaveChanges();
+                        //context.SaveChanges();
                     }
                 }
 
@@ -2445,7 +2445,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == ponumber))
                     {
                         context.TblGoodsReceiptMaster.Update(item);
-                        context.SaveChanges();
+                        //context.SaveChanges();
                     }
                 }
 

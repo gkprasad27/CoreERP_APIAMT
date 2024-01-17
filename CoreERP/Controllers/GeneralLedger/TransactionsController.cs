@@ -1489,7 +1489,7 @@ namespace CoreERP.Controllers.masters
                     if (obj == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                    var poMaster = obj["poHdr"].ToObject < List<TblPurchaseOrder>>();
+                    var poMaster = obj["dtl"].ToObject < List<TblPurchaseOrder>>();
                     //var podetails = obj["poDtl"].ToObject<List<TblPurchaseOrderDetails>>();
                     ///var username = User.Identities.ToList();
 
@@ -1518,7 +1518,7 @@ namespace CoreERP.Controllers.masters
                     if (obj == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                    var grMaster = obj["grHdr"].ToObject  < List<TblGoodsReceiptMaster >> ();
+                    var grMaster = obj["dtl"].ToObject  < List<TblGoodsReceiptMaster >> ();
                     //var podetails = obj["poDtl"].ToObject<List<TblPurchaseOrderDetails>>();
                     ///var username = User.Identities.ToList();
 
