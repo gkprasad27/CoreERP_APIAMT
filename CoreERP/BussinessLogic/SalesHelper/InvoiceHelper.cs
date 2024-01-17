@@ -1003,14 +1003,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
                                 #region InvioceDetail
                                 invdtl.Qty = 1;
-                                invdtl.Status = "Invoice Generated";
+                                invdtl.Status = message;
                                 invdtl.InvoiceNo = invoice.InvoiceNo;
                                 invdtl.InvoiceDate = invoice.InvoiceDate;
                                 invdtl.ServerDateTime = DateTime.Now;
                                 invdtl.UserId = invoice.UserId;
                                 repo.TblInvoiceDetail.Add(invdtl);
 
-                                inspection.Status = "Invoice Generated";
+                                inspection.Status = message;
                                 repo.TblInspectionCheckDetails.UpdateRange(inspection);
 
                                 var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.MaterialCode);
