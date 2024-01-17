@@ -429,7 +429,7 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpPost("GetInvoiceData")]
+        [HttpGet("GetInvoiceData")]
         public async Task<IActionResult> GetInvoiceData()
         {
 
