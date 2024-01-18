@@ -1119,8 +1119,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             List<TblGoodsIssueDetails> goodsOrderDetailsExist;
             using var commitmentitem = new Repository<TblCommitmentItem>();
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == gimaster.SaleOrderNumber);
-            var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == gimaster.SaleOrderNumber);
-            var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == gimaster.SaleOrderNumber);
+            //var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == gimaster.SaleOrderNumber);
+           // var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == gimaster.SaleOrderNumber);
             try
             {
                 if (repogim.TblGoodsIssueMaster.Any(v => v.SaleOrderNumber == gimaster.SaleOrderNumber))
@@ -1237,16 +1237,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 SaleOrder.Status = "Production Released";
                 context.TblSaleOrderMaster.Update(SaleOrder);
-                if (Purcaseorder != null)
-                {
-                    Purcaseorder.Status = "Production Released";
-                    context.TblPurchaseOrder.Update(Purcaseorder);
-                }
-                if (goodsreceipt != null)
-                {
-                    goodsreceipt.Status = "Production Released";
-                    context.TblGoodsReceiptMaster.Update(goodsreceipt);
-                }
+                //if (Purcaseorder != null)
+                //{
+                //    Purcaseorder.Status = "Production Released";
+                //    context.TblPurchaseOrder.Update(Purcaseorder);
+                //}
+                //if (goodsreceipt != null)
+                //{
+                //    goodsreceipt.Status = "Production Released";
+                //    context.TblGoodsReceiptMaster.Update(goodsreceipt);
+                //}
 
                 context.SaveChanges();
 
@@ -1286,7 +1286,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == material).FirstOrDefault();
                 var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
-                var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == saleordernumber);
+                //var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == saleordernumber);
                 var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
                 var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == material);
 
@@ -1406,11 +1406,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     //    Purcaseorder.Status = "Production Started";
                     //    context.TblPurchaseOrder.Update(Purcaseorder);
                     //}
-                    if (goodsreceipt != null)
-                    {
-                        goodsreceipt.Status = "Production Started";
-                        context.TblGoodsReceiptMaster.Update(goodsreceipt);
-                    }
+                    //if (goodsreceipt != null)
+                    //{
+                    //    goodsreceipt.Status = "Production Started";
+                    //    context.TblGoodsReceiptMaster.Update(goodsreceipt);
+                    //}
 
                     context.SaveChanges();
 
@@ -2370,7 +2370,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     int poqty = 0;
                     int soqty = 0;
                     int matqty = 0;
-                    //var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrder && im.MaterialCode == item.MaterialCode);
+                    var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrder && im.MaterialCode == item.MaterialCode);
                     //if (sodata != null)
                     //{
                     var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrder && z.MaterialCode == item.MaterialCode);
@@ -2401,6 +2401,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         poq.Qty = item.Qty;
                         context.TblPoQueue.Add(poq);
                     }
+                    sodata.POQty = item.Qty;
+                    context.TblSaleOrderDetail.Update(sodata);
                     // }
                 }
 
@@ -2499,11 +2501,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblPurchaseOrderDetails>();
             var material = repo.TblMaterialMaster.ToList();
+            //var saleorder = repo.TblSaleOrderDetail.ToList();
 
             repo.TblPurchaseOrderDetails.ToList().ForEach(c =>
             {
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
                 c.AvailableQTY = Convert.ToInt32(material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
+                //c.poQty= Convert.ToInt32(saleorder.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.POQty);
             });
             return repo.TblPurchaseOrderDetails.Where(cd => cd.PurchaseOrderNumber == number).ToList();
         }
@@ -2790,9 +2794,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             string Materialcode = icdetails.FirstOrDefault().MaterialCode;
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             //var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
-            var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == icdata.saleOrderNumber);
-            var goodsissue = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
-            var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
+            //var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == icdata.saleOrderNumber);
+            //var goodsissue = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
+            //var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
             try
             {
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
@@ -2892,21 +2896,21 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 //    Purcaseorder.Status = "QC Started";
                 //    context.TblPurchaseOrder.Update(Purcaseorder);
                 //}
-                if (goodsreceipt != null)
-                {
-                    goodsreceipt.Status = "QC Started";
-                    context.TblGoodsReceiptMaster.Update(goodsreceipt);
-                }
-                if (goodsissue != null)
-                {
-                    goodsissue.Status = "QC Started";
-                    context.TblGoodsIssueMaster.Update(goodsissue);
-                }
-                if (Production != null)
-                {
-                    Production.Status = "QC Started";
-                    context.TblProductionMaster.Update(Production);
-                }
+                //if (goodsreceipt != null)
+                //{
+                //    goodsreceipt.Status = "QC Started";
+                //    context.TblGoodsReceiptMaster.Update(goodsreceipt);
+                //}
+                //if (goodsissue != null)
+                //{
+                //    goodsissue.Status = "QC Started";
+                //    context.TblGoodsIssueMaster.Update(goodsissue);
+                //}
+                //if (Production != null)
+                //{
+                //    Production.Status = "QC Started";
+                //    context.TblProductionMaster.Update(Production);
+                //}
 
                 context.SaveChanges();
 
@@ -3392,7 +3396,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         item1.TagName = item.productionTag;
                         item1.saleOrderNumber = item.saleOrderNumber;
                         item1.Type = item.InspectionType;
-                        item1.Uom = item1.UOMName;
                         if (item.Type != "edit")
                             item1.Id = 0;
                     }
