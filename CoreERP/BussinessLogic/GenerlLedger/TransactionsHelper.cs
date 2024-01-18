@@ -1077,7 +1077,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var sizes = repo.TblMaterialSize.ToList();
             if (!string.IsNullOrEmpty(Materialcode))
             {
-                tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type == Type && cd.Parameter!=null).ToList();
+                tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type == Type && cd.Parameter != null).ToList();
                 material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
             }
             //else
@@ -3198,15 +3198,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (poq == null)
                     {
                         poq = new TblPoQueue();
-                        poq.Qty = Math.Abs((matqty + poqty) - soqty);
+                        poq.Qty = Math.Abs((matqty + poqty) - item.QTY);
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
-                        context.TblPoQueue.AddRange(poq);
+                        if (poq.Qty > 0)
+                            context.TblPoQueue.AddRange(poq);
                     }
                     else
                     {
-                        poq.Qty = Math.Abs((matqty + poqty) - soqty);
+                        poq.Qty = Math.Abs((matqty + poqty) - item.QTY);
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
