@@ -32,7 +32,8 @@ namespace CoreERP.Controllers.masters
                 if (_dispatchRepository.SaveChanges() > 0)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = dispatch };
-                    using var repo = new Repository<TblDispatch>();
+                   // using var repo = new Repository<TblDispatch>();
+                    using var repo = new ERPContext();
                     var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder);
                     var Inspection = repo.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == dispatch.SaleOrder);
                     var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == dispatch.SaleOrder);
@@ -76,6 +77,8 @@ namespace CoreERP.Controllers.masters
                         Invoice.Status = message;
                         repo.TblInvoiceMaster.Update(Invoice);
                     }
+                    repo.SaveChanges();
+                    
                 }
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Recored Added Failed." };
