@@ -2361,7 +2361,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrder && im.MaterialCode == item.MaterialCode);
                     if (sodata != null)
                     {
-                        var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrder && z.MaterialCode == item.MaterialCode && z.Status == "New");
+                        var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrder && z.MaterialCode == item.MaterialCode && z.Qty>0);
                         if (poq != null)
                         {
                             poq.Qty = Math.Abs(Convert.ToInt16(poq.Qty) - (item.Qty));

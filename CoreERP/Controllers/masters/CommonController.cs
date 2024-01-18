@@ -1592,7 +1592,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var POQList = _TblPoQueue.GetAll().Where(x => x.Status != "PO Created");
+                    var POQList = _TblPoQueue.GetAll().Where(x => x.Qty>0);
                     if (POQList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
