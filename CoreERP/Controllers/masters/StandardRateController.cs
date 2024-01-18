@@ -173,10 +173,16 @@ namespace CoreERP.Controllers.masters
         public List<tblQCResults> GetQCResult(string materialcode,string tagname, string Type)
         {
             using var repo = new Repository<tblQCResults>();
-            //var MaterialCodes = repo.TblMaterialMaster.ToList();
+            var sizes = repo.TblMaterialSize.ToList();
 
-            return repo.tblQCResults.Where(cd => cd.MaterialCode == materialcode && cd.TagName== tagname && cd.Type == Type).ToList();
+            var result = repo.tblQCResults.Where(cd => cd.MaterialCode == materialcode && cd.TagName== tagname && cd.Type == Type).ToList();
+            result.ForEach(c =>
+            {
+                c.UOMName = sizes.FirstOrDefault(s => s.unitId == c.Uom)?.unitName;
+            });
 
+
+            return result.ToList();
         }
 
         public List<tblQCDetails> GetQCDetails(string Code)

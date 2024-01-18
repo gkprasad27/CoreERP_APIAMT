@@ -2,6 +2,7 @@
 using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
+using Humanizer;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using System;
@@ -1364,9 +1365,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (item.WorkStatus == "Rejected")
                         {
                             var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNumber && z.MaterialCode == item.MaterialCode);
-                            poq.Qty = 1;
-                            poq.Status = "New";
-                            context.TblPoQueue.Update(poq);
+                            if (poq != null)
+                            {
+                                poq.Qty = (poq.Qty) + 1;
+                                poq.Status = "New";
+                                context.TblPoQueue.Update(poq);
+                            }
+                            else
+                            {
+                                poq.Qty = 1;
+                                poq.Status = "New";
+                                poq.MaterialCode = item.MaterialCode;
+                                poq.SaleOrderNo = item.SaleOrderNumber;
+                                context.TblPoQueue.Update(poq);
+                            }
 
                             materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
                             context.TblMaterialMaster.UpdateRange(materialmaster);
@@ -2358,30 +2370,38 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     int poqty = 0;
                     int soqty = 0;
                     int matqty = 0;
-                    var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrder && im.MaterialCode == item.MaterialCode);
-                    if (sodata != null)
+                    //var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrder && im.MaterialCode == item.MaterialCode);
+                    //if (sodata != null)
+                    //{
+                    var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrder && z.MaterialCode == item.MaterialCode);
+                    if (poq != null)
                     {
-                        var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrder && z.MaterialCode == item.MaterialCode && z.Qty>0);
-                        if (poq != null)
+                        poq.Qty = Math.Abs(Convert.ToInt16(poq.Qty) - (item.Qty));
+                        if (poq.Qty >= 0)
                         {
-                            poq.Qty = Math.Abs(Convert.ToInt16(poq.Qty) - (item.Qty));
-                            if (poq.Qty >= 0)
-                            {
-                                poq.Status = "PO Created";
-                                context.TblPoQueue.Update(poq);
-                            }
-                            else if (poq.Qty < 0)
-                            {
-                                poq.Qty = 0;
-                                poq.Status = "PO Created";
-                                context.TblPoQueue.Update(poq);
-                            }
-                            else
-                            {
-                                context.TblPoQueue.Update(poq);
-                            }
+                            poq.Status = "PO Created";
+                            context.TblPoQueue.Update(poq);
+                        }
+                        else if (poq.Qty < 0)
+                        {
+                            poq.Qty = 0;
+                            poq.Status = "PO Created";
+                            context.TblPoQueue.Update(poq);
+                        }
+                        else
+                        {
+                            context.TblPoQueue.Update(poq);
                         }
                     }
+                    else
+                    {
+                        poq.Status = "PO Created";
+                        poq.SaleOrderNo = item.SaleOrder;
+                        poq.MaterialCode = item.MaterialCode;
+                        poq.Qty = item.Qty;
+                        context.TblPoQueue.Add(poq);
+                    }
+                    // }
                 }
 
                 poDetailsExist = podetails.Where(x => x.Id > 0).ToList();
@@ -2638,6 +2658,35 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     item.InvoiceURL = grdata.InvoiceURL;
                     item.DocumentURL = grdata.DocumentURL;
                     item.SaleorderNo = purchase.SaleOrderNo;
+                    //POQ
+                    if (item.RejectQty > 0)
+                    {
+                        //int poqty = 0;
+                        int soqty = 0;
+                        int matqty = 0;
+                        //var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleorderNo && im.MaterialCode == item.MaterialCode);
+                        //if (sodata != null)
+                        //{
+                        var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleorderNo && z.MaterialCode == item.MaterialCode);
+                        if (poq != null)
+                        {
+                            poq.Qty = Math.Abs(Convert.ToInt16(poq.Qty) + Convert.ToInt16(item.RejectQty));
+                            if (poq.Qty >= 0)
+                            {
+                                poq.Status = "New";
+                                context.TblPoQueue.Update(poq);
+                            }
+                        }
+                        else
+                        {
+                            poq.Status = "New";
+                            poq.SaleOrderNo = item.SaleorderNo;
+                            poq.MaterialCode = item.MaterialCode;
+                            poq.Qty = item.RejectQty;
+                            context.TblPoQueue.Add(poq);
+                        }
+                        //}
+                    }
                 }
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
                 context.SaveChanges();
@@ -2796,10 +2845,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (x.Status == "QC Rejected")
                     {
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == icdata.saleOrderNumber && z.MaterialCode == icdata.MaterialCode);
-                        poq.Qty = 1;
-                        poq.Status = "New";
-                        context.TblPoQueue.Update(poq);
-
+                        if (poq != null)
+                        {
+                            poq.Qty = (poq.Qty) + 1;
+                            poq.Status = "New";
+                            context.TblPoQueue.Update(poq);
+                        }
+                        else
+                        {
+                            poq.Qty = 1;
+                            poq.Status = "New";
+                            poq.MaterialCode = x.MaterialCode;
+                            poq.SaleOrderNo = x.saleOrderNumber;
+                            context.TblPoQueue.Update(poq);
+                        }
                         var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == x.MaterialCode);
                         materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
                         context.TblMaterialMaster.UpdateRange(materialmaster);
