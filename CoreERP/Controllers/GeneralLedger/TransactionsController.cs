@@ -1402,6 +1402,29 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpPost("GetPurchaseOrderApproveList")]
+        public async Task<IActionResult> GetPurchaseOrderApproveList([FromBody] SearchCriteria searchCriteria)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var podetails = new TransactionsHelper().GetPurchaseOrderApproveList(searchCriteria);
+                    if (!podetails.Any())
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for purchase order." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.podetails = podetails;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetPurchaseOrderDetail/{code}")]
         public async Task<IActionResult> GetPurchaseOrderDetail(string code)
         {
@@ -1706,6 +1729,30 @@ namespace CoreERP.Controllers.masters
             });
             return result;
         }
+
+        [HttpPost("GetGoodsReceiptApproval")]
+        public async Task<IActionResult> GetGoodsReceiptApproval([FromBody] SearchCriteria searchCriteria)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var grdetails = new TransactionsHelper().GetGoodsReceiptApproval(searchCriteria);
+                    if (!grdetails.Any())
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Goods Receipt." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.grdetails = grdetails;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
 
         [HttpGet("GetGoodsReceiptDetail/{code}")]
         public async Task<IActionResult> GetGoodsReceiptDetail(string code)

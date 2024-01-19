@@ -2290,6 +2290,42 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }).OrderByDescending(x => x.Id)
                 .ToList();
         }
+
+        public List<TblPurchaseOrder> GetPurchaseOrderApproveList(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
+            searchCriteria.ToDate ??= DateTime.Today;
+            using var repo = new Repository<TblPurchaseOrder>();
+
+            var Company = repo.TblCompany.ToList();
+            var PoType = repo.TblPurchaseOrderType.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            var customer = repo.TblBusinessPartnerAccount.ToList();
+
+            repo.TblPurchaseOrder.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.PurchaseOrderName = PoType.FirstOrDefault(l => l.purchaseType == c.PurchaseOrderType).Description;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode).Name;
+
+                });
+
+            return repo.TblPurchaseOrder.AsEnumerable()
+                .Where(x =>
+                {
+
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.PurchaseOrderNumber) != null
+                              && Convert.ToString(x.PurchaseOrderNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNumber))
+                              && Convert.ToDateTime(x.AddDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                              && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                              && x.ApprovalStatus=="Pending Approval";
+                }).OrderByDescending(x => x.Id)
+                .ToList();
+        }
         public bool AddPurchaseOrder(TblPurchaseOrder podata, List<TblPurchaseOrderDetails> podetails)
         {
             using var repo = new Repository<TblPurchaseOrder>();
@@ -2315,6 +2351,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
                 {
+                    podata.ApprovalStatus = "Pending Approval";
                     podata.Status = "PO Created";
                     podata.EditDate = DateTime.Now;
                     podata.TotalQty = totalqty;
@@ -2330,7 +2367,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.SaveChanges();
                         purchaseordernumber = Pcenter.POPrefix + "-" + Pcenter.PONumber;
                     }
-
+                    podata.ApprovalStatus = "Pending Approval";
                     podata.Status = "PO Created";
                     podata.AddDate = DateTime.Now;
                     podata.PurchaseOrderNumber = purchaseordernumber;
@@ -2573,6 +2610,37 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                }).OrderByDescending(x => x.PurchaseOrderNo)
                .ToList();
         }
+
+        public List<TblGoodsReceiptMaster> GetGoodsReceiptApproval(SearchCriteria searchCriteria)
+        {
+
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
+            searchCriteria.ToDate ??= DateTime.Today;
+            using var repo = new Repository<TblGoodsReceiptMaster>();
+
+            var Company = repo.TblCompany.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+
+            repo.TblGoodsReceiptMaster.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(l => l.Code == c.ProfitCenter).Name;
+
+                });
+
+            return repo.TblGoodsReceiptMaster.AsEnumerable()
+               .Where(x =>
+               {
+                   return Convert.ToString(x.PurchaseOrderNo) != null
+                             && Convert.ToString(x.PurchaseOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNo))
+                             && Convert.ToDateTime(x.ReceivedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                             && Convert.ToDateTime(x.ReceivedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                             && x.ApprovalStatus=="Pending Approval";
+               }).OrderByDescending(x => x.PurchaseOrderNo)
+               .ToList();
+        }
         public bool AddGoodsReceipt(TblGoodsReceiptMaster grdata, List<TblGoodsReceiptDetails> grdetails)
         {
 
@@ -2628,7 +2696,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.TblPurchaseOrder.Update(purchase);
                         context.TblSaleOrderMaster.Update(saleorder);
                     }
-
+                    grdata.ApprovalStatus = "Pending Approval";
                     grdata.Status = "Material Received";
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
@@ -2641,7 +2709,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.TblPurchaseOrder.Update(purchase);
                         context.TblSaleOrderMaster.Update(saleorder);
                     }
-
+                    grdata.ApprovalStatus = "Pending Approval";
                     grdata.Status = "Material Partial Received";
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
