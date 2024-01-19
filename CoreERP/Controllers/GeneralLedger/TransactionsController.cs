@@ -2113,6 +2113,31 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetSaleOrderDetailPO/{saleOrderNumber}")]
+        public async Task<IActionResult> GetSaleOrderDetailPO(string saleOrderNumber)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    var SaleOrderMasters = transactions.GetSaleOrderMastersById(saleOrderNumber);
+                    if (SaleOrderMasters == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.SaleOrderMasters = SaleOrderMasters;
+                    expdoObj.SaleOrderDetails = new TransactionsHelper().GetSaleOrderDetailPO(saleOrderNumber);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
 
         [HttpPost("AddSaleOrder")]
         public async Task<IActionResult> AddSaleOrder([FromBody] JObject obj)
