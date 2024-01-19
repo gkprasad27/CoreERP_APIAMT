@@ -3343,7 +3343,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (poq == null)
                     {
                         poq = new TblPoQueue();
-                        poq.Qty = Math.Abs((matqty + poqty) - item.QTY);
+                        poq.Qty = ( item.QTY- (matqty + poqty));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
@@ -3352,11 +3352,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     else
                     {
-                        poq.Qty = Math.Abs((matqty + poqty) - item.QTY);
+                        poq.Qty = ( item.QTY- (matqty + poqty));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
-                        context.TblPoQueue.UpdateRange(poq);
+                        if (poq.Qty > 0)
+                            context.TblPoQueue.UpdateRange(poq);
                     }
                 }
 
