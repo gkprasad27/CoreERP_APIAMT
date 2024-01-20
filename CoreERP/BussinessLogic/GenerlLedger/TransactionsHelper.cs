@@ -1374,6 +1374,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             }
                             else
                             {
+                                poq = new TblPoQueue();
                                 poq.Qty = 1;
                                 poq.Status = "New";
                                 poq.MaterialCode = item.MaterialCode;
@@ -2353,7 +2354,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             string statusmessage = null;
             int poqtycheck = 0;
             if (purchaseorder != null)
-                poqtycheck = purchaseorder.Sum(p=>p.TotalQty);
+                poqtycheck = purchaseorder.Sum(p => p.TotalQty);
             else
                 poqtycheck = 0;
 
@@ -2447,6 +2448,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     else
                     {
+                        poq = new TblPoQueue();
                         poq.Status = statusmessage;
                         poq.SaleOrderNo = item.SaleOrder;
                         poq.MaterialCode = item.MaterialCode;
@@ -2677,7 +2679,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var Matdtl = new Repository<TblGoodsReceiptDetails>();
             using var PRM = new Repository<TblPurchaseRequisitionMaster>();
             List<TblGoodsReceiptDetails> GoosQTY;
-            string statusmessage=null;
+            string statusmessage = null;
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
@@ -2748,8 +2750,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     item.DocumentURL = grdata.DocumentURL;
                     item.SaleorderNo = purchase.SaleOrderNo;
 
+
                     var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == item.PurchaseOrderNo && z.MaterialCode == item.MaterialCode);
                     POD.Status = statusmessage;
+                    if (Convert.ToInt16(item.RejectQty) > 0)
+                        POD.Qty = (POD.Qty) - Convert.ToInt16(item.RejectQty);
+
                     context.TblPurchaseOrderDetails.UpdateRange(POD);
                     //POQ
                     if (item.RejectQty > 0)
@@ -2757,7 +2763,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         //int poqty = 0;
                         int soqty = 0;
                         int matqty = 0;
-                        //var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleorderNo && im.MaterialCode == item.MaterialCode);
+                        var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleorderNo && im.MaterialCode == item.MaterialCode);
                         //if (sodata != null)
                         //{
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleorderNo && z.MaterialCode == item.MaterialCode);
@@ -2772,12 +2778,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                         else
                         {
+                            poq = new TblPoQueue();
                             poq.Status = "New";
                             poq.SaleOrderNo = item.SaleorderNo;
                             poq.MaterialCode = item.MaterialCode;
                             poq.Qty = item.RejectQty;
                             context.TblPoQueue.Add(poq);
                         }
+                        sodata.POQty = ((sodata.POQty) - Convert.ToInt16(item.RejectQty));
                         //}
                     }
                 }
@@ -2946,11 +2954,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                         else
                         {
+                            poq = new TblPoQueue();
                             poq.Qty = 1;
                             poq.Status = "New";
                             poq.MaterialCode = x.MaterialCode;
                             poq.SaleOrderNo = x.saleOrderNumber;
-                            context.TblPoQueue.Update(poq);
+                            context.TblPoQueue.Add(poq);
                         }
                         var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == x.MaterialCode);
                         materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
