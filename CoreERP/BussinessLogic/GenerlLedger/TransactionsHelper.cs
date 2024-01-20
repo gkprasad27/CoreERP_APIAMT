@@ -3,6 +3,7 @@ using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using Humanizer;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using System;
@@ -1120,7 +1121,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var commitmentitem = new Repository<TblCommitmentItem>();
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == gimaster.SaleOrderNumber);
             //var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == gimaster.SaleOrderNumber);
-           // var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == gimaster.SaleOrderNumber);
+            // var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == gimaster.SaleOrderNumber);
             try
             {
                 if (repogim.TblGoodsIssueMaster.Any(v => v.SaleOrderNumber == gimaster.SaleOrderNumber))
@@ -2322,7 +2323,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                               && Convert.ToString(x.PurchaseOrderNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNumber))
                               && Convert.ToDateTime(x.AddDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                               && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-                              && x.ApprovalStatus=="Pending Approval";
+                              && x.ApprovalStatus == "Pending Approval";
                 }).OrderByDescending(x => x.Id)
                 .ToList();
         }
@@ -2338,6 +2339,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             string purchaseordernumber = string.Empty;
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == podata.ProfitCenter).FirstOrDefault();
             string CustPONumber;
+            var purchaseorder = repo.TblPurchaseOrder.Where(im => im.SaleOrderNo == podata.SaleOrderNo);
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == podata.SaleOrderNo);
             var PRdata = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == podata.SaleOrderNo);
             var Bomdata = repo.TbBommaster.FirstOrDefault(im => im.Bomnumber == podata.SaleOrderNo);
@@ -2347,12 +2349,24 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 CustPONumber = PRdata.RequisitionNumber;
             else
                 CustPONumber = Bomdata.Bomnumber;
+
+            string statusmessage = null;
+            int poqtycheck = 0;
+            if (purchaseorder != null)
+                poqtycheck = purchaseorder.Sum(p=>p.TotalQty);
+            else
+                poqtycheck = 0;
+
+            if (SaleOrder.TotalQty == (totalqty) + (poqtycheck))
+                statusmessage = "PO Created";
+            else
+                statusmessage = "Partial PO Created";
             try
             {
                 if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == podata.PurchaseOrderNumber))
                 {
                     podata.ApprovalStatus = "Pending Approval";
-                    podata.Status = "PO Created";
+                    podata.Status = statusmessage;
                     podata.EditDate = DateTime.Now;
                     podata.TotalQty = totalqty;
                     context.TblPurchaseOrder.Update(podata);
@@ -2368,7 +2382,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         purchaseordernumber = Pcenter.POPrefix + "-" + Pcenter.PONumber;
                     }
                     podata.ApprovalStatus = "Pending Approval";
-                    podata.Status = "PO Created";
+                    podata.Status = statusmessage;
                     podata.AddDate = DateTime.Now;
                     podata.PurchaseOrderNumber = purchaseordernumber;
                     podata.CustPONumber = CustPONumber;
@@ -2384,13 +2398,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 if (SaleOrder != null)
                 {
-                    SaleOrder.Status = "PO Created";
+                    SaleOrder.Status = statusmessage;
                     context.TblSaleOrderMaster.Update(SaleOrder);
                 }
 
                 if (PRdata != null)
                 {
-                    PRdata.Status = "PO Created";
+                    PRdata.Status = statusmessage;
                     context.TblPurchaseRequisitionMaster.Update(PRdata);
                 }
 
@@ -2401,6 +2415,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     x.PurchaseOrderNumber = purchaseordernumber;
                     x.SaleOrder = podata.SaleOrderNo;
+                    x.Status = statusmessage;
                 });
                 foreach (var item in podetails)
                 {
@@ -2416,13 +2431,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         poq.Qty = Math.Abs(Convert.ToInt16(poq.Qty) - (item.Qty));
                         if (poq.Qty >= 0)
                         {
-                            poq.Status = "PO Created";
+                            poq.Status = statusmessage;
                             context.TblPoQueue.Update(poq);
                         }
                         else if (poq.Qty < 0)
                         {
                             poq.Qty = 0;
-                            poq.Status = "PO Created";
+                            poq.Status = statusmessage;
                             context.TblPoQueue.Update(poq);
                         }
                         else
@@ -2432,7 +2447,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     else
                     {
-                        poq.Status = "PO Created";
+                        poq.Status = statusmessage;
                         poq.SaleOrderNo = item.SaleOrder;
                         poq.MaterialCode = item.MaterialCode;
                         poq.Qty = item.Qty;
@@ -2637,7 +2652,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                              && Convert.ToString(x.PurchaseOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNo))
                              && Convert.ToDateTime(x.ReceivedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                              && Convert.ToDateTime(x.ReceivedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-                             && x.ApprovalStatus=="Pending Approval";
+                             && x.ApprovalStatus == "Pending Approval";
                }).OrderByDescending(x => x.PurchaseOrderNo)
                .ToList();
         }
@@ -2662,7 +2677,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var Matdtl = new Repository<TblGoodsReceiptDetails>();
             using var PRM = new Repository<TblPurchaseRequisitionMaster>();
             List<TblGoodsReceiptDetails> GoosQTY;
-
+            string statusmessage=null;
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
@@ -2688,29 +2703,31 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 var saleorder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == purchase.SaleOrderNo);
                 if (poqty == totalqty)
                 {
+                    statusmessage = "Material Received";
                     if (purchase != null)
                     {
-                        purchase.Status = "Material Received";
+                        purchase.Status = statusmessage;
                         purchase.ReceivedDate = DateTime.Now;
-                        saleorder.Status = "Material Received";
+                        saleorder.Status = statusmessage;
                         context.TblPurchaseOrder.Update(purchase);
                         context.TblSaleOrderMaster.Update(saleorder);
                     }
                     grdata.ApprovalStatus = "Pending Approval";
-                    grdata.Status = "Material Received";
+                    grdata.Status = statusmessage;
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
                 else if (totalqty < poqty)
                 {
+                    statusmessage = "Material Partial Received";
                     if (purchase != null)
                     {
-                        purchase.Status = "Material Partial Received";
-                        saleorder.Status = "Material Partial Received";
+                        purchase.Status = statusmessage;
+                        saleorder.Status = statusmessage;
                         context.TblPurchaseOrder.Update(purchase);
                         context.TblSaleOrderMaster.Update(saleorder);
                     }
                     grdata.ApprovalStatus = "Pending Approval";
-                    grdata.Status = "Material Partial Received";
+                    grdata.Status = statusmessage;
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
                 foreach (var item in grdetails)
@@ -2730,6 +2747,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     item.InvoiceURL = grdata.InvoiceURL;
                     item.DocumentURL = grdata.DocumentURL;
                     item.SaleorderNo = purchase.SaleOrderNo;
+
+                    var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == item.PurchaseOrderNo && z.MaterialCode == item.MaterialCode);
+                    POD.Status = statusmessage;
+                    context.TblPurchaseOrderDetails.UpdateRange(POD);
                     //POQ
                     if (item.RejectQty > 0)
                     {
@@ -3325,7 +3346,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     int poqty = 0;
                     int soqty = 0;
                     int matqty = 0;
-                    var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.Status == "PO Created").ToList();
+                    var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
                     var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
                     var material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode);
                     var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
@@ -3343,7 +3364,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (poq == null)
                     {
                         poq = new TblPoQueue();
-                        poq.Qty = ( item.QTY- (matqty + poqty));
+                        poq.Qty = (item.QTY - (matqty + poqty));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
@@ -3352,7 +3373,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     else
                     {
-                        poq.Qty = ( item.QTY- (matqty + poqty));
+                        poq.Qty = (item.QTY - (matqty + poqty));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
