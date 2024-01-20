@@ -37,7 +37,7 @@ namespace CoreERP.Models
         public string? EditWho { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? EditDate { get; set; }
-
+        public string? HeatNumber { get; set; }
         public string? InvoiceNo { get; set; }
         public string? SaleorderNo { get; set; }
     }

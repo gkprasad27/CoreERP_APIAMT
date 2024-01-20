@@ -46,5 +46,8 @@ namespace CoreERP.Models
         public int? OpeningValue { get; set; }
         public int? ClosingPrice { get; set; }
         public int? ClosingValue { get; set; }
+        public string? PartDragNo { get; set; }
+        public string? DragRevNo { get; set; }
+        public string? FileUpload { get; set; }
     }
 }
