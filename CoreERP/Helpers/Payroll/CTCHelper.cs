@@ -44,6 +44,17 @@ namespace CoreERP.BussinessLogic.Payroll
             catch (Exception ex) { throw ex; }
         }
 
+        public List<StructureComponents> GetStructures(string structure = null)
+        {
+            try
+            {
+                using Repository<StructureComponents> repo = new Repository<StructureComponents>();
+                return repo.StructureComponents.Where(structure => structure.Equals(structure)).ToList();
+
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
         public static Ctcbreakup Register(Ctcbreakup ctcBreakup)
         {
             try

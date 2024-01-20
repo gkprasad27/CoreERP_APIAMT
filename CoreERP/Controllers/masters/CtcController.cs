@@ -43,6 +43,25 @@ namespace CoreERP.Controllers.masters
             }
         }
 
+        [HttpGet("GetStructures/{structure}")]
+        public async Task<IActionResult> GetStructures(string structure)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.structureList = new CTCHelper().GetStructures(structure);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetEmployeeList/{empCode}")]
         public async Task<IActionResult> GetEmployeeList(string empCode)
         {
