@@ -1120,13 +1120,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             List<TblGoodsIssueDetails> goodsOrderDetailsExist;
             using var commitmentitem = new Repository<TblCommitmentItem>();
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == gimaster.SaleOrderNumber);
+            int invqty = 0;
+            int sqty = 0;
             //var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == gimaster.SaleOrderNumber);
             // var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == gimaster.SaleOrderNumber);
             try
             {
+                invqty = Convert.ToInt16(gibDetails.Sum(x => x.Qty));
+                string message = null;
+                sqty = SaleOrder.TotalQty;
+                if (sqty == invqty)
+                    message = "Production Released";
+                else
+                    message = "Partially Production Released";
+
                 if (repogim.TblGoodsIssueMaster.Any(v => v.SaleOrderNumber == gimaster.SaleOrderNumber))
                 {
-                    gimaster.Status = "Production Released";
+                    gimaster.Status = message;
                     context.TblGoodsIssueMaster.Update(gimaster);
                     context.SaveChanges();
                 }
@@ -1136,11 +1146,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         throw new Exception("Already Allocated Goods Issue for this Saleorder." + gimaster.SaleOrderNumber);
                     }
-                    gimaster.Status = "Production Released";
+                    gimaster.Status = message;
                     context.TblGoodsIssueMaster.Add(gimaster);
                     tblProduction.Company = gimaster.Company;
                     tblProduction.SaleOrderNumber = gimaster.SaleOrderNumber;
-                    tblProduction.Status = "Production Released";
+                    tblProduction.Status = message;
                     tblProduction.ProfitCenter = gimaster.ProfitCenter;
                     context.TblProductionMaster.Add(tblProduction);
 
@@ -1152,7 +1162,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.SaleOrderNumber = gimaster.SaleOrderNumber;
                     x.AddDate = System.DateTime.Now;
                     x.EditDate = System.DateTime.Now;
-                    x.Status = "Production Released";
+                    x.Status = message;
                 });
 
 
@@ -1173,7 +1183,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         for (var i = 0; i < qty; i++)
                         {
-                            ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released", MaterialCode = item.MaterialCode });
+                            ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode });
                             tagnum = tagnum + 1;
                         }
                     }
@@ -1219,7 +1229,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         foreach (var commit in result)
                         {
-                            ProductionStatus.Add(new TblProductionStatus { SaleOrderNumber = resultcommitment.SaleOrderNumber, ProductionTag = resultcommitment.ProductionTag, Status = "Production Released", WorkStatus = "Production Released", MaterialCode = resultcommitment.MaterialCode, TypeofWork = commit.Description });
+                            ProductionStatus.Add(new TblProductionStatus { SaleOrderNumber = resultcommitment.SaleOrderNumber, ProductionTag = resultcommitment.ProductionTag, Status = message, WorkStatus = message, MaterialCode = resultcommitment.MaterialCode, TypeofWork = commit.Description });
                         }
                     }
                 }
@@ -1236,7 +1246,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     context.TblGoodsIssueDetails.AddRange(gibDetails);
                 }
-                SaleOrder.Status = "Production Released";
+                SaleOrder.Status = message;
                 context.TblSaleOrderMaster.Update(SaleOrder);
                 //if (Purcaseorder != null)
                 //{
@@ -1287,19 +1297,27 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == material).FirstOrDefault();
                 var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
-                //var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == saleordernumber);
+                var goodsreceipt = repo.TblGoodsReceiptDetails.FirstOrDefault(im => im.MaterialCode == material);
                 var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
                 var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == material);
-
-
                 using var dbtrans = context.Database.BeginTransaction();
 
+                int invqty = 0;
+                int sqty = 0;
+                invqty = Convert.ToInt16(prodDetails.Count);
+                string message = null;
+                sqty = SaleOrder.TotalQty;
+                if (sqty == invqty)
+                    message = "Production Started";
+                else
+                    message = "Partially Production Started";
 
                 try
                 {
                     if (InspectionMaster != null)
                     {
-                        InspectionCheckMaster.Status = "Production Started";
+                        InspectionCheckMaster.Status = message;
+                        InspectionCheckMaster.HeatNumber = goodsreceipt.HeatNumber;
                         context.TblInspectionCheckMaster.Update(InspectionMaster);
                         context.SaveChanges();
                         masternumber = InspectionMaster.InspectionCheckNo;
@@ -1317,7 +1335,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             InspectionCheckMaster.InspectionCheckNo = masternumber;
 
 
-                        InspectionCheckMaster.Status = "Production Started";
+                        InspectionCheckMaster.Status = message;
+                        InspectionCheckMaster.HeatNumber = goodsreceipt.HeatNumber;
                         InspectionCheckMaster.InspectionCheckNo = masternumber;
                         InspectionCheckMaster.saleOrderNumber = saleordernumber;
                         InspectionCheckMaster.MaterialCode = material;
@@ -1354,7 +1373,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         ProductionStatus = repo.TblProductionStatus.Where(s => s.SaleOrderNumber == item.SaleOrderNumber && s.MaterialCode == item.MaterialCode && s.ProductionTag == item.ProductionTag && s.TypeofWork == item.TypeofWork).FirstOrDefault();
                         if (ProductionStatus != null)
                         {
-                            ProductionStatus.Status = "Production Started";
+                            ProductionStatus.Status = message;
                             ProductionStatus.WorkStatus = item.WorkStatus;
                             ProductionStatus.AllocatedPerson = item.AllocatedPerson;
                             ProductionStatus.Remarks = item.Remarks;
@@ -1395,13 +1414,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (NewInspectionCheckDetails.Count > 0)
                         context.TblInspectionCheckDetails.AddRange(NewInspectionCheckDetails);
 
-                    repogim.Status = "Production Started";
+                    repogim.Status = message;
 
                     context.TblProductionMaster.UpdateRange(repogim);
                     context.TblGoodsIssueDetails.Update(goodsissue);
                     context.TblProductionDetails.UpdateRange(prodDetails);
 
-                    SaleOrder.Status = "Production Started";
+                    SaleOrder.Status = message;
                     context.TblSaleOrderMaster.Update(SaleOrder);
                     //if (Purcaseorder != null)
                     //{
@@ -2890,7 +2909,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var RejectionMaster = new TblRejectionMaster();
             string Materialcode = icdetails.FirstOrDefault().MaterialCode;
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
-            //var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
+            var MaterialMaster = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == Materialcode);
             //var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == icdata.saleOrderNumber);
             //var goodsissue = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
             //var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
@@ -2898,7 +2917,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
                 {
-                    icdata.DrawingRevNo = "QC-F-005 Dated: 01-Apr-2018";
+                    icdata.DrawingRevNo = MaterialMaster.DragRevNo;
                     icdata.MaterialCode = Materialcode;
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
@@ -2912,7 +2931,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.SaveChanges();
                         masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
-                    icdata.DrawingRevNo = "QC-F-005 Dated: 01-Apr-2018";
+                    icdata.DrawingRevNo = MaterialMaster.DragRevNo;
                     icdata.InspectionCheckNo = masternumber;
                     icdata.MaterialCode = Materialcode;
                     if (masternumber.Length > 1)
@@ -2941,7 +2960,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.Status = icdata.Status;
                     x.HeatNumber = icdata.HeatNumber;
                     x.PartDrgNo = icdata.PartDrgNo;
-                    x.DrawingRevNo = "QC-F-005 Dated: 01-Apr-2018";
+                    x.DrawingRevNo = MaterialMaster.DragRevNo;
                     production.Status = icdata.Status;
                     if (x.Status == "QC Rejected")
                     {
