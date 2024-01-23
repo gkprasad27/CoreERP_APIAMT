@@ -963,9 +963,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using var repo1 = new Repository<TblInvoiceMaster>();
                 var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo);
                 var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo);
-                var goodsreceipt = repo1.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == invoice.SaleOrderNo);
-                var goodsissue = repo1.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
-                var Production = repo1.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
+               // var goodsreceipt = repo1.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == invoice.SaleOrderNo);
+               // var goodsissue = repo1.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
+               // var Production = repo1.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
                 using (ERPContext repo = new ERPContext())
                 {
                     using (var dbTransaction = repo.Database.BeginTransaction())
@@ -1031,21 +1031,21 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 Inspection.Status = message;
                                 repo.TblInspectionCheckMaster.Update(Inspection);
                             }
-                            if (goodsreceipt != null)
-                            {
-                                goodsreceipt.Status = message;
-                                repo.TblGoodsReceiptMaster.Update(goodsreceipt);
-                            }
-                            if (goodsissue != null)
-                            {
-                                goodsissue.Status = message;
-                                repo.TblGoodsIssueMaster.Update(goodsissue);
-                            }
-                            if (Production != null)
-                            {
-                                Production.Status = message;
-                                repo.TblProductionMaster.Update(Production);
-                            }
+                            //if (goodsreceipt != null)
+                            //{
+                            //    goodsreceipt.Status = message;
+                            //    repo.TblGoodsReceiptMaster.Update(goodsreceipt);
+                            //}
+                            //if (goodsissue != null)
+                            //{
+                            //    goodsissue.Status = message;
+                            //    repo.TblGoodsIssueMaster.Update(goodsissue);
+                            //}
+                            //if (Production != null)
+                            //{
+                            //    Production.Status = message;
+                            //    repo.TblProductionMaster.Update(Production);
+                            //}
 
                             dbTransaction.Commit();
                             return true;
