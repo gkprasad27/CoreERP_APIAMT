@@ -20,9 +20,9 @@ namespace CoreERP.Controllers
         {
             _configuration = configuration;
         }
-       
+
         [HttpPost("GetInvoiceDetails/{branchCode}")]
-        public IActionResult GetInvoiceDetails([FromBody]SearchCriteria searchCriteria,string branchCode)
+        public IActionResult GetInvoiceDetails([FromBody] SearchCriteria searchCriteria, string branchCode)
         {
             try
             {
@@ -43,16 +43,16 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetPupms/{pumpNo}/{branchCode}/{productCode?}")]
-        public IActionResult GetPupms(string pumpNo, string branchCode,string productCode)
+        public IActionResult GetPupms(string pumpNo, string branchCode, string productCode)
         {
             try
             {
                 string errorMessage = string.Empty;
 
-               // var pumpsList = new InvoiceHelper().GetPumps(pumpNo, branchCode, productCode);
+                // var pumpsList = new InvoiceHelper().GetPumps(pumpNo, branchCode, productCode);
 
                 dynamic expando = new ExpandoObject();
-               // expando.PumpsList = pumpsList.OrderBy(x=>x.PumpNo).Select(x => new { ID = x.PumpId, TEXT = x.PumpNo });
+                // expando.PumpsList = pumpsList.OrderBy(x=>x.PumpNo).Select(x => new { ID = x.PumpId, TEXT = x.PumpNo });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -68,7 +68,7 @@ namespace CoreERP.Controllers
             {
                 string errorMessage = string.Empty;
 
-               // var pumpsList = new InvoiceHelper().GetPumpsDropDown(branchCode, productCode);
+                // var pumpsList = new InvoiceHelper().GetPumpsDropDown(branchCode, productCode);
 
                 dynamic expando = new ExpandoObject();
                 //expando.PumpsList = pumpsList.OrderBy(x => x.PumpNo).Select(x => new { ID = x.PumpId, TEXT = x.PumpNo });
@@ -182,7 +182,7 @@ namespace CoreERP.Controllers
             try
             {
                 dynamic expando = new ExpandoObject();
-               // expando.CashPartyAccountList = new InvoiceHelper().GetAccountLedgers(ledgerCode).OrderBy(al=> al.LedgerCode.Length).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
+                // expando.CashPartyAccountList = new InvoiceHelper().GetAccountLedgers(ledgerCode).OrderBy(al=> al.LedgerCode.Length).Select(x => new { ID = x.LedgerCode, TEXT = x.LedgerName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -248,9 +248,9 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("GetProductByProductCode")]
-        public IActionResult GetProductByProductCode([FromBody]JObject objData)
+        public IActionResult GetProductByProductCode([FromBody] JObject objData)
         {
-           // if (string.IsNullOrEmpty(productCode))
+            // if (string.IsNullOrEmpty(productCode))
             if (objData == null)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty." });
@@ -269,7 +269,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("GetProductByProductName")]
-        public IActionResult GetProductByProductName([FromBody]JObject objData)
+        public IActionResult GetProductByProductName([FromBody] JObject objData)
         {
             if (objData == null)
             {
@@ -279,7 +279,7 @@ namespace CoreERP.Controllers
             {
                 string productName = objData["productName"].ToString();
                 dynamic expando = new ExpandoObject();
-               // expando.Products = new InvoiceHelper().GetProducts(null, productName).Select(p => new { ID = p.ProductCode, TEXT = p.ProductName });
+                // expando.Products = new InvoiceHelper().GetProducts(null, productName).Select(p => new { ID = p.ProductCode, TEXT = p.ProductName });
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
             }
             catch (Exception ex)
@@ -352,7 +352,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("GetBillingDetailsRcd")]
-        public IActionResult GetBillingDetailsRcd([FromBody]JObject objData)
+        public IActionResult GetBillingDetailsRcd([FromBody] JObject objData)
         {
             // string productCode, string branchCode
             if (objData == null)
@@ -377,7 +377,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("GetInvoiceList/{branchCode}")]
-        public IActionResult GetInvoiceList([FromBody]SearchCriteria searchCriteria,string branchCode)
+        public IActionResult GetInvoiceList([FromBody] SearchCriteria searchCriteria, string branchCode)
         {
 
             if (searchCriteria == null)
@@ -401,7 +401,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpPost("GetInvoiceList")]
-        public async Task<IActionResult>  GetInvoiceList([FromBody] SearchCriteria searchCriteria)
+        public async Task<IActionResult> GetInvoiceList([FromBody] SearchCriteria searchCriteria)
         {
 
             //if (searchCriteria == null)
@@ -411,20 +411,20 @@ namespace CoreERP.Controllers
 
                 try
                 {
-                var invoiceMasterList = new InvoiceHelper().GetInvoiceMasters(searchCriteria);
-                if (invoiceMasterList.Count > 0)
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.InvoiceList = invoiceMasterList;
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
+                    var invoiceMasterList = new InvoiceHelper().GetInvoiceMasters(searchCriteria);
+                    if (invoiceMasterList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.InvoiceList = invoiceMasterList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
 
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
             });
             return result;
         }
@@ -444,7 +444,7 @@ namespace CoreERP.Controllers
                     if (invoiceMasterList.Any())
                     {
                         dynamic expando = new ExpandoObject();
-                        expando.InvoiceList = invoiceMasterList.Select(x => new { InvoiceNo = x.InvoiceNo, SaleOrderNo = x.SaleOrderNo, PONumber=x.PONumber}); 
+                        expando.InvoiceList = invoiceMasterList.Select(x => new { InvoiceNo = x.InvoiceNo, SaleOrderNo = x.SaleOrderNo, PONumber = x.PONumber });
                         return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                     }
 
@@ -510,9 +510,29 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpGet("GetInvoiceDetailList")]
+        public IActionResult GetInvoiceDetailList()
+        {
+            try
+            {
+                var invoiceDetailsList = new InvoiceHelper().GetInvoiceDetailList().Select(x => new { MaterialCode = x.MaterialCode, QCRefNo = x.InspectionCheckNo, Saleorder = x.Saleorder, InvoiceNo = x.InvoiceNo });
+                var invoiceMasterList = new InvoiceHelper().GetInvoiceMasterbysaeorder(invoiceDetailsList.FirstOrDefault().Saleorder);
+
+                dynamic expando = new ExpandoObject();
+                expando.invoiceDetailsList = invoiceDetailsList;
+                expando.invoiceMasterList = invoiceMasterList;
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
 
         [HttpPost("RegisterInvoice")]
-        public IActionResult RegisterBilling([FromBody]JObject objData)
+        public IActionResult RegisterBilling([FromBody] JObject objData)
         {
 
             if (objData == null)
@@ -524,23 +544,23 @@ namespace CoreERP.Controllers
                 var _invoiceHdr = objData["grHdr"].ToObject<TblInvoiceMaster>();
                 var _invoiceDtl = objData["grDtl"].ToObject<TblInvoiceDetail[]>();
 
-                if(_invoiceHdr == null)
+                if (_invoiceHdr == null)
                 {
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No request records found to Save" });
                 }
-               
+
                 if (_invoiceDtl == null || _invoiceDtl.Count() == 0)
                 {
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "In request no product found in to save" });
                 }
-               
+
                 //if (string.IsNullOrEmpty(_invoiceHdr.InvoiceNo))
                 //{
                 //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Invoice no canontbe null/empty." });
                 //}
 
 
-                var result = new InvoiceHelper().RegisterBill(_configuration ,_invoiceHdr, _invoiceDtl.ToList(), out errorMessage);
+                var result = new InvoiceHelper().RegisterBill(_configuration, _invoiceHdr, _invoiceDtl.ToList(), out errorMessage);
                 if (result)
                 {
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _invoiceHdr });
@@ -550,7 +570,7 @@ namespace CoreERP.Controllers
                 {
                     errorMessage = "Registration failed.";
                 }
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage});
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
             }
             catch (Exception ex)
             {

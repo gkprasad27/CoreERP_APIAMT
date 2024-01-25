@@ -877,7 +877,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                 using var repo = new Repository<TblInvoiceMaster>();
                 return repo.TblInvoiceMaster
-                    .FirstOrDefault(x => x.SaleOrderNo == saleorder);
+                    .FirstOrDefault(x => x.SaleOrderNo == saleorder && x.Status.Contains("Dispatched"));
 
             }
             catch (Exception ex)
@@ -919,6 +919,21 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using (Repository<TblInvoiceDetail> repo = new Repository<TblInvoiceDetail>())
                 {
                     return repo.TblInvoiceDetail.Where(x => x.Saleorder == saleorder).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<TblInvoiceDetail> GetInvoiceDetailList()
+        {
+            try
+            {
+                using (Repository<TblInvoiceDetail> repo = new Repository<TblInvoiceDetail>())
+                {
+                    return repo.TblInvoiceDetail.Where(x => x.Status.Contains("Dispatched")).ToList();
                 }
             }
             catch (Exception ex)
