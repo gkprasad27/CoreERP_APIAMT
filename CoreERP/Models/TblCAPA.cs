@@ -20,7 +20,7 @@ namespace CoreERP.Models
         public string? ItemCode { get; set; }
         public string MaterialDescription { get; set; }
         public DateTime? NotificationDate { get; set; }
-        public string? ComplaintQty { get; set; }
+        public int? ComplaintQty { get; set; }
         public string? Tag { get; set; }
         public string? AddWho { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
