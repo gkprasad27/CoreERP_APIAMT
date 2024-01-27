@@ -60,7 +60,7 @@ namespace CoreERP.BussinessLogic.Payroll
                     }
                     else
                     {
-                        return repo.StructureComponents.Where(s => s.StructureName.Equals(structure)).ToList();
+                        structurecomponent.Amount = structurecomponent.Amount;
                     }
                 }
                return repo.StructureComponents.Where(s => s.StructureName.Equals(structure)).ToList();
@@ -74,15 +74,8 @@ namespace CoreERP.BussinessLogic.Payroll
             using var repo = new Repository<Ctcbreakup>();
             using var context = new ERPContext();
 
-            //string structureCode = string.Empty;
-            //string structureName = string.Empty;
             try
             {
-
-                //structure.Active = "Y";
-                //context.Ctcbreakup.Add(structure);
-                //context.Ctcbreakup.AddRange(components);
-               // context.SaveChanges();
                 components.ForEach(x =>
                 {
                    x.EffectFrom = structure.EffectFrom;
