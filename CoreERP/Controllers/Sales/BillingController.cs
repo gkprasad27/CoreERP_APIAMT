@@ -516,7 +516,9 @@ namespace CoreERP.Controllers
             try
             {
                 var invoiceDetailsList = new InvoiceHelper().GetInvoiceDetailList(Tagname).Select(x => new { MaterialCode = x.MaterialCode, QCRefNo = x.InspectionCheckNo, Saleorder = x.Saleorder, InvoiceNo = x.InvoiceNo, Tagname = x.TagName });
-                if (invoiceDetailsList != null)
+                int records= invoiceDetailsList.Count();
+               
+                if (records!=0)
                 {
                     var invoiceMasterList = new InvoiceHelper().GetInvoiceMasterbysaeorder(invoiceDetailsList.FirstOrDefault().Saleorder);
                     dynamic expando = new ExpandoObject();
