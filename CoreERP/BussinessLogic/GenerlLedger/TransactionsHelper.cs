@@ -1409,6 +1409,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             RejectionMaster.TagNo = item.ProductionTag;
                             RejectionMaster.Reason = item.Remarks;
                             context.TblRejectionMaster.Add(RejectionMaster);
+
+                            var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == Purcaseorder.PurchaseOrderNumber && z.MaterialCode == item.MaterialCode);
+                            POD.Qty = (POD.Qty) - 1;
+
+                            var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
+                            sodata.POQty = (sodata.POQty) - 1;
+                            if (sodata.POQty >= 0)
+                                context.TblSaleOrderDetail.Update(sodata);
+
+                            if (POD.Qty >= 0)
+                                context.TblPurchaseOrderDetails.UpdateRange(POD);
                         }
                     }
                     if (NewInspectionCheckDetails.Count > 0)
@@ -2774,8 +2785,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     POD.Status = statusmessage;
                     if (Convert.ToInt16(item.RejectQty) > 0)
                         POD.Qty = (POD.Qty) - Convert.ToInt16(item.RejectQty);
-
-                    context.TblPurchaseOrderDetails.UpdateRange(POD);
+                    if (POD.Qty >= 0)
+                        context.TblPurchaseOrderDetails.UpdateRange(POD);
                     //POQ
                     if (item.RejectQty > 0)
                     {
@@ -2805,6 +2816,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             context.TblPoQueue.Add(poq);
                         }
                         sodata.POQty = ((sodata.POQty) - Convert.ToInt16(item.RejectQty));
+                        if (sodata.POQty >= 0)
+                            context.TblSaleOrderDetail.Update(sodata);
                         //}
                     }
                 }
@@ -2910,7 +2923,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             string Materialcode = icdetails.FirstOrDefault().MaterialCode;
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             var MaterialMaster = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == Materialcode);
-            //var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == icdata.saleOrderNumber);
+            var purchaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             //var goodsissue = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
             //var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
             try
@@ -2989,6 +3002,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         RejectionMaster.TagNo = x.productionTag;
                         RejectionMaster.Reason = x.Description;
                         context.TblRejectionMaster.Add(RejectionMaster);
+
+                        var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == x.saleOrderNumber && im.MaterialCode == x.MaterialCode);
+                        sodata.POQty = ((sodata.POQty) - 1);
+                        if (sodata.POQty >= 0)
+                            context.TblSaleOrderDetail.Update(sodata);
+
+                        var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == purchaseorder.PurchaseOrderNumber && z.MaterialCode == x.MaterialCode);
+                        POD.Qty = (POD.Qty) - 1;
+                        if (POD.Qty >= 0)
+                            context.TblPurchaseOrderDetails.UpdateRange(POD);
+
                     }
                 });
 
