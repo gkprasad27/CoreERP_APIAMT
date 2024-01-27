@@ -1317,7 +1317,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (InspectionMaster != null)
                     {
                         InspectionCheckMaster.Status = message;
-                        InspectionCheckMaster.HeatNumber = goodsreceipt.HeatNumber;
+                        if (goodsreceipt != null)
+                            InspectionCheckMaster.HeatNumber = goodsreceipt.HeatNumber;
                         context.TblInspectionCheckMaster.Update(InspectionMaster);
                         context.SaveChanges();
                         masternumber = InspectionMaster.InspectionCheckNo;
@@ -1336,7 +1337,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
 
                         InspectionCheckMaster.Status = message;
-                        InspectionCheckMaster.HeatNumber = goodsreceipt.HeatNumber;
+                        if (goodsreceipt != null)
+                            InspectionCheckMaster.HeatNumber = goodsreceipt.HeatNumber;
                         InspectionCheckMaster.InspectionCheckNo = masternumber;
                         InspectionCheckMaster.saleOrderNumber = saleordernumber;
                         InspectionCheckMaster.MaterialCode = material;
