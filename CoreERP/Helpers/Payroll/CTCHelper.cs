@@ -44,30 +44,65 @@ namespace CoreERP.BussinessLogic.Payroll
             catch (Exception ex) { throw ex; }
         }
 
-        public List<StructureComponents> GetStructures(string structure = null)
+        public List<StructureComponents> GetStructures(string structure = null,int ctc=0)
         {
             try
             {
+                double totalCtc = 0;
                 using Repository<StructureComponents> repo = new Repository<StructureComponents>();
-                return repo.StructureComponents.Where(structure => structure.Equals(structure)).ToList();
+                var structurepercentage = repo.StructureComponents.Where(s => s.StructureName.Equals(structure)).ToList();
+                foreach (var structurecomponent in structurepercentage)
+                {
+                    if (structurecomponent.Percentage != null)
+                    {
+                        totalCtc += (structurecomponent.Percentage.Value / 100) * ctc;
+                        structurecomponent.Amount= totalCtc;
+                    }
+                    else
+                    {
+                        return repo.StructureComponents.Where(s => s.StructureName.Equals(structure)).ToList();
+                    }
+                }
+               return repo.StructureComponents.Where(s => s.StructureName.Equals(structure)).ToList();
 
             }
             catch (Exception ex) { throw ex; }
         }
 
-        public static Ctcbreakup Register(Ctcbreakup ctcBreakup)
+        public bool Register(Ctcbreakup structure, List<Ctcbreakup> components)
         {
+            using var repo = new Repository<Ctcbreakup>();
+            using var context = new ERPContext();
+
+            //string structureCode = string.Empty;
+            //string structureName = string.Empty;
             try
             {
-                //using Repository<Ctcbreakup> repo = new Repository<Ctcbreakup>();
-                //ctcBreakup.Active = "Y";
-                //repo.Ctcbreakup.Add(ctcBreakup);
-                //if (repo.SaveChanges() > 0)
-                //    return ctcBreakup;
 
-                return null;
+                //structure.Active = "Y";
+                //context.Ctcbreakup.Add(structure);
+                //context.Ctcbreakup.AddRange(components);
+               // context.SaveChanges();
+                components.ForEach(x =>
+                {
+                   x.EffectFrom = structure.EffectFrom;
+                    x.EmpCode = structure.EmpCode;
+                    x.Active = "Y";
+                    x.Ctc = structure.Ctc;
+                    x.StructureName = structure.StructureName;
+                });
+                
+                context.Ctcbreakup.AddRange(components);
+                context.SaveChanges();
+
+
+                return true;
             }
-            catch { throw; }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public static Ctcbreakup Update(Ctcbreakup ctcBreakup)

@@ -2,7 +2,9 @@
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,38 +22,43 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("RegisterctcTypes")]
-        public IActionResult RegisterctcTypes([FromBody] Ctcbreakup ctcComponent)
+        public async Task<IActionResult> RegisterctcTypes([FromBody] JObject obj)
         {
-            if (ctcComponent == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
-
-            try
+            var result = await Task.Run(() =>
             {
-                APIResponse apiResponse;
-                _ctcRepository.Add(ctcComponent);
-                if (_ctcRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = ctcComponent };
-                else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                return Ok(apiResponse);
+                    var structure = obj["structure"].ToObject<Ctcbreakup>();
+                    var components = obj["components"].ToObject<List<Ctcbreakup>>();
+                    ///var username = User.Identities.ToList();
 
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    if (!new CTCHelper().Register(structure, components))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.invoi = structure;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
-        [HttpGet("GetStructures/{structure}")]
-        public async Task<IActionResult> GetStructures(string structure)
+        [HttpGet("GetStructures/{structure}/{ctc}")]
+        public async Task<IActionResult> GetStructures(string structure, int ctc)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.structureList = new CTCHelper().GetStructures(structure);
+                    expando.structureList = new CTCHelper().GetStructures(structure,ctc);
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -81,6 +88,30 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetctcDetailList/{empCode}")]
+        public IActionResult GetctcDetailList(string empcode)
+        {
+            try
+            {
+                var ctcdetailList = _ctcRepository.GetAll().Where(x => x.EmpCode.Equals(empcode));
+                if (ctcdetailList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.ctcDetailList = ctcdetailList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+
+
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpGet("GetctcTypesList")]
         public IActionResult GetctcTypesList()
         {
@@ -96,12 +127,7 @@ namespace CoreERP.Controllers.masters
                 else
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
 
-                //var ctcTypesList = _ctcRepository.GetAll();
-                //if (!ctcTypesList.Any())
-                //    return Ok(new APIResponse {status = APIStatus.FAIL.ToString(), response = "No Data Found."});
-                //dynamic expdoObj = new ExpandoObject();
-                //expdoObj.ctcTypesList = ctcTypesList;
-                //return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                
 
             }
             catch (Exception ex)

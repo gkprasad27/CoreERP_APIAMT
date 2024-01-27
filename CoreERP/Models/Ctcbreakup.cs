@@ -9,7 +9,7 @@ namespace CoreERP.Models
         public string? CompanyCode { get; set; }
         public string? EmpCode { get; set; }
         public DateTime? EffectFrom { get; set; }
-        public string? EarnDednCode { get; set; }
+        public string? ComponentCode { get; set; }
         public decimal? EarnDednAmount { get; set; }
         public decimal? Ctc { get; set; }
         public string? Usrid { get; set; }
@@ -17,7 +17,7 @@ namespace CoreERP.Models
         public string? Upload { get; set; }
         public string? Description { get; set; }
         public string? EmpGrp { get; set; }
-        public string? EarnDednName { get; set; }
+        public string? ComponentName { get; set; }
         public string? StructureName { get; set; }
         public string? CycleName { get; set; }
         public string? Duration { get; set; }
