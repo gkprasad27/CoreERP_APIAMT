@@ -927,13 +927,13 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
-        public List<TblInvoiceDetail> GetInvoiceDetailList()
+        public List<TblInvoiceDetail> GetInvoiceDetailList(string TagName)
         {
             try
             {
                 using (Repository<TblInvoiceDetail> repo = new Repository<TblInvoiceDetail>())
                 {
-                    return repo.TblInvoiceDetail.Where(x => x.Status.Contains("Dispatched")).ToList();
+                    return repo.TblInvoiceDetail.Where(x => x.TagName.Contains(TagName) && x.Status.Contains("Dispatched")).ToList();
                 }
             }
             catch (Exception ex)

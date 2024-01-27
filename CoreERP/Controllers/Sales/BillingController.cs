@@ -510,19 +510,22 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetInvoiceDetailList")]
-        public IActionResult GetInvoiceDetailList()
+        [HttpGet("GetInvoiceDetailList/{Tagname}")]
+        public IActionResult GetInvoiceDetailList(string Tagname)
         {
             try
             {
-                var invoiceDetailsList = new InvoiceHelper().GetInvoiceDetailList().Select(x => new { MaterialCode = x.MaterialCode, QCRefNo = x.InspectionCheckNo, Saleorder = x.Saleorder, InvoiceNo = x.InvoiceNo });
-                var invoiceMasterList = new InvoiceHelper().GetInvoiceMasterbysaeorder(invoiceDetailsList.FirstOrDefault().Saleorder);
-
-                dynamic expando = new ExpandoObject();
-                expando.invoiceDetailsList = invoiceDetailsList;
-                expando.invoiceMasterList = invoiceMasterList;
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-
+                var invoiceDetailsList = new InvoiceHelper().GetInvoiceDetailList(Tagname).Select(x => new { MaterialCode = x.MaterialCode, QCRefNo = x.InspectionCheckNo, Saleorder = x.Saleorder, InvoiceNo = x.InvoiceNo, Tagname = x.TagName });
+                if (invoiceDetailsList != null)
+                {
+                    var invoiceMasterList = new InvoiceHelper().GetInvoiceMasterbysaeorder(invoiceDetailsList.FirstOrDefault().Saleorder);
+                    dynamic expando = new ExpandoObject();
+                    expando.invoiceDetailsList = invoiceDetailsList;
+                    expando.invoiceMasterList = invoiceMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                else
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
             }
             catch (Exception ex)
             {
