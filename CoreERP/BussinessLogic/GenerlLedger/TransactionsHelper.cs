@@ -3104,7 +3104,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.hsnNo = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Hsnsac;
 
                 });
-            return repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == saleorder).ToList();
+            return repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == saleorder && (cd.Status != "Invoice Partially Generated" && cd.Status != "Invoice Generated")).ToList();
         }
 
         public bool ReturnInpectionCheckMaster(string code)
