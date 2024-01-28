@@ -3263,13 +3263,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
 
 
-        public TblSaleOrderMaster GetSaleOrderMaster(string saleOrderNo)
+        public TblSaleOrderMaster GetSaleOrderMaster(string saleOrderNo, string Materialcode)
         {
             using var repo = new Repository<TblSaleOrderMaster>();
 
             var Company = repo.TblCompany.ToList();
             var profitCenters = repo.ProfitCenters.ToList();
             var customer = repo.TblBusinessPartnerAccount.ToList();
+            var SaleordrDetails = repo.TblSaleOrderDetail.Where(x=>x.SaleOrderNo== saleOrderNo && x.MaterialCode== Materialcode).ToList();
 
             repo.TblSaleOrderMaster.ToList()
                 .ForEach(c =>
@@ -3277,7 +3278,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
                     c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
-
+                    c.MatQty = SaleordrDetails.FirstOrDefault(s => s.SaleOrderNo == saleOrderNo).QTY;
                 });
             return repo.TblSaleOrderMaster
                 .FirstOrDefault(x => x.SaleOrderNo == saleOrderNo);

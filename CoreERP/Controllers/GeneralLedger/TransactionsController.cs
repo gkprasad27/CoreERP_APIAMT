@@ -808,7 +808,7 @@ namespace CoreERP.Controllers.masters
                 try
                 {
                     var transactions = new TransactionsHelper();
-                    var tagsData = transactions.GetSaleOrderMaster(SaleorderNumber);
+                    var tagsData = transactions.GetSaleOrderMaster(SaleorderNumber, Materialcode);
                     var QCData = transactions.GetQCMaster(Materialcode);
                     if (tagsData == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });

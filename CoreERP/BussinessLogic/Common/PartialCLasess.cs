@@ -41,6 +41,12 @@ namespace CoreERP.Models
         [NotMapped]
         public string MaterialName { get; set; }
     }
+
+    public partial class TblSaleOrderMaster
+    {
+        [NotMapped]
+        public int MatQty { get; set; }
+    }
     partial class TblPurchaseOrderDetails
     {
         [NotMapped]
