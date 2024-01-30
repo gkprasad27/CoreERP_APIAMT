@@ -49,6 +49,8 @@ namespace CoreERP.Models
         public DateTime? DefectCasuseDate { get; set; }
         public string? SaleOrderNo { get; set; }
         public string? Status { get; set; }
+        public string? CustmerPO { get; set; }
+        public string? CustomerCode { get; set; }
 
     }
 }

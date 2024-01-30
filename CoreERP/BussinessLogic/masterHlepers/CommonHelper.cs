@@ -639,6 +639,19 @@ namespace CoreERP
             return result;
         }
 
+        public static IEnumerable<TblCAPA> GetCapaList()
+        {
+            using var repo = new Repository<TblCAPA>();
+            var materialMasters = repo.TblMaterialMaster.ToList();
+            var result = repo.TblCAPA.ToList();
+
+            result.ForEach(c =>
+            {
+                c.MaterialDescription = materialMasters.FirstOrDefault(cur => cur.MaterialCode == c.ItemCode)?.Description;
+            });
+            return result;
+        }
+
         public static IEnumerable<TblHoliday> GetHolidays()
         {
             using var repo = new Repository<TblHoliday>();

@@ -47,7 +47,8 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var CapaList = _capaRepository.GetAll(); 
+                var CapaList = CommonHelper.GetCapaList();
+
                 if (CapaList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
