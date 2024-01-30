@@ -1412,6 +1412,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             RejectionMaster.Reason = item.Remarks;
                             context.TblRejectionMaster.Add(RejectionMaster);
 
+                            var GID = repo.TblGoodsIssueDetails.FirstOrDefault(z => z.SaleOrderNumber == item.SaleOrderNumber && z.MaterialCode == item.MaterialCode);
+                            GID.AllocatedQTY = (GID.AllocatedQTY) - 1;
+
                             var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == Purcaseorder.PurchaseOrderNumber && z.MaterialCode == item.MaterialCode);
                             POD.Qty = (POD.Qty) - 1;
 
@@ -1422,6 +1425,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                             if (POD.Qty >= 0)
                                 context.TblPurchaseOrderDetails.UpdateRange(POD);
+
+
+                            if (GID.AllocatedQTY >= 0)
+                                context.TblGoodsIssueDetails.UpdateRange(GID);
                         }
                     }
                     if (NewInspectionCheckDetails.Count > 0)

@@ -1592,7 +1592,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var POQList = _TblPoQueue.GetAll().Where(x => x.Qty>0);
+                    var POQList = _TblPoQueue.GetAll().Where(x => x.Qty>0).OrderByDescending(o=>o.ID);
                     if (POQList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
