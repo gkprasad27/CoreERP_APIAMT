@@ -1177,9 +1177,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 foreach (var item in gibDetails)
                 {
                     var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
-                    if (GID.Qty != GID.AllocatedQTY)
+                    if (GID == null)
                     {
-                        // int qty = (item.AllocatedQTY ?? 0)-(receivedqty);
                         int qty = item.AllocatedQTY ?? 0;
                         if (qty > 0)
                         {
@@ -1195,32 +1194,54 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
                             item.AllocatedQTY = (item.AllocatedQTY) + (receivedqty);
                         }
-                        //    if (repogidetail.TblGoodsIssueDetails.Any(z => z.SaleOrderNumber == gimaster.SaleOrderNumber && z.MaterialCode==item.MaterialCode))
-                        //    {
-                        //        int alloqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
+                    }
+                    else
+                    {
+                        if (GID.Qty != GID.AllocatedQTY)
+                        {
+                            // int qty = (item.AllocatedQTY ?? 0)-(receivedqty);
+                            int qty = item.AllocatedQTY ?? 0;
+                            if (qty > 0)
+                            {
+                                for (var i = 0; i < qty; i++)
+                                {
+                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode });
+                                    tagnum = tagnum + 1;
+                                }
+                            }
+                            int receivedqty = 0;
+                            if (item.AllocatedQTY > 0)
+                            {
+                                receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
+                                item.AllocatedQTY = (item.AllocatedQTY) + (receivedqty);
+                            }
+                            //    if (repogidetail.TblGoodsIssueDetails.Any(z => z.SaleOrderNumber == gimaster.SaleOrderNumber && z.MaterialCode==item.MaterialCode))
+                            //    {
+                            //        int alloqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
 
-                        //            int qty = item.AllocatedQTY ?? 0;
-                        //        if (qty > 0)
-                        //        {
-                        //            for (var i = 0; i < qty; i++)
-                        //            {
-                        //                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released", MaterialCode = item.MaterialCode });
-                        //                tagnum = tagnum + 1;
-                        //            }
-                        //        }
-                        //    }
-                        //    else
-                        //    {
-                        //        int qty = item.AllocatedQTY ?? 0;
-                        //        if (qty > 0)
-                        //        {
-                        //            for (var i = 0; i < qty; i++)
-                        //            {
-                        //                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released", MaterialCode = item.MaterialCode });
-                        //                tagnum = tagnum + 1;
-                        //            }
-                        //        }
-                        //    }
+                            //            int qty = item.AllocatedQTY ?? 0;
+                            //        if (qty > 0)
+                            //        {
+                            //            for (var i = 0; i < qty; i++)
+                            //            {
+                            //                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released", MaterialCode = item.MaterialCode });
+                            //                tagnum = tagnum + 1;
+                            //            }
+                            //        }
+                            //    }
+                            //    else
+                            //    {
+                            //        int qty = item.AllocatedQTY ?? 0;
+                            //        if (qty > 0)
+                            //        {
+                            //            for (var i = 0; i < qty; i++)
+                            //            {
+                            //                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released", MaterialCode = item.MaterialCode });
+                            //                tagnum = tagnum + 1;
+                            //            }
+                            //        }
+                            //    }
+                        }
                     }
                 }
                 var result = commitmentitem.Where(x => x.Type.Equals("Production")).OrderBy(z => z.SortOrder);
