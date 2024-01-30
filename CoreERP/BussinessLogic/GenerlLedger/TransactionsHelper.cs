@@ -901,8 +901,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public List<TblGoodsIssueMaster> GetGoodsIssueMaster(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-10), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-10);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblGoodsIssueMaster>();
@@ -921,17 +921,28 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.ProductionPersonName = Employee.FirstOrDefault(f => f.EmployeeCode == c.ProductionPerson).EmployeeName;
                 });
 
-
+            if (searchCriteria.InvoiceNo != null)
+            {
             return repo.TblGoodsIssueMaster.AsEnumerable().Where(x =>
             {
-                Debug.Assert(x.GoodsIssueId != null, "x.VoucherDate != null");
+                Debug.Assert(x.SaleOrderNumber != null, "x.VoucherDate != null");
                 return
-                x.GoodsIssueId != null
-                       && x.GoodsIssueId.ToString().Contains(searchCriteria.searchCriteria ?? x.GoodsIssueId.ToString())
-                       && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                x.SaleOrderNumber != null &&
+               x.SaleOrderNumber.ToString().Contains(searchCriteria.searchCriteria ?? x.SaleOrderNumber.ToString());
             }).ToList();
-
+            }
+            else
+            {
+                return repo.TblGoodsIssueMaster.AsEnumerable().Where(x =>
+                {
+                    Debug.Assert(x.GoodsIssueId != null, "x.VoucherDate != null");
+                    return
+                    x.GoodsIssueId != null
+                           && x.GoodsIssueId.ToString().Contains(searchCriteria.searchCriteria ?? x.GoodsIssueId.ToString())
+                           && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                    && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                }).ToList();
+            }
         }
 
         public List<TblProductionMaster> GetProductionIssueMaster(SearchCriteria searchCriteria)
