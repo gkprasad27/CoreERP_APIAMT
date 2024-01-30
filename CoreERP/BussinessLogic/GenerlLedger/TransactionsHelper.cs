@@ -2461,7 +2461,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrder && z.MaterialCode == item.MaterialCode);
                     if (poq != null)
                     {
-                        poq.Qty = Math.Abs(Convert.ToInt16(poq.Qty) - (item.Qty));
+                        poq.Qty = (poq.Qty) - (item.Qty);
                         if (poq.Qty >= 0)
                         {
                             poq.Status = statusmessage;
