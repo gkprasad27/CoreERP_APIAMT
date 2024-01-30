@@ -8,6 +8,7 @@ namespace CoreERP.Models
     public partial class TblCAPA
     {
         public int ID { get; set; }
+        public DateTime? Date { get; set; }
         public DateTime? DeadlineMonitorDate { get; set; }
         public DateTime? ReceivedPartsDate { get; set; }
         public DateTime? analysisBugunDate { get; set; }
