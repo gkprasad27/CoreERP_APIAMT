@@ -11,7 +11,14 @@ namespace CoreERP.Models
         public string CurrName { get; set; }
 
     }
+    partial class TblCAPA
+    {
+        [NotMapped]
+        public string CustomerName { get; set; }
+       
 
+    }
+    
     public partial class TblInvoiceDetail
     {
         [NotMapped]
