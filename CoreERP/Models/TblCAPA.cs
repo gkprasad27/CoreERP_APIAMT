@@ -19,6 +19,7 @@ namespace CoreERP.Models
         public DateTime? SolutionInspectedDate { get; set; }
         public string? NotificationNo { get; set; }
         public string? ItemCode { get; set; }
+        public string? DefectCause { get; set; }
         public string MaterialDescription { get; set; }
         public DateTime? NotificationDate { get; set; }
         public int? ComplaintQty { get; set; }
