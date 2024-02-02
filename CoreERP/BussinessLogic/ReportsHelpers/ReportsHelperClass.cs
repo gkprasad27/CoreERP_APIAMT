@@ -106,12 +106,48 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         }
         #endregion
 
-        public static DataTable GetPurchasesReport(DateTime fromDate, DateTime toDate, string company)
+        public static DataTable GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
             command.CommandType = CommandType.StoredProcedure;
             command.CommandText = "rpt_GoodsReceipts";
+            #region Parameters
+
+            DbParameter pmfDate = command.CreateParameter();
+            pmfDate.Direction = ParameterDirection.Input;
+            pmfDate.Value = (object)fromDate.ToShortDateString() ?? DBNull.Value;
+            pmfDate.ParameterName = "fromdate";
+
+            DbParameter pmtDate = command.CreateParameter();
+            pmtDate.Direction = ParameterDirection.Input;
+            pmtDate.Value = (object)toDate.ToShortDateString() ?? DBNull.Value;
+            pmtDate.ParameterName = "todate";
+
+            DbParameter companyid = command.CreateParameter();
+            companyid.Direction = ParameterDirection.Input;
+            companyid.Value = (object)company ?? DBNull.Value;
+            companyid.ParameterName = "compcode";
+            #endregion
+            // Add parameter as specified in the store procedure
+
+            command.Parameters.Add(pmfDate);
+            command.Parameters.Add(pmtDate);
+            command.Parameters.Add(companyid);
+            DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
+            if (dt.Rows.Count > 0)
+            {
+                return dt;
+            }
+            else return null;
+        }
+
+        public static DataTable GetPurchaseReport(DateTime fromDate, DateTime toDate, string company)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "rpt_DailyPurchases";
             #region Parameters
 
             DbParameter pmfDate = command.CreateParameter();

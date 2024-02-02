@@ -33,7 +33,7 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
-        [HttpGet("GetPurchasesReport/{fromDate}/{toDate}/{company}")]
+        [HttpGet("GetGoodsReceiptsReport/{fromDate}/{toDate}/{company}")]
         public async Task<IActionResult> GetPurchasesReport(DateTime fromDate, DateTime toDate, string company)
         {
             var result = await Task.Run(() =>
@@ -41,7 +41,26 @@ namespace CoreERP.Controllers.Reports
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.PurchaseReport = ReportsHelperClass.GetPurchasesReport(fromDate, toDate, company);
+                    expando.GoodsReceiptReport = ReportsHelperClass.GetGoodsReceiptsReport(fromDate, toDate, company);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetPurchaseReport/{fromDate}/{toDate}/{company}")]
+        public async Task<IActionResult> GetPurchaseReport(DateTime fromDate, DateTime toDate, string company)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.PurchaseReport = ReportsHelperClass.GetPurchaseReport(fromDate, toDate, company);
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
