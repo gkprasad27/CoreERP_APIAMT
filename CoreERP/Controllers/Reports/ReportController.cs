@@ -34,7 +34,7 @@ namespace CoreERP.Controllers.Reports
         }
 
         [HttpGet("GetGoodsReceiptsReport/{fromDate}/{toDate}/{company}")]
-        public async Task<IActionResult> GetPurchasesReport(DateTime fromDate, DateTime toDate, string company)
+        public async Task<IActionResult> GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company)
         {
             var result = await Task.Run(() =>
             {
