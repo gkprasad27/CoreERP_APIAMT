@@ -183,7 +183,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
             command.CommandType = CommandType.StoredProcedure;
-            command.CommandText = "rpt_srockvaluation";
+            command.CommandText = "rpt_stockvaluation";
             #region Parameters
 
             DbParameter companyid = command.CreateParameter();
