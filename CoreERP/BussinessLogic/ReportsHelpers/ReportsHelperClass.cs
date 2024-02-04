@@ -69,7 +69,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         //    return scopeRepository.ExecuteParamerizedCommand(command);
         //}
 
-        public static DataTable GetSalesReport( DateTime fromDate, DateTime toDate, string company)
+        public static DataSet GetSalesReport( DateTime fromDate, DateTime toDate, string company)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -97,16 +97,17 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             command.Parameters.Add(pmfDate);
             command.Parameters.Add(pmtDate);
             command.Parameters.Add(companyid);
-            DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
-            if (dt.Rows.Count > 0)
-            {
-                return dt;
-            }
-            else return null;
+            return scopeRepository.ExecuteParamerizedCommand(command);
+            //DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
+            //if (dt.Rows.Count > 0)
+            //{
+            //    return dt;
+            //}
+            //else return null;
         }
         #endregion
 
-        public static DataTable GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company)
+        public static DataSet GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -134,15 +135,16 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             command.Parameters.Add(pmfDate);
             command.Parameters.Add(pmtDate);
             command.Parameters.Add(companyid);
-            DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
-            if (dt.Rows.Count > 0)
-            {
-                return dt;
-            }
-            else return null;
+            return scopeRepository.ExecuteParamerizedCommand(command);
+            //DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
+            //if (dt.Rows.Count > 0)
+            //{
+            //    return dt;
+            //}
+            //else return null;
         }
 
-        public static DataTable GetPurchaseReport(DateTime fromDate, DateTime toDate, string company)
+        public static DataSet GetPurchaseReport(DateTime fromDate, DateTime toDate, string company)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -170,12 +172,13 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             command.Parameters.Add(pmfDate);
             command.Parameters.Add(pmtDate);
             command.Parameters.Add(companyid);
-            DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
-            if (dt.Rows.Count > 0)
-            {
-                return dt;
-            }
-            else return null;
+            return scopeRepository.ExecuteParamerizedCommand(command);
+            //DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
+            //if (dt.Rows.Count > 0)
+            //{
+            //    return dt;
+            //}
+            //else return null;
         }
 
         public static DataTable GetStockValuation( string company)

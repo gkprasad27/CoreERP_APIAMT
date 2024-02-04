@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using CoreERP.BussinessLogic.ReportsHelpers;
 using System.Dynamic;
 using System.Data;
+using Microsoft.Build.Framework;
 
 namespace CoreERP.Controllers.Reports
 {
@@ -14,7 +15,7 @@ namespace CoreERP.Controllers.Reports
     [ApiController]
     public class ReportController : ControllerBase
     {
-       [HttpGet("GetSalesReport/{fromDate}/{toDate}/{company}")]
+        [HttpGet("GetSalesReport/{fromDate}/{toDate}/{company}")]
         public async Task<IActionResult> GetSalesReport(DateTime fromDate, DateTime toDate, string company)
         {
             var result = await Task.Run(() =>
@@ -22,7 +23,13 @@ namespace CoreERP.Controllers.Reports
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.SalesReport = ReportsHelperClass.GetSalesReport(fromDate, toDate, company);
+                    DataSet ds = ReportsHelperClass.GetSalesReport(fromDate, toDate, company);
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        expando.SalesReport = ds.Tables[0];
+                        expando.SalesReportTotals = ds.Tables[1];
+                    }
+
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -41,7 +48,13 @@ namespace CoreERP.Controllers.Reports
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.GoodsReceiptReport = ReportsHelperClass.GetGoodsReceiptsReport(fromDate, toDate, company);
+                    DataSet ds = ReportsHelperClass.GetGoodsReceiptsReport(fromDate, toDate, company);
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        expando.GoodsReceiptReport = ds.Tables[0];
+                        expando.GoodsReceiptReportTotals = ds.Tables[1];
+
+                    }
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -60,7 +73,12 @@ namespace CoreERP.Controllers.Reports
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.PurchaseReport = ReportsHelperClass.GetPurchaseReport(fromDate, toDate, company);
+                    DataSet ds =  ReportsHelperClass.GetPurchaseReport(fromDate, toDate, company);
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        expando.PurchaseReport = ds.Tables[0];
+                        expando.PurchaseReportTotals = ds.Tables[1];
+                    }
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -79,7 +97,7 @@ namespace CoreERP.Controllers.Reports
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.StockReport = ReportsHelperClass.GetStockValuation( company);
+                    expando.StockReport = ReportsHelperClass.GetStockValuation(company);
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
