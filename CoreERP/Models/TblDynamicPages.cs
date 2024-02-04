@@ -17,5 +17,6 @@ namespace CoreERP.Models
         public string? PrimaryKey { get; set; }
         public string? Delete { get; set; }
         public string? TabScreen { get; set; }
+        public string? Totals { get; set; }
     }
 }
