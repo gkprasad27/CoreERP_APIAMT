@@ -1033,6 +1033,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             foreach (var item in tblProduction)
             {
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == item.MaterialCode)?.Description;
+                c.FilePath = material.FirstOrDefault(l => l.MaterialCode == item.MaterialCode)?.FileUpload;
             }
         });
 
@@ -3117,6 +3118,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public TblInspectionCheckMaster GetInpectionCheckMasterById(string materialcode, string saleorder)
         {
             using var repo = new Repository<TblInspectionCheckMaster>();
+            var MaterialCodes = repo.TblMaterialMaster.ToList();
+
+            repo.TblInspectionCheckMaster.ToList()
+               .ForEach(c =>
+               {
+                   c.FilePath = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.FileUpload;
+
+               });
+
             return repo.TblInspectionCheckMaster
                 .FirstOrDefault(x => x.MaterialCode == materialcode && x.saleOrderNumber == saleorder);
         }

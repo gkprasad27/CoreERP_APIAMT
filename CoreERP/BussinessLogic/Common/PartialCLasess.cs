@@ -24,7 +24,13 @@ namespace CoreERP.Models
         [NotMapped]
         public string MaterialName { get; set; }
     }
+    public partial class TblProductionDetails
+    {
+        [NotMapped]
+        public string FilePath { get; set; }
+    }
 
+    
     public partial class TblProductionMaster
     {
         [NotMapped]
@@ -418,6 +424,9 @@ namespace CoreERP.Models
     {
         [NotMapped]
         public string Type { get; set; }
+        [NotMapped]
+        public string FilePath { get; set; }
+
     }
     partial class TblMaterialMaster
     {
