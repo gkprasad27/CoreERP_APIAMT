@@ -12,17 +12,17 @@ using Microsoft.Extensions.Logging;
 namespace CoreERP.Controllers.masters
 {
     [ApiController]
-    [Route("api/CommitmentItem")]
-    public class CommitmentItemController : ControllerBase
+    [Route("api/QCParamConfig")]
+    public class QCParamConfigController : ControllerBase
     {
-        private readonly IRepository<TblCommitmentItem> _commitmentItemRepository;
-        public CommitmentItemController(IRepository<TblCommitmentItem> commitmentItemRepository)
+        private readonly IRepository<TblQCParamConfig> _qcparamRepository;
+        public QCParamConfigController(IRepository<TblQCParamConfig> qcparamRepository)
         {
-            _commitmentItemRepository = commitmentItemRepository;
+            _qcparamRepository = qcparamRepository;
         }
 
-        [HttpPost("RegisterCommitmentItem")]
-        public IActionResult RegisterCommitmentItem([FromBody] TblCommitmentItem citem)
+        [HttpPost("RegisterQCParam")]
+        public IActionResult RegisterQCParam([FromBody] TblQCParamConfig citem)
         {
             if (citem == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -31,8 +31,8 @@ namespace CoreERP.Controllers.masters
             {
 
                 APIResponse apiResponse;
-                _commitmentItemRepository.Add(citem);
-                if (_commitmentItemRepository.SaveChanges() > 0)
+                _qcparamRepository.Add(citem);
+                if (_qcparamRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = citem };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
@@ -46,18 +46,18 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetCommitmentItemList")]
-        public async Task<IActionResult> GetCommitmentItemList()
+        [HttpGet("GetQCParamsList")]
+        public async Task<IActionResult> GetQCParamsList()
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var citemList = _commitmentItemRepository.GetAll();
+                    var citemList = _qcparamRepository.GetAll();
                     if (citemList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
-                        expdoObj.citemList = citemList;
+                        expdoObj.QCPList = citemList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
 
@@ -70,49 +70,49 @@ namespace CoreERP.Controllers.masters
             });
             return result;
         }
-        //public List<tblQCResults> GetQCResult(string materialcode, string tagname,string type)
-        //{
-        //    using var repo = new Repository<tblQCResults>();
-        //    //var MaterialCodes = repo.TblMaterialMaster.ToList();
+        public List<tblQCResults> GetQCResult(string materialcode, string tagname,string type)
+        {
+            using var repo = new Repository<tblQCResults>();
+            //var MaterialCodes = repo.TblMaterialMaster.ToList();
 
-        //   return repo.tblQCResults.Where(cd => cd.MaterialCode == materialcode && cd.TagName == tagname && cd.Type == type).ToList();
+           return repo.tblQCResults.Where(cd => cd.MaterialCode == materialcode && cd.TagName == tagname && cd.Type == type).ToList();
             
-        //}
-        //[HttpGet("GetCommitmentItemList/{materialcode}/{tagname}/{type}")]
-        //public async Task<IActionResult> GetCommitmentItemList(string materialcode, string tagname, string Type)
-        //{
-        //    var result = await Task.Run(() =>
-        //    {
-        //        try
-        //        {
-        //            dynamic expdoObj = new ExpandoObject();
-        //            var tagsData = GetQCResult(materialcode, tagname, Type).Select(x => new { id = x.Id, description = x.Parameter , type =x.Type,result=x.Result});
-        //            int count=tagsData.Count();
-        //            if (count==0)
-        //            {
-        //                var tagsData1 = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
-        //                expdoObj.citemList = tagsData1;
-        //            }
-        //            else
-        //                expdoObj.citemList = tagsData;
+        }
+        [HttpGet("GetCommitmentItemList/{materialcode}/{tagname}/{type}")]
+        public async Task<IActionResult> GetCommitmentItemList(string materialcode, string tagname, string Type)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    var tagsData = GetQCResult(materialcode, tagname, Type).Select(x => new { id = x.Id, description = x.Parameter , type =x.Type,result=x.Result});
+                    int count=tagsData.Count();
+                    if (count==0)
+                    {
+                        var tagsData1 = _qcparamRepository.Where(x => x.Type.Equals(Type));
+                        expdoObj.citemList = tagsData1;
+                    }
+                    else
+                        expdoObj.citemList = tagsData;
 
-        //            //var citemList = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
-        //            //if (citemList.Any())
-        //            //{
-        //            //    dynamic expdoObj = new ExpandoObject();
-        //            //    expdoObj.citemList = citemList;
-        //            //    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-        //            //}
+                    //var citemList = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
+                    //if (citemList.Any())
+                    //{
+                    //    dynamic expdoObj = new ExpandoObject();
+                    //    expdoObj.citemList = citemList;
+                    //    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    //}
 
-        //            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //        }
-        //    });
-        //    return result;
-        //}
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
         [HttpGet("GetCommitmentItemList/{type}")]
         public async Task<IActionResult> GetCommitmentItemList(string Type)
         {
@@ -121,7 +121,7 @@ namespace CoreERP.Controllers.masters
                 try
                 {
 
-                    var citemList = _commitmentItemRepository.Where(x => x.Type.Equals(Type)).OrderBy(z=>z.SortOrder);
+                    var citemList = _qcparamRepository.Where(x => x.Type.Equals(Type)).OrderBy(z=>z.SortOrder);
                     if (citemList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -139,8 +139,8 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpPut("UpdateCommitmentItem")]
-        public IActionResult UpdateCommitmentItem([FromBody] TblCommitmentItem citem)
+        [HttpPut("UpdateQCParams")]
+        public IActionResult UpdateQCParams([FromBody] TblQCParamConfig citem)
         {
             if (citem == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(citem)} cannot be null" });
@@ -148,8 +148,8 @@ namespace CoreERP.Controllers.masters
             try
             {
                 APIResponse apiResponse;
-                _commitmentItemRepository.Update(citem);
-                if (_commitmentItemRepository.SaveChanges() > 0)
+                _qcparamRepository.Update(citem);
+                if (_qcparamRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = citem };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
@@ -162,18 +162,18 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpDelete("DeleteCommitmentItem/{code}")]
-        public IActionResult DeleteCommitmentItembyId(string code)
+        [HttpDelete("DeleteQCParam/{code}")]
+        public IActionResult DeleteQCParam(int code)
         {
             try
             {
-                if (code == null)
+                if (code ==0)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _commitmentItemRepository.GetSingleOrDefault(x => x.Code.Equals(code));
-                _commitmentItemRepository.Remove(record);
-                if (_commitmentItemRepository.SaveChanges() > 0)
+                var record = _qcparamRepository.GetSingleOrDefault(x => x.ID.Equals(code));
+                _qcparamRepository.Remove(record);
+                if (_qcparamRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };

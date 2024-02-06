@@ -129,6 +129,8 @@ namespace CoreERP.Models
         public virtual DbSet<TblInspectionCheckDetails> TblInspectionCheckDetails { get; set; }
         public virtual DbSet<TblRejectionMaster> TblRejectionMaster { get; set; }
         public virtual DbSet<TblDispatch> TblDispatch { get; set; }
+
+        public virtual DbSet<TblQCParamConfig> TblQCParamConfig { get; set; }
         public virtual DbSet<TblCAPA> TblCAPA { get; set; }
         public virtual DbSet<TblInvoiceMemoDetails> TblInvoiceMemoDetails { get; set; }
         public virtual DbSet<TblForm> TblForm { get; set; }
