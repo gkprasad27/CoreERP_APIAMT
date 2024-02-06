@@ -15,6 +15,7 @@ using System.Net.Http;
 using CoreERP.Models;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using NuGet.Packaging.Signing;
 
 namespace CoreERP.BussinessLogic.SalesHelper
 {
@@ -978,7 +979,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using var repo1 = new Repository<TblInvoiceMaster>();
                 var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo);
                 var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo);
-               // var goodsreceipt = repo1.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == invoice.SaleOrderNo);
                // var goodsissue = repo1.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
                // var Production = repo1.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
                 using (ERPContext repo = new ERPContext())
@@ -1014,7 +1014,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                             foreach (var invdtl in invoiceDetails)
                             {
-
+                                var SaleOrderDetails = repo1.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode== invdtl.MaterialCode);
                                 var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
                                 #region InvioceDetail
                                 invdtl.Qty = 1;
@@ -1027,6 +1027,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                                 inspection.Status = message;
                                 repo.TblInspectionCheckDetails.UpdateRange(inspection);
+
+                                SaleOrderDetails.Status = message;
+                                repo.TblSaleOrderDetail.UpdateRange(SaleOrderDetails);
 
                                 var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.MaterialCode);
                                 materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);

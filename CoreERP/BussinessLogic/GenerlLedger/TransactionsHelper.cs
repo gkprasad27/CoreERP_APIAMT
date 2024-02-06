@@ -923,13 +923,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             if (searchCriteria.InvoiceNo != null)
             {
-            return repo.TblGoodsIssueMaster.AsEnumerable().Where(x =>
-            {
-                Debug.Assert(x.SaleOrderNumber != null, "x.VoucherDate != null");
-                return
-                x.SaleOrderNumber != null &&
-               x.SaleOrderNumber.ToString().Contains(searchCriteria.searchCriteria ?? x.SaleOrderNumber.ToString());
-            }).ToList();
+                return repo.TblGoodsIssueMaster.AsEnumerable().Where(x =>
+                {
+                    Debug.Assert(x.SaleOrderNumber != null, "x.VoucherDate != null");
+                    return
+                    x.SaleOrderNumber != null &&
+                   x.SaleOrderNumber.ToString().Contains(searchCriteria.searchCriteria ?? x.SaleOrderNumber.ToString());
+                }).ToList();
             }
             else
             {
@@ -1456,7 +1456,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
                             sodata.POQty = (sodata.POQty) - 1;
                             if (sodata.POQty >= 0)
+                            {
+                                sodata.Status = message;
                                 context.TblSaleOrderDetail.Update(sodata);
+                            }
+                            else
+                            {
+                                sodata.Status = message;
+                                context.TblSaleOrderDetail.Update(sodata);
+                            }
 
                             if (POD.Qty >= 0)
                                 context.TblPurchaseOrderDetails.UpdateRange(POD);
@@ -2530,6 +2538,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.TblPoQueue.Add(poq);
                     }
                     sodata.POQty = item.Qty;
+                    sodata.Status = statusmessage;
                     context.TblSaleOrderDetail.Update(sodata);
                     // }
                 }
@@ -2830,7 +2839,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (Convert.ToInt16(item.RejectQty) > 0)
                         POD.Qty = (POD.Qty) - Convert.ToInt16(item.RejectQty);
                     if (POD.Qty >= 0)
+                    {
+                        POD.Status = statusmessage;
                         context.TblPurchaseOrderDetails.UpdateRange(POD);
+                    }
+                    else
+                    {
+                        POD.Status = statusmessage;
+                        context.TblPurchaseOrderDetails.UpdateRange(POD);
+                    }
                     //POQ
                     if (item.RejectQty > 0)
                     {
@@ -2861,7 +2878,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                         sodata.POQty = ((sodata.POQty) - Convert.ToInt16(item.RejectQty));
                         if (sodata.POQty >= 0)
+                        {
+                            sodata.Status = statusmessage;
                             context.TblSaleOrderDetail.Update(sodata);
+                        }
+                        else
+                        {
+                            sodata.Status = statusmessage;
+                           context.TblSaleOrderDetail.Update(sodata);
+                        }
                         //}
                     }
                 }
@@ -3050,7 +3075,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == x.saleOrderNumber && im.MaterialCode == x.MaterialCode);
                         sodata.POQty = ((sodata.POQty) - 1);
                         if (sodata.POQty >= 0)
+                        {
+                            sodata.Status =  "QC Started";
                             context.TblSaleOrderDetail.Update(sodata);
+                        }
+                        else
+                        {
+                            sodata.Status =  "QC Started";
+                            context.TblSaleOrderDetail.Update(sodata);
+                        }
 
                         var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == purchaseorder.PurchaseOrderNumber && z.MaterialCode == x.MaterialCode);
                         POD.Qty = (POD.Qty) - 1;
@@ -3445,6 +3478,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
 
                     x.SaleOrderNo = (SaleOrderNumber);
+                    x.Status= "SO Created"; 
                 });
 
                 foreach (var item in saleOrderDetails)

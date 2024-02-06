@@ -32,5 +32,7 @@ namespace CoreERP.Models
         public DateTime CreatedDate { get; set; }
         public string? AddWho { get; set; }
         public int? POQty { get; set; }
+        public string? Status { get; set; }
+        
     }
 }

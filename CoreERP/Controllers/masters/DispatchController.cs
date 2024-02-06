@@ -41,6 +41,7 @@ namespace CoreERP.Controllers.masters
                     var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == dispatch.SaleOrder);
                     var Invoice = repo.TblInvoiceMaster.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder);
                     var InvoiceDetails = repo.TblInvoiceMaster.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder);
+                    var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder );
                     int sqty = 0;
                     int invqty = 0;
                     string message = null;
@@ -58,6 +59,10 @@ namespace CoreERP.Controllers.masters
                         Inspection.Status = message;
                         repo.TblInspectionCheckMaster.Update(Inspection);
                     }
+
+                    SaleOrderDetails.Status = message;
+                    repo.TblSaleOrderDetail.Update(SaleOrderDetails);
+
                     if (goodsreceipt != null)
                     {
                         goodsreceipt.Status = message;
