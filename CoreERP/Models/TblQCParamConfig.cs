@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
 {
-    [Table("tbl_Dispatch")]
+    [Table("tbl_QCParamConfig")]
     public partial class TblQCParamConfig
     {
         public int ID { get; set; }
