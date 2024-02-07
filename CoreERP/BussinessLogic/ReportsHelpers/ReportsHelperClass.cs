@@ -205,6 +205,30 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             else return null;
         }
 
+        public static DataTable GetPendingSales(string company)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "rpt_PendingSaleOrders";
+            #region Parameters
+
+            DbParameter companyid = command.CreateParameter();
+            companyid.Direction = ParameterDirection.Input;
+            companyid.Value = (object)company ?? DBNull.Value;
+            companyid.ParameterName = "compcode";
+            #endregion
+            // Add parameter as specified in the store procedure
+
+            command.Parameters.Add(companyid);
+            DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
+            if (dt.Rows.Count > 0)
+            {
+                return dt;
+            }
+            else return null;
+        }
+
         public static DataSet getDataFromDataBase(List<parametersClass> dbParametersList, string procedureName)
         {
             DataSet ds = null;

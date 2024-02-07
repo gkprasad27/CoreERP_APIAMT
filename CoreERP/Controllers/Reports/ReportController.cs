@@ -108,6 +108,26 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
+
+        [HttpGet("GetPendingSales/{company}")]
+        public async Task<IActionResult> GetPendingSales(string company)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.PendingSOReport = ReportsHelperClass.GetStockValuation(company);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         //public async Task<IActionResult> GetSalesReport(string company, DateTime fromDate, DateTime toDate)
         //{
         //    try
