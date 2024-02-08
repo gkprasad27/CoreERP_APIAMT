@@ -117,7 +117,13 @@ namespace CoreERP.Controllers.Reports
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.PendingSOReport = ReportsHelperClass.GetStockValuation(company);
+                    DataSet ds = ReportsHelperClass.GetPendingSales(company);
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        expando.PendingSOReport = ds.Tables[0];
+                        expando.PendingSOReportTotals = ds.Tables[1];
+                    }
+                    
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -127,6 +133,32 @@ namespace CoreERP.Controllers.Reports
             });
             return result;
         }
+
+        [HttpGet("GetPendingPOs/{company}")]
+        public async Task<IActionResult> GetPendingPOs(string company)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    DataSet ds = ReportsHelperClass.GetPendingPOs(company);
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        expando.PendingPOReport = ds.Tables[0];
+                        expando.PendingPOReportTotals = ds.Tables[1];
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
 
         //public async Task<IActionResult> GetSalesReport(string company, DateTime fromDate, DateTime toDate)
         //{

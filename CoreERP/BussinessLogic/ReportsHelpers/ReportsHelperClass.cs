@@ -205,7 +205,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             else return null;
         }
 
-        public static DataTable GetPendingSales(string company)
+        public static DataSet GetPendingSales(string company)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -221,12 +221,37 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             // Add parameter as specified in the store procedure
 
             command.Parameters.Add(companyid);
-            DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
-            if (dt.Rows.Count > 0)
-            {
-                return dt;
-            }
-            else return null;
+            return scopeRepository.ExecuteParamerizedCommand(command);
+            //DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
+            //if (dt.Rows.Count > 0)
+            //{
+            //    return dt;
+            //}
+            //else return null;
+        }
+        public static DataSet GetPendingPOs(string company)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "rpt_PendingPOS";
+            #region Parameters
+
+            DbParameter companyid = command.CreateParameter();
+            companyid.Direction = ParameterDirection.Input;
+            companyid.Value = (object)company ?? DBNull.Value;
+            companyid.ParameterName = "compcode";
+            #endregion
+            // Add parameter as specified in the store procedure
+
+            command.Parameters.Add(companyid);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+            //DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
+            //if (dt.Rows.Count > 0)
+            //{
+            //    return dt;
+            //}
+            //else return null;
         }
 
         public static DataSet getDataFromDataBase(List<parametersClass> dbParametersList, string procedureName)
