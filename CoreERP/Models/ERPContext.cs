@@ -274,6 +274,8 @@ namespace CoreERP.Models
         public virtual DbSet<TblSaleOrderMaster> TblSaleOrderMaster { get; set; }
         public virtual DbSet<tblJobworkMaster> tblJobworkMaster { get; set; }
         public virtual DbSet<tblJobworkDetails> tblJobworkDetails { get; set; }
+        public virtual DbSet<tblJWReceiptDetails> tblJWReceiptDetails { get; set; }
+        public virtual DbSet<tblJWReceiptMaster> tblJWReceiptMaster { get; set; }
         public virtual DbSet<Counters> Counters { get; set; }
         public virtual DbSet<TblSaleOrderDetail> TblSaleOrderDetail { get; set; }
         public virtual DbSet<TblInvoiceDetail> TblInvoiceDetail { get; set; }

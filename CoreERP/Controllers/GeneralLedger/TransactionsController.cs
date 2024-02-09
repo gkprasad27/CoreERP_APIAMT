@@ -1730,6 +1730,29 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpPost("GetJWReceipt")]
+        public async Task<IActionResult> GetJWReceipt([FromBody] SearchCriteria searchCriteria)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var jwdetails = new TransactionsHelper().GetJWReceipt(searchCriteria);
+                    if (!jwdetails.Any())
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Goods Receipt." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.jwdetails = jwdetails;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpPost("GetGoodsReceiptApproval")]
         public async Task<IActionResult> GetGoodsReceiptApproval([FromBody] SearchCriteria searchCriteria)
         {
@@ -1779,6 +1802,31 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetJWReceiptDetail/{code}")]
+        public async Task<IActionResult> GetJWReceiptDetail(string code)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    var jwlist = transactions.GetJWReceiptMasterById(code);
+                    if (jwlist == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.jwMasterlist = jwlist;
+                    expdoObj.jwDetail = new TransactionsHelper().GetJWReceiptDetails(code);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpPost("AddGoodsReceipt")]
         public async Task<IActionResult> AddGoodsReceipt([FromBody] JObject obj)
         {
@@ -1806,6 +1854,35 @@ namespace CoreERP.Controllers.masters
             });
             return result;
         }
+
+        [HttpPost("AddJWReceipt")]
+        public async Task<IActionResult> AddJWReceipt([FromBody] JObject obj)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                    var jwMaster = obj["grHdr"].ToObject<tblJWReceiptMaster>();
+                    var jwdetails = obj["grDtl"].ToObject<List<tblJWReceiptDetails>>();
+
+                    if (!new TransactionsHelper().AddJWReceipt(jwMaster, jwdetails))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.jwMaster = jwMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
 
         [HttpGet("ReturnGoodsReceipt/{code}")]
         public IActionResult ReturnGoodsReceipt(string code)

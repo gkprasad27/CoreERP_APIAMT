@@ -41,6 +41,24 @@ namespace CoreERP.Models
 
     }
 
+    partial class tblJWReceiptDetails
+    {
+        [NotMapped]
+        public string MaterialName { get; set; }
+
+
+    }
+
+    partial class tblJWReceiptMaster
+    {
+        [NotMapped]
+        public string CompanyName { get; set; }
+        [NotMapped]
+        public string ProfitcenterName { get; set; }
+
+
+    }
+
     public partial class TblInvoiceDetail
     {
         [NotMapped]

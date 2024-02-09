@@ -2711,6 +2711,36 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                .ToList();
         }
 
+        public List<tblJWReceiptMaster> GetJWReceipt(SearchCriteria searchCriteria)
+        {
+
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
+            searchCriteria.ToDate ??= DateTime.Today;
+            using var repo = new Repository<tblJWReceiptMaster>();
+
+            var Company = repo.TblCompany.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+
+            repo.tblJWReceiptMaster.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(l => l.Code == c.ProfitCenter).Name;
+
+                });
+
+            return repo.tblJWReceiptMaster.AsEnumerable()
+               .Where(x =>
+               {
+                   return Convert.ToString(x.JobWorkNumber) != null
+                             && Convert.ToString(x.JobWorkNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.JobWorkNumber))
+                             && Convert.ToDateTime(x.ReceivedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                             && Convert.ToDateTime(x.ReceivedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+               }).OrderByDescending(x => x.JobWorkNumber)
+               .ToList();
+        }
+
         public List<TblGoodsReceiptMaster> GetGoodsReceiptApproval(SearchCriteria searchCriteria)
         {
 
@@ -2931,11 +2961,209 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return true;
 
         }
+
+        public bool AddJWReceipt(tblJWReceiptMaster jwdata, List<tblJWReceiptDetails> jwdetails)
+        {
+
+            if (jwdata.JobWorkNumber == null)
+                throw new Exception("Jobwork Number Canot be empty/null.");
+
+            int receivedqty = 0;
+            int rejectedqty = 0;
+            int totalqty = 0;
+            int currqtyrec = 0;
+            int currqtyrej = 0;
+            int poqty = 0;
+            int mtqty = 0;
+            int mtrejqty = 0;
+            int currqty = 0;
+            using var repo = new Repository<TblGoodsReceiptMaster>();
+            using var Material = new Repository<TblMaterialMaster>();
+            using var context = new ERPContext();
+            using var Matdtl = new Repository<TblGoodsReceiptDetails>();
+            using var PRM = new Repository<TblPurchaseRequisitionMaster>();
+            List<tblJWReceiptDetails> GoosQTY;
+            string statusmessage = null;
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+
+                currqtyrec = jwdetails.Sum(v => v.ReceivedQty) ?? 0;// current received qty
+                currqtyrej = jwdetails.Sum(v => v.RejectedQty) ?? 0;//current rejected qty
+
+                // already received qty
+                GoosQTY = repo.tblJWReceiptDetails.Where(cd => cd.JobWorkNumber == jwdata.JobWorkNumber).ToList();
+
+
+                if (GoosQTY.Count > 0)
+                {
+                    receivedqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
+                    rejectedqty = (GoosQTY.Sum(i => i.RejectedQty) ?? 0);
+                }
+                //poqty
+               // poqty = jwdetails.Sum(v => v.Qty) ?? 0;
+
+                totalqty = (receivedqty + rejectedqty) + (currqtyrec + currqtyrej);
+
+                //var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.jobworknumber == jwdata.PurchaseOrderNo);
+                //var saleorder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == purchase.SaleOrderNo);
+                if (poqty == totalqty)
+                {
+                    statusmessage = "Material Received";
+                    //if (purchase != null)
+                    //{
+                    //    purchase.Status = statusmessage;
+                    //    purchase.ReceivedDate = DateTime.Now;
+                    //    saleorder.Status = statusmessage;
+                    //    context.TblPurchaseOrder.Update(purchase);
+                    //    context.TblSaleOrderMaster.Update(saleorder);
+                    //}
+                    //grdata.ApprovalStatus = "Pending Approval";
+                    jwdata.Status = statusmessage;
+                    //grdata.SaleorderNo = purchase.SaleOrderNo;
+                }
+                else if (totalqty < poqty)
+                {
+                    statusmessage = "Material Partial Received";
+                    //if (purchase != null)
+                    //{
+                    //    purchase.Status = statusmessage;
+                    //    saleorder.Status = statusmessage;
+                    //    context.TblPurchaseOrder.Update(purchase);
+                    //    context.TblSaleOrderMaster.Update(saleorder);
+                    //}
+                    // grdata.ApprovalStatus = "Pending Approval";
+                    jwdata.Status = statusmessage;
+                    //grdata.SaleorderNo = purchase.SaleOrderNo;
+                }
+                foreach (var item in jwdetails)
+                {
+                   // item.PurchaseOrderNo = grdata.PurchaseOrderNo;
+                    item.LotNo = jwdata.LotNo;
+                    item.VehicleNo = jwdata.VehicleNo;
+                    //item.VehicleNumber = grdata.VehicleNo;
+                    item.ReceivedDate = jwdata.ReceivedDate;
+                    item.ReceivedBy = jwdata.ReceivedBy;
+                    item.BillAmount = jwdata.TotalAmount;
+                    GoosQTY = Matdtl.tblJWReceiptDetails.Where(cd => cd.JobWorkNumber == item.JobWorkNumber && cd.MaterialCode == item.MaterialCode).ToList();
+                    mtqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
+                    mtrejqty = (GoosQTY.Sum(i => i.RejectedQty) ?? 0);
+                    totalqty = (mtqty + mtrejqty) + (item.ReceivedQty ?? 0 + item.RejectedQty ?? 0);
+                    item.InvoiceNo = jwdata.InvoiceNumber;
+                    //item.InvoiceURL = grdata.InvoiceURL;
+                    item.DocumentURL = jwdata.InvoiceDocument;
+                    //item.SaleorderNo = purchase.SaleOrderNo;
+
+
+                    var POD = repo.tblJWReceiptDetails.FirstOrDefault(z => z.JobWorkNumber == item.JobWorkNumber && z.MaterialCode == item.MaterialCode);
+                    POD.Status = statusmessage;
+                    //if (Convert.ToInt16(item.RejectedQty) > 0)
+                    //    POD.Qty = (POD.Qty) - Convert.ToInt16(item.RejectedQty);
+                    //if (POD.Qty >= 0)
+                    //{
+                    //    POD.Status = statusmessage;
+                    //    context.TblPurchaseOrderDetails.UpdateRange(POD);
+                    //}
+                    //else
+                    //{
+                    //    POD.Status = statusmessage;
+                    //    context.TblPurchaseOrderDetails.UpdateRange(POD);
+                    //}
+                    //POQ
+                    if (item.RejectedQty > 0)
+                    {
+                        //int poqty = 0;
+                        int soqty = 0;
+                        int matqty = 0;
+                        //var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleorderNo && im.MaterialCode == item.MaterialCode);
+                        //if (sodata != null)
+                        //{
+                       // var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleorderNo && z.MaterialCode == item.MaterialCode);
+                        //if (poq != null)
+                        //{
+                        //    poq.Qty = Math.Abs(Convert.ToInt16(poq.Qty) + Convert.ToInt16(item.RejectQty));
+                        //    if (poq.Qty >= 0)
+                        //    {
+                        //        poq.Status = "New";
+                        //        context.TblPoQueue.Update(poq);
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    poq = new TblPoQueue();
+                        //    poq.Status = "New";
+                        //    poq.SaleOrderNo = item.SaleorderNo;
+                        //    poq.MaterialCode = item.MaterialCode;
+                        //    poq.Qty = item.RejectQty;
+                        //    context.TblPoQueue.Add(poq);
+                        //}
+                        //sodata.POQty = ((sodata.POQty) - Convert.ToInt16(item.RejectQty));
+                        //if (sodata.POQty >= 0)
+                        //{
+                        //    sodata.Status = statusmessage;
+                        //    context.TblSaleOrderDetail.Update(sodata);
+                        //}
+                        //else
+                        //{
+                        //    sodata.Status = statusmessage;
+                        //    context.TblSaleOrderDetail.Update(sodata);
+                        //}
+                        //}
+                    }
+                }
+                context.tblJWReceiptDetails.AddRange(jwdetails);
+                context.SaveChanges();
+
+                dbtrans.Commit();
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+            if (repo.tblJWReceiptMaster.Any(v => v.JobWorkNumber == jwdata.JobWorkNumber))
+            {
+                var totalamount = repo.tblJWReceiptMaster.Where(v => v.JobWorkNumber == jwdata.JobWorkNumber).FirstOrDefault();
+                jwdata.EditDate = DateTime.Now;
+                jwdata.TotalAmount = (totalamount.TotalAmount ?? 0) + (jwdata.TotalAmount);
+                context.tblJWReceiptMaster.Update(jwdata);
+                context.SaveChanges();
+            }
+            else
+            {
+                jwdata.ReceivedDate = DateTime.Now;
+                context.tblJWReceiptMaster.Add(jwdata);
+                context.SaveChanges();
+            }
+            jwdetails.ForEach(x =>
+            {
+
+                var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == x.MaterialCode);
+
+                if (Convert.ToString(mathdr.ClosingQty) == null)
+                    mathdr.ClosingQty = 0;
+
+                mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
+                context.TblMaterialMaster.Update(mathdr);
+
+            });
+            context.SaveChanges();
+
+            return true;
+
+        }
         public TblGoodsReceiptMaster GetGoodsReceiptMasterById(string id)
         {
             using var repo = new Repository<TblGoodsReceiptMaster>();
             return repo.TblGoodsReceiptMaster
                 .FirstOrDefault(x => x.PurchaseOrderNo == id);
+        }
+
+        public tblJWReceiptMaster GetJWReceiptMasterById(string id)
+        {
+            using var repo = new Repository<tblJWReceiptMaster>();
+            return repo.tblJWReceiptMaster
+                .FirstOrDefault(x => x.JobWorkNumber == id);
         }
         public List<TblGoodsReceiptDetails> GetGoodsReceiptDetails(string number)
         {
@@ -2948,6 +3176,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             });
 
             return repo.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == number).OrderByDescending(x => x.ReceivedDate).ToList();
+
+        }
+
+        public List<tblJWReceiptDetails> GetJWReceiptDetails(string number)
+        {
+            using var repo = new Repository<tblJWReceiptDetails>();
+            var material = repo.TblMaterialMaster.ToList();
+
+            repo.tblJWReceiptDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            });
+
+            return repo.tblJWReceiptDetails.Where(cd => cd.JobWorkNumber == number).OrderByDescending(x => x.JobWorkNumber).ToList();
 
         }
         public bool ReturnGoodsReceiptMaster(string code)
