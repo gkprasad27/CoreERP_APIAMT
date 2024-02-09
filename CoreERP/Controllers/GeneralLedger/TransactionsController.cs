@@ -2088,6 +2088,29 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpPost("GetJobWork")]
+        public async Task<IActionResult> GetJobWork([FromBody] SearchCriteria searchCriteria)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var jobWorkMaster = new TransactionsHelper().GetJobWork(searchCriteria);
+                    if (!jobWorkMaster.Any())
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Sale Order." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.jobWorkMaster = jobWorkMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetSaleOrderDetail/{saleOrderNumber}")]
         public async Task<IActionResult> GetSaleOrderDetail(string saleOrderNumber)
         {
@@ -2112,6 +2135,32 @@ namespace CoreERP.Controllers.masters
             });
             return result;
         }
+
+        [HttpGet("GetJobworkDetail/{JWNumber}")]
+        public async Task<IActionResult> GetJobworkDetail(string JWNumber)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    var JobWorkMasters = transactions.GetJobwrokMastersById(JWNumber);
+                    if (JobWorkMasters == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.JobWorkMasters = JobWorkMasters;
+                    expdoObj.JobWorkDetails = new TransactionsHelper().GetJobworkDetails(JWNumber);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
 
         [HttpGet("GetSaleOrderDetailPO/{saleOrderNumber}")]
         public async Task<IActionResult> GetSaleOrderDetailPO(string saleOrderNumber)
@@ -2172,6 +2221,37 @@ namespace CoreERP.Controllers.masters
         }
 
 
+        [HttpPost("AddJobWork")]
+        public async Task<IActionResult> AddJobWork([FromBody] JObject obj)
+        {
+            var result = await Task.Run(() =>
+            {
+                var jobWorkMaster = new tblJobworkMaster(); ;
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                    jobWorkMaster = obj["qsHdr"].ToObject<tblJobworkMaster>();
+                    var JobWorkDetails = obj["qsDtl"].ToObject<List<tblJobworkDetails>>();
+
+                    if (!new TransactionsHelper().AddJobWork(jobWorkMaster, JobWorkDetails))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.JobWorkMaster = jobWorkMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    if (ex.HResult.ToString() == "-2146233088")
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "JobWork Number Already Exist, Please use another key " + " " + jobWorkMaster.JobWorkNumber });
+                    else
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
 
 
         #endregion

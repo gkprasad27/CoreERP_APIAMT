@@ -2885,7 +2885,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         else
                         {
                             sodata.Status = statusmessage;
-                           context.TblSaleOrderDetail.Update(sodata);
+                            context.TblSaleOrderDetail.Update(sodata);
                         }
                         //}
                     }
@@ -3076,12 +3076,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         sodata.POQty = ((sodata.POQty) - 1);
                         if (sodata.POQty >= 0)
                         {
-                            sodata.Status =  "QC Started";
+                            sodata.Status = "QC Started";
                             context.TblSaleOrderDetail.Update(sodata);
                         }
                         else
                         {
-                            sodata.Status =  "QC Started";
+                            sodata.Status = "QC Started";
                             context.TblSaleOrderDetail.Update(sodata);
                         }
 
@@ -3339,11 +3339,52 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .ToList();
         }
 
+        public List<tblJobworkMaster> GetJobWork(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<tblJobworkMaster>();
+
+            var Company = repo.TblCompany.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            var customer = repo.TblBusinessPartnerAccount.ToList();
+
+            repo.tblJobworkMaster.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.Vendor).Name;
+
+                });
+
+            return repo.tblJobworkMaster.AsEnumerable()
+                .Where(x =>
+                {
+
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.JobWorkNumber) != null
+                              && Convert.ToString(x.JobWorkNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.JobWorkNumber))
+                              && Convert.ToDateTime(x.OrderDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                              && Convert.ToDateTime(x.OrderDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                }).OrderByDescending(x => x.ID)
+                .ToList();
+        }
+
         public TblSaleOrderMaster GetSaleOrderMastersById(string saleOrderNo)
         {
             using var repo = new Repository<TblSaleOrderMaster>();
             return repo.TblSaleOrderMaster
                 .FirstOrDefault(x => x.SaleOrderNo == saleOrderNo);
+        }
+
+        public tblJobworkMaster GetJobwrokMastersById(string jobWorkNumber)
+        {
+            using var repo = new Repository<tblJobworkMaster>();
+            return repo.tblJobworkMaster
+                .FirstOrDefault(x => x.JobWorkNumber == jobWorkNumber);
         }
 
 
@@ -3395,6 +3436,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
             });
             return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
+
+        }
+
+        public List<tblJobworkDetails> GetJobworkDetails(string jobWorkNumber)
+        {
+            using var repo = new Repository<tblJobworkDetails>();
+            var MaterialCodes = repo.TblMaterialMaster.ToList();
+
+            repo.tblJobworkDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+            });
+            return repo.tblJobworkDetails.Where(cd => cd.JobworkNumber == jobWorkNumber).ToList();
 
         }
 
@@ -3478,7 +3532,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
 
                     x.SaleOrderNo = (SaleOrderNumber);
-                    x.Status= "SO Created"; 
+                    x.Status = "SO Created";
                 });
 
                 foreach (var item in saleOrderDetails)
@@ -3544,6 +3598,82 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 TblApi_Error_Log icdata = new TblApi_Error_Log();
                 using var context1 = new ERPContext();
                 icdata.ScreenName = "Sale Order";
+                icdata.ErrorID = ex.HResult.ToString();
+                icdata.ErrorMessage = ex.ToString();
+                context1.TblApi_Error_Log.Add(icdata);
+                context1.SaveChanges();
+
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public bool AddJobWork(tblJobworkMaster jobWorkMaster, List<tblJobworkDetails> jwDetails)
+        {
+            using var repo = new Repository<tblJobworkMaster>();
+            List<tblJobworkDetails> JobworkDetailsNew;
+            List<tblJobworkDetails> JobworkDetailsExist;
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            string JWNumber = string.Empty;
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "JW");
+
+            try
+            {
+                if (repo.tblJobworkMaster.Any(v => v.JobWorkNumber == jobWorkMaster.JobWorkNumber))
+                {
+                    jobWorkMaster.Status = "JO Created";
+                    context.tblJobworkMaster.Update(jobWorkMaster);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    if (Pcenter != null)
+                    {
+                        Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                        context.Counters.UpdateRange(Pcenter);
+                        context.SaveChanges();
+                        JWNumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                    }
+                    if (JWNumber.Length > 1)
+                        context.tblJobworkMaster.Add(jobWorkMaster);
+                    else
+                        throw new Exception("Jobwork Number Not Valid. " + JWNumber + " Please check .");
+
+                }
+                if (string.IsNullOrWhiteSpace(JWNumber))
+                    JWNumber = jobWorkMaster.JobWorkNumber;
+
+                jwDetails.ForEach(x =>
+                {
+
+                    x.JobworkNumber = (JWNumber);
+                    x.Status = "JO Created";
+                });
+
+
+                JobworkDetailsExist = jwDetails.Where(x => x.ID > 0).ToList();
+                JobworkDetailsNew = jwDetails.Where(x => x.ID == 0).ToList();
+
+                if (JobworkDetailsExist.Count > 0)
+                {
+                    context.tblJobworkDetails.UpdateRange(jwDetails);
+                }
+                else if (JobworkDetailsNew.Count > 0)
+                {
+                    context.tblJobworkDetails.AddRange(jwDetails);
+                }
+
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                TblApi_Error_Log icdata = new TblApi_Error_Log();
+                using var context1 = new ERPContext();
+                icdata.ScreenName = "Job Work Order";
                 icdata.ErrorID = ex.HResult.ToString();
                 icdata.ErrorMessage = ex.ToString();
                 context1.TblApi_Error_Log.Add(icdata);

@@ -18,7 +18,29 @@ namespace CoreERP.Models
        
 
     }
-    
+
+    partial class tblJobworkMaster
+    {
+        [NotMapped]
+        public string CompanyName { get; set; }
+
+        [NotMapped]
+        public string ProfitcenterName { get; set; }
+
+        [NotMapped]
+        public string SupplierName { get; set; }
+
+
+    }
+
+    partial class tblJobworkDetails
+    {
+        [NotMapped]
+        public string MaterialName { get; set; }
+
+
+    }
+
     public partial class TblInvoiceDetail
     {
         [NotMapped]
