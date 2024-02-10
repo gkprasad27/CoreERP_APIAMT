@@ -388,6 +388,26 @@ namespace CoreERP.Controllers
             return result;
         }
 
+        public async Task<IActionResult> GetJobworkList()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    var vouchertypeList = CommonHelper.GetJobworkList();
+                    expando.JobWorkList = vouchertypeList.Where(x => (x.Status == "JO Created" || x.Status == "Partial JO Created")).Select(x => new { ID = x.JobWorkNumber, TEXT = x.SupplierName, Vendor = x.Vendor });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+
+            });
+            return result;
+        }
+
         [HttpDelete("DeletePurchaseOrder/{id}")]
         public IActionResult DeletePurchaseOrder(int id)
         {

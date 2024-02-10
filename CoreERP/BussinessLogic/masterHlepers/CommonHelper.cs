@@ -77,6 +77,20 @@ namespace CoreERP
             return result;
         }
 
+        public static IEnumerable<tblJWReceiptMaster> GetJobworkList()
+        {
+            using var repo = new Repository<tblJWReceiptMaster>();
+            var BP = repo.TblBusinessPartnerAccount.ToList();
+
+            var result = repo.tblJWReceiptMaster.ToList();
+
+            repo.tblJWReceiptMaster.ToList().ForEach(c =>
+            {
+                c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.Vendor)?.Name;
+            });
+            return result;
+        }
+
         public static IEnumerable<TblSaleOrderDetail> GetsaleOrdernoList(string saleorderno)
         {
             using var repo = new Repository<TblSaleOrderDetail>();

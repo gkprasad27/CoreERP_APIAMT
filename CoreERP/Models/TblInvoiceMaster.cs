@@ -56,5 +56,6 @@ namespace CoreERP.Models
         public string? ShiptoZip { get; set; }
         public string? ShiptoPhone { get; set; }
         public string? PONumber { get; set; }
+        public decimal? RoundOff { get; set; }
     }
 }

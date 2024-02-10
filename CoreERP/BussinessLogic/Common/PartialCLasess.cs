@@ -55,7 +55,9 @@ namespace CoreERP.Models
         public string CompanyName { get; set; }
         [NotMapped]
         public string ProfitcenterName { get; set; }
-
+        [NotMapped]
+        public string SupplierName { get; set; }
+        
 
     }
 
