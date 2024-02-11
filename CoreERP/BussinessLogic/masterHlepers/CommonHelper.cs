@@ -77,14 +77,14 @@ namespace CoreERP
             return result;
         }
 
-        public static IEnumerable<tblJWReceiptMaster> GetJobworkList()
+        public static IEnumerable<tblJobworkMaster> GetJobworkList()
         {
-            using var repo = new Repository<tblJWReceiptMaster>();
+            using var repo = new Repository<tblJobworkMaster>();
             var BP = repo.TblBusinessPartnerAccount.ToList();
 
-            var result = repo.tblJWReceiptMaster.ToList();
+            var result = repo.tblJobworkMaster.ToList();
 
-            repo.tblJWReceiptMaster.ToList().ForEach(c =>
+            repo.tblJobworkMaster.ToList().ForEach(c =>
             {
                 c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.Vendor)?.Name;
             });
@@ -97,6 +97,20 @@ namespace CoreERP
            // var BP = repo.TblBusinessPartnerAccount.ToList();
 
             var result = repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleorderno).ToList();
+
+            //repo.TblSaleOrderDetail.ToList().ForEach(c =>
+            //{
+            //    c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.CustomerCode)?.Name;
+            //});
+            return result.ToList();
+        }
+
+        public static IEnumerable<tblJobworkDetails> GetJobWorkDetails(string JobworkNo)
+        {
+            using var repo = new Repository<tblJobworkDetails>();
+            // var BP = repo.TblBusinessPartnerAccount.ToList();
+
+            var result = repo.tblJobworkDetails.Where(cd => cd.JobworkNumber == JobworkNo).ToList();
 
             //repo.TblSaleOrderDetail.ToList().ForEach(c =>
             //{

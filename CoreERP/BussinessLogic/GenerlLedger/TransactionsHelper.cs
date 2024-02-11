@@ -3051,7 +3051,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     totalqty = (mtqty + mtrejqty) + (item.ReceivedQty ?? 0 + item.RejectedQty ?? 0);
                     item.InvoiceNo = jwdata.InvoiceNumber;
                     //item.InvoiceURL = grdata.InvoiceURL;
-                    item.DocumentURL = jwdata.InvoiceDocument;
+                    //item.DocumentURL = jwdata.documen;
                     //item.SaleorderNo = purchase.SaleOrderNo;
 
 
@@ -3608,9 +3608,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
                     return Convert.ToString(x.JobWorkNumber) != null
-                              && Convert.ToString(x.JobWorkNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.JobWorkNumber))
-                              && Convert.ToDateTime(x.OrderDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                              && Convert.ToDateTime(x.OrderDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                               && Convert.ToString(x.JobWorkNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.JobWorkNumber))
+                               && Convert.ToDateTime(x.OrderDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                               && Convert.ToDateTime(x.OrderDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
                 }).OrderByDescending(x => x.ID)
                 .ToList();
         }
@@ -3878,7 +3878,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         JWNumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
                     if (JWNumber.Length > 1)
+                    {
+                        jobWorkMaster.Status = "JO Created";
+                        jobWorkMaster.JobWorkNumber =JWNumber;
                         context.tblJobworkMaster.Add(jobWorkMaster);
+                    }
                     else
                         throw new Exception("Jobwork Number Not Valid. " + JWNumber + " Please check .");
 

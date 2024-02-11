@@ -11,6 +11,7 @@ namespace CoreERP.Helpers.SharedModels
         private DateTime? _fromDate;
         private DateTime? _toDate;
         private string _invoiceNo;
+        private string _jobWorkNumber;
         private string _name;
         private int _saleOrderNo=0;
 
@@ -99,6 +100,21 @@ namespace CoreERP.Helpers.SharedModels
                     _saleOrderNo = 0;
                 else
                     _saleOrderNo = value;
+            }
+        }
+
+        public string JobWorkNumber
+        {
+            get
+            {
+                return _jobWorkNumber;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    _jobWorkNumber = null;
+                else
+                    _jobWorkNumber = value;
             }
         }
 

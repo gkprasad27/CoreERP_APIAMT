@@ -387,7 +387,7 @@ namespace CoreERP.Controllers
             });
             return result;
         }
-
+        [HttpGet("GetJobworkList")]
         public async Task<IActionResult> GetJobworkList()
         {
             var result = await Task.Run(() =>
@@ -395,8 +395,8 @@ namespace CoreERP.Controllers
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    var vouchertypeList = CommonHelper.GetJobworkList();
-                    expando.JobWorkList = vouchertypeList.Where(x => (x.Status == "JO Created" || x.Status == "Partial JO Created")).Select(x => new { ID = x.JobWorkNumber, TEXT = x.SupplierName, Vendor = x.Vendor });
+                    var JobworkList = CommonHelper.GetJobworkList();
+                    expando.JobWorkList = JobworkList.Where(x => (x.Status == "JO Created" )).Select(x => new { ID = x.JobWorkNumber, TEXT = x.SupplierName, Vendor = x.Vendor,VendorGSTN=x.VendorGSTN });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -444,6 +444,29 @@ namespace CoreERP.Controllers
                     var vouchertypeList = CommonHelper.GetsaleOrdernoList(saleorderno);
                     expando.saleordernoList = vouchertypeList;
                     expando.saleOrderMasterList = saleOrderMasterList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+
+            });
+            return result;
+        }
+
+        [HttpGet("GetJobWorkDetails/{JobworkNo}")]
+        public async Task<IActionResult> GetJobWorkDetails(string JobworkNo)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    //var saleOrderMasterList = CommonHelper.GetSaleOrderMastersById(saleorderno);
+                    var JWDList = CommonHelper.GetJobWorkDetails(JobworkNo);
+                    //expando.saleordernoList = vouchertypeList;
+                    expando.JWDList = JWDList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
