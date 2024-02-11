@@ -3093,8 +3093,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     //item.SaleorderNo = purchase.SaleOrderNo;
 
 
-                    var POD = repo.tblJWReceiptDetails.FirstOrDefault(z => z.JobWorkNumber == item.JobWorkNumber && z.MaterialCode == item.MaterialCode);
-                    POD.Status = statusmessage;
+                    //var POD = repo.tblJWReceiptDetails.FirstOrDefault(z => z.JobWorkNumber == item.JobWorkNumber && z.MaterialCode == item.MaterialCode);
+                    //POD.Status = statusmessage;
                     //if (Convert.ToInt16(item.RejectedQty) > 0)
                     //    POD.Qty = (POD.Qty) - Convert.ToInt16(item.RejectedQty);
                     //if (POD.Qty >= 0)
