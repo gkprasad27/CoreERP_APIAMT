@@ -901,8 +901,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public List<TblGoodsIssueMaster> GetGoodsIssueMaster(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-10), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-10);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblGoodsIssueMaster>();

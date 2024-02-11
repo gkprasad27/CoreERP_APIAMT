@@ -26,5 +26,6 @@ namespace CoreERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? EditDate { get; set; }
         public string? Status { get; set; }
+        public DateTime? ProductionPlanDate { get; set; }
     }
 }
