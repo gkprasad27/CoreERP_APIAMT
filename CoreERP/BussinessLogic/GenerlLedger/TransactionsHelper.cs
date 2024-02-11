@@ -1518,6 +1518,44 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             return true;
         }
+
+        public bool UpdateProductionStatus(List<TblProductionStatus> prodDetails)
+        {
+            if (prodDetails.Count > 0)
+            {
+                using var context = new ERPContext();
+                using var dbtrans = context.Database.BeginTransaction();
+
+                try
+                {
+
+                    if (prodDetails != null)
+                    {
+                        context.TblProductionStatus.UpdateRange(prodDetails);
+                    }
+
+                    context.SaveChanges();
+
+
+                    dbtrans.Commit();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+
+                    TblApi_Error_Log icdata = new TblApi_Error_Log();
+                    using var context1 = new ERPContext();
+                    icdata.ScreenName = "Production Issue";
+                    icdata.ErrorID = ex.HResult.ToString();
+                    icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                    context1.TblApi_Error_Log.Add(icdata);
+                    context1.SaveChanges();
+                    dbtrans.Rollback();
+                    throw;
+                }
+            }
+            return true;
+        }
         public bool ReturnGoodsIssue(string RequisitionNumber)
         {
             using var repo = new ERPContext();
@@ -3001,7 +3039,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     rejectedqty = (GoosQTY.Sum(i => i.RejectedQty) ?? 0);
                 }
                 //poqty
-               // poqty = jwdetails.Sum(v => v.Qty) ?? 0;
+                // poqty = jwdetails.Sum(v => v.Qty) ?? 0;
 
                 totalqty = (receivedqty + rejectedqty) + (currqtyrec + currqtyrej);
 
@@ -3038,7 +3076,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 foreach (var item in jwdetails)
                 {
-                   // item.PurchaseOrderNo = grdata.PurchaseOrderNo;
+                    // item.PurchaseOrderNo = grdata.PurchaseOrderNo;
                     item.LotNo = jwdata.LotNo;
                     item.VehicleNo = jwdata.VehicleNo;
                     //item.VehicleNumber = grdata.VehicleNo;
@@ -3078,7 +3116,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         //var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleorderNo && im.MaterialCode == item.MaterialCode);
                         //if (sodata != null)
                         //{
-                       // var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleorderNo && z.MaterialCode == item.MaterialCode);
+                        // var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleorderNo && z.MaterialCode == item.MaterialCode);
                         //if (poq != null)
                         //{
                         //    poq.Qty = Math.Abs(Convert.ToInt16(poq.Qty) + Convert.ToInt16(item.RejectQty));
@@ -3880,7 +3918,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (JWNumber.Length > 1)
                     {
                         jobWorkMaster.Status = "JO Created";
-                        jobWorkMaster.JobWorkNumber =JWNumber;
+                        jobWorkMaster.JobWorkNumber = JWNumber;
                         context.tblJobworkMaster.Add(jobWorkMaster);
                     }
                     else

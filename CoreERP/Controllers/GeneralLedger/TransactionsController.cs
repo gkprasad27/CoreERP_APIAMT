@@ -885,6 +885,34 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpPost("UpdateProductionStatus")]
+        public async Task<IActionResult> UpdateProductionStatus([FromBody] JObject obj)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                    // var prodissueMaster = obj["prodHdr"].ToObject<TblProductionMaster>();
+                    var prodissueetails = obj["mreqDtl"].ToObject<List<TblProductionStatus>>();
+
+                    if (!new TransactionsHelper().UpdateProductionStatus(prodissueetails))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.prodissueetails = prodissueetails;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("ReturnGoodsissue/{RequisitionNumber}")]
         public IActionResult ReturnGoodsissue(string RequisitionNumber)
         {
