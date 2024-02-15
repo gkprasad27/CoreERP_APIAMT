@@ -3065,13 +3065,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     mtrejqty = (GoosQTY.Sum(i => i.RejectedQty) ?? 0);
                     totalqty = (mtqty + mtrejqty) + (item.ReceivedQty ?? 0 + item.RejectedQty ?? 0);
                     item.InvoiceNo = jwdata.InvoiceNumber;
-                   
+                    var sodata = repo.tblJobworkDetails.FirstOrDefault(im => im.JobworkNumber == item.JobWorkNumber && im.MaterialCode == item.MaterialCode);
+
                     //POQ
                     if (item.RejectedQty > 0)
                     {
                         int soqty = 0;
                         int matqty = 0;
-                        var sodata = repo.tblJobworkDetails.FirstOrDefault(im => im.JobworkNumber == item.JobWorkNumber && im.MaterialCode == item.MaterialCode);
                         if (sodata != null)
                         {
                             var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.JobWorkNumber && z.MaterialCode == item.MaterialCode);
@@ -3106,7 +3106,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             }
                         }
                     }
+                    sodata.Status = statusmessage;
+                    context.tblJobworkDetails.Update(sodata);
                 }
+
                 context.tblJWReceiptDetails.AddRange(jwdetails);
                 context.SaveChanges();
 
