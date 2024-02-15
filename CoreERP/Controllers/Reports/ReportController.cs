@@ -134,6 +134,31 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
+        [HttpGet("GetPendingJO/{company}")]
+        public async Task<IActionResult> GetPendingJO(string company)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    DataSet ds = ReportsHelperClass.GetPendingJO(company);
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        expando.PendingJOReport = ds.Tables[0];
+                        expando.PendingJOReportTotals = ds.Tables[1];
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetPendingPOs/{company}")]
         public async Task<IActionResult> GetPendingPOs(string company)
         {
