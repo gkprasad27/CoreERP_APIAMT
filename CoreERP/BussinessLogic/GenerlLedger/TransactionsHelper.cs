@@ -3060,6 +3060,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     item.ReceivedBy = jwdata.ReceivedBy;
                     item.BillAmount = jwdata.TotalAmount;
                     item.Status = statusmessage;
+                    item.InvoiceNo = jwdata.InvoiceNumber;
                     GoosQTY = Matdtl.tblJWReceiptDetails.Where(cd => cd.JobWorkNumber == item.JobWorkNumber && cd.MaterialCode == item.MaterialCode).ToList();
                     mtqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
                     mtrejqty = (GoosQTY.Sum(i => i.RejectedQty) ?? 0);
