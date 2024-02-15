@@ -3131,6 +3131,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.tblJWReceiptMaster.Add(jwdata);
                 context.SaveChanges();
             }
+            var JOM = repo.tblJobworkMaster.Where(v => v.JobWorkNumber == jwdata.JobWorkNumber).FirstOrDefault();
+            if (JOM.JobWorkNumber == jwdata.JobWorkNumber)
+            {
+                JOM.Status = statusmessage;
+                context.tblJobworkMaster.Update(JOM);
+                context.SaveChanges();
+            }
             //jwdetails.ForEach(x =>
             //{
 

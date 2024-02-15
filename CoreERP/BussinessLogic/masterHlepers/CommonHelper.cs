@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -94,28 +95,19 @@ namespace CoreERP
         public static IEnumerable<TblSaleOrderDetail> GetsaleOrdernoList(string saleorderno)
         {
             using var repo = new Repository<TblSaleOrderDetail>();
-           // var BP = repo.TblBusinessPartnerAccount.ToList();
-
             var result = repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleorderno).ToList();
-
-            //repo.TblSaleOrderDetail.ToList().ForEach(c =>
-            //{
-            //    c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.CustomerCode)?.Name;
-            //});
             return result.ToList();
         }
 
         public static IEnumerable<tblJobworkDetails> GetJobWorkDetails(string JobworkNo)
         {
             using var repo = new Repository<tblJobworkDetails>();
-            // var BP = repo.TblBusinessPartnerAccount.ToList();
-
             var result = repo.tblJobworkDetails.Where(cd => cd.JobworkNumber == JobworkNo).ToList();
-
-            //repo.TblSaleOrderDetail.ToList().ForEach(c =>
-            //{
-            //    c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.CustomerCode)?.Name;
-            //});
+            var material = repo.TblMaterialMaster.ToList();
+            repo.tblJobworkDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            });
             return result.ToList();
         }
 
