@@ -3018,8 +3018,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblGoodsReceiptMaster>();
             using var Material = new Repository<TblMaterialMaster>();
             using var context = new ERPContext();
-            using var Matdtl = new Repository<TblGoodsReceiptDetails>();
-            using var PRM = new Repository<TblPurchaseRequisitionMaster>();
+            using var Matdtl = new Repository<tblJobworkDetails>();
             List<tblJWReceiptDetails> GoosQTY;
             string statusmessage = null;
             using var dbtrans = context.Database.BeginTransaction();
@@ -3039,114 +3038,73 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     rejectedqty = (GoosQTY.Sum(i => i.RejectedQty) ?? 0);
                 }
                 //poqty
-                // poqty = jwdetails.Sum(v => v.Qty) ?? 0;
-
+                poqty = Matdtl.tblJobworkDetails.Where(cd => cd.JobworkNumber == jwdata.JobWorkNumber).Sum(x => x.Qty) ?? 0;
                 totalqty = (receivedqty + rejectedqty) + (currqtyrec + currqtyrej);
 
-                //var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.jobworknumber == jwdata.PurchaseOrderNo);
-                //var saleorder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == purchase.SaleOrderNo);
                 if (poqty == totalqty)
                 {
                     statusmessage = "Material Received";
-                    //if (purchase != null)
-                    //{
-                    //    purchase.Status = statusmessage;
-                    //    purchase.ReceivedDate = DateTime.Now;
-                    //    saleorder.Status = statusmessage;
-                    //    context.TblPurchaseOrder.Update(purchase);
-                    //    context.TblSaleOrderMaster.Update(saleorder);
-                    //}
-                    //grdata.ApprovalStatus = "Pending Approval";
                     jwdata.Status = statusmessage;
-                    //grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
                 else if (totalqty < poqty)
                 {
                     statusmessage = "Material Partial Received";
-                    //if (purchase != null)
-                    //{
-                    //    purchase.Status = statusmessage;
-                    //    saleorder.Status = statusmessage;
-                    //    context.TblPurchaseOrder.Update(purchase);
-                    //    context.TblSaleOrderMaster.Update(saleorder);
-                    //}
-                    // grdata.ApprovalStatus = "Pending Approval";
                     jwdata.Status = statusmessage;
-                    //grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
                 foreach (var item in jwdetails)
                 {
-                    // item.PurchaseOrderNo = grdata.PurchaseOrderNo;
                     item.LotNo = jwdata.LotNo;
                     item.VehicleNo = jwdata.VehicleNo;
-                    //item.VehicleNumber = grdata.VehicleNo;
+                    item.JobWorkNumber = jwdata.JobWorkNumber;
                     item.ReceivedDate = jwdata.ReceivedDate;
                     item.ReceivedBy = jwdata.ReceivedBy;
                     item.BillAmount = jwdata.TotalAmount;
+                    item.Status = statusmessage;
                     GoosQTY = Matdtl.tblJWReceiptDetails.Where(cd => cd.JobWorkNumber == item.JobWorkNumber && cd.MaterialCode == item.MaterialCode).ToList();
                     mtqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
                     mtrejqty = (GoosQTY.Sum(i => i.RejectedQty) ?? 0);
                     totalqty = (mtqty + mtrejqty) + (item.ReceivedQty ?? 0 + item.RejectedQty ?? 0);
                     item.InvoiceNo = jwdata.InvoiceNumber;
-                    //item.InvoiceURL = grdata.InvoiceURL;
-                    //item.DocumentURL = jwdata.documen;
-                    //item.SaleorderNo = purchase.SaleOrderNo;
-
-
-                    //var POD = repo.tblJWReceiptDetails.FirstOrDefault(z => z.JobWorkNumber == item.JobWorkNumber && z.MaterialCode == item.MaterialCode);
-                    //POD.Status = statusmessage;
-                    //if (Convert.ToInt16(item.RejectedQty) > 0)
-                    //    POD.Qty = (POD.Qty) - Convert.ToInt16(item.RejectedQty);
-                    //if (POD.Qty >= 0)
-                    //{
-                    //    POD.Status = statusmessage;
-                    //    context.TblPurchaseOrderDetails.UpdateRange(POD);
-                    //}
-                    //else
-                    //{
-                    //    POD.Status = statusmessage;
-                    //    context.TblPurchaseOrderDetails.UpdateRange(POD);
-                    //}
+                   
                     //POQ
                     if (item.RejectedQty > 0)
                     {
-                        //int poqty = 0;
                         int soqty = 0;
                         int matqty = 0;
-                        //var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleorderNo && im.MaterialCode == item.MaterialCode);
-                        //if (sodata != null)
-                        //{
-                        // var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleorderNo && z.MaterialCode == item.MaterialCode);
-                        //if (poq != null)
-                        //{
-                        //    poq.Qty = Math.Abs(Convert.ToInt16(poq.Qty) + Convert.ToInt16(item.RejectQty));
-                        //    if (poq.Qty >= 0)
-                        //    {
-                        //        poq.Status = "New";
-                        //        context.TblPoQueue.Update(poq);
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    poq = new TblPoQueue();
-                        //    poq.Status = "New";
-                        //    poq.SaleOrderNo = item.SaleorderNo;
-                        //    poq.MaterialCode = item.MaterialCode;
-                        //    poq.Qty = item.RejectQty;
-                        //    context.TblPoQueue.Add(poq);
-                        //}
-                        //sodata.POQty = ((sodata.POQty) - Convert.ToInt16(item.RejectQty));
-                        //if (sodata.POQty >= 0)
-                        //{
-                        //    sodata.Status = statusmessage;
-                        //    context.TblSaleOrderDetail.Update(sodata);
-                        //}
-                        //else
-                        //{
-                        //    sodata.Status = statusmessage;
-                        //    context.TblSaleOrderDetail.Update(sodata);
-                        //}
-                        //}
+                        var sodata = repo.tblJobworkDetails.FirstOrDefault(im => im.JobworkNumber == item.JobWorkNumber && im.MaterialCode == item.MaterialCode);
+                        if (sodata != null)
+                        {
+                            var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.JobWorkNumber && z.MaterialCode == item.MaterialCode);
+                            if (poq != null)
+                            {
+                                poq.Qty = Math.Abs(Convert.ToInt16(poq.Qty) + Convert.ToInt16(item.RejectedQty));
+                                if (poq.Qty >= 0)
+                                {
+                                    poq.Status = "New";
+                                    context.TblPoQueue.Update(poq);
+                                }
+                            }
+                            else
+                            {
+                                poq = new TblPoQueue();
+                                poq.Status = "New";
+                                poq.SaleOrderNo = item.JobWorkNumber;
+                                poq.MaterialCode = item.MaterialCode;
+                                poq.Qty = item.RejectedQty;
+                                context.TblPoQueue.Add(poq);
+                            }
+                            sodata.Qty = ((sodata.Qty) - Convert.ToInt16(item.RejectedQty));
+                            if (sodata.Qty >= 0)
+                            {
+                                sodata.Status = statusmessage;
+                                context.tblJobworkDetails.Update(sodata);
+                            }
+                            else
+                            {
+                                sodata.Status = statusmessage;
+                                context.tblJobworkDetails.Update(sodata);
+                            }
+                        }
                     }
                 }
                 context.tblJWReceiptDetails.AddRange(jwdetails);
@@ -3173,19 +3131,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.tblJWReceiptMaster.Add(jwdata);
                 context.SaveChanges();
             }
-            jwdetails.ForEach(x =>
-            {
+            //jwdetails.ForEach(x =>
+            //{
 
-                var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == x.MaterialCode);
+            //    var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == x.MaterialCode);
 
-                if (Convert.ToString(mathdr.ClosingQty) == null)
-                    mathdr.ClosingQty = 0;
+            //    if (Convert.ToString(mathdr.ClosingQty) == null)
+            //        mathdr.ClosingQty = 0;
 
-                mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
-                context.TblMaterialMaster.Update(mathdr);
+            //    mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
+            //    context.TblMaterialMaster.Update(mathdr);
 
-            });
-            context.SaveChanges();
+            //});
+            //context.SaveChanges();
 
             return true;
 
