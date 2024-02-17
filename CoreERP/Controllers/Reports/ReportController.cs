@@ -40,6 +40,31 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
+        [HttpGet("GetSalesGSTReport/{fromDate}/{toDate}/{company}")]
+        public async Task<IActionResult> GetSalesGSTReport(DateTime fromDate, DateTime toDate, string company)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    DataSet ds = ReportsHelperClass.GetSalesGSTReport(fromDate, toDate, company);
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        expando.GSTSalesReport = ds.Tables[0];
+                        expando.GSTSalesReportTotals = ds.Tables[1];
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetGoodsReceiptsReport/{fromDate}/{toDate}/{company}")]
         public async Task<IActionResult> GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company)
         {
