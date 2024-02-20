@@ -214,7 +214,8 @@ namespace CoreERP.Controllers
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BPList = _somRepository.Where(x => (x.Status != "Invoice Generated" && x.Status!= "PO Created" && x.Status != "Dispatched")).Select(x => new { SaleOrderNo = x.SaleOrderNo });
+                    var saleOrderDetails = _somRepository.Where(x => (x.Status != "Invoice Generated" && x.Status!= "PO Created" && x.Status != "Dispatched")).Select(x => new { SaleOrderNo = x.SaleOrderNo });
+                    expando.BPList = CommonHelper.GetsaleOrdernoList(saleOrderDetails.FirstOrDefault().SaleOrderNo).Where(x => (x.Status != "Invoice Generated" && x.Status != "PO Created" && x.Status != "Dispatched")).Select(x => new { SaleOrderNo = x.SaleOrderNo, MaterialCode = x.MaterialCode, MaterialName = x.MaterialName });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)

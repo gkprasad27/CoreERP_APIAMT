@@ -96,6 +96,13 @@ namespace CoreERP
         {
             using var repo = new Repository<TblSaleOrderDetail>();
             var result = repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleorderno).ToList();
+            var Material = repo.TblMaterialMaster.ToList();
+
+            repo.TblSaleOrderDetail.ToList().ForEach(c =>
+            {
+                c.MaterialName = Material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            });
+
             return result.ToList();
         }
 
