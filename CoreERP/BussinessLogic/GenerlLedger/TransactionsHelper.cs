@@ -1656,6 +1656,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TbBommaster>();
+            var Company = repo.TblCompany.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            repo.TbBommaster.ToList()
+                .ForEach(c =>
+                {
+                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                    c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+                });
+
             return repo.TbBommaster.AsEnumerable()
                 .Where(x =>
                 {
