@@ -139,6 +139,30 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
+        [HttpGet("GetOrdersvsSales/{fromDate}/{toDate}/{company}")]
+        public async Task<IActionResult> GetOrdersvsSales(DateTime fromDate, DateTime toDate, string company)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    DataSet ds = ReportsHelperClass.GetOrdersvsSales(fromDate, toDate, company);
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        expando.OrdersvsSales = ds.Tables[0];
+                        //expando.PurchaseReportTotals = ds.Tables[1];
+                    }
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetStockValuation/{company}")]
         public async Task<IActionResult> GetStockValuation(string company)
         {
