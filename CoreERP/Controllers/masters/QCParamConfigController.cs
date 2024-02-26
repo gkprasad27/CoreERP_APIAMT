@@ -90,19 +90,11 @@ namespace CoreERP.Controllers.masters
                     int count=tagsData.Count();
                     if (count==0)
                     {
-                        var tagsData1 = _qcparamRepository.Where(x => x.Type.Equals(Type));
+                        var tagsData1 = _qcparamRepository.Where(x => x.Type.Equals(Type)).Select(x => new { id = x.ID, description = x.ParamName, type = x.Type });
                         expdoObj.citemList = tagsData1;
                     }
                     else
                         expdoObj.citemList = tagsData;
-
-                    //var citemList = _commitmentItemRepository.Where(x => x.Type.Equals(Type));
-                    //if (citemList.Any())
-                    //{
-                    //    dynamic expdoObj = new ExpandoObject();
-                    //    expdoObj.citemList = citemList;
-                    //    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-                    //}
 
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                 }
