@@ -59,6 +59,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblMaterialRequisitionMaster> _materialRequisitionMasterRepository;
         private readonly IRepository<TblMaterialRequisitionDetails> _materialRequisitionDetailsRepository;
         private readonly IRepository<TblPurchaseOrderDetails> _purchaseOrderDetailsRepository;
+        private readonly IRepository<tblJobworkDetails> _jobworkDetailsRepository;
         private readonly IRepository<TblQuotationAnalysis> _quotationAnalysisRepository;
         private readonly IRepository<TblPurchaseOrder> _purchaseOrderRepository;
         private readonly IRepository<TblGoodsReceiptMaster> _goodsReceiptMasterRepository;
@@ -88,6 +89,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblCostingNumberSeries> costingNumberSeriesRepository,
                                 IRepository<TblMaterialMaster> materialMasterRepository,
                                 IRepository<TblPurchaseOrderDetails> PurchaseOrderDetailsRepository,
+                                 IRepository<tblJobworkDetails> JobworkDetailsRepository,
                                 IRepository<TblWbs> wbsRepository, IRepository<TblMaterialRequisitionDetails> materialRequisitionDetailsRepository,
                                 IRepository<TblMaterialRequisitionMaster> materialRequisitionMasterRepository,
                                 IRepository<TblWorkcenterMaster> workcenterMasterRepository, IRepository<TblPurchaseOrder> purchaseOrderRepository,
@@ -147,6 +149,7 @@ namespace CoreERP.Controllers
             _materialMasterRepository = materialMasterRepository;
             _wbsRepository = wbsRepository;
             _purchaseOrderDetailsRepository = PurchaseOrderDetailsRepository;
+            _jobworkDetailsRepository = JobworkDetailsRepository;
             _materialRequisitionDetailsRepository = materialRequisitionDetailsRepository;
             _configurationRepository = configurationRepository;
             _TblForm = TblForm;
@@ -412,6 +415,30 @@ namespace CoreERP.Controllers
 
         [HttpDelete("DeletePurchaseOrder/{id}")]
         public IActionResult DeletePurchaseOrder(int id)
+        {
+            try
+            {
+                if (id == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
+
+                APIResponse apiResponse;
+                var record = _jobworkDetailsRepository.Where(x => x.ID == id).FirstOrDefault();
+                _jobworkDetailsRepository.Remove(record);
+                if (_jobworkDetailsRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
+                else
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpDelete("DeleteJWOrder/{id}")]
+        public IActionResult DeleteJWOrder(int id)
         {
             try
             {
