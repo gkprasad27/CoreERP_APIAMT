@@ -222,6 +222,10 @@ namespace CoreERP.Models
         public DateTime? poDate { get; set; }
         [NotMapped]
         public DateTime? dateOfSupply { get; set; }
+        [NotMapped]
+        public string CustName { get; set; }
+
+        
 
     }
     partial class TblGrnassignment

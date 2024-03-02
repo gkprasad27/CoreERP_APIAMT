@@ -247,6 +247,16 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             // searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
                             // searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
                         }
+
+                        var customer = repo.TblBusinessPartnerAccount.ToList();
+
+                        repo.TblInvoiceMaster.ToList()
+                            .ForEach(c =>
+                            {
+                                c.CustName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerName).Name;
+
+                            });
+
                         _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
                           .Where(inv =>
                                      DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
@@ -979,8 +989,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using var repo1 = new Repository<TblInvoiceMaster>();
                 var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo);
                 var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo);
-               // var goodsissue = repo1.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
-               // var Production = repo1.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
+                // var goodsissue = repo1.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
+                // var Production = repo1.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
                 using (ERPContext repo = new ERPContext())
                 {
                     using (var dbTransaction = repo.Database.BeginTransaction())
@@ -1014,7 +1024,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                             foreach (var invdtl in invoiceDetails)
                             {
-                                var SaleOrderDetails = repo1.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode== invdtl.MaterialCode);
+                                var SaleOrderDetails = repo1.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.MaterialCode);
                                 var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
                                 #region InvioceDetail
                                 invdtl.Qty = 1;
@@ -1040,7 +1050,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 #endregion
 
                             }
-                            
+
 
                             SaleOrder.Status = message;
                             repo.TblSaleOrderMaster.Update(SaleOrder);
