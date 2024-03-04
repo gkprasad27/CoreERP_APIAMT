@@ -184,8 +184,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblCashBankMaster> GetCashBankMasters(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblCashBankMaster>();
@@ -198,7 +198,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                            && Convert.ToDateTime(x.VoucherDate.Value) >=
                            Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                            && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
-                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                           && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 })
                 .ToList();
         }
@@ -327,8 +328,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblJvmaster> GetJvMasters(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblJvmaster>();
@@ -341,7 +342,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                            && Convert.ToDateTime(x.VoucherDate.Value) >=
                            Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                            && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
-                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                           && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 })
                 .ToList();
         }
@@ -381,8 +383,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblInvoiceMemoHeader> GetImMasters(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblInvoiceMemoHeader>();
@@ -395,7 +397,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                            && Convert.ToDateTime(x.VoucherDate.Value) >=
                            Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                            && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
-                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                           && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 })
                 .ToList();
         }
@@ -496,8 +499,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblPosaleAssetInvoiceMemoHeader> GetPSIMAssetMaster(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblPosaleAssetInvoiceMemoHeader>();
@@ -510,7 +513,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                            && Convert.ToDateTime(x.VoucherDate.Value) >=
                            Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                            && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
-                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                           && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 })
                 .ToList();
         }
@@ -601,8 +605,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblAssetTransfer> GetAssetTransferMaster(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblAssetTransfer>();
@@ -615,7 +619,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                            && Convert.ToDateTime(x.VoucherDate.Value) >=
                            Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                            && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
-                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                           && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 })
                 .ToList();
         }
@@ -727,8 +732,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblPartyCashBankMaster> GetPaymentsReceiptsMaster(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblPartyCashBankMaster>();
@@ -742,7 +747,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                            && Convert.ToDateTime(x.VoucherDate.Value) >=
                            Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                            && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
-                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                           && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 })
                 .ToList();
         }
@@ -823,8 +829,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblMaterialRequisitionMaster> GetMaterialRequisitionMaster(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblMaterialRequisitionMaster>();
@@ -928,7 +934,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     Debug.Assert(x.SaleOrderNumber != null, "x.VoucherDate != null");
                     return
                     x.SaleOrderNumber != null &&
-                   x.SaleOrderNumber.ToString().Contains(searchCriteria.searchCriteria ?? x.SaleOrderNumber.ToString());
+                   x.SaleOrderNumber.ToString().Contains(searchCriteria.searchCriteria ?? x.SaleOrderNumber.ToString())
+                   && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 }).ToList();
             }
             else
@@ -940,7 +947,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.GoodsIssueId != null
                            && x.GoodsIssueId.ToString().Contains(searchCriteria.searchCriteria ?? x.GoodsIssueId.ToString())
                            && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                           && x.Company.ToString().Contains(searchCriteria.CompanyCode??x.Company.ToString())
+                           && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString())
                     && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
                 }).ToList();
             }
@@ -970,7 +977,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     return Convert.ToString(x.ID) != null
                               && Convert.ToString(x.ID).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.ID))
                               && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                              && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                              && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 }).OrderByDescending(x => x.ID)
                 .ToList();
 
@@ -1218,7 +1226,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             {
                                 for (var i = 0; i < qty; i++)
                                 {
-                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode,ProductionPlanDate=item.ProductionPlanDate,ProductionTargetDate=item.ProductionTargetDate });
+                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate });
                                     tagnum = tagnum + 1;
                                 }
                             }
@@ -1674,7 +1682,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     return Convert.ToString(x.Bomnumber) != null
                               && Convert.ToString(x.Bomnumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.Bomnumber))
                               && Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                              && Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                              && Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 }).OrderByDescending(x => x.Bomnumber)
                 .ToList();
         }
@@ -1970,7 +1979,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                            && Convert.ToDateTime(x.RequisitionDate.Value) >=
                            Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                            && Convert.ToDateTime(x.RequisitionDate.Value.ToShortDateString()) <=
-                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                            && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 })
                 .ToList();
         }
@@ -2093,8 +2103,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblMaterialSupplierMaster> GetMaterialSupplierMaster(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblMaterialSupplierMaster>();
@@ -2306,8 +2316,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         #region QuotationAnalysis
         public List<TblQuotationAnalysis> GetQuotationAnalysis(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-1), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-1);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblQuotationAnalysis>();
@@ -2418,7 +2428,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     return Convert.ToString(x.PurchaseOrderNumber) != null
                               && Convert.ToString(x.PurchaseOrderNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNumber))
                               && Convert.ToDateTime(x.AddDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                              && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                              && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+
                 }).OrderByDescending(x => x.Id)
                 .ToList();
         }
@@ -2454,6 +2466,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                               && Convert.ToString(x.PurchaseOrderNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNumber))
                               && Convert.ToDateTime(x.AddDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                               && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString())
                               && x.ApprovalStatus == "Pending Approval";
                 }).OrderByDescending(x => x.Id)
                 .ToList();
@@ -2754,7 +2767,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                    return Convert.ToString(x.PurchaseOrderNo) != null
                              && Convert.ToString(x.PurchaseOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNo))
                              && Convert.ToDateTime(x.ReceivedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                             && Convert.ToDateTime(x.ReceivedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                             && Convert.ToDateTime(x.ReceivedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                              && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                }).OrderByDescending(x => x.PurchaseOrderNo)
                .ToList();
         }
@@ -2784,7 +2798,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                    return Convert.ToString(x.JobWorkNumber) != null
                              && Convert.ToString(x.JobWorkNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.JobWorkNumber))
                              && Convert.ToDateTime(x.ReceivedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                             && Convert.ToDateTime(x.ReceivedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                             && Convert.ToDateTime(x.ReceivedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                              && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                }).OrderByDescending(x => x.JobWorkNumber)
                .ToList();
         }
@@ -2815,6 +2830,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                              && Convert.ToString(x.PurchaseOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNo))
                              && Convert.ToDateTime(x.ReceivedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                              && Convert.ToDateTime(x.ReceivedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                              && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString())
                              && x.ApprovalStatus == "Pending Approval";
                }).OrderByDescending(x => x.PurchaseOrderNo)
                .ToList();
@@ -3593,7 +3609,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     return Convert.ToString(x.SaleOrderNo) != null
                               && Convert.ToString(x.SaleOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleOrderNo))
                               && Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                              && Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                              && Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 }).OrderByDescending(x => x.Id)
                 .ToList();
         }
@@ -3627,7 +3644,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     return Convert.ToString(x.JobWorkNumber) != null
                                && Convert.ToString(x.JobWorkNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.JobWorkNumber))
                                && Convert.ToDateTime(x.OrderDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                               && Convert.ToDateTime(x.OrderDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                               && Convert.ToDateTime(x.OrderDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                                && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 }).OrderByDescending(x => x.ID)
                 .ToList();
         }
