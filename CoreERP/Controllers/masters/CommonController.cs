@@ -936,14 +936,14 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
-        [HttpGet("GetMaterialMasterList")]
-        public async Task<IActionResult> GetMaterialMasterList()
+        [HttpGet("GetMaterialMasterList/{CompanyCode}")]
+        public async Task<IActionResult> GetMaterialMasterList(string CompanyCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var mmasterList = _materialMasterRepository.GetAll().Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight });
+                    var mmasterList = _materialMasterRepository.GetAll().Where(c=>c.Company.Contains(CompanyCode)).Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight });
                     if (mmasterList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();

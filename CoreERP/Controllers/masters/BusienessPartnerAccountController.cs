@@ -26,14 +26,14 @@ namespace CoreERP.Controllers
             _numberRangerepository = numberRangerepository;
             _bpgrouprepository = bpgrouprepository;
         }
-        [HttpGet("GetBusienessPartnerAccountList")]
-        public async Task<IActionResult> GetBusienessPartnerAccountList()
+        [HttpGet("GetBusienessPartnerAccountList/{CompanyCode}")]
+        public async Task<IActionResult> GetBusienessPartnerAccountList(string CompanyCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var bpaList = CommonHelper.GetBusinessPartner();
+                    var bpaList = CommonHelper.GetBusinessPartner().Where(c => c.Company.Contains(CompanyCode)); 
                     if (bpaList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();

@@ -1342,7 +1342,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var goodsreceipt = repo.TblGoodsReceiptDetails.FirstOrDefault(im => im.MaterialCode == material);
-                var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
+                var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC" && x.CompCode== SaleOrder.Company);
                 var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == material);
                 using var dbtrans = context.Database.BeginTransaction();
 
@@ -1590,7 +1590,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             string masternumber = string.Empty;
             using var repo = new Repository<Counters>();
-            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "BOM");
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "BOM" && x.CompCode==bomMaster.Company);
             using var dbtrans = context.Database.BeginTransaction();
             List<TblBomDetails> prDetailsNew;
             List<TblBomDetails> prDetailsExist;
@@ -1995,7 +1995,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
 
             using var repocoun = new Repository<Counters>();
-            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Master Sale Order");
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Master Sale Order" && x.CompCode==reqmasterdata.Company);
 
             if (repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
             {
@@ -2204,7 +2204,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         {
             using var repo1 = new Repository<Counters>();
-            var Pcenter = repo1.Counters.FirstOrDefault(x => x.CounterName == "Quotation");
+            var Pcenter = repo1.Counters.FirstOrDefault(x => x.CounterName == "Quotation" && x.CompCode==msdata.Company);
             using var context = new ERPContext();
             using var repo = new Repository<TblSupplierQuotationsMaster>();
             using var dbtrans = context.Database.BeginTransaction();
@@ -3260,7 +3260,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             using var repo = new Repository<TblInspectionCheckMaster>();
             string masternumber = string.Empty;
-            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC");
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC" && x.CompCode==icdata.Company);
             List<TblInspectionCheckDetails> prDetailsNew;
             List<TblInspectionCheckDetails> prDetailsExist;
             var RejectionMaster = new TblRejectionMaster();
@@ -3893,7 +3893,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             string JWNumber = string.Empty;
-            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "JW");
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "JW" && x.CompCode==jobWorkMaster.Company);
 
             try
             {
