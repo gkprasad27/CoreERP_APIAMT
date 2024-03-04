@@ -940,6 +940,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.GoodsIssueId != null
                            && x.GoodsIssueId.ToString().Contains(searchCriteria.searchCriteria ?? x.GoodsIssueId.ToString())
                            && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                           && x.Company.ToString().Contains(searchCriteria.CompanyCode??x.Company.ToString())
                     && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
                 }).ToList();
             }

@@ -654,7 +654,7 @@ namespace CoreERP.Controllers.masters
 
         #region Goods Issues
 
-        [HttpPost("GetGoodsissue")]
+        [HttpPost("GetGoodsissue/{CompanyCode}")]
         public async Task<IActionResult> GetGoodsissue([FromBody] SearchCriteria searchCriteria)
         {
             var result = await Task.Run(() =>
