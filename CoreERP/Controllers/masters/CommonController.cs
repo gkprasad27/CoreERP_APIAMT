@@ -211,15 +211,15 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetSaleOrderList")]
-        public async Task<IActionResult> GetSaleOrderList()
+        [HttpGet("GetSaleOrderList/{CompanyCode}")]
+        public async Task<IActionResult> GetSaleOrderList(string CompanyCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BPList= _somRepository.Where(x => (x.Status != "Invoice Generated" && x.Status!= "PO Created" && x.Status != "Dispatched")).Select(x => new { SaleOrderNo = x.SaleOrderNo, ProfitCenter = x.ProfitCenter }).ToList();
+                    expando.BPList= _somRepository.Where(x => (x.Status != "Invoice Generated" && x.Status!= "PO Created" && x.Status != "Dispatched" && x.Company == CompanyCode)).Select(x => new { SaleOrderNo = x.SaleOrderNo, ProfitCenter = x.ProfitCenter }).ToList();
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -230,15 +230,15 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetSaleOrder")]
-        public async Task<IActionResult> GetSaleOrder()
+        [HttpGet("GetSaleOrder/{CompanyCode}")]
+        public async Task<IActionResult> GetSaleOrder(string CompanyCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.SOL = _TblInspectionCheckMaster.Where(x => x.Status != "Invoice Generated").Select(x => new { SaleOrderNo = x.saleOrderNumber }).Distinct();
+                    expando.SOL = _TblInspectionCheckMaster.Where(x => x.Status != "Invoice Generated" && x.Company == CompanyCode).Select(x => new { SaleOrderNo = x.saleOrderNumber }).Distinct();
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
