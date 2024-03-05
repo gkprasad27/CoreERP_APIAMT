@@ -249,15 +249,15 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetSaleOrderData")]
-        public async Task<IActionResult> GetSaleOrderData()
+        [HttpGet("GetSaleOrderData/{CompanyCode}")]
+        public async Task<IActionResult> GetSaleOrderData(string CompanyCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BPList = _somRepository.Where(x => (x.Status != "Dispatched" && x.Status != "Invoice Generated")).Select(x => new { saleOrderNo = x.SaleOrderNo });
+                    expando.BPList = _somRepository.Where(x => (x.Status != "Dispatched" && x.Status != "Invoice Generated" && x.Company == CompanyCode)).Select(x => new { saleOrderNo = x.SaleOrderNo});
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)

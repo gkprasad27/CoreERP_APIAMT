@@ -976,21 +976,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
             try
             {
                 errorMessage = string.Empty;
-                decimal? _qty = null;
-                TblUserNew userNew = null;
-                TblAccountLedger _accountLedger = null;
-                invoice.IsSalesReturned = false;
-                invoice.IsManualEntry = false;
-                var invProduct = "";
-                decimal _invRate = 0;
-                decimal _invQty = 0;
-                decimal _invAmount = 0;
-                string _invUnitName = "";
                 using var repo1 = new Repository<TblInvoiceMaster>();
-                var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo);
-                var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo);
-                // var goodsissue = repo1.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
-                // var Production = repo1.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
+                var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo && im.Company==invoice.Company);
+                var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo && im.Company == invoice.Company);
                 using (ERPContext repo = new ERPContext())
                 {
                     using (var dbTransaction = repo.Database.BeginTransaction())
@@ -1007,7 +995,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             else
                                 message = "Invoice Partially Generated";
 
-                            var invoice_No = GenerateInvoiceNo(out errorMessage);
+                            var invoice_No = invoice.InvoiceNo;
                             if (string.IsNullOrEmpty(invoice_No))
                                 invoice_No = GenerateInvoiceNo(out errorMessage);
 
@@ -1015,8 +1003,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 invoice.InvoiceNo = invoice_No;
 
                             invoice.ServerDateTime = DateTime.Now;
-                            invoice.IsSalesReturned = false;
-                            invoice.InvoiceQty = invoiceDetails.Count(); //invoiceDetails.Sum(x => x.Qty);
+                            invoice.InvoiceQty = invoiceDetails.Count(); 
                             invoice.PONumber = SaleOrder.PONumber;
                             invoice.Status = message;
                             repo.TblInvoiceMaster.Add(invoice);
@@ -1024,8 +1011,10 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                             foreach (var invdtl in invoiceDetails)
                             {
-                                var SaleOrderDetails = repo1.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.MaterialCode);
-                                var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
+                                //var SaleOrderDetails = new TblSaleOrderDetail();
+                                //var inspection = new TblInspectionCheckDetails();
+                               var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.MaterialCode );
+                               var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
                                 #region InvioceDetail
                                 invdtl.Qty = 1;
                                 invdtl.Status = message;
@@ -1059,22 +1048,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 Inspection.Status = message;
                                 repo.TblInspectionCheckMaster.Update(Inspection);
                             }
-                            //if (goodsreceipt != null)
-                            //{
-                            //    goodsreceipt.Status = message;
-                            //    repo.TblGoodsReceiptMaster.Update(goodsreceipt);
-                            //}
-                            //if (goodsissue != null)
-                            //{
-                            //    goodsissue.Status = message;
-                            //    repo.TblGoodsIssueMaster.Update(goodsissue);
-                            //}
-                            //if (Production != null)
-                            //{
-                            //    Production.Status = message;
-                            //    repo.TblProductionMaster.Update(Production);
-                            //}
-
                             dbTransaction.Commit();
                             return true;
                         }
