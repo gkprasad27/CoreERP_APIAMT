@@ -823,7 +823,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var companiesList = _companyRepository.GetAll().Select(x => new { ID = x.CompanyCode, TEXT = x.CompanyName });
+                    var companiesList = _companyRepository.GetAll().Select(x => new { ID = x.CompanyCode, TEXT = x.CompanyName,FinancialYear=x.financialYearFrom });
                     if (companiesList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
