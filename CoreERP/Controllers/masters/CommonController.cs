@@ -1415,7 +1415,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var bpList = CommonHelper.BPList().Select(x => new { ID = x.Bpnumber, TEXT = x.Name, BPTYPE = x.BpTypeName, BPGROUP = x.BpGroupName, GstNo = x.Gstno });
+                    var bpList = CommonHelper.BPList().Select(x => new { ID = x.Bpnumber, TEXT = x.Name+" - "+x.Search, BPTYPE = x.BpTypeName, BPGROUP = x.BpGroupName, GstNo = x.Gstno });
                     if (bpList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
