@@ -19,15 +19,15 @@ namespace CoreERP.Controllers
             _employeeRepository = employeeRepository;
         }
 
-        [HttpGet("GetEmployeeList")]
+        [HttpGet("GetEmployeeList/{companycode}")]
 
-        public async Task<IActionResult> GetEmployeeList()
+        public async Task<IActionResult> GetEmployeeList(string companycode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var employeesList = _employeeRepository.GetAll();
+                    var employeesList = _employeeRepository.GetAll().Where(x=>x.CompanyCode== companycode);
                     if (employeesList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
