@@ -1,4 +1,5 @@
-﻿using CoreERP.DataAccess;
+﻿using Azure;
+using CoreERP.DataAccess;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using System;
@@ -678,7 +679,19 @@ namespace CoreERP
             });
             return result;
         }
+        public static IEnumerable<TblCAPA> GetCapaList(string tag)
+        {
+            using var repo = new Repository<TblCAPA>();
+            var materialMasters = repo.TblMaterialMaster.ToList();
+            var result = repo.TblCAPA.ToList().Where(x => x.Tag == tag).ToList();
 
+            result.ForEach(c =>
+            {
+                c.MaterialDescription = materialMasters.FirstOrDefault(cur => cur.MaterialCode == c.ItemCode)?.Description;
+            });
+            return result;
+        }
+        
         public static IEnumerable<TblHoliday> GetHolidays()
         {
             using var repo = new Repository<TblHoliday>();

@@ -64,6 +64,28 @@ namespace CoreERP.Controllers.masters
             }
         }
 
+        [HttpGet("GetCapaList/{Tag}")]
+        public IActionResult GetCapaList(string Tag)
+        {
+            try
+            {
+                var CapaList = CommonHelper.GetCapaList(Tag);
+
+                if (CapaList.Count() > 0)
+                {
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.CapaDetailList = CapaList;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                }
+                else
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPut("UpdateCapa")]
         public IActionResult UpdateCapa([FromBody] TblCAPA capa)
         {
