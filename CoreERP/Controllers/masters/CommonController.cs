@@ -1408,14 +1408,14 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpGet("GetCustomerList")]
-        public async Task<IActionResult> GetCustomerList()
+        [HttpGet("GetCustomerList/{CompanyCode}")]
+        public async Task<IActionResult> GetCustomerList(string CompanyCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var bpList = CommonHelper.BPList().Select(x => new { ID = x.Bpnumber, TEXT = x.Name+" - "+x.Search, BPTYPE = x.BpTypeName, BPGROUP = x.BpGroupName, GstNo = x.Gstno });
+                    var bpList = CommonHelper.BPList().Where(y=>y.Company== CompanyCode).Select(x => new { ID = x.Bpnumber, TEXT = x.Name+" - "+x.Search, BPTYPE = x.BpTypeName, BPGROUP = x.BpGroupName, GstNo = x.Gstno });
                     if (bpList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -1632,14 +1632,14 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetRejectionList")]
-        public async Task<IActionResult> GetRejectionList()
+        [HttpGet("GetRejectionList/{CompanyCode}")]
+        public async Task<IActionResult> GetRejectionList(string CompanyCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var RejectionList = _TblRejectionMaster.GetAll();
+                    var RejectionList = _TblRejectionMaster.GetAll().Where(x=>x.CompanyCode== CompanyCode);
                     if (RejectionList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -1657,14 +1657,14 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetPOQList")]
-        public async Task<IActionResult> GetPOQList()
+        [HttpGet("GetPOQList/{CompanyCode}")]
+        public async Task<IActionResult> GetPOQList(string CompanyCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var POQList = _TblPoQueue.GetAll().Where(x => x.Qty>0).OrderByDescending(o=>o.ID);
+                    var POQList = _TblPoQueue.GetAll().Where(x => x.Qty>0 && x.CompanyCode== CompanyCode).OrderByDescending(o=>o.ID);
                     if (POQList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
