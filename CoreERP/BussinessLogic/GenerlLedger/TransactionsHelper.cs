@@ -912,7 +912,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblGoodsIssueMaster>();
-
+            var businesspartner = repo.TblBusinessPartnerAccount.ToList();
             var Company = repo.TblCompany.ToList();
             var profitCenters = repo.ProfitCenters.ToList();
             var Employee = repo.TblEmployee.ToList();
@@ -925,6 +925,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.DepartmentName = FunctionalDepartment.FirstOrDefault(f => f.Code == c.Department).Description;
                     c.StoresPersonName = Employee.FirstOrDefault(f => f.EmployeeCode == c.StoresPerson).EmployeeName;
                     c.ProductionPersonName = Employee.FirstOrDefault(f => f.EmployeeCode == c.ProductionPerson).EmployeeName;
+                    c.CustomerName = businesspartner.FirstOrDefault(f => f.Bpnumber == c.CustomerCode).Name;
                 });
 
             if (searchCriteria.InvoiceNo != null)
@@ -960,7 +961,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblProductionMaster>();
-
+            var businesspartner = repo.TblBusinessPartnerAccount.ToList();
             var Company = repo.TblCompany.ToList();
             var profitCenters = repo.ProfitCenters.ToList();
             repo.TblProductionMaster.ToList()
@@ -968,6 +969,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+                    c.CustomerName = businesspartner.FirstOrDefault(p => p.Bpnumber == c.CustomerCode).Name;
                 });
             return repo.TblProductionMaster.AsEnumerable()
                 .Where(x =>
@@ -1168,11 +1170,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         throw new Exception("Already Allocated Goods Issue for this Saleorder." + gimaster.SaleOrderNumber);
                     }
                     gimaster.Status = message;
+                    gimaster.CustomerCode = SaleOrder.CustomerCode;
                     context.TblGoodsIssueMaster.Add(gimaster);
                     tblProduction.Company = gimaster.Company;
                     tblProduction.SaleOrderNumber = gimaster.SaleOrderNumber;
                     tblProduction.Status = message;
                     tblProduction.ProfitCenter = gimaster.ProfitCenter;
+                    tblProduction.CustomerCode = gimaster.CustomerCode;
                     context.TblProductionMaster.Add(tblProduction);
 
                     context.SaveChanges();

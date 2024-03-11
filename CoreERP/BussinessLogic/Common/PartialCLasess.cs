@@ -18,7 +18,14 @@ namespace CoreERP.Models
        
 
     }
+    partial class TblGoodsIssueMaster
+    {
+        [NotMapped]
+        public string CustomerName { get; set; }
 
+
+    }
+    
     partial class tblJobworkMaster
     {
         [NotMapped]
@@ -79,6 +86,8 @@ namespace CoreERP.Models
         public string CompanyName { get; set; }
         [NotMapped]
         public string ProfitcenterName { get; set; }
+        [NotMapped]
+        public string CustomerName { get; set; }
     }
     public partial class tblQCResults
     {
