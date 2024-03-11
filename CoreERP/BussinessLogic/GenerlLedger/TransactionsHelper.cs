@@ -3276,8 +3276,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             var MaterialMaster = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == Materialcode);
             var purchaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
-            //var goodsissue = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
-            //var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
+            var goodsissue = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
+            var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
             try
             {
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
@@ -3403,16 +3403,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 //    goodsreceipt.Status = "QC Started";
                 //    context.TblGoodsReceiptMaster.Update(goodsreceipt);
                 //}
-                //if (goodsissue != null)
-                //{
-                //    goodsissue.Status = "QC Started";
-                //    context.TblGoodsIssueMaster.Update(goodsissue);
-                //}
-                //if (Production != null)
-                //{
-                //    Production.Status = "QC Started";
-                //    context.TblProductionMaster.Update(Production);
-                //}
+                if (goodsissue != null)
+                {
+                    goodsissue.Status = icdata.Status;
+                    context.TblGoodsIssueMaster.Update(goodsissue);
+                }
+                if (Production != null)
+                {
+                    Production.Status = icdata.Status;
+                    context.TblProductionMaster.Update(Production);
+                }
 
                 context.SaveChanges();
 
