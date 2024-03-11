@@ -1442,6 +1442,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 poq = new TblPoQueue();
                                 poq.Qty = 1;
                                 poq.Status = "New";
+                                poq.CompanyCode = repogim.Company;
                                 poq.MaterialCode = item.MaterialCode;
                                 poq.SaleOrderNo = item.SaleOrderNumber;
                                 context.TblPoQueue.Update(poq);
@@ -1449,7 +1450,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                             materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
                             context.TblMaterialMaster.UpdateRange(materialmaster);
-
+                            RejectionMaster.CompanyCode = repogim.Company;
                             RejectionMaster.SaleOrderNo = item.SaleOrderNumber;
                             RejectionMaster.MaterialCode = item.MaterialCode;
                             RejectionMaster.TagNo = item.ProductionTag;
@@ -2596,6 +2597,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         poq.SaleOrderNo = item.SaleOrder;
                         poq.MaterialCode = item.MaterialCode;
                         poq.Qty = item.Qty;
+                        poq.CompanyCode = SaleOrder.Company;
                         context.TblPoQueue.Add(poq);
                     }
                     sodata.POQty = item.Qty;
@@ -2968,6 +2970,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.SaleOrderNo = item.SaleorderNo;
                             poq.MaterialCode = item.MaterialCode;
                             poq.Qty = item.RejectQty;
+                            poq.CompanyCode= grdata.Company;
                             context.TblPoQueue.Add(poq);
                         }
                         sodata.POQty = ((sodata.POQty) - Convert.ToInt16(item.RejectQty));
@@ -3118,6 +3121,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 poq.SaleOrderNo = item.JobWorkNumber;
                                 poq.MaterialCode = item.MaterialCode;
                                 poq.Qty = item.RejectedQty;
+                                poq.CompanyCode = jwdata.Company;
                                 context.TblPoQueue.Add(poq);
                             }
                             sodata.Qty = ((sodata.Qty) - Convert.ToInt16(item.RejectedQty));
@@ -3335,12 +3339,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.Status = "New";
                             poq.MaterialCode = x.MaterialCode;
                             poq.SaleOrderNo = x.saleOrderNumber;
+                            poq.CompanyCode = icdata.Company;
                             context.TblPoQueue.Add(poq);
                         }
                         var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == x.MaterialCode);
                         materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
                         context.TblMaterialMaster.UpdateRange(materialmaster);
-
+                        RejectionMaster.CompanyCode = SaleOrder.Company;
                         RejectionMaster.SaleOrderNo = x.saleOrderNumber;
                         RejectionMaster.MaterialCode = x.MaterialCode;
                         RejectionMaster.TagNo = x.productionTag;
@@ -3839,6 +3844,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
+                        poq.CompanyCode = saleOrderMaster.Company;
                         if (poq.Qty > 0)
                             context.TblPoQueue.AddRange(poq);
                     }
