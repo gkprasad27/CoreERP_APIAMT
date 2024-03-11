@@ -859,14 +859,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
-        public IEnumerable<TblInvoiceMaster> GetInvoiceList()
+        public IEnumerable<TblInvoiceMaster> GetInvoiceList(string companycode)
         {
             try
             {
 
 
                 using var repo = new Repository<TblInvoiceMaster>();
-                return repo.TblInvoiceMaster.ToList().Where(x => x.Status != "Dispatched");
+                return repo.TblInvoiceMaster.ToList().Where(x => x.Status != "Dispatched" && x.Company== companycode);
 
 
 

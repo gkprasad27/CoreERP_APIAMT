@@ -429,8 +429,8 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetInvoiceData")]
-        public async Task<IActionResult> GetInvoiceData()
+        [HttpGet("GetInvoiceData/{companycode}")]
+        public async Task<IActionResult> GetInvoiceData(string companycode)
         {
 
             //if (searchCriteria == null)
@@ -440,7 +440,7 @@ namespace CoreERP.Controllers
 
                 try
                 {
-                    var invoiceMasterList = new InvoiceHelper().GetInvoiceList();
+                    var invoiceMasterList = new InvoiceHelper().GetInvoiceList(companycode);
                     if (invoiceMasterList.Any())
                     {
                         dynamic expando = new ExpandoObject();

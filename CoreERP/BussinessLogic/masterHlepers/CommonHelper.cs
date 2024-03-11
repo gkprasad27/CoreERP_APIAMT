@@ -671,11 +671,13 @@ namespace CoreERP
         {
             using var repo = new Repository<TblCAPA>();
             var materialMasters = repo.TblMaterialMaster.ToList();
+            var businesspartner = repo.TblBusinessPartnerAccount.ToList();
             var result = repo.TblCAPA.ToList();
 
             result.ForEach(c =>
             {
                 c.MaterialDescription = materialMasters.FirstOrDefault(cur => cur.MaterialCode == c.ItemCode)?.Description;
+                c.CustomerName= businesspartner.FirstOrDefault(x => x.Bpnumber == c.custoMer)?.Name;
             });
             return result;
         }
@@ -684,10 +686,11 @@ namespace CoreERP
             using var repo = new Repository<TblCAPA>();
             var materialMasters = repo.TblMaterialMaster.ToList();
             var result = repo.TblCAPA.ToList().Where(x => x.Tag == tag).ToList();
-
+            var businesspartner = repo.TblBusinessPartnerAccount.ToList();
             result.ForEach(c =>
             {
                 c.MaterialDescription = materialMasters.FirstOrDefault(cur => cur.MaterialCode == c.ItemCode)?.Description;
+                c.CustomerName = businesspartner.FirstOrDefault(x => x.Bpnumber == c.custoMer)?.Name;
             });
             return result;
         }
