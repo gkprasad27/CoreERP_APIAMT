@@ -881,12 +881,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                //using (Repository<TblInvoiceMaster> repo = new Repository<TblInvoiceMaster>())
-                //{
-                //    return repo.TblInvoiceMaster.Where(x => x.InvoiceNo == invoiceNo);
-                //}
+                using var repo = new Repository<TblBusinessPartnerAccount>();
+                var customer = repo.TblBusinessPartnerAccount.ToList();
 
-                using var repo = new Repository<TblInvoiceMaster>();
+                repo.TblInvoiceMaster.ToList()
+                    .ForEach(c =>
+                    {
+
+                        c.CustName = customer.FirstOrDefault(z => z.Bpnumber == c.CustomerName)?.Name;
+
+                    });
+
                 return repo.TblInvoiceMaster
                     .FirstOrDefault(x => x.SaleOrderNo == saleorder && x.Status.Contains("Dispatched"));
 
