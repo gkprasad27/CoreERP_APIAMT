@@ -1401,6 +1401,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     foreach (var item in prodDetails)
                     {
+                        item.Status= item.WorkStatus; 
+
                         InspectionCheckDetails = repo.TblInspectionCheckDetails.Where(x => x.InspectionCheckNo == masternumber && x.productionTag == item.ProductionTag).ToList();
 
                         if (InspectionCheckDetails.Count == 0)
