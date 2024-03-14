@@ -1420,7 +1420,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
                         }
                         goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode).FirstOrDefault();
-                        if (item.WorkStatus != null)
+                        if (!string.IsNullOrEmpty(item.WorkStatus))
                             goodsissue.Status = item.WorkStatus;
                         var ProductionStatus = new TblProductionStatus();
                         ProductionStatus = repo.TblProductionStatus.Where(s => s.SaleOrderNumber == item.SaleOrderNumber && s.MaterialCode == item.MaterialCode && s.ProductionTag == item.ProductionTag && s.TypeofWork == item.TypeofWork).FirstOrDefault();
