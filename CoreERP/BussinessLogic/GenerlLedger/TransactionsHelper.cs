@@ -1346,7 +1346,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var goodsreceipt = repo.TblGoodsReceiptDetails.FirstOrDefault(im => im.MaterialCode == material);
-                var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC" && x.CompCode== SaleOrder.Company);
+                var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC" && x.CompCode == SaleOrder.Company);
                 var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == material);
                 using var dbtrans = context.Database.BeginTransaction();
 
@@ -1401,7 +1401,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     foreach (var item in prodDetails)
                     {
-                        item.Status= item.WorkStatus; 
+                        item.Status = item.WorkStatus;
 
                         InspectionCheckDetails = repo.TblInspectionCheckDetails.Where(x => x.InspectionCheckNo == masternumber && x.productionTag == item.ProductionTag).ToList();
 
@@ -1420,7 +1420,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
                         }
                         goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode).FirstOrDefault();
-                        goodsissue.Status = item.WorkStatus;
+                        if (item.WorkStatus != null)
+                            goodsissue.Status = item.WorkStatus;
                         var ProductionStatus = new TblProductionStatus();
                         ProductionStatus = repo.TblProductionStatus.Where(s => s.SaleOrderNumber == item.SaleOrderNumber && s.MaterialCode == item.MaterialCode && s.ProductionTag == item.ProductionTag && s.TypeofWork == item.TypeofWork).FirstOrDefault();
                         if (ProductionStatus != null)
@@ -1597,7 +1598,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             string masternumber = string.Empty;
             using var repo = new Repository<Counters>();
-            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "BOM" && x.CompCode==bomMaster.Company);
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "BOM" && x.CompCode == bomMaster.Company);
             using var dbtrans = context.Database.BeginTransaction();
             List<TblBomDetails> prDetailsNew;
             List<TblBomDetails> prDetailsExist;
@@ -2002,7 +2003,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
 
             using var repocoun = new Repository<Counters>();
-            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Master Sale Order" && x.CompCode==reqmasterdata.Company);
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Master Sale Order" && x.CompCode == reqmasterdata.Company);
 
             if (repo.TblPurchaseRequisitionMaster.Any(v => v.RequisitionNumber == reqmasterdata.RequisitionNumber))
             {
@@ -2211,7 +2212,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         {
             using var repo1 = new Repository<Counters>();
-            var Pcenter = repo1.Counters.FirstOrDefault(x => x.CounterName == "Quotation" && x.CompCode==msdata.Company);
+            var Pcenter = repo1.Counters.FirstOrDefault(x => x.CounterName == "Quotation" && x.CompCode == msdata.Company);
             using var context = new ERPContext();
             using var repo = new Repository<TblSupplierQuotationsMaster>();
             using var dbtrans = context.Database.BeginTransaction();
@@ -2976,7 +2977,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.SaleOrderNo = item.SaleorderNo;
                             poq.MaterialCode = item.MaterialCode;
                             poq.Qty = item.RejectQty;
-                            poq.CompanyCode= grdata.Company;
+                            poq.CompanyCode = grdata.Company;
                             context.TblPoQueue.Add(poq);
                         }
                         sodata.POQty = ((sodata.POQty) - Convert.ToInt16(item.RejectQty));
@@ -3270,7 +3271,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             using var repo = new Repository<TblInspectionCheckMaster>();
             string masternumber = string.Empty;
-            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC" && x.CompCode==icdata.Company);
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC" && x.CompCode == icdata.Company);
             List<TblInspectionCheckDetails> prDetailsNew;
             List<TblInspectionCheckDetails> prDetailsExist;
             var RejectionMaster = new TblRejectionMaster();
@@ -3905,7 +3906,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             string JWNumber = string.Empty;
-            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "JW" && x.CompCode==jobWorkMaster.Company);
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "JW" && x.CompCode == jobWorkMaster.Company);
 
             try
             {
