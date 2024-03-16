@@ -2865,6 +2865,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var Matdtl = new Repository<TblGoodsReceiptDetails>();
             using var PRM = new Repository<TblPurchaseRequisitionMaster>();
             List<TblGoodsReceiptDetails> GoosQTY;
+            var customer = repo.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == grdata.SupplierCode);
             string statusmessage = null;
             using var dbtrans = context.Database.BeginTransaction();
             try
@@ -2993,6 +2994,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                         //}
                     }
+                }
+                if (customer != null)
+                {
+                    customer.ClosingBalance = Convert.ToInt16(customer.ClosingBalance + Convert.ToInt16(grdata.TotalAmount));
+                    context.Update(customer);
                 }
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
                 context.SaveChanges();

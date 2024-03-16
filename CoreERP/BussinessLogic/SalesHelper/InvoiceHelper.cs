@@ -984,6 +984,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 using var repo1 = new Repository<TblInvoiceMaster>();
                 var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo && im.Company==invoice.Company);
                 var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo && im.Company == invoice.Company);
+                var customer = repo1.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == invoice.CustomerName);
                 using (ERPContext repo = new ERPContext())
                 {
                     using (var dbTransaction = repo.Database.BeginTransaction())
@@ -1053,6 +1054,13 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 Inspection.Status = message;
                                 repo.TblInspectionCheckMaster.Update(Inspection);
                             }
+
+                            if (customer != null)
+                            {
+                                customer.ClosingBalance = Convert.ToInt16(customer.ClosingBalance + Convert.ToInt16(invoice.GrandTotal));
+                                repo.TblBusinessPartnerAccount.Update(customer);
+                            }
+
                             dbTransaction.Commit();
                             return true;
                         }
