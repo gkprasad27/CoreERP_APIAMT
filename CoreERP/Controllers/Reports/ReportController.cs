@@ -258,6 +258,50 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
+        [HttpGet("GetSuppliedVsRejected/{fromDate}/{toDate}/{company}")]
+        public async Task<IActionResult> GetSuppliedVsRejected(DateTime fromDate, DateTime toDate, string company)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    DataSet ds = ReportsHelperClass.GetSuppliedVsRejected(fromDate, toDate, company);
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        expando.SalesReport = ds.Tables[0];
+                        expando.SalesReportTotals = ds.Tables[1];
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetEmpPresent/{company}")]
+        public async Task<IActionResult> GetGetEmpPresent(string company)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.StockReport = ReportsHelperClass.GetEmpPresent(company);
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
 
         //public async Task<IActionResult> GetSalesReport(string company, DateTime fromDate, DateTime toDate)
         //{
