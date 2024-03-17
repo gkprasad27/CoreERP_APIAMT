@@ -269,8 +269,8 @@ namespace CoreERP.Controllers.Reports
                     DataSet ds = ReportsHelperClass.GetSuppliedVsRejected(fromDate, toDate, company);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
-                        expando.SalesReport = ds.Tables[0];
-                        expando.SalesReportTotals = ds.Tables[1];
+                        expando.SuppliedVsRejected = ds.Tables[0];
+                        //expando.SalesReportTotals = ds.Tables[1];
                     }
 
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
@@ -291,7 +291,7 @@ namespace CoreERP.Controllers.Reports
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.StockReport = ReportsHelperClass.GetEmpPresent(company);
+                    expando.EmpPresent = ReportsHelperClass.GetEmpPresent(company);
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
