@@ -2997,7 +2997,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 if (customer != null)
                 {
-                    customer.ClosingBalance = Convert.ToInt16(customer.ClosingBalance + Convert.ToInt16(grdata.TotalAmount));
+                    customer.ClosingBalance = Convert.ToInt32(customer.ClosingBalance + Convert.ToInt32(grdata.TotalAmount));
                     context.Update(customer);
                 }
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
