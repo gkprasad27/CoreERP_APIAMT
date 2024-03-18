@@ -69,7 +69,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         //    return scopeRepository.ExecuteParamerizedCommand(command);
         //}
 
-        public static DataSet GetSalesReport( DateTime fromDate, DateTime toDate, string company)
+        public static DataSet GetSalesReport( DateTime fromDate, DateTime toDate, string company,string CustomerCode)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -91,12 +91,19 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             companyid.Direction = ParameterDirection.Input;
             companyid.Value = (object)company ?? DBNull.Value;
             companyid.ParameterName = "compcode";
+
+            DbParameter Customerid = command.CreateParameter();
+            Customerid.Direction = ParameterDirection.Input;
+            Customerid.Value = (object)CustomerCode ?? DBNull.Value;
+            Customerid.ParameterName = "CustomerCode";
             #endregion
             // Add parameter as specified in the store procedure
 
             command.Parameters.Add(pmfDate);
             command.Parameters.Add(pmtDate);
             command.Parameters.Add(companyid);
+            command.Parameters.Add(Customerid);
+            
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
 
@@ -163,7 +170,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         }
         #endregion
 
-        public static DataSet GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company)
+        public static DataSet GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company, string CustomerCode)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -185,12 +192,18 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             companyid.Direction = ParameterDirection.Input;
             companyid.Value = (object)company ?? DBNull.Value;
             companyid.ParameterName = "compcode";
+
+            DbParameter Customerid = command.CreateParameter();
+            Customerid.Direction = ParameterDirection.Input;
+            Customerid.Value = (object)CustomerCode ?? DBNull.Value;
+            Customerid.ParameterName = "CustomerCode";
             #endregion
             // Add parameter as specified in the store procedure
 
             command.Parameters.Add(pmfDate);
             command.Parameters.Add(pmtDate);
             command.Parameters.Add(companyid);
+            command.Parameters.Add(Customerid);
             return scopeRepository.ExecuteParamerizedCommand(command);
             //DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
             //if (dt.Rows.Count > 0)

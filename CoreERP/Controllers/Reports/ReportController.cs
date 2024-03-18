@@ -15,15 +15,15 @@ namespace CoreERP.Controllers.Reports
     [ApiController]
     public class ReportController : ControllerBase
     {
-        [HttpGet("GetSalesReport/{fromDate}/{toDate}/{company}")]
-        public async Task<IActionResult> GetSalesReport(DateTime fromDate, DateTime toDate, string company)
+        [HttpGet("GetSalesReport/{fromDate}/{toDate}/{company}/{CustomerCode}")]
+        public async Task<IActionResult> GetSalesReport(DateTime fromDate, DateTime toDate, string company, string CustomerCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds = ReportsHelperClass.GetSalesReport(fromDate, toDate, company);
+                    DataSet ds = ReportsHelperClass.GetSalesReport(fromDate, toDate, company, CustomerCode);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.SalesReport = ds.Tables[0];
@@ -90,15 +90,15 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
-        [HttpGet("GetGoodsReceiptsReport/{fromDate}/{toDate}/{company}")]
-        public async Task<IActionResult> GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company)
+        [HttpGet("GetGoodsReceiptsReport/{fromDate}/{toDate}/{company}/{CustomerCode}")]
+        public async Task<IActionResult> GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company, string CustomerCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds = ReportsHelperClass.GetGoodsReceiptsReport(fromDate, toDate, company);
+                    DataSet ds = ReportsHelperClass.GetGoodsReceiptsReport(fromDate, toDate, company, CustomerCode);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.GoodsReceiptReport = ds.Tables[0];
