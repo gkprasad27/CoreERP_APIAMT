@@ -1057,7 +1057,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                             if (customer != null)
                             {
-                                customer.ClosingBalance = Convert.ToInt16(customer.ClosingBalance + Convert.ToInt16(invoice.GrandTotal));
+                                customer.ClosingBalance = Convert.ToInt32(customer.ClosingBalance + Convert.ToInt32(invoice.GrandTotal));
                                 repo.TblBusinessPartnerAccount.Update(customer);
                             }
 
