@@ -15,15 +15,15 @@ namespace CoreERP.Controllers.Reports
     [ApiController]
     public class ReportController : ControllerBase
     {
-        [HttpGet("GetSalesReport/{fromDate}/{toDate}/{company}/{CustomerCode}")]
-        public async Task<IActionResult> GetSalesReport(DateTime fromDate, DateTime toDate, string company, string CustomerCode)
+        [HttpGet("GetSalesReport/{fromDate}/{toDate}/{company}/{CustomerCode}/{MaterialCode}")]
+        public async Task<IActionResult> GetSalesReport(DateTime fromDate, DateTime toDate, string company, string CustomerCode, string MaterialCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds = ReportsHelperClass.GetSalesReport(fromDate, toDate, company, CustomerCode);
+                    DataSet ds = ReportsHelperClass.GetSalesReport(fromDate, toDate, company, CustomerCode, MaterialCode);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.SalesReport = ds.Tables[0];
@@ -90,15 +90,15 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
-        [HttpGet("GetGoodsReceiptsReport/{fromDate}/{toDate}/{company}/{CustomerCode}")]
-        public async Task<IActionResult> GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company, string CustomerCode)
+        [HttpGet("GetGoodsReceiptsReport/{fromDate}/{toDate}/{company}/{CustomerCode}/{MaterialCode}")]
+        public async Task<IActionResult> GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company, string CustomerCode,string MaterialCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds = ReportsHelperClass.GetGoodsReceiptsReport(fromDate, toDate, company, CustomerCode);
+                    DataSet ds = ReportsHelperClass.GetGoodsReceiptsReport(fromDate, toDate, company, CustomerCode, MaterialCode);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.GoodsReceiptReport = ds.Tables[0];

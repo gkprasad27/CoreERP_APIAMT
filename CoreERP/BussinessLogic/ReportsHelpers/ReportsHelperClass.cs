@@ -69,7 +69,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         //    return scopeRepository.ExecuteParamerizedCommand(command);
         //}
 
-        public static DataSet GetSalesReport( DateTime fromDate, DateTime toDate, string company,string CustomerCode)
+        public static DataSet GetSalesReport( DateTime fromDate, DateTime toDate, string company,string CustomerCode, string MaterialCode)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -96,6 +96,11 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             Customerid.Direction = ParameterDirection.Input;
             Customerid.Value = (object)CustomerCode ?? DBNull.Value;
             Customerid.ParameterName = "CustomerCode";
+
+            DbParameter Materialid = command.CreateParameter();
+            Materialid.Direction = ParameterDirection.Input;
+            Materialid.Value = (object)CustomerCode ?? DBNull.Value;
+            Materialid.ParameterName = "MaterialCode";
             #endregion
             // Add parameter as specified in the store procedure
 
@@ -103,7 +108,8 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             command.Parameters.Add(pmtDate);
             command.Parameters.Add(companyid);
             command.Parameters.Add(Customerid);
-            
+            command.Parameters.Add(Materialid);
+
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
 
@@ -170,7 +176,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
         }
         #endregion
 
-        public static DataSet GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company, string CustomerCode)
+        public static DataSet GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company, string CustomerCode, string MaterialCode)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -197,6 +203,12 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             Customerid.Direction = ParameterDirection.Input;
             Customerid.Value = (object)CustomerCode ?? DBNull.Value;
             Customerid.ParameterName = "CustomerCode";
+
+
+            DbParameter Materialid = command.CreateParameter();
+            Materialid.Direction = ParameterDirection.Input;
+            Materialid.Value = (object)CustomerCode ?? DBNull.Value;
+            Materialid.ParameterName = "MaterialCode";
             #endregion
             // Add parameter as specified in the store procedure
 
@@ -204,6 +216,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             command.Parameters.Add(pmtDate);
             command.Parameters.Add(companyid);
             command.Parameters.Add(Customerid);
+            command.Parameters.Add(Materialid);
             return scopeRepository.ExecuteParamerizedCommand(command);
             //DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
             //if (dt.Rows.Count > 0)
