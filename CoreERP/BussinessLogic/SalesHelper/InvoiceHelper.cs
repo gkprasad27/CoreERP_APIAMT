@@ -273,7 +273,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                     // && inv.InvoiceNo == (searchCriteria.InvoiceNo ?? inv.InvoiceNo)
 
-                    return _invoiceMasterList.OrderByDescending(x => x.InvoiceDate).ToList();
+                    return _invoiceMasterList.OrderBy(x => x.InvoiceMasterId).ToList();
                 }
             }
             catch (Exception ex)
@@ -866,7 +866,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
 
                 using var repo = new Repository<TblInvoiceMaster>();
-                return repo.TblInvoiceMaster.ToList().Where(x => x.Status != "Dispatched" && x.Company== companycode);
+                return repo.TblInvoiceMaster.ToList().Where(x => x.Status != "Dispatched" && x.Company == companycode);
 
 
 
@@ -982,8 +982,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
             {
                 errorMessage = string.Empty;
                 using var repo1 = new Repository<TblInvoiceMaster>();
-                var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo && im.Company==invoice.Company);
+                var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo && im.Company == invoice.Company);
                 var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo && im.Company == invoice.Company);
+                var InvoiceHist = repo1.TblInvoiceDetail.Where(im => im.Saleorder == invoice.SaleOrderNo);
                 var customer = repo1.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == invoice.CustomerName);
                 using (ERPContext repo = new ERPContext())
                 {
@@ -991,11 +992,15 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     {
                         try
                         {
+                            int histinvqty = 0;
+                            if (histinvqty != null)
+                                histinvqty = Convert.ToInt16(InvoiceHist.Sum(x => x.Qty));
+
                             int sqty = 0;
                             int invqty = 0;
                             string message = null;
                             sqty = SaleOrder.TotalQty;
-                            invqty = Convert.ToInt16(invoiceDetails.Sum(x => x.Qty));
+                            invqty = (Convert.ToInt16(invoiceDetails.Sum(x => x.Qty))) + (histinvqty);
                             if (sqty == invqty)
                                 message = "Invoice Generated";
                             else
@@ -1009,7 +1014,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 invoice.InvoiceNo = invoice_No;
 
                             invoice.ServerDateTime = DateTime.Now;
-                            invoice.InvoiceQty = invoiceDetails.Count(); 
+                            invoice.InvoiceQty = invoiceDetails.Count();
                             invoice.PONumber = SaleOrder.PONumber;
                             invoice.Status = message;
                             repo.TblInvoiceMaster.Add(invoice);
@@ -1019,8 +1024,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             {
                                 //var SaleOrderDetails = new TblSaleOrderDetail();
                                 //var inspection = new TblInspectionCheckDetails();
-                               var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.MaterialCode );
-                               var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
+                                var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.MaterialCode);
+                                var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
                                 #region InvioceDetail
                                 invdtl.Qty = 1;
                                 invdtl.Status = message;
@@ -1057,10 +1062,10 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                             if (customer != null)
                             {
-                                customer.ClosingBalance = Convert.ToInt32(customer.ClosingBalance + Convert.ToInt32(invoice.GrandTotal));
+                                customer.ClosingBalance = (Convert.ToInt32(customer.ClosingBalance) + (Convert.ToInt32(invoice.GrandTotal)));
                                 repo.TblBusinessPartnerAccount.Update(customer);
                             }
-
+                            repo.SaveChanges();
                             dbTransaction.Commit();
                             return true;
                         }
