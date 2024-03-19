@@ -39,6 +39,7 @@ namespace CoreERP.Controllers.masters
                     var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == dispatch.SaleOrder);
                     var goodsissue = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == dispatch.SaleOrder);
                     var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == dispatch.SaleOrder);
+                    var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder);
                     var Invoice = repo.TblInvoiceMaster.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder);
                     var InvoiceDetails = repo.TblInvoiceDetail.FirstOrDefault(im => im.Saleorder == dispatch.SaleOrder);
                     var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder );
@@ -87,6 +88,11 @@ namespace CoreERP.Controllers.masters
                     {
                         InvoiceDetails.Status = message;
                         repo.TblInvoiceDetail.Update(InvoiceDetails);
+                    }
+                    if (purchase != null)
+                    {
+                        purchase.Status = message;
+                        repo.TblPurchaseOrder.Update(purchase);
                     }
                     repo.SaveChanges();
                     
