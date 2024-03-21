@@ -828,12 +828,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                //using (Repository<TblInvoiceMaster> repo = new Repository<TblInvoiceMaster>())
-                //{
-                //    return repo.TblInvoiceMaster.Where(x => x.InvoiceNo == invoiceNo);
-                //}
+                using var repo = new Repository<TblBusinessPartnerAccount>();
+                var customer = repo.TblBusinessPartnerAccount.ToList();
 
-                using var repo = new Repository<TblInvoiceMaster>();
                 var invoice = repo.TblInvoiceMaster.FirstOrDefault(x => x.InvoiceNo == invoiceNo);
 
                 var saleorder = repo.TblSaleOrderMaster.FirstOrDefault(d => d.SaleOrderNo == invoice.SaleOrderNo);
@@ -844,10 +841,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         c.poNo = saleorder.PONumber;
                         c.poDate = saleorder.PODate;
                         c.dateOfSupply = saleorder.DateofSupply;
-
+                        c.CustName=customer.FirstOrDefault(z => z.Bpnumber == c.CustomerName)?.Name;
                     });
-
-                // return repo.TblInvoiceDetail.Where(x => x.InvoiceNo == invoiceNo).ToList();
 
                 return repo.TblInvoiceMaster
                     .FirstOrDefault(x => x.InvoiceNo == invoiceNo);
