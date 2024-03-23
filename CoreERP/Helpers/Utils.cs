@@ -20,7 +20,8 @@ namespace BillBook.Library
         static string m_ConnectionString = null;
         static bool m_UpdateDashboard = false;
         static Dictionary<int, int> m_ColAsteriskClassnumber = new Dictionary<int, int>();
-
+        static string _strOTP = string.Empty;
+        static string _MachineName = string.Empty;
         public static bool CheckFileExists(string Url)
         {
             HttpWebResponse response = null;
@@ -967,6 +968,21 @@ namespace BillBook.Library
         {
             string year = DateTime.Now.Year.ToString();
              return year;
+        }
+
+        public static string GetMachineName()
+        {
+            return _MachineName;
+        }
+
+        private static string GenerateOTP()
+        {
+            string strOTP = string.Empty;
+
+            Random rndm = new Random();
+            strOTP = rndm.Next(1, 9).ToString() + rndm.Next(1, 9).ToString() + rndm.Next(1, 9).ToString() + rndm.Next(1, 9).ToString() + rndm.Next(1, 9).ToString() + rndm.Next(1, 9).ToString();
+
+            return strOTP;
         }
     }
 
