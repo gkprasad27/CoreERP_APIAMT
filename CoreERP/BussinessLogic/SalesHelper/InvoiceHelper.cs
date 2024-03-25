@@ -16,6 +16,10 @@ using CoreERP.Models;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using NuGet.Packaging.Signing;
+using System.Xml.Linq;
+using CoreERP.Models;
+using CoreERP.Helpers.SharedModels;
+using CoreERP.BussinessLogic.GenerlLedger;
 
 namespace CoreERP.BussinessLogic.SalesHelper
 {
@@ -981,6 +985,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo && im.Company == invoice.Company);
                 var InvoiceHist = repo1.TblInvoiceDetail.Where(im => im.Saleorder == invoice.SaleOrderNo);
                 var customer = repo1.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == invoice.CustomerName);
+                var InvoiceMemoHeader = new TblInvoiceMemoHeader();
+                var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
                 using (ERPContext repo = new ERPContext())
                 {
                     using (var dbTransaction = repo.Database.BeginTransaction())
@@ -1045,7 +1051,39 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 #endregion
 
                             }
+                            TransactionsHelper transactionsHelper = new TransactionsHelper();
+                            string vouchernumber = transactionsHelper.GetVoucherNumber("DB");
+                            //foreach (var commit in result)
+                            //{
+                            //InvoiceMemoHeader.Add(new TblInvoiceMemoHeader { Company = grdata.Company, VoucherClass = "02",VoucherType="BD",VoucherDate=System.DateTime.Now,PostingDate = System.DateTime.Now,VoucherNumber= vouchernumber,TransactionType="Invoice",NatureofTransaction="Purchase",Bpcategory="200",PartyAccount= grdata.SupplierCode,AccountingIndicator= CRDRINDICATORS.Debit.ToString(), ReferenceNumber=grdata.SupplierReferenceNo,ReferenceDate=grdata.ReceivedDate,PartyInvoiceNo=grdata.SupplierReferenceNo, TotalAmount=grdata.TotalAmount, Status = "N", SaleOrderNo=grdata.SaleorderNo });
+                            InvoiceMemoHeader.Company = invoice.Company;
+                            InvoiceMemoHeader.VoucherClass = "02";
+                            InvoiceMemoHeader.VoucherType = "BD";
+                            InvoiceMemoHeader.VoucherDate = System.DateTime.Now;
+                            InvoiceMemoHeader.PostingDate = System.DateTime.Now;
+                            InvoiceMemoHeader.VoucherNumber = vouchernumber;
+                            InvoiceMemoHeader.TransactionType = "Invoice";
+                            InvoiceMemoHeader.NatureofTransaction = "Purchase";
+                            InvoiceMemoHeader.Bpcategory = "200";
+                            InvoiceMemoHeader.PartyAccount = invoice.CustomerName;
+                            InvoiceMemoHeader.AccountingIndicator = CRDRINDICATORS.Credit.ToString();
+                            InvoiceMemoHeader.ReferenceNumber = invoice.InvoiceNo;
+                            InvoiceMemoHeader.ReferenceDate = invoice.InvoiceDate;
+                            InvoiceMemoHeader.PartyInvoiceNo = invoice.PONumber;
+                            InvoiceMemoHeader.TotalAmount = invoice.TotalAmount;
+                            InvoiceMemoHeader.Status = "N";
+                            InvoiceMemoHeader.SaleOrderNo = invoice.SaleOrderNo;
+                            //}
 
+                            repo.TblInvoiceMemoHeader.AddRange(InvoiceMemoHeader);
+                            int lineitem = 0;
+                            foreach (var item in invoiceDetails)
+                            {
+                                lineitem = (lineitem + 1);
+                                InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = invoice.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "1000", Amount = item.GrossAmount, TaxCode = item.TaxStructureId, Cgstamount = item.cgstcode, Igstamount = item.Igst, Sgstamount = item.Sgst, Hsnsac = item.HsnNo, OrderNo = item.InvoiceNo, AccountingIndicator = CRDRINDICATORS.Credit.ToString(), Status = "N" });
+                            }
+                            repo.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
+                            repo.SaveChanges();
 
                             SaleOrder.Status = message;
                             repo.TblSaleOrderMaster.Update(SaleOrder);

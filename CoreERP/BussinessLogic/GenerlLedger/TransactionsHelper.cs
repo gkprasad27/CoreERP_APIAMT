@@ -6,6 +6,7 @@ using Humanizer;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
+using NuGet.Protocol.Core.Types;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -2864,7 +2865,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             using var Matdtl = new Repository<TblGoodsReceiptDetails>();
             using var PRM = new Repository<TblPurchaseRequisitionMaster>();
-            List<TblGoodsReceiptDetails> GoosQTY;
+            var InvoiceMemoHeader = new TblInvoiceMemoHeader() ;
+            var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
+            List <TblGoodsReceiptDetails> GoosQTY;
             var customer = repo.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == grdata.SupplierCode);
             string statusmessage = null;
             using var dbtrans = context.Database.BeginTransaction();
@@ -3000,6 +3003,38 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     customer.ClosingBalance = Convert.ToInt32(customer.ClosingBalance + Convert.ToInt32(grdata.TotalAmount));
                     context.Update(customer);
                 }
+                string vouchernumber = GetVoucherNumber("DB");
+                //foreach (var commit in result)
+                //{
+                //InvoiceMemoHeader.Add(new TblInvoiceMemoHeader { Company = grdata.Company, VoucherClass = "02",VoucherType="BD",VoucherDate=System.DateTime.Now,PostingDate = System.DateTime.Now,VoucherNumber= vouchernumber,TransactionType="Invoice",NatureofTransaction="Purchase",Bpcategory="200",PartyAccount= grdata.SupplierCode,AccountingIndicator= CRDRINDICATORS.Debit.ToString(), ReferenceNumber=grdata.SupplierReferenceNo,ReferenceDate=grdata.ReceivedDate,PartyInvoiceNo=grdata.SupplierReferenceNo, TotalAmount=grdata.TotalAmount, Status = "N", SaleOrderNo=grdata.SaleorderNo });
+                InvoiceMemoHeader.Company = grdata.Company;
+                InvoiceMemoHeader.VoucherClass = "02";
+                InvoiceMemoHeader.VoucherType = "BD";
+                InvoiceMemoHeader.VoucherDate = System.DateTime.Now;
+                InvoiceMemoHeader.PostingDate = System.DateTime.Now;
+                InvoiceMemoHeader.VoucherNumber = vouchernumber;
+                InvoiceMemoHeader.TransactionType = "Invoice";
+                InvoiceMemoHeader.NatureofTransaction = "Purchase";
+                InvoiceMemoHeader.Bpcategory = "200";
+                InvoiceMemoHeader.PartyAccount = grdata.SupplierCode;
+                InvoiceMemoHeader.AccountingIndicator = CRDRINDICATORS.Debit.ToString();
+                InvoiceMemoHeader.ReferenceNumber = grdata.SupplierReferenceNo;
+                InvoiceMemoHeader.ReferenceDate = grdata.ReceivedDate;
+                InvoiceMemoHeader.PartyInvoiceNo = grdata.SupplierReferenceNo;
+                InvoiceMemoHeader.TotalAmount = grdata.TotalAmount;
+                InvoiceMemoHeader.Status = "N";
+                InvoiceMemoHeader.SaleOrderNo = grdata.SaleorderNo;
+                //}
+
+                context.TblInvoiceMemoHeader.AddRange(InvoiceMemoHeader);
+
+                int lineitem = 0;
+                foreach (var item in grdetails)
+                {
+                    lineitem= (lineitem + 1);
+                    InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = grdata.Company,  VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now,LineItemNo= lineitem.ToString(),Glaccount="1000",Amount=item.BillAmount,TaxCode=item.TaxCode,Cgstamount=item.CGST,Igstamount=item.IGST,Sgstamount=item.SGST,Hsnsac=item.HSNSAC,OrderNo=item.SaleorderNo,AccountingIndicator = CRDRINDICATORS.Debit.ToString(), Status = "N" });
+                }
+                context.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
                 context.SaveChanges();
 

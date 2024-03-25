@@ -33,6 +33,7 @@ namespace CoreERP.Models
         public string? AddWho { get; set; }
         public int? POQty { get; set; }
         public string? Status { get; set; }
-        
+        public string? HSNSAC { get; set; }
+
     }
 }

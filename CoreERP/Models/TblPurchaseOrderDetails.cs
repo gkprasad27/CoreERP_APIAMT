@@ -33,5 +33,6 @@ namespace CoreERP.Models
         public string? SaleOrder { get; set; }
         public int? SOQty { get; set; }
         public string? Status { get; set; }
+        public string? HSNSAC { get; set; }
     }
 }
