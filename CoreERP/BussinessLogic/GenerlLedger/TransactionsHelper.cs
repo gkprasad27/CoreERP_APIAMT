@@ -769,6 +769,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public bool AddPaymentsReceipts(TblPartyCashBankMaster cbmaster, List<TblParyCashBankDetails> pcbDetails)
         {
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+
             if (cbmaster.VoucherDate == null)
                 throw new Exception("Voucher Date Canot be empty/null.");
 
@@ -778,6 +781,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (this.IsVoucherNumberExists(cbmaster.VoucherNumber, cbmaster.VoucherType))
                 throw new Exception("Voucher number exists.");
 
+             var invoicememoheader = new TblInvoiceMemoHeader();
             cbmaster.VoucherDate ??= DateTime.Now;
 
             int lineno = 1;
@@ -788,14 +792,52 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 x.VoucherDate = cbmaster.VoucherDate;
             });
 
-            using var context = new ERPContext();
-            using var dbtrans = context.Database.BeginTransaction();
             try
             {
-                context.TblPartyCashBankMaster.Add(cbmaster);
-                context.SaveChanges();
 
+                decimal invoiceamount=0;
+                foreach (var item in pcbDetails)
+                {
+                    invoicememoheader = context.TblInvoiceMemoHeader.FirstOrDefault(im => im.ReferenceNumber == item.PartyInvoiceNo);
+                    var CashBankDetails = context.TblParyCashBankDetails.FirstOrDefault(im => im.PartyInvoiceNo == item.PartyInvoiceNo);
+                    if (CashBankDetails != null)
+                    {
+                        invoiceamount = Convert.ToDecimal((CashBankDetails.AdjustmentAmount + item.AdjustmentAmount));
+                        if(invoiceamount== invoicememoheader.TotalAmount)
+                        {
+                            invoicememoheader.Status = "Y";
+                            invoicememoheader.ClearedAmount = invoiceamount;
+                            invoicememoheader.BalanceDue = (invoicememoheader.TotalAmount - invoiceamount);
+                        }
+                        else
+                        {
+                            invoicememoheader.Status = "N";
+                            invoicememoheader.ClearedAmount = invoiceamount;
+                            invoicememoheader.BalanceDue = (invoicememoheader.TotalAmount - invoiceamount);
+                        }
+                    }
+                    else 
+                    {
+                        invoiceamount =Convert.ToDecimal( item.AdjustmentAmount);
+                        if (invoiceamount == invoicememoheader.TotalAmount)
+                        {
+                            invoicememoheader.Status = "Y";
+                            invoicememoheader.ClearedAmount = invoiceamount;
+                            invoicememoheader.BalanceDue = (invoicememoheader.TotalAmount - invoiceamount);
+                        }
+                        else
+                        {
+                            invoicememoheader.Status = "N";
+                            invoicememoheader.ClearedAmount = invoiceamount;
+                            invoicememoheader.BalanceDue = (invoicememoheader.TotalAmount - invoiceamount);
+                        }
+                    }
+
+                }
+
+                context.TblPartyCashBankMaster.Add(cbmaster);
                 context.TblParyCashBankDetails.AddRange(pcbDetails);
+                context.TblInvoiceMemoHeader.Update(invoicememoheader);
                 context.SaveChanges();
 
                 dbtrans.Commit();

@@ -11,6 +11,7 @@ namespace CoreERP.Models
         public string CurrName { get; set; }
 
     }
+    
     partial class TblCAPA
     {
         [NotMapped]
@@ -18,6 +19,7 @@ namespace CoreERP.Models
        
 
     }
+
     partial class TblGoodsIssueMaster
     {
         [NotMapped]
