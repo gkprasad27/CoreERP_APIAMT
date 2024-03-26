@@ -32,6 +32,7 @@ namespace CoreERP.Models
         public string? VehicleNumber { get; set; }
         public string? SupplierRefno { get; set;}
         public decimal? BillAmount { get; set; }
+        public decimal? Rate { get; set; }
         public string? ReceivedBy { get; set; }
         public string? InvoiceURL { get; set; }
         public string? DocumentURL { get; set; }
