@@ -1178,6 +1178,31 @@ namespace CoreERP.Controllers
             return result;
         }
 
+        [HttpGet("GLsubAccountListbyCatetory/{glaccount}")]
+        public async Task<IActionResult> GetGlSubAccounts(string glaccount)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var glsubList = CommonHelper.GetGlSubAccounts(glaccount);
+                    if (glsubList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.glsubList = glsubList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GLAccountListbyCatetory")]
         public async Task<IActionResult> GlAccountListbyCatetory()
         {

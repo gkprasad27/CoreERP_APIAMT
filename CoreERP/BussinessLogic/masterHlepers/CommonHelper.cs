@@ -1331,6 +1331,20 @@ namespace CoreERP
             return result;
         }
 
+        public static IEnumerable<TblGlsubAccount> GetGlSubAccounts(string glaccount)
+        {
+            using var repo = new Repository<TblGlsubAccount>();
+            var gLAccGroups = repo.Glaccounts.ToList();
+
+            var result = repo.TblGlsubAccount.Where(x=>x.Glaccount== glaccount).ToList();
+
+            result.ForEach(c =>
+            {
+                c.AccGroupName = gLAccGroups.FirstOrDefault(cur => cur.AccountNumber == c.Glaccount)?.GlaccountName;
+            });
+            return result;
+        }
+
         public static IEnumerable<TblGlsubAccount> GetGlSubAccounts()
         {
             using var repo = new Repository<TblGlsubAccount>();
@@ -1340,7 +1354,6 @@ namespace CoreERP
 
             result.ForEach(c =>
             {
-
                 c.AccGroupName = gLAccGroups.FirstOrDefault(cur => cur.AccountNumber == c.Glaccount)?.GlaccountName;
             });
             return result;
