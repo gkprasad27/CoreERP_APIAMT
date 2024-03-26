@@ -1177,7 +1177,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     tblProduction.SaleOrderNumber = gimaster.SaleOrderNumber;
                     tblProduction.Status = message;
                     tblProduction.ProfitCenter = gimaster.ProfitCenter;
-                    tblProduction.CustomerCode = gimaster.CustomerCode;
+                    tblProduction.CustomerCode = SaleOrder.CustomerCode;
                     context.TblProductionMaster.Add(tblProduction);
 
                     context.SaveChanges();
