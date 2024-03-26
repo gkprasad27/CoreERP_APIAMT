@@ -3003,7 +3003,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     customer.ClosingBalance = Convert.ToInt32(customer.ClosingBalance + Convert.ToInt32(grdata.TotalAmount));
                     context.Update(customer);
                 }
-                string vouchernumber = GetVoucherNumber("DB");
+                string vouchernumber = GetVoucherNumber("PIN");
                 //foreach (var commit in result)
                 //{
                 //InvoiceMemoHeader.Add(new TblInvoiceMemoHeader { Company = grdata.Company, VoucherClass = "02",VoucherType="BD",VoucherDate=System.DateTime.Now,PostingDate = System.DateTime.Now,VoucherNumber= vouchernumber,TransactionType="Invoice",NatureofTransaction="Purchase",Bpcategory="200",PartyAccount= grdata.SupplierCode,AccountingIndicator= CRDRINDICATORS.Debit.ToString(), ReferenceNumber=grdata.SupplierReferenceNo,ReferenceDate=grdata.ReceivedDate,PartyInvoiceNo=grdata.SupplierReferenceNo, TotalAmount=grdata.TotalAmount, Status = "N", SaleOrderNo=grdata.SaleorderNo });
@@ -3032,7 +3032,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 foreach (var item in grdetails)
                 {
                     lineitem= (lineitem + 1);
-                    InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = grdata.Company,  VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now,LineItemNo= lineitem.ToString(),Glaccount="1000",Amount=item.BillAmount,TaxCode=item.TaxCode,Cgstamount=item.CGST,Igstamount=item.IGST,Sgstamount=item.SGST,Hsnsac=item.HSNSAC,OrderNo=item.SaleorderNo,AccountingIndicator = CRDRINDICATORS.Debit.ToString(), Status = "N" });
+                    InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = grdata.Company,  VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now,LineItemNo= lineitem.ToString(),Glaccount= "150000", Amount=item.BillAmount,TaxCode=item.TaxCode,Cgstamount=item.CGST,Igstamount=item.IGST,Sgstamount=item.SGST,Hsnsac=item.HSNSAC,OrderNo=item.SaleorderNo,AccountingIndicator = CRDRINDICATORS.Debit.ToString(), Status = "N" });
                 }
                 context.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
                 context.TblGoodsReceiptDetails.AddRange(grdetails);

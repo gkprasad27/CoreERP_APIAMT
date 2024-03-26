@@ -1052,7 +1052,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                             }
                             TransactionsHelper transactionsHelper = new TransactionsHelper();
-                            string vouchernumber = transactionsHelper.GetVoucherNumber("DB");
+                            string vouchernumber = transactionsHelper.GetVoucherNumber("IN");
                             //foreach (var commit in result)
                             //{
                             //InvoiceMemoHeader.Add(new TblInvoiceMemoHeader { Company = grdata.Company, VoucherClass = "02",VoucherType="BD",VoucherDate=System.DateTime.Now,PostingDate = System.DateTime.Now,VoucherNumber= vouchernumber,TransactionType="Invoice",NatureofTransaction="Purchase",Bpcategory="200",PartyAccount= grdata.SupplierCode,AccountingIndicator= CRDRINDICATORS.Debit.ToString(), ReferenceNumber=grdata.SupplierReferenceNo,ReferenceDate=grdata.ReceivedDate,PartyInvoiceNo=grdata.SupplierReferenceNo, TotalAmount=grdata.TotalAmount, Status = "N", SaleOrderNo=grdata.SaleorderNo });
@@ -1080,7 +1080,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             foreach (var item in invoiceDetails)
                             {
                                 lineitem = (lineitem + 1);
-                                InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = invoice.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "1000", Amount = item.GrossAmount, TaxCode = item.TaxStructureId, Cgstamount = item.cgstcode, Igstamount = item.Igst, Sgstamount = item.Sgst, Hsnsac = item.HsnNo, OrderNo = item.InvoiceNo, AccountingIndicator = CRDRINDICATORS.Credit.ToString(), Status = "N" });
+                                InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = invoice.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "250000", Amount = item.GrossAmount, TaxCode = item.TaxStructureId, Cgstamount = item.cgstcode, Igstamount = item.Igst, Sgstamount = item.Sgst, Hsnsac = item.HsnNo, OrderNo = item.InvoiceNo, AccountingIndicator = CRDRINDICATORS.Credit.ToString(), Status = "N" });
                             }
                             repo.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
                             repo.SaveChanges();
