@@ -1058,7 +1058,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             //InvoiceMemoHeader.Add(new TblInvoiceMemoHeader { Company = grdata.Company, VoucherClass = "02",VoucherType="BD",VoucherDate=System.DateTime.Now,PostingDate = System.DateTime.Now,VoucherNumber= vouchernumber,TransactionType="Invoice",NatureofTransaction="Purchase",Bpcategory="200",PartyAccount= grdata.SupplierCode,AccountingIndicator= CRDRINDICATORS.Debit.ToString(), ReferenceNumber=grdata.SupplierReferenceNo,ReferenceDate=grdata.ReceivedDate,PartyInvoiceNo=grdata.SupplierReferenceNo, TotalAmount=grdata.TotalAmount, Status = "N", SaleOrderNo=grdata.SaleorderNo });
                             InvoiceMemoHeader.Company = invoice.Company;
                             InvoiceMemoHeader.VoucherClass = "02";
-                            InvoiceMemoHeader.VoucherType = "BD";
+                            InvoiceMemoHeader.VoucherType = "IN";
                             InvoiceMemoHeader.VoucherDate = System.DateTime.Now;
                             InvoiceMemoHeader.PostingDate = System.DateTime.Now;
                             InvoiceMemoHeader.VoucherNumber = vouchernumber;
