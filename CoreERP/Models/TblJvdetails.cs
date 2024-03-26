@@ -41,5 +41,6 @@ namespace CoreERP.Models
         public DateTime? AddDate { get; set; }
         public string? EditWho { get; set; }
         public DateTime? EditDate { get; set; }
+        public string? GlSubaccount { get; set; }
     }
 }
