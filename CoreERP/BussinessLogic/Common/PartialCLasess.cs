@@ -19,7 +19,19 @@ namespace CoreERP.Models
        
 
     }
+    partial class TblPartyCashBankMaster
+    {
+        [NotMapped]
+        public string CustomerName { get; set; }
 
+        [NotMapped]
+        public string CompName { get; set; }
+        [NotMapped]
+        public string AccName { get; set; }
+
+
+    }
+    
     partial class TblGoodsIssueMaster
     {
         [NotMapped]

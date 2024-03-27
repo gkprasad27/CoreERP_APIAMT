@@ -738,6 +738,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblPartyCashBankMaster>();
+
+            var BP = repo.TblBusinessPartnerAccount.ToList();
+            var Company = repo.TblCompany.ToList();
+            var Glaccounts = repo.Glaccounts.ToList();
+
+            repo.TblPartyCashBankMaster.ToList().ForEach(c =>
+            {
+                c.CompName = Company.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.AccName = Glaccounts.FirstOrDefault(l => l.AccountNumber == c.Account)?.GlaccountName;
+                c.CustomerName = BP.FirstOrDefault(l => l.Bpnumber == c.PartyAccount)?.Name;
+            });
+            
+
             return repo.TblPartyCashBankMaster.AsEnumerable()
                 .Where(x =>
                 {
@@ -752,6 +765,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                            && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 })
                 .ToList();
+
+           
         }
 
         public TblPartyCashBankMaster GetPaymentsReceiptsById(string voucherNumber)
@@ -783,6 +798,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
              var invoicememoheader = new TblInvoiceMemoHeader();
             cbmaster.VoucherDate ??= DateTime.Now;
+
+
+            if (cbmaster.NatureofTransaction.ToUpper().Contains("RECEIPTS"))
+                cbmaster.AccountingIndicator = CRDRINDICATORS.Debit.ToString();
+            else if (cbmaster.NatureofTransaction.ToUpper().Contains("PAYMENT"))
+                cbmaster.AccountingIndicator = CRDRINDICATORS.Credit.ToString();
 
             int lineno = 1;
 
@@ -834,7 +855,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
 
                 }
-
                 context.TblPartyCashBankMaster.Add(cbmaster);
                 context.TblParyCashBankDetails.AddRange(pcbDetails);
                 context.TblInvoiceMemoHeader.Update(invoicememoheader);
