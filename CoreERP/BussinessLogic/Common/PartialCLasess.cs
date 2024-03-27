@@ -31,6 +31,19 @@ namespace CoreERP.Models
 
 
     }
+    partial class TblInvoiceMemoHeader
+    {
+        [NotMapped]
+        public string CustomerName { get; set; }
+
+        [NotMapped]
+        public string CompName { get; set; }
+        [NotMapped]
+        public string AccName { get; set; }
+        [NotMapped]
+        public string VoucherName { get; set; }
+
+    }
     
     partial class TblGoodsIssueMaster
     {

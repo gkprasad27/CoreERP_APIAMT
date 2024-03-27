@@ -389,6 +389,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblInvoiceMemoHeader>();
+
+            var BP = repo.TblBusinessPartnerAccount.ToList();
+            var Company = repo.TblCompany.ToList();
+           // var Glaccounts = repo.Glaccounts.ToList();
+            var VoucherClass = repo.TblVoucherclass.ToList();
+
+            repo.TblInvoiceMemoHeader.ToList().ForEach(c =>
+            {
+                c.CompName = Company.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
+                c.CustomerName = BP.FirstOrDefault(l => l.Bpnumber == c.PartyAccount)?.Name;
+                c.VoucherName = VoucherClass.FirstOrDefault(l => l.VoucherKey == c.VoucherClass)?.Description;
+            });
+
             return repo.TblInvoiceMemoHeader.AsEnumerable()
                 .Where(x =>
                 {
