@@ -3916,18 +3916,22 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.CreatedDate = DateTime.Now;
                     saleOrderMaster.SaleOrderNo = SaleOrderNumber;
                     saleOrderMaster.TotalQty = totalqty;
-                    if (SaleOrderNumber.Length > 1)
-                        context.TblSaleOrderMaster.Add(saleOrderMaster);
-                    else
-                        throw new Exception("Saleorder Number Not Valid. " + SaleOrderNumber + " Please check .");
-
 
                     if (Quotation != null)
                     {
                         Quotation.Status = "SO Created";
-
+                        Quotation.SaleorderNo = SaleOrderNumber;
                         context.TblSupplierQuotationsMaster.Update(Quotation);
+
+                        saleOrderMaster.OrderDate= DateTime.Now;
+                        saleOrderMaster.PODate= DateTime.Now;
+                        saleOrderMaster.Gstno = Quotation.Gstno;
                     }
+
+                    if (SaleOrderNumber.Length > 1)
+                        context.TblSaleOrderMaster.Add(saleOrderMaster);
+                    else
+                        throw new Exception("Saleorder Number Not Valid. " + SaleOrderNumber + " Please check .");
                     context.SaveChanges();
                 }
                 if (string.IsNullOrWhiteSpace(SaleOrderNumber))
