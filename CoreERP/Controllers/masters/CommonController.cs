@@ -9,6 +9,8 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CoreERP.Controllers
 {
@@ -99,7 +101,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblHsnsac> hsnsacRepository, IRepository<TblPrimaryCostElement> primaryCostElementRepository,
                                 IRepository<TblMaterialTypes> materialTypesRepository, IRepository<ConfigurationTable> configurationRepository, IRepository<TblForm> TblForm, IRepository<LeaveTypes> leaveTypeRepository,
                                 IRepository<TblPurchaseRequisitionMaster> TblPurchaseRequisitionMaster, IRepository<TblPurchaseRequisitionDetails> TblPurchaseRequisitionDetails, IRepository<TbBommaster> TbbomMaster,
-                                IRepository<StructureCreation> structureCreation,IRepository<TblPoQueue> TblPoQueue, IRepository<TblRejectionMaster> TblRejectionMaster)
+                                IRepository<StructureCreation> structureCreation, IRepository<TblPoQueue> TblPoQueue, IRepository<TblRejectionMaster> TblRejectionMaster)
         {
             _primaryCostElementRepository = primaryCostElementRepository;
             _materialTypesRepository = materialTypesRepository;
@@ -219,7 +221,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BPList= _somRepository.Where(x => (x.Status != "Invoice Generated" && x.Status!= "PO Created" && x.Status != "Dispatched" && x.Company == CompanyCode)).Select(x => new { SaleOrderNo = x.SaleOrderNo, ProfitCenter = x.ProfitCenter }).ToList();
+                    expando.BPList = _somRepository.Where(x => (x.Status != "Invoice Generated" && x.Status != "PO Created" && x.Status != "Dispatched" && x.Company == CompanyCode)).Select(x => new { SaleOrderNo = x.SaleOrderNo, ProfitCenter = x.ProfitCenter }).ToList();
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -257,7 +259,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BPList = _somRepository.Where(x => (x.Status != "Dispatched" && x.Status != "Invoice Generated" && x.Company == CompanyCode)).Select(x => new { saleOrderNo = x.SaleOrderNo});
+                    expando.BPList = _somRepository.Where(x => (x.Status != "Dispatched" && x.Status != "Invoice Generated" && x.Company == CompanyCode)).Select(x => new { saleOrderNo = x.SaleOrderNo });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -276,7 +278,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BPList = _somRepository.Where(x => (x.Status == "Material Received" || x.Status == "Material Partial Received" || x.Status== "SO Created" && x.Company == CompanyCode)).Select(x => new { saleOrderNo = x.SaleOrderNo });
+                    expando.BPList = _somRepository.Where(x => (x.Status == "Material Received" || x.Status == "Material Partial Received" || x.Status == "SO Created" && x.Company == CompanyCode)).Select(x => new { saleOrderNo = x.SaleOrderNo });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -401,7 +403,7 @@ namespace CoreERP.Controllers
                 {
                     dynamic expando = new ExpandoObject();
                     var vouchertypeList = CommonHelper.GetPurchaseOrderMaster();
-                    expando.purchaseordernoList = vouchertypeList.Where(x => (x.Status == "PO Created" || x.Status == "Partial PO Created") && (x.ApprovalStatus== "approve"|| x.ApprovalStatus == "Approved")).Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.SupplierName, SupplierCode = x.SupplierCode });
+                    expando.purchaseordernoList = vouchertypeList.Where(x => (x.Status == "PO Created" || x.Status == "Partial PO Created") && (x.ApprovalStatus == "approve" || x.ApprovalStatus == "Approved")).Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.SupplierName, SupplierCode = x.SupplierCode });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -421,7 +423,7 @@ namespace CoreERP.Controllers
                 {
                     dynamic expando = new ExpandoObject();
                     var JobworkList = CommonHelper.GetJobworkList();
-                    expando.JobWorkList = JobworkList.Where(x => (x.Status == "JO Created" )).Select(x => new { ID = x.JobWorkNumber, TEXT = x.SupplierName, Vendor = x.Vendor,VendorGSTN=x.VendorGSTN });
+                    expando.JobWorkList = JobworkList.Where(x => (x.Status == "JO Created")).Select(x => new { ID = x.JobWorkNumber, TEXT = x.SupplierName, Vendor = x.Vendor, VendorGSTN = x.VendorGSTN });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -843,7 +845,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var companiesList = _companyRepository.GetAll().Select(x => new { ID = x.CompanyCode, TEXT = x.CompanyName,FinancialYear=x.financialYearFrom });
+                    var companiesList = _companyRepository.GetAll().Select(x => new { ID = x.CompanyCode, TEXT = x.CompanyName, FinancialYear = x.financialYearFrom });
                     if (companiesList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -963,7 +965,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var mmasterList = _materialMasterRepository.GetAll().Where(c=>c.Company.Contains(CompanyCode)).Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight });
+                    var mmasterList = _materialMasterRepository.GetAll().Where(c => c.Company.Contains(CompanyCode)).Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight, Hsnsac = x.Hsnsac });
                     if (mmasterList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -1460,7 +1462,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var bpList = CommonHelper.BPList().Where(y=>y.Company== CompanyCode).Select(x => new { ID = x.Bpnumber, TEXT = x.Name+" - "+x.Search, BPTYPE = x.BpTypeName, BPGROUP = x.BpGroupName, GstNo = x.Gstno });
+                    var bpList = CommonHelper.BPList().Where(y => y.Company == CompanyCode).Select(x => new { ID = x.Bpnumber, TEXT = x.Name + " - " + x.Search, BPTYPE = x.BpTypeName, BPGROUP = x.BpGroupName, GstNo = x.Gstno });
                     if (bpList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -1485,7 +1487,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var purchaseinvoiceList = _InvoiceMemoHeaderRepository.GetAll().Where(z=>z.Status=="N").Select(x => new { x.PartyAccount, x.PartyInvoiceNo, x.TotalAmount, x.PostingDate, x.Paymentterms, x.DueDate,x.BalanceDue,x.ClearedAmount});
+                    var purchaseinvoiceList = _InvoiceMemoHeaderRepository.GetAll().Where(z => z.Status == "N").Select(x => new { x.PartyAccount, x.PartyInvoiceNo, x.TotalAmount, x.PostingDate, x.Paymentterms, x.DueDate, x.BalanceDue, x.ClearedAmount });
                     if (purchaseinvoiceList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -1684,7 +1686,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var RejectionList = _TblRejectionMaster.GetAll().Where(x=>x.CompanyCode== CompanyCode);
+                    var RejectionList = _TblRejectionMaster.GetAll().Where(x => x.CompanyCode == CompanyCode);
                     if (RejectionList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -1709,7 +1711,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var POQList = _TblPoQueue.GetAll().Where(x => x.Qty>0 && x.CompanyCode== CompanyCode).OrderByDescending(o=>o.ID);
+                    var POQList = _TblPoQueue.GetAll().Where(x => x.Qty > 0 && x.CompanyCode == CompanyCode).OrderByDescending(o => o.ID);
                     if (POQList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
