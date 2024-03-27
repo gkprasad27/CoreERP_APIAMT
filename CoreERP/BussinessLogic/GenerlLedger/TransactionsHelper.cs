@@ -3491,12 +3491,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 //}
                 if (goodsissue != null)
                 {
-                    goodsissue.Status = icdata.Status;
+                    goodsissue.Status = "QC Started";
                     context.TblGoodsIssueMaster.Update(goodsissue);
                 }
                 if (Production != null)
                 {
-                    Production.Status = icdata.Status;
+                    Production.Status = "QC Started";
                     context.TblProductionMaster.Update(Production);
                 }
 
