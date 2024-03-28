@@ -1063,8 +1063,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             InvoiceMemoHeader.PostingDate = System.DateTime.Now;
                             InvoiceMemoHeader.VoucherNumber = vouchernumber;
                             InvoiceMemoHeader.TransactionType = "Invoice";
-                            InvoiceMemoHeader.NatureofTransaction = "Purchase";
-                            InvoiceMemoHeader.Bpcategory = "200";
+                            InvoiceMemoHeader.NatureofTransaction = "Sales";
+                            InvoiceMemoHeader.Bpcategory = "100";
                             InvoiceMemoHeader.PartyAccount = invoice.CustomerName;
                             InvoiceMemoHeader.AccountingIndicator = CRDRINDICATORS.Credit.ToString();
                             InvoiceMemoHeader.ReferenceNumber = invoice.InvoiceNo;
