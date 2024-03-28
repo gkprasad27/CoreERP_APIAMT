@@ -1043,7 +1043,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 repo.TblSaleOrderDetail.UpdateRange(SaleOrderDetails);
 
                                 var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.MaterialCode);
-                                materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
+                                materialmaster.OpeningQty = ((materialmaster.OpeningQty) - 1);
                                 repo.TblMaterialMaster.UpdateRange(materialmaster);
 
                                 repo.SaveChanges();

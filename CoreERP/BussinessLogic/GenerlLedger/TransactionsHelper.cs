@@ -392,7 +392,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             var BP = repo.TblBusinessPartnerAccount.ToList();
             var Company = repo.TblCompany.ToList();
-           // var Glaccounts = repo.Glaccounts.ToList();
+            // var Glaccounts = repo.Glaccounts.ToList();
             var VoucherClass = repo.TblVoucherclass.ToList();
 
             repo.TblInvoiceMemoHeader.ToList().ForEach(c =>
@@ -762,7 +762,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 c.AccName = Glaccounts.FirstOrDefault(l => l.AccountNumber == c.Account)?.GlaccountName;
                 c.CustomerName = BP.FirstOrDefault(l => l.Bpnumber == c.PartyAccount)?.Name;
             });
-            
+
 
             return repo.TblPartyCashBankMaster.AsEnumerable()
                 .Where(x =>
@@ -779,7 +779,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 })
                 .ToList();
 
-           
+
         }
 
         public TblPartyCashBankMaster GetPaymentsReceiptsById(string voucherNumber)
@@ -809,7 +809,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (this.IsVoucherNumberExists(cbmaster.VoucherNumber, cbmaster.VoucherType))
                 throw new Exception("Voucher number exists.");
 
-             var invoicememoheader = new TblInvoiceMemoHeader();
+            var invoicememoheader = new TblInvoiceMemoHeader();
             cbmaster.VoucherDate ??= DateTime.Now;
 
 
@@ -829,7 +829,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             try
             {
 
-                decimal invoiceamount=0;
+                decimal invoiceamount = 0;
                 foreach (var item in pcbDetails)
                 {
                     invoicememoheader = context.TblInvoiceMemoHeader.FirstOrDefault(im => im.ReferenceNumber == item.PartyInvoiceNo);
@@ -837,7 +837,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (CashBankDetails != null)
                     {
                         invoiceamount = Convert.ToDecimal((CashBankDetails.AdjustmentAmount + item.AdjustmentAmount));
-                        if(invoiceamount== invoicememoheader.TotalAmount)
+                        if (invoiceamount == invoicememoheader.TotalAmount)
                         {
                             invoicememoheader.Status = "Y";
                             invoicememoheader.ClearedAmount = invoiceamount;
@@ -850,9 +850,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             invoicememoheader.BalanceDue = (invoicememoheader.TotalAmount - invoiceamount);
                         }
                     }
-                    else 
+                    else
                     {
-                        invoiceamount =Convert.ToDecimal( item.AdjustmentAmount);
+                        invoiceamount = Convert.ToDecimal(item.AdjustmentAmount);
                         if (invoiceamount == invoicememoheader.TotalAmount)
                         {
                             invoicememoheader.Status = "Y";
@@ -1424,7 +1424,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var goodsreceipt = repo.TblGoodsReceiptDetails.FirstOrDefault(im => im.MaterialCode == material);
                 var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC" && x.CompCode == SaleOrder.Company);
-                var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == material);
+
                 using var dbtrans = context.Database.BeginTransaction();
 
                 int invqty = 0;
@@ -1478,6 +1478,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     foreach (var item in prodDetails)
                     {
+                        var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
+
                         item.Status = item.WorkStatus;
 
                         InspectionCheckDetails = repo.TblInspectionCheckDetails.Where(x => x.InspectionCheckNo == masternumber && x.productionTag == item.ProductionTag).ToList();
@@ -1533,7 +1535,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             }
 
                             materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
+                            materialmaster.OpeningQty = ((materialmaster.OpeningQty) + 1);
                             context.TblMaterialMaster.UpdateRange(materialmaster);
+
                             RejectionMaster.CompanyCode = repogim.Company;
                             RejectionMaster.SaleOrderNo = item.SaleOrderNumber;
                             RejectionMaster.MaterialCode = item.MaterialCode;
@@ -1567,6 +1571,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             if (GID.AllocatedQTY >= 0)
                                 context.TblGoodsIssueDetails.UpdateRange(GID);
                         }
+
+                        materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
+                        repo.TblMaterialMaster.UpdateRange(materialmaster);
+
                     }
                     if (NewInspectionCheckDetails.Count > 0)
                         context.TblInspectionCheckDetails.AddRange(NewInspectionCheckDetails);
@@ -2941,9 +2949,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             using var Matdtl = new Repository<TblGoodsReceiptDetails>();
             using var PRM = new Repository<TblPurchaseRequisitionMaster>();
-            var InvoiceMemoHeader = new TblInvoiceMemoHeader() ;
+            var InvoiceMemoHeader = new TblInvoiceMemoHeader();
             var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
-            List <TblGoodsReceiptDetails> GoosQTY;
+            List<TblGoodsReceiptDetails> GoosQTY;
             var customer = repo.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == grdata.SupplierCode);
             string statusmessage = null;
             using var dbtrans = context.Database.BeginTransaction();
@@ -3107,8 +3115,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 int lineitem = 0;
                 foreach (var item in grdetails)
                 {
-                    lineitem= (lineitem + 1);
-                    InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = grdata.Company,  VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now,LineItemNo= lineitem.ToString(),Glaccount= "150000", Amount=item.BillAmount,TaxCode=item.TaxCode,Cgstamount=item.CGST,Igstamount=item.IGST,Sgstamount=item.SGST,Hsnsac=item.HSNSAC,OrderNo=item.SaleorderNo,AccountingIndicator = CRDRINDICATORS.Debit.ToString(), Status = "N" });
+                    lineitem = (lineitem + 1);
+                    InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = grdata.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "150000", Amount = item.BillAmount, TaxCode = item.TaxCode, Cgstamount = item.CGST, Igstamount = item.IGST, Sgstamount = item.SGST, Hsnsac = item.HSNSAC, OrderNo = item.SaleorderNo, AccountingIndicator = CRDRINDICATORS.Debit.ToString(), Status = "N" });
                 }
                 context.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
@@ -3143,7 +3151,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (Convert.ToString(mathdr.ClosingQty) == null)
                     mathdr.ClosingQty = 0;
 
+                if (Convert.ToString(mathdr.OpeningValue) == null)
+                    mathdr.OpeningValue = 0;
+
                 mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
+                mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) + (x.ReceivedQty));
+                if (mathdr.OpeningValue < 0)
+                    mathdr.OpeningValue = 0;
+
                 context.TblMaterialMaster.Update(mathdr);
 
             });
@@ -3924,8 +3939,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         Quotation.SaleorderNo = SaleOrderNumber;
                         context.TblSupplierQuotationsMaster.Update(Quotation);
 
-                        saleOrderMaster.OrderDate= DateTime.Now;
-                        saleOrderMaster.PODate= DateTime.Now;
+                        saleOrderMaster.OrderDate = DateTime.Now;
+                        saleOrderMaster.PODate = DateTime.Now;
                         saleOrderMaster.Gstno = Quotation.Gstno;
                     }
 
@@ -3964,11 +3979,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (material.ClosingQty == null)
                         material.ClosingQty = 0;
 
+                    if (material.OpeningValue == null)
+                        material.OpeningValue = 0;
+
                     matqty = Convert.ToInt16(material.ClosingQty);
                     if (poq == null)
                     {
                         poq = new TblPoQueue();
-                        poq.Qty = (item.QTY - (matqty + poqty));
+                        poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
@@ -3978,14 +3996,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     else
                     {
-                        poq.Qty = (item.QTY - (matqty + poqty));
+                        poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
                         if (poq.Qty > 0)
                             context.TblPoQueue.UpdateRange(poq);
                     }
+
+                    material.OpeningValue = (material.OpeningValue + item.QTY);
+                    context.TblMaterialMaster.UpdateRange(material);
                 }
+
 
                 saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID > 0).ToList();
                 saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
