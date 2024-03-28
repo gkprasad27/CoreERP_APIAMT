@@ -423,6 +423,62 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
 
+        public static DataSet VendorPaymentsReport(DateTime fromDate, DateTime toDate, string company, string Status, string BPType, string Customer)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "rpt_VendorPayments";
+            #region Parameters
+
+            DbParameter pmfDate = command.CreateParameter();
+            pmfDate.Direction = ParameterDirection.Input;
+            pmfDate.Value = String.Format("{0:MM/dd/yyyy}", fromDate);
+            pmfDate.ParameterName = "fromdate";
+
+            DbParameter pmtDate = command.CreateParameter();
+            pmtDate.Direction = ParameterDirection.Input;
+            pmtDate.Value = String.Format("{0:MM/dd/yyyy}", toDate);
+            pmtDate.ParameterName = "todate";
+
+            DbParameter companyid = command.CreateParameter();
+            companyid.Direction = ParameterDirection.Input;
+            companyid.Value = (object)company ?? DBNull.Value;
+            companyid.ParameterName = "compcode";
+
+            DbParameter statusid = command.CreateParameter();
+            statusid.Direction = ParameterDirection.Input;
+            statusid.Value = (object)Status ?? DBNull.Value;
+            statusid.ParameterName = "Status";
+
+
+            DbParameter BPTypeid = command.CreateParameter();
+            BPTypeid.Direction = ParameterDirection.Input;
+            BPTypeid.Value = (object)BPType ?? DBNull.Value;
+            BPTypeid.ParameterName = "BPType";
+
+            DbParameter Customerid = command.CreateParameter();
+            Customerid.Direction = ParameterDirection.Input;
+            Customerid.Value = (object)Customer ?? DBNull.Value;
+            Customerid.ParameterName = "Customer";
+            #endregion
+            // Add parameter as specified in the store procedure
+
+            command.Parameters.Add(pmfDate);
+            command.Parameters.Add(pmtDate);
+            command.Parameters.Add(companyid);
+            command.Parameters.Add(statusid);
+            command.Parameters.Add(BPTypeid);
+            command.Parameters.Add(Customerid);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+            //DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
+            //if (dt.Rows.Count > 0)
+            //{
+            //    return dt;
+            //}
+            //else return null;
+        }
+
         public static DataSet getDataFromDataBase(List<parametersClass> dbParametersList, string procedureName)
         {
             DataSet ds = null;
