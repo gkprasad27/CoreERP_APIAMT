@@ -1279,6 +1279,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 foreach (var item in gibDetails)
                 {
+                    var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
                     var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
                     if (GID == null)
                     {
@@ -1346,6 +1347,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             //    }
                         }
                     }
+
+
+                    materialmaster.ClosingQty = ((materialmaster.ClosingQty) - item.AllocatedQTY);
+                    repo.TblMaterialMaster.UpdateRange(materialmaster);
+
                 }
                 var result = commitmentitem.Where(x => x.Type.Equals("Production")).OrderBy(z => z.SortOrder);
 
@@ -1573,8 +1579,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 context.TblGoodsIssueDetails.UpdateRange(GID);
                         }
 
-                        materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
-                        repo.TblMaterialMaster.UpdateRange(materialmaster);
+                        //materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
+                        //repo.TblMaterialMaster.UpdateRange(materialmaster);
 
                     }
                     if (NewInspectionCheckDetails.Count > 0)
