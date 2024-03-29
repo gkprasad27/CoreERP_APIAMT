@@ -981,7 +981,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var mmasterList = _materialMasterRepository.GetAll().Where(c => c.Company.Contains(CompanyCode)).Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight, Hsnsac = x.Hsnsac });
+                    var mmasterList = _materialMasterRepository.GetAll().Where(c => c.Company.Contains(CompanyCode)).Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight, Hsnsac = x.Hsnsac, CustomerCode=x.CustomerCode, BOM=x.BOM });
                     if (mmasterList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
