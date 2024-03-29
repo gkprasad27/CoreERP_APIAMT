@@ -593,8 +593,8 @@ namespace CoreERP.Controllers
             {
                 string errorMessage = string.Empty;
 
-                var _invoiceHdr = objData["grHdr"].ToObject<TblInvoiceMaster>();
-                var _invoiceDtl = objData["grDtl"].ToObject<TblInvoiceDetail[]>();
+                var _invoiceHdr = objData["grHdr"].ToObject<TblOrderSwap>();
+                var _invoiceDtl = objData["grDtl"].ToObject<TblOrderSwapDetails[]>();
 
                 if (_invoiceHdr == null)
                 {
