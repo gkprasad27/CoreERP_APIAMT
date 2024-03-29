@@ -30,5 +30,7 @@ namespace CoreERP.Models
         public string? Editwho { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? CreatedDate { get; set; }
+        public string? Billable { get; set; }
+        public string? MainComponent { get; set; }
     }
 }
