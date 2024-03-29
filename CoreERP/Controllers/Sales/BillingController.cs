@@ -583,7 +583,52 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpPost("SwapOrder/{SaleOrder}")]
+        public IActionResult SwapOrder([FromBody] JObject objData, string SaleOrder)
+        {
 
+            if (objData == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                string errorMessage = string.Empty;
+
+                var _invoiceHdr = objData["grHdr"].ToObject<TblInvoiceMaster>();
+                var _invoiceDtl = objData["grDtl"].ToObject<TblInvoiceDetail[]>();
+
+                if (_invoiceHdr == null)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No request records found to Save" });
+                }
+
+                if (_invoiceDtl == null || _invoiceDtl.Count() == 0)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "In request no product found in to save" });
+                }
+
+                //if (string.IsNullOrEmpty(_invoiceHdr.InvoiceNo))
+                //{
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Invoice no canontbe null/empty." });
+                //}
+
+
+                var result = new InvoiceHelper().SwapOrder(_configuration, _invoiceHdr, _invoiceDtl.ToList(), SaleOrder, out errorMessage);
+                if (result)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _invoiceHdr });
+                }
+
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = "Registration failed.";
+                }
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }
 

@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 
-namespace BillBook.Library
+namespace CoreERP.Helpers
 {
     public class SMSGateway
     {

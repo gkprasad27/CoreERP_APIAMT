@@ -1,5 +1,6 @@
 ﻿using CoreERP.BussinessLogic.Common;
 using CoreERP.DataAccess;
+using CoreERP.Helpers;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using Humanizer;
@@ -3900,7 +3901,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             totalqty = (int)saleOrderDetails.Sum(a => a.QTY);
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == saleOrderMaster.ProfitCenter).FirstOrDefault();
             var Quotation = repo.TblSupplierQuotationsMaster.Where(x => x.QuotationNumber == saleOrderMaster.PONumber).FirstOrDefault();
-
+            Utils.SendEMail("krishnaprasadg81@gmail.com", "Test", "Body");
             try
             {
                 if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))

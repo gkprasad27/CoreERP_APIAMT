@@ -1070,7 +1070,148 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             InvoiceMemoHeader.ReferenceNumber = invoice.InvoiceNo;
                             InvoiceMemoHeader.ReferenceDate = invoice.InvoiceDate;
                             InvoiceMemoHeader.PartyInvoiceNo = invoice.PONumber;
-                            InvoiceMemoHeader.TotalAmount = invoice.TotalAmount;
+                            InvoiceMemoHeader.TotalAmount = invoice.GrandTotal;
+                            InvoiceMemoHeader.Status = "N";
+                            InvoiceMemoHeader.SaleOrderNo = invoice.SaleOrderNo;
+                            //}
+
+                            repo.TblInvoiceMemoHeader.AddRange(InvoiceMemoHeader);
+                            int lineitem = 0;
+                            foreach (var item in invoiceDetails)
+                            {
+                                lineitem = (lineitem + 1);
+                                InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = invoice.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "250000", Amount = item.GrossAmount, TaxCode = item.TaxStructureId, Cgstamount = item.cgstcode, Igstamount = item.Igst, Sgstamount = item.Sgst, Hsnsac = item.HsnNo, OrderNo = item.InvoiceNo, AccountingIndicator = CRDRINDICATORS.Credit.ToString(), Status = "N" });
+                            }
+                            repo.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
+                            repo.SaveChanges();
+
+                            SaleOrder.Status = message;
+                            repo.TblSaleOrderMaster.Update(SaleOrder);
+                            if (Inspection != null)
+                            {
+                                Inspection.Status = message;
+                                repo.TblInspectionCheckMaster.Update(Inspection);
+                            }
+
+                            if (customer != null)
+                            {
+                                customer.ClosingBalance = (Convert.ToInt32(customer.ClosingBalance) + (Convert.ToInt32(invoice.GrandTotal)));
+                                repo.TblBusinessPartnerAccount.Update(customer);
+                            }
+                            repo.SaveChanges();
+                            dbTransaction.Commit();
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            dbTransaction.Rollback();
+                            throw ex;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool SwapOrder(IConfiguration configuration, TblInvoiceMaster invoice, List<TblInvoiceDetail> invoiceDetails,string SaleOrderNumber, out string errorMessage)
+        {
+            try
+            {
+                errorMessage = string.Empty;
+                using var repo1 = new Repository<TblInvoiceMaster>();
+                var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo && im.Company == invoice.Company);
+                var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo && im.Company == invoice.Company);
+                var InvoiceHist = repo1.TblInvoiceDetail.Where(im => im.Saleorder == invoice.SaleOrderNo);
+                var customer = repo1.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == invoice.CustomerName);
+                var InvoiceMemoHeader = new TblInvoiceMemoHeader();
+                var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
+                using (ERPContext repo = new ERPContext())
+                {
+                    using (var dbTransaction = repo.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            int histinvqty = 0;
+                            if (histinvqty != null)
+                                histinvqty = Convert.ToInt16(InvoiceHist.Sum(x => x.Qty));
+
+                            int sqty = 0;
+                            int invqty = 0;
+                            string message = null;
+                            sqty = SaleOrder.TotalQty;
+                            invqty = (Convert.ToInt16(invoiceDetails.Sum(x => x.Qty))) + (histinvqty);
+                            if (sqty == invqty)
+                                message = "Invoice Generated";
+                            else
+                                message = "Invoice Partially Generated";
+
+                            var invoice_No = invoice.InvoiceNo;
+                            if (string.IsNullOrEmpty(invoice_No))
+                                invoice_No = GenerateInvoiceNo(out errorMessage);
+
+                            if (!string.IsNullOrEmpty(invoice_No))
+                                invoice.InvoiceNo = invoice_No;
+
+                            invoice.ServerDateTime = DateTime.Now;
+                            invoice.InvoiceQty = invoiceDetails.Count();
+                            invoice.PONumber = SaleOrder.PONumber;
+                            invoice.Status = message;
+                            repo.TblInvoiceMaster.Add(invoice);
+                            repo.SaveChanges();
+
+                            foreach (var invdtl in invoiceDetails)
+                            {
+                                //var SaleOrderDetails = new TblSaleOrderDetail();
+                                //var inspection = new TblInspectionCheckDetails();
+                                var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.MaterialCode);
+                                var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
+                                #region InvioceDetail
+                                invdtl.Qty = 1;
+                                invdtl.Status = message;
+                                invdtl.InvoiceNo = invoice.InvoiceNo;
+                                invdtl.InvoiceDate = invoice.InvoiceDate;
+                                invdtl.ServerDateTime = DateTime.Now;
+                                invdtl.UserId = invoice.UserId;
+                                repo.TblInvoiceDetail.Add(invdtl);
+
+                                inspection.Status = message;
+                                repo.TblInspectionCheckDetails.UpdateRange(inspection);
+
+                                SaleOrderDetails.Status = message;
+                                repo.TblSaleOrderDetail.UpdateRange(SaleOrderDetails);
+
+                                var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.MaterialCode);
+                                materialmaster.OpeningQty = ((materialmaster.OpeningQty) - 1);
+                                repo.TblMaterialMaster.UpdateRange(materialmaster);
+
+                                repo.SaveChanges();
+
+                                #endregion
+
+                            }
+                            TransactionsHelper transactionsHelper = new TransactionsHelper();
+                            string vouchernumber = transactionsHelper.GetVoucherNumber("IN");
+                            //foreach (var commit in result)
+                            //{
+                            //InvoiceMemoHeader.Add(new TblInvoiceMemoHeader { Company = grdata.Company, VoucherClass = "02",VoucherType="BD",VoucherDate=System.DateTime.Now,PostingDate = System.DateTime.Now,VoucherNumber= vouchernumber,TransactionType="Invoice",NatureofTransaction="Purchase",Bpcategory="200",PartyAccount= grdata.SupplierCode,AccountingIndicator= CRDRINDICATORS.Debit.ToString(), ReferenceNumber=grdata.SupplierReferenceNo,ReferenceDate=grdata.ReceivedDate,PartyInvoiceNo=grdata.SupplierReferenceNo, TotalAmount=grdata.TotalAmount, Status = "N", SaleOrderNo=grdata.SaleorderNo });
+                            InvoiceMemoHeader.Company = invoice.Company;
+                            InvoiceMemoHeader.VoucherClass = "02";
+                            InvoiceMemoHeader.VoucherType = "IN";
+                            InvoiceMemoHeader.VoucherDate = System.DateTime.Now;
+                            InvoiceMemoHeader.PostingDate = System.DateTime.Now;
+                            InvoiceMemoHeader.VoucherNumber = vouchernumber;
+                            InvoiceMemoHeader.TransactionType = "Invoice";
+                            InvoiceMemoHeader.NatureofTransaction = "Sales";
+                            InvoiceMemoHeader.Bpcategory = "100";
+                            InvoiceMemoHeader.PartyAccount = invoice.CustomerName;
+                            InvoiceMemoHeader.AccountingIndicator = CRDRINDICATORS.Credit.ToString();
+                            InvoiceMemoHeader.ReferenceNumber = invoice.InvoiceNo;
+                            InvoiceMemoHeader.ReferenceDate = invoice.InvoiceDate;
+                            InvoiceMemoHeader.PartyInvoiceNo = invoice.PONumber;
+                            InvoiceMemoHeader.TotalAmount = invoice.GrandTotal;
                             InvoiceMemoHeader.Status = "N";
                             InvoiceMemoHeader.SaleOrderNo = invoice.SaleOrderNo;
                             //}

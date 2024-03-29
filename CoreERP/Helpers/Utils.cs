@@ -13,7 +13,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 
-namespace BillBook.Library
+namespace CoreERP.Helpers
 {
     public static class Utils
     {
@@ -933,27 +933,57 @@ namespace BillBook.Library
         {
             try
             {
+                //MailMessage email = new MailMessage();
+                //email.From = new MailAddress("mmp@amtpowertransmission.com", "AMT");
+                //email.To.Add(new MailAddress(emailid, ""));
+                //email.Subject = subject;
+                //email.Body = body;
+                //email.IsBodyHtml = true;
+
+                //SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+                ////client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                //client.UseDefaultCredentials = false;
+                //// Password changed by Naidu on 20-Feb-2017
+                //client.Credentials = new System.Net.NetworkCredential("mmp@amtpowertransmission.com", "vbaamtpower@39");//password is changed 18-jan-2015
+                //client.EnableSsl = true;
+
+                ////System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate (object s,
+                ////System.Security.Cryptography.X509Certificates.X509Certificate certificate,
+                ////System.Security.Cryptography.X509Certificates.X509Chain chain,
+                ////System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                ////{
+                ////    return true;
+                ////};
+
+                //client.Send(email);
+
                 MailMessage email = new MailMessage();
-                email.From = new MailAddress("mmp@amtpowertransmission.com", "AMT");
-                email.To.Add(new MailAddress(emailid, ""));
+                email.From = new MailAddress("krishnaprasadg81@gmail.com", "AMT");
+                email.To.Add(new MailAddress(emailid));
+
+                //email.Bcc.Add(new MailAddress("mail id", "Email display"));
+
+
                 email.Subject = subject;
+
                 email.Body = body;
                 email.IsBodyHtml = true;
 
-                SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
-                //client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                SmtpClient client = new SmtpClient("smtpout.secureserver.net", 587);
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.UseDefaultCredentials = false;
-                // Password changed by Naidu on 20-Feb-2017
-                client.Credentials = new System.Net.NetworkCredential("mmp@amtpowertransmission.com", "vbaamtpower@39");//password is changed 18-jan-2015
-                client.EnableSsl = true;
 
-                //System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate (object s,
-                //System.Security.Cryptography.X509Certificates.X509Certificate certificate,
-                //System.Security.Cryptography.X509Certificates.X509Chain chain,
-                //System.Net.Security.SslPolicyErrors sslPolicyErrors)
-                //{
-                //    return true;
-                //};
+                client.Credentials = new System.Net.NetworkCredential("krishnaprasadg81@gmail.com", "youfool2");
+                client.EnableSsl = true;
+                client.Timeout = 20000;
+
+                System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate (object s,
+                System.Security.Cryptography.X509Certificates.X509Certificate certificate,
+                System.Security.Cryptography.X509Certificates.X509Chain chain,
+                System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                {
+                    return true;
+                };
 
                 client.Send(email);
             }

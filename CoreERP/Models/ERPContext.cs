@@ -171,6 +171,8 @@ namespace CoreERP.Models
         public virtual DbSet<TblOrderType> TblOrderType { get; set; }
         public virtual DbSet<TblPartyCashBankMaster> TblPartyCashBankMaster { get; set; }
         public virtual DbSet<TblParyCashBankDetails> TblParyCashBankDetails { get; set; }
+        public virtual DbSet<TblOrderSwap> TblOrderSwap { get; set; }
+        public virtual DbSet<TblOrderSwapDetails> TblOrderSwapDetails { get; set; }
         public virtual DbSet<TblPaymentTermDetails> TblPaymentTermDetails { get; set; }
         public virtual DbSet<TblPaymentTerms> TblPaymentTerms { get; set; }
         public virtual DbSet<TblPermissions> TblPermissions { get; set; }

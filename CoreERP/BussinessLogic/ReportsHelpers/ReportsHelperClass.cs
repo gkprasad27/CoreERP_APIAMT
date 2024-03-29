@@ -99,7 +99,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
 
             DbParameter Materialid = command.CreateParameter();
             Materialid.Direction = ParameterDirection.Input;
-            Materialid.Value = (object)CustomerCode ?? DBNull.Value;
+            Materialid.Value = (object)MaterialCode ?? DBNull.Value;
             Materialid.ParameterName = "MaterialCode";
             #endregion
             // Add parameter as specified in the store procedure
@@ -207,7 +207,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
 
             DbParameter Materialid = command.CreateParameter();
             Materialid.Direction = ParameterDirection.Input;
-            Materialid.Value = (object)CustomerCode ?? DBNull.Value;
+            Materialid.Value = (object)MaterialCode ?? DBNull.Value;
             Materialid.ParameterName = "MaterialCode";
             #endregion
             // Add parameter as specified in the store procedure
