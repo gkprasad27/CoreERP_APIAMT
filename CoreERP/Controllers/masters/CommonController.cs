@@ -1,4 +1,5 @@
-﻿using CoreERP.BussinessLogic.masterHlepers;
+﻿using CoreERP.BussinessLogic.GenerlLedger;
+using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -289,6 +290,21 @@ namespace CoreERP.Controllers
             return result;
         }
 
+        [HttpGet("GetBomDetail/{bomNumber}")]
+        public IActionResult GetBomDetail(string bomNumber)
+        {
+            try
+            {
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.bomDetail = new TransactionsHelper().GetlBomDetails(bomNumber);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
         [HttpGet("GetBOMList")]
         public async Task<IActionResult> GetBOMList()
@@ -298,7 +314,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BOMList = _bommasterRepository.Where(x => x.Status != "Completed").Select(x => new { saleOrderNo = x.Bomnumber });
+                    expando.BOMList = _bommasterRepository.GetAll().Select(x => new { Bomnumber = x.Bomnumber, BomName = x.Description, Material = x.Material});
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
