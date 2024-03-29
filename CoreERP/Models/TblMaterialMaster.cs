@@ -50,5 +50,6 @@ namespace CoreERP.Models
         public string? DragRevNo { get; set; }
         public string? FileUpload { get; set; }
         public string? CustomerCode { get; set; }
+        public string? BOM { get; set; }
     }
 }
