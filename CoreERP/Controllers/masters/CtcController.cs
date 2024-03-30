@@ -137,26 +137,50 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPut("UpdatectcTypes")]
-        public IActionResult UpdatectcTypes([FromBody] Ctcbreakup ctcComponent)
+        public async Task<IActionResult> UpdatectcTypes([FromBody] JObject obj)
         {
-            if (ctcComponent == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(ctcComponent)} cannot be null" });
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-            try
-            {
-                APIResponse apiResponse;
-                _ctcRepository.Update(ctcComponent);
-                if (_ctcRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = ctcComponent };
-                else
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-               
-                return Ok(apiResponse);
-            }
-            catch (Exception ex)
-            {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            }
+                    var structure = obj["structure"].ToObject<Ctcbreakup>();
+                    var components = obj["components"].ToObject<List<Ctcbreakup>>();
+                    ///var username = User.Identities.ToList();
+
+                    if (!new CTCHelper().Update(structure, components))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.invoi = structure;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+            //if (ctcComponent == null)
+            //    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(ctcComponent)} cannot be null" });
+
+            //try
+            //{
+            //    APIResponse apiResponse;
+            //    _ctcRepository.Update(ctcComponent);
+            //    if (_ctcRepository.SaveChanges() > 0)
+            //        apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = ctcComponent };
+            //    else
+            //        apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
+
+            //    return Ok(apiResponse);
+            //}
+            //catch (Exception ex)
+            //{
+            //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            //}
         }
 
         [HttpDelete("DeletectcTypes/{code}")]

@@ -98,18 +98,48 @@ namespace CoreERP.BussinessLogic.Payroll
             }
         }
 
-        public static Ctcbreakup Update(Ctcbreakup ctcBreakup)
+        public bool Update(Ctcbreakup structure, List<Ctcbreakup> components)
         {
-            try
             {
-                //using Repository<Ctcbreakup> repo = new Repository<Ctcbreakup>();
-                //repo.Ctcbreakup.Update(ctcBreakup);
-                //if (repo.SaveChanges() > 0)
-                //    return ctcBreakup;
+                using var repo = new Repository<Ctcbreakup>();
+                using var context = new ERPContext();
 
-                return null;
+                try
+                {
+                    if (structure.Id > 0)
+                    {
+                        components.ForEach(x =>
+                        {
+                            x.EffectFrom = structure.EffectFrom;
+                            x.EmpCode = structure.EmpCode;
+                            x.Active = "Y";
+                            x.Ctc = structure.Ctc;
+                            x.StructureName = structure.StructureName;
+                        });
+                        context.Ctcbreakup.UpdateRange(components);
+                        context.SaveChanges();
+
+
+                        
+                    }
+                    return true;
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                //try
+                //{
+                //    //using Repository<Ctcbreakup> repo = new Repository<Ctcbreakup>();
+                //    //repo.Ctcbreakup.Update(ctcBreakup);
+                //    //if (repo.SaveChanges() > 0)
+                //    //    return ctcBreakup;
+
+                //    return null;
+                //}
+                //catch { throw; }
             }
-            catch { throw; }
         }
 
 
