@@ -1279,31 +1279,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 foreach (var item in gibDetails)
                 {
+                    var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
                     var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
-                    var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
-                    if (GID == null)
+
+                    if (sodata != null && sodata.MainComponent == "Y")
                     {
-                        int qty = item.AllocatedQTY ?? 0;
-                        if (qty > 0)
+                        var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
+                        if (GID == null)
                         {
-                            for (var i = 0; i < qty; i++)
-                            {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate });
-                                tagnum = tagnum + 1;
-                            }
-                        }
-                        int receivedqty = 0;
-                        if (item.AllocatedQTY > 0)
-                        {
-                            receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
-                            item.AllocatedQTY = (item.AllocatedQTY) + (receivedqty);
-                        }
-                    }
-                    else
-                    {
-                        if (GID.Qty != GID.AllocatedQTY)
-                        {
-                            // int qty = (item.AllocatedQTY ?? 0)-(receivedqty);
                             int qty = item.AllocatedQTY ?? 0;
                             if (qty > 0)
                             {
@@ -1319,35 +1302,31 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
                                 item.AllocatedQTY = (item.AllocatedQTY) + (receivedqty);
                             }
-                            //    if (repogidetail.TblGoodsIssueDetails.Any(z => z.SaleOrderNumber == gimaster.SaleOrderNumber && z.MaterialCode==item.MaterialCode))
-                            //    {
-                            //        int alloqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
+                        }
+                        else
+                        {
+                            if (GID.Qty != GID.AllocatedQTY)
+                            {
+                                // int qty = (item.AllocatedQTY ?? 0)-(receivedqty);
+                                int qty = item.AllocatedQTY ?? 0;
+                                if (qty > 0)
+                                {
+                                    for (var i = 0; i < qty; i++)
+                                    {
+                                        ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate });
+                                        tagnum = tagnum + 1;
+                                    }
+                                }
+                                int receivedqty = 0;
+                                if (item.AllocatedQTY > 0)
+                                {
+                                    receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
+                                    item.AllocatedQTY = (item.AllocatedQTY) + (receivedqty);
+                                }
 
-                            //            int qty = item.AllocatedQTY ?? 0;
-                            //        if (qty > 0)
-                            //        {
-                            //            for (var i = 0; i < qty; i++)
-                            //            {
-                            //                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released", MaterialCode = item.MaterialCode });
-                            //                tagnum = tagnum + 1;
-                            //            }
-                            //        }
-                            //    }
-                            //    else
-                            //    {
-                            //        int qty = item.AllocatedQTY ?? 0;
-                            //        if (qty > 0)
-                            //        {
-                            //            for (var i = 0; i < qty; i++)
-                            //            {
-                            //                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = "Production Released", MaterialCode = item.MaterialCode });
-                            //                tagnum = tagnum + 1;
-                            //            }
-                            //        }
-                            //    }
+                            }
                         }
                     }
-
 
                     materialmaster.ClosingQty = ((materialmaster.ClosingQty) - item.AllocatedQTY);
                     repo.TblMaterialMaster.UpdateRange(materialmaster);
@@ -1690,7 +1669,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             string masternumber = string.Empty;
             using var repo = new Repository<Counters>();
-            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "BOM" && x.CompCode == bomMaster.Company);
+            //var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "BOM" && x.CompCode == bomMaster.Company);
             using var dbtrans = context.Database.BeginTransaction();
             List<TblBomDetails> prDetailsNew;
             List<TblBomDetails> prDetailsExist;
@@ -1705,17 +1684,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
             else
             {
-                if (Pcenter != null)
-                {
-                    Pcenter.LastNumber = (Pcenter.LastNumber + 1);
-                    context.Counters.UpdateRange(Pcenter);
-                    context.SaveChanges();
-                    masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
-                }
+                //if (Pcenter != null)
+                //{
+                //    Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                //    context.Counters.UpdateRange(Pcenter);
+                //    context.SaveChanges();
+                //    masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                //}
 
                 //bomMaster.Status = "Created";
                 bomMaster.CreatedDate = DateTime.Now;
-                bomMaster.Bomnumber = masternumber;
+                //bomMaster.Bomnumber = masternumber;
                 if (masternumber.Length > 1)
                     context.TbBommaster.Add(bomMaster);
                 else
@@ -3907,7 +3886,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             totalqty = (int)saleOrderDetails.Sum(a => a.QTY);
             var Pcenter = repo.ProfitCenters.Where(x => x.Code == saleOrderMaster.ProfitCenter).FirstOrDefault();
             var Quotation = repo.TblSupplierQuotationsMaster.Where(x => x.QuotationNumber == saleOrderMaster.PONumber).FirstOrDefault();
-            Utils.SendEMail("krishnaprasadg81@gmail.com", "Test", "Body");
+           // Utils.SendEMail("sales@amtpowertransmission.com", "Test", "Body");
             try
             {
                 if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))

@@ -958,8 +958,8 @@ namespace CoreERP.Helpers
                 //client.Send(email);
 
                 MailMessage email = new MailMessage();
-                email.From = new MailAddress("krishnaprasadg81@gmail.com", "AMT");
-                email.To.Add(new MailAddress(emailid));
+                email.From = new MailAddress("sales@amtpowertransmission.com", "AMT");
+                email.To.Add(new MailAddress("krishnaprasadg81@gmail.com"));
 
                 //email.Bcc.Add(new MailAddress("mail id", "Email display"));
 
@@ -973,7 +973,7 @@ namespace CoreERP.Helpers
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.UseDefaultCredentials = false;
 
-                client.Credentials = new System.Net.NetworkCredential("krishnaprasadg81@gmail.com", "youfool2");
+                client.Credentials = new System.Net.NetworkCredential("sales@amtpowertransmission.com", "SALES@2020AMT");
                 client.EnableSsl = true;
                 client.Timeout = 20000;
 

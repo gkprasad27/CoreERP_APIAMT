@@ -34,6 +34,8 @@ namespace CoreERP.Models
         public int? POQty { get; set; }
         public string? Status { get; set; }
         public string? HSNSAC { get; set; }
+        public string? Billable { get; set; }
+        public string? MainComponent { get; set; }
 
     }
 }
