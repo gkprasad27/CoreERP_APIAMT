@@ -9,6 +9,8 @@ namespace CoreERP.Models
         public string? Description { get; set; }
         public string? Class { get; set; }
         public string? Usage { get; set; }
-        public int? Ext1 { get; set; }
+        public string? Ext1 { get; set; }
+        public string? MaterialGroup { get; set; }
+        
     }
 }
