@@ -1698,7 +1698,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (repo.TbBommaster.Any(v => v.Bomnumber == bomMaster.Bomnumber))
             {
                 int lineno = 1;
-                bomMaster.Status = "Created";
+                //bomMaster.Status = "Created";
                 bomMaster.CreatedDate = System.DateTime.Now;
                 context.TbBommaster.Update(bomMaster);
                 context.SaveChanges();
@@ -1713,7 +1713,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                 }
 
-                bomMaster.Status = "Created";
+                //bomMaster.Status = "Created";
                 bomMaster.CreatedDate = DateTime.Now;
                 bomMaster.Bomnumber = masternumber;
                 if (masternumber.Length > 1)
