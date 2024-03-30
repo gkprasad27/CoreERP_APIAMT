@@ -5,11 +5,11 @@ using CoreERP.BussinessLogic.Payroll;
 
 namespace CoreERP.Controllers.Payroll
 {
-    [Route("api/Payroll/SalaryProcess")]
+    [Route("api/Ledger")]
     [ApiController]
     public class SalaryProcessController : Controller
     {
-        [HttpGet("SalaryProcess")]
+        [HttpPost("SalaryProcess")]
         public IActionResult SalaryProcess(string Year, string Month, string CompanyCode, string EmpCode, string Status)
         {
             try
