@@ -16,6 +16,10 @@ using CoreERP.Models;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using NuGet.Packaging.Signing;
+using System.Xml.Linq;
+using CoreERP.Models;
+using CoreERP.Helpers.SharedModels;
+using CoreERP.BussinessLogic.GenerlLedger;
 
 namespace CoreERP.BussinessLogic.SalesHelper
 {
@@ -247,6 +251,16 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             // searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
                             // searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
                         }
+
+                        var customer = repo.TblBusinessPartnerAccount.ToList();
+
+                        repo.TblInvoiceMaster.ToList()
+                            .ForEach(c =>
+                            {
+                                c.CustName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerName).Name;
+
+                            });
+
                         _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()
                           .Where(inv =>
                                      DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
@@ -263,7 +277,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                     // && inv.InvoiceNo == (searchCriteria.InvoiceNo ?? inv.InvoiceNo)
 
-                    return _invoiceMasterList.OrderByDescending(x => x.InvoiceDate).ToList();
+                    return _invoiceMasterList.OrderBy(x => x.InvoiceMasterId).ToList();
                 }
             }
             catch (Exception ex)
@@ -818,12 +832,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                //using (Repository<TblInvoiceMaster> repo = new Repository<TblInvoiceMaster>())
-                //{
-                //    return repo.TblInvoiceMaster.Where(x => x.InvoiceNo == invoiceNo);
-                //}
+                using var repo = new Repository<TblBusinessPartnerAccount>();
+                var customer = repo.TblBusinessPartnerAccount.ToList();
 
-                using var repo = new Repository<TblInvoiceMaster>();
                 var invoice = repo.TblInvoiceMaster.FirstOrDefault(x => x.InvoiceNo == invoiceNo);
 
                 var saleorder = repo.TblSaleOrderMaster.FirstOrDefault(d => d.SaleOrderNo == invoice.SaleOrderNo);
@@ -834,10 +845,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         c.poNo = saleorder.PONumber;
                         c.poDate = saleorder.PODate;
                         c.dateOfSupply = saleorder.DateofSupply;
-
+                        c.CustName = customer.FirstOrDefault(z => z.Bpnumber == c.CustomerName)?.Name;
                     });
-
-                // return repo.TblInvoiceDetail.Where(x => x.InvoiceNo == invoiceNo).ToList();
 
                 return repo.TblInvoiceMaster
                     .FirstOrDefault(x => x.InvoiceNo == invoiceNo);
@@ -849,14 +858,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
-        public IEnumerable<TblInvoiceMaster> GetInvoiceList()
+        public IEnumerable<TblInvoiceMaster> GetInvoiceList(string companycode)
         {
             try
             {
 
 
                 using var repo = new Repository<TblInvoiceMaster>();
-                return repo.TblInvoiceMaster.ToList().Where(x => x.Status != "Dispatched");
+                return repo.TblInvoiceMaster.ToList().Where(x => x.Status != "Dispatched" && x.Company == companycode);
 
 
 
@@ -871,12 +880,17 @@ namespace CoreERP.BussinessLogic.SalesHelper
         {
             try
             {
-                //using (Repository<TblInvoiceMaster> repo = new Repository<TblInvoiceMaster>())
-                //{
-                //    return repo.TblInvoiceMaster.Where(x => x.InvoiceNo == invoiceNo);
-                //}
+                using var repo = new Repository<TblBusinessPartnerAccount>();
+                var customer = repo.TblBusinessPartnerAccount.ToList();
 
-                using var repo = new Repository<TblInvoiceMaster>();
+                repo.TblInvoiceMaster.ToList()
+                    .ForEach(c =>
+                    {
+
+                        c.CustName = customer.FirstOrDefault(z => z.Bpnumber == c.CustomerName)?.Name;
+
+                    });
+
                 return repo.TblInvoiceMaster
                     .FirstOrDefault(x => x.SaleOrderNo == saleorder && x.Status.Contains("Dispatched"));
 
@@ -966,38 +980,34 @@ namespace CoreERP.BussinessLogic.SalesHelper
             try
             {
                 errorMessage = string.Empty;
-                decimal? _qty = null;
-                TblUserNew userNew = null;
-                TblAccountLedger _accountLedger = null;
-                invoice.IsSalesReturned = false;
-                invoice.IsManualEntry = false;
-                var invProduct = "";
-                decimal _invRate = 0;
-                decimal _invQty = 0;
-                decimal _invAmount = 0;
-                string _invUnitName = "";
                 using var repo1 = new Repository<TblInvoiceMaster>();
-                var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo);
-                var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo);
-               // var goodsissue = repo1.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
-               // var Production = repo1.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == invoice.SaleOrderNo);
+                var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo && im.Company == invoice.Company);
+                var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo && im.Company == invoice.Company);
+                var InvoiceHist = repo1.TblInvoiceDetail.Where(im => im.Saleorder == invoice.SaleOrderNo);
+                var customer = repo1.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == invoice.CustomerName);
+                var InvoiceMemoHeader = new TblInvoiceMemoHeader();
+                var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
                 using (ERPContext repo = new ERPContext())
                 {
                     using (var dbTransaction = repo.Database.BeginTransaction())
                     {
                         try
                         {
+                            int histinvqty = 0;
+                            if (histinvqty != null)
+                                histinvqty = Convert.ToInt16(InvoiceHist.Sum(x => x.Qty));
+
                             int sqty = 0;
                             int invqty = 0;
                             string message = null;
                             sqty = SaleOrder.TotalQty;
-                            invqty = Convert.ToInt16(invoiceDetails.Sum(x => x.Qty));
+                            invqty = (Convert.ToInt16(invoiceDetails.Sum(x => x.Qty))) + (histinvqty);
                             if (sqty == invqty)
                                 message = "Invoice Generated";
                             else
                                 message = "Invoice Partially Generated";
 
-                            var invoice_No = GenerateInvoiceNo(out errorMessage);
+                            var invoice_No = invoice.InvoiceNo;
                             if (string.IsNullOrEmpty(invoice_No))
                                 invoice_No = GenerateInvoiceNo(out errorMessage);
 
@@ -1005,8 +1015,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 invoice.InvoiceNo = invoice_No;
 
                             invoice.ServerDateTime = DateTime.Now;
-                            invoice.IsSalesReturned = false;
-                            invoice.InvoiceQty = invoiceDetails.Count(); //invoiceDetails.Sum(x => x.Qty);
+                            invoice.InvoiceQty = invoiceDetails.Count();
                             invoice.PONumber = SaleOrder.PONumber;
                             invoice.Status = message;
                             repo.TblInvoiceMaster.Add(invoice);
@@ -1014,7 +1023,9 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                             foreach (var invdtl in invoiceDetails)
                             {
-                                var SaleOrderDetails = repo1.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode== invdtl.MaterialCode);
+                                //var SaleOrderDetails = new TblSaleOrderDetail();
+                                //var inspection = new TblInspectionCheckDetails();
+                                var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.MaterialCode);
                                 var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
                                 #region InvioceDetail
                                 invdtl.Qty = 1;
@@ -1032,7 +1043,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 repo.TblSaleOrderDetail.UpdateRange(SaleOrderDetails);
 
                                 var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.MaterialCode);
-                                materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
+                                materialmaster.OpeningQty = ((materialmaster.OpeningQty) - 1);
                                 repo.TblMaterialMaster.UpdateRange(materialmaster);
 
                                 repo.SaveChanges();
@@ -1040,7 +1051,39 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 #endregion
 
                             }
-                            
+                            TransactionsHelper transactionsHelper = new TransactionsHelper();
+                            string vouchernumber = transactionsHelper.GetVoucherNumber("IN");
+                            //foreach (var commit in result)
+                            //{
+                            //InvoiceMemoHeader.Add(new TblInvoiceMemoHeader { Company = grdata.Company, VoucherClass = "02",VoucherType="BD",VoucherDate=System.DateTime.Now,PostingDate = System.DateTime.Now,VoucherNumber= vouchernumber,TransactionType="Invoice",NatureofTransaction="Purchase",Bpcategory="200",PartyAccount= grdata.SupplierCode,AccountingIndicator= CRDRINDICATORS.Debit.ToString(), ReferenceNumber=grdata.SupplierReferenceNo,ReferenceDate=grdata.ReceivedDate,PartyInvoiceNo=grdata.SupplierReferenceNo, TotalAmount=grdata.TotalAmount, Status = "N", SaleOrderNo=grdata.SaleorderNo });
+                            InvoiceMemoHeader.Company = invoice.Company;
+                            InvoiceMemoHeader.VoucherClass = "02";
+                            InvoiceMemoHeader.VoucherType = "IN";
+                            InvoiceMemoHeader.VoucherDate = System.DateTime.Now;
+                            InvoiceMemoHeader.PostingDate = System.DateTime.Now;
+                            InvoiceMemoHeader.VoucherNumber = vouchernumber;
+                            InvoiceMemoHeader.TransactionType = "Invoice";
+                            InvoiceMemoHeader.NatureofTransaction = "Sales";
+                            InvoiceMemoHeader.Bpcategory = "100";
+                            InvoiceMemoHeader.PartyAccount = invoice.CustomerName;
+                            InvoiceMemoHeader.AccountingIndicator = CRDRINDICATORS.Credit.ToString();
+                            InvoiceMemoHeader.ReferenceNumber = invoice.InvoiceNo;
+                            InvoiceMemoHeader.ReferenceDate = invoice.InvoiceDate;
+                            InvoiceMemoHeader.PartyInvoiceNo = invoice.PONumber;
+                            InvoiceMemoHeader.TotalAmount = invoice.GrandTotal;
+                            InvoiceMemoHeader.Status = "N";
+                            InvoiceMemoHeader.SaleOrderNo = invoice.SaleOrderNo;
+                            //}
+
+                            repo.TblInvoiceMemoHeader.AddRange(InvoiceMemoHeader);
+                            int lineitem = 0;
+                            foreach (var item in invoiceDetails)
+                            {
+                                lineitem = (lineitem + 1);
+                                InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = invoice.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "250000", Amount = item.GrossAmount, TaxCode = item.TaxStructureId, Cgstamount = item.cgstcode, Igstamount = item.Igst, Sgstamount = item.Sgst, Hsnsac = item.HsnNo, OrderNo = item.InvoiceNo, AccountingIndicator = CRDRINDICATORS.Credit.ToString(), Status = "N" });
+                            }
+                            repo.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
+                            repo.SaveChanges();
 
                             SaleOrder.Status = message;
                             repo.TblSaleOrderMaster.Update(SaleOrder);
@@ -1049,22 +1092,108 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 Inspection.Status = message;
                                 repo.TblInspectionCheckMaster.Update(Inspection);
                             }
-                            //if (goodsreceipt != null)
-                            //{
-                            //    goodsreceipt.Status = message;
-                            //    repo.TblGoodsReceiptMaster.Update(goodsreceipt);
-                            //}
-                            //if (goodsissue != null)
-                            //{
-                            //    goodsissue.Status = message;
-                            //    repo.TblGoodsIssueMaster.Update(goodsissue);
-                            //}
-                            //if (Production != null)
-                            //{
-                            //    Production.Status = message;
-                            //    repo.TblProductionMaster.Update(Production);
-                            //}
 
+                            if (customer != null)
+                            {
+                                customer.ClosingBalance = (Convert.ToInt32(customer.ClosingBalance) + (Convert.ToInt32(invoice.GrandTotal)));
+                                repo.TblBusinessPartnerAccount.Update(customer);
+                            }
+                            repo.SaveChanges();
+                            dbTransaction.Commit();
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            dbTransaction.Rollback();
+                            throw ex;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool SwapOrder(IConfiguration configuration, TblOrderSwap invoice, List<TblOrderSwapDetails> invoiceDetails, string SaleOrderNumber, out string errorMessage)
+        {
+            try
+            {
+                errorMessage = string.Empty;
+                using var repo1 = new Repository<TblInvoiceMaster>();
+                var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.ToSaleOrder && im.Company == invoice.Company);
+                var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.FromSaleOrder && im.Company == invoice.Company);
+                var tblProduction = new TblProductionMaster();
+                var customer = repo1.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == SaleOrder.CustomerCode);
+                var GoodsIssue = repo1.TblGoodsIssueMaster.FirstOrDefault(x => x.SaleOrderNumber == invoice.FromSaleOrder);
+                var InvoiceMemoHeader = new TblInvoiceMemoHeader();
+                var GoodsIssueDetails = new List<TblGoodsIssueDetails>();
+                var GoodsIssueD = new TblGoodsIssueDetails();
+                var ProductionD = new TblProductionDetails();
+                var ProductionDetails = new List<TblProductionDetails>();
+                var ProductionStatus = new List<TblProductionStatus>();
+                var ProductionS = new TblProductionStatus();
+                using (ERPContext repo = new ERPContext())
+                {
+                    using (var dbTransaction = repo.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            TblGoodsIssueMaster GoodsIssueMaster = new TblGoodsIssueMaster();
+                            GoodsIssueMaster.Company = GoodsIssue.Company;
+                            GoodsIssueMaster.ProfitCenter = GoodsIssue.ProfitCenter;
+                            GoodsIssueMaster.StoresPerson = GoodsIssue.StoresPerson;
+                            GoodsIssueMaster.Department = GoodsIssue.Department;
+                            GoodsIssueMaster.SaleOrderNumber = invoice.ToSaleOrder;
+                            GoodsIssueMaster.ProductionPerson = GoodsIssue.ProductionPerson;
+                            GoodsIssueMaster.Status = GoodsIssue.Status;
+                            GoodsIssueMaster.SaleOrder = GoodsIssue.SaleOrder;
+                            GoodsIssueMaster.CustomerCode = SaleOrder.CustomerCode;
+                            repo.TblGoodsIssueMaster.Add(GoodsIssueMaster);
+                           
+
+                            tblProduction.Company = GoodsIssue.Company;
+                            tblProduction.SaleOrderNumber = invoice.ToSaleOrder;
+                            tblProduction.Status = GoodsIssue.Status; ;
+                            tblProduction.ProfitCenter = GoodsIssue.ProfitCenter;
+                            tblProduction.CustomerCode = SaleOrder.CustomerCode;
+                            repo.TblProductionMaster.Add(tblProduction);
+                            repo.SaveChanges();
+
+                            foreach (var item in invoiceDetails)
+                            {
+                                GoodsIssueDetails.Add(new TblGoodsIssueDetails {Qty = item.Qty, AllocatedQTY = item.AllocatedQty, MaterialCode = item.MaterialCode, SaleOrderNumber = invoice.ToSaleOrder, Status = GoodsIssue.Status });
+                                GoodsIssueD = repo1.TblGoodsIssueDetails.FirstOrDefault(x => x.SaleOrderNumber == invoice.FromSaleOrder && x.MaterialCode == item.MaterialCode);
+                                GoodsIssueD.AllocatedQTY = (Convert.ToInt32(GoodsIssueD.AllocatedQTY) - (Convert.ToInt32(item.AllocatedQty)));
+                                GoodsIssueD.Qty = (Convert.ToInt32(GoodsIssueD.Qty) - (Convert.ToInt32(item.Qty)));
+                            }
+                            repo.TblGoodsIssueDetails.AddRange(GoodsIssueDetails);
+                           // repo.SaveChanges();
+
+                            repo.TblGoodsIssueDetails.UpdateRange(GoodsIssueD);
+                           // repo.SaveChanges();
+
+                            foreach (var invdtl in invoiceDetails)
+                            {
+                                ProductionD = repo1.TblProductionDetails.FirstOrDefault(x => x.SaleOrderNumber == invoice.FromSaleOrder && x.MaterialCode == invdtl.MaterialCode && x.ProductionTag==invdtl.ProductionTag);
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = invoice.FromSaleOrder, ProductionTag = ProductionD.ProductionTag, Status = ProductionD.Status, MaterialCode = ProductionD.MaterialCode, ProductionPlanDate = ProductionD.ProductionPlanDate, ProductionTargetDate = ProductionD.ProductionTargetDate });
+                                repo.TblProductionDetails.AddRange(ProductionDetails);
+
+                                repo.TblProductionDetails.Remove(ProductionD);
+                               // repo.SaveChanges();
+
+                            }
+                            foreach (var commit in invoiceDetails)
+                            {
+                                ProductionS = repo1.TblProductionStatus.FirstOrDefault(x => x.SaleOrderNumber == invoice.FromSaleOrder && x.MaterialCode == commit.MaterialCode && x.ProductionTag == commit.ProductionTag);
+                                ProductionStatus.Add(new TblProductionStatus { SaleOrderNumber = ProductionS.SaleOrderNumber, ProductionTag = ProductionS.ProductionTag, Status = ProductionS.Status, WorkStatus = ProductionS.Status, MaterialCode = ProductionS.MaterialCode, TypeofWork = ProductionS.TypeofWork });
+                                repo.TblProductionStatus.AddRange(ProductionStatus);
+
+                                repo.TblProductionStatus.Remove(ProductionS);
+                            }
+
+                            repo.SaveChanges();
                             dbTransaction.Commit();
                             return true;
                         }

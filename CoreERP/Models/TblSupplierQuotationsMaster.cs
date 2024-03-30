@@ -40,5 +40,7 @@ namespace CoreERP.Models
         public string? RecomendedBy { get; set; }
         public string? ApprovedBy { get; set; }
         public string? Material { get; set; }
+        public string? SaleorderNo { get; set; }
+        
     }
 }

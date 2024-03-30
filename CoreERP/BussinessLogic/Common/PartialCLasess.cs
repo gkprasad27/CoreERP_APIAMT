@@ -11,6 +11,7 @@ namespace CoreERP.Models
         public string CurrName { get; set; }
 
     }
+    
     partial class TblCAPA
     {
         [NotMapped]
@@ -18,7 +19,40 @@ namespace CoreERP.Models
        
 
     }
+    partial class TblPartyCashBankMaster
+    {
+        [NotMapped]
+        public string CustomerName { get; set; }
 
+        [NotMapped]
+        public string CompName { get; set; }
+        [NotMapped]
+        public string AccName { get; set; }
+
+
+    }
+    partial class TblInvoiceMemoHeader
+    {
+        [NotMapped]
+        public string CustomerName { get; set; }
+
+        [NotMapped]
+        public string CompName { get; set; }
+        [NotMapped]
+        public string AccName { get; set; }
+        [NotMapped]
+        public string VoucherName { get; set; }
+
+    }
+    
+    partial class TblGoodsIssueMaster
+    {
+        [NotMapped]
+        public string CustomerName { get; set; }
+
+
+    }
+    
     partial class tblJobworkMaster
     {
         [NotMapped]
@@ -79,6 +113,8 @@ namespace CoreERP.Models
         public string CompanyName { get; set; }
         [NotMapped]
         public string ProfitcenterName { get; set; }
+        [NotMapped]
+        public string CustomerName { get; set; }
     }
     public partial class tblQCResults
     {
@@ -222,6 +258,10 @@ namespace CoreERP.Models
         public DateTime? poDate { get; set; }
         [NotMapped]
         public DateTime? dateOfSupply { get; set; }
+        [NotMapped]
+        public string CustName { get; set; }
+
+        
 
     }
     partial class TblGrnassignment

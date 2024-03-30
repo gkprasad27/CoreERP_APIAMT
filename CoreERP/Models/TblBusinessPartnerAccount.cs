@@ -49,5 +49,6 @@ namespace CoreERP.Models
         public string? ShiptoCity { get; set; }
         public string? ShiptoZip { get; set; }
         public string? ShiptoPhone { get; set; }
+        public decimal? ClosingBalance { get; set; }
     }
 }

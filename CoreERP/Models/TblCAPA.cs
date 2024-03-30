@@ -52,7 +52,9 @@ namespace CoreERP.Models
         public string? SaleOrderNo { get; set; }
         public string? Status { get; set; }
         public string? CustmerPO { get; set; }
-        public string? CustomerCode { get; set; }
+        public string? custoMer { get; set; }
+        public string? QCRefNo { get; set; }
+        public string? InvoiceNumber { get; set; }
 
     }
 }

@@ -19,5 +19,6 @@ namespace CoreERP.Models
         public string? Ext1 { get; set; }
         public string? Ext2 { get; set; }
         public int? LastNumber { get; set; }
+        public string? CompCode { get; set; }
     }
 }

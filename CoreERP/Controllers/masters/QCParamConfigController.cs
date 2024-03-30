@@ -154,16 +154,16 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpDelete("DeleteQCParam/{code}")]
-        public IActionResult DeleteQCParam(int code)
+        [HttpDelete("DeleteQCParam/{id}")]
+        public IActionResult DeleteQCParam(int id)
         {
             try
             {
-                if (code ==0)
+                if (id == 0)
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _qcparamRepository.GetSingleOrDefault(x => x.ID.Equals(code));
+                var record = _qcparamRepository.GetSingleOrDefault(x => x.ID.Equals(id));
                 _qcparamRepository.Remove(record);
                 if (_qcparamRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };

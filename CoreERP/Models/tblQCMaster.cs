@@ -20,5 +20,7 @@ namespace CoreERP.Models
         public string? InspectionType { get; set; }
         public string? HeatNumber { get; set; }
         public string? PartDrgNo { get; set; }
+
+        public string? Product { get; set; }
     }
 }

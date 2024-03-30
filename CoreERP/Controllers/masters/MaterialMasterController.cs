@@ -120,12 +120,12 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetMaterialMasterList")]
-        public IActionResult GetMaterialMasterList()
+        [HttpGet("GetMaterialMasterList/{CompanyCode}")]
+        public IActionResult GetMaterialMasterList(string CompanyCode)
         {
             try
             {
-                var mmasterList = CommonHelper.GetMaterialMaster();
+                var mmasterList = CommonHelper.GetMaterialMaster().Where(c => c.Company.Contains(CompanyCode));
                 if (mmasterList.Any())
                 {
                     dynamic expdoObj = new ExpandoObject();

@@ -429,8 +429,8 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetInvoiceData")]
-        public async Task<IActionResult> GetInvoiceData()
+        [HttpGet("GetInvoiceData/{companycode}")]
+        public async Task<IActionResult> GetInvoiceData(string companycode)
         {
 
             //if (searchCriteria == null)
@@ -440,7 +440,7 @@ namespace CoreERP.Controllers
 
                 try
                 {
-                    var invoiceMasterList = new InvoiceHelper().GetInvoiceList();
+                    var invoiceMasterList = new InvoiceHelper().GetInvoiceList(companycode);
                     if (invoiceMasterList.Any())
                     {
                         dynamic expando = new ExpandoObject();
@@ -583,7 +583,52 @@ namespace CoreERP.Controllers
             }
         }
 
+        [HttpPost("SwapOrder/{SaleOrder}")]
+        public IActionResult SwapOrder([FromBody] JObject objData, string SaleOrder)
+        {
 
+            if (objData == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                string errorMessage = string.Empty;
+
+                var _invoiceHdr = objData["grHdr"].ToObject<TblOrderSwap>();
+                var _invoiceDtl = objData["grDtl"].ToObject<TblOrderSwapDetails[]>();
+
+                if (_invoiceHdr == null)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No request records found to Save" });
+                }
+
+                if (_invoiceDtl == null || _invoiceDtl.Count() == 0)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "In request no product found in to save" });
+                }
+
+                //if (string.IsNullOrEmpty(_invoiceHdr.InvoiceNo))
+                //{
+                //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Invoice no canontbe null/empty." });
+                //}
+
+
+                var result = new InvoiceHelper().SwapOrder(_configuration, _invoiceHdr, _invoiceDtl.ToList(), SaleOrder, out errorMessage);
+                if (result)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _invoiceHdr });
+                }
+
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = "Registration failed.";
+                }
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
     }
 }
 

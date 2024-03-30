@@ -23,10 +23,16 @@ namespace CoreERP.Models
         public int? RejectQty { get; set; }
         public decimal? NetWeight { get; set; }
         public int? Qty { get; set; }
+        public string? TaxCode { get; set; }
+        public decimal? IGST { get; set; }
+        public decimal? UGST { get; set; }
+        public decimal? CGST { get; set; }
+        public decimal? SGST { get; set; }
         public DateTime? ReceivedDate { get; set; }
         public string? VehicleNumber { get; set; }
         public string? SupplierRefno { get; set;}
         public decimal? BillAmount { get; set; }
+        public decimal? Rate { get; set; }
         public string? ReceivedBy { get; set; }
         public string? InvoiceURL { get; set; }
         public string? DocumentURL { get; set; }
@@ -41,5 +47,6 @@ namespace CoreERP.Models
         public string? InvoiceNo { get; set; }
         public string? SaleorderNo { get; set; }
         public string? Status { get; set; }
+        public string? HSNSAC { get; set; }
     }
 }

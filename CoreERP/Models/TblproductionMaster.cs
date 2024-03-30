@@ -21,5 +21,7 @@ namespace CoreERP.Models
         public string? EditWho { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? EditDate { get; set; }
+
+        public string? CustomerCode { get; set; }
     }
 }

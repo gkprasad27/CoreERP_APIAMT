@@ -665,7 +665,7 @@ namespace CoreERP.Controllers.masters
                     if (!Goodsissue.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for GoodsIssue." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.Goodsissue = Goodsissue.OrderByDescending(x=>x.GoodsIssueId);
+                    expdoObj.Goodsissue = Goodsissue.Where(x => x.Status != "Dispatched").OrderByDescending(x=>x.GoodsIssueId);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -689,7 +689,7 @@ namespace CoreERP.Controllers.masters
                     if (!Productionissue.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Productionissue." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.Productionissue = Productionissue;
+                    expdoObj.Productionissue = Productionissue.Where(x=>x.Status!= "Dispatched");
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -1418,7 +1418,7 @@ namespace CoreERP.Controllers.masters
                     if (!podetails.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for purchase order." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.podetails = podetails;
+                    expdoObj.podetails = podetails.Where(x => x.Status != "Dispatched"); 
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -1746,7 +1746,7 @@ namespace CoreERP.Controllers.masters
                     if (!grdetails.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Goods Receipt." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.grdetails = grdetails;
+                    expdoObj.grdetails = grdetails.Where(x => x.Status != "Dispatched");
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -2181,7 +2181,7 @@ namespace CoreERP.Controllers.masters
                     if (!saleOrderMaster.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Sale Order." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.saleOrderMaster = saleOrderMaster;
+                    expdoObj.saleOrderMaster = saleOrderMaster.Where(x => x.Status != "Dispatched"); ;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }

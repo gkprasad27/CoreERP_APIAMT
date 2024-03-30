@@ -14,7 +14,7 @@ namespace CoreERP.Helpers.SharedModels
         private string _jobWorkNumber;
         private string _name;
         private int _saleOrderNo=0;
-
+        private string _companyCode;
         public string searchCriteria
         {
             get
@@ -41,6 +41,18 @@ namespace CoreERP.Helpers.SharedModels
                     _fromDate = DateTime.Now;
 
                 _fromDate = value;
+            }
+        }
+
+        public string? CompanyCode
+        {
+            get
+            {
+                return _companyCode;
+            }
+            set
+            {
+                _companyCode = value;
             }
         }
         public DateTime? ToDate
