@@ -1693,6 +1693,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 //}
 
                 //bomMaster.Status = "Created";
+                masternumber = bomMaster.Bomnumber;
                 bomMaster.CreatedDate = DateTime.Now;
                 //bomMaster.Bomnumber = masternumber;
                 if (masternumber.Length > 1)
