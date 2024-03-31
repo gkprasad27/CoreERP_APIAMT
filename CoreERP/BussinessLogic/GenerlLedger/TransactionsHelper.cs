@@ -3931,7 +3931,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         saleOrderMaster.Gstno = Quotation.Gstno;
                     }
 
-                    if (SaleOrderNumber.Length > 1)
+                    if (SaleOrderNumber.Length > 1 && saleOrderMaster.CustomerCode.Length>1)
                         context.TblSaleOrderMaster.Add(saleOrderMaster);
                     else
                         throw new Exception("Saleorder Number Not Valid. " + SaleOrderNumber + " Please check .");
