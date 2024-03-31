@@ -7948,6 +7948,11 @@ namespace CoreERP.Models
                 entity.HasKey(e => e.Ptslab);
                 entity.ToTable("PTMaster");
 
+                entity.HasKey(e => e.Id);
+                entity.ToTable("PTMaster");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
                 entity.Property(e => e.Active)
                     .HasMaxLength(1)
                     .IsUnicode(false)
