@@ -2560,7 +2560,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             totalqty = (int)podetails.Sum(a => a.Qty);
             using var dbtrans = context.Database.BeginTransaction();
             string purchaseordernumber = string.Empty;
-            var Pcenter = repo.ProfitCenters.Where(x => x.Code == podata.ProfitCenter).FirstOrDefault();
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Purchase Order" && x.CompCode == podata.Company);
             string CustPONumber;
             var purchaseorder = repo.TblPurchaseOrder.Where(im => im.SaleOrderNo == podata.SaleOrderNo);
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == podata.SaleOrderNo);
@@ -2599,10 +2599,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     if (Pcenter != null)
                     {
-                        Pcenter.PONumber = (Pcenter.PONumber + 1);
-                        context.ProfitCenters.UpdateRange(Pcenter);
+                        Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                        context.Counters.UpdateRange(Pcenter);
                         context.SaveChanges();
-                        purchaseordernumber = Pcenter.POPrefix + "-" + Pcenter.PONumber;
+                        purchaseordernumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
                     podata.ApprovalStatus = "Pending Approval";
                     podata.Status = statusmessage;
@@ -3884,7 +3884,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             string SaleOrderNumber = string.Empty;
             int totalqty;
             totalqty = (int)saleOrderDetails.Sum(a => a.QTY);
-            var Pcenter = repo.ProfitCenters.Where(x => x.Code == saleOrderMaster.ProfitCenter).FirstOrDefault();
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Sale Order" && x.CompCode == saleOrderMaster.Company); 
             var Quotation = repo.TblSupplierQuotationsMaster.Where(x => x.QuotationNumber == saleOrderMaster.PONumber).FirstOrDefault();
            // Utils.SendEMail("sales@amtpowertransmission.com", "Test", "Body");
             try
@@ -3908,10 +3908,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     if (Pcenter != null)
                     {
-                        Pcenter.SONumber = (Pcenter.SONumber + 1);
-                        context.ProfitCenters.UpdateRange(Pcenter);
+                        Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                        context.Counters.UpdateRange(Pcenter);
                         context.SaveChanges();
-                        SaleOrderNumber = Pcenter.SOPrefix + "-" + Pcenter.SONumber;
+                        SaleOrderNumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
 
                     saleOrderMaster.Status = "SO Created";
