@@ -33,6 +33,9 @@ namespace CoreERP.Models
         public DateTime CreatedDate { get; set; }
       
         public string? EditWho { get; set; }
+        public string? Billable { get; set; }
+        public string? MainComponent { get; set; }
+        public string? Bomkey { get; set; }
 
 
     }
