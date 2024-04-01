@@ -33,5 +33,6 @@ namespace CoreERP.Models
         public DateTime? EditDate { get; set; }
         public DateTime? ProductionPlanDate { get; set; }
         public DateTime? ProductionTargetDate { get; set; }
+        public string? BomKey { get; set; }
     }
 }

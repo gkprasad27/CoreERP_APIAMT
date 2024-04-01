@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Linq;
 
 namespace CoreERP.Models
 {
@@ -32,5 +33,6 @@ namespace CoreERP.Models
         public DateTime? EditDate { get; set; }
         public DateTime? ProductionPlanDate { get; set; }
         public DateTime? ProductionTargetDate { get; set; }
+        public string? BomKey { get; set; } 
     }
 }
