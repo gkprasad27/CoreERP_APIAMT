@@ -3970,10 +3970,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         material.OpeningValue = 0;
 
                     matqty = Convert.ToInt16(material.ClosingQty);
+                    var poqqty = repo.TblPoQueue.FirstOrDefault(z => z.MaterialCode == item.MaterialCode && z.Status == "New");
                     if (poq == null)
                     {
+                       
                         poq = new TblPoQueue();
-                        poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty));
+                        poq.Qty = ((item.QTY + material.OpeningValue )- (matqty + poqty+ poqqty.Qty));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
@@ -3983,7 +3985,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     else
                     {
-                        poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty));
+                        poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqty.Qty));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
