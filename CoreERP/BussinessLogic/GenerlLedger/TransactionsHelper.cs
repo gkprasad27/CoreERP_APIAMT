@@ -3885,9 +3885,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             string SaleOrderNumber = string.Empty;
             int totalqty;
             totalqty = (int)saleOrderDetails.Sum(a => a.QTY);
-            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Sale Order" && x.CompCode == saleOrderMaster.Company); 
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Sale Order" && x.CompCode == saleOrderMaster.Company);
             var Quotation = repo.TblSupplierQuotationsMaster.Where(x => x.QuotationNumber == saleOrderMaster.PONumber).FirstOrDefault();
-           // Utils.SendEMail("sales@amtpowertransmission.com", "Test", "Body");
+            // Utils.SendEMail("sales@amtpowertransmission.com", "Test", "Body");
             try
             {
                 if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
@@ -3931,7 +3931,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         saleOrderMaster.Gstno = Quotation.Gstno;
                     }
 
-                    if (SaleOrderNumber.Length > 1 && saleOrderMaster.CustomerCode.Length>1)
+                    if (SaleOrderNumber.Length > 1 && saleOrderMaster.CustomerCode != null)
                         context.TblSaleOrderMaster.Add(saleOrderMaster);
                     else
                         throw new Exception("Saleorder Number Not Valid. " + SaleOrderNumber + " Please check .");
@@ -3971,11 +3971,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     matqty = Convert.ToInt16(material.ClosingQty);
                     var poqqty = repo.TblPoQueue.FirstOrDefault(z => z.MaterialCode == item.MaterialCode && z.Status == "New");
+                    if (poqqty == null)
+                        poqqty.Qty = 0;
+
                     if (poq == null)
                     {
-                       
                         poq = new TblPoQueue();
-                        poq.Qty = ((item.QTY + material.OpeningValue )- (matqty + poqty+ poqqty.Qty));
+                        poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqty.Qty));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
