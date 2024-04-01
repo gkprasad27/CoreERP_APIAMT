@@ -77,6 +77,8 @@ namespace CoreERP.Controllers
         private readonly IRepository<TblForm> _TblForm;
         private readonly IRepository<TbBommaster> _bommasterRepository;
         private readonly IRepository<StructureCreation> _structureRepository;
+        private readonly IRepository<Pfmaster> _pfRepository;
+        private readonly IRepository<Ptmaster> _ptRepository;
         private readonly IRepository<TblPoQueue> _TblPoQueue;
         private readonly IRepository<TblRejectionMaster> _TblRejectionMaster;
         public CommonController(IRepository<TblCompany> companyRepository, IRepository<Department> departmentRepository, IRepository<States> stateRepository, IRepository<TblCurrency> currencyRepository, IRepository<TblLanguage> languageRepository,
@@ -102,7 +104,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblHsnsac> hsnsacRepository, IRepository<TblPrimaryCostElement> primaryCostElementRepository,
                                 IRepository<TblMaterialTypes> materialTypesRepository, IRepository<ConfigurationTable> configurationRepository, IRepository<TblForm> TblForm, IRepository<LeaveTypes> leaveTypeRepository,
                                 IRepository<TblPurchaseRequisitionMaster> TblPurchaseRequisitionMaster, IRepository<TblPurchaseRequisitionDetails> TblPurchaseRequisitionDetails, IRepository<TbBommaster> TbbomMaster,
-                                IRepository<StructureCreation> structureCreation, IRepository<TblPoQueue> TblPoQueue, IRepository<TblRejectionMaster> TblRejectionMaster)
+                                IRepository<StructureCreation> structureCreation, IRepository<TblPoQueue> TblPoQueue, IRepository<TblRejectionMaster> TblRejectionMaster, IRepository<Pfmaster> pfRepository, IRepository<Ptmaster> ptRepository)
         {
             _primaryCostElementRepository = primaryCostElementRepository;
             _materialTypesRepository = materialTypesRepository;
@@ -163,7 +165,8 @@ namespace CoreERP.Controllers
             _structureRepository = structureCreation;
             _TblPoQueue = TblPoQueue;
             _TblRejectionMaster = TblRejectionMaster;
-
+            _pfRepository = pfRepository;
+            _ptRepository = ptRepository;
         }
 
         [HttpGet("GetPrimaryCostElementList")]
@@ -891,6 +894,56 @@ namespace CoreERP.Controllers
                     {
                         dynamic expdoObj = new ExpandoObject();
                         expdoObj.structuresList = structuresList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetPFList")]
+        public async Task<IActionResult> GetPFList()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var pfList = _pfRepository.GetAll().Select(x => new { ID = x.PfType, TEXT = x.PfType });
+                    if (pfList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.pfList = pfList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpGet("GetPTList")]
+        public async Task<IActionResult> GetPTList()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var ptList = _ptRepository.GetAll().Select(x => new { ID = x.Ptslab, TEXT = x.Ptslab });
+                    if (ptList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.ptList = ptList;
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
 

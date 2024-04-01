@@ -8002,7 +8002,7 @@ namespace CoreERP.Models
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
-                entity.Property(e => e.ComponentCode)
+                entity.Property(e => e.PfType)
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
@@ -8018,8 +8018,8 @@ namespace CoreERP.Models
                     .HasMaxLength(10)
                     .IsUnicode(false);
 
-                entity.Property(e => e.PftypeName)
-                    .HasColumnName("PFTypeName")
+                entity.Property(e => e.PfName)
+                    .HasColumnName("PFName")
                     .HasMaxLength(50);
             });
             modelBuilder.Entity<ComponentMaster>(entity =>
