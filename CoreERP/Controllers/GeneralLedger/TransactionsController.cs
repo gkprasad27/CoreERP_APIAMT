@@ -1969,7 +1969,7 @@ namespace CoreERP.Controllers.masters
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.icmasters = iclist;
-                    expdoObj.icDetail = new TransactionsHelper().GetInspectionCheckDetailsBySaleorder(saleorder).Where(x=>x.Status!= "Rejected");
+                    expdoObj.icDetail = new TransactionsHelper().GetInspectionCheckDetailsBySaleorder(saleorder).Where(x=>x.Status== "QC Passed");
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
