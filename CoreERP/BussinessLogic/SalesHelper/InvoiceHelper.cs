@@ -876,6 +876,24 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
+        public IEnumerable<TblInvoiceMaster> GetInvoiceData(string saleorder)
+        {
+            try
+            {
+
+
+                using var repo = new Repository<TblInvoiceMaster>();
+                return repo.TblInvoiceMaster.ToList().Where(x => x.Status != "Dispatched" && x.SaleOrderNo == saleorder);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public TblInvoiceMaster GetInvoiceMasterbysaeorder(string saleorder)
         {
             try
