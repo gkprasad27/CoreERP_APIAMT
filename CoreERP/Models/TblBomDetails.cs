@@ -17,13 +17,13 @@ namespace CoreERP.Models
         public decimal? Amount { get; set; }
         public decimal? TaxAmount { get; set; }
         public int? Qty { get; set; }
-        public string? TaxCode   { get; set; }
+        public string? TaxCode { get; set; }
         public decimal? IGST { get; set; }
         public decimal? UGST { get; set; }
         public decimal? CGST { get; set; }
         public decimal? SGST { get; set; }
         public decimal? NetWeight { get; set; }
-       public DateTime? DeliveryDate { get; set; }
+        public DateTime? DeliveryDate { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? EditDate { get; set; }
         public string? Addwho { get; set; }
@@ -32,5 +32,7 @@ namespace CoreERP.Models
         public DateTime? CreatedDate { get; set; }
         public string? Billable { get; set; }
         public string? MainComponent { get; set; }
+        public string? HSNSAC{get;set;}
+
     }
 }

@@ -2689,6 +2689,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     sodata.POQty = item.Qty;
                     sodata.Status = statusmessage;
                     context.TblSaleOrderDetail.Update(sodata);
+
+                    var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == item.MaterialCode);
+
+                    if (Convert.ToString(mathdr.OpeningValue) == null)
+                        mathdr.OpeningValue = 0;
+
+                   mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) - (item.Qty));
+                    if (mathdr.OpeningValue < 0)
+                        mathdr.OpeningValue = 0;
+
+                    context.TblMaterialMaster.Update(mathdr);
+
                     // }
                 }
 
@@ -3002,6 +3014,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 foreach (var item in grdetails)
                 {
+
                     item.PurchaseOrderNo = grdata.PurchaseOrderNo;
                     item.LotNo = grdata.LotNo;
                     item.SupplierRefno = grdata.SupplierReferenceNo;
@@ -3017,7 +3030,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     item.InvoiceURL = grdata.InvoiceURL;
                     item.DocumentURL = grdata.DocumentURL;
                     item.SaleorderNo = purchase.SaleOrderNo;
-
+                    item.Status = statusmessage;
 
                     var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == item.PurchaseOrderNo && z.MaterialCode == item.MaterialCode);
                     POD.Status = statusmessage;
