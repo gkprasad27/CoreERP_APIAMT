@@ -785,8 +785,8 @@ namespace CoreERP.Controllers.masters
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Production Not Completed." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.tagsData = tagsData;
-                    var tagsDetail= new TransactionsHelper().GetQcIssueDetails(GSNumber, Materialcode);
-                    if (tagsDetail.Count == 0)
+                    var tagsDetail= new TransactionsHelper().GetQcIssueDetails(GSNumber, Materialcode).Where(x=>x.Status!= "Rejected");
+                    if (tagsDetail==null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Production Not Completed." });
                     expdoObj.tagsDetail = tagsDetail;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
@@ -1969,7 +1969,7 @@ namespace CoreERP.Controllers.masters
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.icmasters = iclist;
-                    expdoObj.icDetail = new TransactionsHelper().GetInspectionCheckDetailsBySaleorder(saleorder);
+                    expdoObj.icDetail = new TransactionsHelper().GetInspectionCheckDetailsBySaleorder(saleorder).Where(x=>x.Status!= "Rejected");
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
