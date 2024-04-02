@@ -19,6 +19,14 @@ namespace CoreERP.Models
        
 
     }
+    partial class TblBomDetails
+    {
+        [NotMapped]
+        public string BomName { get; set; }
+
+
+    }
+    
     partial class TblPartyCashBankMaster
     {
         [NotMapped]
