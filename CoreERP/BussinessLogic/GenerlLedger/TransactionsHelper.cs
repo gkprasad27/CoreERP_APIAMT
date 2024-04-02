@@ -2695,7 +2695,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (Convert.ToString(mathdr.OpeningValue) == null)
                         mathdr.OpeningValue = 0;
 
-                   mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) - (item.Qty));
+                    mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) - (item.Qty));
                     if (mathdr.OpeningValue < 0)
                         mathdr.OpeningValue = 0;
 
@@ -3990,7 +3990,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         material.OpeningValue = 0;
 
                     matqty = Convert.ToInt16(material.ClosingQty);
-                    var poqqty = repo.TblPoQueue.FirstOrDefault(z => z.MaterialCode == item.MaterialCode && z.Status == "New");
+                    var poqqty = repo.TblPoQueue.FirstOrDefault(z => z.MaterialCode == item.MaterialCode && z.Status == "New" || z.Status == "Partial PO Created");
                     if (poqqty == null)
                     {
                         poqqty = new TblPoQueue();
