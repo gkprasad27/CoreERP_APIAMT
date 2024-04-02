@@ -1408,6 +1408,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault();
                 var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == material).FirstOrDefault();
                 var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
+                var SaleOrderDetail = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var goodsreceipt = repo.TblGoodsReceiptDetails.FirstOrDefault(im => im.MaterialCode == material);
                 var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC" && x.CompCode == SaleOrder.Company);
@@ -1453,7 +1454,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             InspectionCheckMaster.HeatNumber = goodsreceipt.HeatNumber;
                         InspectionCheckMaster.InspectionCheckNo = masternumber;
                         InspectionCheckMaster.saleOrderNumber = saleordernumber;
-                        InspectionCheckMaster.MaterialCode = material;
+                        InspectionCheckMaster.MaterialCode = SaleOrderDetail.Bomkey;
+                        InspectionCheckMaster.BomKey = material;
                         InspectionCheckMaster.completionDate = System.DateTime.Now;
                         if (masternumber.Length > 1)
                             context.TblInspectionCheckMaster.Add(InspectionCheckMaster);
@@ -1472,7 +1474,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         InspectionCheckDetails = repo.TblInspectionCheckDetails.Where(x => x.InspectionCheckNo == masternumber && x.productionTag == item.ProductionTag).ToList();
 
                         if (InspectionCheckDetails.Count == 0)
-                            NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.BomKey, BomName = item.BomName });
+                            NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.BomKey, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.MaterialCode, BomName = item.BomName });
                         else
                         {
                             InspectionCheckDetails.ForEach(x =>
@@ -3158,13 +3160,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (Convert.ToString(mathdr.ClosingQty) == null)
                     mathdr.ClosingQty = 0;
 
-                if (Convert.ToString(mathdr.OpeningValue) == null)
-                    mathdr.OpeningValue = 0;
+                //if (Convert.ToString(mathdr.OpeningValue) == null)
+                //    mathdr.OpeningValue = 0;
 
                 mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
-                mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) + (x.ReceivedQty));
-                if (mathdr.OpeningValue < 0)
-                    mathdr.OpeningValue = 0;
+               // mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) + (x.ReceivedQty));
+                //if (mathdr.OpeningValue < 0)
+                //    mathdr.OpeningValue = 0;
 
                 context.TblMaterialMaster.Update(mathdr);
 
@@ -3471,7 +3473,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     production.Status = icdata.Status;
                     if (x.Status == "QC Rejected")
                     {
-                        var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == icdata.saleOrderNumber && z.MaterialCode == icdata.MaterialCode);
+                        var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == icdata.saleOrderNumber && z.MaterialCode == icdata.BomKey);
                         if (poq != null)
                         {
                             poq.Qty = (poq.Qty) + 1;
@@ -3483,7 +3485,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq = new TblPoQueue();
                             poq.Qty = 1;
                             poq.Status = "New";
-                            poq.MaterialCode = x.MaterialCode;
+                            poq.MaterialCode = x.BomKey;
                             poq.SaleOrderNo = x.saleOrderNumber;
                             poq.CompanyCode = icdata.Company;
                             context.TblPoQueue.Add(poq);
@@ -3493,7 +3495,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.TblMaterialMaster.UpdateRange(materialmaster);
                         RejectionMaster.CompanyCode = SaleOrder.Company;
                         RejectionMaster.SaleOrderNo = x.saleOrderNumber;
-                        RejectionMaster.MaterialCode = x.MaterialCode;
+                        RejectionMaster.MaterialCode = x.BomKey;
                         RejectionMaster.TagNo = x.productionTag;
                         RejectionMaster.Reason = x.Description;
                         context.TblRejectionMaster.Add(RejectionMaster);
