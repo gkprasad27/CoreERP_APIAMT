@@ -3972,7 +3972,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     int poqty = 0;
                     int soqty = 0;
                     int matqty = 0;
-                    var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
+                    var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrder == item.SaleOrderNo&&(z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
                     var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
                     var material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode);
                     var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
@@ -3990,17 +3990,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         material.OpeningValue = 0;
 
                     matqty = Convert.ToInt16(material.ClosingQty);
-                    var poqqty = repo.TblPoQueue.FirstOrDefault(z => z.MaterialCode == item.MaterialCode && z.Status == "New" || z.Status == "Partial PO Created");
-                    if (poqqty == null)
+                    var poqqtysun = repo.TblPoQueue.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "New" || z.Status == "Partial PO Created"));
+                    if (poqqtysun == null)
                     {
-                        poqqty = new TblPoQueue();
+                      var  poqqty = new TblPoQueue();
                         poqqty.Qty = 0;
                     }
 
                     if (poq == null)
                     {
                         poq = new TblPoQueue();
-                        poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqty.Qty));
+                        poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
@@ -4010,7 +4010,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     else
                     {
-                        poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqty.Qty));
+                        poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
