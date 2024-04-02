@@ -1721,11 +1721,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (prDetailsExist.Count > 0)
                 {
-                    context.TblBomDetails.UpdateRange(prDetailsExist);
+                    context.TblBomDetails.UpdateRange(bomDetails);
                 }
                 else
                 {
-                    context.TblBomDetails.AddRange(prDetailsNew);
+                    context.TblBomDetails.AddRange(bomDetails);
                 }
                 context.SaveChanges();
 
