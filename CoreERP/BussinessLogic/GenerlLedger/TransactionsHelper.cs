@@ -1405,10 +1405,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using var context = new ERPContext();
                 string saleordernumber = prodDetails.FirstOrDefault().SaleOrderNumber;
                 string material = prodDetails.FirstOrDefault().MaterialCode;
-                var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault();
-                var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == material).FirstOrDefault();
-                var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var SaleOrderDetail = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
+                var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault();
+                var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == SaleOrderDetail.Bomkey).FirstOrDefault();
+                var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var goodsreceipt = repo.TblGoodsReceiptDetails.FirstOrDefault(im => im.MaterialCode == material);
                 var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC" && x.CompCode == SaleOrder.Company);
@@ -3418,6 +3418,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var RejectionMaster = new TblRejectionMaster();
             string Materialcode = icdetails.FirstOrDefault().MaterialCode;
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
+            var SaleOrderDetail = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             var MaterialMaster = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == Materialcode);
             var purchaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             var goodsissue = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
@@ -3427,7 +3428,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
                 {
                     icdata.DrawingRevNo = MaterialMaster.DragRevNo;
-                    icdata.MaterialCode = Materialcode;
+                    icdata.MaterialCode = SaleOrderDetail.Bomkey;
+                    icdata.BomKey = Materialcode;
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
                 }
@@ -3442,7 +3444,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     icdata.DrawingRevNo = MaterialMaster.DragRevNo;
                     icdata.InspectionCheckNo = masternumber;
-                    icdata.MaterialCode = Materialcode;
+                    icdata.MaterialCode = SaleOrderDetail.Bomkey;
+                    icdata.BomKey = Materialcode;
                     if (masternumber.Length > 1)
                         context.TblInspectionCheckMaster.Add(icdata);
                     else
@@ -3473,7 +3476,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     production.Status = icdata.Status;
                     if (x.Status == "QC Rejected")
                     {
-                        var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == icdata.saleOrderNumber && z.MaterialCode == icdata.BomKey);
+                        var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == icdata.saleOrderNumber && z.MaterialCode == x.BomKey);
                         if (poq != null)
                         {
                             poq.Qty = (poq.Qty) + 1;
@@ -3490,7 +3493,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.CompanyCode = icdata.Company;
                             context.TblPoQueue.Add(poq);
                         }
-                        var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == x.MaterialCode);
+                        var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == x.BomKey);
                         materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
                         context.TblMaterialMaster.UpdateRange(materialmaster);
                         RejectionMaster.CompanyCode = SaleOrder.Company;
@@ -3500,7 +3503,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         RejectionMaster.Reason = x.Description;
                         context.TblRejectionMaster.Add(RejectionMaster);
 
-                        var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == x.saleOrderNumber && im.MaterialCode == x.MaterialCode);
+                        var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == x.saleOrderNumber && im.MaterialCode == x.BomKey);
                         sodata.POQty = ((sodata.POQty) - 1);
                         if (sodata.POQty >= 0)
                         {
@@ -3513,7 +3516,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             context.TblSaleOrderDetail.Update(sodata);
                         }
 
-                        var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == purchaseorder.PurchaseOrderNumber && z.MaterialCode == x.MaterialCode);
+                        var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == purchaseorder.PurchaseOrderNumber && z.MaterialCode == x.BomKey);
                         POD.Qty = (POD.Qty) - 1;
                         if (POD.Qty >= 0)
                             context.TblPurchaseOrderDetails.UpdateRange(POD);
