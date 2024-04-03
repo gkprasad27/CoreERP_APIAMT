@@ -48,6 +48,7 @@ namespace CoreERP.Models
         public int? cgstcode { get; set; }
         public int? sgstcode { get; set; }
         public int? igstcode { get; set; }
+        public string? Bomkey { get; set; }
 
     }
 }

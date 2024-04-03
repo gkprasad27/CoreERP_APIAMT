@@ -1330,6 +1330,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                     }
                     materialmaster.ClosingQty = ((materialmaster.ClosingQty) - item.AllocatedQTY);
+                    materialmaster.OpeningValue = ((materialmaster.OpeningValue) - item.AllocatedQTY);
                     repo.TblMaterialMaster.UpdateRange(materialmaster);
 
                 }
@@ -3129,9 +3130,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 context.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
-                context.SaveChanges();
+                //context.SaveChanges();
 
-                dbtrans.Commit();
+                //dbtrans.Commit();
             }
             catch (Exception)
             {
@@ -3144,13 +3145,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 grdata.EditDate = DateTime.Now;
                 grdata.TotalAmount = (totalamount.TotalAmount ?? 0) + (grdata.TotalAmount);
                 context.TblGoodsReceiptMaster.Update(grdata);
-                context.SaveChanges();
             }
             else
             {
                 grdata.ReceiptDate = DateTime.Now;
                 context.TblGoodsReceiptMaster.Add(grdata);
-                context.SaveChanges();
             }
             grdetails.ForEach(x =>
             {
@@ -3160,19 +3159,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (Convert.ToString(mathdr.ClosingQty) == null)
                     mathdr.ClosingQty = 0;
 
-                //if (Convert.ToString(mathdr.OpeningValue) == null)
-                //    mathdr.OpeningValue = 0;
+                if (Convert.ToString(mathdr.OpeningValue) == null)
+                    mathdr.OpeningValue = 0;
 
                 mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
-               // mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) + (x.ReceivedQty));
-                //if (mathdr.OpeningValue < 0)
-                //    mathdr.OpeningValue = 0;
+                mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) + (x.ReceivedQty));
+                if (mathdr.OpeningValue < 0)
+                    mathdr.OpeningValue = 0;
 
                 context.TblMaterialMaster.Update(mathdr);
 
             });
             context.SaveChanges();
 
+            dbtrans.Commit();
             return true;
 
         }

@@ -1044,7 +1044,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             {
                                 //var SaleOrderDetails = new TblSaleOrderDetail();
                                 //var inspection = new TblInspectionCheckDetails();
-                                var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.MaterialCode);
+                                var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.Bomkey);
                                 var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
                                 #region InvioceDetail
                                 invdtl.Qty = 1;
@@ -1061,7 +1061,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 SaleOrderDetails.Status = message;
                                 repo.TblSaleOrderDetail.UpdateRange(SaleOrderDetails);
 
-                                var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.MaterialCode);
+                                var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.Bomkey);
                                 materialmaster.OpeningQty = ((materialmaster.OpeningQty) - 1);
                                 repo.TblMaterialMaster.UpdateRange(materialmaster);
 
