@@ -11,7 +11,7 @@ namespace CoreERP.Models
         public string? Remarks { get; set; }
         public string? CompanyCode { get; set; }
         public double? Amount { get; set; }
-        public int? Percentage { get; set; }
+        public double? Percentage { get; set; }
         public string? Duration { get; set; }
         public string? SpecificMonth { get; set; }
         public string? Active { get; set; }
