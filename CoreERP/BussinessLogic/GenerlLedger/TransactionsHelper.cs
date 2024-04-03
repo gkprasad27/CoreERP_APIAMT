@@ -4014,7 +4014,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (poq == null)
                     {
                         poq = new TblPoQueue();
-                        poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
+                        //poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
+                        poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
@@ -4024,7 +4025,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     else
                     {
-                        poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
+                        //poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
+                        poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
