@@ -3417,14 +3417,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             List<TblInspectionCheckDetails> prDetailsExist;
             var RejectionMaster = new TblRejectionMaster();
             string Materialcode = icdetails.FirstOrDefault().MaterialCode;
+            string BomKey = icdetails.FirstOrDefault().BomKey;
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             var SaleOrderDetail = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
-            var MaterialMaster = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == Materialcode);
+            var MaterialMaster = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == BomKey);
             var purchaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == icdata.saleOrderNumber);
             var goodsissue = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
             var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
             try
             {
+                if(MaterialMaster.DragRevNo==null)
+                {
+                    if (icdata.DrawingRevNo != null)
+                        MaterialMaster.DragRevNo = icdata.DrawingRevNo;
+                    else
+                        icdata.DrawingRevNo = "Not Required";
+                }
+
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
                 {
                     icdata.DrawingRevNo = MaterialMaster.DragRevNo;
