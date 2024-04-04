@@ -2605,11 +2605,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (string.IsNullOrWhiteSpace(purchaseordernumber))
                     purchaseordernumber = podata.PurchaseOrderNumber;
 
-                //podetails.ForEach(x =>
-                //{
-                //    x.PurchaseOrderNumber = purchaseordernumber;
-                //    x.SaleOrder = podata.SaleOrderNo;
-                //});
+                podetails.ForEach(x =>
+                {
+                    x.PurchaseOrderNumber = purchaseordernumber;
+                    x.SaleOrder = podata.SaleOrderNo;
+                });
                 foreach (var item in podetails)
                 {
                     var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrder && im.MaterialCode == item.MaterialCode);
@@ -2657,7 +2657,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.TblPoQueue.Add(poq);
                     }
                     sodata.POQty = sodata.POQty + item.Qty;
-                    sodata.Status = statusmessage;
+                    if (sodata.POQty == sodata.QTY)
+                        sodata.Status = "PO Created";
+                    else
+                        sodata.Status = statusmessage;
+
                     context.TblSaleOrderDetail.Update(sodata);
 
                     var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == item.MaterialCode);
@@ -2668,8 +2672,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     //mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) - (item.Qty));
                     //if (mathdr.OpeningValue < 0)
                     //    mathdr.OpeningValue = 0;
-                    item.PurchaseOrderNumber = purchaseordernumber;
-                    item.SaleOrder = podata.SaleOrderNo;
+
                     item.Status = statusmessage;
 
                     context.TblMaterialMaster.Update(mathdr);
@@ -2692,7 +2695,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 else
                 {
-                    
+
                     podata.ApprovalStatus = "Pending Approval";
                     podata.Status = statusmessage;
                     podata.AddDate = DateTime.Now;
@@ -3088,15 +3091,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                         sodata.POQty = ((sodata.POQty) - Convert.ToInt16(item.RejectQty));
                         if (sodata.POQty >= 0)
-                        {
-                            sodata.Status = statusmessage;
-                            context.TblSaleOrderDetail.Update(sodata);
-                        }
+                            sodata.Status = "Partial PO Created";
                         else
-                        {
                             sodata.Status = statusmessage;
-                            context.TblSaleOrderDetail.Update(sodata);
-                        }
+
+                        context.TblSaleOrderDetail.Update(sodata);
+
                         //}
                     }
                 }
@@ -4010,11 +4010,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (material != null && material.ClosingQty == null)
                         material.ClosingQty = 0;
 
-                    //if (material != null && material.OpeningValue == null)
-                    //    material.OpeningValue = 0;
 
                     matqty = Convert.ToInt16(material.ClosingQty);
                     var poqqtysun = repo.TblPoQueue.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "New" || z.Status == "Partial PO Created"));
+                    int poqqtysuntotal = Convert.ToInt32(poqqtysun.Sum(x => x.Qty));
+                    int purchaseorderqtytotal = purchaseorderqty.Sum(x => x.Qty);
+                    int saleorderqtytotal = saleorderqty.Sum(x => x.QTY);
                     if (poqqtysun == null)
                     {
                         var poqqty = new TblPoQueue();
@@ -4025,7 +4026,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         poq = new TblPoQueue();
                         //poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
-                        poq.Qty = (item.QTY + saleorderqty.Sum(x => x.QTY) - (matqty + poqty + poqqtysun.Sum(x => x.Qty) + purchaseorderqty.Sum(x => x.Qty)));
+                        poq.Qty = ((item.QTY + saleorderqtytotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
@@ -4036,7 +4037,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     else
                     {
                         //poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
-                        poq.Qty = (item.QTY + saleorderqty.Sum(x => x.QTY) - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
+                        poq.Qty = ((item.QTY + saleorderqtytotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal));
                         poq.Status = "New";
                         poq.SaleOrderNo = item.SaleOrderNo;
                         poq.MaterialCode = item.MaterialCode;
