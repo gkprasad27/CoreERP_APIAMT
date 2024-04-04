@@ -1330,7 +1330,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                     }
                     materialmaster.ClosingQty = ((materialmaster.ClosingQty) - item.AllocatedQTY);
-                    materialmaster.OpeningValue = ((materialmaster.OpeningValue) - item.AllocatedQTY);
+                    //materialmaster.OpeningValue = ((materialmaster.OpeningValue) - item.AllocatedQTY);
                     repo.TblMaterialMaster.UpdateRange(materialmaster);
 
                 }
@@ -2695,12 +2695,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == item.MaterialCode);
 
-                    if (Convert.ToString(mathdr.OpeningValue) == null)
-                        mathdr.OpeningValue = 0;
+                    //if (Convert.ToString(mathdr.OpeningValue) == null)
+                    //    mathdr.OpeningValue = 0;
 
-                    mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) - (item.Qty));
-                    if (mathdr.OpeningValue < 0)
-                        mathdr.OpeningValue = 0;
+                    //mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) - (item.Qty));
+                    //if (mathdr.OpeningValue < 0)
+                    //    mathdr.OpeningValue = 0;
 
                     context.TblMaterialMaster.Update(mathdr);
 
@@ -3159,13 +3159,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (Convert.ToString(mathdr.ClosingQty) == null)
                     mathdr.ClosingQty = 0;
 
-                if (Convert.ToString(mathdr.OpeningValue) == null)
-                    mathdr.OpeningValue = 0;
+                //if (Convert.ToString(mathdr.OpeningValue) == null)
+                //    mathdr.OpeningValue = 0;
 
                 mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
-                mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) + (x.ReceivedQty));
-                if (mathdr.OpeningValue < 0)
-                    mathdr.OpeningValue = 0;
+                //mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) + (x.ReceivedQty));
+                //if (mathdr.OpeningValue < 0)
+                //    mathdr.OpeningValue = 0;
 
                 context.TblMaterialMaster.Update(mathdr);
 
@@ -4001,8 +4001,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (material != null && material.ClosingQty == null)
                         material.ClosingQty = 0;
 
-                    if (material != null && material.OpeningValue == null)
-                        material.OpeningValue = 0;
+                    //if (material != null && material.OpeningValue == null)
+                    //    material.OpeningValue = 0;
 
                     matqty = Convert.ToInt16(material.ClosingQty);
                     var poqqtysun = repo.TblPoQueue.Where(z => z.MaterialCode == item.MaterialCode  && (z.Status == "New" || z.Status == "Partial PO Created"));
