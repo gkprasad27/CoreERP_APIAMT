@@ -18,8 +18,8 @@ namespace CoreERP.Controllers.Payroll
             {
                 var sal_Year = obj["sal_Year"].ToString();
                 var sal_Month = obj["sal_Month"].ToString();
-                var structureName = obj["structureName"].ToString();
-                var salaryprocessList = SalaryProcessHelper.SalaryProcess(sal_Year, sal_Month, structureName);
+                //var structureName = obj["structureName"].ToString();
+                var salaryprocessList = SalaryProcessHelper.SalaryProcess(sal_Year, sal_Month);
                 if (salaryprocessList != null)
                 {
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = salaryprocessList });

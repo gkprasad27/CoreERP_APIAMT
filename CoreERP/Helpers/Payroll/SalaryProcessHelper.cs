@@ -7,13 +7,13 @@ namespace CoreERP.BussinessLogic.Payroll
 {
     public class SalaryProcessHelper
     {
-        public static string SalaryProcess(string Year, string Month, string StructureName)
+        public static string SalaryProcess(string Year, string Month)
         {
             using var context = new ERPContext();
-            var result = context.Database.ExecuteSqlRaw("EXEC Salary_Process_StructureWise @year, @month, @structure",
+            var result = context.Database.ExecuteSqlRaw("EXEC Salary_Process_All @year, @month",
              new SqlParameter("@year", Year),
-             new SqlParameter("@month", Month),
-             new SqlParameter("@structure", StructureName));
+             new SqlParameter("@month", Month));
+             //new SqlParameter("@structure", StructureName));
             return result.ToString();
             //ScopeRepository scopeRepository = new ScopeRepository();
             //using DbCommand command = scopeRepository.CreateCommand();
