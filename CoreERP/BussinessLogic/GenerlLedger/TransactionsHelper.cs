@@ -3989,72 +3989,154 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.Status = "SO Created";
                 });
 
-                foreach (var item in saleOrderDetails)
+
+                var duplicates = saleOrderDetails
+                        .GroupBy(s => s.MaterialCode)
+                        .Where(g => g.Count() > 1).Count() > 0;
+
+
+
+                if (duplicates)
                 {
-                    int poqty = 0;
-                    int soqty = 0;
-                    int matqty = 0;
-                    var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrder == item.SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
-                    var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
-                    var material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode);
-                    var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
-                    var saleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "SO Created" || z.Status == "Partial PO Created")).ToList();
-                    var purchaseorderqty = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
-                    if (pod != null)
+                    var mergedList =
+               saleOrderDetails.GroupBy(x => x.MaterialCode)
+                     .ToList();
+
+                    foreach (var item in mergedList)
                     {
-                        pod.SOQty = item.QTY;
-                        context.TblPurchaseOrderDetails.Update(pod);
-                    }
-                    poqty = purchaseorder.Sum(x => x.Qty);
-                    soqty = saleOrderDetails.Sum(s => s.QTY);
-                    if (material != null && material.ClosingQty == null)
-                        material.ClosingQty = 0;
+                        int poqty = 0;
+                        int soqty = 0;
+                        int matqty = 0;
+                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && z.SaleOrder == item.FirstOrDefault().SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
+                        var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.FirstOrDefault().SaleOrderNo && z.MaterialCode == item.FirstOrDefault().MaterialCode);
+                        var material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.FirstOrDefault().MaterialCode);
+                        var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.FirstOrDefault().SaleOrderNo && z.MaterialCode == item.FirstOrDefault().MaterialCode);
+                        var saleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && (z.Status == "SO Created" || z.Status == "Partial PO Created")).ToList();
+                        var purchaseorderqty = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
+                        if (pod != null)
+                        {
+                            pod.SOQty = item.Sum(x => x.QTY);
+                            context.TblPurchaseOrderDetails.Update(pod);
+                        }
+                        poqty = purchaseorder.Sum(x => x.Qty);
+                        soqty = saleOrderDetails.Sum(s => s.QTY);
+                        if (material != null && material.ClosingQty == null)
+                            material.ClosingQty = 0;
+
+                        int currentqty = Convert.ToInt32(item.Sum(x => Convert.ToInt32(x.QTY)));
 
 
-                    matqty = Convert.ToInt16(material.ClosingQty);
-                    var poqqtysun = repo.TblPoQueue.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "New" || z.Status == "Partial PO Created"));
-                    int poqqtysuntotal = Convert.ToInt32(poqqtysun.Sum(x => x.Qty));
-                    int purchaseorderqtytotal = purchaseorderqty.Sum(x => x.Qty);
-                    int saleorderqtytotal = saleorderqty.Sum(x => x.QTY);
-                    if (poqqtysun == null)
-                    {
-                        var poqqty = new TblPoQueue();
-                        poqqty.Qty = 0;
-                    }
+                        matqty = Convert.ToInt16(material.ClosingQty);
+                        var poqqtysun = repo.TblPoQueue.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && (z.Status == "New" || z.Status == "Partial PO Created"));
+                        int poqqtysuntotal = Convert.ToInt32(poqqtysun.Sum(x => x.Qty));
+                        int purchaseorderqtytotal = purchaseorderqty.Sum(x => x.Qty);
+                        int saleorderqtytotal = saleorderqty.Sum(x => x.QTY);
+                        if (poqqtysun == null)
+                        {
+                            var poqqty = new TblPoQueue();
+                            poqqty.Qty = 0;
+                        }
 
-                    if (poq == null)
-                    {
-                        poq = new TblPoQueue();
-                        //poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
-                        poq.Qty = ((item.QTY + saleorderqtytotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal));
-                        poq.Status = "New";
-                        poq.SaleOrderNo = item.SaleOrderNo;
-                        poq.MaterialCode = item.MaterialCode;
-                        poq.CompanyCode = saleOrderMaster.Company;
+                        if (poq == null)
+                        {
+                            poq = new TblPoQueue();
+                            //poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
+                            poq.Qty = ((currentqty + saleorderqtytotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal));
+                            poq.Status = "New";
+                            poq.SaleOrderNo = item.FirstOrDefault().SaleOrderNo;
+                            poq.MaterialCode = item.FirstOrDefault().MaterialCode;
+                            poq.CompanyCode = saleOrderMaster.Company;
+                            if (poq.Qty > 0)
+                                context.TblPoQueue.AddRange(poq);
+                        }
+                        else
+                        {
+                            //poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
+                            poq.Qty = ((currentqty + saleorderqtytotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal));
+                            poq.Status = "New";
+                            poq.SaleOrderNo = item.FirstOrDefault().SaleOrderNo;
+                            poq.MaterialCode = item.FirstOrDefault().MaterialCode;
+                            if (poq.Qty > 0)
+                                context.TblPoQueue.UpdateRange(poq);
+                        }
+
+                        //material.OpeningValue = (material.OpeningValue + item.QTY);
                         if (poq.Qty > 0)
-                            context.TblPoQueue.AddRange(poq);
-                    }
-                    else
-                    {
-                        //poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
-                        poq.Qty = ((item.QTY + saleorderqtytotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal));
-                        poq.Status = "New";
-                        poq.SaleOrderNo = item.SaleOrderNo;
-                        poq.MaterialCode = item.MaterialCode;
-                        if (poq.Qty > 0)
-                            context.TblPoQueue.UpdateRange(poq);
-                    }
+                        {
+                            if (item.Sum(z => z.QTY) != poq.Qty)
+                                item.FirstOrDefault().POQty = Math.Abs(Convert.ToInt32(item.Sum(z => z.QTY) - poq.Qty));
+                        }
 
-                    //material.OpeningValue = (material.OpeningValue + item.QTY);
-                    if (poq.Qty > 0)
-                    {
-                        if (item.QTY != poq.Qty)
-                            item.POQty = Math.Abs(Convert.ToInt32(item.QTY - poq.Qty));
+                        context.TblMaterialMaster.UpdateRange(material);
                     }
-
-                    context.TblMaterialMaster.UpdateRange(material);
                 }
+                else
+                {
+                    foreach (var item in saleOrderDetails)
+                    {
+                        int poqty = 0;
+                        int soqty = 0;
+                        int matqty = 0;
+                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrder == item.SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
+                        var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
+                        var material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode);
+                        var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
+                        var saleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "SO Created" || z.Status == "Partial PO Created")).ToList();
+                        var purchaseorderqty = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
+                        if (pod != null)
+                        {
+                            pod.SOQty = item.QTY;
+                            context.TblPurchaseOrderDetails.Update(pod);
+                        }
+                        poqty = purchaseorder.Sum(x => x.Qty);
+                        soqty = saleOrderDetails.Sum(s => s.QTY);
+                        if (material != null && material.ClosingQty == null)
+                            material.ClosingQty = 0;
 
+                        matqty = Convert.ToInt16(material.ClosingQty);
+                        var poqqtysun = repo.TblPoQueue.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "New" || z.Status == "Partial PO Created"));
+                        int poqqtysuntotal = Convert.ToInt32(poqqtysun.Sum(x => x.Qty));
+                        int purchaseorderqtytotal = purchaseorderqty.Sum(x => x.Qty);
+                        int saleorderqtytotal = saleorderqty.Sum(x => x.QTY);
+                        if (poqqtysun == null)
+                        {
+                            var poqqty = new TblPoQueue();
+                            poqqty.Qty = 0;
+                        }
+
+                        if (poq == null)
+                        {
+                            poq = new TblPoQueue();
+                            //poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
+                            poq.Qty = ((item.QTY + saleorderqtytotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal));
+                            poq.Status = "New";
+                            poq.SaleOrderNo = item.SaleOrderNo;
+                            poq.MaterialCode = item.MaterialCode;
+                            poq.CompanyCode = saleOrderMaster.Company;
+                            if (poq.Qty > 0)
+                                context.TblPoQueue.AddRange(poq);
+                        }
+                        else
+                        {
+                            //poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
+                            poq.Qty = ((item.QTY + saleorderqtytotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal));
+                            poq.Status = "New";
+                            poq.SaleOrderNo = item.SaleOrderNo;
+                            poq.MaterialCode = item.MaterialCode;
+                            if (poq.Qty > 0)
+                                context.TblPoQueue.UpdateRange(poq);
+                        }
+
+                        //material.OpeningValue = (material.OpeningValue + item.QTY);
+                        if (poq.Qty > 0)
+                        {
+                            if (item.QTY != poq.Qty)
+                                item.POQty = Math.Abs(Convert.ToInt32(item.QTY - poq.Qty));
+                        }
+
+                        context.TblMaterialMaster.UpdateRange(material);
+                    }
+                }
 
                 saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID > 0).ToList();
                 saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
