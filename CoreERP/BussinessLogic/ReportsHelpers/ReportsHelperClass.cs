@@ -509,7 +509,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
             command.CommandType = CommandType.StoredProcedure;
-            command.CommandText = "rpt_EemployeeOThrs";
+            command.CommandText = "rpt_EmpMonthlyOverTime";
             #region Parameters
 
             DbParameter pmfDate = command.CreateParameter();
