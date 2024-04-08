@@ -36,7 +36,7 @@ namespace CoreERP.Models
         public string? HSNSAC { get; set; }
         public string? Billable { get; set; }
         public string? MainComponent { get; set; }
-        public string? Bomkey { get; set; }
+        public string? BomKey { get; set; }
         public string? BomName { get; set; }
     }
 }

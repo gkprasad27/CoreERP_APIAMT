@@ -1284,7 +1284,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     if (sodata != null && sodata.MainComponent == "Y")
                     {
-                        item.BomNumber = sodata.Bomkey;
+                        item.BomNumber = sodata.BomKey;
                         item.BomName = sodata.BomName;
                         var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
                         if (GID == null)
@@ -1294,7 +1294,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             {
                                 for (var i = 0; i < qty; i++)
                                 {
-                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.Bomkey, BomName = sodata.BomName });
+                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName });
                                     tagnum = tagnum + 1;
                                 }
                             }
@@ -1315,7 +1315,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 {
                                     for (var i = 0; i < qty; i++)
                                     {
-                                        ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.Bomkey, BomName = sodata.BomName });
+                                        ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName });
                                         tagnum = tagnum + 1;
                                     }
                                 }
@@ -1408,7 +1408,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 string material = prodDetails.FirstOrDefault().MaterialCode;
                 var SaleOrderDetail = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault();
-                var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == SaleOrderDetail.Bomkey).FirstOrDefault();
+                var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == SaleOrderDetail.BomKey).FirstOrDefault();
                 var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var goodsreceipt = repo.TblGoodsReceiptDetails.FirstOrDefault(im => im.MaterialCode == material);
@@ -1455,7 +1455,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             InspectionCheckMaster.HeatNumber = goodsreceipt.HeatNumber;
                         InspectionCheckMaster.InspectionCheckNo = masternumber;
                         InspectionCheckMaster.saleOrderNumber = saleordernumber;
-                        InspectionCheckMaster.MaterialCode = SaleOrderDetail.Bomkey;
+                        InspectionCheckMaster.MaterialCode = SaleOrderDetail.BomKey;
                         InspectionCheckMaster.BomKey = material;
                         InspectionCheckMaster.completionDate = System.DateTime.Now;
                         if (masternumber.Length > 1)
@@ -3471,7 +3471,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
                 {
                     icdata.DrawingRevNo = MaterialMaster.DragRevNo;
-                    icdata.MaterialCode = SaleOrderDetail.Bomkey;
+                    icdata.MaterialCode = SaleOrderDetail.BomKey;
                     icdata.BomKey = Materialcode;
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
@@ -3487,7 +3487,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     icdata.DrawingRevNo = MaterialMaster.DragRevNo;
                     icdata.InspectionCheckNo = masternumber;
-                    icdata.MaterialCode = SaleOrderDetail.Bomkey;
+                    icdata.MaterialCode = SaleOrderDetail.BomKey;
                     icdata.BomKey = Materialcode;
                     if (masternumber.Length > 1)
                         context.TblInspectionCheckMaster.Add(icdata);
