@@ -41,6 +41,10 @@ namespace CoreERP.Models
         public string? ApprovedBy { get; set; }
         public string? Material { get; set; }
         public string? SaleorderNo { get; set; }
-        
+        public string? RefNo { get; set; }
+        public string? ResponsiblePerson { get; set; }
+        public string? Quotationfor { get; set; }
+
+
     }
 }
