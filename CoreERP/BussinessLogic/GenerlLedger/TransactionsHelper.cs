@@ -2754,6 +2754,32 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == ponumber))
                     {
+
+                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.SaleOrder == item.SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
+                        foreach (var item1 in purchaseorder)
+                        {
+                            var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item1.SaleOrder && im.MaterialCode == item1.MaterialCode);
+                            var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item1.SaleOrder && z.MaterialCode == item1.MaterialCode);
+
+                            if (poq != null)
+                            {
+                                poq.Qty = (poq.Qty) + (item1.Qty);
+                                if (poq.Qty >= 0)
+                                {
+                                    context.TblPoQueue.Update(poq);
+                                }
+                            }
+                            else
+                            {
+                                poq = new TblPoQueue();
+                                poq.SaleOrderNo = item1.SaleOrder;
+                                poq.MaterialCode = item1.MaterialCode;
+                                poq.Qty = item1.Qty;
+                                poq.CompanyCode = podata.FirstOrDefault().Company;
+                                context.TblPoQueue.Add(poq);
+                            }
+                        }
+                            
                         context.TblPurchaseOrder.Update(item);
                         //context.SaveChanges();
                     }
