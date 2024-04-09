@@ -2347,11 +2347,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (prDetailsExist.Count > 0)
                 {
-                    context.TblSupplierQuotationDetails.UpdateRange(prDetailsExist);
+                    context.TblSupplierQuotationDetails.UpdateRange(qsdetails);
                 }
                 else
                 {
-                    context.TblSupplierQuotationDetails.AddRange(prDetailsNew);
+                    context.TblSupplierQuotationDetails.AddRange(qsdetails);
                 }
                 context.SaveChanges();
                 dbtrans.Commit();
