@@ -11,12 +11,20 @@ namespace CoreERP.Models
         public string CurrName { get; set; }
 
     }
-    
+
+
+    partial class TblSupplierQuotationDetails
+    {
+        [NotMapped]
+        public int BOMQty { get; set; }
+
+
+    }
     partial class TblCAPA
     {
         [NotMapped]
         public string CustomerName { get; set; }
-       
+
 
     }
     partial class TblBomDetails
@@ -26,7 +34,7 @@ namespace CoreERP.Models
 
 
     }
-    
+
     partial class TblPartyCashBankMaster
     {
         [NotMapped]
@@ -52,7 +60,7 @@ namespace CoreERP.Models
         public string VoucherName { get; set; }
 
     }
-    
+
     partial class TblGoodsIssueMaster
     {
         [NotMapped]
@@ -60,7 +68,7 @@ namespace CoreERP.Models
 
 
     }
-    
+
     partial class tblJobworkMaster
     {
         [NotMapped]
@@ -99,7 +107,7 @@ namespace CoreERP.Models
         public string ProfitcenterName { get; set; }
         [NotMapped]
         public string SupplierName { get; set; }
-        
+
 
     }
 
@@ -114,7 +122,7 @@ namespace CoreERP.Models
         public string FilePath { get; set; }
     }
 
-    
+
     public partial class TblProductionMaster
     {
         [NotMapped]
@@ -152,7 +160,7 @@ namespace CoreERP.Models
         public int? AvailableQTY { get; set; }
         [NotMapped]
         public int? poQty { get; set; }
-        
+
 
 
     }
@@ -271,7 +279,7 @@ namespace CoreERP.Models
         [NotMapped]
         public string CustName { get; set; }
 
-        
+
 
     }
     partial class TblGrnassignment

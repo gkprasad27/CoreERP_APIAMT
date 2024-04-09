@@ -2380,8 +2380,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public List<TblSupplierQuotationDetails> GetSupplierQuotationDetails(string number)
         {
+
             using var repo = new Repository<TblSupplierQuotationDetails>();
+            var BOMMaster = repo.TblBomDetails.ToList();
+
+            repo.TblSupplierQuotationDetails.ToList().ForEach(c =>
+            {
+                c.BOMQty = Convert.ToInt32(BOMMaster.FirstOrDefault(z => z.BomKey == c.BomKey)?.Qty);
+            });
             return repo.TblSupplierQuotationDetails.Where(cd => cd.QuotationNumber == number).ToList();
+
         }
         public bool ReturnSupplierQuotationDetails(string code)
         {
