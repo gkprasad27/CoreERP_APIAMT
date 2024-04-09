@@ -160,6 +160,8 @@ namespace CoreERP.Models
     {
         [NotMapped]
         public int AvailableQTY { get; set; }
+        [NotMapped]
+        public int BOMQTY { get; set; }
 
     }
     partial class TblRegion

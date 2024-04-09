@@ -3984,11 +3984,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblSaleOrderDetail>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
+            var BOMMaster = repo.TblBomDetails.ToList();
 
             repo.TblSaleOrderDetail.ToList().ForEach(c =>
             {
                 c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
                 c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+                c.BOMQTY = Convert.ToInt32(BOMMaster.FirstOrDefault(z => z.BomKey == c.BomKey)?.Qty);
             });
             return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
 
