@@ -2584,15 +2584,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var purchaseorder = repo.TblPurchaseOrder.Where(im => im.SaleOrderNo == podata.SaleOrderNo);
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == podata.SaleOrderNo);
             var PRdata = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == podata.SaleOrderNo);
-
-            if (Pcenter != null)
+            if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber != podata.PurchaseOrderNumber))
             {
-                Pcenter.LastNumber = (Pcenter.LastNumber + 1);
-                context.Counters.UpdateRange(Pcenter);
-                context.SaveChanges();
-                purchaseordernumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                if (Pcenter != null)
+                {
+                    Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                    context.Counters.UpdateRange(Pcenter);
+                    context.SaveChanges();
+                    purchaseordernumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                }
             }
-
             if (SaleOrder != null)
                 CustPONumber = SaleOrder.PONumber;
             else if (PRdata != null)
@@ -4058,7 +4059,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.Status = "SO Created";
                     saleOrderMaster.TotalQty = totalqty;
                     saleOrderMaster.EditDate = DateTime.Now;
-                    // saleOrderMaster.CustomerCode = suppliername;
+                    saleOrderMaster.CreatedDate = DateTime.Now;
                     //invoiceDetails.Sum(x => x.Qty);
                     context.TblSaleOrderMaster.UpdateRange(saleOrderMaster);
                     context.SaveChanges();

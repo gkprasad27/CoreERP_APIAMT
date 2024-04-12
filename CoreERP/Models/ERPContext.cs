@@ -8581,7 +8581,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblSaleOrderMaster>(entity =>
             {
-                entity.HasKey(e => e.PONumber);
+                entity.HasKey(e => e.SaleOrderNo);
 
                 entity.Property(e => e.CustomerCode)
                 .HasMaxLength(50).IsUnicode(false);
