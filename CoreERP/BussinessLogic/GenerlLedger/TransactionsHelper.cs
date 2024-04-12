@@ -3998,7 +3998,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
                 c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
-                c.BOMQTY = Convert.ToInt32(BOMMaster.FirstOrDefault(z => z.BomKey == c.BomKey)?.Qty);
+                c.BOMQTY = Convert.ToInt32(BOMMaster.Where(z=>z.BomKey==c.BomKey).FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Qty);
             });
             return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
 
