@@ -2765,10 +2765,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
 
                         var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.SaleOrder == item.SaleOrderNo && z.PurchaseOrderNumber == ponumber).ToList();
-                        var saleorder = repo.TblSaleOrderDetail.Where(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item.Material).FirstOrDefault();
                         foreach (var item1 in purchaseorder)
                         {
                             var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item1.SaleOrder && z.MaterialCode == item1.MaterialCode);
+                            var saleorder = repo.TblSaleOrderDetail.Where(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item1.MaterialCode).FirstOrDefault();
 
                             if (poq != null)
                             {
@@ -2787,15 +2787,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 poq.CompanyCode = podata.FirstOrDefault().Company;
                                 context.TblPoQueue.Add(poq);
                             }
+
+                            saleorder.POQty = saleorder.POQty - saleorder.POQty;
+                            if (Convert.ToInt16(saleorder.POQty) < 0)
+                                saleorder.POQty = 0;
+
+                            context.TblSaleOrderDetail.Update(saleorder);
                         }
 
                         context.TblPurchaseOrder.Update(item);
 
-                        saleorder.POQty = saleorder.POQty - saleorder.POQty;
-                        if (Convert.ToInt16(saleorder.POQty) < 0)
-                            saleorder.POQty = 0;
 
-                        context.TblSaleOrderDetail.Update(saleorder);
+                        
                     }
                 }
 
