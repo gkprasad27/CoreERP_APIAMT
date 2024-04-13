@@ -2584,7 +2584,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var purchaseorder = repo.TblPurchaseOrder.Where(im => im.SaleOrderNo == podata.SaleOrderNo);
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == podata.SaleOrderNo);
             var PRdata = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == podata.SaleOrderNo);
-            if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber != podata.PurchaseOrderNumber))
+            if (podata.PurchaseOrderNumber==null)
             {
                 if (Pcenter != null)
                 {
