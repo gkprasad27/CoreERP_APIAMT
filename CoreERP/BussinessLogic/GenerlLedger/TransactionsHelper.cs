@@ -2753,133 +2753,140 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public bool SavePurchaseOrder(List<TblPurchaseOrder> podata)
         {
-            using var repo = new Repository<TblPurchaseOrder>();
-            using var context = new ERPContext();
-            string ponumber = podata.FirstOrDefault().PurchaseOrderNumber;
-            using var dbtrans = context.Database.BeginTransaction();
-            try
+            if (podata != null || podata.Count > 0)
             {
-                foreach (var item in podata)
+                using var repo = new Repository<TblPurchaseOrder>();
+                using var context = new ERPContext();
+                string ponumber = podata.FirstOrDefault().PurchaseOrderNumber;
+                using var dbtrans = context.Database.BeginTransaction();
+                try
                 {
-                    if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == ponumber))
+                    foreach (var item in podata)
                     {
-
-                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.SaleOrder == item.SaleOrderNo && z.PurchaseOrderNumber == ponumber).ToList();
-                        foreach (var item1 in purchaseorder)
+                        if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == ponumber))
                         {
-                            var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item1.SaleOrder && z.MaterialCode == item1.MaterialCode);
-                            var saleorder = repo.TblSaleOrderDetail.Where(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item1.MaterialCode).FirstOrDefault();
 
-                            if (poq != null)
+                            var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.SaleOrder == item.SaleOrderNo && z.PurchaseOrderNumber == ponumber).ToList();
+                            if (item.ApprovalStatus == "Rejected")
                             {
-                                poq.Qty = (poq.Qty) + (item1.Qty);
-                                if (poq.Qty >= 0)
+                                foreach (var item1 in purchaseorder)
                                 {
-                                    context.TblPoQueue.Update(poq);
+                                    var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item1.SaleOrder && z.MaterialCode == item1.MaterialCode);
+                                    var saleorder = repo.TblSaleOrderDetail.Where(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item1.MaterialCode).FirstOrDefault();
+
+                                    if (poq != null)
+                                    {
+                                        poq.Qty = (poq.Qty) + (item1.Qty);
+                                        if (poq.Qty >= 0)
+                                        {
+                                            context.TblPoQueue.Update(poq);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        poq = new TblPoQueue();
+                                        poq.SaleOrderNo = item1.SaleOrder;
+                                        poq.MaterialCode = item1.MaterialCode;
+                                        poq.Qty = (poq.Qty) + (item1.Qty);
+                                        poq.CompanyCode = podata.FirstOrDefault().Company;
+                                        context.TblPoQueue.Add(poq);
+                                    }
+                                    saleorder.POQty = saleorder.POQty - saleorder.POQty;
+                                    if (Convert.ToInt16(saleorder.POQty) < 0)
+                                        saleorder.POQty = 0;
+                                    context.TblSaleOrderDetail.Update(saleorder);
                                 }
                             }
-                            else
-                            {
-                                poq = new TblPoQueue();
-                                poq.SaleOrderNo = item1.SaleOrder;
-                                poq.MaterialCode = item1.MaterialCode;
-                                poq.Qty = (poq.Qty) + (item1.Qty);
-                                poq.CompanyCode = podata.FirstOrDefault().Company;
-                                context.TblPoQueue.Add(poq);
-                            }
-
-                            saleorder.POQty = saleorder.POQty - saleorder.POQty;
-                            if (Convert.ToInt16(saleorder.POQty) < 0)
-                                saleorder.POQty = 0;
-
-                            context.TblSaleOrderDetail.Update(saleorder);
+                            context.TblPurchaseOrder.Update(item);
                         }
-
-                        context.TblPurchaseOrder.Update(item);
-
-
-                        
                     }
+
+                    context.SaveChanges();
+
+                    dbtrans.Commit();
+                    return true;
                 }
-
-                context.SaveChanges();
-
-                dbtrans.Commit();
-                return true;
+                catch (Exception)
+                {
+                    dbtrans.Rollback();
+                    throw;
+                }
             }
-            catch (Exception)
-            {
-                dbtrans.Rollback();
-                throw;
-            }
+            return true;
         }
 
         public bool SaveGoodsReceipt(List<TblGoodsReceiptMaster> podata)
         {
-            using var repo = new Repository<TblGoodsReceiptMaster>();
-            using var context = new ERPContext();
-            string ponumber = podata.FirstOrDefault().PurchaseOrderNo;
-            using var dbtrans = context.Database.BeginTransaction();
-            var customer = repo.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == podata.FirstOrDefault().SupplierCode);
-            try
+            if (podata != null || podata.Count > 0)
             {
-                foreach (var item in podata)
+                using var repo = new Repository<TblGoodsReceiptMaster>();
+                using var context = new ERPContext();
+                string ponumber = podata.FirstOrDefault().PurchaseOrderNo;
+                using var dbtrans = context.Database.BeginTransaction();
+                var customer = repo.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == podata.FirstOrDefault().SupplierCode);
+                try
                 {
-                    if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == ponumber))
+                    foreach (var item in podata)
                     {
-                        var GoodsReceiptDetails = repo.TblGoodsReceiptDetails.Where(z => z.PurchaseOrderNo == item.PurchaseOrderNo).ToList();
-                        foreach (var item1 in GoodsReceiptDetails)
+                        if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == ponumber))
                         {
-                            var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item1.SaleorderNo && z.MaterialCode == item1.MaterialCode);
-                            var Material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item1.MaterialCode);
-
-                            if (poq != null)
+                            var GoodsReceiptDetails = repo.TblGoodsReceiptDetails.Where(z => z.PurchaseOrderNo == item.PurchaseOrderNo).ToList();
+                            if (item.ApprovalStatus == "Rejected")
                             {
-                                poq.Qty = (poq.Qty) + (item1.Qty);
-                                if (poq.Qty >= 0)
+                                foreach (var item1 in GoodsReceiptDetails)
                                 {
-                                    context.TblPoQueue.Update(poq);
+                                    var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item1.SaleorderNo && z.MaterialCode == item1.MaterialCode);
+                                    var Material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item1.MaterialCode);
+
+                                    if (poq != null)
+                                    {
+                                        poq.Qty = (poq.Qty) + (item1.Qty);
+                                        if (poq.Qty >= 0)
+                                        {
+                                            context.TblPoQueue.Update(poq);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        poq = new TblPoQueue();
+                                        poq.SaleOrderNo = item1.SaleorderNo;
+                                        poq.MaterialCode = item1.MaterialCode;
+                                        poq.Qty = (poq.Qty) + (item1.ReceivedQty);
+                                        poq.CompanyCode = podata.FirstOrDefault().Company;
+                                        context.TblPoQueue.Add(poq);
+                                    }
+                                    if (Convert.ToString(Material.ClosingQty) == null)
+                                        Material.ClosingQty = 0;
+
+                                    Material.ClosingQty = ((Material.ClosingQty ?? 0) - (item1.ReceivedQty));
+                                    context.TblMaterialMaster.Update(Material);
                                 }
                             }
-                            else
-                            {
-                                poq = new TblPoQueue();
-                                poq.SaleOrderNo = item1.SaleorderNo;
-                                poq.MaterialCode = item1.MaterialCode;
-                                poq.Qty = (poq.Qty) + (item1.ReceivedQty);
-                                poq.CompanyCode = podata.FirstOrDefault().Company;
-                                context.TblPoQueue.Add(poq);
-                            }
-                            if (Convert.ToString(Material.ClosingQty) == null)
-                                Material.ClosingQty = 0;
 
-                            Material.ClosingQty = ((Material.ClosingQty ?? 0) - (item1.ReceivedQty));
-                            context.TblMaterialMaster.Update(Material);
                         }
 
+                        context.TblGoodsReceiptMaster.Update(item);
 
                     }
 
-                    context.TblGoodsReceiptMaster.Update(item);
+                    if (customer != null)
+                    {
+                        customer.ClosingBalance = Convert.ToInt32(customer.ClosingBalance + Convert.ToInt32(podata.FirstOrDefault().TotalAmount));
+                        context.Update(customer);
+                    }
 
+                    context.SaveChanges();
+
+                    dbtrans.Commit();
+                    return true;
                 }
-
-                if (customer != null)
+                catch (Exception)
                 {
-                    customer.ClosingBalance = Convert.ToInt32(customer.ClosingBalance + Convert.ToInt32(podata.FirstOrDefault().TotalAmount));
-                    context.Update(customer);
+                    dbtrans.Rollback();
+                    throw;
                 }
-
-                context.SaveChanges();
-
-                dbtrans.Commit();
-                return true;
             }
-            catch (Exception)
-            {
-                dbtrans.Rollback();
-                throw;
-            }
+            return true;
         }
 
         public TblPurchaseOrder GetPurchaseOrderMasterById(string id)
