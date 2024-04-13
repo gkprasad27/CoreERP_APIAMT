@@ -3178,9 +3178,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     item.Status = statusmessage;
 
                     var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == item.PurchaseOrderNo && z.MaterialCode == item.MaterialCode);
-                    POD.Status = statusmessage;
+                    POD.Status = "Material Partial Received";
                     if (Convert.ToInt16(item.RejectQty) > 0)
+                    {
                         POD.Qty = (POD.Qty) - Convert.ToInt16(item.RejectQty);
+
+                        purchase.Status = "Material Partial Received"; 
+                        purchase.ReceivedDate = DateTime.Now;
+                        context.TblPurchaseOrder.Update(purchase);
+                    }
                     if (POD.Qty >= 0)
                     {
                         POD.Status = statusmessage;
@@ -4139,7 +4145,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         int poqty = 0;
                         int soqty = 0;
                         int matqty = 0;
-                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && z.SaleOrder == item.FirstOrDefault().SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
+                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && z.SaleOrder == item.FirstOrDefault().SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
                         var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.FirstOrDefault().SaleOrderNo && z.MaterialCode == item.FirstOrDefault().MaterialCode);
                         var material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.FirstOrDefault().MaterialCode);
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.FirstOrDefault().SaleOrderNo && z.MaterialCode == item.FirstOrDefault().MaterialCode);
@@ -4219,7 +4225,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         int poqty = 0;
                         int soqty = 0;
                         int matqty = 0;
-                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrder == item.SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
+                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrder == item.SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created" || z.Status== "Material Partial Received")).ToList();
                         var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
                         var material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode);
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
