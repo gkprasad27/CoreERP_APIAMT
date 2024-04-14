@@ -4200,7 +4200,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             else if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "Material Partial Received")
                                 poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
                             else
-                                poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (poqty + purchaseorderqtytotal + Exitsalerqty));
+                                poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (matqty+poqty + purchaseorderqtytotal + Exitsalerqty));
 
                             poq.Status = "New";
                             poq.SaleOrderNo = item.FirstOrDefault().SaleOrderNo;
@@ -4217,7 +4217,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             else if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "Material Partial Received")
                                 poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
                             else
-                                poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (poqty + purchaseorderqtytotal + Exitsalerqty));
+                                poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (matqty+poqty + purchaseorderqtytotal + Exitsalerqty));
 
 
                             poq.Status = "New";
@@ -4282,7 +4282,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             else if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "Material Partial Received")
                                 poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
                             else
-                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (poqty + purchaseorderqtytotal + Exitsalerqty));
+                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (matqty+poqty + purchaseorderqtytotal + Exitsalerqty));
 
                             poq.Status = "New";
                             poq.SaleOrderNo = item.SaleOrderNo;
@@ -4299,7 +4299,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             else if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "Material Partial Received")
                                 poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
                             else
-                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (poqty + purchaseorderqtytotal + Exitsalerqty));
+                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (matqty+poqty + purchaseorderqtytotal + Exitsalerqty));
 
 
                             poq.Status = "New";
