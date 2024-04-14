@@ -2798,8 +2798,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                     if (Convert.ToInt16(saleorder.POQty) < 0)
                                         saleorder.POQty = 0;
                                     context.TblSaleOrderDetail.Update(saleorder);
+
+                                    item.Status = "SO Created";
+                                    context.TblPurchaseOrderDetails.Update(item1);
                                 }
                             }
+                            item.Status = "SO Created";
                             context.TblPurchaseOrder.Update(item);
                         }
                     }
@@ -2863,11 +2867,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                                     Material.ClosingQty = ((Material.ClosingQty ?? 0) - (item1.ReceivedQty));
                                     context.TblMaterialMaster.Update(Material);
+
+                                    item1.Status = "PO Created";
+                                    context.TblGoodsReceiptDetails.Update(item1);
                                 }
                             }
 
                         }
-
+                        item.Status = "PO Created";
                         context.TblGoodsReceiptMaster.Update(item);
 
                     }
