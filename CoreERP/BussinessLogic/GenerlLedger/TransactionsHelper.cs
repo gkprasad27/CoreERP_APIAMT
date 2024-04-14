@@ -2665,6 +2665,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         poq.CompanyCode = SaleOrder.Company;
                         context.TblPoQueue.Add(poq);
                     }
+                    if (sodata.POQty == null)
+                        sodata.POQty = 0;
+
                     sodata.POQty = sodata.POQty + item.Qty;
                     if (sodata.POQty == sodata.QTY)
                         sodata.Status = "PO Created";
