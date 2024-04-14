@@ -4181,7 +4181,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             poq = new TblPoQueue();
                             //poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
-                            if (Exitsaleorderqty!=null && Exitsaleorderqty.FirstOrDefault().Status == "Partial PO Created")
+                            if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "Partial PO Created")
                                 poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (poqty +  purchaseorderqtytotal + Exitsalerqty));
                             else
                                 poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal+ poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
@@ -4196,7 +4196,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         else
                         {
                             //poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
-                            if (Exitsaleorderqty != null && Exitsaleorderqty.FirstOrDefault().Status == "Partial PO Created")
+                            if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "Partial PO Created")
                                 poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (poqty +  purchaseorderqtytotal + Exitsalerqty));
                             else
                                 poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal+ poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
@@ -4258,7 +4258,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             poq = new TblPoQueue();
                             //poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
-                            if(Exitsaleorderqty!=null && Exitsaleorderqty.FirstOrDefault().Status== "Partial PO Created")
+                            if(Exitsaleorderqty.Count>0 && Exitsaleorderqty.FirstOrDefault().Status== "Partial PO Created")
                                 poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (poqty +  purchaseorderqtytotal + Exitsalerqty));
                             else
                             poq.Qty = ((item.QTY + saleorderqtytotal+ poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
@@ -4273,7 +4273,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         else
                         {
                             //poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
-                            if (Exitsaleorderqty != null && Exitsaleorderqty.FirstOrDefault().Status == "Partial PO Created")
+                            if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "Partial PO Created")
                                 poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (poqty + purchaseorderqtytotal + Exitsalerqty));
                             else
                                 poq.Qty = ((item.QTY + saleorderqtytotal+ poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
