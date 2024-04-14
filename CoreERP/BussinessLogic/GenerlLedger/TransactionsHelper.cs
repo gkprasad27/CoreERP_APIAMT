@@ -2584,7 +2584,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var purchaseorder = repo.TblPurchaseOrder.Where(im => im.SaleOrderNo == podata.SaleOrderNo);
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == podata.SaleOrderNo);
             var PRdata = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == podata.SaleOrderNo);
-            if (podata.PurchaseOrderNumber==null)
+            if (podata.PurchaseOrderNumber == null)
             {
                 if (Pcenter != null)
                 {
@@ -3183,7 +3183,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         POD.Qty = (POD.Qty) - Convert.ToInt16(item.RejectQty);
 
-                        purchase.Status = "Material Partial Received"; 
+                        purchase.Status = "Material Partial Received";
                         purchase.ReceivedDate = DateTime.Now;
                         context.TblPurchaseOrder.Update(purchase);
                     }
@@ -4182,9 +4182,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq = new TblPoQueue();
                             //poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
                             if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "Partial PO Created")
-                                poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (poqty +  purchaseorderqtytotal + Exitsalerqty));
+                                poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
                             else
-                                poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal+ poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
+                                poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (poqty + purchaseorderqtytotal + Exitsalerqty));
 
                             poq.Status = "New";
                             poq.SaleOrderNo = item.FirstOrDefault().SaleOrderNo;
@@ -4197,9 +4197,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             //poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
                             if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "Partial PO Created")
-                                poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (poqty +  purchaseorderqtytotal + Exitsalerqty));
+                                poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
                             else
-                                poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal+ poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
+                                poq.Qty = ((item.FirstOrDefault().QTY + saleorderqtytotal + poqqtysuntotal) - (poqty + purchaseorderqtytotal + Exitsalerqty));
+
 
                             poq.Status = "New";
                             poq.SaleOrderNo = item.FirstOrDefault().SaleOrderNo;
@@ -4225,7 +4226,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         int poqty = 0;
                         int soqty = 0;
                         int matqty = 0;
-                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrder == item.SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created" || z.Status== "Material Partial Received")).ToList();
+                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrder == item.SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
                         var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
                         var material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode);
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
@@ -4258,10 +4259,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             poq = new TblPoQueue();
                             //poq.Qty = ((item.QTY + material.OpeningValue) - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
-                            if(Exitsaleorderqty.Count>0 && Exitsaleorderqty.FirstOrDefault().Status== "Partial PO Created")
-                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (poqty +  purchaseorderqtytotal + Exitsalerqty));
+                            if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "Partial PO Created")
+                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
                             else
-                            poq.Qty = ((item.QTY + saleorderqtytotal+ poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
+                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (poqty + purchaseorderqtytotal + Exitsalerqty));
 
                             poq.Status = "New";
                             poq.SaleOrderNo = item.SaleOrderNo;
@@ -4274,9 +4275,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             //poq.Qty = (item.QTY + material.OpeningValue - (matqty + poqty + poqqtysun.Sum(x => x.Qty)));
                             if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "Partial PO Created")
-                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (poqty + purchaseorderqtytotal + Exitsalerqty));
+                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
                             else
-                                poq.Qty = ((item.QTY + saleorderqtytotal+ poqqtysuntotal) - (matqty + poqty + poqqtysuntotal + purchaseorderqtytotal + Exitsalerqty));
+                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (poqty + purchaseorderqtytotal + Exitsalerqty));
+
 
                             poq.Status = "New";
                             poq.SaleOrderNo = item.SaleOrderNo;
