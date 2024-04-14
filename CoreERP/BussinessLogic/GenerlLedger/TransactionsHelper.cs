@@ -2768,6 +2768,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == ponumber))
                         {
+                            var saleordermaster = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNo);
 
                             var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.SaleOrder == item.SaleOrderNo && z.PurchaseOrderNumber == ponumber).ToList();
                             if (item.ApprovalStatus == "Rejected")
@@ -2797,14 +2798,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                     saleorder.POQty = saleorder.POQty - saleorder.POQty;
                                     if (Convert.ToInt16(saleorder.POQty) < 0)
                                         saleorder.POQty = 0;
+
+                                    saleorder.Status = "Rejected";
                                     context.TblSaleOrderDetail.Update(saleorder);
 
-                                    item.Status = "SO Created";
+                                    item.Status = "Rejected";
                                     context.TblPurchaseOrderDetails.Update(item1);
                                 }
                             }
-                            item.Status = "SO Created";
+                            item.Status = "Rejected";
                             context.TblPurchaseOrder.Update(item);
+
+                            saleordermaster.Status = "Rejected";
+                            context.TblSaleOrderMaster.Update(saleordermaster);
                         }
                     }
 
@@ -2837,6 +2843,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == ponumber))
                         {
+                            var purchaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == item.PurchaseOrderNo);
                             var GoodsReceiptDetails = repo.TblGoodsReceiptDetails.Where(z => z.PurchaseOrderNo == item.PurchaseOrderNo).ToList();
                             if (item.ApprovalStatus == "Rejected")
                             {
@@ -2844,7 +2851,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 {
                                     var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item1.SaleorderNo && z.MaterialCode == item1.MaterialCode);
                                     var Material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item1.MaterialCode);
-
+                                    var purchaseorderdetail = repo.TblPurchaseOrderDetails.Where(z => z.SaleOrder == item1.SaleorderNo && z.PurchaseOrderNumber == item1.PurchaseOrderNo).FirstOrDefault();
                                     if (poq != null)
                                     {
                                         poq.Qty = (poq.Qty) + (item1.Qty);
@@ -2865,18 +2872,25 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                     if (Convert.ToString(Material.ClosingQty) == null)
                                         Material.ClosingQty = 0;
 
-                                    Material.ClosingQty = ((Material.ClosingQty ?? 0) - (item1.ReceivedQty));
+                                    Material.ClosingQty = Math.Abs(Convert.ToInt16(Material.ClosingQty ?? 0) - Convert.ToInt16(item1.ReceivedQty));
                                     context.TblMaterialMaster.Update(Material);
 
-                                    item1.Status = "PO Created";
+                                    item1.Status = "Rejected";
                                     context.TblGoodsReceiptDetails.Update(item1);
+
+                                    purchaseorderdetail.Status = "Rejected";
+                                    context.TblPurchaseOrderDetails.Update(purchaseorderdetail);
                                 }
                             }
+                            purchaseorder.Status = "Rejected";
+                            context.TblPurchaseOrder.Update(purchaseorder);
 
+                            item.Status = "Rejected";
+                            context.TblGoodsReceiptMaster.Update(item);
                         }
-                        item.Status = "PO Created";
-                        context.TblGoodsReceiptMaster.Update(item);
+                       
 
+                        
                     }
 
                     if (customer != null)
