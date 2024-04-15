@@ -2805,11 +2805,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                     item.Status = "Rejected";
                                     context.TblPurchaseOrderDetails.Update(item1);
                                 }
+                                item.Status = "Rejected";
+                                saleordermaster.Status = "Rejected";
+
                             }
-                            item.Status = "Rejected";
                             context.TblPurchaseOrder.Update(item);
 
-                            saleordermaster.Status = "Rejected";
                             context.TblSaleOrderMaster.Update(saleordermaster);
                         }
                     }
@@ -2881,11 +2882,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                     purchaseorderdetail.Status = "Rejected";
                                     context.TblPurchaseOrderDetails.Update(purchaseorderdetail);
                                 }
+                                purchaseorder.Status = "Rejected";
+                                item.Status = "Rejected";
+
                             }
-                            purchaseorder.Status = "Rejected";
                             context.TblPurchaseOrder.Update(purchaseorder);
 
-                            item.Status = "Rejected";
                             context.TblGoodsReceiptMaster.Update(item);
                         }
                        
