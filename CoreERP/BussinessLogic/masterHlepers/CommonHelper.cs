@@ -681,6 +681,13 @@ namespace CoreERP
             });
             return result;
         }
+
+        public static IEnumerable<TblAttendanceDetails> GetAttendanceDetails()
+        {
+            using var repo = new Repository<TblAttendanceDetails>();
+            var result = repo.TblAttendanceDetails.Where(x => x.Year == DateTime.Now.Year && x.Month == DateTime.Now.Month).ToList();
+            return result;
+        }
         public static IEnumerable<TblCAPA> GetCapaList(string tag)
         {
             using var repo = new Repository<TblCAPA>();
@@ -694,7 +701,15 @@ namespace CoreERP
             });
             return result;
         }
-        
+
+        public static IEnumerable<TblAttendanceDetails> GetAttendanceDetails(string Empcode)
+        {
+            using var repo = new Repository<TblAttendanceDetails>();
+            var result = repo.TblAttendanceDetails.ToList().Where(x => x.Emp_Code == Empcode).ToList();
+           
+            return result;
+        }
+
         public static IEnumerable<TblHoliday> GetHolidays()
         {
             using var repo = new Repository<TblHoliday>();
