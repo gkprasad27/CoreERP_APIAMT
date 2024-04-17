@@ -378,6 +378,30 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
+        [HttpGet("GetAttendanceProcess/{fromDate}/{toDate}/{company}/{EmployeeCode}")]
+        public async Task<IActionResult> GetAttendanceProcess(DateTime fromDate, DateTime toDate, string company, string EmployeeCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    DataSet ds = ReportsHelperClass.GetAttendanceProcess(fromDate, toDate, company, EmployeeCode);
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        expando.AttendanceProcess = ds.Tables[0];
+                        //expando.GoodsReceiptReportTotals = ds.Tables[1];
+
+                    }
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
 
         //public async Task<IActionResult> GetSalesReport(string company, DateTime fromDate, DateTime toDate)
         //{
