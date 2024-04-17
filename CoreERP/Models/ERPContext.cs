@@ -132,6 +132,7 @@ namespace CoreERP.Models
 
         public virtual DbSet<TblQCParamConfig> TblQCParamConfig { get; set; }
         public virtual DbSet<TblCAPA> TblCAPA { get; set; }
+        public virtual DbSet<TblAttendanceDetails> TblAttendanceDetails { get; set; }
         public virtual DbSet<TblInvoiceMemoDetails> TblInvoiceMemoDetails { get; set; }
         public virtual DbSet<TblForm> TblForm { get; set; }
         public virtual DbSet<TblInvoiceMemoHeader> TblInvoiceMemoHeader { get; set; }
