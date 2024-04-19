@@ -447,15 +447,15 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Language).HasMaxLength(5);
 
-                entity.HasOne(d => d.CurrencyNavigation)
-                    .WithMany(p => p.Countries)
-                    .HasForeignKey(d => d.Currency)
-                    .HasConstraintName("FK__Countries__Curre__22B6AD3C");
+                //entity.HasOne(d => d.CurrencyNavigation)
+                //    .WithMany(p => p.Countries)
+                //    .HasForeignKey(d => d.Currency)
+                //    .HasConstraintName("FK__Countries__Curre__22B6AD3C");
 
-                entity.HasOne(d => d.LanguageNavigation)
-                    .WithMany(p => p.Countries)
-                    .HasForeignKey(d => d.Language)
-                    .HasConstraintName("FK__Countries__Langu__21C28903");
+                //entity.HasOne(d => d.LanguageNavigation)
+                //    .WithMany(p => p.Countries)
+                //    .HasForeignKey(d => d.Language)
+                //    .HasConstraintName("FK__Countries__Langu__21C28903");
             });
 
             modelBuilder.Entity<Department>(entity =>
@@ -1017,30 +1017,30 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.State).HasMaxLength(5);
 
-                entity.HasOne(d => d.CountryNavigation)
-                    .WithMany(p => p.ProfitCenters)
-                    .HasForeignKey(d => d.Country)
-                    .HasConstraintName("FK__ProfitCen__Count__570A79EA");
+                //entity.HasOne(d => d.CountryNavigation)
+                //    .WithMany(p => p.ProfitCenters)
+                //    .HasForeignKey(d => d.Country)
+                //    .HasConstraintName("FK__ProfitCen__Count__570A79EA");
 
-                entity.HasOne(d => d.CurrencyNavigation)
-                    .WithMany(p => p.ProfitCenters)
-                    .HasForeignKey(d => d.Currency)
-                    .HasConstraintName("FK__ProfitCen__Curre__57FE9E23");
+                //entity.HasOne(d => d.CurrencyNavigation)
+                //    .WithMany(p => p.ProfitCenters)
+                //    .HasForeignKey(d => d.Currency)
+                //    .HasConstraintName("FK__ProfitCen__Curre__57FE9E23");
 
-                entity.HasOne(d => d.LanguageNavigation)
-                    .WithMany(p => p.ProfitCenters)
-                    .HasForeignKey(d => d.Language)
-                    .HasConstraintName("FK__ProfitCen__Langu__34D55D77");
+                //entity.HasOne(d => d.LanguageNavigation)
+                //    .WithMany(p => p.ProfitCenters)
+                //    .HasForeignKey(d => d.Language)
+                //    .HasConstraintName("FK__ProfitCen__Langu__34D55D77");
 
-                entity.HasOne(d => d.RegionNavigation)
-                    .WithMany(p => p.ProfitCenters)
-                    .HasForeignKey(d => d.Region)
-                    .HasConstraintName("FK__ProfitCen__Regio__561655B1");
+                //entity.HasOne(d => d.RegionNavigation)
+                //    .WithMany(p => p.ProfitCenters)
+                //    .HasForeignKey(d => d.Region)
+                //    .HasConstraintName("FK__ProfitCen__Regio__561655B1");
 
-                entity.HasOne(d => d.StateNavigation)
-                    .WithMany(p => p.ProfitCenters)
-                    .HasForeignKey(d => d.State)
-                    .HasConstraintName("FK__ProfitCen__State__55223178");
+                //entity.HasOne(d => d.StateNavigation)
+                //    .WithMany(p => p.ProfitCenters)
+                //    .HasForeignKey(d => d.State)
+                //    .HasConstraintName("FK__ProfitCen__State__55223178");
             });
 
             modelBuilder.Entity<SalesDepartment>(entity =>
@@ -1093,25 +1093,25 @@ namespace CoreERP.Models
                     .HasColumnName("TANNo")
                     .HasMaxLength(50);
 
-                entity.HasOne(d => d.CountryNavigation)
-                    .WithMany(p => p.SalesDepartment)
-                    .HasForeignKey(d => d.Country)
-                    .HasConstraintName("FK__SalesDepa__Count__65589941");
+                //entity.HasOne(d => d.CountryNavigation)
+                //    .WithMany(p => p.SalesDepartment)
+                //    .HasForeignKey(d => d.Country)
+                //    .HasConstraintName("FK__SalesDepa__Count__65589941");
 
-                entity.HasOne(d => d.CurrencyNavigation)
-                    .WithMany(p => p.SalesDepartment)
-                    .HasForeignKey(d => d.Currency)
-                    .HasConstraintName("FK__SalesDepa__Curre__664CBD7A");
+                //entity.HasOne(d => d.CurrencyNavigation)
+                //    .WithMany(p => p.SalesDepartment)
+                //    .HasForeignKey(d => d.Currency)
+                //    .HasConstraintName("FK__SalesDepa__Curre__664CBD7A");
 
-                entity.HasOne(d => d.RegionNavigation)
-                    .WithMany(p => p.SalesDepartment)
-                    .HasForeignKey(d => d.Region)
-                    .HasConstraintName("FK__SalesDepa__Regio__64647508");
+                //entity.HasOne(d => d.RegionNavigation)
+                //    .WithMany(p => p.SalesDepartment)
+                //    .HasForeignKey(d => d.Region)
+                //    .HasConstraintName("FK__SalesDepa__Regio__64647508");
 
-                entity.HasOne(d => d.StateNavigation)
-                    .WithMany(p => p.SalesDepartment)
-                    .HasForeignKey(d => d.State)
-                    .HasConstraintName("FK__SalesDepa__State__637050CF");
+                //entity.HasOne(d => d.StateNavigation)
+                //    .WithMany(p => p.SalesDepartment)
+                //    .HasForeignKey(d => d.State)
+                //    .HasConstraintName("FK__SalesDepa__State__637050CF");
             });
 
             modelBuilder.Entity<Segment>(entity =>
@@ -1218,15 +1218,15 @@ namespace CoreERP.Models
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.HasOne(d => d.CountryCodeNavigation)
-                    .WithMany(p => p.States)
-                    .HasForeignKey(d => d.CountryCode)
-                    .HasConstraintName("FK__States__CountryC__2E285FE8");
+                //entity.HasOne(d => d.CountryCodeNavigation)
+                //    .WithMany(p => p.States)
+                //    .HasForeignKey(d => d.CountryCode)
+                //    .HasConstraintName("FK__States__CountryC__2E285FE8");
 
-                entity.HasOne(d => d.LanguageNavigation)
-                    .WithMany(p => p.States)
-                    .HasForeignKey(d => d.Language)
-                    .HasConstraintName("FK__States__Language__2D343BAF");
+                //entity.HasOne(d => d.LanguageNavigation)
+                //    .WithMany(p => p.States)
+                //    .HasForeignKey(d => d.Language)
+                //    .HasConstraintName("FK__States__Language__2D343BAF");
             });
 
             modelBuilder.Entity<TaxIntegration>(entity =>
@@ -2159,31 +2159,31 @@ namespace CoreERP.Models
                     .HasColumnName("TANNo")
                     .HasMaxLength(50);
 
-                entity.HasOne(d => d.CompanyCodeNavigation)
-                    .WithMany(p => p.TblBranch)
-                    .HasForeignKey(d => d.CompanyCode)
-                    .HasConstraintName("FK__tbl_Branc__Compa__5A06E226");
+                //entity.HasOne(d => d.CompanyCodeNavigation)
+                //    .WithMany(p => p.TblBranch)
+                //    .HasForeignKey(d => d.CompanyCode)
+                //    .HasConstraintName("FK__tbl_Branc__Compa__5A06E226");
 
-                entity.HasOne(d => d.CountryNavigation)
-                    .WithMany(p => p.TblBranch)
-                    .HasForeignKey(d => d.Country)
-                    .HasConstraintName("FK__tbl_Branc__Count__5BCF2F07");
+                //entity.HasOne(d => d.CountryNavigation)
+                //    .WithMany(p => p.TblBranch)
+                //    .HasForeignKey(d => d.Country)
+                //    .HasConstraintName("FK__tbl_Branc__Count__5BCF2F07");
 
-                entity.HasOne(d => d.CurrencyNavigation)
-                    .WithMany(p => p.TblBranch)
-                    .HasForeignKey(d => d.Currency)
-                    .HasConstraintName("FK__tbl_Branc__Curre__5CC35340");
+                //entity.HasOne(d => d.CurrencyNavigation)
+                //    .WithMany(p => p.TblBranch)
+                //    .HasForeignKey(d => d.Currency)
+                //    .HasConstraintName("FK__tbl_Branc__Curre__5CC35340");
 
-                entity.HasOne(d => d.RegionNavigation)
-                    .WithMany(p => p.TblBranch)
-                    .HasForeignKey(d => d.Region)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__tbl_Branc__Regio__5ADB0ACE");
+                //entity.HasOne(d => d.RegionNavigation)
+                //    .WithMany(p => p.TblBranch)
+                //    .HasForeignKey(d => d.Region)
+                //    .OnDelete(DeleteBehavior.ClientSetNull)
+                //    .HasConstraintName("FK__tbl_Branc__Regio__5ADB0ACE");
 
-                entity.HasOne(d => d.StateNavigation)
-                    .WithMany(p => p.TblBranch)
-                    .HasForeignKey(d => d.State)
-                    .HasConstraintName("FK__tbl_Branc__State__59E6E695");
+                //entity.HasOne(d => d.StateNavigation)
+                //    .WithMany(p => p.TblBranch)
+                //    .HasForeignKey(d => d.State)
+                //    .HasConstraintName("FK__tbl_Branc__State__59E6E695");
             });
 
             modelBuilder.Entity<TblBusinessPartnerAccount>(entity =>
@@ -2533,20 +2533,20 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.WebSite).HasMaxLength(50);
 
-                entity.HasOne(d => d.CountryNavigation)
-                    .WithMany(p => p.TblCompany)
-                    .HasForeignKey(d => d.Country)
-                    .HasConstraintName("FK__tbl_Compa__Count__4C8CEB77");
+                //entity.HasOne(d => d.CountryNavigation)
+                //    .WithMany(p => p.TblCompany)
+                //    .HasForeignKey(d => d.Country)
+                //    .HasConstraintName("FK__tbl_Compa__Count__4C8CEB77");
 
-                entity.HasOne(d => d.CurrencyNavigation)
-                    .WithMany(p => p.TblCompany)
-                    .HasForeignKey(d => d.Currency)
-                    .HasConstraintName("FK__tbl_Compa__Curre__5339E906");
+                //entity.HasOne(d => d.CurrencyNavigation)
+                //    .WithMany(p => p.TblCompany)
+                //    .HasForeignKey(d => d.Currency)
+                //    .HasConstraintName("FK__tbl_Compa__Curre__5339E906");
 
-                entity.HasOne(d => d.LanguageNavigation)
-                    .WithMany(p => p.TblCompany)
-                    .HasForeignKey(d => d.Language)
-                    .HasConstraintName("FK__tbl_Compa__Langu__33E1393E");
+                //entity.HasOne(d => d.LanguageNavigation)
+                //    .WithMany(p => p.TblCompany)
+                //    .HasForeignKey(d => d.Language)
+                //    .HasConstraintName("FK__tbl_Compa__Langu__33E1393E");
             });
 
             modelBuilder.Entity<TblCostingActivity>(entity =>
@@ -4978,30 +4978,30 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.State).HasMaxLength(5);
 
-                entity.HasOne(d => d.CountryNavigation)
-                    .WithMany(p => p.TblPlant)
-                    .HasForeignKey(d => d.Country)
-                    .HasConstraintName("FK__tbl_Plant__Count__6093E424");
+                //entity.HasOne(d => d.CountryNavigation)
+                //    .WithMany(p => p.TblPlant)
+                //    .HasForeignKey(d => d.Country)
+                //    .HasConstraintName("FK__tbl_Plant__Count__6093E424");
 
-                entity.HasOne(d => d.CurrencyNavigation)
-                    .WithMany(p => p.TblPlant)
-                    .HasForeignKey(d => d.Currency)
-                    .HasConstraintName("FK__tbl_Plant__Curre__6188085D");
+                //entity.HasOne(d => d.CurrencyNavigation)
+                //    .WithMany(p => p.TblPlant)
+                //    .HasForeignKey(d => d.Currency)
+                //    .HasConstraintName("FK__tbl_Plant__Curre__6188085D");
 
-                entity.HasOne(d => d.LanguageNavigation)
-                    .WithMany(p => p.TblPlant)
-                    .HasForeignKey(d => d.Language)
-                    .HasConstraintName("FK__tbl_Plant__Langu__5AFB065F");
+                //entity.HasOne(d => d.LanguageNavigation)
+                //    .WithMany(p => p.TblPlant)
+                //    .HasForeignKey(d => d.Language)
+                //    .HasConstraintName("FK__tbl_Plant__Langu__5AFB065F");
 
-                entity.HasOne(d => d.RegionNavigation)
-                    .WithMany(p => p.TblPlant)
-                    .HasForeignKey(d => d.Region)
-                    .HasConstraintName("FK__tbl_Plant__Regio__5F9FBFEB");
+                //entity.HasOne(d => d.RegionNavigation)
+                //    .WithMany(p => p.TblPlant)
+                //    .HasForeignKey(d => d.Region)
+                //    .HasConstraintName("FK__tbl_Plant__Regio__5F9FBFEB");
 
-                entity.HasOne(d => d.StateNavigation)
-                    .WithMany(p => p.TblPlant)
-                    .HasForeignKey(d => d.State)
-                    .HasConstraintName("FK__tbl_Plant__State__5EAB9BB2");
+                //entity.HasOne(d => d.StateNavigation)
+                //    .WithMany(p => p.TblPlant)
+                //    .HasForeignKey(d => d.State)
+                //    .HasConstraintName("FK__tbl_Plant__State__5EAB9BB2");
             });
 
             modelBuilder.Entity<TblPosaleAssetInvoiceMemoDetails>(entity =>
@@ -5710,10 +5710,10 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.RegionName).HasMaxLength(5);
 
-                entity.HasOne(d => d.CountryNavigation)
-                    .WithMany(p => p.TblRegion)
-                    .HasForeignKey(d => d.Country)
-                    .HasConstraintName("FK__tbl_Regio__Count__2C401776");
+                //entity.HasOne(d => d.CountryNavigation)
+                //    .WithMany(p => p.TblRegion)
+                //    .HasForeignKey(d => d.Country)
+                //    .HasConstraintName("FK__tbl_Regio__Count__2C401776");
             });
 
             modelBuilder.Entity<TblRejectionReason>(entity =>
@@ -6022,30 +6022,30 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.State).HasMaxLength(5);
 
-                entity.HasOne(d => d.CountryNavigation)
-                    .WithMany(p => p.TblSalesOffice)
-                    .HasForeignKey(d => d.Country)
-                    .HasConstraintName("FK__tbl_Sales__Count__6A1D4E5E");
+                //entity.HasOne(d => d.CountryNavigation)
+                //    .WithMany(p => p.TblSalesOffice)
+                //    .HasForeignKey(d => d.Country)
+                //    .HasConstraintName("FK__tbl_Sales__Count__6A1D4E5E");
 
-                entity.HasOne(d => d.CurrencyNavigation)
-                    .WithMany(p => p.TblSalesOffice)
-                    .HasForeignKey(d => d.Currency)
-                    .HasConstraintName("FK__tbl_Sales__Curre__6B117297");
+                //entity.HasOne(d => d.CurrencyNavigation)
+                //    .WithMany(p => p.TblSalesOffice)
+                //    .HasForeignKey(d => d.Currency)
+                //    .HasConstraintName("FK__tbl_Sales__Curre__6B117297");
 
-                entity.HasOne(d => d.LanguageNavigation)
-                    .WithMany(p => p.TblSalesOffice)
-                    .HasForeignKey(d => d.Language)
-                    .HasConstraintName("FK__tbl_Sales__Langu__629C2827");
+                //entity.HasOne(d => d.LanguageNavigation)
+                //    .WithMany(p => p.TblSalesOffice)
+                //    .HasForeignKey(d => d.Language)
+                //    .HasConstraintName("FK__tbl_Sales__Langu__629C2827");
 
-                entity.HasOne(d => d.RegionNavigation)
-                    .WithMany(p => p.TblSalesOffice)
-                    .HasForeignKey(d => d.Region)
-                    .HasConstraintName("FK__tbl_Sales__Regio__69292A25");
+                //entity.HasOne(d => d.RegionNavigation)
+                //    .WithMany(p => p.TblSalesOffice)
+                //    .HasForeignKey(d => d.Region)
+                //    .HasConstraintName("FK__tbl_Sales__Regio__69292A25");
 
-                entity.HasOne(d => d.StateNavigation)
-                    .WithMany(p => p.TblSalesOffice)
-                    .HasForeignKey(d => d.State)
-                    .HasConstraintName("FK__tbl_Sales__State__683505EC");
+                //entity.HasOne(d => d.StateNavigation)
+                //    .WithMany(p => p.TblSalesOffice)
+                //    .HasForeignKey(d => d.State)
+                //    .HasConstraintName("FK__tbl_Sales__State__683505EC");
             });
 
             modelBuilder.Entity<TblSecondaryCostElement>(entity =>
