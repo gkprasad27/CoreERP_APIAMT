@@ -3,7 +3,9 @@ using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 
@@ -20,17 +22,18 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("RegisterAttendanceProcess")]
-        public IActionResult RegisterAttendanceProcess([FromBody] TblAttendanceDetails capa)
+        public IActionResult RegisterAttendanceProcess([FromBody] JObject obj)
         {
-            if (capa == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(capa)} cannot be null" });
+            if (obj == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(obj)} cannot be null" });
 
             try
             {
+                var AttendanceProcess = obj["qsDtl"].ToObject<List<TblAttendanceDetails>>();
                 APIResponse apiResponse;
-                _attendanceProcessRepositoryRepository.Add(capa);
+                _attendanceProcessRepositoryRepository.AddRange(AttendanceProcess);
                 if (_attendanceProcessRepositoryRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = capa };
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = obj };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Recored Added Failed." };
 
@@ -87,17 +90,18 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPut("UpdateAttendanceProcess")]
-        public IActionResult UpdateAttendanceProcess([FromBody] TblAttendanceDetails tad)
+        public IActionResult UpdateAttendanceProcess([FromBody] JObject obj)
         {
-            if (tad == null)
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(tad)} cannot be null" });
+            if (obj == null)
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(obj)} cannot be null" });
 
             try
             {
+                var AttendanceProcess = obj["qsDtl"].ToObject<List<TblAttendanceDetails>>();
                 APIResponse apiResponse;
-                _attendanceProcessRepositoryRepository.Update(tad);
+                _attendanceProcessRepositoryRepository.UpdateRange(AttendanceProcess);
                 if (_attendanceProcessRepositoryRepository.SaveChanges() > 0)
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = tad };
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = obj };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
 
