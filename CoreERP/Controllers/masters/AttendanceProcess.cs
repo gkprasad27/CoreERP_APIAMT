@@ -22,16 +22,20 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("RegisterAttendanceProcess")]
-        public IActionResult RegisterAttendanceProcess([FromBody] JObject obj)
+        public IActionResult RegisterAttendanceProcess([FromBody] List<TblAttendanceDetails> obj)
         {
             if (obj == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(obj)} cannot be null" });
 
             try
             {
-                var AttendanceProcess = obj["qsDtl"].ToObject<List<TblAttendanceDetails>>();
+                int isexist = obj.Where(x => x.ID > 0).Count();
                 APIResponse apiResponse;
-                _attendanceProcessRepositoryRepository.AddRange(AttendanceProcess);
+                if (isexist > 0)
+                    _attendanceProcessRepositoryRepository.UpdateRange(obj);
+                else
+                    _attendanceProcessRepositoryRepository.AddRange(obj);
+
                 if (_attendanceProcessRepositoryRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = obj };
                 else
@@ -90,16 +94,17 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPut("UpdateAttendanceProcess")]
-        public IActionResult UpdateAttendanceProcess([FromBody] JObject obj)
+        public IActionResult UpdateAttendanceProcess([FromBody] List<TblAttendanceDetails> obj)
         {
             if (obj == null)
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = $"{nameof(obj)} cannot be null" });
 
             try
             {
-                var AttendanceProcess = obj["qsDtl"].ToObject<List<TblAttendanceDetails>>();
+
+                //var AttendanceProcess = obj["qsDtl"].ToObject<List<TblAttendanceDetails>>();
                 APIResponse apiResponse;
-                _attendanceProcessRepositoryRepository.UpdateRange(AttendanceProcess);
+                _attendanceProcessRepositoryRepository.UpdateRange(obj);
                 if (_attendanceProcessRepositoryRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = obj };
                 else
