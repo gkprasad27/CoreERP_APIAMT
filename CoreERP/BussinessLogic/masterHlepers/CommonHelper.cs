@@ -685,7 +685,7 @@ namespace CoreERP
         public static IEnumerable<TblAttendanceDetails> GetAttendanceDetails()
         {
             using var repo = new Repository<TblAttendanceDetails>();
-            var result = repo.TblAttendanceDetails.Where(x => x.Year == DateTime.Now.Year && x.Month == DateTime.Now.Month).ToList();
+            var result = repo.TblAttendanceDetails.Where(x => x.Year == DateTime.Now.Year).ToList();
             return result;
         }
         public static IEnumerable<TblCAPA> GetCapaList(string tag)
