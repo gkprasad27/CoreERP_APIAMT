@@ -1095,7 +1095,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                {
                    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
                });
-            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
+            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MainComponent == "Y").ToList();
 
         }
 
@@ -1280,6 +1280,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
                     item.BomNumber = sodata.BomKey;
                     item.BomName = sodata.BomName;
+                    item.MainComponent = sodata.MainComponent;
                     int receivedqty = 0;
                     int qty = item.AllocatedQTY ?? 0;
 
