@@ -1180,7 +1180,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (!string.IsNullOrEmpty(Materialcode))
             {
                 tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type == Type && cd.Parameter != null).ToList();
-                material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
+                //material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
             }
             //else
             //{
@@ -3991,14 +3991,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
 
 
-        public TblSaleOrderMaster GetSaleOrderMaster(string saleOrderNo, string Materialcode)
+        public TblSaleOrderMaster GetSaleOrderMaster(string saleOrderNo, string BomKey)
         {
             using var repo = new Repository<TblSaleOrderMaster>();
 
             var Company = repo.TblCompany.ToList();
             var profitCenters = repo.ProfitCenters.ToList();
             var customer = repo.TblBusinessPartnerAccount.ToList();
-            var SaleordrDetails = repo.TblSaleOrderDetail.Where(x => x.SaleOrderNo == saleOrderNo && x.MaterialCode == Materialcode).ToList();
+            var SaleordrDetails = repo.TblSaleOrderDetail.Where(x => x.SaleOrderNo == saleOrderNo && x.BomKey == BomKey && x.MainComponent=="Y").ToList();
 
             repo.TblSaleOrderMaster.ToList()
                 .ForEach(c =>
