@@ -1320,6 +1320,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.TblMaterialMaster.UpdateRange(materialmaster);
                     }
 
+                    sodata.Status = message;
+                    context.TblSaleOrderDetail.UpdateRange(sodata);
                 }
                 var result = commitmentitem.Where(x => x.Type.Equals("Production")).OrderBy(z => z.SortOrder);
 
@@ -3644,6 +3646,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.PartDrgNo = icdata.PartDrgNo;
                     x.DrawingRevNo = MaterialMaster.DragRevNo;
                     production.Status = icdata.Status;
+                    var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == x.saleOrderNumber && im.MaterialCode == x.BomKey);
+
                     if (x.Status == "QC Rejected")
                     {
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == icdata.saleOrderNumber && z.MaterialCode == x.BomKey);
@@ -3673,24 +3677,24 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         RejectionMaster.Reason = x.Description;
                         context.TblRejectionMaster.Add(RejectionMaster);
 
-                        var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == x.saleOrderNumber && im.MaterialCode == x.BomKey);
                         sodata.POQty = ((sodata.POQty) - 1);
-                        if (sodata.POQty >= 0)
-                        {
-                            sodata.Status = "QC Started";
-                            context.TblSaleOrderDetail.Update(sodata);
-                        }
-                        else
-                        {
-                            sodata.Status = "QC Started";
-                            context.TblSaleOrderDetail.Update(sodata);
-                        }
+                        
 
                         var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == purchaseorder.PurchaseOrderNumber && z.MaterialCode == x.BomKey);
                         POD.Qty = (POD.Qty) - 1;
                         if (POD.Qty >= 0)
                             context.TblPurchaseOrderDetails.UpdateRange(POD);
 
+                    }
+                    if (sodata.POQty >= 0)
+                    {
+                        sodata.Status = "QC Started";
+                        context.TblSaleOrderDetail.UpdateRange(sodata);
+                    }
+                    else
+                    {
+                        sodata.Status = "QC Started";
+                        context.TblSaleOrderDetail.UpdateRange(sodata);
                     }
                 });
 
