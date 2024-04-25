@@ -378,48 +378,22 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
-        [HttpGet("GetPayslip/{fromDate}/{toDate}/{company}")]
-        public async Task<IActionResult> GetPayslip(DateTime fromDate, DateTime toDate, string company)
-        {
-            {
-                var result = await Task.Run(() =>
-                {
-                    try
-                    {
-                        dynamic expando = new ExpandoObject();
-                        DataSet ds = ReportsHelperClass.GetPayslip(fromDate, toDate, company);
-                        if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
-                        {
-                            expando.Payslip = ds.Tables[0];
 
-                        }
-
-                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                    }
-                    catch (Exception ex)
-                    {
-                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-                    }
-                });
-                return result;
-            }
-        }
-
-            //public async Task<IActionResult> GetSalesReport(string company, DateTime fromDate, DateTime toDate)
-            //{
-            //    try
-            //    {
-            //        var DailySalesList = await Task.FromResult(ReportsHelperClass.GetSalesReport( company, fromDate, toDate));
-            //        dynamic expdoObj = new ExpandoObject();
-            //        expdoObj.dailySalesList = DailySalesList.Item1;
-            //        expdoObj.headerList = DailySalesList.Item2;
-            //        expdoObj.footerList = DailySalesList.Item3;
-            //        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
-            //    }
-            //}
-        }
+        //public async Task<IActionResult> GetSalesReport(string company, DateTime fromDate, DateTime toDate)
+        //{
+        //    try
+        //    {
+        //        var DailySalesList = await Task.FromResult(ReportsHelperClass.GetSalesReport( company, fromDate, toDate));
+        //        dynamic expdoObj = new ExpandoObject();
+        //        expdoObj.dailySalesList = DailySalesList.Item1;
+        //        expdoObj.headerList = DailySalesList.Item2;
+        //        expdoObj.footerList = DailySalesList.Item3;
+        //        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //    }
+        //}
+    }
 }
