@@ -590,6 +590,42 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             //else return null;
         }
 
+        public static DataSet GetAttendanceProcess(DateTime fromDate, DateTime toDate, string company, string empcode)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "rpt_AttendanceProcess";
+            #region Parameters
+
+            DbParameter pmfDate = command.CreateParameter();
+            pmfDate.Direction = ParameterDirection.Input;
+            pmfDate.Value = String.Format("{0:MM/dd/yyyy}", fromDate);
+            pmfDate.ParameterName = "fromdate";
+
+            DbParameter pmtDate = command.CreateParameter();
+            pmtDate.Direction = ParameterDirection.Input;
+            pmtDate.Value = String.Format("{0:MM/dd/yyyy}", toDate);
+            pmtDate.ParameterName = "todate";
+
+            DbParameter companyid = command.CreateParameter();
+            companyid.Direction = ParameterDirection.Input;
+            companyid.Value = (object)company ?? DBNull.Value;
+            companyid.ParameterName = "compcode";
+
+            DbParameter employeeid = command.CreateParameter();
+            employeeid.Direction = ParameterDirection.Input;
+            employeeid.Value = (object)company ?? DBNull.Value;
+            employeeid.ParameterName = "empcode";
+            #endregion
+            // Add parameter as specified in the store procedure
+
+            command.Parameters.Add(pmfDate);
+            command.Parameters.Add(pmtDate);
+            command.Parameters.Add(companyid);
+            command.Parameters.Add(employeeid);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
         public static List<dynamic> ToDynamic(DataTable dt)
         {
             var dynamicDt = new List<dynamic>();

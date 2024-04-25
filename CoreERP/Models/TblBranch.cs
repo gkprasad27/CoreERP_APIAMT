@@ -30,10 +30,10 @@ namespace CoreERP.Models
         public string? Currency { get; set; }
         public string? ResponsiblePerson { get; set; }
 
-        public virtual TblCompany CompanyCodeNavigation { get; set; }
-        public virtual Countries CountryNavigation { get; set; }
-        public virtual TblCurrency CurrencyNavigation { get; set; }
-        public virtual TblRegion RegionNavigation { get; set; }
-        public virtual States StateNavigation { get; set; }
+        //public virtual TblCompany CompanyCodeNavigation { get; set; }
+        //public virtual Countries CountryNavigation { get; set; }
+        //public virtual TblCurrency CurrencyNavigation { get; set; }
+        //public virtual TblRegion RegionNavigation { get; set; }
+        //public virtual States StateNavigation { get; set; }
     }
 }
