@@ -312,7 +312,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             else return null;
         }
 
-        public static DataSet GetPayslip(DateTime fromDate, DateTime toDate, string company)
+        public static DataSet GetPayslip(string year, string month, string company, string employee)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -322,18 +322,23 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
 
             DbParameter pmfDate = command.CreateParameter();
             pmfDate.Direction = ParameterDirection.Input;
-            pmfDate.Value = String.Format("{0:MM/dd/yyyy}", fromDate);
+            pmfDate.Value = String.Format("{0:MM/dd/yyyy}", year);
             pmfDate.ParameterName = "fromdate";
 
             DbParameter pmtDate = command.CreateParameter();
             pmtDate.Direction = ParameterDirection.Input;
-            pmtDate.Value = String.Format("{0:MM/dd/yyyy}", toDate);
+            pmtDate.Value = String.Format("{0:MM/dd/yyyy}", month);
             pmtDate.ParameterName = "todate";
 
             DbParameter companyid = command.CreateParameter();
             companyid.Direction = ParameterDirection.Input;
             companyid.Value = (object)company ?? DBNull.Value;
             companyid.ParameterName = "compcode";
+
+            DbParameter empid = command.CreateParameter();
+            companyid.Direction = ParameterDirection.Input;
+            companyid.Value = (object)employee ?? DBNull.Value;
+            companyid.ParameterName = "empcode";
             #endregion
             // Add parameter as specified in the store procedure
 

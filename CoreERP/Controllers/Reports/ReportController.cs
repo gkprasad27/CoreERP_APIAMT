@@ -403,8 +403,8 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
-        [HttpGet("GetPayslip/{fromDate}/{toDate}/{company}")]
-        public async Task<IActionResult> GetPayslip(DateTime fromDate, DateTime toDate, string company)
+        [HttpGet("GetPayslip/{month}/{year}/{company}/{employee}")]
+        public async Task<IActionResult> GetPayslip(string year, string month, string company, string employee)
         {
             {
                 var result = await Task.Run(() =>
@@ -412,7 +412,7 @@ namespace CoreERP.Controllers.Reports
                     try
                     {
                         dynamic expando = new ExpandoObject();
-                        DataSet ds = ReportsHelperClass.GetPayslip(fromDate, toDate, company);
+                        DataSet ds = ReportsHelperClass.GetPayslip(year, month, company,employee);
                         if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                         {
                             expando.Payslip = ds.Tables[0];
