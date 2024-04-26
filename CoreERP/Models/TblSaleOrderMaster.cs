@@ -11,6 +11,7 @@ namespace CoreERP.Models
         public int Id { get; set; }
         public string? SaleOrderNo { get; set; }
         public string? CustomerCode { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? OrderDate { get; set; }
         public string? PONumber { get; set; }
         public DateTime? PODate { get; set; }
