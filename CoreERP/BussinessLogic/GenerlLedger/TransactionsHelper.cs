@@ -4119,6 +4119,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.CreatedDate = DateTime.Now;
                     saleOrderMaster.SaleOrderNo = SaleOrderNumber;
                     saleOrderMaster.TotalQty = totalqty;
+                    saleOrderMaster.OrderDate = DateTime.Now;
 
                     if (Quotation != null)
                     {
