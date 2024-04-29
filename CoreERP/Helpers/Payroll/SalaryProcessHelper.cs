@@ -2,17 +2,20 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using CoreERP.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace CoreERP.BussinessLogic.Payroll
 {
     public class SalaryProcessHelper
     {
-        public static string SalaryProcess(string Year, string Month)
+        public static string SalaryProcess(string Year, string Month, string company, string employee)
         {
             using var context = new ERPContext();
             var result = context.Database.ExecuteSqlRaw("EXEC Salary_Process_All @year, @month",
              new SqlParameter("@year", Year),
-             new SqlParameter("@month", Month));
+             new SqlParameter("@month", Month),
+             new SqlParameter("@month", company),
+             new SqlParameter("@month", employee));
              //new SqlParameter("@structure", StructureName));
             return result.ToString();
             //ScopeRepository scopeRepository = new ScopeRepository();

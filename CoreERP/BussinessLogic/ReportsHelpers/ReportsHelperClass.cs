@@ -320,15 +320,15 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             command.CommandText = "GetSalaryDetailsPivot";
             #region Parameters
 
-            DbParameter pmfDate = command.CreateParameter();
-            pmfDate.Direction = ParameterDirection.Input;
-            pmfDate.Value = String.Format("{0:MM/dd/yyyy}", year);
-            pmfDate.ParameterName = "fromdate";
+            DbParameter Year = command.CreateParameter();
+            Year.Direction = ParameterDirection.Input;
+            Year.Value = (object)year ?? DBNull.Value;
+            Year.ParameterName = "year";
 
-            DbParameter pmtDate = command.CreateParameter();
-            pmtDate.Direction = ParameterDirection.Input;
-            pmtDate.Value = String.Format("{0:MM/dd/yyyy}", month);
-            pmtDate.ParameterName = "todate";
+            DbParameter Month = command.CreateParameter();
+            Month.Direction = ParameterDirection.Input;
+            Month.Value = (object)month ?? DBNull.Value;
+            Month.ParameterName = "month";
 
             DbParameter companyid = command.CreateParameter();
             companyid.Direction = ParameterDirection.Input;
@@ -336,15 +336,16 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             companyid.ParameterName = "compcode";
 
             DbParameter empid = command.CreateParameter();
-            companyid.Direction = ParameterDirection.Input;
-            companyid.Value = (object)employee ?? DBNull.Value;
-            companyid.ParameterName = "empcode";
+            empid.Direction = ParameterDirection.Input;
+            empid.Value = (object)employee ?? DBNull.Value;
+            empid.ParameterName = "empcode";
             #endregion
             // Add parameter as specified in the store procedure
 
-            command.Parameters.Add(pmfDate);
-            command.Parameters.Add(pmtDate);
+            command.Parameters.Add(Year);
+            command.Parameters.Add(Month);
             command.Parameters.Add(companyid);
+            command.Parameters.Add(empid);
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         public static DataTable GetEmpPresent(string company)
