@@ -11,11 +11,11 @@ namespace CoreERP.BussinessLogic.Payroll
         public static string SalaryProcess(string Year, string Month, string company, string employee)
         {
             using var context = new ERPContext();
-            var result = context.Database.ExecuteSqlRaw("EXEC Salary_Process_All @year, @month",
+            var result = context.Database.ExecuteSqlRaw("EXEC Salary_Process_All @year, @month, @compcode, @empcode",
              new SqlParameter("@year", Year),
              new SqlParameter("@month", Month),
-             new SqlParameter("@month", company),
-             new SqlParameter("@month", employee));
+             new SqlParameter("@compcode", company),
+             new SqlParameter("@empcode", employee));
              //new SqlParameter("@structure", StructureName));
             return result.ToString();
             //ScopeRepository scopeRepository = new ScopeRepository();
