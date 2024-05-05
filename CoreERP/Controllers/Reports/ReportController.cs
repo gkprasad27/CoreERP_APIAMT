@@ -416,7 +416,7 @@ namespace CoreERP.Controllers.Reports
                         if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                         {
                             expando.Payslip = ds.Tables[0];
-                            expando.Payslip = ds.Tables[1];
+                            expando.Attendance = ds.Tables[1];
 
                         }
 
