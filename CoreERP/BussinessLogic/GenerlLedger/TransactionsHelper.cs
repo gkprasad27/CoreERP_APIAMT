@@ -1384,13 +1384,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 var RejectionMaster = new TblRejectionMaster();
                 using var context = new ERPContext();
                 string saleordernumber = prodDetails.FirstOrDefault().SaleOrderNumber;
-                string material = prodDetails.FirstOrDefault().MaterialCode;
+                //string material = prodDetails.FirstOrDefault().MaterialCode;
                 var SaleOrderDetail = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault();
-                var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == SaleOrderDetail.BomKey).FirstOrDefault();
+                var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == prodDetails.FirstOrDefault().BomKey).FirstOrDefault();
                 var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
-                var goodsreceipt = repo.TblGoodsReceiptDetails.FirstOrDefault(im => im.MaterialCode == material);
+                var goodsreceipt = repo.TblGoodsReceiptDetails.FirstOrDefault(im => im.MaterialCode == prodDetails.FirstOrDefault().MaterialCode);
                 var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC" && x.CompCode == SaleOrder.Company);
 
                 using var dbtrans = context.Database.BeginTransaction();
@@ -1429,13 +1429,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             InspectionCheckMaster.InspectionCheckNo = masternumber;
 
 
-                        InspectionCheckMaster.Status = message;
+                        InspectionCheckMaster.Status = prodDetails.FirstOrDefault().WorkStatus;
                         if (goodsreceipt != null)
                             InspectionCheckMaster.HeatNumber = goodsreceipt.HeatNumber;
                         InspectionCheckMaster.InspectionCheckNo = masternumber;
                         InspectionCheckMaster.saleOrderNumber = saleordernumber;
-                        InspectionCheckMaster.MaterialCode = SaleOrderDetail.BomKey;
-                        InspectionCheckMaster.BomKey = material;
+                        InspectionCheckMaster.MaterialCode = prodDetails.FirstOrDefault().BomKey;
+                        InspectionCheckMaster.BomKey = prodDetails.FirstOrDefault().BomKey;
                         InspectionCheckMaster.completionDate = System.DateTime.Now;
                         if (masternumber.Length > 1)
                             context.TblInspectionCheckMaster.Add(InspectionCheckMaster);
