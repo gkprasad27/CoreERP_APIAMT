@@ -417,6 +417,7 @@ namespace CoreERP.Controllers.Reports
                         {
                             expando.Payslip = ds.Tables[0];
                             expando.Attendance = ds.Tables[1];
+                            expando.OT = ds.Tables[2];
 
                         }
 
