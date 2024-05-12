@@ -27,7 +27,7 @@ namespace CoreERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? EditDate { get; set; }
 
-
+        public string? CompCode { get; set; }
 
     }
 }

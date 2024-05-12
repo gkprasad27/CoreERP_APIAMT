@@ -651,7 +651,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
 
             DbParameter employeeid = command.CreateParameter();
             employeeid.Direction = ParameterDirection.Input;
-            employeeid.Value = (object)company ?? DBNull.Value;
+            employeeid.Value = (object)empcode ?? DBNull.Value;
             employeeid.ParameterName = "empcode";
             #endregion
             // Add parameter as specified in the store procedure
