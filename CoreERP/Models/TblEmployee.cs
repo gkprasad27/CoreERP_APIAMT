@@ -35,7 +35,7 @@ namespace CoreERP.Models
         public string? RecomendedBy { get; set; }
         public string? ReportedBy { get; set; }
         public string? ApprovedBy { get; set; }
-        //public string? EmployeeID { get; set; }
+        public string? EmployeeID { get; set; }
         public string? CompanyCode { get; set; }
         public string? DepartmentCode { get; set; }
     }
