@@ -10,10 +10,10 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CoreERP.Controllers
+namespace CoreERP.Controllers.Selfservice
 {
     [ApiController]
-    [Route("api/Selfservice/ApprovalType")]
+    [Route("api/ApprovalType")]
     public class ApprovalTypeController : ControllerBase
     {
         [HttpPost("RegisterApprovalType")]
