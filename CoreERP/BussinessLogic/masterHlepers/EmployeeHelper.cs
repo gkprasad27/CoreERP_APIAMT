@@ -36,6 +36,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
             catch { throw; }
         }
 
+        public static IEnumerable<TblEmployee> GetEmployeesByCompany(string company)
+        {
+            try
+            {
+                return Repository<TblEmployee>.Instance.Where(x => x.CompanyCode == company);
+            }
+            catch { throw; }
+        }
 
         public static TblEmployee Register(TblEmployee employees)
         {
