@@ -1761,12 +1761,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblBomDetails> GetlBomDetails(string bomNumber)
         {
             using var repo = new Repository<TblBomDetails>();
-            var Bommaster = repo.TbBommaster.ToList();
-            repo.TblBomDetails.ToList()
-                .ForEach(c =>
-                {
-                    c.BomName = Bommaster.FirstOrDefault(l => l.Bomnumber == c.BomKey).Description;
-                });
+            var Bommaster = repo.TbBommaster.ToList().Where(x=>x.Bomnumber== bomNumber);
+            //repo.TblBomDetails.ToList()
+            //    .ForEach(c =>
+            //    {
+            //        c.BomName = Bommaster.FirstOrDefault(l => l.Bomnumber == c.BomKey).Description;
+            //    });
 
             return repo.TblBomDetails.Where(cd => cd.BomKey == bomNumber).ToList();
 
