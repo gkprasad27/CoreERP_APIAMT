@@ -1052,6 +1052,31 @@ namespace CoreERP.Controllers
             return result;
         }
 
+        [HttpGet("GetMaterialList/{CompanyCode}/{MaterialCode}")]
+        public async Task<IActionResult> GetMaterialList(string CompanyCode, string MaterialCode )
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var mmasterList = _materialMasterRepository.GetAll().Where(c => c.Company.Contains(CompanyCode) && c.MaterialCode.Contains(MaterialCode)).Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight, Hsnsac = x.Hsnsac, CustomerCode = x.CustomerCode, BOM = x.BOM });
+                    if (mmasterList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.mmasterList = mmasterList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetLocationsList")]
         public IActionResult GetLocationsList()
         {
