@@ -2,6 +2,7 @@
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.BussinessLogic.SelfserviceHelpers;
 using CoreERP.DataAccess;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,12 +11,18 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CoreERP.Controllers.Selfservice
+namespace CoreERP.Controllers.masters
 {
     [ApiController]
     [Route("api/ApprovalType")]
     public class ApprovalTypeController : ControllerBase
     {
+        private readonly IRepository<ApprovalType> _approvalTypeRepository;
+        public ApprovalTypeController(IRepository<ApprovalType> approvalTypeRepository)
+        {
+            _approvalTypeRepository = approvalTypeRepository;
+        }
+
         [HttpPost("RegisterApprovalType")]
         public IActionResult RegisterApprovalType([FromBody]ApprovalType aptype)
         {
@@ -27,16 +34,12 @@ namespace CoreERP.Controllers.Selfservice
                 if (ApprovalTypeHelper.GetList(aptype.Approval).Count() > 0)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"ApprovalType Code {nameof(aptype.Approval)} is already exists ,Please Use Different Code " });
 
-                var result = ApprovalTypeHelper.Register(aptype);
                 APIResponse apiResponse;
-                if (result != null)
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
-                }
+                _approvalTypeRepository.Add(aptype);
+                if (_approvalTypeRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = aptype };
                 else
-                {
-                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
-                }
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Recored Added Failed." };
 
                 return Ok(apiResponse);
 

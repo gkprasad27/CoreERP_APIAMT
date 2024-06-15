@@ -2799,7 +2799,7 @@ namespace CoreERP.Models
             modelBuilder.Entity<TblHoliday>(entity =>
             {
                 entity.HasKey(e => e.HolidayId);
-                    
+
 
                 entity.ToTable("tbl_Holiday");
 
@@ -2956,7 +2956,7 @@ namespace CoreERP.Models
                     .HasColumnName("esiNumber")
                     .IsUnicode(false);
 
-               
+
 
                 entity.Property(e => e.Gender)
                     .HasColumnName("gender")
@@ -2968,7 +2968,7 @@ namespace CoreERP.Models
                     .HasColumnName("joiningDate")
                     .HasColumnType("datetime");
 
-               
+
 
                 entity.Property(e => e.MaritalStatus)
                     .HasColumnName("maritalStatus")
@@ -2986,7 +2986,7 @@ namespace CoreERP.Models
                     .HasColumnName("panNumber")
                     .IsUnicode(false);
 
-                
+
 
                 entity.Property(e => e.PassportNo)
                     .HasColumnName("passportNo")
@@ -3009,7 +3009,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.ReportedBy).IsUnicode(false);
 
-                
+
             });
 
             modelBuilder.Entity<TblEmployeeMaster>(entity =>
@@ -4238,7 +4238,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMaterialMaster>(entity =>
             {
-                entity.HasKey(e => new {e.MaterialCode });
+                entity.HasKey(e => new { e.MaterialCode });
 
                 entity.ToTable("tbl_MaterialMaster");
 
@@ -4323,7 +4323,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblMaterialNoAssignment>(entity =>
             {
-                entity.HasKey(e => new { e.ID});
+                entity.HasKey(e => new { e.ID });
 
                 entity.ToTable("tbl_MaterialNoAssignment");
 
@@ -4724,11 +4724,13 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<ApprovalType>(entity =>
             {
+                entity.HasKey(e => e.Id);
+
                 entity.Property(e => e.Approval)
                     .HasColumnName("Approval")
                     .HasMaxLength(50)
                     .IsUnicode(false);
-               
+
 
                 entity.Property(e => e.ApprovedBy)
                     .HasMaxLength(50)
@@ -4738,7 +4740,7 @@ namespace CoreERP.Models
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-              
+
 
                 entity.Property(e => e.Department)
                     .HasMaxLength(50)
@@ -5443,7 +5445,7 @@ namespace CoreERP.Models
                 entity.Property(e => e.Amount).HasColumnType("numeric(18, 2)");
                 entity.Property(e => e.NetWeight).HasColumnType("numeric(18, 4)");
 
-    });
+            });
 
             modelBuilder.Entity<TblPurchaseOrderNoAssignment>(entity =>
             {
@@ -7941,7 +7943,7 @@ namespace CoreERP.Models
                 entity.Property(e => e.CompanyCode).HasMaxLength(50);
 
                 entity.Property(e => e.Active).HasMaxLength(50);
-               
+
             });
 
             modelBuilder.Entity<Ptmaster>(entity =>
@@ -7985,7 +7987,7 @@ namespace CoreERP.Models
             });
             modelBuilder.Entity<Pfmaster>(entity =>
             {
-                entity.HasKey(e=>e.Id);
+                entity.HasKey(e => e.Id);
                 entity.ToTable("PFMaster");
 
                 entity.Property(e => e.Id).HasColumnName("id");

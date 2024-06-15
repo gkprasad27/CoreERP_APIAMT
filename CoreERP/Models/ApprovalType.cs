@@ -5,6 +5,7 @@ namespace CoreERP.Models
 {
     public partial class ApprovalType
     {
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
         public int? Id { get; set; }
         public string? Approval { get; set; }
         public string? ImmediateReporting { get; set; }
