@@ -1063,7 +1063,7 @@ namespace CoreERP.Controllers
                     if (mmasterList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
-                        expdoObj.mmasterList = mmasterList;
+                        expdoObj.mmasterList = mmasterList.OrderByDescending(x=>x.ID);
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
 
