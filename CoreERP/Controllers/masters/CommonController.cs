@@ -76,6 +76,7 @@ namespace CoreERP.Controllers
         private readonly IRepository<ConfigurationTable> _configurationRepository;
         private readonly IRepository<TblForm> _TblForm;
         private readonly IRepository<TbBommaster> _bommasterRepository;
+        private readonly IRepository<TblBomDetails> _bomdetailsRepository;
         private readonly IRepository<StructureCreation> _structureRepository;
         private readonly IRepository<Pfmaster> _pfRepository;
         private readonly IRepository<Ptmaster> _ptRepository;
@@ -103,7 +104,7 @@ namespace CoreERP.Controllers
                                 IRepository<TblGoodsReceiptDetails> GoodsReceiptDetailsRepository,
                                 IRepository<TblHsnsac> hsnsacRepository, IRepository<TblPrimaryCostElement> primaryCostElementRepository,
                                 IRepository<TblMaterialTypes> materialTypesRepository, IRepository<ConfigurationTable> configurationRepository, IRepository<TblForm> TblForm, IRepository<LeaveTypes> leaveTypeRepository,
-                                IRepository<TblPurchaseRequisitionMaster> TblPurchaseRequisitionMaster, IRepository<TblPurchaseRequisitionDetails> TblPurchaseRequisitionDetails, IRepository<TbBommaster> TbbomMaster,
+                                IRepository<TblPurchaseRequisitionMaster> TblPurchaseRequisitionMaster, IRepository<TblPurchaseRequisitionDetails> TblPurchaseRequisitionDetails, IRepository<TbBommaster> TbbomMaster, IRepository<TblBomDetails> TblBomDetails,
                                 IRepository<StructureCreation> structureCreation, IRepository<TblPoQueue> TblPoQueue, IRepository<TblRejectionMaster> TblRejectionMaster, IRepository<Pfmaster> pfRepository, IRepository<Ptmaster> ptRepository)
         {
             _primaryCostElementRepository = primaryCostElementRepository;
@@ -162,6 +163,7 @@ namespace CoreERP.Controllers
             _tblPurchaseRequisitionMaster = TblPurchaseRequisitionMaster;
             _tblPurchaseRequisitionDetails = TblPurchaseRequisitionDetails;
             _bommasterRepository = TbbomMaster;
+            _bomdetailsRepository = TblBomDetails;
             _structureRepository = structureCreation;
             _TblPoQueue = TblPoQueue;
             _TblRejectionMaster = TblRejectionMaster;
@@ -466,6 +468,30 @@ namespace CoreERP.Controllers
                 var record = _jobworkDetailsRepository.Where(x => x.ID == id).FirstOrDefault();
                 _jobworkDetailsRepository.Remove(record);
                 if (_jobworkDetailsRepository.SaveChanges() > 0)
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
+                else
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
+
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpDelete("DeleteBomDetail/{bomkey}")]
+        public IActionResult DeleteBomDetail(string bomkey)
+        {
+            try
+            {
+                if (bomkey == null)
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
+
+                APIResponse apiResponse;
+                var record = _bomdetailsRepository.Where(x => x.BomKey == bomkey).FirstOrDefault();
+                _bomdetailsRepository.Remove(record);
+                if (_bomdetailsRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
