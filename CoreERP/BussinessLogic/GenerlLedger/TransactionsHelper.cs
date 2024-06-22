@@ -4148,6 +4148,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     x.SaleOrderNo = (SaleOrderNumber);
                     x.Status = "SO Created";
+                    x.Company = saleOrderMaster.Company;
                 });
 
 
