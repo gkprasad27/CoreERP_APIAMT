@@ -4188,8 +4188,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                         int currentqty = Convert.ToInt32(item.Sum(x => Convert.ToInt32(x.QTY)));
 
+                        if (material != null)
+                            matqty = Convert.ToInt16(material.ClosingQty);
 
-                        matqty = Convert.ToInt16(material.ClosingQty);
                         var poqqtysun = repo.TblPoQueue.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && (z.Status == "New" || z.Status == "Partial PO Created"));
                         int poqqtysuntotal = Convert.ToInt32(poqqtysun.Sum(x => x.Qty));
                         int purchaseorderqtytotal = purchaseorderqty.Sum(x => x.Qty);

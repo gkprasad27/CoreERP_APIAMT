@@ -481,7 +481,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteBomDetail/{bomkey}")]
-        public IActionResult DeleteBomDetail(string bomkey)
+        public IActionResult DeleteBomDetail(int bomkey)
         {
             try
             {
@@ -489,7 +489,7 @@ namespace CoreERP.Controllers
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "code can not be null" });
 
                 APIResponse apiResponse;
-                var record = _bomdetailsRepository.Where(x => x.BomKey == bomkey).FirstOrDefault();
+                var record = _bomdetailsRepository.Where(x => x.Id == bomkey).FirstOrDefault();
                 _bomdetailsRepository.Remove(record);
                 if (_bomdetailsRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
