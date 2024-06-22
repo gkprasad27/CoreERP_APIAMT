@@ -4114,6 +4114,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.SaveChanges();
                         SaleOrderNumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
+                    else
+                        throw new Exception("Please Configure SaleOrder Number. " + saleOrderMaster.PONumber + " Please check .");
 
                     saleOrderMaster.Status = "SO Created";
                     saleOrderMaster.CreatedDate = DateTime.Now;
