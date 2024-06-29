@@ -96,13 +96,19 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
 
             if (mmaster.MaterialCode == null || mmaster.Description == null || mmaster.Company == null)
-                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Please Enter Material Code or Description or Company" }); 
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "Please Enter Material Code or Description or Company" });
 
             try
             {
 
                 APIResponse apiResponse;
                 var result = new CommonHelper().updatemmaterielcode(mmaster);
+                if (mmaster.NetWeight == null)
+                    mmaster.NetWeight = 0;
+
+                if (mmaster.GrossWeight == null)
+                    mmaster.GrossWeight = 0;
+
                 _materialMasterRepository.Add(mmaster);
                 if (_materialMasterRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = mmaster };
