@@ -4157,7 +4157,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         .Where(g => g.Count() > 1).Count() > 0;
 
 
-
+                var material = new TblMaterialMaster();
                 if (duplicates)
                 {
                     var mergedList =
@@ -4171,7 +4171,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         int matqty = 0;
                         var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && z.SaleOrder == item.FirstOrDefault().SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
                         var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.FirstOrDefault().SaleOrderNo && z.MaterialCode == item.FirstOrDefault().MaterialCode);
-                        var material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.FirstOrDefault().MaterialCode);
+                        material = repo.TblMaterialMaster.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && z.Company==item.FirstOrDefault().Company).FirstOrDefault();
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.FirstOrDefault().SaleOrderNo && z.MaterialCode == item.FirstOrDefault().MaterialCode);
                         var saleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && (z.Status == "SO Created" || z.Status == "Partial PO Created")).ToList();
                         var Exitsaleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && z.SaleOrderNo == item.FirstOrDefault().SaleOrderNo && (z.Status == "SO Created" || z.Status == "Partial PO Created")).ToList();
@@ -4254,7 +4254,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 item.FirstOrDefault().POQty = Math.Abs(Convert.ToInt32(item.Sum(z => z.QTY) - poq.Qty));
                         }
 
-                        context.TblMaterialMaster.UpdateRange(material);
+                        //context.TblMaterialMaster.UpdateRange(material);
                     }
                 }
                 else
@@ -4266,7 +4266,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         int matqty = 0;
                         var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrder == item.SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
                         var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
-                        var material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode);
+                        material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode && z.Company==item.Company);
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
                         var saleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "SO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
                         var Exitsaleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrderNo == item.SaleOrderNo && (z.Status == "SO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
@@ -4337,17 +4337,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 context.TblPoQueue.UpdateRange(poq);
                         }
 
-                        //material.OpeningValue = (material.OpeningValue + item.QTY);
+                        material.OpeningValue = (material.OpeningValue + item.QTY);
                         if (poq.Qty > 0)
                         {
                             if (item.QTY != poq.Qty)
                                 item.POQty = Math.Abs(Convert.ToInt32(item.QTY - poq.Qty));
                         }
 
-                        context.TblMaterialMaster.UpdateRange(material);
+                       // context.TblMaterialMaster.UpdateRange(material);
                     }
                 }
-
+                context.TblMaterialMaster.UpdateRange(material);
                 saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID > 0).ToList();
                 saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
 
