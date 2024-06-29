@@ -314,40 +314,46 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
 
         public static DataSet GetPayslip(string year, string month, string company, string employee)
         {
-            ScopeRepository scopeRepository = new ScopeRepository();
-            using DbCommand command = scopeRepository.CreateCommand();
+            var scopeRepository = new ScopeRepository();
+
+            using var command = scopeRepository.CreateCommand();
             command.CommandType = CommandType.StoredProcedure;
-            command.CommandText = "GetSalaryDetailsPivot";
+            command.CommandText = company == "1000" ? "GetSalaryDetailsPivot_AMT" : "GetSalaryDetailsPivot";
+
             #region Parameters
 
-            DbParameter Year = command.CreateParameter();
-            Year.Direction = ParameterDirection.Input;
-            Year.Value = (object)year ?? DBNull.Value;
-            Year.ParameterName = "year";
+            var yearParam = command.CreateParameter();
+            yearParam.Direction = ParameterDirection.Input;
+            yearParam.Value = (object)year ?? DBNull.Value;
+            yearParam.ParameterName = "year";
 
-            DbParameter Month = command.CreateParameter();
-            Month.Direction = ParameterDirection.Input;
-            Month.Value = (object)month ?? DBNull.Value;
-            Month.ParameterName = "month";
+            var monthParam = command.CreateParameter();
+            monthParam.Direction = ParameterDirection.Input;
+            monthParam.Value = (object)month ?? DBNull.Value;
+            monthParam.ParameterName = "month";
 
-            DbParameter companyid = command.CreateParameter();
-            companyid.Direction = ParameterDirection.Input;
-            companyid.Value = (object)company ?? DBNull.Value;
-            companyid.ParameterName = "compcode";
+            var companyParam = command.CreateParameter();
+            companyParam.Direction = ParameterDirection.Input;
+            companyParam.Value = (object)company ?? DBNull.Value;
+            companyParam.ParameterName = "compcode";
 
-            DbParameter empid = command.CreateParameter();
-            empid.Direction = ParameterDirection.Input;
-            empid.Value = (object)employee ?? DBNull.Value;
-            empid.ParameterName = "empcode";
+            var empParam = command.CreateParameter();
+            empParam.Direction = ParameterDirection.Input;
+            empParam.Value = (object)employee ?? DBNull.Value;
+            empParam.ParameterName = "empcode";
+
             #endregion
-            // Add parameter as specified in the store procedure
 
-            command.Parameters.Add(Year);
-            command.Parameters.Add(Month);
-            command.Parameters.Add(companyid);
-            command.Parameters.Add(empid);
+            // Add parameters to the command
+            command.Parameters.Add(yearParam);
+            command.Parameters.Add(monthParam);
+            command.Parameters.Add(companyParam);
+            command.Parameters.Add(empParam);
+
+            // Execute the command and return the result as a DataSet
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
+
         public static DataTable GetEmpPresent(string company)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
