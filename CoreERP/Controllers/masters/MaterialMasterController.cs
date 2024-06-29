@@ -104,10 +104,10 @@ namespace CoreERP.Controllers.masters
                 APIResponse apiResponse;
                 var result = new CommonHelper().updatemmaterielcode(mmaster);
                 if (mmaster.NetWeight == null)
-                    mmaster.NetWeight = 0;
+                    mmaster.NetWeight = 1;
 
                 if (mmaster.GrossWeight == null)
-                    mmaster.GrossWeight = 0;
+                    mmaster.GrossWeight = 1;
 
                 _materialMasterRepository.Add(mmaster);
                 if (_materialMasterRepository.SaveChanges() > 0)
