@@ -34,5 +34,7 @@ namespace CoreERP.Models
         public int? SOQty { get; set; }
         public string? Status { get; set; }
         public string? HSNSAC { get; set; }
+        public string? Material { get; set; }
+        public string? Company { get; set; }
     }
 }

@@ -2597,11 +2597,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     x.PurchaseOrderNumber = purchaseordernumber;
                     x.SaleOrder = podata.SaleOrderNo;
+                    x.Company = podata.Company;
                 });
                 foreach (var item in podetails)
                 {
-                    var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrder && im.MaterialCode == item.MaterialCode);
-                    var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrder && z.MaterialCode == item.MaterialCode);
+                    var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrder && im.MaterialCode == item.MaterialCode && im.Company==item.Company);
+                    var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrder && z.MaterialCode == item.MaterialCode && z.CompanyCode==item.Company);
 
                     if (SaleOrder.TotalQty == (totalqty) + (poqtycheck) + sodata.POQty)
                         statusmessage = "PO Created";
