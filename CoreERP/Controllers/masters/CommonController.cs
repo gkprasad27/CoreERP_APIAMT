@@ -415,8 +415,8 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetPurchaseOrdernoList")]
-        public async Task<IActionResult> GetPurchaseOrdernoList()
+        [HttpGet("GetPurchaseOrdernoList/{CompanyCode}")]
+        public async Task<IActionResult> GetPurchaseOrdernoList(string CompanyCode)
         {
             var result = await Task.Run(() =>
             {
@@ -424,7 +424,7 @@ namespace CoreERP.Controllers
                 {
                     dynamic expando = new ExpandoObject();
                     var vouchertypeList = CommonHelper.GetPurchaseOrderMaster();
-                    expando.purchaseordernoList = vouchertypeList.Where(x => (x.Status == "PO Created" || x.Status == "Partial PO Created") && (x.ApprovalStatus == "approve" || x.ApprovalStatus == "Approved")).Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.SupplierName, SupplierCode = x.SupplierCode });
+                    expando.purchaseordernoList = vouchertypeList.Where(x => (x.Status == "PO Created" || x.Status == "Partial PO Created") && x.Company== CompanyCode && (x.ApprovalStatus == "approve" || x.ApprovalStatus == "Approved")).Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.SupplierName, SupplierCode = x.SupplierCode });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
