@@ -3601,7 +3601,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
                 {
                     icdata.DrawingRevNo = MaterialMaster.DragRevNo;
-                    icdata.MaterialCode = SaleOrderDetail.BomKey;
+                    icdata.MaterialCode = Materialcode;
                     icdata.BomKey = Materialcode;
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
@@ -3617,7 +3617,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     icdata.DrawingRevNo = MaterialMaster.DragRevNo;
                     icdata.InspectionCheckNo = masternumber;
-                    icdata.MaterialCode = SaleOrderDetail.BomKey;
+                    icdata.MaterialCode = Materialcode;
                     icdata.BomKey = Materialcode;
                     if (masternumber.Length > 1)
                         context.TblInspectionCheckMaster.Add(icdata);
