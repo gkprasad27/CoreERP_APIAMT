@@ -4092,6 +4092,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
                 {
+                    if (string.IsNullOrEmpty(saleOrderMaster.CustomerCode))
+                        throw new Exception("Please Select Customer. " + saleOrderMaster.PONumber + " Customer Name Cannot be Empty .");
+
                     saleOrderMaster.Status = "SO Created";
                     saleOrderMaster.TotalQty = totalqty;
                     saleOrderMaster.EditDate = DateTime.Now;
@@ -4134,10 +4137,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         saleOrderMaster.Gstno = Quotation.Gstno;
                     }
 
+                    if (string.IsNullOrEmpty(saleOrderMaster.CustomerCode))
+                        throw new Exception("Please Select Customer. " + saleOrderMaster.PONumber + " Customer Name Cannot be Empty .");
+
                     if (SaleOrderNumber.Length > 1 && saleOrderMaster.CustomerCode != null)
                         context.TblSaleOrderMaster.Add(saleOrderMaster);
                     else
                         throw new Exception("Saleorder Number Not Valid. " + SaleOrderNumber + " Please check .");
+
                     context.SaveChanges();
                 }
                 if (string.IsNullOrWhiteSpace(SaleOrderNumber))
