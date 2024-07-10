@@ -983,14 +983,15 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetEmployeeList")]
-        public async Task<IActionResult> GetEmployeesList()
+        [HttpGet("GetEmployeeList/{companycode}")]
+        public async Task<IActionResult> GetEmployeesList(string companycode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var empList = _employeeRepository.GetAll().Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
+                    //var empList = _employeeRepository.GetAll().Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
+                    var empList = EmployeeHelper.GetEmployeesByCompany(companycode).Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
                     if (empList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();

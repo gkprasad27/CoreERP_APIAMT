@@ -3150,7 +3150,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.TblSaleOrderMaster.Update(saleorder);
                     }
                     grdata.ApprovalStatus = "Pending Approval";
-                    grdata.Status = "Material Received";
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
                 else if (totalqty < poqty)

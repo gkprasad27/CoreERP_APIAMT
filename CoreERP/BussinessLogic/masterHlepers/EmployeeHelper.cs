@@ -3,6 +3,7 @@ using CoreERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 
 namespace CoreERP.BussinessLogic.masterHlepers
 {
@@ -40,7 +41,10 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                return Repository<TblEmployee>.Instance.Where(x => x.CompanyCode == company);
+                //return Repository<TblEmployee>.Instance.Where(x => x.CompanyCode == company && x.IsActive==true);
+                using Repository<TblEmployee> repo = new Repository<TblEmployee>();
+                var emp = repo.TblEmployee.Where(e => e.CompanyCode == company && e.IsActive == true).ToList();
+                return emp;
             }
             catch { throw; }
         }
