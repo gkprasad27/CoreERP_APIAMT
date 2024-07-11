@@ -1236,8 +1236,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 if (repogim.TblGoodsIssueMaster.Any(v => v.SaleOrderNumber == gimaster.SaleOrderNumber))
                 {
+                    var GIM = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == gimaster.SaleOrderNumber);
                     gimaster.CustomerCode = SaleOrder.CustomerCode;
                     gimaster.Status = message;
+                    gimaster.GoodsIssueId = GIM.GoodsIssueId;
                     context.TblGoodsIssueMaster.Update(gimaster);
                     context.SaveChanges();
                 }
