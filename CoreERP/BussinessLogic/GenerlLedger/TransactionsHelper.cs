@@ -1099,6 +1099,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         }
 
+        public List<TblGoodsIssueDetails> GetGoodsIssueDetail(string GoodsIssueId)
+        {
+            using var repo = new Repository<TblGoodsIssueDetails>();
+
+            var material = repo.TblMaterialMaster.ToList();
+
+            repo.TblGoodsIssueDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            });
+            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
+
+        }
+
         public List<TblProductionDetails> GetTagsIssueDetails(string GoodsIssueId, string Materialcode)
         {
             using var repo = new ERPContext();
@@ -1226,7 +1240,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             // var goodsreceipt = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.SaleorderNo == gimaster.SaleOrderNumber);
             try
             {
-                invqty = Convert.ToInt16(gibDetails.Sum(x => x.Qty));
+                invqty = Convert.ToInt16(gibDetails.Sum(x => x.AllocatedQTY));
                 string message = null;
                 sqty = SaleOrder.TotalQty;
                 if (sqty == invqty)
