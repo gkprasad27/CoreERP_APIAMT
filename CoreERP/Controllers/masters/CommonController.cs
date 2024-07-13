@@ -332,15 +332,15 @@ namespace CoreERP.Controllers
         }
 
 
-        [HttpGet("GetPRList")]
-        public async Task<IActionResult> GetPRList()
+        [HttpGet("GetPRList/{CompanyCode}")]
+        public async Task<IActionResult> GetPRList( string CompanyCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BPList = _tblPurchaseRequisitionMaster.Where(x => x.Status != "Completed").Select(x => new { SaleOrderNo = x.RequisitionNumber });
+                    expando.BPList = _tblPurchaseRequisitionMaster.Where(x => x.Status != "Completed" && x.Company==CompanyCode).Select(x => new { SaleOrderNo = x.RequisitionNumber });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
