@@ -48,5 +48,8 @@ namespace CoreERP.Models
         public string? SaleorderNo { get; set; }
         public string? Status { get; set; }
         public string? HSNSAC { get; set; }
+        public string? MaterialGrade { get; set; }
+        public string? MillTCNo { get; set; }
+        public string? TPTCNO { get; set; }
     }
 }
