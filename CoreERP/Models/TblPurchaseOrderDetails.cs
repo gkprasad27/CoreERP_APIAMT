@@ -36,5 +36,6 @@ namespace CoreERP.Models
         public string? HSNSAC { get; set; }
         public string? Material { get; set; }
         public string? Company { get; set; }
+        public string? Dimentions { get; set; }
     }
 }
