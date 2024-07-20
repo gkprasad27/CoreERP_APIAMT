@@ -1335,11 +1335,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                         if (qty > 0)
                         {
-                            for (var i = 0; i < qty; i++)
-                            {
+                            //for (var i = 0; i < qty; i++)
+                            //{
                                 ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName });
                                 tagnum = tagnum + 1;
-                            }
+                            //}
                         }
                         //if (sodata != null && sodata.Company == "2000" && sodata.MainComponent == "Y")
                         //{
