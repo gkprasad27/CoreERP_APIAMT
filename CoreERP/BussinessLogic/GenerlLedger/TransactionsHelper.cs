@@ -1122,7 +1122,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (!string.IsNullOrEmpty(Materialcode))
             {
                 tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
-                material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
+                if (tblProduction.Count > 0)
+                    material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
+                else
+                    material = repo.TblMaterialMaster.ToList();
             }
             else
             {
@@ -1337,8 +1340,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             //for (var i = 0; i < qty; i++)
                             //{
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName });
-                                tagnum = tagnum + 1;
+                            ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName });
+                            tagnum = tagnum + 1;
                             //}
                         }
                         //if (sodata != null && sodata.Company == "2000" && sodata.MainComponent == "Y")
@@ -3251,12 +3254,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     item.Status = statusmessage;
 
                     var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == item.PurchaseOrderNo && z.MaterialCode == item.MaterialCode);
-                    POD.Status = "Material Partial Received";
+                    if (string.IsNullOrEmpty(statusmessage))
+                    {
+                        statusmessage = "Material Partial Received";
+                        grdata.ApprovalStatus = "Pending Approval";
+                    }
+
+                    POD.Status = statusmessage;
                     if (Convert.ToInt16(item.RejectQty) > 0)
                     {
                         POD.Qty = (POD.Qty) - Convert.ToInt16(item.RejectQty);
 
-                        purchase.Status = "Material Partial Received";
+                        purchase.Status = statusmessage;
                         purchase.ReceivedDate = DateTime.Now;
                         context.TblPurchaseOrder.Update(purchase);
 
