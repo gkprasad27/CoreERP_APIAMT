@@ -3213,7 +3213,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         purchase.Status = statusmessage;
                         purchase.ReceivedDate = DateTime.Now;
+                        if(saleorder!=null)
                         saleorder.Status = statusmessage;
+
                         context.TblPurchaseOrder.Update(purchase);
                         context.TblSaleOrderMaster.Update(saleorder);
                     }
