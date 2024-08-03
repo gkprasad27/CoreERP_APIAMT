@@ -3219,6 +3219,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.TblPurchaseOrder.Update(purchase);
                         context.TblSaleOrderMaster.Update(saleorder);
                     }
+                    statusmessage = "Material Received";
                     grdata.ApprovalStatus = "Pending Approval";
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
@@ -3328,6 +3329,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                         //}
                     }
+
+                    var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == item.MaterialCode);
+
+                    if (Convert.ToString(mathdr.ClosingQty) == null)
+                        mathdr.ClosingQty = 0;
+                    mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (item.ReceivedQty));
+                    context.TblMaterialMaster.Update(mathdr);
                 }
                 if (customer != null)
                 {
@@ -3367,52 +3375,57 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 context.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
-                //context.SaveChanges();
 
-                //dbtrans.Commit();
+                if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo))
+                {
+                    var totalamount = repo.TblGoodsReceiptMaster.Where(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo).FirstOrDefault();
+                    grdata.EditDate = DateTime.Now;
+                    grdata.ReceiptDate = DateTime.Now;
+                    grdata.TotalAmount = (totalamount.TotalAmount ?? 0) + (grdata.TotalAmount);
+                    grdata.SaleorderNo = purchase.SaleOrderNo;
+                    context.TblGoodsReceiptMaster.Update(grdata);
+                }
+                else
+                {
+                    grdata.EditDate = DateTime.Now;
+                    grdata.ReceiptDate = DateTime.Now;
+                    grdata.SaleorderNo = purchase.SaleOrderNo;
+                    context.TblGoodsReceiptMaster.Add(grdata);
+                }
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
             }
             catch (Exception)
             {
                 dbtrans.Rollback();
                 throw;
             }
-            if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo))
-            {
-                var totalamount = repo.TblGoodsReceiptMaster.Where(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo).FirstOrDefault();
-                grdata.EditDate = DateTime.Now;
-                grdata.ReceiptDate = DateTime.Now;
-                grdata.TotalAmount = (totalamount.TotalAmount ?? 0) + (grdata.TotalAmount);
-                context.TblGoodsReceiptMaster.Update(grdata);
-            }
-            else
-            {
-                grdata.EditDate = DateTime.Now;
-                grdata.ReceiptDate = DateTime.Now;
-                context.TblGoodsReceiptMaster.Add(grdata);
-            }
-            grdetails.ForEach(x =>
-            {
+            
+            //grdetails.ForEach(x =>
+            //{
 
-                var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == x.MaterialCode);
+            //    var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == x.MaterialCode);
 
-                if (Convert.ToString(mathdr.ClosingQty) == null)
-                    mathdr.ClosingQty = 0;
+            //    if (Convert.ToString(mathdr.ClosingQty) == null)
+            //        mathdr.ClosingQty = 0;
 
-                //if (Convert.ToString(mathdr.OpeningValue) == null)
-                //    mathdr.OpeningValue = 0;
+            //    //if (Convert.ToString(mathdr.OpeningValue) == null)
+            //    //    mathdr.OpeningValue = 0;
 
-                mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
-                //mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) + (x.ReceivedQty));
-                //if (mathdr.OpeningValue < 0)
-                //    mathdr.OpeningValue = 0;
+            //    mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
+            //    //mathdr.OpeningValue = ((mathdr.OpeningValue ?? 0) + (x.ReceivedQty));
+            //    //if (mathdr.OpeningValue < 0)
+            //    //    mathdr.OpeningValue = 0;
 
-                context.TblMaterialMaster.Update(mathdr);
+            //    context.TblMaterialMaster.Update(mathdr);
 
-            });
-            context.SaveChanges();
+            //});
+            //context.SaveChanges();
 
-            dbtrans.Commit();
-            return true;
+            //dbtrans.Commit();
+            //return true;
 
         }
 
