@@ -3213,8 +3213,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         purchase.Status = statusmessage;
                         purchase.ReceivedDate = DateTime.Now;
-                        if(saleorder!=null)
-                        saleorder.Status = statusmessage;
+                        if (saleorder != null)
+                            saleorder.Status = statusmessage;
 
                         context.TblPurchaseOrder.Update(purchase);
                         context.TblSaleOrderMaster.Update(saleorder);
@@ -3402,7 +3402,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 dbtrans.Rollback();
                 throw;
             }
-            
+
             //grdetails.ForEach(x =>
             //{
 
@@ -4377,12 +4377,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (material != null && material.ClosingQty == null)
                             material.ClosingQty = 0;
 
-                        matqty = Convert.ToInt16(material.ClosingQty);
+                        if (material != null)
+                            matqty = Convert.ToInt16(material.ClosingQty);
+
                         var poqqtysun = repo.TblPoQueue.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "New" || z.Status == "Partial PO Created"));
                         int poqqtysuntotal = Convert.ToInt32(poqqtysun.Sum(x => x.Qty));
                         int purchaseorderqtytotal = purchaseorderqty.Sum(x => x.Qty);
                         int saleorderqtytotal = saleorderqty.Sum(x => x.QTY);
                         int Exitsalerqty = Exitsaleorderqty.Sum(x => x.QTY);
+
+                        int sodpoqty = Convert.ToInt32(saleorderqty.Sum(x => x.POQty));
                         if (poqqtysun == null)
                         {
                             var poqqty = new TblPoQueue();
@@ -4400,7 +4404,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             else if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "SO Created" && matqty == 0)
                                 poq.Qty = ((item.QTY) - (Exitsalerqty));
                             else if (Exitsaleorderqty.Count == 0 && saleorderqtytotal > 0)
-                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (saleorderqtytotal + poqqtysuntotal + matqty));
+                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (sodpoqty + matqty + poqqtysuntotal));//need change here
+
+                            //poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (saleorderqtytotal + poqqtysuntotal + matqty));//need change here
                             else
                                 poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (matqty + poqty + purchaseorderqtytotal + Exitsalerqty));
 
@@ -4421,7 +4427,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             else if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "SO Created" && matqty == 0)
                                 poq.Qty = ((item.QTY));
                             else if (Exitsaleorderqty.Count == 0 && saleorderqtytotal > 0)
-                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (saleorderqtytotal + poqqtysuntotal + matqty));
+                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (sodpoqty + matqty));
+                            //poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (saleorderqtytotal + poqqtysuntotal + matqty));
                             else
                                 poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (matqty + poqty + purchaseorderqtytotal + Exitsalerqty));
 
