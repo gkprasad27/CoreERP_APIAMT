@@ -4415,7 +4415,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             else if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "SO Created" && matqty == 0)
                                 poq.Qty = ((item.QTY) - (Exitsalerqty));
                             else if (Exitsaleorderqty.Count == 0 && saleorderqtytotal > 0)
-                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (sodpoqty + matqty + poqqtysuntotal));//need change here
+                                poq.Qty = ((item.QTY + saleorderqtytotal) - (sodpoqty + matqty + poqqtysuntotal));//need change here
 
                             //poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (saleorderqtytotal + poqqtysuntotal + matqty));//need change here
                             else
@@ -4438,7 +4438,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             else if (Exitsaleorderqty.Count > 0 && Exitsaleorderqty.FirstOrDefault().Status == "SO Created" && matqty == 0)
                                 poq.Qty = ((item.QTY));
                             else if (Exitsaleorderqty.Count == 0 && saleorderqtytotal > 0)
-                                poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (sodpoqty + matqty));
+                                poq.Qty = ((item.QTY + saleorderqtytotal) - (sodpoqty + matqty + poqqtysuntotal));
                             //poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (saleorderqtytotal + poqqtysuntotal + matqty));
                             else
                                 poq.Qty = ((item.QTY + saleorderqtytotal + poqqtysuntotal) - (matqty + poqty + purchaseorderqtytotal + Exitsalerqty));
@@ -4455,7 +4455,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (poq.Qty > 0)
                         {
                             if (item.QTY != poq.Qty)
-                                item.POQty = Math.Abs(Convert.ToInt32(item.QTY - poq.Qty));
+                                item.POQty = Convert.ToInt32(item.QTY - poq.Qty);
                         }
 
                         // context.TblMaterialMaster.UpdateRange(material);
