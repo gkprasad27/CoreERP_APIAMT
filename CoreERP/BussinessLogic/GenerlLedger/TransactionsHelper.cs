@@ -1119,9 +1119,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var material = new List<TblMaterialMaster>();
             var tblProduction = new List<TblProductionDetails>();
 
-            if (!string.IsNullOrEmpty(Materialcode))
+            if (!string.IsNullOrEmpty(GoodsIssueId) && !string.IsNullOrEmpty(Materialcode))
             {
-                tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
+                tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode.Contains(Materialcode)).ToList();
                 if (tblProduction.Count > 0)
                     material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
                 else
