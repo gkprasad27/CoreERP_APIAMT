@@ -3205,9 +3205,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 poqty = grdetails.Sum(v => v.Qty) ?? 0;
 
                 totalqty = (receivedqty + rejectedqty) + (currqtyrec + currqtyrej);
-
+                var Mastersaleorder = new TblPurchaseRequisitionMaster();
                 var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == grdata.PurchaseOrderNo);
                 var saleorder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == purchase.SaleOrderNo);
+                if (saleorder == null)
+                    Mastersaleorder = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == purchase.SaleOrderNo);
+
                 if (poqty == totalqty)
                 {
                     if (currqtyrej > 0)
@@ -3221,9 +3224,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         purchase.ReceivedDate = DateTime.Now;
                         if (saleorder != null)
                             saleorder.Status = statusmessage;
+                        else
+                            Mastersaleorder.Status = statusmessage;
 
                         context.TblPurchaseOrder.Update(purchase);
-                        context.TblSaleOrderMaster.Update(saleorder);
+                        if (saleorder != null)
+                            context.TblSaleOrderMaster.Update(saleorder);
+                        else if (Mastersaleorder != null)
+                            context.TblPurchaseRequisitionMaster.Update(Mastersaleorder);
                     }
                     statusmessage = "Material Received";
                     grdata.ApprovalStatus = "Pending Approval";
@@ -3234,9 +3242,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     statusmessage = "Material Partial Received";
                     if (purchase != null)
                     {
-                        saleorder.Status = statusmessage;
+                        if (saleorder == null)
+                            Mastersaleorder.Status = statusmessage;
+                        else
+                            saleorder.Status = statusmessage;
+
                         context.TblPurchaseOrder.Update(purchase);
-                        context.TblSaleOrderMaster.Update(saleorder);
+                        if (saleorder != null)
+                            context.TblSaleOrderMaster.Update(saleorder);
+                        else if (Mastersaleorder != null)
+                            context.TblPurchaseRequisitionMaster.Update(Mastersaleorder);
                     }
                     grdata.ApprovalStatus = "Pending Approval";
                     grdata.Status = statusmessage;
@@ -3389,6 +3404,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     grdata.ReceiptDate = DateTime.Now;
                     grdata.TotalAmount = (totalamount.TotalAmount ?? 0) + (grdata.TotalAmount);
                     grdata.SaleorderNo = purchase.SaleOrderNo;
+                    grdata.Id = totalamount.Id;
                     context.TblGoodsReceiptMaster.Update(grdata);
                 }
                 else
