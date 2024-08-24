@@ -128,22 +128,37 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetSaleOrderDetailbymaterialcode/{materialcode}/{tagname}/{type}")]
-        public async Task<IActionResult> GetSaleOrderDetailbymaterialcode(string materialcode,string tagname, string type)
+        [HttpGet("GetSaleOrderDetailbymaterialcode/{materialcode}/{tagname}/{type}/{bomkey}/{companyCode}")]
+        public async Task<IActionResult> GetSaleOrderDetailbymaterialcode(string materialcode,string tagname, string type,string bomkey,string companyCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expdoObj = new ExpandoObject();
-                    var tagsData = GetQCResult(materialcode, tagname, type);
-                    if (tagsData.Count==0)
+
+                    if (companyCode=="2000")
                     {
-                        var tagsData1 = GetQCDetail(materialcode);
-                        expdoObj.QCConfigDetail = tagsData1;
+                        var tagsData = GetQCResult(tagname, type);
+                        if (tagsData.Count == 0)
+                        {
+                            var tagsData1 = GetQCDetailManufacturing(bomkey);
+                            expdoObj.QCConfigDetail = tagsData1;
+                        }
+                        else
+                            expdoObj.QCConfigDetail = tagsData;
                     }
                     else
-                        expdoObj.QCConfigDetail = tagsData;
+                    {
+                        var tagsData = GetQCResult(materialcode, tagname, type);
+                        if (tagsData.Count == 0)
+                        {
+                            var tagsData1 = GetQCDetail(materialcode);
+                            expdoObj.QCConfigDetail = tagsData1;
+                        }
+                        else
+                            expdoObj.QCConfigDetail = tagsData;
+                    }
 
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
@@ -170,12 +185,41 @@ namespace CoreERP.Controllers.masters
             return result.ToList();
         }
 
+        public List<tblQCDetails> GetQCDetailManufacturing(string materialcode)
+        {
+            using var repo = new Repository<tblQCDetails>();
+            var sizes = repo.TblMaterialSize.ToList();
+
+            var result = repo.tblQCDetails.Where(cd => cd.MaterialCode == materialcode).ToList();
+
+            result.ForEach(c =>
+            {
+                c.UOMName = sizes.FirstOrDefault(s => s.unitId == c.Uom)?.unitName;
+            });
+            return result.ToList();
+        }
+
         public List<tblQCResults> GetQCResult(string materialcode,string tagname, string Type)
         {
             using var repo = new Repository<tblQCResults>();
             var sizes = repo.TblMaterialSize.ToList();
 
             var result = repo.tblQCResults.Where(cd => cd.MaterialCode == materialcode && cd.TagName== tagname && cd.Type == Type).ToList();
+            result.ForEach(c =>
+            {
+                c.UOMName = sizes.FirstOrDefault(s => s.unitId == c.Uom)?.unitName;
+            });
+
+
+            return result.ToList();
+        }
+
+        public List<tblQCResults> GetQCResult(string tagname, string Type)
+        {
+            using var repo = new Repository<tblQCResults>();
+            var sizes = repo.TblMaterialSize.ToList();
+
+            var result = repo.tblQCResults.Where(cd => cd.TagName == tagname && cd.Type == Type).ToList();
             result.ForEach(c =>
             {
                 c.UOMName = sizes.FirstOrDefault(s => s.unitId == c.Uom)?.unitName;
