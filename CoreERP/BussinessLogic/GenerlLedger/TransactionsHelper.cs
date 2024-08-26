@@ -1368,6 +1368,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     else
                     {
+                        if (qty > 0)
+                        {
+                            for (var i = 0; i < qty; i++)
+                            {
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName });
+                                tagnum = tagnum + 1;
+                            }
+                        }
                         var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
                         if (GID != null)
                         {
