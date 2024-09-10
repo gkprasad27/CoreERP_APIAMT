@@ -436,6 +436,30 @@ namespace CoreERP.Controllers
             });
             return result;
         }
+
+
+        [HttpGet("GetAuthentication")]
+        public async Task<IActionResult> GetAuthentication()
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    var vouchertypeList = CommonHelper.GetAuthentication();
+                    expando.purchaseordernoList = vouchertypeList;
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+
+            });
+            return result;
+        }
+
+
         [HttpGet("GetJobworkList")]
         public async Task<IActionResult> GetJobworkList()
         {

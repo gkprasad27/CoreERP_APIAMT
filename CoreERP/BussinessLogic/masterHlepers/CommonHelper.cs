@@ -6,7 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -76,6 +78,34 @@ namespace CoreERP
             {
                 c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.SupplierCode)?.Name;
             });
+            return result;
+        }
+
+        public static Int64 GetAuthentication()
+        {
+            string MobileNumber;
+            Int64 result =0;
+            int _min = 0000;
+            int _max = 9999;
+            Random _rdm = new Random();
+            result = _rdm.Next(_min, _max);
+            MobileNumber = "9346218049";
+            
+            string sendSMSUri = $"https://dlt.fastsmsindia.com/messages/sendSmsApi?username=AMTpower&password=AMTpower@&drout=3&senderid=AMTHYD&intity_id=1201171169797828072&template_id=1207171644087137963&numbers={MobileNumber}&language=en&message=Hello,%{result}is%20your%20OTP%20to%20Access%20AMT%20ERP.%20-AMT%20Power%20Transmission";
+            System.Net.ServicePointManager.ServerCertificateValidationCallback = (senderX, certificate, chain, sslPolicyErrors) => { return true; };
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
+                   | SecurityProtocolType.Tls11
+                   | SecurityProtocolType.Tls12
+                   | SecurityProtocolType.Ssl3;
+            HttpWebRequest GETRequest = (HttpWebRequest)WebRequest.Create(sendSMSUri);
+            GETRequest.Method = "GET";
+
+            HttpWebResponse GETResponse = (HttpWebResponse)GETRequest.GetResponse();
+            Stream GETResponseStream = GETResponse.GetResponseStream();
+            StreamReader sr = new StreamReader(GETResponseStream);
+            string strResponseReceived = sr.ReadLine();
+
             return result;
         }
 
