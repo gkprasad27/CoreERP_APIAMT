@@ -81,6 +81,7 @@ namespace CoreERP
             return result;
         }
 
+        [Obsolete]
         public static Int64 GetAuthentication()
         {
             string MobileNumber;
@@ -94,10 +95,17 @@ namespace CoreERP
             string sendSMSUri = $"https://dlt.fastsmsindia.com/messages/sendSmsApi?username=AMTpower&password=AMTpower@&drout=3&senderid=AMTHYD&intity_id=1201171169797828072&template_id=1207171644087137963&numbers={MobileNumber}&language=en&message=Hello,%{result}is%20your%20OTP%20to%20Access%20AMT%20ERP.%20-AMT%20Power%20Transmission";
             System.Net.ServicePointManager.ServerCertificateValidationCallback = (senderX, certificate, chain, sslPolicyErrors) => { return true; };
             ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
-                   | SecurityProtocolType.Tls11
-                   | SecurityProtocolType.Tls12
-                   | SecurityProtocolType.Ssl3;
+            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
+            //       | SecurityProtocolType.Tls11
+            //       | SecurityProtocolType.Tls12
+            //       | SecurityProtocolType.Ssl3;
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | (SecurityProtocolType)768 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls
+                | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+
+            //ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11;
+
             HttpWebRequest GETRequest = (HttpWebRequest)WebRequest.Create(sendSMSUri);
             GETRequest.Method = "GET";
 

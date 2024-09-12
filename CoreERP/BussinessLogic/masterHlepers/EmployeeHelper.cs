@@ -43,7 +43,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 //return Repository<TblEmployee>.Instance.Where(x => x.CompanyCode == company && x.IsActive==true);
                 using Repository<TblEmployee> repo = new Repository<TblEmployee>();
-                var emp = repo.TblEmployee.Where(e => e.CompanyCode == company && e.IsActive == true).ToList();
+                var emp = repo.TblEmployee.Where(e => e.CompanyCode == company).ToList();
                 return emp;
             }
             catch { throw; }
