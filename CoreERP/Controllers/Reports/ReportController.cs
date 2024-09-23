@@ -386,12 +386,20 @@ namespace CoreERP.Controllers.Reports
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds = ReportsHelperClass.GetAttendanceProcess(fromDate, toDate, company, EmployeeCode);
-                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    var empList = CommonHelper.CheckAttendanceData(fromDate.Month, fromDate.Year, company);
+                    if (empList.Any())
                     {
-                        expando.AttendanceProcess = ds.Tables[0];
-                        //expando.GoodsReceiptReportTotals = ds.Tables[1];
+                        expando.AttendanceProcess = empList;
+                    }
+                    else
+                    {
+                        DataSet ds = ReportsHelperClass.GetAttendanceProcess(fromDate, toDate, company, EmployeeCode);
+                        if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                        {
+                            expando.AttendanceProcess = ds.Tables[0];
+                            //expando.GoodsReceiptReportTotals = ds.Tables[1];
 
+                        }
                     }
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }

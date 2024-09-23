@@ -9,6 +9,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -93,19 +94,17 @@ namespace CoreERP
             MobileNumber = "9346218049";
             
             string sendSMSUri = $"https://dlt.fastsmsindia.com/messages/sendSmsApi?username=AMTpower&password=AMTpower@&drout=3&senderid=AMTHYD&intity_id=1201171169797828072&template_id=1207171644087137963&numbers={MobileNumber}&language=en&message=Hello,%{result}is%20your%20OTP%20to%20Access%20AMT%20ERP.%20-AMT%20Power%20Transmission";
-            System.Net.ServicePointManager.ServerCertificateValidationCallback = (senderX, certificate, chain, sslPolicyErrors) => { return true; };
-            ServicePointManager.Expect100Continue = true;
+          
             //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
             //       | SecurityProtocolType.Tls11
             //       | SecurityProtocolType.Tls12
             //       | SecurityProtocolType.Ssl3;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | (SecurityProtocolType)768 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls
-                | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
-
-            //ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11;
-
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            clientHandler.UseDefaultCredentials = true;
+            ServicePointManager.Expect100Continue = true;
             HttpWebRequest GETRequest = (HttpWebRequest)WebRequest.Create(sendSMSUri);
             GETRequest.Method = "GET";
 
@@ -128,6 +127,13 @@ namespace CoreERP
             {
                 c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.Vendor)?.Name;
             });
+            return result;
+        }
+
+        public static IEnumerable<TblAttendanceDetails> CheckAttendanceData(int Month,int year,string Company)
+        {
+            using var repo = new Repository<TblAttendanceDetails>();
+            var result = repo.TblAttendanceDetails.Where(x=>x.Month==Month && x.Year==year && x.CompCode==Company).ToList();
             return result;
         }
 
