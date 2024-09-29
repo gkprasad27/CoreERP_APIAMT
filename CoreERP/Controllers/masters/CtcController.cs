@@ -69,15 +69,19 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetEmployeeList/{empCode}")]
-        public async Task<IActionResult> GetEmployeeList(string empCode)
+        [HttpGet("GetEmployeeList/{empCode}/{companyCode}")]
+        public async Task<IActionResult> GetEmployeeList(string empCode, string companyCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.EmployeeList = new CTCHelper().GetEmployeesList(empCode).OrderBy(emp => emp.EmployeeCode.Length).Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
+                    // Pass both empCode and companyCode to GetEmployeesList
+                    expando.EmployeeList = new CTCHelper().GetEmployeesList(empCode, companyCode)
+                        .OrderBy(emp => emp.EmployeeCode.Length)
+                        .Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
+
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -87,6 +91,25 @@ namespace CoreERP.Controllers.masters
             });
             return result;
         }
+
+        //[HttpGet("GetEmployeeList/{empCode}")]
+        //public async Task<IActionResult> GetEmployeeList(string empCode)
+        //{
+        //    var result = await Task.Run(() =>
+        //    {
+        //        try
+        //        {
+        //            dynamic expando = new ExpandoObject();
+        //            expando.EmployeeList = new CTCHelper().GetEmployeesList(empCode).OrderBy(emp => emp.EmployeeCode.Length).Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
+        //            return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //        }
+        //    });
+        //    return result;
+        //}
 
         [HttpGet("GetctcDetailList/{empCode}")]
         public IActionResult GetctcDetailList(string empcode)

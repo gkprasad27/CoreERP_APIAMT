@@ -33,16 +33,36 @@ namespace CoreERP.BussinessLogic.Payroll
             catch { throw; }
         }
 
-        public List<TblEmployee> GetEmployeesList(string empCode = null)
+        public List<TblEmployee> GetEmployeesList(string empCode = null, string companyCode = null)
         {
             try
             {
                 using Repository<TblEmployee> repo = new Repository<TblEmployee>();
-                return repo.TblEmployee.Where(emp => emp.EmployeeCode.Contains(empCode ?? emp.EmployeeCode)).OrderBy(x => x.EmployeeCode).ToList();
 
+                // Apply both empCode and companyCode filters
+                return repo.TblEmployee
+                    .Where(emp => (string.IsNullOrEmpty(empCode) || emp.EmployeeCode.Contains(empCode)) &&
+                                  (string.IsNullOrEmpty(companyCode) || emp.CompanyCode == companyCode))
+                    .OrderBy(x => x.EmployeeCode)
+                    .ToList();
             }
-            catch (Exception ex) { throw ex; }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
+
+
+        //public List<TblEmployee> GetEmployeesList(string empCode = null)
+        //{
+        //    try
+        //    {
+        //        using Repository<TblEmployee> repo = new Repository<TblEmployee>();
+        //        return repo.TblEmployee.Where(emp => emp.EmployeeCode.Contains(empCode ?? emp.EmployeeCode)).OrderBy(x => x.EmployeeCode).ToList();
+
+        //    }
+        //    catch (Exception ex) { throw ex; }
+        //}
 
         public List<StructureComponents> GetStructures(string structure = null,int ctc=0)
         {
@@ -83,6 +103,7 @@ namespace CoreERP.BussinessLogic.Payroll
                     x.Active = "Y";
                     x.Ctc = structure.Ctc;
                     x.StructureName = structure.StructureName;
+                    x.CompanyCode = structure.CompanyCode;
                 });
                 
                 context.Ctcbreakup.AddRange(components);
