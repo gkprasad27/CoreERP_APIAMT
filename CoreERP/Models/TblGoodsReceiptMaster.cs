@@ -45,6 +45,11 @@ namespace CoreERP.Models
         public string? ApprovedBy { get; set; }
         public string? RecommendedBy { get; set; }
         public string? ApprovalStatus { get; set; }
+        public decimal? Fright { get; set; }
+        public decimal? WeightBridge { get; set; }
+        public decimal? OtherCharges { get; set; }
+        public decimal? HamaliCharges { get; set; }
+        public decimal? RoundOff { get; set; }
 
     }
 }
