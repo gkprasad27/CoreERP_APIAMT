@@ -10,6 +10,7 @@ namespace CoreERP.Models
         public int ID { get; set; }
         public string? SaleOrderNo { get; set; }
         public string? MaterialCode { get; set; }
+        public string? MaterialName { get; set; }
         public int? Qty { get; set; }       
         public string? AddWho { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]

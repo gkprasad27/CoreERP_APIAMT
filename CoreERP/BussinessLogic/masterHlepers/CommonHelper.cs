@@ -1896,5 +1896,19 @@ namespace CoreERP
             else return null;
         }
 
+        public static IEnumerable<TblPoQueue> GetPoQueue(string CompanyCode)
+        {
+            using var repo = new Repository<TblPoQueue>();
+            var Material = repo.TblMaterialMaster.ToList().Where(x=>x.Company== CompanyCode);
+
+            var result = repo.TblPoQueue.Where(x => x.CompanyCode == CompanyCode).ToList();
+
+            result.ForEach(c =>
+            {
+                c.MaterialName = Material.FirstOrDefault(cur => cur.MaterialCode == c.MaterialCode)?.Description;
+            });
+            return result;
+        }
+
     }
 }

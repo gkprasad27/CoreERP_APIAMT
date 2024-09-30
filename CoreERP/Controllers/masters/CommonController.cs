@@ -284,8 +284,8 @@ namespace CoreERP.Controllers
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BPList = _somRepository.Where(x => ((x.Status == "Material Received" || x.Status == "Material Partial Received" || x.Status == "SO Created" || x.Status == "Partial PO Created" || x.Status == "PO Created" ))&& (x.Company==CompanyCode)).Select(x => new { saleOrderNo = x.SaleOrderNo });
-                   
+                    expando.BPList = _somRepository.Where(x => ((x.Status == "Material Received" || x.Status == "Material Partial Received" || x.Status == "SO Created" || x.Status == "Partial PO Created" || x.Status == "PO Created")) && (x.Company == CompanyCode)).Select(x => new { saleOrderNo = x.SaleOrderNo });
+
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -320,7 +320,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BOMList = _bommasterRepository.GetAll().Select(x => new { Bomnumber = x.Bomnumber, BomName = x.Description, Material = x.Material});
+                    expando.BOMList = _bommasterRepository.GetAll().Select(x => new { Bomnumber = x.Bomnumber, BomName = x.Description, Material = x.Material });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -333,14 +333,14 @@ namespace CoreERP.Controllers
 
 
         [HttpGet("GetPRList/{CompanyCode}")]
-        public async Task<IActionResult> GetPRList( string CompanyCode)
+        public async Task<IActionResult> GetPRList(string CompanyCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BPList = _tblPurchaseRequisitionMaster.Where(x => x.Status != "Completed" && x.Company==CompanyCode).Select(x => new { SaleOrderNo = x.RequisitionNumber });
+                    expando.BPList = _tblPurchaseRequisitionMaster.Where(x => x.Status != "Completed" && x.Company == CompanyCode).Select(x => new { SaleOrderNo = x.RequisitionNumber });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -425,7 +425,7 @@ namespace CoreERP.Controllers
                 {
                     dynamic expando = new ExpandoObject();
                     var vouchertypeList = CommonHelper.GetPurchaseOrderMaster();
-                    expando.purchaseordernoList = vouchertypeList.Where(x => (x.Status == "PO Created" || x.Status == "Partial PO Created" || x.Status== "Material Partial Received") && x.Company== CompanyCode && (x.ApprovalStatus == "approve" || x.ApprovalStatus == "Approved")).Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.SupplierName, SupplierCode = x.SupplierCode });
+                    expando.purchaseordernoList = vouchertypeList.Where(x => (x.Status == "PO Created" || x.Status == "Partial PO Created" || x.Status == "Material Partial Received") && x.Company == CompanyCode && (x.ApprovalStatus == "approve" || x.ApprovalStatus == "Approved")).Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.SupplierName, SupplierCode = x.SupplierCode });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -1086,7 +1086,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var mmasterList = _materialMasterRepository.GetAll().Where(c => c.Company.Contains(CompanyCode)).Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight, Hsnsac = x.Hsnsac, CustomerCode=x.CustomerCode, BOM=x.BOM });
+                    var mmasterList = _materialMasterRepository.GetAll().Where(c => c.Company.Contains(CompanyCode)).Select(x => new { ID = x.MaterialCode, TEXT = x.Description, AvailQTY = x.ClosingQty, Rate = x.ClosingPrice, netWeight = x.NetWeight, Hsnsac = x.Hsnsac, CustomerCode = x.CustomerCode, BOM = x.BOM });
                     if (mmasterList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -1105,7 +1105,7 @@ namespace CoreERP.Controllers
         }
 
         [HttpGet("GetMaterialList/{CompanyCode}/{MaterialCode}")]
-        public async Task<IActionResult> GetMaterialList(string CompanyCode, string MaterialCode )
+        public async Task<IActionResult> GetMaterialList(string CompanyCode, string MaterialCode)
         {
             var result = await Task.Run(() =>
             {
@@ -1115,7 +1115,7 @@ namespace CoreERP.Controllers
                     if (mmasterList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
-                        expdoObj.mmasterList = mmasterList.OrderByDescending(x=>x.ID);
+                        expdoObj.mmasterList = mmasterList.OrderByDescending(x => x.ID);
                         return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
                     }
 
@@ -1857,7 +1857,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var POQList = _TblPoQueue.GetAll().Where(x => x.Qty > 0 && x.CompanyCode == CompanyCode).OrderByDescending(o => o.ID);
+                    var POQList = CommonHelper.GetPoQueue(CompanyCode);//_TblPoQueue.GetAll().Where(x => x.Qty > 0 && x.CompanyCode == CompanyCode).OrderByDescending(o => o.ID);
                     if (POQList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
