@@ -3420,6 +3420,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     grdata.EditDate = DateTime.Now;
                     grdata.ReceiptDate = DateTime.Now;
                     grdata.SaleorderNo = purchase.SaleOrderNo;
+                    grdata.Fright = purchase.Fright;
+                    grdata.HamaliCharges = purchase.HamaliCharges;
+                    grdata.WeightBridge = purchase.WeightBridge;
+                    grdata.OtherCharges = purchase.OtherCharges;
+                    grdata.RoundOff = purchase.RoundOff;
                     context.TblGoodsReceiptMaster.Add(grdata);
                 }
                 context.SaveChanges();
