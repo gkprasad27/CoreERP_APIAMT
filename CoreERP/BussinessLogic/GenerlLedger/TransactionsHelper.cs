@@ -2764,6 +2764,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     podata.Status = statusmessage;
                     podata.EditDate = DateTime.Now;
                     podata.TotalQty = totalqty;
+                    podata.Ammendment = podata.Ammendment + 1;
                     context.TblPurchaseOrder.Update(podata);
                     //context.SaveChanges();
                 }
@@ -2776,6 +2777,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     podata.PurchaseOrderNumber = purchaseordernumber;
                     podata.CustPONumber = CustPONumber;
                     podata.TotalQty = totalqty;
+                    podata.Ammendment = 0;
                     if (purchaseordernumber.Length > 1)
                         context.TblPurchaseOrder.Add(podata);
                     else

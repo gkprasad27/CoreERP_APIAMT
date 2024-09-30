@@ -56,6 +56,7 @@ namespace CoreERP.Models
         public decimal? OtherCharges { get; set; }
         public decimal? HamaliCharges { get; set; }
         public decimal? RoundOff { get; set; }
+        public int? Ammendment { get; set; }
 
     }
 }
