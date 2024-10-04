@@ -4360,6 +4360,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.SaleOrderNo = item.FirstOrDefault().SaleOrderNo;
                             poq.MaterialCode = item.FirstOrDefault().MaterialCode;
                             poq.CompanyCode = saleOrderMaster.Company;
+                            poq.MaterialName=item.FirstOrDefault().MaterialName;
                             if (poq.Qty > 0)
                                 context.TblPoQueue.AddRange(poq);
                         }
@@ -4381,6 +4382,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.Status = "New";
                             poq.SaleOrderNo = item.FirstOrDefault().SaleOrderNo;
                             poq.MaterialCode = item.FirstOrDefault().MaterialCode;
+                            poq.CompanyCode = saleOrderMaster.Company;
+                            poq.MaterialName = item.FirstOrDefault().MaterialName;
                             if (poq.Qty > 0)
                                 context.TblPoQueue.UpdateRange(poq);
                         }
