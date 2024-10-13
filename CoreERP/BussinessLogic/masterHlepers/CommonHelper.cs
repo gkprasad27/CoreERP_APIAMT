@@ -91,10 +91,10 @@ namespace CoreERP
             int _max = 9999;
             Random _rdm = new Random();
             result = _rdm.Next(_min, _max);
-            MobileNumber = "9346218049";
+            MobileNumber = "9666756333";
 
             //  string sendSMSUri = $"https://dlt.fastsmsindia.com/messages/sendSmsApi?username=AMTpower&password=AMTpower@&drout=3&senderid=AMTHYD&intity_id=1201171169797828072&template_id=1207171644087137963&numbers={MobileNumber}&language=en&message=Hello,%{result}is%20your%20OTP%20to%20Access%20AMT%20ERP.%20-AMT%20Power%20Transmission";
-            string sendSMSUri = $" https://www.bulksmsapps.com/api/apismsv2.aspx?apikey=e9ba82fb-ef76-41e6-8c98-63390b78096a&sender=AMTHYD&number={MobileNumber}&message=Hello,%20789123%20is%20your%20OTP%20to%20Access%20AMT%20ERP.%20-AMT%20Power%20Transmission";
+            string sendSMSUri = $" https://www.bulksmsapps.com/api/apismsv2.aspx?apikey=e9ba82fb-ef76-41e6-8c98-63390b78096a&sender=AMTHYD&number={MobileNumber}&message=Hello,%20{result}%20is%20your%20OTP%20to%20Access%20AMT%20ERP.%20-AMT%20Power%20Transmission";
             //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
             //       | SecurityProtocolType.Tls11
             //       | SecurityProtocolType.Tls12
