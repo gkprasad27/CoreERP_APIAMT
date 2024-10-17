@@ -1121,7 +1121,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             if (!string.IsNullOrEmpty(GoodsIssueId) && !string.IsNullOrEmpty(Materialcode))
             {
-                tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode==Materialcode).ToList();
+                tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
                 if (tblProduction.Count > 0)
                     material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
                 else
@@ -4061,8 +4061,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
 
                 });
+            if (searchCriteria.InvoiceNo != null)
+            {
+                return repo.TblSaleOrderMaster.AsEnumerable()
+                .Where(x =>
+                {
 
-            return repo.TblSaleOrderMaster.AsEnumerable()
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.SaleOrderNo) != null
+                              && Convert.ToString(x.SaleOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleOrderNo))
+                              || Convert.ToString(x.PONumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PONumber))
+                              && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                }).OrderByDescending(x => x.Id)
+                .ToList();
+            }
+            else
+            {
+                return repo.TblSaleOrderMaster.AsEnumerable()
                 .Where(x =>
                 {
 
@@ -4074,6 +4089,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 }).OrderByDescending(x => x.Id)
                 .ToList();
+            }
         }
 
         public List<tblJobworkMaster> GetJobWork(SearchCriteria searchCriteria)
@@ -4360,7 +4376,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.SaleOrderNo = item.FirstOrDefault().SaleOrderNo;
                             poq.MaterialCode = item.FirstOrDefault().MaterialCode;
                             poq.CompanyCode = saleOrderMaster.Company;
-                            poq.MaterialName=item.FirstOrDefault().MaterialName;
+                            poq.MaterialName = item.FirstOrDefault().MaterialName;
                             if (poq.Qty > 0)
                                 context.TblPoQueue.AddRange(poq);
                         }
