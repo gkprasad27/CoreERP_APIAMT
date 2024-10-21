@@ -1810,8 +1810,22 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
                 });
+            if (searchCriteria.InvoiceNo != null)
+            {
+                return repo.TbBommaster.AsEnumerable()
+                .Where(x =>
+                {
 
-            return repo.TbBommaster.AsEnumerable()
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.Bomnumber) != null
+                              && Convert.ToString(x.Bomnumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.Bomnumber))
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                }).OrderByDescending(x => x.Bomnumber)
+                .ToList();
+            }
+            else
+            {
+                return repo.TbBommaster.AsEnumerable()
                 .Where(x =>
                 {
 
@@ -1823,6 +1837,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 }).OrderByDescending(x => x.Bomnumber)
                 .ToList();
+            }
         }
 
         public TbBommaster GetBommasterById(string bomNumber)
