@@ -57,6 +57,6 @@ namespace CoreERP.Models
         public decimal? HamaliCharges { get; set; }
         public decimal? RoundOff { get; set; }
         public int? Ammendment { get; set; }
-
+        public string? MechineNumber { get; set; }
     }
 }

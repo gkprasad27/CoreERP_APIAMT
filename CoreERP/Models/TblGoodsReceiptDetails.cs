@@ -51,5 +51,7 @@ namespace CoreERP.Models
         public string? MaterialGrade { get; set; }
         public string? MillTCNo { get; set; }
         public string? TPTCNO { get; set; }
+        public string? MechineNumber { get; set; }
+
     }
 }

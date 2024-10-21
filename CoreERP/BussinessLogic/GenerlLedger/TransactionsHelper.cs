@@ -2688,6 +2688,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.PurchaseOrderNumber = purchaseordernumber;
                     x.SaleOrder = podata.SaleOrderNo;
                     x.Company = podata.Company;
+                    x.MechineNumber = podata.MechineNumber;
                 });
                 foreach (var item in podetails)
                 {
@@ -3303,6 +3304,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     item.Status = statusmessage;
 
                     var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == item.PurchaseOrderNo && z.MaterialCode == item.MaterialCode);
+                    item.MechineNumber = POD.MechineNumber;
                     if (string.IsNullOrEmpty(statusmessage))
                     {
                         statusmessage = "Material Partial Received";

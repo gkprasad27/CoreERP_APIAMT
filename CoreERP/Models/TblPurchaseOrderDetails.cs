@@ -37,5 +37,6 @@ namespace CoreERP.Models
         public string? Material { get; set; }
         public string? Company { get; set; }
         public string? Dimentions { get; set; }
+        public string? MechineNumber { get; set; }
     }
 }
