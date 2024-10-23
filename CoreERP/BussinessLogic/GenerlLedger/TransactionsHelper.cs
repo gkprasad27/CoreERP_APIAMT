@@ -1328,9 +1328,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
                         }
                         item.AllocatedQTY = (item.AllocatedQTY) + (receivedqty);
-
-                        materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
-                        context.TblMaterialMaster.UpdateRange(materialmaster);
+                        if (materialmaster != null)
+                        {
+                            materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
+                            context.TblMaterialMaster.UpdateRange(materialmaster);
+                        }
                     }
                     else if (sodata != null && sodata.Company == "2000")
                     {
@@ -1362,9 +1364,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
                         }
                         item.AllocatedQTY = (item.AllocatedQTY) + (receivedqty);
-
-                        materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
-                        context.TblMaterialMaster.UpdateRange(materialmaster);
+                        if (materialmaster != null)
+                        {
+                            materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
+                            context.TblMaterialMaster.UpdateRange(materialmaster);
+                        }
                     }
                     else
                     {
@@ -1383,9 +1387,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
                         }
                         item.AllocatedQTY = (item.AllocatedQTY) + (receivedqty);
-
-                        materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
-                        context.TblMaterialMaster.UpdateRange(materialmaster);
+                        if (materialmaster != null)
+                        {
+                            materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
+                            context.TblMaterialMaster.UpdateRange(materialmaster);
+                        }
                     }
 
                     sodata.Status = message;
