@@ -1333,6 +1333,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
                             context.TblMaterialMaster.UpdateRange(materialmaster);
                         }
+                        else
+                            throw new Exception("Material Code not Available" + item.MaterialCode);
                     }
                     else if (sodata != null && sodata.Company == "2000")
                     {
@@ -1369,6 +1371,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
                             context.TblMaterialMaster.UpdateRange(materialmaster);
                         }
+                        else
+                            throw new Exception("Material Code not Available" + item.MaterialCode);
+                       
                     }
                     else
                     {
@@ -1392,6 +1397,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
                             context.TblMaterialMaster.UpdateRange(materialmaster);
                         }
+                        else
+                            throw new Exception("Material Code not Available" + item.MaterialCode);
                     }
 
                     sodata.Status = message;
