@@ -1373,7 +1373,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                         else
                             throw new Exception("Material Code not Available" + item.MaterialCode);
-                       
+
                     }
                     else
                     {
@@ -1443,7 +1443,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 using var context1 = new ERPContext();
                 icdata.ScreenName = "Goods Issue";
                 icdata.ErrorID = ex.HResult.ToString();
-                icdata.ErrorMessage = ex.InnerException.Message.ToString();
+                icdata.ErrorMessage = ex.Message.ToString();
                 context1.TblApi_Error_Log.Add(icdata);
                 context1.SaveChanges();
                 dbtrans.Rollback();
@@ -2862,7 +2862,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (repo.TblPurchaseOrder.Any(v => v.PurchaseOrderNumber == ponumber))
                         {
                             var saleordermaster = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNo);
-
+                            var Msaleordermaster = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == item.SaleOrderNo);
                             var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.SaleOrder == item.SaleOrderNo && z.PurchaseOrderNumber == ponumber).ToList();
                             if (item.ApprovalStatus == "Rejected")
                             {
@@ -2871,6 +2871,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                     var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item1.SaleOrder && z.MaterialCode == item1.MaterialCode);
                                     var saleorder = repo.TblSaleOrderDetail.Where(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item1.MaterialCode).FirstOrDefault();
 
+                                    if (saleorder == null)
+                                    {
+
+                                        var Msaleorder = repo.TblPurchaseRequisitionDetails.Where(z => z.PurchaseRequisitionNumber == item.SaleOrderNo && z.MaterialCode == item1.MaterialCode).FirstOrDefault();
+                                        Msaleorder.Status = "Rejected";
+                                        context.TblPurchaseRequisitionDetails.Update(Msaleorder);
+                                    }
                                     if (poq != null)
                                     {
                                         poq.Qty = (poq.Qty) + (item1.Qty);
@@ -2888,23 +2895,31 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                         poq.CompanyCode = podata.FirstOrDefault().Company;
                                         context.TblPoQueue.Add(poq);
                                     }
-                                    saleorder.POQty = saleorder.POQty - saleorder.POQty;
-                                    if (Convert.ToInt16(saleorder.POQty) < 0)
-                                        saleorder.POQty = 0;
+                                    if (saleorder != null)
+                                    {
+                                        saleorder.POQty = saleorder.POQty - saleorder.POQty;
+                                        if (Convert.ToInt16(saleorder.POQty) < 0)
+                                            saleorder.POQty = 0;
 
-                                    saleorder.Status = "Rejected";
-                                    context.TblSaleOrderDetail.Update(saleorder);
-
+                                        saleorder.Status = "Rejected";
+                                        context.TblSaleOrderDetail.Update(saleorder);
+                                    }
                                     item.Status = "Rejected";
                                     context.TblPurchaseOrderDetails.Update(item1);
                                 }
                                 item.Status = "Rejected";
-                                saleordermaster.Status = "Rejected";
-
+                                if (saleordermaster != null)
+                                {
+                                    saleordermaster.Status = "Rejected";
+                                    context.TblSaleOrderMaster.Update(saleordermaster);
+                                }
+                                else
+                                {
+                                    Msaleordermaster.Status = "Rejected";
+                                    context.TblPurchaseRequisitionMaster.Update(Msaleordermaster);
+                                }
                             }
                             context.TblPurchaseOrder.Update(item);
-                            if (saleordermaster != null)
-                                context.TblSaleOrderMaster.Update(saleordermaster);
                         }
                     }
 
