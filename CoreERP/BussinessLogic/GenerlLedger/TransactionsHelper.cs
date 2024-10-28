@@ -1132,11 +1132,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
                 material = repo.TblMaterialMaster.ToList();
             }
-            if (tblProduction.Count == 0)
-            {
-                tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
-                material = repo.TblMaterialMaster.ToList();
-            }
+            //if (tblProduction.Count == 0)
+            //{
+            //    tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
+            //    material = repo.TblMaterialMaster.ToList();
+            //}
 
 
 
@@ -2139,21 +2139,37 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.DepartmentName = Department.FirstOrDefault(m => m.Code == c.Department).Description;
 
                 });
-
-            return repo.TblPurchaseRequisitionMaster.AsEnumerable()
+            if (searchCriteria.InvoiceNo != null)
+            {
+                return repo.TblPurchaseRequisitionMaster.AsEnumerable()
                 .Where(x =>
                 {
                     Debug.Assert(x.RequisitionDate != null, "x.RequisitionDate != null");
                     return
                     x.RequisitionNumber != null
                            && x.RequisitionNumber.Contains(searchCriteria.searchCriteria ?? x.RequisitionNumber)
-                           && Convert.ToDateTime(x.RequisitionDate.Value) >=
-                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                           && Convert.ToDateTime(x.RequisitionDate.Value.ToShortDateString()) <=
-                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
                             && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 })
                 .ToList();
+            }
+            else
+            {
+                return repo.TblPurchaseRequisitionMaster.AsEnumerable()
+                                .Where(x =>
+                                {
+                                    Debug.Assert(x.RequisitionDate != null, "x.RequisitionDate != null");
+                                    return
+                                    x.RequisitionNumber != null
+                                           && x.RequisitionNumber.Contains(searchCriteria.searchCriteria ?? x.RequisitionNumber)
+                                           && Convert.ToDateTime(x.RequisitionDate.Value) >=
+                                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                                           && Convert.ToDateTime(x.RequisitionDate.Value.ToShortDateString()) <=
+                                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                                            && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                                })
+                                .ToList();
+            }
+                
         }
         public bool AddPurchaseRequisitionMaster(TblPurchaseRequisitionMaster reqmasterdata, List<TblPurchaseRequisitionDetails> reqdetails)
         {
