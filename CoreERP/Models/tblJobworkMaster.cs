@@ -22,5 +22,8 @@ namespace CoreERP.Models
         public DateTime? EditDate { get; set; }       
         public string? Status { get; set; }
         public DateTime? DeliveryDate { get; set; }
+        public string? DocumentURL { get; set; }
+        public string? InvoiceURL { get; set; }
+
     }
 }
