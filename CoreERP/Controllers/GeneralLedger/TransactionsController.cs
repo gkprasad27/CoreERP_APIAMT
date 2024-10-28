@@ -825,15 +825,15 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetQCReportDetail/{SaleorderNumber}/{Materialcode}/{Type}")]
-        public async Task<IActionResult> GetQCReportDetail(string SaleorderNumber, string Materialcode, string Type)
+        [HttpGet("GetQCReportDetail/{SaleorderNumber}/{Materialcode}/{Type}/BomKey")]
+        public async Task<IActionResult> GetQCReportDetail(string SaleorderNumber, string Materialcode, string Type,string Bomkey)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     var transactions = new TransactionsHelper();
-                    var tagsData = transactions.GetSaleOrderMaster(SaleorderNumber, Materialcode);
+                    var tagsData = transactions.GetSaleOrderMaster(SaleorderNumber, Bomkey);
                     var QCData = transactions.GetQCMaster(Materialcode);
                     if (tagsData == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -841,7 +841,7 @@ namespace CoreERP.Controllers.masters
                     expdoObj.QCData = QCData;
                     expdoObj.SaleorderMaster = tagsData;
                     expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
-                    expdoObj.InsoectionCheck = new TransactionsHelper().GetInpectionCheckMasterById(Materialcode,SaleorderNumber );
+                    expdoObj.InsoectionCheck = new TransactionsHelper().GetInpectionCheckMasterById(Bomkey, SaleorderNumber );
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }

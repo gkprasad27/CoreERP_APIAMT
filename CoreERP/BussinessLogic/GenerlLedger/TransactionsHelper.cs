@@ -1176,7 +1176,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
                 material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
             }
-            else
+            if (tblProduction.Count == 0)
             {
                 tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId).ToList();
                 material = repo.TblMaterialMaster.ToList();
@@ -1204,7 +1204,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             if (!string.IsNullOrEmpty(Materialcode))
             {
                 tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type == Type && cd.Parameter != null).ToList();
-                //material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
+                material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == tblProduction.FirstOrDefault().MaterialCode).ToList();
+            }
+            if (tblProduction.Count == 0)
+            {
+                tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.Type == Type && cd.Parameter != null).ToList();
+                material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == tblProduction.FirstOrDefault().MaterialCode).ToList();
             }
             //else
             //{
@@ -1214,11 +1219,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             repo.tblQCResults.ToList().ForEach(c =>
             {
-                foreach (var item in tblProduction)
-                {
-                    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == item.MaterialCode)?.Description;
+                //foreach (var item in tblProduction)
+                //{
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == material.FirstOrDefault().MaterialCode)?.Description;
 
-                }
+                //}
                 c.UOMName = sizes.FirstOrDefault(s => s.unitId == c.Uom)?.unitName;
             });
 
@@ -1538,7 +1543,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (InspectionCheckDetails.Count == 0)
                         {
                             if (item.Company == "2000")
-                                NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.BomKey, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.MaterialCode, BomName = item.BomName });
+                                NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.BomKey, BomName = item.BomName });
                             else
                                 NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.BomKey, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.MaterialCode, BomName = item.BomName });
                         }
@@ -2169,7 +2174,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 })
                                 .ToList();
             }
-                
+
         }
         public bool AddPurchaseRequisitionMaster(TblPurchaseRequisitionMaster reqmasterdata, List<TblPurchaseRequisitionDetails> reqdetails)
         {
