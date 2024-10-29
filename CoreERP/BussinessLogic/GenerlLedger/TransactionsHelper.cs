@@ -4178,8 +4178,22 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.Vendor).Name;
 
                 });
+            if (searchCriteria.InvoiceNo != null)
+            {
+                return repo.tblJobworkMaster.AsEnumerable()
+                .Where(x =>
+                {
 
-            return repo.tblJobworkMaster.AsEnumerable()
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.JobWorkNumber) != null
+                               && Convert.ToString(x.JobWorkNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.JobWorkNumber))
+                                && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                }).OrderByDescending(x => x.ID)
+                .ToList();
+            }
+            else
+            {
+                return repo.tblJobworkMaster.AsEnumerable()
                 .Where(x =>
                 {
 
@@ -4191,6 +4205,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 }).OrderByDescending(x => x.ID)
                 .ToList();
+            }
         }
 
         public TblSaleOrderMaster GetSaleOrderMastersById(string saleOrderNo)

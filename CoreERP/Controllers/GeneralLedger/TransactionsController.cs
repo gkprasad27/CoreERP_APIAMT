@@ -665,7 +665,7 @@ namespace CoreERP.Controllers.masters
                     if (!Goodsissue.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for GoodsIssue." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.Goodsissue = Goodsissue.Where(x => x.Status != "Dispatched").OrderByDescending(x=>x.GoodsIssueId);
+                    expdoObj.Goodsissue = Goodsissue.Where(x => x.Status != "Dispatched").OrderByDescending(x => x.GoodsIssueId);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -689,7 +689,7 @@ namespace CoreERP.Controllers.masters
                     if (!Productionissue.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Productionissue." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.Productionissue = Productionissue.Where(x=>x.Status!= "Dispatched");
+                    expdoObj.Productionissue = Productionissue.Where(x => x.Status != "Dispatched");
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -777,7 +777,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetProductionStatus/{Saleorder}/{Materialcode}/{GSTag}")]
-        public async Task<IActionResult> GetProductionStatus(string Saleorder, string Materialcode , string GSTag)
+        public async Task<IActionResult> GetProductionStatus(string Saleorder, string Materialcode, string GSTag)
         {
             var result = await Task.Run(() =>
             {
@@ -810,8 +810,8 @@ namespace CoreERP.Controllers.masters
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Production Not Completed." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.tagsData = tagsData;
-                    var tagsDetail= new TransactionsHelper().GetQcIssueDetails(GSNumber, Materialcode).Where(x=>x.Status!= "Rejected");
-                    if (tagsDetail==null)
+                    var tagsDetail = new TransactionsHelper().GetQcIssueDetails(GSNumber, Materialcode).Where(x => x.Status != "Rejected");
+                    if (tagsDetail == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Production Not Completed." });
                     expdoObj.tagsDetail = tagsDetail;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
@@ -825,23 +825,32 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetQCReportDetail/{SaleorderNumber}/{Materialcode}/{Type}/BomKey")]
-        public async Task<IActionResult> GetQCReportDetail(string SaleorderNumber, string Materialcode, string Type,string Bomkey)
+        [HttpGet("GetQCReportDetail/{SaleorderNumber}/{Materialcode}/{Type}/{BomKey}")]
+        public async Task<IActionResult> GetQCReportDetail(string SaleorderNumber, string Materialcode, string Type, string Bomkey)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
+                    var QCData = new tblQCMaster();
                     var transactions = new TransactionsHelper();
                     var tagsData = transactions.GetSaleOrderMaster(SaleorderNumber, Bomkey);
-                    var QCData = transactions.GetQCMaster(Materialcode);
+                    if (tagsData.Company == "2000")
+                        QCData = transactions.GetQCMaster(Materialcode);
+                    else
+                        QCData = transactions.GetQCMaster(Bomkey);
+
                     if (tagsData == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.QCData = QCData;
                     expdoObj.SaleorderMaster = tagsData;
-                    expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
-                    expdoObj.InsoectionCheck = new TransactionsHelper().GetInpectionCheckMasterById(Bomkey, SaleorderNumber );
+                    if (tagsData.Company == "2000")
+                        expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
+                    else
+                        expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Bomkey, Type);
+
+                    expdoObj.InsoectionCheck = new TransactionsHelper().GetInpectionCheckMasterById(Bomkey, SaleorderNumber);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -1443,7 +1452,7 @@ namespace CoreERP.Controllers.masters
                     if (!podetails.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for purchase order." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.podetails = podetails.Where(x => x.Status != "Dispatched"); 
+                    expdoObj.podetails = podetails.Where(x => x.Status != "Dispatched");
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -1505,7 +1514,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetPurchaseOrderData/{Saleorder}/{Materialcode}")]
-        public async Task<IActionResult> GetPurchaseOrderData(string Saleorder,string Materialcode)
+        public async Task<IActionResult> GetPurchaseOrderData(string Saleorder, string Materialcode)
         {
             var result = await Task.Run(() =>
             {
@@ -1565,7 +1574,7 @@ namespace CoreERP.Controllers.masters
                     if (obj == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                    var poMaster = obj["dtl"].ToObject < List<TblPurchaseOrder>>();
+                    var poMaster = obj["dtl"].ToObject<List<TblPurchaseOrder>>();
                     //var podetails = obj["poDtl"].ToObject<List<TblPurchaseOrderDetails>>();
                     ///var username = User.Identities.ToList();
 
@@ -1594,7 +1603,7 @@ namespace CoreERP.Controllers.masters
                     if (obj == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                    var grMaster = obj["dtl"].ToObject  < List<TblGoodsReceiptMaster >> ();
+                    var grMaster = obj["dtl"].ToObject<List<TblGoodsReceiptMaster>>();
                     //var podetails = obj["poDtl"].ToObject<List<TblPurchaseOrderDetails>>();
                     ///var username = User.Identities.ToList();
 
@@ -1994,7 +2003,7 @@ namespace CoreERP.Controllers.masters
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.icmasters = iclist;
-                    expdoObj.icDetail = new TransactionsHelper().GetInspectionCheckDetailsBySaleorder(saleorder).Where(x=>x.Status== "QC Passed");
+                    expdoObj.icDetail = new TransactionsHelper().GetInspectionCheckDetailsBySaleorder(saleorder).Where(x => x.Status == "QC Passed");
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -2033,7 +2042,7 @@ namespace CoreERP.Controllers.masters
 
 
         [HttpGet("GetInspectionDetail/{MaterialCode}/{Saleorder}")]
-        public async Task<IActionResult> GetInspectionDetail(string MaterialCode,string Saleorder)
+        public async Task<IActionResult> GetInspectionDetail(string MaterialCode, string Saleorder)
         {
             var result = await Task.Run(() =>
             {
