@@ -1202,21 +1202,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var tblProduction = new List<tblQCResults>();
             var sizes = repo.TblMaterialSize.ToList();
             if (!string.IsNullOrEmpty(Materialcode))
-            {
                 tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.Type == Type && cd.Parameter != null).ToList();
-                material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == tblProduction.FirstOrDefault().MaterialCode).ToList();
-            }
             if (tblProduction.Count == 0)
-            {
                 tblProduction = repo.tblQCResults.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.Type == Type && cd.Parameter != null).ToList();
-                material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == tblProduction.FirstOrDefault().MaterialCode).ToList();
-            }
+
             //else
             //{
             //    tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId).ToList();
             //    material = repo.TblMaterialMaster.ToList();
             //}
-
+            material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == tblProduction.FirstOrDefault().MaterialCode).ToList();
             repo.tblQCResults.ToList().ForEach(c =>
             {
                 //foreach (var item in tblProduction)
@@ -4231,17 +4226,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var profitCenters = repo.ProfitCenters.ToList();
             var customer = repo.TblBusinessPartnerAccount.ToList();
             var SaleordrDetails = repo.TblSaleOrderDetail.Where(x => x.SaleOrderNo == saleOrderNo && x.BomKey == BomKey && x.MainComponent == "Y").ToList();
-
-            repo.TblSaleOrderMaster.ToList()
-                .ForEach(c =>
-                {
-                    c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
-                    c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
-                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
-                    c.MatQty = SaleordrDetails.FirstOrDefault(s => s.SaleOrderNo == saleOrderNo).QTY;
-                });
+            if (SaleordrDetails.Count > 0)
+            {
+                repo.TblSaleOrderMaster.ToList()
+                    .ForEach(c =>
+                    {
+                        c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
+                        c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+                        c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
+                        c.MatQty = SaleordrDetails.FirstOrDefault(s => s.SaleOrderNo == saleOrderNo).QTY;
+                    });
+            }
             return repo.TblSaleOrderMaster
                 .FirstOrDefault(x => x.SaleOrderNo == saleOrderNo);
+
         }
 
         public tblQCMaster GetQCMaster(string MaterialCode)
