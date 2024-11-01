@@ -1124,19 +1124,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
                 if (tblProduction.Count > 0)
                     material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
-                else
-                    material = repo.TblMaterialMaster.ToList();
+                //else
+                //    material = repo.TblMaterialMaster.ToList();
             }
-            else
+            if (tblProduction.Count == 0)
             {
                 tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
-                material = repo.TblMaterialMaster.ToList();
+                //material = repo.TblMaterialMaster.ToList();
             }
-            //if (tblProduction.Count == 0)
-            //{
-            //    tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
-            //    material = repo.TblMaterialMaster.ToList();
-            //}
+            if (material.Count == 0)
+                material = repo.TblMaterialMaster.ToList();
 
 
 
@@ -1144,7 +1141,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 foreach (var item in tblProduction)
                 {
-                    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == item.MaterialCode)?.Description;
+                    c.MaterialName = material.Where(l => l.MaterialCode == item.MaterialCode).FirstOrDefault().Description;
                     c.FilePath = material.FirstOrDefault(l => l.MaterialCode == item.MaterialCode)?.FileUpload;
                 }
             });
