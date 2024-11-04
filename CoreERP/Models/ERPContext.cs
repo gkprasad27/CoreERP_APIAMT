@@ -275,6 +275,7 @@ namespace CoreERP.Models
         public virtual DbSet<PermissionRequest> PermissionRequest { get; set; }
         public virtual DbSet<VehicleRequisition> VehicleRequisition { get; set; }
         public virtual DbSet<TblSaleOrderMaster> TblSaleOrderMaster { get; set; }
+        public virtual DbSet<AttendanceData> AttendanceData { get; set; }
         public virtual DbSet<tblJobworkMaster> tblJobworkMaster { get; set; }
         public virtual DbSet<tblJobworkDetails> tblJobworkDetails { get; set; }
         public virtual DbSet<tblJWReceiptDetails> tblJWReceiptDetails { get; set; }
@@ -8616,8 +8617,24 @@ namespace CoreERP.Models
                 entity.Property(e => e.CreatedBy);
                 entity.Property(e => e.ProfitCenter);
             });
+
+            modelBuilder.Entity<AttendanceData>(entity =>
+            {
+                entity.HasKey(e => e.ID);                
+                entity.Property(e => e.EmpCode);
+                entity.Property(e => e.DateTimeStamp);
+                entity.Property(e => e.InAndOut);
+                entity.Property(e => e.DeviceAddress);
+                entity.Property(e => e.TerminalId);
+                entity.Property(e => e.PullStatus);
+                entity.Property(e => e.StaffId);
+                entity.Property(e => e.LogDatetime);
+            });
+
             OnModelCreatingPartial(modelBuilder);
         }
+
+
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }

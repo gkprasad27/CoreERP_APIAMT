@@ -2359,6 +2359,37 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpPost("AddAttendance")]
+        public async Task<IActionResult> AddAttendance([FromBody] JObject obj)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                    var attendanceDetails = obj["qsDtl"].ToObject<List<AttendanceData>>();
+
+                    if (!new TransactionsHelper().AddAttendance(attendanceDetails))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.attendanceDetails = attendanceDetails;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    //if (ex.HResult.ToString() == "-2146233088")
+                    //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "PO Number Already Exist, Please use another key " + " " + saleOrderMaster.PONumber });
+                    //else
+                    //    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
 
         [HttpPost("AddJobWork")]
         public async Task<IActionResult> AddJobWork([FromBody] JObject obj)

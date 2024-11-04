@@ -2663,6 +2663,38 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }).OrderByDescending(x => x.Id)
                 .ToList();
         }
+
+        public bool AddAttendance(List<AttendanceData> attendancedetails)
+        {
+            using var repo = new Repository<AttendanceData>();
+            using var context = new ERPContext();
+            List<AttendanceData> AttendanceDataDetailsNew;
+            List<AttendanceData> AttendanceDataDetailsExist;
+            using var dbtrans = context.Database.BeginTransaction();
+            try
+            {
+                AttendanceDataDetailsExist = attendancedetails.Where(x => x.ID > 0).ToList();
+                AttendanceDataDetailsNew = attendancedetails.Where(x => x.ID == 0).ToList();
+
+                if (AttendanceDataDetailsExist.Count > 0)
+                {
+                    context.AttendanceData.UpdateRange(AttendanceDataDetailsExist);
+                }
+                else
+                {
+                    context.AttendanceData.AddRange(AttendanceDataDetailsNew);
+                }
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception)
+            {
+                dbtrans.Rollback();
+                throw;
+            }
+        }
         public bool AddPurchaseOrder(TblPurchaseOrder podata, List<TblPurchaseOrderDetails> podetails)
         {
             using var repo = new Repository<TblPurchaseOrder>();
