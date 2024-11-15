@@ -28,6 +28,7 @@ namespace CoreERP.Models
         public DateTime? EditDate { get; set; }
 
         public string? CompCode { get; set; }
+        public int? LessHrs { get; set; }
 
     }
 }
