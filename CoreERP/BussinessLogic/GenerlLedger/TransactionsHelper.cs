@@ -2679,6 +2679,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     item.DeviceAddress = "2";
                     item.StaffId = item.EmpCode;
+                    item.DateTimeStamp = item.LogDatetime;
                     if (AttendanceDataDetailsExist.Count > 0)
                     {
                         context.AttendanceData.UpdateRange(AttendanceDataDetailsExist);
