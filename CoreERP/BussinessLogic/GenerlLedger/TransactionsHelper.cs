@@ -2675,15 +2675,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 AttendanceDataDetailsExist = attendancedetails.Where(x => x.ID > 0).ToList();
                 AttendanceDataDetailsNew = attendancedetails.Where(x => x.ID == 0).ToList();
+                foreach (var item in attendancedetails)
+                {
+                    item.DeviceAddress = "2";
+                    item.StaffId = item.EmpCode;
+                    if (AttendanceDataDetailsExist.Count > 0)
+                    {
+                        context.AttendanceData.UpdateRange(AttendanceDataDetailsExist);
+                    }
+                    else
+                    {
+                        context.AttendanceData.AddRange(AttendanceDataDetailsNew);
+                    }
+                }
 
-                if (AttendanceDataDetailsExist.Count > 0)
-                {
-                    context.AttendanceData.UpdateRange(AttendanceDataDetailsExist);
-                }
-                else
-                {
-                    context.AttendanceData.AddRange(AttendanceDataDetailsNew);
-                }
                 context.SaveChanges();
 
                 dbtrans.Commit();
