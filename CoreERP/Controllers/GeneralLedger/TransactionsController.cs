@@ -714,7 +714,11 @@ namespace CoreERP.Controllers.masters
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.goodsissueasters = goodsissueasters;
-                    expdoObj.goodsissueastersDetail = new TransactionsHelper().GetGoodsIssueDetails(GSNumber);
+                    //if (goodsissueasters.Company == "2000")
+                    //    expdoObj.goodsissueastersDetail = new TransactionsHelper().GetGoodsIssueDetailswithoutMainComponent(GSNumber);
+                    //else
+                        expdoObj.goodsissueastersDetail = new TransactionsHelper().GetGoodsIssueDetails(GSNumber);
+
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }

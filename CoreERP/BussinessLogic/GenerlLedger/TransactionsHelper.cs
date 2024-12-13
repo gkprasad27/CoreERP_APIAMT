@@ -1099,6 +1099,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         }
 
+        public List<TblGoodsIssueDetails> GetGoodsIssueDetailswithoutMainComponent(string GoodsIssueId)
+        {
+            using var repo = new Repository<TblGoodsIssueDetails>();
+
+            var material = repo.TblMaterialMaster.ToList();
+
+            repo.TblGoodsIssueDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            });
+            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
+
+        }
+
         public List<TblGoodsIssueDetails> GetGoodsIssueDetail(string GoodsIssueId)
         {
             using var repo = new Repository<TblGoodsIssueDetails>();
@@ -1126,6 +1140,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
                 //else
                 //    material = repo.TblMaterialMaster.ToList();
+            }
+            if (tblProduction.Count > 0)
+            {
+                tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
+                material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
             }
             if (tblProduction.Count == 0)
             {
@@ -1341,7 +1360,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             //for (var i = 0; i < qty; i++)
                             //{
-                            ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName });
+                            ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName, Company = sodata.Company });
                             tagnum = tagnum + 1;
                             //}
                         }
@@ -1378,7 +1397,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName });
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName, Company = sodata.Company });
                                 tagnum = tagnum + 1;
                             }
                         }
@@ -2146,7 +2165,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.RequisitionNumber != null
                            && x.RequisitionNumber.Contains(searchCriteria.searchCriteria ?? x.RequisitionNumber)
                             && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
-                })
+                }).OrderByDescending(x => x.ID)
                 .ToList();
             }
             else
@@ -2163,7 +2182,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                            && Convert.ToDateTime(x.RequisitionDate.Value.ToShortDateString()) <=
                                            Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
                                             && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
-                                })
+                                }).OrderByDescending(x => x.ID)
                                 .ToList();
             }
 

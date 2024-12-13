@@ -6,6 +6,7 @@ namespace CoreERP.Models
 {
     public partial class TblPurchaseRequisitionMaster
     {
+        public int ID { get; set; }
         public string? Company { get; set; }
         public string? Plant { get; set; }
         public string? Department { get; set; }

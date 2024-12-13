@@ -277,7 +277,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                     // && inv.InvoiceNo == (searchCriteria.InvoiceNo ?? inv.InvoiceNo)
 
-                    return _invoiceMasterList.OrderBy(x => x.InvoiceMasterId).ToList();
+                    return _invoiceMasterList.OrderByDescending(x => x.InvoiceMasterId).ToList();
                 }
             }
             catch (Exception ex)
