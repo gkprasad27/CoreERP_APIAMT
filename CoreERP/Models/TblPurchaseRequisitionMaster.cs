@@ -6,6 +6,7 @@ namespace CoreERP.Models
 {
     public partial class TblPurchaseRequisitionMaster
     {
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         public string? Company { get; set; }
         public string? Plant { get; set; }
