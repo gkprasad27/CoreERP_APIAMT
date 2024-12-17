@@ -5559,7 +5559,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblPurchaseRequisitionMaster>(entity =>
             {
-                entity.HasKey(e => e.RequisitionNumber);
+                entity.HasKey(e => e.ID);
 
                 entity.ToTable("tbl_PurchaseRequisitionMaster");
 

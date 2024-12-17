@@ -10,6 +10,8 @@ using Newtonsoft.Json.Linq;
 using NuGet.Protocol.Core.Types;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Linq;
@@ -1126,7 +1128,50 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
 
         }
+        public static DataSet GetTagsDetails(string saleorderno, string materialcode)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "GetTagsIssueDetails";
+            #region Parameters
 
+            DbParameter saleorder = command.CreateParameter();
+            saleorder.Direction = ParameterDirection.Input;
+            saleorder.Value = (object)saleorderno ?? DBNull.Value;
+            saleorder.ParameterName = "saleorderno";
+
+            DbParameter material = command.CreateParameter();
+            material.Direction = ParameterDirection.Input;
+            material.Value = (object)materialcode ?? DBNull.Value;
+            material.ParameterName = "materialcode";
+            #endregion
+            command.Parameters.Add(saleorder);
+            command.Parameters.Add(material);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
+        public static DataSet GetTagIssueDetails(string saleorderno)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "GetTagIssueDetails";
+            #region Parameters
+
+            DbParameter saleorder = command.CreateParameter();
+            saleorder.Direction = ParameterDirection.Input;
+            saleorder.Value = (object)saleorderno ?? DBNull.Value;
+            saleorder.ParameterName = "saleorderno";
+
+            //DbParameter material = command.CreateParameter();
+            //material.Direction = ParameterDirection.Input;
+            //material.Value = (object)materialcode ?? DBNull.Value;
+            //material.ParameterName = "materialcode";
+            #endregion
+            command.Parameters.Add(saleorder);
+            //command.Parameters.Add(material);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
         public List<TblProductionDetails> GetTagsIssueDetails(string GoodsIssueId, string Materialcode)
         {
             using var repo = new ERPContext();
@@ -1145,7 +1190,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 tblProduction = new List<TblProductionDetails>();
                 tblProduction = repo.TblProductionDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
-               // material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
+                // material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
             }
             if (tblProduction.Count == 0)
             {
@@ -1162,7 +1207,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 foreach (var item in tblProduction)
                 {
-                    c.MaterialName = material.Where(l => l.MaterialCode == item.MaterialCode).FirstOrDefault().Description;
+                    //c.MaterialName = material.Where(l => l.MaterialCode == item.MaterialCode).FirstOrDefault().Description;
+                    c.MaterialName = material.Where(l => l.MaterialCode == item.MaterialCode).Select(x => x.Description).ToString();
                     c.FilePath = material.FirstOrDefault(l => l.MaterialCode == item.MaterialCode)?.FileUpload;
                 }
             });

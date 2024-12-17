@@ -16,6 +16,11 @@ using Microsoft.AspNetCore.Http;
 using System.Net;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
+using CoreERP.BussinessLogic.ReportsHelpers;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Data;
 
 namespace CoreERP.Controllers.masters
 {
@@ -758,17 +763,36 @@ namespace CoreERP.Controllers.masters
         [HttpGet("GetTagsissueDetail/{GSNumber}/{Materialcode}")]
         public async Task<IActionResult> GetTagsissueDetail(string GSNumber, string Materialcode = null)
         {
+          string  code = Materialcode.Replace(@"\r", string.Empty).Trim();
+          
             var result = await Task.Run(() =>
             {
                 try
                 {
                     var transactions = new TransactionsHelper();
-                    //var tagsData = transactions.GetTagsIssueMasterById(GSNumber);
-                    //if (tagsData == null)
-                    //    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    var tagsData = transactions.GetTagsIssueMasterById(GSNumber);
+                    if (tagsData == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
-                    //expdoObj.tagsData = tagsData;
-                    expdoObj.tagsDetail = new TransactionsHelper().GetTagsIssueDetails(GSNumber, Materialcode);
+                    if (tagsData.Company == "1000")
+                    {
+                       
+                        DataSet ds = TransactionsHelper.GetTagsDetails(GSNumber, Materialcode);
+                        if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                        {
+                            expdoObj.tagsDetail = ds.Tables[0];
+
+                        }
+                    }
+                    else
+                    {
+                        DataSet ds = TransactionsHelper.GetTagIssueDetails(GSNumber);
+                        if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                        {
+                            expdoObj.tagsDetail = ds.Tables[0];
+
+                        }
+                    }
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -779,6 +803,11 @@ namespace CoreERP.Controllers.masters
             });
             return result;
         }
+        //private static readonly Regex sWhitespace = new Regex(@"\s+");
+        //public static string ReplaceWhitespace(string input, string replacement)
+        //{
+        //    return sWhitespace.Replace(input, replacement);
+        //}
 
         [HttpGet("GetProductionStatus/{Saleorder}/{Materialcode}/{GSTag}")]
         public async Task<IActionResult> GetProductionStatus(string Saleorder, string Materialcode, string GSTag)
