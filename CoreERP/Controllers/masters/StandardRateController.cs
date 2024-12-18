@@ -129,7 +129,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetSaleOrderDetailbymaterialcode/{materialcode}/{tagname}/{type}/{bomkey}/{companyCode}")]
-        public async Task<IActionResult> GetSaleOrderDetailbymaterialcode(string materialcode,string tagname, string type,string bomkey,string companyCode)
+        public async Task<IActionResult> GetSaleOrderDetailbymaterialcode(string materialcode,string tagname, string type,string bomkey, string companyCode)
         {
             var result = await Task.Run(() =>
             {
@@ -142,7 +142,7 @@ namespace CoreERP.Controllers.masters
                         var tagsData = GetQCResult(tagname, type);
                         if (tagsData.Count == 0)
                         {
-                            var tagsData1 = GetQCDetailManufacturing(materialcode);
+                            var tagsData1 = GetQCDetailManufacturing(bomkey);
                             expdoObj.QCConfigDetail = tagsData1;
                         }
                         else
