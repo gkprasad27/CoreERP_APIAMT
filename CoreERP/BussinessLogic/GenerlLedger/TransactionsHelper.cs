@@ -3878,17 +3878,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == icdata.saleOrderNumber);
             try
             {
-                if (MaterialMaster.DragRevNo == null)
+                if (MaterialMaster != null)
                 {
-                    if (icdata.DrawingRevNo != null)
-                        MaterialMaster.DragRevNo = icdata.DrawingRevNo;
-                    else
-                        icdata.DrawingRevNo = "Not Required";
+                    if (MaterialMaster.DragRevNo == null)
+                    {
+                        if (icdata.DrawingRevNo != null)
+                            MaterialMaster.DragRevNo = icdata.DrawingRevNo;
+                        else
+                            icdata.DrawingRevNo = "Not Required";
+                    }
                 }
+
 
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
                 {
-                    icdata.DrawingRevNo = MaterialMaster.DragRevNo;
+                    if (MaterialMaster != null)
+                        icdata.DrawingRevNo = MaterialMaster.DragRevNo;
+
                     icdata.Company = SaleOrder.Company;
                     icdata.MaterialCode = Materialcode;
                     icdata.BomKey = Materialcode;
@@ -3904,7 +3910,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         context.SaveChanges();
                         masternumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                     }
-                    icdata.DrawingRevNo = MaterialMaster.DragRevNo;
+                    if (MaterialMaster != null)
+                        icdata.DrawingRevNo = MaterialMaster.DragRevNo;
+
                     icdata.InspectionCheckNo = masternumber;
                     icdata.MaterialCode = Materialcode;
                     icdata.BomKey = Materialcode;
@@ -3935,12 +3943,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.Status = icdata.Status;
                     x.HeatNumber = icdata.HeatNumber;
                     x.PartDrgNo = icdata.PartDrgNo;
-                    x.DrawingRevNo = MaterialMaster.DragRevNo;
+
                     production.Status = icdata.Status;
                     if (icdata.Company == "2000")
+                    {
                         sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == x.saleOrderNumber && im.MaterialCode == x.MaterialCode);
+                        MaterialMaster = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == x.MaterialCode);
+                        x.DrawingRevNo = MaterialMaster.DragRevNo;
+                    }
                     else
+                    {
                         sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == x.saleOrderNumber && im.MaterialCode == x.BomKey);
+                        if (MaterialMaster != null)
+                            x.DrawingRevNo = MaterialMaster.DragRevNo;
+                    }
 
                     if (x.Status == "QC Rejected")
                     {

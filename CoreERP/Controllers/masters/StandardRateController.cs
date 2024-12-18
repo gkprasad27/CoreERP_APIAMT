@@ -142,7 +142,7 @@ namespace CoreERP.Controllers.masters
                         var tagsData = GetQCResult(tagname, type);
                         if (tagsData.Count == 0)
                         {
-                            var tagsData1 = GetQCDetailManufacturing(bomkey);
+                            var tagsData1 = GetQCDetailManufacturing(materialcode);
                             expdoObj.QCConfigDetail = tagsData1;
                         }
                         else
