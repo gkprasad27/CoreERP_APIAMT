@@ -871,7 +871,7 @@ namespace CoreERP.Controllers.masters
                     if (tagsData.Company == "2000")
                         QCData = transactions.GetQCMaster(Materialcode);
                     else
-                        QCData = transactions.GetQCMaster(Bomkey);
+                        QCData = transactions.GetQCMaster(Materialcode);
 
                     if (tagsData == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -881,9 +881,9 @@ namespace CoreERP.Controllers.masters
                     if (tagsData.Company == "2000")
                         expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
                     else
-                        expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Bomkey, Type);
+                        expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
 
-                    expdoObj.InsoectionCheck = new TransactionsHelper().GetInpectionCheckMasterById(Bomkey, SaleorderNumber);
+                    expdoObj.InsoectionCheck = new TransactionsHelper().GetInpectionCheckMasterById(Materialcode, SaleorderNumber);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
