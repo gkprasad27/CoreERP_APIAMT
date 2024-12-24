@@ -933,7 +933,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     .ForEach(c =>
                     {
                         c.MaterialName = materialtype.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
-                        c.HsnNo= HSCCODE.FirstOrDefault(z => z.Code == c.HsnNo)?.Description;
+                        c.HsnNo = HSCCODE.FirstOrDefault(z => z.Code == c.HsnNo)?.Description;
                     });
 
                     return repo.TblInvoiceDetail.Where(x => x.InvoiceNo == invoiceNo).ToList();
@@ -1040,12 +1040,22 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             invoice.Status = message;
                             repo.TblInvoiceMaster.Add(invoice);
                             repo.SaveChanges();
-
+                            var SaleOrderDetails = new TblSaleOrderDetail();
+                            var materialmaster = new TblMaterialMaster();
                             foreach (var invdtl in invoiceDetails)
                             {
                                 //var SaleOrderDetails = new TblSaleOrderDetail();
                                 //var inspection = new TblInspectionCheckDetails();
-                                var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.Bomkey);
+                                if (invoice.Company == "1000")
+                                {
+                                    SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.Bomkey);
+                                    materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.Bomkey);
+                                }
+                                else
+                                {
+                                    SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.MaterialCode);
+                                    materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.MaterialCode);
+                                }
                                 var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
                                 #region InvioceDetail
                                 invdtl.Qty = 1;
@@ -1062,7 +1072,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 SaleOrderDetails.Status = message;
                                 repo.TblSaleOrderDetail.UpdateRange(SaleOrderDetails);
 
-                                var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.Bomkey);
+
                                 materialmaster.OpeningQty = ((materialmaster.OpeningQty) - 1);
                                 repo.TblMaterialMaster.UpdateRange(materialmaster);
 
@@ -1171,7 +1181,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             GoodsIssueMaster.SaleOrder = GoodsIssue.SaleOrder;
                             GoodsIssueMaster.CustomerCode = SaleOrder.CustomerCode;
                             repo.TblGoodsIssueMaster.Add(GoodsIssueMaster);
-                           
+
 
                             tblProduction.Company = GoodsIssue.Company;
                             tblProduction.SaleOrderNumber = invoice.ToSaleOrder;
@@ -1183,25 +1193,25 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                             foreach (var item in invoiceDetails)
                             {
-                                GoodsIssueDetails.Add(new TblGoodsIssueDetails {Qty = item.Qty, AllocatedQTY = item.AllocatedQty, MaterialCode = item.MaterialCode, SaleOrderNumber = invoice.ToSaleOrder, Status = GoodsIssue.Status });
+                                GoodsIssueDetails.Add(new TblGoodsIssueDetails { Qty = item.Qty, AllocatedQTY = item.AllocatedQty, MaterialCode = item.MaterialCode, SaleOrderNumber = invoice.ToSaleOrder, Status = GoodsIssue.Status });
                                 GoodsIssueD = repo1.TblGoodsIssueDetails.FirstOrDefault(x => x.SaleOrderNumber == invoice.FromSaleOrder && x.MaterialCode == item.MaterialCode);
                                 GoodsIssueD.AllocatedQTY = (Convert.ToInt32(GoodsIssueD.AllocatedQTY) - (Convert.ToInt32(item.AllocatedQty)));
                                 GoodsIssueD.Qty = (Convert.ToInt32(GoodsIssueD.Qty) - (Convert.ToInt32(item.Qty)));
                             }
                             repo.TblGoodsIssueDetails.AddRange(GoodsIssueDetails);
-                           // repo.SaveChanges();
+                            // repo.SaveChanges();
 
                             repo.TblGoodsIssueDetails.UpdateRange(GoodsIssueD);
-                           // repo.SaveChanges();
+                            // repo.SaveChanges();
 
                             foreach (var invdtl in invoiceDetails)
                             {
-                                ProductionD = repo1.TblProductionDetails.FirstOrDefault(x => x.SaleOrderNumber == invoice.FromSaleOrder && x.MaterialCode == invdtl.MaterialCode && x.ProductionTag==invdtl.ProductionTag);
+                                ProductionD = repo1.TblProductionDetails.FirstOrDefault(x => x.SaleOrderNumber == invoice.FromSaleOrder && x.MaterialCode == invdtl.MaterialCode && x.ProductionTag == invdtl.ProductionTag);
                                 ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = invoice.FromSaleOrder, ProductionTag = ProductionD.ProductionTag, Status = ProductionD.Status, MaterialCode = ProductionD.MaterialCode, ProductionPlanDate = ProductionD.ProductionPlanDate, ProductionTargetDate = ProductionD.ProductionTargetDate });
                                 repo.TblProductionDetails.AddRange(ProductionDetails);
 
                                 repo.TblProductionDetails.Remove(ProductionD);
-                               // repo.SaveChanges();
+                                // repo.SaveChanges();
 
                             }
                             foreach (var commit in invoiceDetails)
