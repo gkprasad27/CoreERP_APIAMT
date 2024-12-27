@@ -1554,9 +1554,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     if (InspectionMaster != null)
                     {
-                        InspectionCheckMaster.Status = message;
+                        InspectionMaster.Status = message;
                         if (goodsreceipt != null)
-                            InspectionCheckMaster.HeatNumber = goodsreceipt.HeatNumber;
+                            InspectionMaster.HeatNumber = goodsreceipt.HeatNumber;
                         context.TblInspectionCheckMaster.Update(InspectionMaster);
                         context.SaveChanges();
                         masternumber = InspectionMaster.InspectionCheckNo;
@@ -1574,7 +1574,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             InspectionCheckMaster.InspectionCheckNo = masternumber;
 
 
-                        InspectionCheckMaster.Status = prodDetails.FirstOrDefault().WorkStatus;
+                        // InspectionCheckMaster.Status = prodDetails.FirstOrDefault().WorkStatus;
                         if (goodsreceipt != null)
                             InspectionCheckMaster.HeatNumber = goodsreceipt.HeatNumber;
                         InspectionCheckMaster.InspectionCheckNo = masternumber;
@@ -1583,6 +1583,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         InspectionCheckMaster.BomKey = prodDetails.FirstOrDefault().BomKey;
                         InspectionCheckMaster.Company = prodDetails.FirstOrDefault().Company;
                         InspectionCheckMaster.completionDate = System.DateTime.Now;
+                        InspectionCheckMaster.Status = message;
                         if (masternumber.Length > 1)
                             context.TblInspectionCheckMaster.Add(InspectionCheckMaster);
                         else
@@ -3889,6 +3890,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                 }
 
+                if (icdata.Company == "2000")
+                    Materialcode = icdetails.FirstOrDefault().BomKey;
 
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
                 {
@@ -4428,7 +4431,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             string SaleOrderNumber = string.Empty;
             int totalqty;
-            totalqty = (int)saleOrderDetails.Sum(a => a.QTY);
+            totalqty = (int)saleOrderDetails.Where(z=>z.MainComponent=="Y").Sum(a => a.QTY);
             var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Sale Order" && x.CompCode == saleOrderMaster.Company);
             var Quotation = repo.TblSupplierQuotationsMaster.Where(x => x.QuotationNumber == saleOrderMaster.PONumber).FirstOrDefault();
             // Utils.SendEMail("sales@amtpowertransmission.com", "Test", "Body");
