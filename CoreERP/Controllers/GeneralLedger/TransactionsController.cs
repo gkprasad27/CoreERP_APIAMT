@@ -760,8 +760,8 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetTagsissueDetail/{GSNumber}/{Materialcode}")]
-        public async Task<IActionResult> GetTagsissueDetail(string GSNumber, string Materialcode = null)
+        [HttpGet("GetTagsissueDetail/{GSNumber}/{Materialcode}/{bomNumber}")]
+        public async Task<IActionResult> GetTagsissueDetail(string GSNumber, string Materialcode = null,string bomNumber = null)
         {
           string  code = Materialcode.Replace(@"\r", string.Empty).Trim();
           
@@ -777,7 +777,7 @@ namespace CoreERP.Controllers.masters
                     if (tagsData.Company == "1000")
                     {
                        
-                        DataSet ds = TransactionsHelper.GetTagsDetails(GSNumber, Materialcode);
+                        DataSet ds = TransactionsHelper.GetTagsDetails(GSNumber, Materialcode, bomNumber);
                         if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                         {
                             expdoObj.tagsDetail = ds.Tables[0];

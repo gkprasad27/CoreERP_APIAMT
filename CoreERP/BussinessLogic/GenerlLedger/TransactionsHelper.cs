@@ -1128,7 +1128,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
 
         }
-        public static DataSet GetTagsDetails(string saleorderno, string materialcode)
+        public static DataSet GetTagsDetails(string saleorderno, string materialcode , string bomNumber)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -1145,9 +1145,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             material.Direction = ParameterDirection.Input;
             material.Value = (object)materialcode ?? DBNull.Value;
             material.ParameterName = "materialcode";
+
+            DbParameter bom = command.CreateParameter();
+            bom.Direction = ParameterDirection.Input;
+            bom.Value = (object)bomNumber ?? DBNull.Value;
+            bom.ParameterName = "bomNumber";
             #endregion
             command.Parameters.Add(saleorder);
             command.Parameters.Add(material);
+            command.Parameters.Add(bom);
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
         public static DataSet GetTagIssueDetails(string saleorderno)
@@ -1368,7 +1374,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
                     var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
+                    if(item.BomNumber==null)
                     item.BomNumber = sodata.BomKey;
+
                     item.BomName = sodata.BomName;
                     item.MainComponent = sodata.MainComponent;
                     int receivedqty = 0;
@@ -1382,7 +1390,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName });
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName });
                                 tagnum = tagnum + 1;
                             }
                         }
@@ -1408,7 +1416,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             //for (var i = 0; i < qty; i++)
                             //{
-                            ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName, Company = sodata.Company });
+                            ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, Company = sodata.Company });
                             tagnum = tagnum + 1;
                             //}
                         }
@@ -1445,7 +1453,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = sodata.BomName, Company = sodata.Company });
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, Company = sodata.Company });
                                 tagnum = tagnum + 1;
                             }
                         }
