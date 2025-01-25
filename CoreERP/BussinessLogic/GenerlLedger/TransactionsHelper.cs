@@ -2445,6 +2445,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblSupplierQuotationsMaster>();
+
             var Company = repo.TblCompany.ToList();
             var profitCenters = repo.ProfitCenters.ToList();
             var customer = repo.TblBusinessPartnerAccount.ToList();
@@ -2458,7 +2459,36 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 });
 
-            return repo.TblSupplierQuotationsMaster.AsEnumerable().ToList();
+            if (searchCriteria.InvoiceNo != null)
+            {
+                return repo.TblSupplierQuotationsMaster.AsEnumerable()
+                .Where(x =>
+                {
+
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.QuotationNumber) != null
+                              && Convert.ToString(x.QuotationNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.QuotationNumber))
+                              || Convert.ToString(x.SaleorderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleorderNo))
+                              && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                }).OrderByDescending(x => x.QuotationNumber)
+                .ToList();
+            }
+            else
+            {
+                return repo.TblSupplierQuotationsMaster.AsEnumerable()
+                .Where(x =>
+                {
+
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.QuotationNumber) != null
+                              //&& Convert.ToString(x.QuotationNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.QuotationNumber))
+                              && Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                              || Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                }).OrderByDescending(x => x.QuotationNumber)
+                .ToList();
+            }
+            //return repo.TblSupplierQuotationsMaster.AsEnumerable().ToList();
         }
         public bool AddSupplierQuotationsMaster(TblSupplierQuotationsMaster msdata, List<TblSupplierQuotationDetails> qsdetails)
 
