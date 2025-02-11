@@ -867,11 +867,11 @@ namespace CoreERP.Controllers.masters
                 {
                     var QCData = new tblQCMaster();
                     var transactions = new TransactionsHelper();
-                    var tagsData = transactions.GetSaleOrderMaster(SaleorderNumber, Bomkey);
+                    var tagsData = transactions.GetSaleOrderMaster(SaleorderNumber, Materialcode);
                     if (tagsData.Company == "2000")
                         QCData = transactions.GetQCMaster(Materialcode);
                     else
-                        QCData = transactions.GetQCMaster(Materialcode);
+                        QCData = transactions.GetQCMaster(Materialcode, tagsData.Company);
 
                     if (tagsData == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
@@ -881,8 +881,13 @@ namespace CoreERP.Controllers.masters
                     if (tagsData.Company == "2000")
                         expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
                     else
-                        expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
-
+                    {
+                        var tag = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
+                        if (tag.Count>0)
+                            expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
+                        else
+                            return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "QC Check Not Completed. Please complete QC." });
+                    }
                     expdoObj.InsoectionCheck = new TransactionsHelper().GetInpectionCheckMasterById(Materialcode, SaleorderNumber);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 

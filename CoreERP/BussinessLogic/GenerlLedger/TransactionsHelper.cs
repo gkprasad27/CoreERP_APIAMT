@@ -1281,17 +1281,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             //    tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId).ToList();
             //    material = repo.TblMaterialMaster.ToList();
             //}
-            material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == tblProduction.FirstOrDefault().MaterialCode).ToList();
-            repo.tblQCResults.ToList().ForEach(c =>
+            if (tblProduction.Count > 0)
             {
-                //foreach (var item in tblProduction)
-                //{
-                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == material.FirstOrDefault().MaterialCode)?.Description;
+                material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == tblProduction.FirstOrDefault().MaterialCode).ToList();
+                repo.tblQCResults.ToList().ForEach(c =>
+                {
+                    //foreach (var item in tblProduction)
+                    //{
+                    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == material.FirstOrDefault().MaterialCode)?.Description;
 
-                //}
-                c.UOMName = sizes.FirstOrDefault(s => s.unitId == c.Uom)?.unitName;
-            });
-
+                    //}
+                    c.UOMName = sizes.FirstOrDefault(s => s.unitId == c.Uom)?.unitName;
+                });
+            }
 
             return tblProduction.ToList();
 
@@ -4428,6 +4430,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
 
+                });
+            return repo.tblQCMaster
+                .FirstOrDefault(x => x.MaterialCode == MaterialCode);
+        }
+
+        public tblQCMaster GetQCMaster(string MaterialCode,string companyCode)
+        {
+            using var repo = new Repository<tblQCMaster>();
+
+            //var MaterialCodes = repo.TblMaterialMaster.ToList();
+
+            var MaterialCodes = repo.TbBommaster.ToList();
+
+            repo.tblQCMaster.ToList()
+                .ForEach(c =>
+                {
+                    c.MaterialName = MaterialCodes.FirstOrDefault(z => z.Bomnumber == c.MaterialCode)?.Description;
                 });
             return repo.tblQCMaster
                 .FirstOrDefault(x => x.MaterialCode == MaterialCode);

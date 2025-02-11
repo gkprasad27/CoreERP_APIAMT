@@ -911,7 +911,10 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     });
 
                 return repo.TblInvoiceMaster
-                    .FirstOrDefault(x => x.SaleOrderNo == saleorder && x.Status.Contains("Dispatched"));
+                    .FirstOrDefault(x => x.SaleOrderNo == saleorder);
+
+                //return repo.TblInvoiceMaster
+                //    .FirstOrDefault(x => x.SaleOrderNo == saleorder && x.Status.Contains("Dispatched"));
 
             }
             catch (Exception ex)
