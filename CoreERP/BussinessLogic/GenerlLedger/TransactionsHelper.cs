@@ -2717,20 +2717,36 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode).Name;
 
                 });
-
-            return repo.TblPurchaseOrder.AsEnumerable()
+            if (searchCriteria.InvoiceNo != null)
+            {
+                return repo.TblPurchaseOrder.AsEnumerable()
                 .Where(x =>
                 {
 
                     //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
                     return Convert.ToString(x.PurchaseOrderNumber) != null
                               && Convert.ToString(x.PurchaseOrderNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNumber))
-                              && Convert.ToDateTime(x.AddDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                              && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
-
+                              || Convert.ToString(x.SaleOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleOrderNo))
+                              && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                 }).OrderByDescending(x => x.Id)
                 .ToList();
+            }
+            else
+            {
+                return repo.TblPurchaseOrder.AsEnumerable()
+                    .Where(x =>
+                    {
+
+                        //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                        return Convert.ToString(x.PurchaseOrderNumber) != null
+                                  && Convert.ToString(x.PurchaseOrderNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNumber))
+                                  && Convert.ToDateTime(x.AddDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                                  && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                                   && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+
+                    }).OrderByDescending(x => x.Id)
+                    .ToList();
+            }
         }
 
         public List<TblPurchaseOrder> GetPurchaseOrderApproveList(SearchCriteria searchCriteria)
@@ -4661,11 +4677,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         int matqty = 0;
                         var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrder == item.SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
                         var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
+                        var purchaseorderqty = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
+
                         material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode && z.Company == item.Company);
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
                         var saleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "SO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
                         var Exitsaleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrderNo == item.SaleOrderNo && (z.Status == "SO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
-                        var purchaseorderqty = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
                         if (pod != null)
                         {
                             pod.SOQty = item.QTY;
