@@ -86,7 +86,7 @@ namespace CoreERP
         public static Int64 GetAuthentication()
         {
             string MobileNumber;
-            Int64 result =0;
+            Int64 result = 0;
             int _min = 0000;
             int _max = 9999;
             Random _rdm = new Random();
@@ -116,6 +116,32 @@ namespace CoreERP
             return result;
         }
 
+        public static void GetAuthentication(string result, string MobileNumber)
+        {
+            // string result = "YouhaveReceivedSaleOrderfromCu1234567892";
+            //  string sendSMSUri = $"https://dlt.fastsmsindia.com/messages/sendSmsApi?username=AMTpower&password=AMTpower@&drout=3&senderid=AMTHYD&intity_id=1201171169797828072&template_id=1207171644087137963&numbers={MobileNumber}&language=en&message=Hello,%{result}is%20your%20OTP%20to%20Access%20AMT%20ERP.%20-AMT%20Power%20Transmission";
+            // string sendSMSUri = $" https://www.bulksmsapps.com/api/apismsv2.aspx?apikey=e9ba82fb-ef76-41e6-8c98-63390b78096a&sender=AMTHYD&number={MobileNumber}&message=Hello,%20{result}%20";
+            string sendSMSUri = $" https://www.bulksmsapps.com/api/apismsv2.aspx?apikey=e9ba82fb-ef76-41e6-8c98-63390b78096a&sender=AMTHYD&number={MobileNumber}&message=Hello,%20{result}";
+            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
+            //       | SecurityProtocolType.Tls11
+            //       | SecurityProtocolType.Tls12
+            //       | SecurityProtocolType.Ssl3;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            clientHandler.UseDefaultCredentials = true;
+            ServicePointManager.Expect100Continue = true;
+            HttpWebRequest GETRequest = (HttpWebRequest)WebRequest.Create(sendSMSUri);
+            GETRequest.Method = "GET";
+
+            HttpWebResponse GETResponse = (HttpWebResponse)GETRequest.GetResponse();
+            Stream GETResponseStream = GETResponse.GetResponseStream();
+            StreamReader sr = new StreamReader(GETResponseStream);
+            string strResponseReceived = sr.ReadLine();
+
+            //return result;
+        }
         public static IEnumerable<tblJobworkMaster> GetJobworkList()
         {
             using var repo = new Repository<tblJobworkMaster>();
@@ -130,10 +156,10 @@ namespace CoreERP
             return result;
         }
 
-        public static IEnumerable<TblAttendanceDetails> CheckAttendanceData(int Month,int year,string Company)
+        public static IEnumerable<TblAttendanceDetails> CheckAttendanceData(int Month, int year, string Company)
         {
             using var repo = new Repository<TblAttendanceDetails>();
-            var result = repo.TblAttendanceDetails.Where(x=>x.Month==Month && x.Year==year && x.CompCode==Company).ToList();
+            var result = repo.TblAttendanceDetails.Where(x => x.Month == Month && x.Year == year && x.CompCode == Company).ToList();
             return result;
         }
 
@@ -168,7 +194,7 @@ namespace CoreERP
             using var repo = new Repository<TblSaleOrderMaster>();
             var BP = repo.TblBusinessPartnerAccount.ToList();
 
-            var result= repo.TblSaleOrderMaster
+            var result = repo.TblSaleOrderMaster
                 .FirstOrDefault(x => x.SaleOrderNo == saleorderno);
 
 
@@ -721,7 +747,7 @@ namespace CoreERP
             result.ForEach(c =>
             {
                 c.MaterialDescription = materialMasters.FirstOrDefault(cur => cur.MaterialCode == c.ItemCode)?.Description;
-                c.CustomerName= businesspartner.FirstOrDefault(x => x.Bpnumber == c.custoMer)?.Name;
+                c.CustomerName = businesspartner.FirstOrDefault(x => x.Bpnumber == c.custoMer)?.Name;
             });
             return result;
         }
@@ -750,7 +776,7 @@ namespace CoreERP
         {
             using var repo = new Repository<TblAttendanceDetails>();
             var result = repo.TblAttendanceDetails.ToList().Where(x => x.Emp_Code == Empcode).ToList();
-           
+
             return result;
         }
 
@@ -1395,7 +1421,7 @@ namespace CoreERP
             using var repo = new Repository<TblGlsubAccount>();
             var gLAccGroups = repo.Glaccounts.ToList();
 
-            var result = repo.TblGlsubAccount.Where(x=>x.Glaccount== glaccount).ToList();
+            var result = repo.TblGlsubAccount.Where(x => x.Glaccount == glaccount).ToList();
 
             result.ForEach(c =>
             {
@@ -1887,7 +1913,7 @@ namespace CoreERP
             using DbCommand command = scopeRepository.CreateCommand();
             command.CommandType = CommandType.StoredProcedure;
             command.CommandText = "usp_employeeattendance";
-           
+
             DataTable dt = scopeRepository.ExecuteParamerizedCommand(command).Tables[0];
             if (dt.Rows.Count > 0)
             {
@@ -1899,7 +1925,7 @@ namespace CoreERP
         public static IEnumerable<TblPoQueue> GetPoQueue(string CompanyCode)
         {
             using var repo = new Repository<TblPoQueue>();
-            var Material = repo.TblMaterialMaster.ToList().Where(x=>x.Company== CompanyCode);
+            var Material = repo.TblMaterialMaster.ToList().Where(x => x.Company == CompanyCode);
 
             var result = repo.TblPoQueue.Where(x => x.CompanyCode == CompanyCode).ToList();
 

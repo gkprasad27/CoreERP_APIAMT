@@ -3301,7 +3301,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
             searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
-            searchCriteria.ToDate ??= DateTime.Today;
+            searchCriteria.ToDate ??= DateTime.Today.AddDays(+1);
             using var repo = new Repository<TblGoodsReceiptMaster>();
 
             var Company = repo.TblCompany.ToList();
@@ -3314,17 +3314,34 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.ProfitcenterName = profitCenters.FirstOrDefault(l => l.Code == c.ProfitCenter).Name;
 
                 });
+            if (searchCriteria.InvoiceNo != null)
+            {
+                return repo.TblGoodsReceiptMaster.AsEnumerable()
+                .Where(x =>
+                {
 
-            return repo.TblGoodsReceiptMaster.AsEnumerable()
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.PurchaseOrderNo) != null
+                              && Convert.ToString(x.SaleorderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleorderNo))
+                              || Convert.ToString(x.PurchaseOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNo))
+                              && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                }).OrderByDescending(x => x.Id)
+                .ToList();
+            }
+            else
+            {
+                return repo.TblGoodsReceiptMaster.AsEnumerable()
                .Where(x =>
                {
                    return Convert.ToString(x.PurchaseOrderNo) != null
                              && Convert.ToString(x.PurchaseOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.PurchaseOrderNo))
-                             && Convert.ToDateTime(x.ReceivedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                             && Convert.ToDateTime(x.ReceivedDate.Value.ToShortDateString()) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                              && Convert.ToDateTime(x.ReceivedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
                }).OrderByDescending(x => x.PurchaseOrderNo)
                .ToList();
+            }
+            
         }
 
         public List<tblJWReceiptMaster> GetJWReceipt(SearchCriteria searchCriteria)
@@ -4496,7 +4513,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
         public bool AddSaleOrder(TblSaleOrderMaster saleOrderMaster, List<TblSaleOrderDetail> saleOrderDetails)
         {
-            // string suppliername=string.Empty;
             using var repo = new Repository<TblSaleOrderMaster>();
             List<TblSaleOrderDetail> saleOrderDetailsNew;
             List<TblSaleOrderDetail> saleOrderDetailsExist;
@@ -4801,6 +4817,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.SaveChanges();
 
                 dbtrans.Commit();
+
+                //// Declare and initialize the array with two mobile numbers
+                //string[] mobileNumbers = { "9346218049", "9133677733" };
+                //// Print the mobile numbers
+                //foreach (string number in mobileNumbers)
+                //{
+                //    var customerName = repo.TblBusinessPartnerAccount.Where(x => x.Bpnumber == saleOrderMaster.CustomerCode).Select(x => x.Name).FirstOrDefault();
+                //    CommonHelper.GetAuthentication("You have Received SaleOrder from" + customerName + "Customer PO is" + saleOrderMaster.PONumber + "Order QTY" + saleOrderMaster.TotalQty + "Total Value is" + saleOrderMaster.TotalAmount, number);
+                //}
+                   
+
+
                 return true;
             }
             catch (Exception ex)
