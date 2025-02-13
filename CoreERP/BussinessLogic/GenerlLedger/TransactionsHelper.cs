@@ -2263,6 +2263,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 reqmasterdata.Status = "MSO Created";
                 reqmasterdata.EditDate = DateTime.Now;
+                reqmasterdata.RequisitionDate = DateTime.Now;
                 context.TblPurchaseRequisitionMaster.Update(reqmasterdata);
                 context.SaveChanges();
             }
@@ -2279,6 +2280,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 reqmasterdata.Status = "MSO Created";
                 reqmasterdata.AddDate = DateTime.Now;
                 reqmasterdata.RequisitionNumber = masternumber;
+                reqmasterdata.RequisitionDate = DateTime.Now;
                 if (masternumber.Length > 1)
                     context.TblPurchaseRequisitionMaster.Add(reqmasterdata);
                 else
@@ -2351,6 +2353,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             if (preqHeader != null)
             {
+                preqHeader.RequisitionDate = System.DateTime.Now;
                 repo.TblPurchaseRequisitionMaster.Update(preqHeader);
             }
 
@@ -3000,6 +3003,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (PRdata != null)
                 {
                     PRdata.Status = statusmessage;
+                    PRdata.RequisitionDate = DateTime.Now;
                     context.TblPurchaseRequisitionMaster.Update(PRdata);
                 }
                 if (poDetailsExist.Count > 0)
@@ -3471,13 +3475,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (saleorder != null)
                             saleorder.Status = statusmessage;
                         else
+                        {
                             Mastersaleorder.Status = statusmessage;
-
+                            Mastersaleorder.RequisitionDate = DateTime.Now;
+                        }
                         context.TblPurchaseOrder.Update(purchase);
                         if (saleorder != null)
                             context.TblSaleOrderMaster.Update(saleorder);
                         else if (Mastersaleorder != null)
+                        {
+                            Mastersaleorder.RequisitionDate = DateTime.Now;
                             context.TblPurchaseRequisitionMaster.Update(Mastersaleorder);
+                        }
                     }
                     statusmessage = "Material Received";
                     grdata.ApprovalStatus = "Pending Approval";
@@ -3497,7 +3506,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (saleorder != null)
                             context.TblSaleOrderMaster.Update(saleorder);
                         else if (Mastersaleorder != null)
+                        {
+                            Mastersaleorder.RequisitionDate = DateTime.Now;
                             context.TblPurchaseRequisitionMaster.Update(Mastersaleorder);
+                        }
                     }
                     grdata.ApprovalStatus = "Pending Approval";
                     grdata.Status = statusmessage;
