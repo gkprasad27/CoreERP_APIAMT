@@ -1565,6 +1565,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (InspectionMaster != null)
                     {
                         InspectionMaster.Status = message;
+                        InspectionMaster.Company = Purcaseorder.Company;
                         if (goodsreceipt != null)
                             InspectionMaster.HeatNumber = goodsreceipt.HeatNumber;
                         context.TblInspectionCheckMaster.Update(InspectionMaster);
@@ -1591,7 +1592,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         InspectionCheckMaster.saleOrderNumber = saleordernumber;
                         InspectionCheckMaster.MaterialCode = prodDetails.FirstOrDefault().BomKey;
                         InspectionCheckMaster.BomKey = prodDetails.FirstOrDefault().BomKey;
-                        InspectionCheckMaster.Company = prodDetails.FirstOrDefault().Company;
+                        InspectionCheckMaster.Company = Purcaseorder.Company;
                         InspectionCheckMaster.completionDate = System.DateTime.Now;
                         InspectionCheckMaster.Status = message;
                         if (masternumber.Length > 1)

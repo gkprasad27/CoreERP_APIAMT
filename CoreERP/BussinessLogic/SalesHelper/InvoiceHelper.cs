@@ -1123,6 +1123,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             if (Inspection != null)
                             {
                                 Inspection.Status = message;
+                                Inspection.Company = SaleOrder.Company;
                                 repo.TblInspectionCheckMaster.Update(Inspection);
                             }
 
