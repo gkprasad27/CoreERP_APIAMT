@@ -1376,7 +1376,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
                     var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
-                    if(item.BomNumber==null)
+                    if(item.BomNumber==null || item.BomNumber == "0")
                     item.BomNumber = sodata.BomKey;
 
                     item.BomName = sodata.BomName;
