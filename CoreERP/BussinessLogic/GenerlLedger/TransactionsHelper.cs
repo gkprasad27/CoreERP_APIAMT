@@ -1128,7 +1128,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
 
         }
-        public static DataSet GetTagsDetails(string saleorderno, string materialcode , string bomNumber)
+        public static DataSet GetTagsDetails(string saleorderno, string materialcode, string bomNumber)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -1376,8 +1376,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
                     var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
-                    if(item.BomNumber==null || item.BomNumber == "0")
-                    item.BomNumber = sodata.BomKey;
+                    if (item.BomNumber == null || item.BomNumber == "0")
+                        item.BomNumber = sodata.BomKey;
 
                     item.BomName = sodata.BomName;
                     item.MainComponent = sodata.MainComponent;
@@ -1413,14 +1413,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     else if (sodata != null && sodata.Company == "2000")
                     {
                         var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
-
+                        var amritsaleorder = repo.TblSaleOrderDetail.Where(im => im.SaleOrderNo == item.SaleOrderNumber && im.BomKey == item.BomNumber).ToList();
                         if (qty > 0)
                         {
-                            //for (var i = 0; i < qty; i++)
-                            //{
-                            ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, Company = sodata.Company });
-                            tagnum = tagnum + 1;
-                            //}
+                            foreach (var amrititem in amritsaleorder)
+                            {
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = amrititem.SaleOrderNo, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = amrititem.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = amrititem.BomKey, BomName = amrititem.BomName, Company = amrititem.Company });
+                                tagnum = tagnum + 1;
+                            }
                         }
                         //if (sodata != null && sodata.Company == "2000" && sodata.MainComponent == "Y")
                         //{
@@ -3346,7 +3346,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                }).OrderByDescending(x => x.PurchaseOrderNo)
                .ToList();
             }
-            
+
         }
 
         public List<tblJWReceiptMaster> GetJWReceipt(SearchCriteria searchCriteria)
@@ -4465,7 +4465,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.MaterialCode == MaterialCode);
         }
 
-        public tblQCMaster GetQCMaster(string MaterialCode,string companyCode)
+        public tblQCMaster GetQCMaster(string MaterialCode, string companyCode)
         {
             using var repo = new Repository<tblQCMaster>();
 
@@ -4533,7 +4533,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             string SaleOrderNumber = string.Empty;
             int totalqty;
-            totalqty = (int)saleOrderDetails.Where(z=>z.MainComponent=="Y").Sum(a => a.QTY);
+            totalqty = (int)saleOrderDetails.Where(z => z.MainComponent == "Y").Sum(a => a.QTY);
             var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Sale Order" && x.CompCode == saleOrderMaster.Company);
             var Quotation = repo.TblSupplierQuotationsMaster.Where(x => x.QuotationNumber == saleOrderMaster.PONumber).FirstOrDefault();
             // Utils.SendEMail("sales@amtpowertransmission.com", "Test", "Body");
@@ -4839,7 +4839,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 //    var customerName = repo.TblBusinessPartnerAccount.Where(x => x.Bpnumber == saleOrderMaster.CustomerCode).Select(x => x.Name).FirstOrDefault();
                 //    CommonHelper.GetAuthentication("You have Received SaleOrder from" + customerName + "Customer PO is" + saleOrderMaster.PONumber + "Order QTY" + saleOrderMaster.TotalQty + "Total Value is" + saleOrderMaster.TotalAmount, number);
                 //}
-                   
+
 
 
                 return true;
