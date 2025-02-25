@@ -170,7 +170,7 @@ namespace CoreERP.Models
         public int AvailableQTY { get; set; }
         [NotMapped]
         public int BOMQTY { get; set; }
-
+        [NotMapped]
         public string BomType { get; set; }
 
     }
