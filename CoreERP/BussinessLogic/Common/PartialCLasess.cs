@@ -171,6 +171,8 @@ namespace CoreERP.Models
         [NotMapped]
         public int BOMQTY { get; set; }
 
+        public string BomType { get; set; }
+
     }
     partial class TblRegion
     {
