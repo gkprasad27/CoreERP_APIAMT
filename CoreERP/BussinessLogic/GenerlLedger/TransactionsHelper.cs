@@ -1576,7 +1576,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (InspectionMaster != null)
                     {
                         InspectionMaster.Status = message;
-                        InspectionMaster.Company = Purcaseorder.Company;
+                        InspectionMaster.Company = SaleOrder.Company;
                         if (goodsreceipt != null)
                             InspectionMaster.HeatNumber = goodsreceipt.HeatNumber;
                         context.TblInspectionCheckMaster.Update(InspectionMaster);
@@ -1603,7 +1603,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         InspectionCheckMaster.saleOrderNumber = saleordernumber;
                         InspectionCheckMaster.MaterialCode = prodDetails.FirstOrDefault().BomKey;
                         InspectionCheckMaster.BomKey = prodDetails.FirstOrDefault().BomKey;
-                        InspectionCheckMaster.Company = Purcaseorder.Company;
+                        InspectionCheckMaster.Company = SaleOrder.Company;
                         InspectionCheckMaster.completionDate = System.DateTime.Now;
                         InspectionCheckMaster.Status = message;
                         if (masternumber.Length > 1)
@@ -1690,13 +1690,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             RejectionMaster.TagNo = item.ProductionTag;
                             RejectionMaster.Reason = item.Remarks;
                             context.TblRejectionMaster.Add(RejectionMaster);
-
+                            var POD = new TblPurchaseOrderDetails();
                             var GID = repo.TblGoodsIssueDetails.FirstOrDefault(z => z.SaleOrderNumber == item.SaleOrderNumber && z.MaterialCode == item.MaterialCode);
                             GID.AllocatedQTY = (GID.AllocatedQTY) - 1;
-
-                            var POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == Purcaseorder.PurchaseOrderNumber && z.MaterialCode == item.MaterialCode);
-                            POD.Qty = (POD.Qty) - 1;
-
+                            if (Purcaseorder != null)
+                            {
+                                POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == Purcaseorder.PurchaseOrderNumber && z.MaterialCode == item.MaterialCode);
+                                POD.Qty = (POD.Qty) - 1;
+                            }
                             var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
                             sodata.POQty = (sodata.POQty) - 1;
                             if (sodata.POQty >= 0)
