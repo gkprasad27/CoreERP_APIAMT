@@ -1377,7 +1377,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
                     var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
-                    if (item.BomNumber == null || item.BomNumber == "0")
+                    if (item.BomNumber == null || item.BomNumber == "0" || string.IsNullOrEmpty(item.BomNumber) || string.IsNullOrWhiteSpace(item.BomNumber))
                         item.BomNumber = sodata.BomKey;
 
                     item.BomName = sodata.BomName;
@@ -1421,11 +1421,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             if (qty > 0)
                             {
-                                foreach (var amrititem in amritsaleorder)
-                                {
-                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = amrititem.SaleOrderNo, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = amrititem.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = amrititem.BomKey, BomName = amrititem.BomName, Company = amrititem.Company });
-                                    tagnum = tagnum + 1;
-                                }
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company });
+                                tagnum = tagnum + 1;
+
+                                //foreach (var amrititem in amritsaleorder)
+                                //{
+                                //    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = amrititem.SaleOrderNo, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = amrititem.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = amrititem.BomKey, BomName = amrititem.BomName, Company = amrititem.Company });
+                                //    tagnum = tagnum + 1;
+                                //}
                             }
                         }
                         else
@@ -4502,12 +4505,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblSaleOrderDetail>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
             var BOMMaster = repo.TblBomDetails.ToList();
+            var BOMType = repo.TbBommaster.ToList();
 
             repo.TblSaleOrderDetail.ToList().ForEach(c =>
             {
                 c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
                 c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
                 c.BOMQTY = Convert.ToInt32(BOMMaster.Where(z => z.BomKey == c.BomKey).FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Qty);
+                c.BomType = BOMType.FirstOrDefault(b => b.Bomnumber == c.BomKey)?.Bomtype;
             });
             return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
 
