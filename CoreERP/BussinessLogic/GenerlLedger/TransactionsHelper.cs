@@ -1316,7 +1316,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             List<TblGoodsIssueDetails> goodsOrderDetailsExist;
             using var commitmentitem = new Repository<TblCommitmentItem>();
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == gimaster.SaleOrderNumber);
-           
+
             int invqty = 0;
             int sqty = 0;
             //var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == gimaster.SaleOrderNumber);
@@ -3159,9 +3159,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                     var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item1.SaleorderNo && z.MaterialCode == item1.MaterialCode);
                                     var Material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item1.MaterialCode);
                                     var purchaseorderdetail = repo.TblPurchaseOrderDetails.Where(z => z.SaleOrder == item1.SaleorderNo && z.PurchaseOrderNumber == item1.PurchaseOrderNo).FirstOrDefault();
+                                    var saleorderdetail = repo.TblSaleOrderDetail.Where(z => z.SaleOrderNo == item1.SaleorderNo && z.MaterialCode == item1.MaterialCode).FirstOrDefault();
                                     if (poq != null)
                                     {
-                                        poq.Qty = (poq.Qty) + (item1.Qty);
+                                        poq.Qty = (poq.Qty) + (item1.ReceivedQty);
                                         if (poq.Qty >= 0)
                                         {
                                             context.TblPoQueue.Update(poq);
@@ -3172,10 +3173,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                         poq = new TblPoQueue();
                                         poq.SaleOrderNo = item1.SaleorderNo;
                                         poq.MaterialCode = item1.MaterialCode;
-                                        poq.Qty = (poq.Qty) + (item1.ReceivedQty);
+                                        poq.Qty =  (item1.ReceivedQty);
                                         poq.CompanyCode = podata.FirstOrDefault().Company;
                                         context.TblPoQueue.Add(poq);
                                     }
+
+                                    saleorderdetail.POQty = (saleorderdetail.POQty) - item1.ReceivedQty;
+                                    if (saleorderdetail.POQty < 0)
+                                        saleorderdetail.POQty = 0;
+
+                                    context.TblSaleOrderDetail.Update(saleorderdetail);
+
                                     if (Convert.ToString(Material.ClosingQty) == null)
                                         Material.ClosingQty = 0;
 
