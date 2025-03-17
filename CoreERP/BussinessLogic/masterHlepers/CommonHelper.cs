@@ -163,6 +163,18 @@ namespace CoreERP
             return result;
         }
 
+        public static IEnumerable<TblSaleOrderMaster> GetSaleOrderApprovedData()
+        {
+            using (var repo = new Repository<TblSaleOrderMaster>())
+            {
+                var approvedSalesOrders = (from so in repo.TblSaleOrderMaster
+                                           join gr in repo.TblGoodsReceiptMaster on so.SaleOrderNo equals gr.SaleorderNo
+                                           where gr.ApprovalStatus == "Approved"
+                                           select so).ToList(); // Select `so` as the return type is `TblSaleOrderMaster`.
+
+                return approvedSalesOrders;
+            }
+        }
         public static IEnumerable<TblSaleOrderDetail> GetsaleOrdernoList(string saleorderno)
         {
             using var repo = new Repository<TblSaleOrderDetail>();
