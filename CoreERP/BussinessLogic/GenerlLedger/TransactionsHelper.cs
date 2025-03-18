@@ -3242,13 +3242,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblPurchaseOrderDetails>();
             var material = repo.TblMaterialMaster.ToList();
-            //var saleorder = repo.TblSaleOrderDetail.ToList();
+            var saleorder = repo.TblSaleOrderDetail.ToList();
 
             repo.TblPurchaseOrderDetails.ToList().ForEach(c =>
             {
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
                 c.AvailableQTY = Convert.ToInt32(material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
-                //c.poQty= Convert.ToInt32(saleorder.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.POQty);
+                c.poQty= Convert.ToInt32(saleorder.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.POQty);
             });
             return repo.TblPurchaseOrderDetails.Where(cd => cd.PurchaseOrderNumber == number).ToList();
         }
@@ -4751,18 +4751,21 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         int poqty = 0;
                         int soqty = 0;
                         int matqty = 0;
-                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrder == item.SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
-                        var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
-                        var purchaseorderqty = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
+                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrder == item.SaleOrderNo && (z.Status != "Invoice Generated" || z.Status != "Dispatched")).ToList();
+                        var pod = repo.TblPurchaseOrderDetails.Where(z => z.SaleOrder == item.SaleOrderNo && z.MaterialCode == item.MaterialCode && (z.Status != "Invoice Generated" || z.Status != "Dispatched")).ToList();
+                        var purchaseorderqty = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.MaterialCode && (z.Status != "Invoice Generated" || z.Status != "Dispatched")).ToList();
 
                         material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode && z.Company == item.Company);
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
                         var saleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "SO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
                         var Exitsaleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrderNo == item.SaleOrderNo && (z.Status == "SO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
-                        if (pod != null)
+                        foreach (var updateqty in pod)
                         {
-                            pod.SOQty = item.QTY;
-                            context.TblPurchaseOrderDetails.Update(pod);
+                            if (pod != null)
+                            {
+                                updateqty.SOQty = item.QTY;
+                                context.TblPurchaseOrderDetails.Update(updateqty);
+                            }
                         }
                         poqty = purchaseorder.Sum(x => x.Qty);
                         soqty = saleOrderDetails.Sum(s => s.QTY);
