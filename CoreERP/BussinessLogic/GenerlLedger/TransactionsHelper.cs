@@ -3430,12 +3430,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             int poqty = 0;
             int mtqty = 0;
             int mtrejqty = 0;
-            int currqty = 0;
             using var repo = new Repository<TblGoodsReceiptMaster>();
-            using var Material = new Repository<TblMaterialMaster>();
             using var context = new ERPContext();
             using var Matdtl = new Repository<TblGoodsReceiptDetails>();
-            using var PRM = new Repository<TblPurchaseRequisitionMaster>();
             var InvoiceMemoHeader = new TblInvoiceMemoHeader();
             var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
             List<TblGoodsReceiptDetails> GoosQTY;
@@ -3450,7 +3447,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 // already received qty
                 GoosQTY = Matdtl.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == grdata.PurchaseOrderNo).ToList();
-
 
                 if (GoosQTY.Count > 0)
                 {
@@ -3542,7 +3538,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     item.InvoiceURL = grdata.InvoiceURL;
                     item.DocumentURL = grdata.DocumentURL;
                     item.SaleorderNo = purchase.SaleOrderNo;
-                    int currenttotal = 0;
                     item.MechineNumber = POD.MechineNumber;
 
                     if (item.Qty == totalqty)
@@ -3576,8 +3571,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     //POQ
                     if (item.RejectQty > 0)
                     {
-                        int soqty = 0;
-                        int matqty = 0;
                         var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleorderNo && im.MaterialCode == item.MaterialCode);
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleorderNo && z.MaterialCode == item.MaterialCode);
                         if (poq != null)
