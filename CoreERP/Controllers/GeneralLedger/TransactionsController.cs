@@ -722,7 +722,7 @@ namespace CoreERP.Controllers.masters
                     //if (goodsissueasters.Company == "2000")
                     //    expdoObj.goodsissueastersDetail = new TransactionsHelper().GetGoodsIssueDetailswithoutMainComponent(GSNumber);
                     //else
-                        expdoObj.goodsissueastersDetail = new TransactionsHelper().GetGoodsIssueDetails(GSNumber);
+                    expdoObj.goodsissueastersDetail = new TransactionsHelper().GetGoodsIssueDetails(GSNumber);
 
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
@@ -761,10 +761,10 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetTagsissueDetail/{GSNumber}/{Materialcode}/{bomNumber}")]
-        public async Task<IActionResult> GetTagsissueDetail(string GSNumber, string Materialcode = null,string bomNumber = null)
+        public async Task<IActionResult> GetTagsissueDetail(string GSNumber, string Materialcode = null, string bomNumber = null)
         {
-          string  code = Materialcode.Replace(@"\r", string.Empty).Trim();
-          
+            string code = Materialcode.Replace(@"\r", string.Empty).Trim();
+
             var result = await Task.Run(() =>
             {
                 try
@@ -776,7 +776,7 @@ namespace CoreERP.Controllers.masters
                     dynamic expdoObj = new ExpandoObject();
                     if (tagsData.Company == "1000")
                     {
-                       
+
                         DataSet ds = TransactionsHelper.GetTagsDetails(GSNumber, Materialcode, bomNumber);
                         if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                         {
@@ -883,7 +883,7 @@ namespace CoreERP.Controllers.masters
                     else
                     {
                         var tag = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
-                        if (tag.Count>0)
+                        if (tag.Count > 0)
                             expdoObj.tagsDetail = new TransactionsHelper().GetQcDetails(SaleorderNumber, Materialcode, Type);
                         else
                             return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "QC Check Not Completed. Please complete QC." });
@@ -2352,7 +2352,13 @@ namespace CoreERP.Controllers.masters
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.SaleOrderMasters = SaleOrderMasters;
-                    expdoObj.SaleOrderDetails = new TransactionsHelper().GetSaleOrderDetailPO(saleOrderNumber);
+                    var BPList = new TransactionsHelper().GetSaleOrderDetailPO(saleOrderNumber);
+                    BPList.Where(x => (x.Status == "SO Created" || x.Status == "Partial PO Created") && (x.Company == SaleOrderMasters.Company));
+                    if (BPList == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    else
+                        expdoObj.SaleOrderDetails = BPList;
+
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
