@@ -7,6 +7,6 @@ namespace CoreERP
 {
     public enum APIStatus
     {
-        PASS,FAIL
+        PASS,FAIL,SUCCESS,NOT_FOUND,MESSAGE
     }
 }
