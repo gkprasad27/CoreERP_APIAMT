@@ -34,5 +34,7 @@ namespace CoreERP.Models
         public string? Status { get; set; }
         public decimal? NetWeight { get; set; }
         public decimal? Total { get; set; }
+        public int? POQty { get; set; }
+        public string? Company { get; set; }
     }
 }

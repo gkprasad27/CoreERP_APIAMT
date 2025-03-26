@@ -36,6 +36,7 @@ namespace CoreERP.Models
         public string? DepartmentName { get; set; }
         public string? ProfitcenterName { get; set; }
         public string? CompanyName { get; set; }
+        public int TotalQty { get; set; }
 
     }
 }
