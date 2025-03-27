@@ -2996,7 +2996,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 poq.SaleOrderNo = item.SaleOrder;
                                 poq.MaterialCode = item.MaterialCode;
                                 poq.Qty = item.Qty;
-                                poq.CompanyCode = SaleOrder.Company;
+                                poq.CompanyCode = item.Company;
                                 context.TblPoQueue.Add(poq);
                             }
                         }
@@ -3027,7 +3027,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.SaleOrderNo = item.SaleOrder;
                             poq.MaterialCode = item.MaterialCode;
                             poq.Qty = item.Qty;
-                            poq.CompanyCode = SaleOrder.Company;
+                            poq.CompanyCode = item.Company;
                             context.TblPoQueue.Add(poq);
                         }
                     }
@@ -3066,7 +3066,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 poq.SaleOrderNo = item.SaleOrder;
                                 poq.MaterialCode = item.MaterialCode;
                                 poq.Qty = item.Qty;
-                                poq.CompanyCode = SaleOrder.Company;
+                                poq.CompanyCode = item.Company;
                                 context.TblPoQueue.Add(poq);
                             }
                         }
@@ -3097,7 +3097,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.SaleOrderNo = item.SaleOrder;
                             poq.MaterialCode = item.MaterialCode;
                             poq.Qty = item.Qty;
-                            poq.CompanyCode = SaleOrder.Company;
+                            poq.CompanyCode = item.Company;
                             context.TblPoQueue.Add(poq);
                         }
                     }
