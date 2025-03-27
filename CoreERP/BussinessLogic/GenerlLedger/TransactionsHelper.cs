@@ -3746,7 +3746,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     if (item.Qty == totalqty)
                         detailstatus = "Material Received";
-                    else if (item.Qty == totalqty && item.RejectQty > 0)
+                    else if (item.RejectQty > 0)
                         detailstatus = "Material Partial Received";
                     else
                         detailstatus = "Material Partial Received";
@@ -3796,15 +3796,31 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.CompanyCode = grdata.Company;
                             context.TblPoQueue.Add(poq);
                         }
-                        if (sodata.POQty == null)
-                            sodata.POQty = 0;
+                        if (sodata != null)
+                        {
+                            if (sodata.POQty == null)
+                                sodata.POQty = 0;
 
-                        sodata.POQty = (Convert.ToInt16(sodata.POQty) - Convert.ToInt16(item.RejectQty));
-                        if (sodata.POQty < 0)
-                            sodata.POQty = 0;
+                            sodata.POQty = (Convert.ToInt16(sodata.POQty) - Convert.ToInt16(item.RejectQty));
+                            if (sodata.POQty < 0)
+                                sodata.POQty = 0;
 
-                        sodata.Status = detailstatus;
-                        context.TblSaleOrderDetail.Update(sodata);
+                            sodata.Status = detailstatus;
+                            context.TblSaleOrderDetail.Update(sodata);
+                        }
+                        else
+                        {
+                            var PRdata = repo.TblPurchaseRequisitionDetails.FirstOrDefault(im => im.PurchaseRequisitionNumber == item.SaleorderNo && im.MaterialCode == item.MaterialCode);
+                            if (PRdata.POQty == null)
+                                PRdata.POQty = 0;
+
+                            PRdata.POQty = (Convert.ToInt16(PRdata.POQty) - Convert.ToInt16(item.RejectQty));
+                            if (PRdata.POQty < 0)
+                                PRdata.POQty = 0;
+
+                            PRdata.Status = detailstatus;
+                            context.TblPurchaseRequisitionDetails.Update(PRdata);
+                        }
                     }
 
                     var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == item.MaterialCode);
