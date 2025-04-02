@@ -42,9 +42,9 @@ namespace CoreERP.Models
         public DateTime? EditDate { get; set; }
         public DateTime? AddDate { get; set; }
         public string? NetWeightUom { get; set; }
-        public int? OpeningPrice { get; set; }
+        public decimal? OpeningPrice { get; set; }
         public int? OpeningValue { get; set; }
-        public int? ClosingPrice { get; set; }
+        public decimal? ClosingPrice { get; set; }
         public int? ClosingValue { get; set; }
         public string? PartDragNo { get; set; }
         public string? DragRevNo { get; set; }
