@@ -2967,11 +2967,40 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (sodata.QTY == item.Qty)
                         {
                             soItemQty = item.Qty;
+                            sodata.POQty = qtycheck;// sodata.POQty + item.Qty;
+                            statusmessage = "PO Created";
+                            if (poq != null)
+                            {
+                                poq.Qty = (poq.Qty) - (item.Qty);
+                                if (poq.Qty >= 0)
+                                {
+                                    poq.Status = statusmessage;
+                                    context.TblPoQueue.Update(poq);
+                                }
+                                else if (poq.Qty < 0)
+                                {
+                                    poq.Qty = 0;
+                                    poq.Status = statusmessage;
+                                    context.TblPoQueue.Update(poq);
+                                }
+                                else
+                                    context.TblPoQueue.Update(poq);
+                            }
+                            else
+                            {
+                                poq = new TblPoQueue();
+                                poq.Status = statusmessage;
+                                poq.SaleOrderNo = item.SaleOrder;
+                                poq.MaterialCode = item.MaterialCode;
+                                poq.Qty = item.Qty;
+                                poq.CompanyCode = item.Company;
+                                context.TblPoQueue.Add(poq);
+                            }
                         }
                         else
                         {
                             sodata.POQty = qtycheck;// sodata.POQty + item.Qty;
-
+                            statusmessage = "Partial PO Created";
                             if (poq != null)
                             {
                                 poq.Qty = (poq.Qty) - (item.Qty);

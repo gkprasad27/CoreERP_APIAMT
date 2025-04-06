@@ -12,6 +12,7 @@ using System.Net;
 using System.Net.Http;
 using System.Security.AccessControl;
 using System.Text.RegularExpressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CoreERP
@@ -171,6 +172,11 @@ namespace CoreERP
                                            join gr in repo.TblGoodsReceiptMaster on so.SaleOrderNo equals gr.SaleorderNo
                                            where gr.ApprovalStatus == "Approved"
                                            select so).ToList(); // Select `so` as the return type is `TblSaleOrderMaster`.
+
+                if (approvedSalesOrders.Count==0)
+                {
+                    approvedSalesOrders = repo.TblSaleOrderMaster.ToList();
+                }
 
                 return approvedSalesOrders;
             }
