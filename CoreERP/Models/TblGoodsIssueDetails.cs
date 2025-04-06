@@ -31,5 +31,6 @@ namespace CoreERP.Models
         public string? BomNumber { get; set; }
         public string? BomName { get; set; }
         public string? MainComponent { get; set; }
+        public string? ApprovalStatus { get; set; }
     }
 }
