@@ -168,15 +168,23 @@ namespace CoreERP
         {
             using (var repo = new Repository<TblSaleOrderMaster>())
             {
-                var approvedSalesOrders = (from so in repo.TblSaleOrderMaster
-                                           join gr in repo.TblGoodsReceiptMaster on so.SaleOrderNo equals gr.SaleorderNo
-                                           where gr.ApprovalStatus == "Approved"
-                                           select so).ToList(); // Select `so` as the return type is `TblSaleOrderMaster`.
+                //var approvedSalesOrders = (from so in repo.TblSaleOrderMaster
+                //                           join gr in repo.TblGoodsReceiptMaster on so.SaleOrderNo equals gr.SaleorderNo
+                //                           where gr.ApprovalStatus == "Approved"
+                //                           select so).ToList(); // Select `so` as the return type is `TblSaleOrderMaster`.
 
-                if (approvedSalesOrders.Count==0)
-                {
-                    approvedSalesOrders = repo.TblSaleOrderMaster.ToList();
-                }
+                var approvedSalesOrders = (from so in repo.TblSaleOrderMaster
+                                           join gr in repo.TblGoodsReceiptMaster
+                                           on so.SaleOrderNo equals gr.SaleorderNo into grGroup
+                                           from gr in grGroup.DefaultIfEmpty()
+                                           where gr == null || gr.ApprovalStatus == "Approved"
+                                           select so).ToList().OrderByDescending(x=>x.Id);
+
+
+                //if (approvedSalesOrders.Count==0)
+                //{
+                //    approvedSalesOrders = repo.TblSaleOrderMaster.ToList();
+                //}
 
                 return approvedSalesOrders;
             }

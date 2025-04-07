@@ -286,7 +286,7 @@ namespace CoreERP.Controllers
                     dynamic expando = new ExpandoObject();
 
                     var BPList =CommonHelper.GetSaleOrderApprovedData();
-                    expando.BPList = BPList.Where(x => ((x.Status == "Material Received" || x.Status == "Material Partial Received" || x.Status == "SO Created" || x.Status == "Partial PO Created" || x.Status == "PO Created")) && (x.Company == CompanyCode)).Select(x => new { saleOrderNo = x.SaleOrderNo });
+                    expando.BPList = BPList.Where(x => ((x.Status != "Invoice Generated" || x.Status != "Dispatched" )) && (x.Company == CompanyCode)).Select(x => new { saleOrderNo = x.SaleOrderNo });
 
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
