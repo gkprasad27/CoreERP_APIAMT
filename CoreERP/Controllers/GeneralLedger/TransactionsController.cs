@@ -694,7 +694,7 @@ namespace CoreERP.Controllers.masters
                     if (!Productionissue.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Productionissue." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.Productionissue = Productionissue.Where(x => x.Status != "Dispatched");
+                    expdoObj.Productionissue = Productionissue.Where(x => x.Status != "Dispatched" && x.ApprovalStatus=="Approved");
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -915,6 +915,34 @@ namespace CoreERP.Controllers.masters
                     var goodsissueetails = obj["gibDtl"].ToObject<List<TblGoodsIssueDetails>>();
 
                     if (!new TransactionsHelper().AddGoodsIssue(goodsissueMaster, goodsissueetails))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.invoi = goodsissueMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+        [HttpPost("AddGoodsIssueApproval")]
+        public async Task<IActionResult> AddGoodsIssueApproval([FromBody] JObject obj)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                    var goodsissueMaster = obj["gibHdr"].ToObject<TblGoodsIssueMaster>();
+                    var goodsissueetails = obj["gibDtl"].ToObject<List<TblGoodsIssueDetails>>();
+
+                    if (!new TransactionsHelper().AddGoodsIssueApproval(goodsissueMaster, goodsissueetails))
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.invoi = goodsissueMaster;

@@ -1070,7 +1070,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblGoodsIssueMaster>();
             return repo.TblGoodsIssueMaster
-                .FirstOrDefault(x => x.SaleOrderNumber == GoodsIssueId);
+                .FirstOrDefault(x => x.SaleOrderNumber == GoodsIssueId && x.ApprovalStatus=="Approved");
+
         }
 
         public TblProductionMaster GetTagsIssueMasterById(string GoodsIssueId)
@@ -1097,7 +1098,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                {
                    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
                });
-            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MainComponent == "Y").ToList();
+            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MainComponent == "Y" && cd.ApprovalStatus=="Approved").ToList();
 
         }
 
@@ -1406,6 +1407,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (materialmaster != null)
                         {
                             materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
+                            materialmaster.EditDate = System.DateTime.Now;
                             context.TblMaterialMaster.UpdateRange(materialmaster);
                         }
                         else
@@ -1457,6 +1459,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (materialmaster != null)
                         {
                             materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
+                            materialmaster.EditDate = System.DateTime.Now;
                             context.TblMaterialMaster.UpdateRange(materialmaster);
                         }
                         else
@@ -1483,6 +1486,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (materialmaster != null)
                         {
                             materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
+                            materialmaster.EditDate = System.DateTime.Now;
                             context.TblMaterialMaster.UpdateRange(materialmaster);
                         }
                         else
@@ -1539,6 +1543,60 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
+        public bool AddGoodsIssueApproval(TblGoodsIssueMaster gimaster, List<TblGoodsIssueDetails> gibDetails)
+        {
+
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            var GIDetails = new List<TblGoodsIssueDetails>();
+            var tblProduction = new TblProductionMaster();
+            var GID = new TblGoodsIssueDetails();
+            var PID = new TblProductionDetails();
+            try
+            {
+                if (context.TblGoodsIssueMaster.Any(v => v.SaleOrderNumber == gimaster.SaleOrderNumber))
+                {
+                    var GIM = context.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == gimaster.SaleOrderNumber);
+                    tblProduction = context.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == gimaster.SaleOrderNumber);
+                    GIM.ApprovalStatus = "Approved";
+                    context.TblGoodsIssueMaster.Update(GIM);
+                    tblProduction.ApprovalStatus = "Approved";
+                    context.TblProductionMaster.Update(tblProduction);
+                    context.SaveChanges();
+                }
+
+                GIDetails = context.TblGoodsIssueDetails.Where(v => v.SaleOrderNumber == gimaster.SaleOrderNumber).ToList();
+
+                foreach (var item in GIDetails)
+                {
+
+                    GID = context.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
+                    GID.ApprovalStatus = "Approved";
+                    PID = context.TblProductionDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
+                    PID.ApprovalStatus = "Approved";
+                }
+
+                context.TblProductionDetails.UpdateRange(PID);
+                context.TblGoodsIssueDetails.UpdateRange(GID);
+
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                TblApi_Error_Log icdata = new();
+                using var context1 = new ERPContext();
+                icdata.ScreenName = "Goods Issue";
+                icdata.ErrorID = ex.HResult.ToString();
+                icdata.ErrorMessage = ex.Message.ToString();
+                context1.TblApi_Error_Log.Add(icdata);
+                context1.SaveChanges();
+                dbtrans.Rollback();
+                throw;
+            }
+        }
         public bool AddProdIssue(List<TblProductionDetails> prodDetails)
         {
             if (prodDetails.Count > 0)
@@ -1685,6 +1743,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                             materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
                             materialmaster.OpeningQty = ((materialmaster.OpeningQty) + 1);
+                            materialmaster.EditDate = System.DateTime.Now;
                             context.TblMaterialMaster.UpdateRange(materialmaster);
 
                             RejectionMaster.CompanyCode = repogim.Company;
@@ -3400,6 +3459,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                         Material.ClosingQty = 0;
 
                                     Material.ClosingQty = Math.Abs(Convert.ToInt16(Material.ClosingQty ?? 0) - Convert.ToInt16(item1.ReceivedQty));
+                                    Material.EditDate = System.DateTime.Now;
                                     context.TblMaterialMaster.Update(Material);
 
                                     item1.Status = "Rejected";
@@ -3857,6 +3917,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (Convert.ToString(mathdr.ClosingQty) == null)
                         mathdr.ClosingQty = 0;
                     mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (item.ReceivedQty));
+                    mathdr.EditDate = System.DateTime.Now;
                     context.TblMaterialMaster.Update(mathdr);
                 }
                 if (customer != null)
@@ -4281,6 +4342,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                         var materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == x.BomKey);
                         materialmaster.ClosingQty = ((materialmaster.ClosingQty) - 1);
+                        materialmaster.EditDate = System.DateTime.Now;
                         context.TblMaterialMaster.UpdateRange(materialmaster);
                         RejectionMaster.CompanyCode = SaleOrder.Company;
                         RejectionMaster.SaleOrderNo = x.saleOrderNumber;
@@ -5035,6 +5097,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
 
                         material.OpeningValue = (material.OpeningValue + item.QTY);
+                        material.EditDate = System.DateTime.Now;
                         if (poq.Qty > 0)
                         {
                             if (item.QTY != poq.Qty)

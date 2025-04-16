@@ -1077,6 +1077,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
 
                                 materialmaster.OpeningQty = ((materialmaster.OpeningQty) - 1);
+                                materialmaster.EditDate = System.DateTime.Now;
                                 repo.TblMaterialMaster.UpdateRange(materialmaster);
 
                                 repo.SaveChanges();

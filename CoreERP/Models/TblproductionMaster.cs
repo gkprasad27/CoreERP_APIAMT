@@ -23,5 +23,6 @@ namespace CoreERP.Models
         public DateTime? EditDate { get; set; }
 
         public string? CustomerCode { get; set; }
+        public string? ApprovalStatus { get; set; }
     }
 }
