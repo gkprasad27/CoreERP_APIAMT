@@ -760,6 +760,31 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetGoodsissueDetailsApproved/{GSNumber}")]
+        public async Task<IActionResult> GetGoodsissueDetailsApproved(string GSNumber)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    var goodsissueasters = transactions.GetGoodsIssueMasterByIdApproved(GSNumber);
+                    if (goodsissueasters == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.goodsissueasters = goodsissueasters;
+                    expdoObj.goodsissueastersDetail = new TransactionsHelper().GetGoodsIssueDetailApproved(GSNumber);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetTagsissueDetail/{GSNumber}/{Materialcode}/{bomNumber}")]
         public async Task<IActionResult> GetTagsissueDetail(string GSNumber, string Materialcode = null, string bomNumber = null)
         {

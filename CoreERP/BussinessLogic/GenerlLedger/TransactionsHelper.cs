@@ -1070,7 +1070,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblGoodsIssueMaster>();
             return repo.TblGoodsIssueMaster
-                .FirstOrDefault(x => x.SaleOrderNumber == GoodsIssueId && x.ApprovalStatus=="Approved");
+                .FirstOrDefault(x => x.SaleOrderNumber == GoodsIssueId);
+
+        }
+
+        public TblGoodsIssueMaster GetGoodsIssueMasterByIdApproved(string GoodsIssueId)
+        {
+            using var repo = new Repository<TblGoodsIssueMaster>();
+            return repo.TblGoodsIssueMaster
+                .FirstOrDefault(x => x.SaleOrderNumber == GoodsIssueId && x.ApprovalStatus == "Approved");
 
         }
 
@@ -1127,6 +1135,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
             });
             return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId).ToList();
+
+        }
+
+        public List<TblGoodsIssueDetails> GetGoodsIssueDetailApproved(string GoodsIssueId)
+        {
+            using var repo = new Repository<TblGoodsIssueDetails>();
+
+            var material = repo.TblMaterialMaster.ToList();
+
+            repo.TblGoodsIssueDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            });
+            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.ApprovalStatus=="Approved").ToList();
 
         }
         public static DataSet GetTagsDetails(string saleorderno, string materialcode, string bomNumber)
