@@ -789,6 +789,11 @@ namespace CoreERP.Controllers.masters
         public async Task<IActionResult> GetTagsissueDetail(string GSNumber, string Materialcode = null, string bomNumber = null)
         {
             string code = Materialcode.Replace(@"\r", string.Empty).Trim();
+            // Using HttpUtility.UrlDecode (requires System.Web)
+            string decodedString = HttpUtility.UrlDecode(code);
+
+            // OR using Uri.UnescapeDataString
+            //string decodedAlternative = Uri.UnescapeDataString(code);
 
             var result = await Task.Run(() =>
             {
@@ -802,7 +807,7 @@ namespace CoreERP.Controllers.masters
                     if (tagsData.Company == "1000")
                     {
 
-                        DataSet ds = TransactionsHelper.GetTagsDetails(GSNumber, Materialcode, bomNumber);
+                        DataSet ds = TransactionsHelper.GetTagsDetails(GSNumber, decodedString, bomNumber);
                         if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                         {
                             expdoObj.tagsDetail = ds.Tables[0];
