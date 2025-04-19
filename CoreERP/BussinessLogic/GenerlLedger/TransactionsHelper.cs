@@ -3069,13 +3069,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             }
                             else
                             {
-                                poq = new TblPoQueue();
-                                poq.Status = statusmessage;
-                                poq.SaleOrderNo = item.SaleOrder;
-                                poq.MaterialCode = item.MaterialCode;
-                                poq.Qty = item.Qty;
-                                poq.CompanyCode = item.Company;
-                                context.TblPoQueue.Add(poq);
+                                //poq = new TblPoQueue();
+                                //poq.Status = statusmessage;
+                                //poq.SaleOrderNo = item.SaleOrder;
+                                //poq.MaterialCode = item.MaterialCode;
+                                //poq.Qty = item.Qty;
+                                //poq.CompanyCode = item.Company;
+                                //context.TblPoQueue.Add(poq);
                             }
                         }
                         else
@@ -3101,13 +3101,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             }
                             else
                             {
-                                poq = new TblPoQueue();
-                                poq.Status = statusmessage;
-                                poq.SaleOrderNo = item.SaleOrder;
-                                poq.MaterialCode = item.MaterialCode;
-                                poq.Qty = item.Qty;
-                                poq.CompanyCode = item.Company;
-                                context.TblPoQueue.Add(poq);
+                                //poq = new TblPoQueue();
+                                //poq.Status = statusmessage;
+                                //poq.SaleOrderNo = item.SaleOrder;
+                                //poq.MaterialCode = item.MaterialCode;
+                                //poq.Qty = item.Qty;
+                                //poq.CompanyCode = item.Company;
+                                //context.TblPoQueue.Add(poq);
                             }
                         }
                     }
@@ -3132,13 +3132,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                         else
                         {
-                            poq = new TblPoQueue();
-                            poq.Status = statusmessage;
-                            poq.SaleOrderNo = item.SaleOrder;
-                            poq.MaterialCode = item.MaterialCode;
-                            poq.Qty = item.Qty;
-                            poq.CompanyCode = item.Company;
-                            context.TblPoQueue.Add(poq);
+                            //poq = new TblPoQueue();
+                            //poq.Status = statusmessage;
+                            //poq.SaleOrderNo = item.SaleOrder;
+                            //poq.MaterialCode = item.MaterialCode;
+                            //poq.Qty = item.Qty;
+                            //poq.CompanyCode = item.Company;
+                            //context.TblPoQueue.Add(poq);
                         }
                     }
                     else if (Msodata != null && podata.saleOrderType == "Master Saleorder")
@@ -3171,13 +3171,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             }
                             else
                             {
-                                poq = new TblPoQueue();
-                                poq.Status = statusmessage;
-                                poq.SaleOrderNo = item.SaleOrder;
-                                poq.MaterialCode = item.MaterialCode;
-                                poq.Qty = item.Qty;
-                                poq.CompanyCode = item.Company;
-                                context.TblPoQueue.Add(poq);
+                                //poq = new TblPoQueue();
+                                //poq.Status = statusmessage;
+                                //poq.SaleOrderNo = item.SaleOrder;
+                                //poq.MaterialCode = item.MaterialCode;
+                                //poq.Qty = item.Qty;
+                                //poq.CompanyCode = item.Company;
+                                //context.TblPoQueue.Add(poq);
                             }
                         }
                     }
@@ -3202,13 +3202,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                         else
                         {
-                            poq = new TblPoQueue();
-                            poq.Status = statusmessage;
-                            poq.SaleOrderNo = item.SaleOrder;
-                            poq.MaterialCode = item.MaterialCode;
-                            poq.Qty = item.Qty;
-                            poq.CompanyCode = item.Company;
-                            context.TblPoQueue.Add(poq);
+                            //poq = new TblPoQueue();
+                            //poq.Status = statusmessage;
+                            //poq.SaleOrderNo = item.SaleOrder;
+                            //poq.MaterialCode = item.MaterialCode;
+                            //poq.Qty = item.Qty;
+                            //poq.CompanyCode = item.Company;
+                            //context.TblPoQueue.Add(poq);
                         }
                     }
 
