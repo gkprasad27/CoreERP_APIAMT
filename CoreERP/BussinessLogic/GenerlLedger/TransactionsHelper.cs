@@ -3141,76 +3141,76 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             //context.TblPoQueue.Add(poq);
                         }
                     }
-                    else if (Msodata != null && podata.saleOrderType == "Master Saleorder")
-                    {
-                        soItemQty = (int)Msodata.Qty;
-                        if (Msodata.Qty == item.Qty)
-                        {
-                            soItemQty = item.Qty;
-                        }
-                        else
-                        {
-                            Msodata.POQty = qtycheck;// sodata.POQty + item.Qty;
+                    //else if (Msodata != null && podata.saleOrderType == "Master Saleorder")
+                    //{
+                    //    soItemQty = (int)Msodata.Qty;
+                    //    if (Msodata.Qty == item.Qty)
+                    //    {
+                    //        soItemQty = item.Qty;
+                    //    }
+                    //    else
+                    //    {
+                    //        Msodata.POQty = qtycheck;// sodata.POQty + item.Qty;
 
-                            if (poq != null)
-                            {
-                                poq.Qty = (poq.Qty) - (item.Qty);
-                                if (poq.Qty >= 0)
-                                {
-                                    poq.Status = statusmessage;
-                                    context.TblPoQueue.Update(poq);
-                                }
-                                else if (poq.Qty < 0)
-                                {
-                                    poq.Qty = 0;
-                                    poq.Status = statusmessage;
-                                    context.TblPoQueue.Update(poq);
-                                }
-                                else
-                                    context.TblPoQueue.Update(poq);
-                            }
-                            else
-                            {
-                                //poq = new TblPoQueue();
-                                //poq.Status = statusmessage;
-                                //poq.SaleOrderNo = item.SaleOrder;
-                                //poq.MaterialCode = item.MaterialCode;
-                                //poq.Qty = item.Qty;
-                                //poq.CompanyCode = item.Company;
-                                //context.TblPoQueue.Add(poq);
-                            }
-                        }
-                    }
-                    else if (Msodata == null && podata.saleOrderType == "Master Saleorder")
-                    {
-                        if (poq != null)
-                        {
-                            poq.Qty = (poq.Qty) - (item.Qty);
-                            if (poq.Qty >= 0)
-                            {
-                                poq.Status = statusmessage;
-                                context.TblPoQueue.Update(poq);
-                            }
-                            else if (poq.Qty < 0)
-                            {
-                                poq.Qty = 0;
-                                poq.Status = statusmessage;
-                                context.TblPoQueue.Update(poq);
-                            }
-                            else
-                                context.TblPoQueue.Update(poq);
-                        }
-                        else
-                        {
-                            //poq = new TblPoQueue();
-                            //poq.Status = statusmessage;
-                            //poq.SaleOrderNo = item.SaleOrder;
-                            //poq.MaterialCode = item.MaterialCode;
-                            //poq.Qty = item.Qty;
-                            //poq.CompanyCode = item.Company;
-                            //context.TblPoQueue.Add(poq);
-                        }
-                    }
+                    //        if (poq != null)
+                    //        {
+                    //            poq.Qty = (poq.Qty) - (item.Qty);
+                    //            if (poq.Qty >= 0)
+                    //            {
+                    //                poq.Status = statusmessage;
+                    //                context.TblPoQueue.Update(poq);
+                    //            }
+                    //            else if (poq.Qty < 0)
+                    //            {
+                    //                poq.Qty = 0;
+                    //                poq.Status = statusmessage;
+                    //                context.TblPoQueue.Update(poq);
+                    //            }
+                    //            else
+                    //                context.TblPoQueue.Update(poq);
+                    //        }
+                    //        else
+                    //        {
+                    //            //poq = new TblPoQueue();
+                    //            //poq.Status = statusmessage;
+                    //            //poq.SaleOrderNo = item.SaleOrder;
+                    //            //poq.MaterialCode = item.MaterialCode;
+                    //            //poq.Qty = item.Qty;
+                    //            //poq.CompanyCode = item.Company;
+                    //            //context.TblPoQueue.Add(poq);
+                    //        }
+                    //    }
+                    //}
+                    //else if (Msodata == null && podata.saleOrderType == "Master Saleorder")
+                    //{
+                    //    if (poq != null)
+                    //    {
+                    //        poq.Qty = (poq.Qty) - (item.Qty);
+                    //        if (poq.Qty >= 0)
+                    //        {
+                    //            poq.Status = statusmessage;
+                    //            context.TblPoQueue.Update(poq);
+                    //        }
+                    //        else if (poq.Qty < 0)
+                    //        {
+                    //            poq.Qty = 0;
+                    //            poq.Status = statusmessage;
+                    //            context.TblPoQueue.Update(poq);
+                    //        }
+                    //        else
+                    //            context.TblPoQueue.Update(poq);
+                    //    }
+                    //    else
+                    //    {
+                    //        //poq = new TblPoQueue();
+                    //        //poq.Status = statusmessage;
+                    //        //poq.SaleOrderNo = item.SaleOrder;
+                    //        //poq.MaterialCode = item.MaterialCode;
+                    //        //poq.Qty = item.Qty;
+                    //        //poq.CompanyCode = item.Company;
+                    //        //context.TblPoQueue.Add(poq);
+                    //    }
+                    //}
 
                     if (soItemQty == (item.Qty + sodata.POQty))
                         statusmessage = "PO Created";
@@ -3377,14 +3377,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                             context.TblPoQueue.Update(poq);
                                         }
                                     }
-                                    else
+                                    else 
                                     {
-                                        poq = new TblPoQueue();
-                                        poq.SaleOrderNo = item1.SaleOrder;
-                                        poq.MaterialCode = item1.MaterialCode;
-                                        poq.Qty = (poq.Qty) + (item1.Qty);
-                                        poq.CompanyCode = podata.FirstOrDefault().Company;
-                                        context.TblPoQueue.Add(poq);
+                                        if (item.saleOrderType != "Master Saleorder")
+                                        {
+                                            poq = new TblPoQueue();
+                                            poq.SaleOrderNo = item1.SaleOrder;
+                                            poq.MaterialCode = item1.MaterialCode;
+                                            poq.Qty = (poq.Qty) + (item1.Qty);
+                                            poq.CompanyCode = podata.FirstOrDefault().Company;
+                                            context.TblPoQueue.Add(poq);
+                                        }
                                     }
                                     if (saleorder != null)
                                     {
