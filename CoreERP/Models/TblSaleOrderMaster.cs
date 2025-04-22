@@ -42,6 +42,7 @@ namespace CoreERP.Models
         public string? ApprovedBy { get; set; }
         public DateTime? DispatchedDate { get; set; }
         public decimal? RoundOff { get; set; }
+        public string? ApprovalStatus { get; set; }
 
     }
 }

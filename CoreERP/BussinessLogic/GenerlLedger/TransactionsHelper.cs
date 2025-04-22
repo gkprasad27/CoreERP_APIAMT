@@ -2894,6 +2894,40 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .ToList();
         }
 
+        public List<TblSaleOrderMaster> GetSaleOrderApproveList(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-400), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-400);
+            searchCriteria.ToDate ??= DateTime.Today;
+            using var repo = new Repository<TblSaleOrderMaster>();
+
+            var Company = repo.TblCompany.ToList();
+            var PoType = repo.TblPurchaseOrderType.ToList();
+            var profitCenters = repo.ProfitCenters.ToList();
+            var customer = repo.TblBusinessPartnerAccount.ToList();
+
+            repo.TblSaleOrderMaster.ToList()
+                .ForEach(c =>
+                {
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
+
+                });
+
+            return repo.TblSaleOrderMaster.AsEnumerable()
+                .Where(x =>
+                {
+
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.SaleOrderNo) != null
+                              && Convert.ToString(x.SaleOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleOrderNo))
+                              && Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                              && Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString())
+                              && x.ApprovalStatus == "Pending Approval";
+                }).OrderByDescending(x => x.Id)
+                .ToList();
+        }
+
         public bool AddAttendance(List<AttendanceData> attendancedetails)
         {
             using var repo = new Repository<AttendanceData>();
@@ -3511,6 +3545,99 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         customer.ClosingBalance = Convert.ToInt32(customer.ClosingBalance + Convert.ToInt32(podata.FirstOrDefault().TotalAmount));
                         context.Update(customer);
                     }
+
+                    context.SaveChanges();
+
+                    dbtrans.Commit();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    dbtrans.Rollback();
+                    throw;
+                }
+            }
+            return true;
+        }
+
+        public bool SaveSaleOrderApproval(List<TblSaleOrderMaster> sodata)
+        {
+            if (sodata != null || sodata.Count > 0)
+            {
+                using var repo = new Repository<TblSaleOrderMaster>();
+                using var context = new ERPContext();
+                //string sonumber = sodata.FirstOrDefault().SaleOrderNo;
+                using var dbtrans = context.Database.BeginTransaction();
+                var customer = repo.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == sodata.FirstOrDefault().CustomerCode);
+                try
+                {
+                    foreach (var item in sodata)
+                    {
+                        if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == item.SaleOrderNo))
+                        {
+                            //var purchaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.PurchaseOrderNumber == item.PurchaseOrderNo);
+                            var SaleOrderDetails = repo.TblSaleOrderDetail.Where(z => z.SaleOrderNo == item.SaleOrderNo).ToList();
+                            if (item.ApprovalStatus == "Rejected")
+                            {
+                                foreach (var item1 in SaleOrderDetails)
+                                {
+                                    var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item1.SaleOrderNo && z.MaterialCode == item1.MaterialCode);
+                                    //var Material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item1.MaterialCode);
+                                    //var purchaseorderdetail = repo.TblPurchaseOrderDetails.Where(z => z.SaleOrder == item1.SaleOrderNo && z.PurchaseOrderNumber == item1.PurchaseOrderNo).FirstOrDefault();
+                                    var saleorderdetail = repo.TblSaleOrderDetail.Where(z => z.SaleOrderNo == item1.SaleOrderNo && z.MaterialCode == item1.MaterialCode).FirstOrDefault();
+                                    if (poq != null)
+                                    {
+                                        poq.Qty = (poq.Qty) - (item1.QTY);
+                                        if (poq.Qty >= 0)
+                                        {
+                                            context.TblPoQueue.Update(poq);
+                                        }
+                                    }
+                                    //else
+                                    //{
+                                    //    poq = new TblPoQueue();
+                                    //    poq.SaleOrderNo = item1.SaleOrderNo;
+                                    //    poq.MaterialCode = item1.MaterialCode;
+                                    //    poq.Qty = (item1.QTY);
+                                    //    poq.CompanyCode = sodata.FirstOrDefault().Company;
+                                    //    context.TblPoQueue.Add(poq);
+                                    //}
+
+                                    saleorderdetail.POQty = (saleorderdetail.POQty) - item1.QTY;
+                                    if (saleorderdetail.POQty < 0)
+                                        saleorderdetail.POQty = 0;
+
+                                    context.TblSaleOrderDetail.Update(saleorderdetail);
+
+                                    //if (Convert.ToString(Material.ClosingQty) == null)
+                                    //    Material.ClosingQty = 0;
+
+                                    //Material.ClosingQty = Math.Abs(Convert.ToInt16(Material.ClosingQty ?? 0) - Convert.ToInt16(item1.QTY));
+                                    //Material.EditDate = System.DateTime.Now;
+                                    //context.TblMaterialMaster.Update(Material);
+
+                                    item1.Status = "Rejected";
+                                    context.TblSaleOrderDetail.Update(item1);
+
+                                    //purchaseorderdetail.Status = "Rejected";
+                                    //context.TblPurchaseOrderDetails.Update(purchaseorderdetail);
+                                }
+                                //purchaseorder.Status = "Rejected";
+                                item.Status = "Rejected";
+
+                            }
+                            //context.TblPurchaseOrder.Update(purchaseorder);
+
+                            context.TblSaleOrderMaster.Update(item);
+                        }
+
+                    }
+
+                    //if (customer != null)
+                    //{
+                    //    customer.ClosingBalance = Convert.ToInt32(customer.ClosingBalance + Convert.ToInt32(podata.FirstOrDefault().TotalAmount));
+                    //    context.Update(customer);
+                    //}
 
                     context.SaveChanges();
 
@@ -4851,6 +4978,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         throw new Exception("Please Select Customer. " + saleOrderMaster.PONumber + " Customer Name Cannot be Empty .");
 
                     saleOrderMaster.Status = "SO Created";
+                    saleOrderMaster.ApprovalStatus = "Pending Approval";
                     saleOrderMaster.TotalQty = totalqty;
                     saleOrderMaster.EditDate = DateTime.Now;
                     saleOrderMaster.CreatedDate = DateTime.Now;
@@ -4876,6 +5004,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         throw new Exception("Please Configure SaleOrder Number. " + saleOrderMaster.PONumber + " Please check .");
 
                     saleOrderMaster.Status = "SO Created";
+                    saleOrderMaster.ApprovalStatus = "Pending Approval";
                     saleOrderMaster.CreatedDate = DateTime.Now;
                     saleOrderMaster.SaleOrderNo = SaleOrderNumber;
                     saleOrderMaster.TotalQty = totalqty;
@@ -4910,6 +5039,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     x.SaleOrderNo = (SaleOrderNumber);
                     x.Status = "SO Created";
+                    x.ApprovalStatus = "Pending Approval";
                     x.Company = saleOrderMaster.Company;
                 });
 

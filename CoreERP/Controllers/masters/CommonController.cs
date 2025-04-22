@@ -238,6 +238,25 @@ namespace CoreERP.Controllers
             return result;
         }
 
+        [HttpGet("GetSaleOrderApprovedList/{CompanyCode}")]
+        public async Task<IActionResult> GetSaleOrderApprovedList(string CompanyCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.BPList = _somRepository.Where(x => (x.Status != "Invoice Generated" && x.Status != "PO Created" && x.Status != "Dispatched" && x.ApprovalStatus =="Approved" && x.Company == CompanyCode)).Select(x => new { SaleOrderNo = x.SaleOrderNo, ProfitCenter = x.ProfitCenter }).ToList();
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetSaleOrder/{CompanyCode}")]
         public async Task<IActionResult> GetSaleOrder(string CompanyCode)
         {

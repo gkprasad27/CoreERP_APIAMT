@@ -1583,6 +1583,29 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpPost("GetSaleOrderApproveList")]
+        public async Task<IActionResult> GetSaleOrderApproveList([FromBody] SearchCriteria searchCriteria)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var sodetails = new TransactionsHelper().GetSaleOrderApproveList(searchCriteria);
+                    if (!sodetails.Any())
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for sale order." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.sodetails = sodetails;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetPurchaseOrderDetail/{code}")]
         public async Task<IActionResult> GetPurchaseOrderDetail(string code)
         {
@@ -1717,6 +1740,36 @@ namespace CoreERP.Controllers.masters
             });
             return result;
         }
+
+        [HttpPost("SaveSaleOrderApproval")]
+        public async Task<IActionResult> SaveSaleOrderApproval([FromBody] JObject obj)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                    var soMaster = obj["dtl"].ToObject<List<TblSaleOrderMaster>>();
+                    //var podetails = obj["poDtl"].ToObject<List<TblPurchaseOrderDetails>>();
+                    ///var username = User.Identities.ToList();
+
+                    if (!new TransactionsHelper().SaveSaleOrderApproval(soMaster))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.soapproval = soMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
 
         [HttpPost]
         [Route("UploadFile/{uploadfileName}")]
