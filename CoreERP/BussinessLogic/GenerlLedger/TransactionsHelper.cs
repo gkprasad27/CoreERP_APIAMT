@@ -1148,7 +1148,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
             });
-            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.ApprovalStatus=="Approved").ToList();
+            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.ApprovalStatus=="Approved" && cd.MainComponent=="Y").ToList();
 
         }
         public static DataSet GetTagsDetails(string saleorderno, string materialcode, string bomNumber)
@@ -1445,20 +1445,25 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             if (qty > 0)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company });
-                                tagnum = tagnum + 1;
+                                //ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company });
+                                //tagnum = tagnum + 1;
 
-                                //foreach (var amrititem in amritsaleorder)
-                                //{
-                                //    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = amrititem.SaleOrderNo, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = amrititem.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = amrititem.BomKey, BomName = amrititem.BomName, Company = amrititem.Company });
-                                //    tagnum = tagnum + 1;
-                                //}
+                                for (var i = 0; i < qty; i++)
+                                {
+                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company });
+                                    tagnum = tagnum + 1;
+                                }
                             }
                         }
                         else
                         {
-                            ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, Company = sodata.Company });
-                            tagnum = tagnum + 1;
+                            //ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, Company = sodata.Company });
+                            //tagnum = tagnum + 1;
+                            for (var i = 0; i < qty; i++)
+                            {
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company });
+                                tagnum = tagnum + 1;
+                            }
                         }
                         //if (sodata != null && sodata.Company == "2000" && sodata.MainComponent == "Y")
                         //{
@@ -1480,7 +1485,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         item.AllocatedQTY = (item.AllocatedQTY) + (receivedqty);
                         if (materialmaster != null)
                         {
-                            materialmaster.ClosingQty = ((materialmaster.ClosingQty) - qty);
+                            materialmaster.ClosingQty = Math.Abs(Convert.ToInt32(materialmaster.ClosingQty) - qty);
                             materialmaster.EditDate = System.DateTime.Now;
                             context.TblMaterialMaster.UpdateRange(materialmaster);
                         }

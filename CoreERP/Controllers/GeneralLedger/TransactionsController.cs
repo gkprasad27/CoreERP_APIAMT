@@ -816,7 +816,8 @@ namespace CoreERP.Controllers.masters
                     }
                     else
                     {
-                        DataSet ds = TransactionsHelper.GetTagIssueDetails(GSNumber);
+                        //DataSet ds = TransactionsHelper.GetTagIssueDetails(GSNumber);
+                        DataSet ds = TransactionsHelper.GetTagsDetails(GSNumber, decodedString, bomNumber);
                         if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                         {
                             expdoObj.tagsDetail = ds.Tables[0];
