@@ -5229,7 +5229,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.MaterialCode = item.MaterialCode;
                             poq.CompanyCode = saleOrderMaster.Company;
                             if (poq.Qty > 0)
+                            {
+                                if(poq.Qty > item.QTY)
+                                {
+                                    poq.Qty = item.QTY;
+                                }
                                 context.TblPoQueue.AddRange(poq);
+                            }
                         }
                         else
                         {
@@ -5253,7 +5259,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.SaleOrderNo = item.SaleOrderNo;
                             poq.MaterialCode = item.MaterialCode;
                             if (poq.Qty > 0)
+                            {
+                                if (poq.Qty > item.QTY)
+                                {
+                                    poq.Qty = item.QTY;
+                                }
                                 context.TblPoQueue.UpdateRange(poq);
+                            }
                         }
 
                         material.OpeningValue = (material.OpeningValue + item.QTY);
