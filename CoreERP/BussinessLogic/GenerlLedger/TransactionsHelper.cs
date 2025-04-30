@@ -1089,11 +1089,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.SaleOrderNumber == GoodsIssueId);
         }
 
-        public TblInspectionCheckMaster GetQcIssueMasterById(string GoodsIssueId, string Materialcode)
+        public TblInspectionCheckMaster GetQcIssueMasterById(string GoodsIssueId, string Materialcode, string BomNumber)
         {
             using var repo = new Repository<TblInspectionCheckMaster>();
             return repo.TblInspectionCheckMaster
-                .FirstOrDefault(x => x.saleOrderNumber == GoodsIssueId && x.MaterialCode == Materialcode);
+                .FirstOrDefault(x => x.saleOrderNumber == GoodsIssueId && x.BomKey == BomNumber );
         }
 
         public List<TblGoodsIssueDetails> GetGoodsIssueDetails(string GoodsIssueId)
@@ -1258,21 +1258,22 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         }
 
-        public List<TblInspectionCheckDetails> GetQcIssueDetails(string GoodsIssueId, string Materialcode)
+        public List<TblInspectionCheckDetails> GetQcIssueDetails(string GoodsIssueId, string Materialcode, string BomNumber, string Company)
         {
             using var repo = new ERPContext();
             var material = new List<TblMaterialMaster>();
             var tblProduction = new List<TblInspectionCheckDetails>();
 
-            if (!string.IsNullOrEmpty(Materialcode) && !string.IsNullOrEmpty(GoodsIssueId))
+            if (!string.IsNullOrEmpty(Materialcode) && !string.IsNullOrEmpty(GoodsIssueId) && Company=="2000")
             {
-                tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode).ToList();
+                tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.BomKey == BomNumber && cd.MaterialCode==Materialcode).ToList();
                 material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
             }
-            if (tblProduction.Count == 0)
+            if (tblProduction.Count == 0 && Company == "1000")
             {
-                tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId).ToList();
-                material = repo.TblMaterialMaster.ToList();
+                tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.BomKey == Materialcode && cd.MaterialCode == BomNumber).ToList();
+                material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
+                
             }
 
             repo.TblInspectionCheckDetails.ToList().ForEach(c =>
@@ -3913,9 +3914,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (saleorder == null)
                     Mastersaleorder = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == purchase.SaleOrderNo);
 
-                if (poqty == totalqty && currqtyrej > 0)
+                var PODQty = repo.TblPurchaseOrderDetails.Where(z => z.PurchaseOrderNumber == grdata.PurchaseOrderNo).ToList();
+                int totalPOqty = PODQty.Sum(x => x.Qty);
+
+                if (totalPOqty != totalqty || currqtyrej > 0)
                     statusmessage = "Material Partial Received";
-                else if (poqty == totalqty)
+                else if (totalPOqty == totalqty)
                     statusmessage = "Material Received";
                 else
                     statusmessage = "Material Partial Received";
@@ -4120,6 +4124,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     grdata.TotalAmount = (totalamount.TotalAmount ?? 0) + (grdata.TotalAmount);
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                     grdata.Id = totalamount.Id;
+                    grdata.ApprovalStatus = "Pending Approval";
                     context.TblGoodsReceiptMaster.Update(grdata);
                 }
                 else
@@ -5066,13 +5071,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         int poqty = 0;
                         int soqty = 0;
                         int matqty = 0;
-                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && z.SaleOrder == item.FirstOrDefault().SaleOrderNo && (z.Status == "PO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received")).ToList();
+                        var purchaseorder = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && z.SaleOrder == item.FirstOrDefault().SaleOrderNo && (z.Status != "Invoice Generated" || z.Status != "Dispatched")).ToList();
                         var pod = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.SaleOrder == item.FirstOrDefault().SaleOrderNo && z.MaterialCode == item.FirstOrDefault().MaterialCode);
                         material = repo.TblMaterialMaster.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && z.Company == item.FirstOrDefault().Company).FirstOrDefault();
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.FirstOrDefault().SaleOrderNo && z.MaterialCode == item.FirstOrDefault().MaterialCode);
-                        var saleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && (z.Status == "SO Created" || z.Status == "Partial PO Created")).ToList();
-                        var Exitsaleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && z.SaleOrderNo == item.FirstOrDefault().SaleOrderNo && (z.Status == "SO Created" || z.Status == "Partial PO Created")).ToList();
-                        var purchaseorderqty = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && (z.Status == "PO Created" || z.Status == "Partial PO Created")).ToList();
+                        var saleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && (z.Status != "Invoice Generated" || z.Status != "Dispatched")).ToList();
+                        var Exitsaleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && z.SaleOrderNo == item.FirstOrDefault().SaleOrderNo && (z.Status != "Invoice Generated" || z.Status != "Dispatched")).ToList();
+                        var purchaseorderqty = repo.TblPurchaseOrderDetails.Where(z => z.MaterialCode == item.FirstOrDefault().MaterialCode && (z.Status != "Invoice Generated" || z.Status != "Dispatched")).ToList();
                         if (pod != null)
                         {
                             pod.SOQty = item.Sum(x => x.QTY);
@@ -5174,8 +5179,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                         material = repo.TblMaterialMaster.FirstOrDefault(z => z.MaterialCode == item.MaterialCode && z.Company == item.Company);
                         var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrderNo && z.MaterialCode == item.MaterialCode);
-                        var saleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.MaterialCode && (z.Status == "SO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received" || z.Status== "Partially Production Released")).ToList();
-                        var Exitsaleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrderNo == item.SaleOrderNo && (z.Status == "SO Created" || z.Status == "Partial PO Created" || z.Status == "Material Partial Received" || z.Status == "Partially Production Released")).ToList();
+                        var saleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.MaterialCode && (z.Status != "Invoice Generated" || z.Status != "Dispatched")).ToList();
+                        var Exitsaleorderqty = repo.TblSaleOrderDetail.Where(z => z.MaterialCode == item.MaterialCode && z.SaleOrderNo == item.SaleOrderNo && (z.Status != "Invoice Generated" || z.Status != "Dispatched")).ToList();
                         foreach (var updateqty in pod)
                         {
                             if (pod != null)

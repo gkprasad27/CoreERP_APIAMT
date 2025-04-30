@@ -861,20 +861,20 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetQCissueDetail/{GSNumber}/{Materialcode}")]
-        public async Task<IActionResult> GetQCissueDetail(string GSNumber, string Materialcode = null)
+        [HttpGet("GetQCissueDetail/{GSNumber}/{Materialcode}/{BomNumber}")]
+        public async Task<IActionResult> GetQCissueDetail(string GSNumber, string Materialcode = null, string BomNumber=null)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     var transactions = new TransactionsHelper();
-                    var tagsData = transactions.GetQcIssueMasterById(GSNumber, Materialcode);
+                    var tagsData = transactions.GetQcIssueMasterById(GSNumber, Materialcode, BomNumber);
                     if (tagsData == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Production Not Completed." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.tagsData = tagsData;
-                    var tagsDetail = new TransactionsHelper().GetQcIssueDetails(GSNumber, Materialcode).Where(x => x.Status != "Rejected");
+                    var tagsDetail = new TransactionsHelper().GetQcIssueDetails(GSNumber, Materialcode, BomNumber, tagsData.Company).Where(x => x.Status != "Rejected");
                     if (tagsDetail == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Production Not Completed." });
                     expdoObj.tagsDetail = tagsDetail;
