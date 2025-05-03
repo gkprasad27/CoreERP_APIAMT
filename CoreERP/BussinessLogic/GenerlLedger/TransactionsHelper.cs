@@ -3056,32 +3056,26 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (Msodata.POQty == null)
                             Msodata.POQty = 0;
                     }
-                    if (sodatacheck != null)
-                    {
-                        int qtyexistcheck = sodatacheck.Sum(x => x.Qty);
-                        qtycheck = (item.Qty + qtyexistcheck);
-                        if (podata.saleOrderType != "Master Saleorder")
-                        {
-                            if (qtycheck > sodata.QTY)
-                            {
-                                throw new Exception("QTY Exceed, You cannot allocated More Qty. Please check Other Purchase Orders");
-                            }
-                        }
-                        else
-                        {
-                            if (qtycheck > Msodata.Qty)
-                            {
-                                throw new Exception("QTY Exceed, You cannot allocated More Qty. Please check Other Purchase Orders");
-                            }
-                        }
-                    }
-                    //if (podata.saleOrderType != "Master Saleorder")
-                    //    qtycheck = (int)sodata.POQty;
-                    //else if (podata.saleOrderType == "Master Saleorder")
-                    //    qtycheck = (int)Msodata.POQty;
-                    //else
-                    //    qtycheck = 0;
-
+                    //if (sodatacheck != null)
+                    //{
+                    //    int qtyexistcheck = sodatacheck.Sum(x => x.Qty);
+                    //    qtycheck = (item.Qty + qtyexistcheck);
+                    //    if (podata.saleOrderType != "Master Saleorder")
+                    //    {
+                    //        if (qtycheck > sodata.QTY)
+                    //        {
+                    //            throw new Exception("QTY Exceed, You cannot allocated More Qty. Please check Other Purchase Orders");
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        if (qtycheck > Msodata.Qty)
+                    //        {
+                    //            throw new Exception("QTY Exceed, You cannot allocated More Qty. Please check Other Purchase Orders");
+                    //        }
+                    //    }
+                    //}
+                   
                     if (sodata != null && podata.saleOrderType != "Master Saleorder")
                     {
                         soItemQty = sodata.QTY;
