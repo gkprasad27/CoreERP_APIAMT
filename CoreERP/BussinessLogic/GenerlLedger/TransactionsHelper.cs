@@ -4841,6 +4841,53 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
+        public List<TblMaterialIssueMaster> GetMaterialIssue(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria
+            {
+                FromDate = DateTime.Today.AddDays(-100),
+                ToDate = DateTime.Today
+            };
+
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblMaterialIssueMaster>();
+
+            // Get company master list
+            var companyList = repo.TblCompany.ToList();
+
+            // Step 1: Get data from DB with safe-to-translate filters
+            var query = repo.TblMaterialIssueMaster
+                .Where(x =>
+                    x.IssuedDate >= searchCriteria.FromDate &&
+                    x.IssuedDate <= searchCriteria.ToDate &&
+                    (string.IsNullOrEmpty(searchCriteria.CompanyCode) || x.Company == searchCriteria.CompanyCode)
+                )
+                .ToList(); // move to memory now
+
+            // Step 2: In-memory filtering for MaterialIssueId using .Contains
+            if (!string.IsNullOrEmpty(searchCriteria.searchCriteria))
+            {
+                query = query
+                    .Where(x => x.MaterialIssueId != null &&
+                                x.MaterialIssueId.Contains(searchCriteria.searchCriteria))
+                    .ToList();
+            }
+
+            // Step 3: Map company names (preserving original company code)
+            query.ForEach(c =>
+            {
+                var company = companyList.FirstOrDefault(l => l.CompanyCode == c.Company);
+                c.Company = company?.CompanyName ?? c.Company; 
+            });
+
+            return query.OrderByDescending(x => x.Id).ToList();
+        }
+
+
+
+
         public TblSaleOrderMaster GetSaleOrderMastersById(string saleOrderNo)
         {
             using var repo = new Repository<TblSaleOrderMaster>();
@@ -5381,6 +5428,86 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 else if (JobworkDetailsNew.Count > 0)
                 {
                     context.tblJobworkDetails.AddRange(jwDetails);
+                }
+
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                TblApi_Error_Log icdata = new TblApi_Error_Log();
+                using var context1 = new ERPContext();
+                icdata.ScreenName = "Job Work Order";
+                icdata.ErrorID = ex.HResult.ToString();
+                icdata.ErrorMessage = ex.ToString();
+                context1.TblApi_Error_Log.Add(icdata);
+                context1.SaveChanges();
+
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
+        public bool AddMaterialIssue(TblMaterialIssueMaster materialIssueMaster, List<TblMaterialIssueDetails> materialIssueDetails)
+        {
+            using var repo = new Repository<TblMaterialIssueMaster>();
+            List<TblMaterialIssueDetails> materialIssueDetailsNew;
+            List<TblMaterialIssueDetails> materialIssueDetailsExist;
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+            string MINumber = string.Empty;
+            var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Material Issue" && x.CompCode == materialIssueMaster.Company);
+
+            try
+            {
+                if (repo.TblMaterialIssueMaster.Any(v => v.MaterialIssueId == materialIssueMaster.MaterialIssueId))
+                {
+                    materialIssueMaster.Status = "MI Created";
+                    context.TblMaterialIssueMaster.Update(materialIssueMaster);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    if (Pcenter != null)
+                    {
+                        Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                        context.Counters.UpdateRange(Pcenter);
+                        context.SaveChanges();
+                        MINumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                    }
+                    if (MINumber.Length > 1)
+                    {
+                        materialIssueMaster.Status = "MI Created";
+                        materialIssueMaster.MaterialIssueId = MINumber;
+                        context.TblMaterialIssueMaster.Add(materialIssueMaster);
+                    }
+                    else
+                        throw new Exception("Material Issue Number Not Valid. " + MINumber + " Please check .");
+
+                }
+                if (string.IsNullOrWhiteSpace(MINumber))
+                    MINumber = materialIssueMaster.MaterialIssueId;
+
+                materialIssueDetails.ForEach(x =>
+                {
+
+                    x.MaterialIssueId = (MINumber);
+                    x.Status = "MI Created";
+                });
+
+
+                materialIssueDetailsExist = materialIssueDetails.Where(x => x.ID > 0).ToList();
+                materialIssueDetailsNew = materialIssueDetails.Where(x => x.ID == 0).ToList();
+
+                if (materialIssueDetailsExist.Count > 0)
+                {
+                    context.TblMaterialIssueDetails.UpdateRange(materialIssueDetails);
+                }
+                else if (materialIssueDetailsNew.Count > 0)
+                {
+                    context.TblMaterialIssueDetails.AddRange(materialIssueDetails);
                 }
 
                 context.SaveChanges();

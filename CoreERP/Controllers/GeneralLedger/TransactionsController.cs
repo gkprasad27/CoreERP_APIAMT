@@ -2400,28 +2400,28 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        //[HttpPost("GetMaterialIssue")]
-        //public async Task<IActionResult> GetMaterialIssue([FromBody] SearchCriteria searchCriteria)
-        //{
-        //    var result = await Task.Run(() =>
-        //    {
-        //        try
-        //        {
-        //            var materialIsssueMaster = new TransactionsHelper().GetMaterialIssue(searchCriteria);
-        //            if (!materialIsssueMaster.Any())
-        //                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Material Issue." });
-        //            dynamic expdoObj = new ExpandoObject();
-        //            expdoObj.materialissuelist = materialIsssueMaster;
-        //            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+        [HttpPost("GetMaterialIssue")]
+        public async Task<IActionResult> GetMaterialIssue([FromBody] SearchCriteria searchCriteria)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var materialIsssueMaster = new TransactionsHelper().GetMaterialIssue(searchCriteria);
+                    if (!materialIsssueMaster.Any())
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Material Issue." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.materialissuelist = materialIsssueMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //        }
-        //    });
-        //    return result;
-        //}
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
 
         [HttpGet("GetSaleOrderDetail/{saleOrderNumber}")]
         public async Task<IActionResult> GetSaleOrderDetail(string saleOrderNumber)
@@ -2602,37 +2602,37 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        //[HttpPost("AddMaterialIssue")]
-        //public async Task<IActionResult> AddMaterialIssue([FromBody] JObject obj)
-        //{
-        //    var result = await Task.Run(() =>
-        //    {
-        //        var materialIssueMaster = new TblMaterialIssueMaster(); ;
-        //        try
-        //        {
-        //            if (obj == null)
-        //                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+        [HttpPost("AddMaterialIssue")]
+        public async Task<IActionResult> AddMaterialIssue([FromBody] JObject obj)
+        {
+            var result = await Task.Run(() =>
+            {
+                var materialIssueMaster = new TblMaterialIssueMaster(); ;
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-        //            materialIssueMaster = obj["miHdr"].ToObject<TblMaterialIssueMaster>();
-        //            var materialIssueDetails = obj["miDtl"].ToObject<List<TblMaterialIssueDetails>>();
+                    materialIssueMaster = obj["miHdr"].ToObject<TblMaterialIssueMaster>();
+                    var materialIssueDetails = obj["miDtl"].ToObject<List<TblMaterialIssueDetails>>();
 
-        //            if (!new TransactionsHelper().AddMaterialIssue(materialIssueMaster, materialIssueDetails))
-        //                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-        //            dynamic expdoObj = new ExpandoObject();
-        //            expdoObj.materialIssueMaster = materialIssueMaster;
-        //            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    if (!new TransactionsHelper().AddMaterialIssue(materialIssueMaster, materialIssueDetails))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.materialIssueMaster = materialIssueMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            if (ex.HResult.ToString() == "-2146233088")
-        //                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "JobWork Number Already Exist, Please use another key " + " " + materialIssueMaster.MaterialIssueId });
-        //            else
-        //                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
-        //        }
-        //    });
-        //    return result;
-        //}
+                }
+                catch (Exception ex)
+                {
+                    if (ex.HResult.ToString() == "-2146233088")
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "JobWork Number Already Exist, Please use another key " + " " + materialIssueMaster.MaterialIssueId });
+                    else
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
 
 
         #endregion
