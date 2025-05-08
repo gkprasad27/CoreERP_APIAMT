@@ -5531,19 +5531,29 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     x.Status = "MI Created";
                 });
 
-
-                materialIssueDetailsExist = materialIssueDetails.Where(x => x.ID > 0).ToList();
-                materialIssueDetailsNew = materialIssueDetails.Where(x => x.ID == 0).ToList();
-
-                if (materialIssueDetailsExist.Count > 0)
+                foreach (var item in materialIssueDetails)
                 {
-                    context.TblMaterialIssueDetails.UpdateRange(materialIssueDetails);
-                }
-                else if (materialIssueDetailsNew.Count > 0)
-                {
-                    context.TblMaterialIssueDetails.AddRange(materialIssueDetails);
-                }
 
+                    materialIssueDetailsExist = materialIssueDetails.Where(x => x.ID > 0).ToList();
+                    materialIssueDetailsNew = materialIssueDetails.Where(x => x.ID == 0).ToList();
+
+                    if (materialIssueDetailsExist.Count > 0)
+                    {
+                        context.TblMaterialIssueDetails.UpdateRange(materialIssueDetails);
+                    }
+                    else if (materialIssueDetailsNew.Count > 0)
+                    {
+                        context.TblMaterialIssueDetails.AddRange(materialIssueDetails);
+                    }
+
+                    var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == item.MaterialCode);
+
+                    if (Convert.ToString(mathdr.ClosingQty) == null)
+                        mathdr.ClosingQty = 0;
+                    mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) - (item.Qty));
+                    mathdr.EditDate = System.DateTime.Now;
+                    context.TblMaterialMaster.Update(mathdr);
+                }
                 context.SaveChanges();
 
                 dbtrans.Commit();
