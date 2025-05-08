@@ -773,7 +773,14 @@ namespace CoreERP.Controllers.masters
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.goodsissueasters = goodsissueasters;
-                    expdoObj.goodsissueastersDetail = new TransactionsHelper().GetGoodsIssueDetailApproved(GSNumber);
+                    if (goodsissueasters.Company == "1000")
+                    {
+                        expdoObj.goodsissueastersDetail = new TransactionsHelper().GetGoodsIssueDetailApproved(GSNumber);
+                    }
+                    else if (goodsissueasters.Company == "2000")
+                    {
+                        expdoObj.goodsissueastersDetail = new TransactionsHelper().GetGoodsIssueDetailApprovedForAmrit(GSNumber);
+                    }
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -2473,6 +2480,31 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetMaterialIssueDetail/{MINumber}")]
+        public async Task<IActionResult> GetMaterialIssueDetail(string MINumber)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    var materialIssueMasters = transactions.GetMaterialIssueMastersById(MINumber);
+                    if (materialIssueMasters == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.materialIssueMasters = materialIssueMasters;
+                    expdoObj.materialIssueDetails = new TransactionsHelper().GetMaterialIssueDetail(MINumber);
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
 
         [HttpGet("GetSaleOrderDetailPO/{saleOrderNumber}")]
         public async Task<IActionResult> GetSaleOrderDetailPO(string saleOrderNumber)
@@ -2626,7 +2658,7 @@ namespace CoreERP.Controllers.masters
                 catch (Exception ex)
                 {
                     if (ex.HResult.ToString() == "-2146233088")
-                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "JobWork Number Already Exist, Please use another key " + " " + materialIssueMaster.MaterialIssueId });
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Material Issue Already Exist, Please use another key " + " " + materialIssueMaster.MaterialIssueId });
                     else
                         return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
                 }

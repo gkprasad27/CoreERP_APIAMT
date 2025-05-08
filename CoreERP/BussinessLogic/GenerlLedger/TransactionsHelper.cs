@@ -1151,6 +1151,20 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.ApprovalStatus=="Approved" && cd.MainComponent=="Y").ToList();
 
         }
+
+        public List<TblGoodsIssueDetails> GetGoodsIssueDetailApprovedForAmrit(string GoodsIssueId)
+        {
+            using var repo = new Repository<TblGoodsIssueDetails>();
+
+            var material = repo.TblMaterialMaster.ToList();
+
+            repo.TblGoodsIssueDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            });
+            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.ApprovalStatus == "Approved").ToList();
+
+        }
         public static DataSet GetTagsDetails(string saleorderno, string materialcode, string bomNumber)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
@@ -4902,6 +4916,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.JobWorkNumber == jobWorkNumber);
         }
 
+        public TblMaterialIssueMaster GetMaterialIssueMastersById(string materialIssueId)
+        {
+            using var repo = new Repository<TblMaterialIssueMaster>();
+            return repo.TblMaterialIssueMaster
+                .FirstOrDefault(x => x.MaterialIssueId == materialIssueId);
+        }
+
 
         public TblSaleOrderMaster GetSaleOrderMaster(string saleOrderNo, string BomKey)
         {
@@ -4988,6 +5009,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
             });
             return repo.tblJobworkDetails.Where(cd => cd.JobworkNumber == jobWorkNumber).ToList();
+
+        }
+
+        public List<TblMaterialIssueDetails> GetMaterialIssueDetail(string materialIssueId)
+        {
+            using var repo = new Repository<TblMaterialIssueDetails>();
+            var MaterialCodes = repo.TblMaterialMaster.ToList();
+
+            repo.TblMaterialIssueDetails.ToList().ForEach(c =>
+            {
+                c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+            });
+            return repo.TblMaterialIssueDetails.Where(cd => cd.MaterialIssueId == materialIssueId).ToList();
 
         }
 
