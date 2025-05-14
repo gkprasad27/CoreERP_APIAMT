@@ -1427,7 +1427,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (sodata != null && sodata.MainComponent == "Y" && sodata.Company == "1000")
                     {
                         var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
-
+                        
                         if (qty > 0)
                         {
                             for (var i = 0; i < qty; i++)
@@ -1438,6 +1438,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                         if (GID != null)
                         {
+                            item.Id = GID.Id;
                             if (item.AllocatedQTY > 0)
                                 receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
                         }
@@ -1495,6 +1496,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         //}
                         if (GID != null)
                         {
+                            item.Id = GID.Id;
                             if (item.AllocatedQTY > 0)
                                 receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
                         }
