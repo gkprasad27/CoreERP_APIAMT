@@ -2505,37 +2505,84 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-
         [HttpGet("GetSaleOrderDetailPO/{saleOrderNumber}")]
-        public async Task<IActionResult> GetSaleOrderDetailPO(string saleOrderNumber)
+        public IActionResult GetSaleOrderDetailPO(string saleOrderNumber)
         {
-            var result = await Task.Run(() =>
+            try
             {
-                try
+                var transactions = new TransactionsHelper();
+                var saleOrderMasters = transactions.GetSaleOrderMastersById(saleOrderNumber);
+                if (saleOrderMasters == null)
                 {
-                    var transactions = new TransactionsHelper();
-                    var SaleOrderMasters = transactions.GetSaleOrderMastersById(saleOrderNumber);
-                    if (SaleOrderMasters == null)
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                    dynamic expdoObj = new ExpandoObject();
-                    expdoObj.SaleOrderMasters = SaleOrderMasters;
-                    var BPList = new TransactionsHelper().GetSaleOrderDetailPO(saleOrderNumber);
-                    BPList.Where(x => (x.Status == "SO Created" || x.Status == "Partial PO Created") && (x.Company == SaleOrderMasters.Company));
-                    if (BPList == null)
-                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
-                    else
-                        expdoObj.SaleOrderDetails = BPList;
-
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
-
+                    return NotFound(new APIResponse
+                    {
+                        status = APIStatus.FAIL.ToString(),
+                        response = "Sale Order Master not found."
+                    });
                 }
-                catch (Exception ex)
+                var bpList = transactions.GetSaleOrderDetailPO(saleOrderNumber);
+                if (bpList == null || !bpList.Any())
                 {
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                    return NotFound(new APIResponse
+                    {
+                        status = APIStatus.FAIL.ToString(),
+                        response = "Sale Order Details not found."
+                    });
                 }
-            });
-            return result;
+                var filteredList = bpList
+                    .Where(x => (x.Status == "SO Created" || x.Status == "Partial PO Created") &&
+                                x.Company == saleOrderMasters.Company)
+                    .ToList();
+                dynamic expandoObj = new ExpandoObject();
+                expandoObj.SaleOrderMasters = saleOrderMasters;
+                expandoObj.SaleOrderDetails = filteredList;
+                return Ok(new APIResponse
+                {
+                    status = APIStatus.PASS.ToString(),
+                    response = expandoObj
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new APIResponse
+                {
+                    status = APIStatus.FAIL.ToString(),
+                    response = ex.Message
+                });
+            }
         }
+
+
+        //[HttpGet("GetSaleOrderDetailPO/{saleOrderNumber}")]
+        //public async Task<IActionResult> GetSaleOrderDetailPO(string saleOrderNumber)
+        //{
+        //    var result = await Task.Run(() =>
+        //    {
+        //        try
+        //        {
+        //            var transactions = new TransactionsHelper();
+        //            var SaleOrderMasters = transactions.GetSaleOrderMastersById(saleOrderNumber);
+        //            if (SaleOrderMasters == null)
+        //                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+        //            dynamic expdoObj = new ExpandoObject();
+        //            expdoObj.SaleOrderMasters = SaleOrderMasters;
+        //            var BPList = new TransactionsHelper().GetSaleOrderDetailPO(saleOrderNumber);
+        //            BPList.Where(x => (x.Status == "SO Created" || x.Status == "Partial PO Created") && (x.Company == SaleOrderMasters.Company));
+        //            if (BPList == null)
+        //                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+        //            else
+        //                expdoObj.SaleOrderDetails = BPList;
+
+        //            return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+        //        }
+        //    });
+        //    return result;
+        //}
 
 
         [HttpPost("AddSaleOrder")]
