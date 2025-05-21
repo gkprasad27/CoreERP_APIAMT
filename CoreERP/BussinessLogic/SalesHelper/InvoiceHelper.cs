@@ -931,12 +931,14 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 {
                     var materialtype = repo.TblMaterialMaster.ToList();
                     var HSCCODE = repo.TblHsnsac.ToList();
+                    var unit = repo.TblUnit.ToList();
 
                     repo.TblInvoiceDetail.ToList()
                     .ForEach(c =>
                     {
-                        c.MaterialName = materialtype.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+                        c.MaterialName = materialtype.FirstOrDefault(z => z.MaterialCode == c.Bomkey)?.Description;
                         c.HsnNo = HSCCODE.FirstOrDefault(z => z.Code == c.HsnNo)?.Description;
+                        c.uom = unit.FirstOrDefault(z => Convert.ToString(z.UnitId) == c.uom)?.UnitName;
                     });
 
                     return repo.TblInvoiceDetail.Where(x => x.InvoiceNo == invoiceNo).ToList();
@@ -1053,11 +1055,15 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 {
                                     SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.Bomkey);
                                     materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.Bomkey);
+                                    invdtl.HsnNo = materialmaster.Hsnsac;
+                                    invdtl.uom = materialmaster.Uom;
                                 }
                                 else
                                 {
                                     SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.MaterialCode);
                                     materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.MaterialCode);
+                                    invdtl.HsnNo = materialmaster.Hsnsac;
+                                    invdtl.uom = materialmaster.Uom;
                                 }
                                 var inspection = repo.TblInspectionCheckDetails.FirstOrDefault(x => x.productionTag == invdtl.TagName);
                                 #region InvioceDetail

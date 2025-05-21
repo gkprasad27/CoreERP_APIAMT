@@ -1747,7 +1747,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             });
                             context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
                         }
-                        goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode).FirstOrDefault();
+                        if(item.Company == "2000")
+                        goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode ).FirstOrDefault();
+                        else
+                        goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode && g.BomNumber==item.BomKey).FirstOrDefault();
+
                         if (goodsissue != null)
                         {
                             if (!string.IsNullOrEmpty(item.WorkStatus))
