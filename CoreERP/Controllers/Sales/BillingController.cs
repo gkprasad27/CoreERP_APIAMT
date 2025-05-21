@@ -8,6 +8,7 @@ using CoreERP.Models;
 using Newtonsoft.Json.Linq;
 using CoreERP.Helpers.SharedModels;
 using Microsoft.Extensions.Configuration;
+using CoreERP.DataAccess;
 
 namespace CoreERP.Controllers
 {
@@ -495,13 +496,23 @@ namespace CoreERP.Controllers
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
             try
             {
+                dynamic expando = new ExpandoObject();
                 var invoiceMasterList = new InvoiceHelper().GetInvoiceMaster(invoiceNo);
                 if (invoiceMasterList != null)
                 {
-                    var invoiceDetailsList = new InvoiceHelper().GetInvoiceDetails(invoiceNo);
-                    dynamic expando = new ExpandoObject();
+                    if (invoiceMasterList.Company == "1000")
+                    {
+                        var invoiceDetailsList = new InvoiceHelper().GetInvoiceDetails(invoiceNo);
+                        expando.invoiceDetailsList = invoiceDetailsList;
+                    }
+                    else
+                    {
+                        var invoiceDetailsList1 = new InvoiceHelper().GetInvoiceDetailsAmrit(invoiceNo);
+                        expando.invoiceDetailsList = invoiceDetailsList1;
+                    }
+                        
                     expando.InvoiceMasterList = invoiceMasterList;
-                    expando.invoiceDetailsList = invoiceDetailsList;
+                    
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
 

@@ -41,13 +41,15 @@ namespace CoreERP.Controllers.masters
                     var Production = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == dispatch.SaleOrder);
                     var purchase = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder);
                     var Invoice = repo.TblInvoiceMaster.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder);
+                    var Invoice1 = repo.TblInvoiceMaster.Where(im => im.SaleOrderNo == dispatch.SaleOrder);
                     var InvoiceDetails = repo.TblInvoiceDetail.FirstOrDefault(im => im.Saleorder == dispatch.SaleOrder);
-                    var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder );
+                    var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder && im.Billable=="Y");
+                    var SaleOrderDetails1 = repo.TblSaleOrderDetail.Where(im => im.SaleOrderNo == dispatch.SaleOrder && im.Billable == "Y");
                     int sqty = 0;
                     int invqty = 0;
                     string message = null;
-                    sqty = SaleOrder.TotalQty;
-                    invqty =Convert.ToInt16(Invoice.InvoiceQty);
+                    sqty = SaleOrderDetails1.Sum(x=>x.QTY);
+                    invqty =Convert.ToInt16(Invoice1.Sum(x=>x.InvoiceQty));
                     if (sqty == invqty)
                         message = "Dispatched";
                     else

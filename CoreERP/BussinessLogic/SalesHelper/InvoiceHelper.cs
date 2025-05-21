@@ -950,6 +950,33 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
+        public List<TblInvoiceDetail> GetInvoiceDetailsAmrit(string invoiceNo)
+        {
+            try
+            {
+                using (Repository<TblInvoiceDetail> repo = new Repository<TblInvoiceDetail>())
+                {
+                    var materialtype = repo.TblMaterialMaster.ToList();
+                    var HSCCODE = repo.TblHsnsac.ToList();
+                    var unit = repo.TblUnit.ToList();
+
+                    repo.TblInvoiceDetail.ToList()
+                    .ForEach(c =>
+                    {
+                        c.MaterialName = materialtype.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+                        c.HsnNo = HSCCODE.FirstOrDefault(z => z.Code == c.HsnNo)?.Description;
+                        c.uom = unit.FirstOrDefault(z => Convert.ToString(z.UnitId) == c.uom)?.UnitName;
+                    });
+
+                    return repo.TblInvoiceDetail.Where(x => x.InvoiceNo == invoiceNo).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
 
 
         public List<TblInvoiceDetail> GetInvoiceDetailsbysaleorder(string saleorder)
