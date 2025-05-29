@@ -8,6 +8,7 @@ using CoreERP.BussinessLogic.ReportsHelpers;
 using System.Dynamic;
 using System.Data;
 using Microsoft.Build.Framework;
+using System.Web;
 
 namespace CoreERP.Controllers.Reports
 {
@@ -40,15 +41,15 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
-        [HttpGet("GetSalesGSTReport/{fromDate}/{toDate}/{company}")]
-        public async Task<IActionResult> GetSalesGSTReport(DateTime fromDate, DateTime toDate, string company)
+        [HttpGet("GetSalesGSTReport/{fromDate}/{toDate}/{company}/{customerCode}")]
+        public async Task<IActionResult> GetSalesGSTReport(DateTime fromDate, DateTime toDate, string company, string customerCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds = ReportsHelperClass.GetSalesGSTReport(fromDate, toDate, company);
+                    DataSet ds = ReportsHelperClass.GetSalesGSTReport(fromDate, toDate, company, customerCode);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.GSTSalesReport = ds.Tables[0];
@@ -65,15 +66,15 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
-        [HttpGet("GetPurchaseGSTReport/{fromDate}/{toDate}/{company}")]
-        public async Task<IActionResult> GetPurchaseGSTReport(DateTime fromDate, DateTime toDate, string company)
+        [HttpGet("GetPurchaseGSTReport/{fromDate}/{toDate}/{company}/{vendorCode}")]
+        public async Task<IActionResult> GetPurchaseGSTReport(DateTime fromDate, DateTime toDate, string company, string vendorCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds = ReportsHelperClass.GetPurchaseGSTReport(fromDate, toDate, company);
+                    DataSet ds = ReportsHelperClass.GetPurchaseGSTReport(fromDate, toDate, company, vendorCode);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.GSTPOReport = ds.Tables[0];
@@ -115,15 +116,18 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
-        [HttpGet("GetPurchaseReport/{fromDate}/{toDate}/{company}")]
-        public async Task<IActionResult> GetPurchaseReport(DateTime fromDate, DateTime toDate, string company)
+        [HttpGet("GetPurchaseReport/{fromDate}/{toDate}/{company}/{customerCode}/{MaterialCode}")]
+        public async Task<IActionResult> GetPurchaseReport(DateTime fromDate, DateTime toDate, string company,string customerCode, string MaterialCode)
         {
+            string code = MaterialCode.Replace(@"\r", string.Empty).Trim();
+            // Using HttpUtility.UrlDecode (requires System.Web)
+            string decodedString = HttpUtility.UrlDecode(code);
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds =  ReportsHelperClass.GetPurchaseReport(fromDate, toDate, company);
+                    DataSet ds =  ReportsHelperClass.GetPurchaseReport(fromDate, toDate, company, customerCode, decodedString);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.PurchaseReport = ds.Tables[0];
@@ -163,15 +167,18 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
-        [HttpGet("GetStockValuation/{company}")]
-        public async Task<IActionResult> GetStockValuation(string company)
+        [HttpGet("GetStockValuation/{company}/{materialCode}")]
+        public async Task<IActionResult> GetStockValuation(string company,string materialCode)
         {
+            string code = materialCode.Replace(@"\r", string.Empty).Trim();
+            // Using HttpUtility.UrlDecode (requires System.Web)
+            string decodedString = HttpUtility.UrlDecode(code);
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.StockReport = ReportsHelperClass.GetStockValuation(company);
+                    expando.StockReport = ReportsHelperClass.GetStockValuation(company, decodedString);
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
