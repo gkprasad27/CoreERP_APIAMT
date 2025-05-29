@@ -871,17 +871,20 @@ namespace CoreERP.Controllers.masters
         [HttpGet("GetQCissueDetail/{GSNumber}/{Materialcode}/{BomNumber}")]
         public async Task<IActionResult> GetQCissueDetail(string GSNumber, string Materialcode = null, string BomNumber=null)
         {
+            string code = Materialcode.Replace(@"\r", string.Empty).Trim();
+            // Using HttpUtility.UrlDecode (requires System.Web)
+            string decodedString = HttpUtility.UrlDecode(code);
             var result = await Task.Run(() =>
             {
                 try
                 {
                     var transactions = new TransactionsHelper();
-                    var tagsData = transactions.GetQcIssueMasterById(GSNumber, Materialcode, BomNumber);
+                    var tagsData = transactions.GetQcIssueMasterById(GSNumber, decodedString, BomNumber);
                     if (tagsData == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Production Not Completed." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.tagsData = tagsData;
-                    var tagsDetail = new TransactionsHelper().GetQcIssueDetails(GSNumber, Materialcode, BomNumber, tagsData.Company).Where(x => x.Status != "Rejected");
+                    var tagsDetail = new TransactionsHelper().GetQcIssueDetails(GSNumber, decodedString, BomNumber, tagsData.Company).Where(x => x.Status != "Rejected");
                     if (tagsDetail == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Production Not Completed." });
                     expdoObj.tagsDetail = tagsDetail;
@@ -2530,7 +2533,7 @@ namespace CoreERP.Controllers.masters
                     });
                 }
                 var filteredList = bpList
-                    .Where(x => (x.Status == "SO Created" || x.Status == "Partial PO Created") &&
+                    .Where(x => (x.Status != "Invoice Generated" && x.Status != "PO Created" && x.Status != "Dispatched") &&
                                 x.Company == saleOrderMasters.Company)
                     .ToList();
                 dynamic expandoObj = new ExpandoObject();
