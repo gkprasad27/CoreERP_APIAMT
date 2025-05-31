@@ -410,7 +410,7 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             else return null;
         }
 
-        public static DataSet GetPendingSales(string company)
+        public static DataSet GetPendingSales(string company,string CustomerCode)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -422,14 +422,20 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             companyid.Direction = ParameterDirection.Input;
             companyid.Value = (object)company ?? DBNull.Value;
             companyid.ParameterName = "compcode";
+
+            DbParameter customerParam = command.CreateParameter();
+            customerParam.Direction = ParameterDirection.Input;
+            customerParam.Value = (object)CustomerCode ?? DBNull.Value;
+            customerParam.ParameterName = "CustomerCode";
             #endregion
             // Add parameter as specified in the store procedure
 
             command.Parameters.Add(companyid);
+            command.Parameters.Add(customerParam);
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
 
-        public static DataSet GetPendingJO(string company)
+        public static DataSet GetPendingJO(string company,string vendorCode)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -441,13 +447,19 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             companyid.Direction = ParameterDirection.Input;
             companyid.Value = (object)company ?? DBNull.Value;
             companyid.ParameterName = "compcode";
+
+            DbParameter vendorParam = command.CreateParameter();
+            vendorParam.Direction = ParameterDirection.Input;
+            vendorParam.Value = (object)vendorCode ?? DBNull.Value;
+            vendorParam.ParameterName = "VendorCode";
             #endregion
             // Add parameter as specified in the store procedure
 
             command.Parameters.Add(companyid);
+            command.Parameters.Add(vendorParam);
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
-        public static DataSet GetPendingPOs(string company)
+        public static DataSet GetPendingPOs(string company, string vendorCode)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
             using DbCommand command = scopeRepository.CreateCommand();
@@ -459,10 +471,16 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             companyid.Direction = ParameterDirection.Input;
             companyid.Value = (object)company ?? DBNull.Value;
             companyid.ParameterName = "compcode";
+
+            DbParameter vendorParam = command.CreateParameter();
+            vendorParam.Direction = ParameterDirection.Input;
+            vendorParam.Value = (object)vendorCode ?? DBNull.Value;
+            vendorParam.ParameterName = "VendorCode";
             #endregion
             // Add parameter as specified in the store procedure
 
             command.Parameters.Add(companyid);
+            command.Parameters.Add(vendorParam);
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
 

@@ -190,15 +190,15 @@ namespace CoreERP.Controllers.Reports
         }
 
 
-        [HttpGet("GetPendingSales/{company}")]
-        public async Task<IActionResult> GetPendingSales(string company)
+        [HttpGet("GetPendingSales/{company}/{CustomerCode}")]
+        public async Task<IActionResult> GetPendingSales(string company, string CustomerCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds = ReportsHelperClass.GetPendingSales(company);
+                    DataSet ds = ReportsHelperClass.GetPendingSales(company, CustomerCode);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.PendingSOReport = ds.Tables[0];
@@ -215,15 +215,15 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
-        [HttpGet("GetPendingJO/{company}")]
-        public async Task<IActionResult> GetPendingJO(string company)
+        [HttpGet("GetPendingJO/{company}/{vendorCode}")]
+        public async Task<IActionResult> GetPendingJO(string company,string vendorCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds = ReportsHelperClass.GetPendingJO(company);
+                    DataSet ds = ReportsHelperClass.GetPendingJO(company,vendorCode);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.PendingJOReport = ds.Tables[0];
@@ -240,15 +240,15 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
-        [HttpGet("GetPendingPOs/{company}")]
-        public async Task<IActionResult> GetPendingPOs(string company)
+        [HttpGet("GetPendingPOs/{company}/{vendorCode}")]
+        public async Task<IActionResult> GetPendingPOs(string company, string vendorCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds = ReportsHelperClass.GetPendingPOs(company);
+                    DataSet ds = ReportsHelperClass.GetPendingPOs(company, vendorCode);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.PendingPOReport = ds.Tables[0];
