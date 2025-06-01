@@ -1414,7 +1414,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 foreach (var item in gibDetails)
                 {
-                    var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
+                    var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomKey==item.BomNumber);
                     var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
                     if (item.BomNumber == null || item.BomNumber == "0" || string.IsNullOrEmpty(item.BomNumber) || string.IsNullOrWhiteSpace(item.BomNumber))
                         item.BomNumber = sodata.BomKey;
@@ -1615,9 +1615,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 foreach (var item in GIDetails)
                 {
 
-                    GID = context.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
+                    GID = context.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomNumber==item.BomNumber);
                     GID.ApprovalStatus = "Approved";
-                    PID = context.TblProductionDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
+                    PID = context.TblProductionDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomKey == item.BomNumber);
                     PID.ApprovalStatus = "Approved";
                 }
 
