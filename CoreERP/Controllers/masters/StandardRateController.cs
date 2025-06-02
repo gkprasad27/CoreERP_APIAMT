@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using CoreERP.BussinessLogic.GenerlLedger;
 using CoreERP.Helpers.SharedModels;
+using System.Web;
 
 namespace CoreERP.Controllers.masters
 {
@@ -107,16 +108,19 @@ namespace CoreERP.Controllers.masters
         [HttpGet("GetQCConfigDetail/{code}")]
         public async Task<IActionResult> GetSaleOrderDetail(string code)
         {
+            string materialcode = code.Replace(@"\r", string.Empty).Trim();
+            // Using HttpUtility.UrlDecode (requires System.Web)
+            string decodedString = HttpUtility.UrlDecode(materialcode);
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    var ConfigDetail = GetQCMastersById(code);
+                    var ConfigDetail = GetQCMastersById(decodedString);
                     if (ConfigDetail == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.QCConfigDetailMaster = ConfigDetail;
-                    expdoObj.QCConfigDetail = GetQCDetails(code);
+                    expdoObj.QCConfigDetail = GetQCDetails(decodedString);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
