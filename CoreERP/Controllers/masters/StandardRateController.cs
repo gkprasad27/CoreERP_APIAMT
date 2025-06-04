@@ -135,6 +135,9 @@ namespace CoreERP.Controllers.masters
         [HttpGet("GetSaleOrderDetailbymaterialcode/{materialcode}/{tagname}/{type}/{bomkey}/{companyCode}")]
         public async Task<IActionResult> GetSaleOrderDetailbymaterialcode(string materialcode,string tagname, string type,string bomkey, string companyCode)
         {
+            string code = materialcode.Replace(@"\r", string.Empty).Trim();
+            // Using HttpUtility.UrlDecode (requires System.Web)
+            string decodedString = HttpUtility.UrlDecode(code);
             var result = await Task.Run(() =>
             {
                 try
@@ -146,7 +149,7 @@ namespace CoreERP.Controllers.masters
                         var tagsData = GetQCResult(tagname, type);
                         if (tagsData.Count == 0)
                         {
-                            var tagsData1 = GetQCDetailManufacturing(materialcode);
+                            var tagsData1 = GetQCDetailManufacturing(decodedString);
                             expdoObj.QCConfigDetail = tagsData1;
                         }
                         else
@@ -154,10 +157,10 @@ namespace CoreERP.Controllers.masters
                     }
                     else
                     {
-                        var tagsData = GetQCResult(materialcode, tagname, type);
+                        var tagsData = GetQCResult(decodedString, tagname, type);
                         if (tagsData.Count == 0)
                         {
-                            var tagsData1 = GetQCDetail(materialcode);
+                            var tagsData1 = GetQCDetail(decodedString);
                             expdoObj.QCConfigDetail = tagsData1;
                         }
                         else
