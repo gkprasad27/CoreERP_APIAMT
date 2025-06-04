@@ -276,6 +276,10 @@ namespace CoreERP.Models
         public virtual DbSet<VehicleRequisition> VehicleRequisition { get; set; }
         public virtual DbSet<TblSaleOrderMaster> TblSaleOrderMaster { get; set; }
         public virtual DbSet<AttendanceData> AttendanceData { get; set; }
+
+        public virtual DbSet<TblMaterialIssueMaster> TblMaterialIssueMaster { get; set; }
+
+        public virtual DbSet<TblMaterialIssueDetails> TblMaterialIssueDetails { get; set; }
         public virtual DbSet<tblJobworkMaster> tblJobworkMaster { get; set; }
         public virtual DbSet<tblJobworkDetails> tblJobworkDetails { get; set; }
         public virtual DbSet<tblJWReceiptDetails> tblJWReceiptDetails { get; set; }
@@ -291,7 +295,7 @@ namespace CoreERP.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server = 103.67.238.235,7912; Database = ERP; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
+                optionsBuilder.UseSqlServer("Server = 103.67.238.235,7912; Database = ERP_AMT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
             }
         }
 
@@ -8616,6 +8620,49 @@ namespace CoreERP.Models
                 entity.Property(e => e.CreatedDate);
                 entity.Property(e => e.CreatedBy);
                 entity.Property(e => e.ProfitCenter);
+            });
+
+            modelBuilder.Entity<TblMaterialIssueMaster>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.MaterialIssueId)
+                .HasMaxLength(50).IsUnicode(false);
+
+                entity.Property(e => e.Company);
+
+                entity.Property(e => e.IssuedFrom)
+                    .HasMaxLength(50).IsUnicode(false);
+
+                entity.Property(e => e.IssuedTo);
+
+                entity.Property(e => e.IssuedDate);
+
+                entity.Property(e => e.Narration)
+                    .HasMaxLength(500).IsUnicode(false);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50);
+               
+            });
+
+            modelBuilder.Entity<TblMaterialIssueDetails>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+
+                entity.Property(e => e.MaterialIssueId)
+                .HasMaxLength(50).IsUnicode(false);
+
+                entity.Property(e => e.MaterialCode);
+
+                entity.Property(e => e.MaterialName)
+                    .HasMaxLength(50).IsUnicode(false);
+
+                entity.Property(e => e.Qty);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50);
+
             });
 
             modelBuilder.Entity<AttendanceData>(entity =>
