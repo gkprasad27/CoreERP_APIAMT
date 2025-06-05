@@ -1730,10 +1730,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                         if (InspectionCheckDetails.Count == 0)
                         {
-                            if (item.Company == "2000")
-                                NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.BomKey, BomName = item.BomName });
-                            else
+                            var SaleOrderDetail1 = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode==item.MaterialCode && im.BomKey==item.BomKey);
+                            if (item.Company == "1000" && SaleOrderDetail1.Billable=="Y")
+                            {
                                 NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.BomKey, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.MaterialCode, BomName = item.BomName });
+                            }
+                            else
+                                NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.BomKey, BomName = item.BomName });
                         }
                         else
                         {
