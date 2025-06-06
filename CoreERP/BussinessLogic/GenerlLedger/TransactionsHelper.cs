@@ -1604,10 +1604,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     var GIM = context.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == gimaster.SaleOrderNumber);
                     tblProduction = context.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == gimaster.SaleOrderNumber);
                     GIM.ApprovalStatus = "Approved";
-                    GIM.Company = gimaster.Company;
                     context.TblGoodsIssueMaster.Update(GIM);
                     tblProduction.ApprovalStatus = "Approved";
-                    tblProduction.Company = gimaster.Company;
                     context.TblProductionMaster.Update(tblProduction);
                     context.SaveChanges();
                 }
@@ -1619,10 +1617,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     GID = context.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomNumber==item.BomNumber);
                     GID.ApprovalStatus = "Approved";
-                    PID.Company = gimaster.Company;
                     PID = context.TblProductionDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomKey == item.BomNumber);
                     PID.ApprovalStatus = "Approved";
-                    PID.Company = gimaster.Company;
                 }
 
                 context.TblProductionDetails.UpdateRange(PID);
@@ -1739,7 +1735,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             {
                                 NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.BomKey, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.MaterialCode, BomName = item.BomName });
                             }
-                            else if (item.Company == "2000")
+                            else if(item.Company=="2000")
                                 NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.BomKey, BomName = item.BomName });
                         }
                         else
