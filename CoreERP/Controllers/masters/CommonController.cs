@@ -584,7 +584,7 @@ namespace CoreERP.Controllers
                     dynamic expando = new ExpandoObject();
                     var saleOrderMasterList = CommonHelper.GetSaleOrderMastersById(saleorderno);
                     var vouchertypeList = CommonHelper.GetsaleOrdernoList(saleorderno);
-                    expando.saleordernoList = vouchertypeList;
+                    expando.saleordernoList = vouchertypeList.Where(x=>x.Billable=="Y");
                     expando.saleOrderMasterList = saleOrderMasterList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
