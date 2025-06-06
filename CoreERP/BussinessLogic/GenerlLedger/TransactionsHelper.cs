@@ -1414,6 +1414,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 foreach (var item in gibDetails)
                 {
+                    item.ApprovalStatus = "Pending Approval";
                     var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomKey==item.BomNumber);
                     var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
                     if (item.BomNumber == null || item.BomNumber == "0" || string.IsNullOrEmpty(item.BomNumber) || string.IsNullOrWhiteSpace(item.BomNumber))
@@ -1432,7 +1433,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName });
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName , ApprovalStatus="Pending Approval",Company="1000"});
                                 tagnum = tagnum + 1;
                             }
                         }
@@ -1467,7 +1468,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                                 for (var i = 0; i < qty; i++)
                                 {
-                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company });
+                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company , ApprovalStatus = "Pending Approval" });
                                     tagnum = tagnum + 1;
                                 }
                             }
@@ -1478,7 +1479,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             //tagnum = tagnum + 1;
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company });
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company , ApprovalStatus = "Pending Approval" });
                                 tagnum = tagnum + 1;
                             }
                         }
@@ -1517,7 +1518,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, Company = sodata.Company });
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, Company = sodata.Company , ApprovalStatus = "Pending Approval" });
                                 tagnum = tagnum + 1;
                             }
                         }
@@ -1537,7 +1538,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         else
                             throw new Exception("Material Code not Available" + item.MaterialCode);
                     }
-
+                    item.ApprovalStatus = "Pending Approval";
                     sodata.Status = message;
                     context.TblSaleOrderDetail.UpdateRange(sodata);
                 }
@@ -1614,7 +1615,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 foreach (var item in GIDetails)
                 {
-
+                    item.ApprovalStatus = "Approved";
                     GID = context.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomNumber==item.BomNumber);
                     GID.ApprovalStatus = "Approved";
                     PID = context.TblProductionDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomKey == item.BomNumber);
@@ -1722,6 +1723,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     foreach (var item in prodDetails)
                     {
+                        item.ApprovalStatus = "Approved";
                         var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
 
                         item.Status = item.WorkStatus;
@@ -3964,6 +3966,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                     }
                     grdata.ApprovalStatus = "Pending Approval";
+                    grdata.Company = saleorder.Company;
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
                 else if (totalqty < poqty)
@@ -3989,6 +3992,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     grdata.ApprovalStatus = "Pending Approval";
                     grdata.Status = statusmessage;
+                    grdata.Company = saleorder.Company;
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
                 foreach (var item in grdetails)
@@ -4143,6 +4147,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                     grdata.Id = totalamount.Id;
                     grdata.ApprovalStatus = "Pending Approval";
+                    grdata.Company = saleorder.Company;
                     context.TblGoodsReceiptMaster.Update(grdata);
                 }
                 else
@@ -4559,7 +4564,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     context.TblGoodsIssueDetails.UpdateRange(gidetail);
                 });
-
+                production.ApprovalStatus = "Approved";
                 context.TblProductionDetails.UpdateRange(production);
 
 
