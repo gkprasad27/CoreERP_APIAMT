@@ -160,6 +160,10 @@ namespace CoreERP.Models
         public int? AvailableQTY { get; set; }
         [NotMapped]
         public int? poQty { get; set; }
+        [NotMapped]
+        public string? Uom { get; set; }
+        [NotMapped]
+        public string? UomCode { get; set; }
 
 
 
