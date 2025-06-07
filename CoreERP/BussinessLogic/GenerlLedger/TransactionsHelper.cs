@@ -4827,7 +4827,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                               && Convert.ToString(x.SaleOrderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleOrderNo))
                               && Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                               && Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString()) && x.Status != "Dispatched";
                 }).OrderByDescending(x => x.Id)
                 .ToList();
             }
