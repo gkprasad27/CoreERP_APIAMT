@@ -2375,7 +2375,7 @@ namespace CoreERP.Controllers.masters
                     if (!saleOrderMaster.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Sale Order." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.saleOrderMaster = saleOrderMaster.Where(x => x.Status != "Dispatched"); ;
+                    expdoObj.saleOrderMaster = saleOrderMaster ;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
