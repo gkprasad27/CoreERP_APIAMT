@@ -28,6 +28,7 @@ namespace CoreERP.Models
         public DateTime? EditDate { get; set; }
         public string? VendorGSTN { get; set; }
         public string? InvoiceNumber { get; set; }
-
+        public string? InvoiceURL { get; set; }
+        public string? DocumentURL { get; set; }
     }
 }

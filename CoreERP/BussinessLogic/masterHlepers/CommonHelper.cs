@@ -628,18 +628,32 @@ namespace CoreERP
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<tblQCMaster>();
-
-            return repo.tblQCMaster.AsEnumerable()
+            if (searchCriteria.InvoiceNo != null)
+            {
+                return repo.tblQCMaster.AsEnumerable()
                 .Where(x =>
                 {
 
                     // Debug.Assert(x.CreatedDate != null, "x.AddDate != null");
                     return Convert.ToString(x.MaterialCode) != null
-                              && Convert.ToString(x.MaterialCode).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.MaterialCode))
-                              && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                              && Convert.ToDateTime(x.EditDate.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                              && x.MaterialCode.ToString().Contains(searchCriteria.searchCriteria ?? x.MaterialCode.ToString());
                 }).OrderByDescending(x => x.AddDate)
                 .ToList();
+            }
+            else
+            {
+                return repo.tblQCMaster.AsEnumerable()
+                    .Where(x =>
+                    {
+
+                        // Debug.Assert(x.CreatedDate != null, "x.AddDate != null");
+                        return Convert.ToString(x.MaterialCode) != null
+                                  && Convert.ToString(x.MaterialCode).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.MaterialCode))
+                                  && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                                  && Convert.ToDateTime(x.EditDate.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
+                    }).OrderByDescending(x => x.AddDate)
+                    .ToList();
+            }
         }
 
         public static IEnumerable<TblCostingnumberAssigntoObject> GetCostingnumberAssigntoObject()

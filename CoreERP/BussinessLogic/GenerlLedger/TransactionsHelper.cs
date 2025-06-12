@@ -3971,7 +3971,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                     }
                     grdata.ApprovalStatus = "Pending Approval";
-                    grdata.Company = saleorder.Company;
+                    //grdata.Company = saleorder.Company;
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
                 else if (totalqty < poqty)
