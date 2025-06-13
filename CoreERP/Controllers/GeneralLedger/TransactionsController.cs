@@ -694,7 +694,7 @@ namespace CoreERP.Controllers.masters
                     if (!Productionissue.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Productionissue." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.Productionissue = Productionissue.Where(x => x.Status != "Dispatched" && x.ApprovalStatus=="Approved");
+                    expdoObj.Productionissue = Productionissue.Where(x => x.Status != "Dispatched" && x.ApprovalStatus == "Approved");
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -869,7 +869,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpGet("GetQCissueDetail/{GSNumber}/{Materialcode}/{BomNumber}")]
-        public async Task<IActionResult> GetQCissueDetail(string GSNumber, string Materialcode = null, string BomNumber=null)
+        public async Task<IActionResult> GetQCissueDetail(string GSNumber, string Materialcode = null, string BomNumber = null)
         {
             string code = Materialcode.Replace(@"\r", string.Empty).Trim();
             // Using HttpUtility.UrlDecode (requires System.Web)
@@ -880,7 +880,7 @@ namespace CoreERP.Controllers.masters
                 {
                     var transactions = new TransactionsHelper();
                     var tagsData = transactions.GetQcIssueMasterById(GSNumber, decodedString, BomNumber);
-                    if (tagsData.Company != "1000")
+                    if ((tagsData!=null) && (tagsData.Company != "1000"))
                     {
                         tagsData = transactions.GetQcIssueMasterByIdAmrit(GSNumber, decodedString, BomNumber);
                     }
@@ -933,7 +933,7 @@ namespace CoreERP.Controllers.masters
                         else
                             return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "QC Check Not Completed. Please complete QC." });
                     }
-                    expdoObj.InspectionCheck = new TransactionsHelper().GetInpectionCheckMasterById(Bomkey,SaleorderNumber, Materialcode);
+                    expdoObj.InspectionCheck = new TransactionsHelper().GetInpectionCheckMasterById(Bomkey, SaleorderNumber, Materialcode);
                     if (tagsData.Company == "2000")
                         expdoObj.InspectionCheck = new TransactionsHelper().GetInpectionCheckMasterByIdAmrit(Bomkey, SaleorderNumber, Materialcode);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
@@ -2208,7 +2208,7 @@ namespace CoreERP.Controllers.masters
 
 
         [HttpGet("GetInspectionDetail/{BomNumber}/{Saleorder}/{MaterialCode}")]
-        public async Task<IActionResult> GetInspectionDetail(string BomNumber,string Saleorder, string MaterialCode)
+        public async Task<IActionResult> GetInspectionDetail(string BomNumber, string Saleorder, string MaterialCode)
         {
             var result = await Task.Run(() =>
             {
@@ -2216,7 +2216,7 @@ namespace CoreERP.Controllers.masters
                 {
                     var transactions = new TransactionsHelper();
                     var iclist = transactions.GetInpectionCheckMasterById(BomNumber, Saleorder, MaterialCode);
-                    if(iclist.Company != "1000")
+                    if ((iclist != null) && (iclist.Company != "1000"))
                     {
                         iclist = transactions.GetInpectionCheckMasterByIdAmrit(BomNumber, Saleorder, MaterialCode);
                     }
@@ -2385,7 +2385,7 @@ namespace CoreERP.Controllers.masters
                     if (!saleOrderMaster.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Sale Order." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.saleOrderMaster = saleOrderMaster ;
+                    expdoObj.saleOrderMaster = saleOrderMaster;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }

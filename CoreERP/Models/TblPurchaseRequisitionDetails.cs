@@ -36,5 +36,6 @@ namespace CoreERP.Models
         public decimal? Total { get; set; }
         public int? POQty { get; set; }
         public string? Company { get; set; }
+        public string? hsnsac { get; set; }
     }
 }

@@ -937,6 +937,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblMaterialRequisitionDetails> GetMaterialRequisitionDetails(string reqno)
         {
             using var repo = new Repository<TblMaterialRequisitionDetails>();
+           
             return repo.TblMaterialRequisitionDetails.Where(cd => cd.RequisitionNumber == reqno).ToList();
         }
 
@@ -1434,7 +1435,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     if (sodata != null && sodata.MainComponent == "Y" && sodata.Company == "1000")
                     {
-                        var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
+                        var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomNumber ==item.BomNumber);
                         
                         if (qty > 0)
                         {
@@ -1448,7 +1449,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             item.Id = GID.Id;
                             if (item.AllocatedQTY > 0)
-                                receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode).Sum(a => a.AllocatedQTY));
+                                receivedqty = Convert.ToInt16(repogidetail.TblGoodsIssueDetails.Where(y => y.SaleOrderNumber == gimaster.SaleOrderNumber && y.MaterialCode == item.MaterialCode && y.BomNumber == item.BomNumber).Sum(a => a.AllocatedQTY));
                         }
                         item.AllocatedQTY = (item.AllocatedQTY) + (receivedqty);
                         if (materialmaster != null)
@@ -1529,7 +1530,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 tagnum = tagnum + 1;
                             }
                         }
-                        var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
+                        var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomNumber == item.BomNumber);
                         if (GID != null)
                         {
                             if (item.AllocatedQTY > 0)
@@ -2482,7 +2483,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblPurchaseRequisitionDetails>();
 
-            return repo.TblPurchaseRequisitionDetails.Where(cd => cd.PurchaseRequisitionNumber == number).ToList();
+            var result = repo.TblPurchaseRequisitionDetails.Where(cd => cd.PurchaseRequisitionNumber == number).ToList();
+            var hsn = repo.TblMaterialMaster.ToList();
+
+            result
+                .ForEach(c =>
+                {
+                    c.hsnsac = hsn.FirstOrDefault(l => l.MaterialCode == c.MaterialCode).Hsnsac;
+                });
+
+            return result.ToList();
+
+            
+            //return repo.TblPurchaseRequisitionDetails.Where(cd => cd.PurchaseRequisitionNumber == number).ToList();
         }
 
         public bool ReturnPurchaseRequisition(string RequisitionNumber)
@@ -3080,15 +3093,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             sodata.POQty = 0;
                     }
 
-                    if (Msodata == null)
-                    {
-                        Msodata.POQty = 0;
-                    }
-                    else
-                    {
-                        if (Msodata.POQty == null)
-                            Msodata.POQty = 0;
-                    }
+                    //if (Msodata == null)
+                    //{
+                    //    Msodata.POQty = 0;
+                    //}
+                    //else
+                    //{
+                    //    if (Msodata.POQty == null)
+                    //        Msodata.POQty = 0;
+                    //}
                     //if (sodatacheck != null)
                     //{
                     //    int qtyexistcheck = sodatacheck.Sum(x => x.Qty);
@@ -4518,7 +4531,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     else
                     {
                         sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == x.saleOrderNumber && im.MaterialCode == x.BomKey);
-                        gidetail = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == x.saleOrderNumber && im.MaterialCode == x.BomKey);
+                        gidetail = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == x.saleOrderNumber && im.BomNumber == x.MaterialCode && im.MaterialCode==x.BomKey);
                         if (MaterialMaster != null)
                             x.DrawingRevNo = MaterialMaster.DragRevNo;
                             x.PartDrgNo = MaterialMaster.PartDragNo;
@@ -4645,7 +4658,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                });
 
             return repo.TblInspectionCheckMaster
-                .FirstOrDefault(x => x.MaterialCode == materialcode && x.saleOrderNumber == saleorder);
+                .FirstOrDefault(x => x.BomKey == bomkey && x.saleOrderNumber == saleorder);
         }
 
         public TblInspectionCheckMaster GetInpectionCheckMasterByIdAmrit(string bomkey, string saleorder, string materialcode)
@@ -5080,7 +5093,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblSaleOrderDetail>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
-
             repo.TblSaleOrderDetail.ToList().ForEach(c =>
             {
                 c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);

@@ -20,6 +20,7 @@ namespace CoreERP.Models
 
 
     }
+
     partial class TblCAPA
     {
         [NotMapped]
