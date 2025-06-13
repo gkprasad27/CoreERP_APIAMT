@@ -880,6 +880,10 @@ namespace CoreERP.Controllers.masters
                 {
                     var transactions = new TransactionsHelper();
                     var tagsData = transactions.GetQcIssueMasterById(GSNumber, decodedString, BomNumber);
+                    if (tagsData.Company != "1000")
+                    {
+                        tagsData = transactions.GetQcIssueMasterByIdAmrit(GSNumber, decodedString, BomNumber);
+                    }
                     if (tagsData == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Production Not Completed." });
                     dynamic expdoObj = new ExpandoObject();
@@ -929,7 +933,9 @@ namespace CoreERP.Controllers.masters
                         else
                             return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "QC Check Not Completed. Please complete QC." });
                     }
-                    expdoObj.InsoectionCheck = new TransactionsHelper().GetInpectionCheckMasterById(Materialcode, SaleorderNumber);
+                    expdoObj.InspectionCheck = new TransactionsHelper().GetInpectionCheckMasterById(Bomkey,SaleorderNumber, Materialcode);
+                    if (tagsData.Company == "2000")
+                        expdoObj.InspectionCheck = new TransactionsHelper().GetInpectionCheckMasterByIdAmrit(Bomkey, SaleorderNumber, Materialcode);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -2201,15 +2207,19 @@ namespace CoreERP.Controllers.masters
         }
 
 
-        [HttpGet("GetInspectionDetail/{MaterialCode}/{Saleorder}")]
-        public async Task<IActionResult> GetInspectionDetail(string MaterialCode, string Saleorder)
+        [HttpGet("GetInspectionDetail/{BomNumber}/{Saleorder}/{MaterialCode}")]
+        public async Task<IActionResult> GetInspectionDetail(string BomNumber,string Saleorder, string MaterialCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     var transactions = new TransactionsHelper();
-                    var iclist = transactions.GetInpectionCheckMasterById(MaterialCode, Saleorder);
+                    var iclist = transactions.GetInpectionCheckMasterById(BomNumber, Saleorder, MaterialCode);
+                    if(iclist.Company != "1000")
+                    {
+                        iclist = transactions.GetInpectionCheckMasterByIdAmrit(BomNumber, Saleorder, MaterialCode);
+                    }
                     if (iclist == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();

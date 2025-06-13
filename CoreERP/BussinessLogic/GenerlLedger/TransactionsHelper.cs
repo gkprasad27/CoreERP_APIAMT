@@ -1096,6 +1096,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.saleOrderNumber == GoodsIssueId && x.BomKey == BomNumber );
         }
 
+        public TblInspectionCheckMaster GetQcIssueMasterByIdAmrit(string GoodsIssueId, string Materialcode, string BomNumber)
+        {
+            using var repo = new Repository<TblInspectionCheckMaster>();
+            return repo.TblInspectionCheckMaster
+                .FirstOrDefault(x => x.saleOrderNumber == GoodsIssueId && x.MaterialCode == Materialcode);
+        }
+
         public List<TblGoodsIssueDetails> GetGoodsIssueDetails(string GoodsIssueId)
         {
             using var repo = new Repository<TblGoodsIssueDetails>();
@@ -4441,7 +4448,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
 
                 if (icdata.Company == "2000")
-                    Materialcode = icdetails.FirstOrDefault().BomKey;
+                    Materialcode = icdetails.FirstOrDefault().MaterialCode;
 
                 if (repo.TblInspectionCheckMaster.Any(v => v.InspectionCheckNo == icdata.InspectionCheckNo && v.MaterialCode == Materialcode))
                 {
@@ -4625,7 +4632,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.InspectionCheckNo == id);
         }
 
-        public TblInspectionCheckMaster GetInpectionCheckMasterById(string materialcode, string saleorder)
+        public TblInspectionCheckMaster GetInpectionCheckMasterById(string bomkey,string saleorder, string materialcode)
+        {
+            using var repo = new Repository<TblInspectionCheckMaster>();
+            var MaterialCodes = repo.TblMaterialMaster.ToList();
+
+            repo.TblInspectionCheckMaster.ToList()
+               .ForEach(c =>
+               {
+                   c.FilePath = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.FileUpload;
+
+               });
+
+            return repo.TblInspectionCheckMaster
+                .FirstOrDefault(x => x.MaterialCode == materialcode && x.saleOrderNumber == saleorder);
+        }
+
+        public TblInspectionCheckMaster GetInpectionCheckMasterByIdAmrit(string bomkey, string saleorder, string materialcode)
         {
             using var repo = new Repository<TblInspectionCheckMaster>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
