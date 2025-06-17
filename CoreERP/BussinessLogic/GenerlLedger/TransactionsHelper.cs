@@ -1668,11 +1668,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 //string material = prodDetails.FirstOrDefault().MaterialCode;
                 var SaleOrderDetail = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault();
-                var InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == prodDetails.FirstOrDefault().BomKey).FirstOrDefault();
+                
                 var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var goodsreceipt = repo.TblGoodsReceiptDetails.FirstOrDefault(im => im.MaterialCode == prodDetails.FirstOrDefault().MaterialCode);
                 var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "QC" && x.CompCode == SaleOrder.Company);
+                var InspectionMaster = new TblInspectionCheckMaster();
 
                 using var dbtrans = context.Database.BeginTransaction();
 
@@ -1685,6 +1686,15 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     message = "Production Started";
                 else
                     message = "Partially Production Started";
+
+                if (SaleOrder.Company=="1000")
+                {
+                    InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == prodDetails.FirstOrDefault().BomKey).FirstOrDefault();
+                }
+                else if (SaleOrder.Company != "1000")
+                {
+                    InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == prodDetails.FirstOrDefault().MaterialCode).FirstOrDefault();
+                }
 
                 try
                 {
@@ -1716,7 +1726,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             InspectionCheckMaster.HeatNumber = goodsreceipt.HeatNumber;
                         InspectionCheckMaster.InspectionCheckNo = masternumber;
                         InspectionCheckMaster.saleOrderNumber = saleordernumber;
-                        InspectionCheckMaster.MaterialCode = prodDetails.FirstOrDefault().BomKey;
+                        if (SaleOrder.Company == "2000")
+                        {
+                            InspectionCheckMaster.MaterialCode = prodDetails.FirstOrDefault().MaterialCode;
+                        }
+                        else if (SaleOrder.Company != "2000")
+                        {
+                            InspectionCheckMaster.MaterialCode = prodDetails.FirstOrDefault().BomKey;
+                        }
                         InspectionCheckMaster.BomKey = prodDetails.FirstOrDefault().BomKey;
                         InspectionCheckMaster.Company = SaleOrder.Company;
                         InspectionCheckMaster.completionDate = System.DateTime.Now;
