@@ -12,6 +12,11 @@ namespace CoreERP.Models
 
     }
 
+    partial class TblGoodsIssueDetails
+    {
+        [NotMapped]
+        public string DrawingNo { get; set; }
+    }
 
     partial class TblSupplierQuotationDetails
     {

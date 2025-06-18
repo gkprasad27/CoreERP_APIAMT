@@ -1169,6 +1169,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             repo.TblGoodsIssueDetails.ToList().ForEach(c =>
             {
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+                c.DrawingNo = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.PartDragNo;
             });
             return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.ApprovalStatus == "Approved").ToList();
 

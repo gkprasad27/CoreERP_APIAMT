@@ -305,7 +305,7 @@ namespace CoreERP.Controllers
                     dynamic expando = new ExpandoObject();
 
                     var BPList =CommonHelper.GetSaleOrderApprovedData();
-                    expando.BPList = BPList.Where(x => ((x.Status != "Invoice Generated" || x.Status != "Dispatched" )) && (x.Company == CompanyCode)).Select(x => new { saleOrderNo = x.SaleOrderNo });
+                    expando.BPList = BPList.Where(x => ((x.Status == "SO Created" || x.Status == "PO Created" || x.Status == "Partial PO Created" || x.Status == "Material Received" || x.Status == "Material Partial Received")) && (x.Company == CompanyCode)).Select(x => new { saleOrderNo = x.SaleOrderNo });
 
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
@@ -460,14 +460,14 @@ namespace CoreERP.Controllers
 
 
         [HttpGet("GetAuthentication")]
-        public async Task<IActionResult> GetAuthentication()
+        public async Task<IActionResult> GetAuthentication([FromQuery] string company)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    var vouchertypeList = CommonHelper.GetAuthentication();
+                    var vouchertypeList = CommonHelper.GetAuthentication(company);
                     expando.purchaseordernoList = vouchertypeList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
