@@ -1051,20 +1051,36 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
                     c.CustomerName = businesspartner.FirstOrDefault(p => p.Bpnumber == c.CustomerCode).Name;
                 });
-            return repo.TblProductionMaster.AsEnumerable()
-                .Where(x =>
-                {
 
-                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
-                    return Convert.ToString(x.ID) != null
-                              && Convert.ToString(x.ID).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.ID))
-                              && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                              && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
-                }).OrderByDescending(x => x.ID)
-                .ToList();
+            if (searchCriteria.InvoiceNo != null)
+            {
+                return repo.TblProductionMaster.AsEnumerable()
+                    .Where(x =>
+                    {
 
+                        //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                        return Convert.ToString(x.SaleOrderNumber) != null
+                                  && Convert.ToString(x.SaleOrderNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleOrderNumber))
+                                   && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                    }).OrderByDescending(x => x.ID)
+                    .ToList();
+            }
+            else
+            {
+                return repo.TblProductionMaster.AsEnumerable()
+                    .Where(x =>
+                    {
 
+                        //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                        return Convert.ToString(x.ID) != null
+                                  && Convert.ToString(x.ID).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.ID))
+                                  && Convert.ToDateTime(x.AddDate) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                                  && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                                   && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                    }).OrderByDescending(x => x.ID)
+                    .ToList();
+
+            }
         }
 
         public TblGoodsIssueMaster GetGoodsIssueMasterById(string GoodsIssueId)

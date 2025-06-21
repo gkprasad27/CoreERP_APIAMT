@@ -670,7 +670,8 @@ namespace CoreERP.Controllers.masters
                     if (!Goodsissue.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for GoodsIssue." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.Goodsissue = Goodsissue.Where(x => x.Status != "Dispatched").OrderByDescending(x => x.GoodsIssueId);
+                    expdoObj.Goodsissue= Goodsissue.OrderByDescending(x => x.GoodsIssueId);
+                    //expdoObj.Goodsissue = Goodsissue.Where(x => x.Status != "Dispatched").OrderByDescending(x => x.GoodsIssueId);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
@@ -694,7 +695,8 @@ namespace CoreERP.Controllers.masters
                     if (!Productionissue.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Productionissue." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.Productionissue = Productionissue.Where(x => x.Status != "Dispatched" && x.ApprovalStatus == "Approved");
+                    expdoObj.Productionissue = Productionissue;
+                    //expdoObj.Productionissue = Productionissue.Where(x => x.Status != "Dispatched" && x.ApprovalStatus == "Approved");
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }
