@@ -109,6 +109,7 @@ namespace CoreERP.Controllers.masters
                 if (mmaster.GrossWeight == null)
                     mmaster.GrossWeight = 1;
 
+                mmaster.AddDate = System.DateTime.Now;
                 _materialMasterRepository.Add(mmaster);
                 if (_materialMasterRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = mmaster };
@@ -156,6 +157,7 @@ namespace CoreERP.Controllers.masters
             try
             {
                 APIResponse apiResponse;
+                mmaster.EditDate= System.DateTime.Now;
                 _materialMasterRepository.Update(mmaster);
                 if (_materialMasterRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = mmaster };
