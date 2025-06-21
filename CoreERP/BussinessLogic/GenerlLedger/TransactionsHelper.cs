@@ -937,7 +937,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblMaterialRequisitionDetails> GetMaterialRequisitionDetails(string reqno)
         {
             using var repo = new Repository<TblMaterialRequisitionDetails>();
-           
+
             return repo.TblMaterialRequisitionDetails.Where(cd => cd.RequisitionNumber == reqno).ToList();
         }
 
@@ -1094,7 +1094,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblInspectionCheckMaster>();
             return repo.TblInspectionCheckMaster
-                .FirstOrDefault(x => x.saleOrderNumber == GoodsIssueId && x.BomKey == BomNumber );
+                .FirstOrDefault(x => x.saleOrderNumber == GoodsIssueId && x.BomKey == BomNumber);
         }
 
         public TblInspectionCheckMaster GetQcIssueMasterByIdAmrit(string GoodsIssueId, string Materialcode, string BomNumber)
@@ -1114,7 +1114,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                {
                    c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
                });
-            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MainComponent == "Y" && cd.ApprovalStatus=="Approved").ToList();
+            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MainComponent == "Y" && cd.ApprovalStatus == "Approved").ToList();
 
         }
 
@@ -1156,7 +1156,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
             });
-            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.ApprovalStatus=="Approved" && cd.MainComponent=="Y").ToList();
+            return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.ApprovalStatus == "Approved" && cd.MainComponent == "Y").ToList();
 
         }
 
@@ -1287,16 +1287,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var material = new List<TblMaterialMaster>();
             var tblProduction = new List<TblInspectionCheckDetails>();
 
-            if (!string.IsNullOrEmpty(Materialcode) && !string.IsNullOrEmpty(GoodsIssueId) && Company=="2000")
+            if (!string.IsNullOrEmpty(Materialcode) && !string.IsNullOrEmpty(GoodsIssueId) && Company == "2000")
             {
-                tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.BomKey == BomNumber && cd.MaterialCode==Materialcode).ToList();
+                tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.BomKey == BomNumber && cd.MaterialCode == Materialcode).ToList();
                 material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
             }
             if (tblProduction.Count == 0 && Company == "1000")
             {
                 tblProduction = repo.TblInspectionCheckDetails.Where(cd => cd.saleOrderNumber == GoodsIssueId && cd.BomKey == Materialcode && cd.MaterialCode == BomNumber).ToList();
                 material = repo.TblMaterialMaster.Where(cd => cd.MaterialCode == Materialcode).ToList();
-                
+
             }
 
             repo.TblInspectionCheckDetails.ToList().ForEach(c =>
@@ -1424,7 +1424,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 foreach (var item in gibDetails)
                 {
                     item.ApprovalStatus = "Pending Approval";
-                    var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomKey==item.BomNumber);
+                    var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomKey == item.BomNumber);
                     var materialmaster = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
                     if (item.BomNumber == null || item.BomNumber == "0" || string.IsNullOrEmpty(item.BomNumber) || string.IsNullOrWhiteSpace(item.BomNumber))
                         item.BomNumber = sodata.BomKey;
@@ -1436,13 +1436,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     if (sodata != null && sodata.MainComponent == "Y" && sodata.Company == "1000")
                     {
-                        var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomNumber ==item.BomNumber);
-                        
+                        var GID = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomNumber == item.BomNumber);
+
                         if (qty > 0)
                         {
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName , ApprovalStatus="Pending Approval",Company="1000"});
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, ApprovalStatus = "Pending Approval", Company = "1000" });
                                 tagnum = tagnum + 1;
                             }
                         }
@@ -1477,7 +1477,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                                 for (var i = 0; i < qty; i++)
                                 {
-                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company , ApprovalStatus = "Pending Approval" });
+                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company, ApprovalStatus = "Pending Approval" });
                                     tagnum = tagnum + 1;
                                 }
                             }
@@ -1488,7 +1488,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             //tagnum = tagnum + 1;
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company , ApprovalStatus = "Pending Approval" });
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company, ApprovalStatus = "Pending Approval" });
                                 tagnum = tagnum + 1;
                             }
                         }
@@ -1527,7 +1527,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, Company = sodata.Company , ApprovalStatus = "Pending Approval" });
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, Company = sodata.Company, ApprovalStatus = "Pending Approval" });
                                 tagnum = tagnum + 1;
                             }
                         }
@@ -1625,7 +1625,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 foreach (var item in GIDetails)
                 {
                     item.ApprovalStatus = "Approved";
-                    GID = context.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomNumber==item.BomNumber);
+                    GID = context.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomNumber == item.BomNumber);
                     GID.ApprovalStatus = "Approved";
                     PID = context.TblProductionDetails.FirstOrDefault(im => im.SaleOrderNumber == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomKey == item.BomNumber);
                     PID.ApprovalStatus = "Approved";
@@ -1669,7 +1669,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 //string material = prodDetails.FirstOrDefault().MaterialCode;
                 var SaleOrderDetail = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var repogim = repo.TblProductionMaster.Where(x => x.SaleOrderNumber == saleordernumber).FirstOrDefault();
-                
+
                 var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var Purcaseorder = repo.TblPurchaseOrder.FirstOrDefault(im => im.SaleOrderNo == saleordernumber);
                 var goodsreceipt = repo.TblGoodsReceiptDetails.FirstOrDefault(im => im.MaterialCode == prodDetails.FirstOrDefault().MaterialCode);
@@ -1688,7 +1688,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 else
                     message = "Partially Production Started";
 
-                if (SaleOrder.Company=="1000")
+                if (SaleOrder.Company == "1000")
                 {
                     InspectionMaster = repo.TblInspectionCheckMaster.Where(x => x.saleOrderNumber == saleordernumber && x.MaterialCode == prodDetails.FirstOrDefault().BomKey).FirstOrDefault();
                 }
@@ -1758,12 +1758,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                         if (InspectionCheckDetails.Count == 0)
                         {
-                            var SaleOrderDetail1 = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode==item.MaterialCode && im.BomKey==item.BomKey);
-                            if (item.Company == "1000" && SaleOrderDetail1.Billable=="Y")
+                            var SaleOrderDetail1 = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomKey == item.BomKey);
+                            if (item.Company == "1000" && SaleOrderDetail1.Billable == "Y")
                             {
                                 NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.BomKey, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.MaterialCode, BomName = item.BomName });
                             }
-                            else if(item.Company=="2000")
+                            else if (item.Company == "2000")
                                 NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.BomKey, BomName = item.BomName });
                         }
                         else
@@ -1778,10 +1778,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             });
                             context.TblInspectionCheckDetails.UpdateRange(InspectionCheckDetails);
                         }
-                        if(item.Company == "2000")
-                        goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode ).FirstOrDefault();
+                        if (item.Company == "2000")
+                            goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode).FirstOrDefault();
                         else
-                        goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode && g.BomNumber==item.BomKey).FirstOrDefault();
+                            goodsissue = repo.TblGoodsIssueDetails.Where(g => g.SaleOrderNumber == item.SaleOrderNumber && g.MaterialCode == item.MaterialCode && g.BomNumber == item.BomKey).FirstOrDefault();
 
                         if (goodsissue != null)
                         {
@@ -1838,7 +1838,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             if (Purcaseorder != null)
                             {
                                 POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == Purcaseorder.PurchaseOrderNumber && z.MaterialCode == item.MaterialCode);
-                                POD.Qty = (POD.Qty) - 1;
+                                if (POD != null)
+                                    POD.Qty = (POD.Qty) - 1;
                             }
                             var sodata = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode);
                             sodata.POQty = (sodata.POQty) - 1;
@@ -1852,9 +1853,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 sodata.Status = message;
                                 context.TblSaleOrderDetail.Update(sodata);
                             }
-
-                            if (POD.Qty >= 0)
-                                context.TblPurchaseOrderDetails.UpdateRange(POD);
+                            if (POD != null)
+                                if (POD.Qty >= 0)
+                                    context.TblPurchaseOrderDetails.UpdateRange(POD);
 
 
                             if (GID.AllocatedQTY >= 0)
@@ -2512,7 +2513,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             return result.ToList();
 
-            
+
             //return repo.TblPurchaseRequisitionDetails.Where(cd => cd.PurchaseRequisitionNumber == number).ToList();
         }
 
@@ -3139,7 +3140,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     //        }
                     //    }
                     //}
-                   
+
                     if (sodata != null && podata.saleOrderType != "Master Saleorder")
                     {
                         soItemQty = sodata.QTY;
@@ -3475,7 +3476,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                             context.TblPoQueue.Update(poq);
                                         }
                                     }
-                                    else 
+                                    else
                                     {
                                         if (item.saleOrderType != "Master Saleorder")
                                         {
@@ -3741,7 +3742,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 c.poQty = Convert.ToInt32(saleorder.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.POQty);
                 c.HSNSAC = hsn.FirstOrDefault(x => x.Code == c.HSNSAC)?.Description;
                 c.UomCode = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Uom;
-                c.Uom = UOM.FirstOrDefault(x =>Convert.ToString(x.UnitId) == c.UomCode)?.UnitName;
+                c.Uom = UOM.FirstOrDefault(x => Convert.ToString(x.UnitId) == c.UomCode)?.UnitName;
             });
             return repo.TblPurchaseOrderDetails.Where(cd => cd.PurchaseOrderNumber == number).ToList();
         }
@@ -4601,11 +4602,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         else if (SaleOrder.Company == "2000")
                             POD = repo.TblPurchaseOrderDetails.FirstOrDefault(z => z.PurchaseOrderNumber == purchaseorder.PurchaseOrderNumber && z.MaterialCode == x.MaterialCode);
 
+                        if (POD != null)
+                        {
+                            POD.Qty = (POD.Qty) - 1;
+                            if (POD.Qty >= 0)
+                                context.TblPurchaseOrderDetails.UpdateRange(POD);
+                        }
 
-                        POD.Qty = (POD.Qty) - 1;
-                        if (POD.Qty >= 0)
-                            context.TblPurchaseOrderDetails.UpdateRange(POD);
-
+                        gidetail.AllocatedQTY = (gidetail.AllocatedQTY) - 1;
                     }
                     if (sodata.POQty < 0)
                         sodata.POQty = 0;
@@ -4662,7 +4666,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 .FirstOrDefault(x => x.InspectionCheckNo == id);
         }
 
-        public TblInspectionCheckMaster GetInpectionCheckMasterById(string bomkey,string saleorder, string materialcode)
+        public TblInspectionCheckMaster GetInpectionCheckMasterById(string bomkey, string saleorder, string materialcode)
         {
             using var repo = new Repository<TblInspectionCheckMaster>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
@@ -4974,7 +4978,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             query.ForEach(c =>
             {
                 var company = companyList.FirstOrDefault(l => l.CompanyCode == c.Company);
-                c.Company = company?.CompanyName ?? c.Company; 
+                c.Company = company?.CompanyName ?? c.Company;
             });
 
             return query.OrderByDescending(x => x.Id).ToList();
@@ -5390,7 +5394,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.CompanyCode = saleOrderMaster.Company;
                             if (poq.Qty > 0)
                             {
-                                if(poq.Qty > item.QTY)
+                                if (poq.Qty > item.QTY)
                                 {
                                     poq.Qty = item.QTY;
                                 }
