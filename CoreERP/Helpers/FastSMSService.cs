@@ -111,5 +111,58 @@ namespace CoreERP.Helpers
 
             SendMessage2("objCustomer.Contact1", sMessage);
         }
+
+        public string SendSOMessage(string mobileNumber, string message)
+        {
+            try
+            {
+                string encodedMessage = HttpUtility.UrlEncode(message);
+                string sendSMSUri = $"https://www.bulksmsapps.com/api/apismsv2.aspx?apikey=e9ba82fb-ef76-41e6-8c98-63390b78096a&sender=AMTHYD&number={mobileNumber}&message={encodedMessage}";
+
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(sendSMSUri);
+                request.Method = "GET";
+
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                {
+                    string result = reader.ReadToEnd();
+
+                    // Log or return the MessageId from result
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the error
+                return $"Error: {ex.Message}";
+            }
+        }
+
+
+
+
+        public void SendSOCreationMessage(string mobileNumber, string soNumber, string vendorName, string Company)
+        {
+            string message;
+            if (string.IsNullOrEmpty(mobileNumber) || mobileNumber.Length < 10)
+                return;
+            if (Company == "2000")
+            {
+                message = $"Dear {vendorName}, your order {soNumber} has been successfully processed by AMRIT. Thank you for the business with us. -AMRIT Stone Crusher Equipments";
+            }
+            else
+            {
+               message = $"Dear {vendorName}, your order {soNumber} has been successfully processed by AMT. Thank you for the business with us. -AMT Power Transmission";
+            }
+
+            
+            //string message = $"PO created successfully";
+
+            SendSOMessage(mobileNumber, message);
+        }
+
     }
 }

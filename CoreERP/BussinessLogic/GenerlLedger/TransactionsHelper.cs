@@ -5476,6 +5476,31 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 dbtrans.Commit();
 
+                // Call SMS notification here
+                FastSMSService smsService = new FastSMSService();
+
+                // You will need the SO number and vendor details here
+                string customerCode = saleOrderMaster.CustomerCode;
+
+                var Name = context.TblBusinessPartnerAccount
+                    .Where(bp => bp.Bpnumber == customerCode)
+                    .Select(bp => bp.Name)
+                    .FirstOrDefault();
+
+                string soNumber = saleOrderMaster.SaleOrderNo;
+                string vendorName = Name;
+                string vendorMobile;
+                if (saleOrderMaster.Company == "2000")
+                {
+                    vendorMobile = "9666756333";
+                }
+                else
+                {
+                    vendorMobile = "9704288499";
+                }
+
+                smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName,saleOrderMaster.Company);
+
                 //// Declare and initialize the array with two mobile numbers
                 //string[] mobileNumbers = { "9346218049", "9133677733" };
                 //// Print the mobile numbers
