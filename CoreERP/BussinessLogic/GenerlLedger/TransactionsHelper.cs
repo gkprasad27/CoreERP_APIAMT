@@ -404,20 +404,37 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 c.CustomerName = BP.FirstOrDefault(l => l.Bpnumber == c.PartyAccount)?.Name;
                 c.VoucherName = VoucherClass.FirstOrDefault(l => l.VoucherKey == c.VoucherClass)?.Description;
             });
-
-            return repo.TblInvoiceMemoHeader.AsEnumerable()
-                .Where(x =>
-                {
-                    Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
-                    return x.Status == "N"
-                           && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
-                           && Convert.ToDateTime(x.VoucherDate.Value) >=
-                           Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                           && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
-                           Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-                           && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
-                })
-                .ToList();
+            if (searchCriteria.InvoiceNo != null)
+            {
+                return repo.TblInvoiceMemoHeader.AsEnumerable()
+                    .Where(x =>
+                    {
+                        Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
+                        return x.Status == "N"
+                               && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
+                               || x.SaleOrderNo.Contains(searchCriteria.searchCriteria ?? x.SaleOrderNo)
+                               || x.PartyInvoiceNo.Contains(searchCriteria.searchCriteria ?? x.PartyInvoiceNo)
+                               || x.ReferenceNumber.Contains(searchCriteria.searchCriteria ?? x.ReferenceNumber)
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                    })
+                    .ToList();
+            }
+            else
+            {
+                return repo.TblInvoiceMemoHeader.AsEnumerable()
+                    .Where(x =>
+                    {
+                        Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
+                        return x.Status == "N"
+                               && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber)
+                               && Convert.ToDateTime(x.VoucherDate.Value) >=
+                               Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                               && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
+                               Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                    })
+                    .ToList();
+            }
         }
 
         public TblInvoiceMemoHeader GetImMastersById(string voucherNumber)
