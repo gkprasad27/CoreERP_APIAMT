@@ -16,5 +16,7 @@ namespace CoreERP.Models
         public string? Ponumber { get; set; }
         public DateTime? Podate { get; set; }
         public string? Narration { get; set; }
+        public string? DeliveryDays { get; set; }
+        public string? PaymentDueDays { get; set; }
     }
 }
