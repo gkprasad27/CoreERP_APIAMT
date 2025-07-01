@@ -2585,15 +2585,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public bool AddMaterialSupplierMaster(TblMaterialSupplierMaster msdata, List<TblMaterialSupplierDetails> msdetails)
 
         {
+            var materialSupplyDetailsNew = new List<TblMaterialSupplierDetails>();
+            var materialSupplyDetailsExist = new List<TblMaterialSupplierDetails>();
+            var materialSupplyMasterNew = new TblMaterialSupplierMaster();
+            var materialSupplyMasterExist = new TblMaterialSupplierMaster();
             if (msdata.SupplierCode == null)
                 throw new Exception("Supplier Code Canot be empty/null.");
 
             using var repo = new Repository<TblMaterialSupplierMaster>();
 
-            if (repo.TblMaterialSupplierMaster.Any(v => v.SupplierCode == msdata.SupplierCode))
-                throw new Exception("Supplier Code  exists.");
+            
 
-            msdetails.ForEach(x =>
+                msdetails.ForEach(x =>
             {
                 x.SupplierCode = msdata.SupplierCode;
             });
@@ -2602,11 +2605,29 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
-                context.TblMaterialSupplierMaster.Add(msdata);
-                context.SaveChanges();
+                if (repo.TblMaterialSupplierMaster.Any(v => v.SupplierCode == msdata.SupplierCode))
+                {
+                    context.TblMaterialSupplierMaster.UpdateRange(msdata);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    context.TblMaterialSupplierMaster.AddRange(msdata);
+                    context.SaveChanges();
+                }
 
-                context.TblMaterialSupplierDetails.AddRange(msdetails);
-                context.SaveChanges();
+                materialSupplyDetailsExist = msdetails.Where(x => x.Id > 0).ToList();
+                materialSupplyDetailsNew = msdetails.Where(x => x.Id == 0).ToList();
+
+                if (materialSupplyDetailsExist.Count > 0)
+                {
+                    context.TblMaterialSupplierDetails.UpdateRange(msdetails);
+                }
+                else if (materialSupplyDetailsNew.Count > 0)
+                {
+                    context.TblMaterialSupplierDetails.AddRange(msdetails);
+                }
+
 
                 dbtrans.Commit();
                 return true;

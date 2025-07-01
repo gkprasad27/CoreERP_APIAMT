@@ -1325,8 +1325,8 @@ namespace CoreERP.Controllers.masters
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                var ssMaster = obj["ssHdr"].ToObject<TblMaterialSupplierMaster>();
-                var ssdetails = obj["ssDtl"].ToObject<List<TblMaterialSupplierDetails>>();
+                var ssMaster = obj["qsHdr"].ToObject<TblMaterialSupplierMaster>();
+                var ssdetails = obj["qsDtl"].ToObject<List<TblMaterialSupplierDetails>>();
 
                 if (!new TransactionsHelper().AddMaterialSupplierMaster(ssMaster, ssdetails))
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });

@@ -58,5 +58,7 @@ namespace CoreERP.Models
         public decimal? RoundOff { get; set; }
         public int? Ammendment { get; set; }
         public string? MechineNumber { get; set; }
+        public string? CreatedBy { get; set; }
+        public string? ContactNo { get; set; }
     }
 }
