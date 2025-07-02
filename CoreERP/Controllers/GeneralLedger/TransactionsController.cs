@@ -1317,6 +1317,23 @@ namespace CoreERP.Controllers.masters
             }
         }
 
+        [HttpGet("GetSourceSupplyDetailByMaterial/{Materialcode}")]
+        public IActionResult GetSourceSupplyDetailByMaterial(string Materialcode)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.ssDetail = new TransactionsHelper().GetMaterialSupplierDetailsbyMaterialCode(Materialcode);
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPost("AddSourceSupply")]
         public IActionResult AddSourceSupply([FromBody] JObject obj)
         {

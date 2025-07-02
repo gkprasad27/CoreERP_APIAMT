@@ -2649,6 +2649,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblMaterialSupplierDetails>();
             return repo.TblMaterialSupplierDetails.Where(cd => cd.SupplierCode == number).ToList();
         }
+
+        public List<TblMaterialSupplierDetails> GetMaterialSupplierDetailsbyMaterialCode(string MaterialCode)
+        {
+            using var repo = new Repository<TblMaterialSupplierDetails>();
+            return repo.TblMaterialSupplierDetails.Where(cd => cd.MaterialCode == MaterialCode).ToList();
+        }
         public bool ReturnMaterialSupplier(string code)
         {
             using var repo = new ERPContext();
