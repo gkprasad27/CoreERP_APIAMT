@@ -151,7 +151,7 @@ namespace CoreERP.Helpers
                 return;
             if (Company == "2000")
             {
-                message = $"Dear {vendorName}, your order {soNumber} has been successfully processed by AMRIT. Thank you for the business with us. -AMRIT Stone Crusher Equipments";
+                message = $"Dear {vendorName}, your order {soNumber} has been successfully processed by AMT. Thank you for the business with us. -AMT Power Transmission";
             }
             else
             {

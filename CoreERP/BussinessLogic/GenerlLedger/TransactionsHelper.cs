@@ -3488,6 +3488,31 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.SaveChanges();
 
                 dbtrans.Commit();
+
+                // Call SMS notification here
+                FastSMSService smsService = new FastSMSService();
+
+                // You will need the SO number and vendor details here
+                string customerCode = podata.SupplierCode;
+
+                var Name = context.TblBusinessPartnerAccount
+                    .Where(bp => bp.Bpnumber == customerCode)
+                    .Select(bp => bp.Name)
+                    .FirstOrDefault();
+
+                string soNumber = podata.PurchaseOrderNumber;
+                string vendorName = Name;
+                string vendorMobile;
+                if (podata.Company == "2000")
+                {
+                    vendorMobile = "9666756333";
+                }
+                else
+                {
+                    vendorMobile = "9704288499";
+                }
+
+                smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);
                 return true;
             }
             catch (Exception)
