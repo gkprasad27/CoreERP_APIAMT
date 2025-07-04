@@ -1348,7 +1348,8 @@ namespace CoreERP.Controllers.masters
                 if (!new TransactionsHelper().AddMaterialSupplierMaster(ssMaster, ssdetails))
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 dynamic expdoObj = new ExpandoObject();
-                expdoObj.invoi = ssMaster;
+                expdoObj.master = ssMaster;
+                expdoObj.details = ssdetails;
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
             }

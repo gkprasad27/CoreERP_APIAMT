@@ -2622,10 +2622,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (materialSupplyDetailsExist.Count > 0)
                 {
                     context.TblMaterialSupplierDetails.UpdateRange(msdetails);
+                    context.SaveChanges();
                 }
                 else if (materialSupplyDetailsNew.Count > 0)
                 {
                     context.TblMaterialSupplierDetails.AddRange(msdetails);
+                    context.SaveChanges();
                 }
 
 
