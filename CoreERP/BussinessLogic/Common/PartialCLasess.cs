@@ -16,6 +16,9 @@ namespace CoreERP.Models
     {
         [NotMapped]
         public string DrawingNo { get; set; }
+        [NotMapped]
+        public string DocumentURL { get; set; }
+
     }
 
     partial class TblSupplierQuotationDetails

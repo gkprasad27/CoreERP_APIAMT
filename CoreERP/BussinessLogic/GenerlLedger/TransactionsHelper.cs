@@ -1184,10 +1184,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblGoodsIssueDetails>();
 
             var material = repo.TblMaterialMaster.ToList();
+            var document = repo.TblGoodsReceiptDetails.ToList();
 
             repo.TblGoodsIssueDetails.ToList().ForEach(c =>
             {
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+                c.DocumentURL = document.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.DocumentURL;
+                c.DrawingNo = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.PartDragNo;
             });
             return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.ApprovalStatus == "Approved" && cd.MainComponent == "Y").ToList();
 
@@ -1198,11 +1201,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblGoodsIssueDetails>();
 
             var material = repo.TblMaterialMaster.ToList();
+            var document = repo.TblGoodsReceiptDetails.ToList();
 
             repo.TblGoodsIssueDetails.ToList().ForEach(c =>
             {
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
                 c.DrawingNo = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.PartDragNo;
+                c.DocumentURL = document.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.DocumentURL;
             });
             return repo.TblGoodsIssueDetails.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.ApprovalStatus == "Approved").ToList();
 

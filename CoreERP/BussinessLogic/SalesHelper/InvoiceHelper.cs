@@ -1168,6 +1168,30 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             }
                             repo.SaveChanges();
                             dbTransaction.Commit();
+                            // Call SMS notification here
+                            FastSMSService smsService = new FastSMSService();
+
+                            // You will need the SO number and vendor details here
+                            string customerCode = invoice.CustomerName;
+
+                            var Name = repo.TblBusinessPartnerAccount
+                                .Where(bp => bp.Bpnumber == customerCode)
+                                .Select(bp => bp.Name)
+                                .FirstOrDefault();
+
+                            string soNumber = invoice.InvoiceNo;
+                            string vendorName = Name;
+                            string vendorMobile;
+                            if (invoice.Company == "2000")
+                            {
+                                vendorMobile = "9666756333";
+                            }
+                            else
+                            {
+                                vendorMobile = "9704288499";
+                            }
+
+                            smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, invoice.Company);
                             return true;
                         }
                         catch (Exception ex)

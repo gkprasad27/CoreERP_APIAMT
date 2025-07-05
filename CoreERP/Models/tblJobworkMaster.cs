@@ -24,6 +24,8 @@ namespace CoreERP.Models
         public DateTime? DeliveryDate { get; set; }
         public string? DocumentURL { get; set; }
         public string? InvoiceURL { get; set; }
+        public string? CreatedBy { get; set; }
+        public string? ContactNo { get; set; }
 
     }
 }
