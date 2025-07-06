@@ -2585,6 +2585,49 @@ namespace CoreERP.Controllers.masters
             }
         }
 
+        [HttpGet("GetSaleOrderDetailPO/{saleOrderNumber}")]
+        public IActionResult GetSaleOrderDetailPOQ(string saleOrderNumber)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var saleOrderMasters = transactions.GetSaleOrderMastersById(saleOrderNumber);
+                if (saleOrderMasters == null)
+                {
+                    return NotFound(new APIResponse
+                    {
+                        status = APIStatus.FAIL.ToString(),
+                        response = "Sale Order Master not found."
+                    });
+                }
+                var bpList = transactions.GetSaleOrderDetailPOQ(saleOrderNumber);
+                if (bpList == null || !bpList.Any())
+                {
+                    return NotFound(new APIResponse
+                    {
+                        status = APIStatus.FAIL.ToString(),
+                        response = "Sale Order Details not found."
+                    });
+                }
+                dynamic expandoObj = new ExpandoObject();
+                expandoObj.SaleOrderMasters = saleOrderMasters;
+                expandoObj.SaleOrderDetails = bpList;
+                return Ok(new APIResponse
+                {
+                    status = APIStatus.PASS.ToString(),
+                    response = expandoObj
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new APIResponse
+                {
+                    status = APIStatus.FAIL.ToString(),
+                    response = ex.Message
+                });
+            }
+        }
+
 
         //[HttpGet("GetSaleOrderDetailPO/{saleOrderNumber}")]
         //public async Task<IActionResult> GetSaleOrderDetailPO(string saleOrderNumber)

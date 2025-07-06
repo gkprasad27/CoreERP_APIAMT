@@ -2599,12 +2599,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             using var repo = new Repository<TblMaterialSupplierMaster>();
 
-            
 
-                msdetails.ForEach(x =>
-            {
-                x.SupplierCode = msdata.SupplierCode;
-            });
+
+            msdetails.ForEach(x =>
+        {
+            x.SupplierCode = msdata.SupplierCode;
+        });
 
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
@@ -5214,6 +5214,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo && cd.QTY != cd.POQty).ToList();
 
         }
+
+        public List<TblPoQueue> GetSaleOrderDetailPOQ(string saleOrderNo)
+        {
+            using var repo = new Repository<TblPoQueue>();
+            return repo.TblPoQueue.Where(z => z.SaleOrderNo == saleOrderNo).ToList();
+
+        }
         public bool AddSaleOrder(TblSaleOrderMaster saleOrderMaster, List<TblSaleOrderDetail> saleOrderDetails)
         {
             using var repo = new Repository<TblSaleOrderMaster>();
@@ -5575,7 +5582,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     vendorMobile = "9704288499";
                 }
 
-                smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName,saleOrderMaster.Company);
+                smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, saleOrderMaster.Company);
 
                 //// Declare and initialize the array with two mobile numbers
                 //string[] mobileNumbers = { "9346218049", "9133677733" };
