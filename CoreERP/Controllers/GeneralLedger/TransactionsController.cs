@@ -2585,7 +2585,7 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("GetSaleOrderDetailPO/{saleOrderNumber}")]
+        [HttpGet("GetSaleOrderDetailPOQ/{saleOrderNumber}")]
         public IActionResult GetSaleOrderDetailPOQ(string saleOrderNumber)
         {
             try
