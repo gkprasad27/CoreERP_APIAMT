@@ -2951,7 +2951,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             var Company = repo.TblCompany.ToList();
             var PoType = repo.TblPurchaseOrderType.ToList();
-            var profitCenters = repo.ProfitCenters.ToList();
+            //var profitCenters = repo.ProfitCenters.ToList();
             var customer = repo.TblBusinessPartnerAccount.ToList();
 
             repo.TblPurchaseOrder.ToList()
@@ -2959,7 +2959,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.PurchaseOrderName = PoType.FirstOrDefault(l => l.purchaseType == c.PurchaseOrderType).Description;
-                    c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
+                    //c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
                     c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode).Name;
 
                 });
@@ -3512,11 +3512,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 string vendorMobile;
                 if (podata.Company == "2000")
                 {
-                    vendorMobile = "9666756333";
+                    vendorMobile = "7093166536";
                 }
                 else
                 {
-                    vendorMobile = "9704288499";
+                    vendorMobile = "7093166536";
                 }
 
                 smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);
