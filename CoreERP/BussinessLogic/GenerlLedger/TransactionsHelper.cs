@@ -4148,7 +4148,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     totalqty = (mtqty + mtrejqty) + (item.ReceivedQty ?? 0 + item.RejectQty ?? 0);
                     item.InvoiceNo = grdata.SupplierReferenceNo;
                     item.InvoiceURL = grdata.InvoiceURL;
-                    item.DocumentURL = grdata.DocumentURL;
+                    //item.DocumentURL = grdata.DocumentURL;
                     item.SaleorderNo = purchase.SaleOrderNo;
                     item.MechineNumber = POD.MechineNumber;
 
