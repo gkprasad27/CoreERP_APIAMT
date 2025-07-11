@@ -3512,11 +3512,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 string vendorMobile;
                 if (podata.Company == "2000")
                 {
-                    vendorMobile = "7093166536";
+                    vendorMobile = "9666756333";
                 }
                 else
                 {
-                    vendorMobile = "7093166536";
+                    vendorMobile = "9704288499";
                 }
 
                 smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);

@@ -36,5 +36,6 @@ namespace CoreERP.Models
         public string? Editwho { get; set; }
         public string? RecomendedBy { get; set; }
         public string? ApprovedBy { get; set; }
+        public string? DrawingDocument { get; set; }
     }
 }
