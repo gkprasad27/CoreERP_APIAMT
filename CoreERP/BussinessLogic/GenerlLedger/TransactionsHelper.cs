@@ -4283,7 +4283,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                     grdata.Id = totalamount.Id;
                     grdata.ApprovalStatus = "Pending Approval";
-                    grdata.Company = saleorder.Company;
+                    if (saleorder != null)
+                        grdata.Company = saleorder.Company;
+                    else
+                        grdata.Company = Mastersaleorder.Company;
                     context.TblGoodsReceiptMaster.Update(grdata);
                 }
                 else
