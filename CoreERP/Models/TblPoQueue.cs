@@ -20,5 +20,6 @@ namespace CoreERP.Models
         public DateTime? EditDate { get; set; }
         public string? Status { get; set; }
         public string? CompanyCode { get; set; }
+        public string? BomKey { get; set; }
     }
 }

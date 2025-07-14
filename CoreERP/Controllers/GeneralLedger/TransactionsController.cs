@@ -2149,6 +2149,23 @@ namespace CoreERP.Controllers.masters
             }
         }
 
+        [HttpGet("SwapOrder/{fromcode}/{tocode}")]
+        public IActionResult SwapOrder(string fromcode,string tocode)
+        {
+            try
+            {
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.SwapOrder(fromcode, tocode))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Purchase Order Analysis memo no {fromcode} return successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         #endregion
 
         #region Inspection Checkipt

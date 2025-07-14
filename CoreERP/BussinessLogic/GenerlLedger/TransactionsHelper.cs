@@ -1846,6 +1846,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             {
                                 poq.Qty = (poq.Qty) + 1;
                                 poq.Status = "New";
+                                poq.BomKey = item.BomKey;
                                 context.TblPoQueue.Update(poq);
                             }
                             else
@@ -1854,6 +1855,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 poq.Qty = 1;
                                 poq.Status = "New";
                                 poq.CompanyCode = repogim.Company;
+                                poq.BomKey = item.BomKey;
                                 poq.MaterialCode = item.MaterialCode;
                                 poq.SaleOrderNo = item.SaleOrderNumber;
                                 context.TblPoQueue.Update(poq);
@@ -4531,6 +4533,24 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             return true;
         }
+
+        public bool SwapOrder(string fromcode, string tocode)
+        {
+            using var repo = new ERPContext();
+            var poHeader = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.PurchaseOrderNo == fromcode);
+
+            if (poHeader != null)
+                throw new Exception($"Analysis PurchaseOrderNumber memo no {fromcode} already return.");
+
+            if (poHeader != null)
+            {
+                repo.TblGoodsReceiptMaster.Update(poHeader);
+            }
+
+            repo.SaveChanges();
+
+            return true;
+        }
         #endregion
 
         #region InspectionCheck
@@ -4674,6 +4694,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                             poq.SaleOrderNo = x.saleOrderNumber;
                             poq.CompanyCode = icdata.Company;
+                            poq.BomKey = icdata.BomKey;
                             context.TblPoQueue.Add(poq);
                         }
                         MaterialMaster.ClosingQty = ((MaterialMaster.ClosingQty) - 1);
@@ -5266,6 +5287,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                     if (Pcenter != null)
                     {
+                        if (saleOrderMaster.PONumber == null || string.IsNullOrWhiteSpace(saleOrderMaster.PONumber) || string.IsNullOrEmpty(saleOrderMaster.PONumber))
+                        {
+                            var IPO = repo.Counters.FirstOrDefault(x => x.CounterName == "IPO" && x.CompCode == saleOrderMaster.Company);
+                            saleOrderMaster.PONumber = IPO.Prefix + "-" + IPO.LastNumber;
+                        }
                         Pcenter.LastNumber = (Pcenter.LastNumber + 1);
                         context.Counters.UpdateRange(Pcenter);
                         context.SaveChanges();
@@ -5386,6 +5412,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.Status = "New";
                             poq.SaleOrderNo = item.FirstOrDefault().SaleOrderNo;
                             poq.MaterialCode = item.FirstOrDefault().MaterialCode;
+                            poq.BomKey = item.FirstOrDefault().BomKey;
                             poq.CompanyCode = saleOrderMaster.Company;
                             poq.MaterialName = item.FirstOrDefault().MaterialName;
                             if (poq.Qty > 0)
@@ -5493,6 +5520,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.Status = "New";
                             poq.SaleOrderNo = item.SaleOrderNo;
                             poq.MaterialCode = item.MaterialCode;
+                            poq.MaterialCode = item.BomKey;
                             poq.CompanyCode = saleOrderMaster.Company;
                             if (poq.Qty > 0)
                             {
