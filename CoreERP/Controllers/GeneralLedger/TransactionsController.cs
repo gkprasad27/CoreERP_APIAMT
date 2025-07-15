@@ -670,7 +670,7 @@ namespace CoreERP.Controllers.masters
                     if (!Goodsissue.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for GoodsIssue." });
                     dynamic expdoObj = new ExpandoObject();
-                    expdoObj.Goodsissue= Goodsissue.OrderByDescending(x => x.GoodsIssueId);
+                    expdoObj.Goodsissue = Goodsissue.OrderByDescending(x => x.GoodsIssueId);
                     //expdoObj.Goodsissue = Goodsissue.Where(x => x.Status != "Dispatched").OrderByDescending(x => x.GoodsIssueId);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
@@ -882,7 +882,7 @@ namespace CoreERP.Controllers.masters
                 {
                     var transactions = new TransactionsHelper();
                     var tagsData = transactions.GetQcIssueMasterById(GSNumber, decodedString, BomNumber);
-                    if ((tagsData!=null) && (tagsData.Company != "1000"))
+                    if ((tagsData != null) && (tagsData.Company != "1000"))
                     {
                         tagsData = transactions.GetQcIssueMasterByIdAmrit(GSNumber, decodedString, BomNumber);
                     }
@@ -2149,16 +2149,18 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpGet("SwapOrder/{fromcode}/{tocode}")]
-        public IActionResult SwapOrder(string fromcode,string tocode)
+        [HttpPost("GetSwapOrderList")]
+        public IActionResult GetSwapOrderList([FromBody] SearchCriteria searchCriteria)
         {
             try
             {
-                TransactionsHelper transactions = new TransactionsHelper();
-                if (transactions.SwapOrder(fromcode, tocode))
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Purchase Order Analysis memo no {fromcode} return successfully." });
+                var Swap = new TransactionsHelper().GetSwapOrder(searchCriteria);
+                if (!Swap.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Swap Order." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.Swap = Swap;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
-                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while returning invoice memo." });
             }
             catch (Exception ex)
             {
@@ -2166,6 +2168,28 @@ namespace CoreERP.Controllers.masters
             }
         }
 
+        [HttpPost("SwapOrder")]
+        public async Task<IActionResult> SwapOrder([FromBody] JObject obj)
+        {
+            try
+            {
+                var swap = new TblOrderSwap(); ;
+
+                if (obj == null)
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                swap = obj["swap"].ToObject<TblOrderSwap>();
+                TransactionsHelper transactions = new TransactionsHelper();
+                if (transactions.SwapOrder(swap.FromSaleOrder, swap.ToSaleOrder))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Swap Order {swap.FromSaleOrder}  successfully." });
+
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while Swap  Order." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
         #endregion
 
         #region Inspection Checkipt

@@ -2127,6 +2127,45 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
+        public List<TblOrderSwap> GetSwapOrder(SearchCriteria searchCriteria)
+        {
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
+            searchCriteria.ToDate ??= DateTime.Today;
+
+            using var repo = new Repository<TblOrderSwap>();
+
+            if (searchCriteria.InvoiceNo != null)
+            {
+                return repo.TblOrderSwap.AsEnumerable()
+                .Where(x =>
+                {
+
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.FromSaleOrder) != null
+                              && Convert.ToString(x.FromSaleOrder).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.FromSaleOrder))
+                              || Convert.ToString(x.ToSaleOrder).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.ToSaleOrder))
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                }).OrderByDescending(x => x.FromSaleOrder)
+                .ToList();
+            }
+            else
+            {
+                return repo.TblOrderSwap.AsEnumerable()
+                .Where(x =>
+                {
+
+                    //Debug.Assert(x.CreatedDate != null, "x.CreatedDate != null");
+                    return Convert.ToString(x.FromSaleOrder) != null
+                              && Convert.ToString(x.FromSaleOrder).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.FromSaleOrder))
+                              && Convert.ToDateTime(x.AddDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
+                              && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
+                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                }).OrderByDescending(x => x.FromSaleOrder)
+                .ToList();
+            }
+        }
+
         public TbBommaster GetBommasterById(string bomNumber)
         {
             using var repo = new Repository<TbBommaster>();
@@ -4536,19 +4575,82 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public bool SwapOrder(string fromcode, string tocode)
         {
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
             using var repo = new ERPContext();
-            var poHeader = repo.TblGoodsReceiptMaster.FirstOrDefault(im => im.PurchaseOrderNo == fromcode);
-
-            if (poHeader != null)
-                throw new Exception($"Analysis PurchaseOrderNumber memo no {fromcode} already return.");
-
-            if (poHeader != null)
+            var GIM = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == tocode);
+            var PM = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == tocode);
+            var ICM = repo.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == tocode);
+            var GID = repo.TblGoodsIssueDetails.Where(im => im.SaleOrderNumber == tocode);
+            var PD = repo.TblProductionDetails.Where(im => im.SaleOrderNumber == tocode);
+            var PS = repo.TblProductionStatus.Where(im => im.SaleOrderNumber == tocode);
+            var ICD = repo.TblInspectionCheckDetails.Where(im => im.saleOrderNumber == tocode);
+            var QCR = repo.tblQCResults.Where(im => im.saleOrderNumber == tocode);
+            var Swap = new TblOrderSwap();
+            if (GIM != null)
             {
-                repo.TblGoodsReceiptMaster.Update(poHeader);
+                GIM.SaleOrderNumber = fromcode;
+                context.TblGoodsIssueMaster.Update(GIM);
+            }
+            if (PM != null)
+            {
+                PM.SaleOrderNumber = fromcode;
+                context.TblProductionMaster.Update(PM);
+            }
+            if (PD != null)
+            {
+                foreach (var item in PD)
+                {
+                    item.SaleOrderNumber = fromcode;
+                    context.TblProductionDetails.Update(item);
+                }
+            }
+            if (PS != null)
+            {
+                foreach (var item in PS)
+                {
+                    item.SaleOrderNumber = fromcode;
+                    context.TblProductionStatus.Update(item);
+                }
+            }
+            if (GID != null)
+            {
+                foreach (var item in GID)
+                {
+                    item.SaleOrderNumber = fromcode;
+                    context.TblGoodsIssueDetails.Update(item);
+                }
+            }
+            if (ICM != null)
+            {
+                ICM.saleOrderNumber = fromcode;
+                context.TblInspectionCheckMaster.Update(ICM);
+            }
+            if (ICD != null)
+            {
+                foreach (var item in ICD)
+                {
+                    item.saleOrderNumber = fromcode;
+                    context.TblInspectionCheckDetails.Update(item);
+                }
+            }
+            if (QCR != null)
+            {
+                foreach (var item in QCR)
+                {
+                    item.saleOrderNumber = fromcode;
+                    context.tblQCResults.Update(item);
+                }
             }
 
-            repo.SaveChanges();
+            Swap.FromSaleOrder = fromcode;
+            Swap.ToSaleOrder = tocode;
+            Swap.AddDate = System.DateTime.Now;
+            Swap.EditDate = System.DateTime.Now;
+            context.TblOrderSwap.Add(Swap);
 
+            repo.SaveChanges();
+            dbtrans.Commit();
             return true;
         }
         #endregion
