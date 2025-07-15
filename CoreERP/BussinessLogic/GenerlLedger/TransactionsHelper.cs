@@ -5415,8 +5415,25 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.BomKey = item.FirstOrDefault().BomKey;
                             poq.CompanyCode = saleOrderMaster.Company;
                             poq.MaterialName = item.FirstOrDefault().MaterialName;
-                            if (poq.Qty > 0)
-                                context.TblPoQueue.AddRange(poq);
+                            if (saleOrderMaster.Company == "2000")
+                            {
+                                var Bommaster = repo.TbBommaster.FirstOrDefault(x => x.Bomnumber == item.FirstOrDefault().BomKey);
+                                if (Bommaster.Bomtype == "Special BOM" && item.FirstOrDefault().MainComponent == "Y")
+                                {
+                                    if (poq.Qty > 0)
+                                        context.TblPoQueue.AddRange(poq);
+                                }
+                                else if (Bommaster.Bomtype != "Special BOM")
+                                {
+                                    if (poq.Qty > 0)
+                                        context.TblPoQueue.AddRange(poq);
+                                }
+                            }
+                            else
+                            {
+                                if (poq.Qty > 0)
+                                    context.TblPoQueue.AddRange(poq);
+                            }
                         }
                         else
                         {
@@ -5440,8 +5457,27 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.MaterialCode = item.FirstOrDefault().MaterialCode;
                             poq.CompanyCode = saleOrderMaster.Company;
                             poq.MaterialName = item.FirstOrDefault().MaterialName;
-                            if (poq.Qty > 0)
-                                context.TblPoQueue.UpdateRange(poq);
+                            //if (poq.Qty > 0)
+                            //    context.TblPoQueue.UpdateRange(poq);
+                            if (saleOrderMaster.Company == "2000")
+                            {
+                                var Bommaster = repo.TbBommaster.FirstOrDefault(x => x.Bomnumber == item.FirstOrDefault().BomKey);
+                                if (Bommaster.Bomtype == "Special BOM" && item.FirstOrDefault().MainComponent == "Y")
+                                {
+                                    if (poq.Qty > 0)
+                                        context.TblPoQueue.UpdateRange(poq);
+                                }
+                                else if (Bommaster.Bomtype != "Special BOM")
+                                {
+                                    if (poq.Qty > 0)
+                                        context.TblPoQueue.UpdateRange(poq);
+                                }
+                            }
+                            else
+                            {
+                                if (poq.Qty > 0)
+                                    context.TblPoQueue.UpdateRange(poq);
+                            }
                         }
 
                         //material.OpeningValue = (material.OpeningValue + item.QTY);
@@ -5528,7 +5564,26 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 {
                                     poq.Qty = item.QTY;
                                 }
-                                context.TblPoQueue.AddRange(poq);
+                                //context.TblPoQueue.AddRange(poq);
+                                if (saleOrderMaster.Company == "2000")
+                                {
+                                    var Bommaster = repo.TbBommaster.FirstOrDefault(x => x.Bomnumber == item.BomKey);
+                                    if (Bommaster.Bomtype == "Special BOM" && item.MainComponent == "Y")
+                                    {
+                                        if (poq.Qty > 0)
+                                            context.TblPoQueue.AddRange(poq);
+                                    }
+                                    else if (Bommaster.Bomtype != "Special BOM")
+                                    {
+                                        if (poq.Qty > 0)
+                                            context.TblPoQueue.AddRange(poq);
+                                    }
+                                }
+                                else
+                                {
+                                    if (poq.Qty > 0)
+                                        context.TblPoQueue.AddRange(poq);
+                                }
                             }
                         }
                         else
@@ -5558,7 +5613,26 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                                 {
                                     poq.Qty = item.QTY;
                                 }
-                                context.TblPoQueue.UpdateRange(poq);
+                                //context.TblPoQueue.UpdateRange(poq);
+                                if (saleOrderMaster.Company == "2000")
+                                {
+                                    var Bommaster = repo.TbBommaster.FirstOrDefault(x => x.Bomnumber == item.BomKey);
+                                    if (Bommaster.Bomtype == "Special BOM" && item.MainComponent == "Y")
+                                    {
+                                        if (poq.Qty > 0)
+                                            context.TblPoQueue.UpdateRange(poq);
+                                    }
+                                    else if (Bommaster.Bomtype != "Special BOM")
+                                    {
+                                        if (poq.Qty > 0)
+                                            context.TblPoQueue.UpdateRange(poq);
+                                    }
+                                }
+                                else
+                                {
+                                    if (poq.Qty > 0)
+                                        context.TblPoQueue.UpdateRange(poq);
+                                }
                             }
                         }
 
