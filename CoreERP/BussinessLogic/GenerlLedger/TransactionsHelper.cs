@@ -2159,8 +2159,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     return Convert.ToString(x.FromSaleOrder) != null
                               && Convert.ToString(x.FromSaleOrder).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.FromSaleOrder))
                               && Convert.ToDateTime(x.AddDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
-                              && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
-                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
+                              && Convert.ToDateTime(x.AddDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString());
                 }).OrderByDescending(x => x.FromSaleOrder)
                 .ToList();
             }
@@ -4578,30 +4577,35 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             using var repo = new ERPContext();
-            var GIM = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == tocode);
-            var PM = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == tocode);
-            var ICM = repo.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == tocode);
-            var GID = repo.TblGoodsIssueDetails.Where(im => im.SaleOrderNumber == tocode);
-            var PD = repo.TblProductionDetails.Where(im => im.SaleOrderNumber == tocode);
-            var PS = repo.TblProductionStatus.Where(im => im.SaleOrderNumber == tocode);
-            var ICD = repo.TblInspectionCheckDetails.Where(im => im.saleOrderNumber == tocode);
-            var QCR = repo.tblQCResults.Where(im => im.saleOrderNumber == tocode);
+            var GIM = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == fromcode);
+            var PM = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == fromcode);
+            var ICM = repo.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == fromcode);
+            var GID = repo.TblGoodsIssueDetails.Where(im => im.SaleOrderNumber == fromcode);
+            var PD = repo.TblProductionDetails.Where(im => im.SaleOrderNumber == fromcode);
+            var PS = repo.TblProductionStatus.Where(im => im.SaleOrderNumber == fromcode);
+            var ICD = repo.TblInspectionCheckDetails.Where(im => im.saleOrderNumber == fromcode);
+            var QCR = repo.tblQCResults.Where(im => im.saleOrderNumber == fromcode);
             var Swap = new TblOrderSwap();
+
+            if (GID != null)
+            {
+                foreach (var item in GID)
+                {
+                    item.SaleOrderNumber = tocode;
+                    context.TblGoodsIssueDetails.Update(item);
+                }
+            }
             if (GIM != null)
             {
-                GIM.SaleOrderNumber = fromcode;
+                GIM.SaleOrderNumber = tocode;
                 context.TblGoodsIssueMaster.Update(GIM);
             }
-            if (PM != null)
-            {
-                PM.SaleOrderNumber = fromcode;
-                context.TblProductionMaster.Update(PM);
-            }
+
             if (PD != null)
             {
                 foreach (var item in PD)
                 {
-                    item.SaleOrderNumber = fromcode;
+                    item.SaleOrderNumber = tocode;
                     context.TblProductionDetails.Update(item);
                 }
             }
@@ -4609,36 +4613,36 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 foreach (var item in PS)
                 {
-                    item.SaleOrderNumber = fromcode;
+                    item.SaleOrderNumber = tocode;
                     context.TblProductionStatus.Update(item);
                 }
             }
-            if (GID != null)
+            if (PM != null)
             {
-                foreach (var item in GID)
-                {
-                    item.SaleOrderNumber = fromcode;
-                    context.TblGoodsIssueDetails.Update(item);
-                }
+                PM.SaleOrderNumber = tocode;
+                context.TblProductionMaster.Update(PM);
             }
-            if (ICM != null)
-            {
-                ICM.saleOrderNumber = fromcode;
-                context.TblInspectionCheckMaster.Update(ICM);
-            }
+
+
             if (ICD != null)
             {
                 foreach (var item in ICD)
                 {
-                    item.saleOrderNumber = fromcode;
+                    item.saleOrderNumber = tocode;
                     context.TblInspectionCheckDetails.Update(item);
                 }
             }
+            if (ICM != null)
+            {
+                ICM.saleOrderNumber = tocode;
+                context.TblInspectionCheckMaster.Update(ICM);
+            }
+            
             if (QCR != null)
             {
                 foreach (var item in QCR)
                 {
-                    item.saleOrderNumber = fromcode;
+                    item.saleOrderNumber = tocode;
                     context.tblQCResults.Update(item);
                 }
             }
@@ -4649,7 +4653,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             Swap.EditDate = System.DateTime.Now;
             context.TblOrderSwap.Add(Swap);
 
-            repo.SaveChanges();
+            context.SaveChanges();
             dbtrans.Commit();
             return true;
         }

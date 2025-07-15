@@ -21,6 +21,7 @@ using static System.Net.Mime.MediaTypeNames;
 using CoreERP.BussinessLogic.ReportsHelpers;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Data;
+using Newtonsoft.Json;
 
 namespace CoreERP.Controllers.masters
 {
@@ -2173,12 +2174,11 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var swap = new TblOrderSwap(); ;
+                TblOrderSwap swap = obj.ToObject<TblOrderSwap>();
 
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
-                swap = obj["swap"].ToObject<TblOrderSwap>();
                 TransactionsHelper transactions = new TransactionsHelper();
                 if (transactions.SwapOrder(swap.FromSaleOrder, swap.ToSaleOrder))
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Swap Order {swap.FromSaleOrder}  successfully." });
