@@ -4168,7 +4168,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
                     grdata.ApprovalStatus = "Pending Approval";
                     grdata.Status = statusmessage;
-                    grdata.Company = saleorder.Company;
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
                 foreach (var item in grdetails)
@@ -4637,7 +4636,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 ICM.saleOrderNumber = tocode;
                 context.TblInspectionCheckMaster.Update(ICM);
             }
-            
+
             if (QCR != null)
             {
                 foreach (var item in QCR)
