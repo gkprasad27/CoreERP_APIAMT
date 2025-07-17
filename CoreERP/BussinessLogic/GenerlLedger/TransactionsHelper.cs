@@ -5661,7 +5661,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             poq.Status = "New";
                             poq.SaleOrderNo = item.SaleOrderNo;
                             poq.MaterialCode = item.MaterialCode;
-                            poq.MaterialCode = item.BomKey;
+                            poq.BomKey = item.BomKey;
                             poq.CompanyCode = saleOrderMaster.Company;
                             if (poq.Qty > 0)
                             {

@@ -490,7 +490,7 @@ namespace CoreERP.Controllers
                 {
                     dynamic expando = new ExpandoObject();
                     var JobworkList = CommonHelper.GetJobworkList();
-                    expando.JobWorkList = JobworkList.Where(x => (x.Status == "JO Created")).Select(x => new { ID = x.JobWorkNumber, TEXT = x.SupplierName, Vendor = x.Vendor, VendorGSTN = x.VendorGSTN });
+                    expando.JobWorkList = JobworkList.Where(x => (x.Status != "Material Received")).Select(x => new { ID = x.JobWorkNumber, TEXT = x.SupplierName, Vendor = x.Vendor, VendorGSTN = x.VendorGSTN });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
