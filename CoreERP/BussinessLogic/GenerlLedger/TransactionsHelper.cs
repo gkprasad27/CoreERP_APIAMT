@@ -3853,6 +3853,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public TblPurchaseOrder GetPurchaseOrderMasterById(string id)
         {
             using var repo = new Repository<TblPurchaseOrder>();
+            var Employees = repo.TblEmployee.ToList();
+
+            repo.TblPurchaseOrder.ToList().ForEach(c =>
+            {
+                c.CreatedBy = Employees.FirstOrDefault(l => l.EmployeeCode == c.CreatedBy)?.EmployeeName;
+
+            });
             return repo.TblPurchaseOrder
                 .FirstOrDefault(x => x.PurchaseOrderNumber == id);
         }
