@@ -1321,11 +1321,14 @@ namespace CoreERP.Controllers.masters
         [HttpGet("GetSourceSupplyDetailByMaterial/{Materialcode}")]
         public IActionResult GetSourceSupplyDetailByMaterial(string Materialcode)
         {
+            string code = Materialcode.Replace(@"\r", string.Empty).Trim();
+            // Using HttpUtility.UrlDecode (requires System.Web)
+            string decodedString = HttpUtility.UrlDecode(code);
             try
             {
                 var transactions = new TransactionsHelper();
                 dynamic expdoObj = new ExpandoObject();
-                expdoObj.ssDetail = new TransactionsHelper().GetMaterialSupplierDetailsbyMaterialCode(Materialcode);
+                expdoObj.ssDetail = new TransactionsHelper().GetMaterialSupplierDetailsbyMaterialCode(decodedString);
                 return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
             }
