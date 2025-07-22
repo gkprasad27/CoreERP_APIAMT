@@ -213,7 +213,7 @@ namespace CoreERP
         public static IEnumerable<tblJobworkDetails> GetJobWorkDetails(string JobworkNo)
         {
             using var repo = new Repository<tblJobworkDetails>();
-            var result = repo.tblJobworkDetails.Where(cd => cd.JobworkNumber == JobworkNo).ToList();
+            var result = repo.tblJobworkDetails.Where(cd => cd.JobworkNumber == JobworkNo && cd.Status!= "Material Received").ToList();
             var material = repo.TblMaterialMaster.ToList();
             repo.tblJobworkDetails.ToList().ForEach(c =>
             {
