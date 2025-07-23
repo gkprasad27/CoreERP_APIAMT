@@ -4380,6 +4380,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             using var Matdtl = new Repository<tblJobworkDetails>();
             List<tblJWReceiptDetails> GoosQTY;
+            string Masterstatusmessage = null;
             string statusmessage = null;
             using var dbtrans = context.Database.BeginTransaction();
             try
@@ -4403,23 +4404,44 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 if (poqty == totalqty)
                 {
-                    statusmessage = "Material Received";
+                    Masterstatusmessage = "Material Received";
                     jwdata.Status = statusmessage;
                 }
                 else if (totalqty < poqty)
                 {
-                    statusmessage = "Material Partial Received";
+                    Masterstatusmessage = "Material Partial Received";
                     jwdata.Status = statusmessage;
                 }
                 foreach (var item in jwdetails)
                 {
+                    poqty = Matdtl.tblJobworkDetails.Where(cd => cd.JobworkNumber == jwdata.JobWorkNumber && cd.MaterialCode == item.MaterialCode).Sum(x => x.Qty) ?? 0;
+                    GoosQTY = repo.tblJWReceiptDetails.Where(cd => cd.JobWorkNumber == item.JobWorkNumber && cd.MaterialCode == item.MaterialCode).ToList();
+                    if (GoosQTY.Count > 0)
+                    {
+                        receivedqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
+                        rejectedqty = (GoosQTY.Sum(i => i.RejectedQty) ?? 0);
+                    }
+                    var totally = receivedqty + rejectedqty + item.ReceivedQty ?? 0 + item.RejectedQty ?? 0;
+
+                    if (poqty == totally)
+                    {
+                        statusmessage = "Material Received";
+                        item.Status = statusmessage;
+
+                    }
+                    else if (totally < poqty)
+                    {
+                        statusmessage = "Material Partial Received";
+                        item.Status = statusmessage;
+
+                    }
+
                     item.LotNo = jwdata.LotNo;
                     item.VehicleNo = jwdata.VehicleNo;
                     item.JobWorkNumber = jwdata.JobWorkNumber;
                     item.ReceivedDate = jwdata.ReceivedDate;
                     item.ReceivedBy = jwdata.ReceivedBy;
                     item.BillAmount = jwdata.TotalAmount;
-                    item.Status = statusmessage;
                     item.InvoiceNo = jwdata.InvoiceNumber;
                     GoosQTY = Matdtl.tblJWReceiptDetails.Where(cd => cd.JobWorkNumber == item.JobWorkNumber && cd.MaterialCode == item.MaterialCode).ToList();
                     mtqty = (GoosQTY.Sum(i => i.ReceivedQty) ?? 0);
@@ -4499,7 +4521,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var JOM = repo.tblJobworkMaster.Where(v => v.JobWorkNumber == jwdata.JobWorkNumber).FirstOrDefault();
             if (JOM.JobWorkNumber == jwdata.JobWorkNumber)
             {
-                JOM.Status = statusmessage;
+                JOM.Status = Masterstatusmessage;
                 context.tblJobworkMaster.Update(JOM);
                 context.SaveChanges();
             }
