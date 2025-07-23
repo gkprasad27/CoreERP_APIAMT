@@ -1973,12 +1973,13 @@ namespace CoreERP
         {
             using var repo = new Repository<TblPoQueue>();
             var Material = repo.TblMaterialMaster.ToList().Where(x => x.Company == CompanyCode);
-
+            var SOM = repo.TblSaleOrderMaster.ToList().Where(x => x.Company == CompanyCode && x.Status!= "Dispatched" && x.Status!= "Invoice Generated" && x.Status!= "PO Created");
             var result = repo.TblPoQueue.Where(x => x.CompanyCode == CompanyCode).ToList();
 
             result.ForEach(c =>
             {
                 c.MaterialName = Material.FirstOrDefault(cur => cur.MaterialCode == c.MaterialCode)?.Description;
+                c.ApprovalStatus = SOM.FirstOrDefault(cur => cur.SaleOrderNo == c.SaleOrderNo)?.ApprovalStatus;
             });
             return result;
         }

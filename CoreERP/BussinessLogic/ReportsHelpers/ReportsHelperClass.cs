@@ -113,6 +113,27 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             return scopeRepository.ExecuteParamerizedCommand(command);
         }
 
+        public static DataSet GetCPReport(DateTime fromDate)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "GetConsolidatedSalaryReport";
+            #region Parameters
+
+            DbParameter pmfDate = command.CreateParameter();
+            pmfDate.Direction = ParameterDirection.Input;
+            pmfDate.Value = String.Format("{0:MM/dd/yyyy}", fromDate);
+            pmfDate.ParameterName = "fromdate";
+            
+            #endregion
+            // Add parameter as specified in the store procedure
+
+            command.Parameters.Add(pmfDate);
+            
+
+            return scopeRepository.ExecuteParamerizedCommand(command);
+        }
         public static DataSet GetSalesGSTReport(DateTime fromDate, DateTime toDate, string company, string customerCode)
         {
             ScopeRepository scopeRepository = new ScopeRepository();

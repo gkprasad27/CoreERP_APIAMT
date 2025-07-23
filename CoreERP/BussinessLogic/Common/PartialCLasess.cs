@@ -163,6 +163,12 @@ namespace CoreERP.Models
         [NotMapped]
         public int MatQty { get; set; }
     }
+
+    public partial class TblPoQueue
+    {
+        [NotMapped]
+        public string ApprovalStatus { get; set; }
+    }
     partial class TblPurchaseOrderDetails
     {
         [NotMapped]
