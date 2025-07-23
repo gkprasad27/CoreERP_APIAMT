@@ -29,6 +29,8 @@ namespace CoreERP.Models
         public decimal? Cgst { get; set; }
         public decimal? Ugst { get; set; }
         public decimal? Sgst { get; set; }
+        public string? Uom { get; set; }
+        public string? HsnSac { get; set; }
 
     }
 }

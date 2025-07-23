@@ -5316,10 +5316,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<tblJobworkDetails>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
-
+            var UOM = repo.TblUnit.ToList();
             repo.tblJobworkDetails.ToList().ForEach(c =>
             {
                 c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+                c.Uom = UOM.FirstOrDefault(x => Convert.ToString(x.UnitId) == c.Uom)?.UnitName;
             });
             return repo.tblJobworkDetails.Where(cd => cd.JobworkNumber == jobWorkNumber).ToList();
 
@@ -5354,6 +5355,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblPoQueue> GetSaleOrderDetailPOQ(string saleOrderNo)
         {
             using var repo = new Repository<TblPoQueue>();
+            var MaterialCodes = repo.TblMaterialMaster.ToList();
+            repo.TblPoQueue.ToList().ForEach(c =>
+            {
+                c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+            });
             return repo.TblPoQueue.Where(z => z.SaleOrderNo == saleOrderNo).ToList();
 
         }
@@ -5869,13 +5875,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (string.IsNullOrWhiteSpace(JWNumber))
                     JWNumber = jobWorkMaster.JobWorkNumber;
 
-                jwDetails.ForEach(x =>
+                foreach (var item in jwDetails) 
                 {
-
-                    x.JobworkNumber = (JWNumber);
-                    x.Status = "JO Created";
-                });
-
+                    var material = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
+                    item.HsnSac = material.Hsnsac;
+                    item.Uom = material.Uom;
+                    item.JobworkNumber = (JWNumber);
+                    item.Status = "JO Created";
+                }
 
                 JobworkDetailsExist = jwDetails.Where(x => x.ID > 0).ToList();
                 JobworkDetailsNew = jwDetails.Where(x => x.ID == 0).ToList();
