@@ -4395,19 +4395,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.tblJobworkMaster.Update(JOM);
                 context.SaveChanges();
             }
-            //jwdetails.ForEach(x =>
-            //{
-
-            //    var mathdr = repo.TblMaterialMaster.FirstOrDefault(im => im.MaterialCode == x.MaterialCode);
-
-            //    if (Convert.ToString(mathdr.ClosingQty) == null)
-            //        mathdr.ClosingQty = 0;
-
-            //    mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (x.ReceivedQty));
-            //    context.TblMaterialMaster.Update(mathdr);
-
-            //});
-            //context.SaveChanges();
+            
 
             return true;
 
