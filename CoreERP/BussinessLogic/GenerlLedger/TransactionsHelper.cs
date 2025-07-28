@@ -5270,8 +5270,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.Status = "SO Created";
                     saleOrderMaster.ApprovalStatus = "Pending Approval";
                     saleOrderMaster.TotalQty = totalqty;
-                    saleOrderMaster.EditDate = DateTime.Now;
-                    saleOrderMaster.CreatedDate = DateTime.Now;
+                    saleOrderMaster.EditDate = DateTime.Now;                    
                     //invoiceDetails.Sum(x => x.Qty);
                     context.TblSaleOrderMaster.UpdateRange(saleOrderMaster);
                     context.SaveChanges();
@@ -5309,8 +5308,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         Quotation.Status = "SO Created";
                         Quotation.SaleorderNo = SaleOrderNumber;
+                        Quotation.CreatedDate = DateTime.Now;
                         context.TblSupplierQuotationsMaster.Update(Quotation);
-
+                        saleOrderMaster.CreatedDate = DateTime.Now;
                         saleOrderMaster.OrderDate = DateTime.Now;
                         saleOrderMaster.PODate = DateTime.Now;
                         saleOrderMaster.Gstno = Quotation.Gstno;
@@ -5645,6 +5645,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         // context.TblMaterialMaster.UpdateRange(material);
                     }
                 }
+                material.EditDate = System.DateTime.Now;
                 context.TblMaterialMaster.UpdateRange(material);
                 saleOrderDetailsExist = saleOrderDetails.Where(x => x.ID > 0).ToList();
                 saleOrderDetailsNew = saleOrderDetails.Where(x => x.ID == 0).ToList();
