@@ -3204,7 +3204,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     var poq = repo.TblPoQueue.FirstOrDefault(z => z.SaleOrderNo == item.SaleOrder && z.MaterialCode == item.MaterialCode && z.CompanyCode == item.Company);
                     var sodatacheck = repo.TblPurchaseOrderDetails.Where(im => im.SaleOrder == item.SaleOrder && im.PurchaseOrderNumber != item.PurchaseOrderNumber && im.MaterialCode == item.MaterialCode && im.Company == item.Company);
 
-                    if (item.Qty == (item.Qty + sodata.POQty??0))
+                    if (item.Qty == (item.Qty + sodata.POQty ?? 0))
                         statusmessage = "PO Created";
                     else
                         statusmessage = "Partial PO Created";
@@ -3225,7 +3225,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             sodata.POQty = 0;
                     }
 
-                    
+
                     if (sodata != null && podata.saleOrderType != "Master Saleorder")
                     {
                         soItemQty = sodata.QTY;
@@ -3325,7 +3325,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             //context.TblPoQueue.Add(poq);
                         }
                     }
-                   
+
                     if (podata.saleOrderType != "Master Saleorder")
                     {
                         context.TblSaleOrderDetail.Update(sodata);
@@ -4068,10 +4068,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     item.SaleorderNo = purchase.SaleOrderNo;
                     item.MechineNumber = POD.MechineNumber;
 
-                    if (item.Qty == totalqty)
-                        detailstatus = "Material Received";
-                    else if (item.RejectQty > 0)
+
+                    if (item.RejectQty > 0)
                         detailstatus = "Material Partial Received";
+                    else if (item.Qty == totalqty)
+                        detailstatus = "Material Received";
                     else
                         detailstatus = "Material Partial Received";
 
@@ -4215,6 +4216,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     grdata.WeightBridge = purchase.WeightBridge;
                     grdata.OtherCharges = purchase.OtherCharges;
                     grdata.RoundOff = purchase.RoundOff;
+                    grdata.ApprovalStatus = "Pending Approval";
                     context.TblGoodsReceiptMaster.Add(grdata);
                 }
                 context.SaveChanges();
@@ -4395,7 +4397,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.tblJobworkMaster.Update(JOM);
                 context.SaveChanges();
             }
-            
+
 
             return true;
 
@@ -5270,7 +5272,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.Status = "SO Created";
                     saleOrderMaster.ApprovalStatus = "Pending Approval";
                     saleOrderMaster.TotalQty = totalqty;
-                    saleOrderMaster.EditDate = DateTime.Now;                    
+                    saleOrderMaster.EditDate = DateTime.Now;
                     //invoiceDetails.Sum(x => x.Qty);
                     context.TblSaleOrderMaster.UpdateRange(saleOrderMaster);
                     context.SaveChanges();
@@ -5756,7 +5758,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (string.IsNullOrWhiteSpace(JWNumber))
                     JWNumber = jobWorkMaster.JobWorkNumber;
 
-                foreach (var item in jwDetails) 
+                foreach (var item in jwDetails)
                 {
                     var material = repo.TblMaterialMaster.FirstOrDefault(x => x.MaterialCode == item.MaterialCode);
                     item.HsnSac = material.Hsnsac;
