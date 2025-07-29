@@ -4590,6 +4590,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (MaterialMaster != null)
                         icdata.DrawingRevNo = MaterialMaster.DragRevNo;
 
+                    icdata.MaterialCode = Materialcode;
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
                 }
@@ -4618,7 +4619,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
 
                     if (masternumber.Length > 1)
+                    {
+                        icdata.MaterialCode = Materialcode;
                         context.TblInspectionCheckMaster.Add(icdata);
+                    }
                     else
                         throw new Exception("Inspectioncheck Number Not Valid. " + masternumber + " Please check .");
 
@@ -5271,7 +5275,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.ApprovalStatus = "Pending Approval";
                     saleOrderMaster.TotalQty = totalqty;
                     saleOrderMaster.EditDate = DateTime.Now;
-                    saleOrderMaster.CreatedDate = DateTime.Now;
+                    //saleOrderMaster.CreatedDate = DateTime.Now;
                     //invoiceDetails.Sum(x => x.Qty);
                     context.TblSaleOrderMaster.UpdateRange(saleOrderMaster);
                     context.SaveChanges();
@@ -5309,6 +5313,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         Quotation.Status = "SO Created";
                         Quotation.SaleorderNo = SaleOrderNumber;
+                        Quotation.EditDate = DateTime.Now;
                         context.TblSupplierQuotationsMaster.Update(Quotation);
 
                         saleOrderMaster.OrderDate = DateTime.Now;
