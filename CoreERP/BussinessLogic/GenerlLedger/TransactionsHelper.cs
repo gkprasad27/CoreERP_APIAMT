@@ -4592,6 +4592,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (MaterialMaster != null)
                         icdata.DrawingRevNo = MaterialMaster.DragRevNo;
 
+                    icdata.MaterialCode = Materialcode;
                     context.TblInspectionCheckMaster.Update(icdata);
                     context.SaveChanges();
                 }
@@ -4620,7 +4621,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     }
 
                     if (masternumber.Length > 1)
+                    {
+                        icdata.MaterialCode = Materialcode;
                         context.TblInspectionCheckMaster.Add(icdata);
+                    }
                     else
                         throw new Exception("Inspectioncheck Number Not Valid. " + masternumber + " Please check .");
 
