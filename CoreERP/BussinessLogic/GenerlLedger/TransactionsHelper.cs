@@ -5277,7 +5277,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     saleOrderMaster.ApprovalStatus = "Pending Approval";
                     saleOrderMaster.TotalQty = totalqty;
                     saleOrderMaster.EditDate = DateTime.Now;
-                    //invoiceDetails.Sum(x => x.Qty);
+                    saleOrderMaster.CreatedDate = DateTime.Now;
                     context.TblSaleOrderMaster.UpdateRange(saleOrderMaster);
                     context.SaveChanges();
                 }
