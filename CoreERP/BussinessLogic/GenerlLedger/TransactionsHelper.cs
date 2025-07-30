@@ -5238,6 +5238,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         }
 
+        public List<TblSaleOrderDetail> GetSaleOrderDetailJO(string saleOrderNo)
+        {
+            using var repo = new Repository<TblSaleOrderDetail>();
+            var MaterialCodes = repo.TblMaterialMaster.ToList();
+            repo.TblSaleOrderDetail.ToList().ForEach(c =>
+            {
+                c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
+                c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+            });
+            return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
+
+        }
         public List<TblPoQueue> GetSaleOrderDetailPOQ(string saleOrderNo)
         {
             using var repo = new Repository<TblPoQueue>();

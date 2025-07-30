@@ -2629,6 +2629,53 @@ namespace CoreERP.Controllers.masters
             }
         }
 
+        [HttpGet("GetSaleOrderDetailJO/{saleOrderNumber}")]
+        public IActionResult GetSaleOrderDetailJO(string saleOrderNumber)
+        {
+            try
+            {
+                var transactions = new TransactionsHelper();
+                var saleOrderMasters = transactions.GetSaleOrderMastersById(saleOrderNumber);
+                if (saleOrderMasters == null)
+                {
+                    return NotFound(new APIResponse
+                    {
+                        status = APIStatus.FAIL.ToString(),
+                        response = "Sale Order Master not found."
+                    });
+                }
+                var bpList = transactions.GetSaleOrderDetailJO(saleOrderNumber);
+                if (bpList == null || !bpList.Any())
+                {
+                    return NotFound(new APIResponse
+                    {
+                        status = APIStatus.FAIL.ToString(),
+                        response = "Sale Order Details not found."
+                    });
+                }
+                var filteredList = bpList
+                    .Where(x => (x.Status != "Invoice Generated" && x.Status != "Dispatched") &&
+                                x.Company == saleOrderMasters.Company)
+                    .ToList();
+                dynamic expandoObj = new ExpandoObject();
+                expandoObj.SaleOrderMasters = saleOrderMasters;
+                expandoObj.SaleOrderDetails = filteredList;
+                return Ok(new APIResponse
+                {
+                    status = APIStatus.PASS.ToString(),
+                    response = expandoObj
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new APIResponse
+                {
+                    status = APIStatus.FAIL.ToString(),
+                    response = ex.Message
+                });
+            }
+        }
+
         [HttpGet("GetSaleOrderDetailPOQ/{saleOrderNumber}")]
         public IActionResult GetSaleOrderDetailPOQ(string saleOrderNumber)
         {
