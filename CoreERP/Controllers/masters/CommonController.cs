@@ -1878,7 +1878,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var POQList = CommonHelper.GetPoQueue(CompanyCode);//_TblPoQueue.GetAll().Where(x => x.Qty > 0 && x.CompanyCode == CompanyCode).OrderByDescending(o => o.ID);
+                    var POQList = CommonHelper.GetPoQueue(CompanyCode).OrderByDescending(o => o.ID);//_TblPoQueue.GetAll().Where(x => x.Qty > 0 && x.CompanyCode == CompanyCode).OrderByDescending(o => o.ID);
                     if (POQList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
