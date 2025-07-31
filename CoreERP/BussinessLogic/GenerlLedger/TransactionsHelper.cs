@@ -5229,10 +5229,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblSaleOrderDetail>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
+            var hsn = repo.TblHsnsac.ToList();
             repo.TblSaleOrderDetail.ToList().ForEach(c =>
             {
                 c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
                 c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+                c.HSNSAC = hsn.FirstOrDefault(x => x.Code == c.HSNSAC)?.Description;
             });
             return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo && cd.QTY != cd.POQty).ToList();
 
@@ -5254,9 +5256,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblPoQueue>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
+            var hsn = repo.TblHsnsac.ToList();
             repo.TblPoQueue.ToList().ForEach(c =>
             {
                 c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+                c.HSNSAC = hsn.FirstOrDefault(x => x.Code == c.HSNSAC)?.Description;
             });
             return repo.TblPoQueue.Where(z => z.SaleOrderNo == saleOrderNo).ToList();
 

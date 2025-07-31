@@ -168,6 +168,8 @@ namespace CoreERP.Models
     {
         [NotMapped]
         public string ApprovalStatus { get; set; }
+        [NotMapped]
+        public string HSNSAC { get; set; }
     }
     partial class TblPurchaseOrderDetails
     {
