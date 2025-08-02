@@ -96,12 +96,14 @@ namespace CoreERP.BussinessLogic.SelfserviceHelpers
         {
             try
             {
-                using Repository<TblAdvanceType> repo = new Repository<TblAdvanceType>();
-                //return repo.TblAdvanceType.ToList();
-
-                return null;
+                using var repo = new Repository<TblAdvanceType>();
+                return repo.GetAll().ToList();
             }
-            catch { throw; }
+            catch (Exception ex)
+            {
+                // Optionally log the exception here
+                throw new ApplicationException("Error fetching Advance Types", ex);
+            }
         }
     }
 }
