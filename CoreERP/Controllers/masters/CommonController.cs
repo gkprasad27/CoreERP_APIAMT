@@ -1037,7 +1037,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     //var empList = _employeeRepository.GetAll().Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
-                    var empList = EmployeeHelper.GetEmployeesByCompany(companycode).Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName, Mobile=x.MobileNumber });
+                    var empList = EmployeeHelper.GetEmployeesByCompany(companycode).Where(y=>y.IsActive==true).Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName, Mobile=x.MobileNumber });
                     if (empList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
