@@ -72,6 +72,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblAssignchartaccttoCompanycode> TblAssignchartaccttoCompanycode { get; set; }
         public virtual DbSet<TblAssignment> TblAssignment { get; set; }
         public virtual DbSet<TblAssignmentVoucherSeriestoVoucherType> TblAssignmentVoucherSeriestoVoucherType { get; set; }
+        public virtual DbSet<TblAdvanceType> TblAdvanceType { get; set; }
         public virtual DbSet<TblBankMaster> TblBankMaster { get; set; }
         public virtual DbSet<TblBatchMaster> TblBatchMaster { get; set; }
         public virtual DbSet<TblBinsCreation> TblBinsCreation { get; set; }
@@ -295,7 +296,7 @@ namespace CoreERP.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server = 103.67.238.235,7912; Database = ERP_AMT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
+                optionsBuilder.UseSqlServer("Server = 103.67.238.235,7912; Database = ERP_Amrit; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
             }
         }
 
@@ -2189,6 +2190,19 @@ namespace CoreERP.Models
                 //    .WithMany(p => p.TblBranch)
                 //    .HasForeignKey(d => d.State)
                 //    .HasConstraintName("FK__tbl_Branc__State__59E6E695");
+            });
+
+            modelBuilder.Entity<TblAdvanceType>(entity =>
+            {
+                entity.ToTable("Tbl_AdvanceType"); 
+
+                entity.HasKey(e => e.Id); // Set primary key
+
+                entity.Property(e => e.AdvanceTypeId)
+                      .HasMaxLength(50);
+
+                entity.Property(e => e.AdvanceTypeName)
+                      .HasMaxLength(100);
             });
 
             modelBuilder.Entity<TblBusinessPartnerAccount>(entity =>

@@ -87,25 +87,19 @@ namespace CoreERP.Controllers.Selfservice
             }
         }
 
-        [HttpGet("GetAdvancedataDetailslist")]
-        public IActionResult GetAdvancedataDetailslist()
+        [HttpGet("GetAdvanceDataDetailsList")]
+        public IActionResult GetAdvanceDataDetailsList()
         {
             try
             {
-                var advanceList = AdvanceHelper.GetAdvanceTypes();
-                if (advanceList.Count > 0)
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.advancesList = advanceList.Select(n => new { ID = n.AdvanceTypeId, Text = n.AdvanceTypeName });
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
-                }
-                else
-                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                var result = AdvanceHelper.GetAdvanceTypes();
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = result });
             }
             catch (Exception ex)
             {
-                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
     }
 }
