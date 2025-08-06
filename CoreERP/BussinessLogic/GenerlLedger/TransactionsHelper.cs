@@ -5260,8 +5260,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             repo.TblPoQueue.ToList().ForEach(c =>
             {
                 c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
+                c.HSNSAC = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Hsnsac;
                 c.HSNSAC = hsn.FirstOrDefault(x => x.Code == c.HSNSAC)?.Description;
             });
+
             return repo.TblPoQueue.Where(z => z.SaleOrderNo == saleOrderNo).ToList();
 
         }
