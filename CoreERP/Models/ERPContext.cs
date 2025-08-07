@@ -3982,7 +3982,7 @@ namespace CoreERP.Models
                     .HasColumnName("UGSTAmount")
                     .HasColumnType("numeric(18, 2)");
 
-                entity.Property(e => e.VoucherDate).HasMaxLength(50);
+                entity.Property(e => e.VoucherDate).HasColumnType("date");
 
                 entity.Property(e => e.VoucherNumber).HasMaxLength(50);
 
@@ -4024,7 +4024,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.PostingDate).HasColumnType("date");
 
-                entity.Property(e => e.ReferenceDate).HasMaxLength(50);
+                entity.Property(e => e.ReferenceDate).HasColumnType("date");
 
                 entity.Property(e => e.ReferenceNo).HasMaxLength(50);
 

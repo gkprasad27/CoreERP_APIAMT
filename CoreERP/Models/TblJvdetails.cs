@@ -10,7 +10,7 @@ namespace CoreERP.Models
         public string? Company { get; set; }
         public string? Branch { get; set; }
         public string? VoucherNumber { get; set; }
-        public string? VoucherDate { get; set; }
+        public DateTime? VoucherDate { get; set; }
         public DateTime? PostingDate { get; set; }
         public string? LineItemNo { get; set; }
         public string? Glaccount { get; set; }

@@ -15,7 +15,7 @@ namespace CoreERP.Models
         public string? VoucherNumber { get; set; }
         public string? TransactionType { get; set; }
         public string? ReferenceNo { get; set; }
-        public string? ReferenceDate { get; set; }
+        public DateTime? ReferenceDate { get; set; }
         public string? Narration { get; set; }
         public string? Status { get; set; }
         public string? AccountingIndicator { get; set; }
