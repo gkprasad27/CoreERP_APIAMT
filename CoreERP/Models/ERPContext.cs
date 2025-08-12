@@ -171,6 +171,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblNumberRange> TblNumberRange { get; set; }
         public virtual DbSet<TblOpenLedger> TblOpenLedger { get; set; }
         public virtual DbSet<TblOrderType> TblOrderType { get; set; }
+        public virtual DbSet<TblOpeningBalance> TblOpeningBalance { get; set; }
         public virtual DbSet<TblPartyCashBankMaster> TblPartyCashBankMaster { get; set; }
         public virtual DbSet<TblParyCashBankDetails> TblParyCashBankDetails { get; set; }
         public virtual DbSet<TblOrderSwap> TblOrderSwap { get; set; }
@@ -186,6 +187,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblPrimaryCostElement> TblPrimaryCostElement { get; set; }
         //public virtual DbSet<TblPrnoRange> TblPrnoRange { get; set; }
         public virtual DbSet<TblProcess> TblProcess { get; set; }
+        public virtual DbSet<TblPaymentType> TblPaymentType { get; set; }
         public virtual DbSet<TblPurchaseDepartment> TblPurchaseDepartment { get; set; }
         public virtual DbSet<TblPurchaseGroup> TblPurchaseGroup { get; set; }
         public virtual DbSet<TblPurchaseNoRange> TblPurchaseNoRange { get; set; }
@@ -296,7 +298,7 @@ namespace CoreERP.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server = 103.67.238.235,7912; Database = ERP_Amrit; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
+                optionsBuilder.UseSqlServer("Server = 103.67.238.235,7912; Database = ERP_AMT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
             }
         }
 
@@ -3822,6 +3824,23 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Value).HasColumnType("numeric(18, 2)");
             });
+
+            modelBuilder.Entity<TblPaymentType>(entity =>
+            {
+                entity.HasKey(e => e.PaymentTypeId);
+
+                entity.ToTable("tbl_PaymentType");
+
+                entity.Property(e => e.PaymentTypeId)
+                    .HasColumnName("paymentTypeId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.PaymentTypeName)
+                    .HasColumnName("paymentTypeName")
+                    .IsUnicode(false);
+            });
+
 
             modelBuilder.Entity<TblInvoiceVerificationMaster>(entity =>
             {
@@ -8658,6 +8677,87 @@ namespace CoreERP.Models
                 entity.Property(e => e.Status)
                     .HasMaxLength(50);
                
+            });
+
+            modelBuilder.Entity<TblOpeningBalance>(entity =>
+            {
+                entity.HasKey(e => e.OpeningBalanceId)
+                    .HasName("PK__tbl_Open__5E1AFE196CCE70E6");
+
+                entity.ToTable("tbl_OpeningBalance");
+
+                entity.Property(e => e.OpeningBalanceId)
+                    .HasColumnName("openingBalanceId")
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Amount)
+                    .HasColumnName("amount")
+                    .HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.BranchCode)
+                    .IsRequired()
+                    .HasColumnName("branchCode")
+                    .HasMaxLength(80);
+
+                entity.Property(e => e.BranchId)
+                    .HasColumnName("branchID")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.BranchName)
+                    .IsRequired()
+                    .HasColumnName("branchName")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("employeeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.LedgerCode)
+                    .HasColumnName("ledgerCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.LedgerId)
+                    .HasColumnName("ledgerId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.LedgerName)
+                    .HasColumnName("ledgerName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Narration)
+                    .HasColumnName("narration")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.OpeningBalanceDate)
+                    .HasColumnName("openingBalanceDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.PaymentTypeId)
+                    .HasColumnName("paymentTypeId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.PaymentTypeName)
+                    .HasColumnName("paymentTypeName")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ShiftId)
+                    .HasColumnName("shiftId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("userId")
+                    .HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasColumnName("userName")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VoucherNo)
+                    .HasColumnName("voucherNo")
+                    .HasMaxLength(250);
             });
 
             modelBuilder.Entity<TblMaterialIssueDetails>(entity =>
