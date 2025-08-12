@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace CoreERP.Controllers
 {
     [ApiController]
-    [Route("api/masters/OpeningBalance")]
+    [Route("api/OpeningBalance")]
     public class OpeningBalanceController : ControllerBase
     {
         [HttpGet("GetOpeningBalanceList")]
