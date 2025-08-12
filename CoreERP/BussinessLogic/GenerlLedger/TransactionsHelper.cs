@@ -302,7 +302,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             jvDetails.ForEach(x =>
             {
                 x.VoucherNumber = jvMaster.VoucherNumber;
-                x.VoucherDate = Convert.ToString(jvMaster.VoucherDate);
+                x.VoucherDate = jvMaster.VoucherDate;
                 x.Company = jvMaster.Company;
                 x.Branch = jvMaster.Branch;
                 x.PostingDate = jvMaster.PostingDate;
