@@ -2,10 +2,12 @@
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Dynamic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -32,7 +34,7 @@ namespace CoreERP.Controllers.masters
                 if (_dispatchRepository.SaveChanges() > 0)
                 {
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = dispatch };
-                   // using var repo = new Repository<TblDispatch>();
+                    // using var repo = new Repository<TblDispatch>();
                     using var repo = new ERPContext();
                     var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder);
                     var Inspection = repo.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == dispatch.SaleOrder);
@@ -43,13 +45,13 @@ namespace CoreERP.Controllers.masters
                     var Invoice = repo.TblInvoiceMaster.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder);
                     var Invoice1 = repo.TblInvoiceMaster.Where(im => im.SaleOrderNo == dispatch.SaleOrder);
                     var InvoiceDetails = repo.TblInvoiceDetail.FirstOrDefault(im => im.Saleorder == dispatch.SaleOrder);
-                    var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder && im.Billable=="Y");
+                    var SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == dispatch.SaleOrder && im.Billable == "Y");
                     var SaleOrderDetails1 = repo.TblSaleOrderDetail.Where(im => im.SaleOrderNo == dispatch.SaleOrder && im.Billable == "Y");
                     int sqty = 0;
                     int invqty = 0;
                     string message = null;
-                    sqty = SaleOrderDetails1.Sum(x=>x.QTY);
-                    invqty =Convert.ToInt16(Invoice1.Sum(x=>x.InvoiceQty));
+                    sqty = SaleOrderDetails1.Sum(x => x.QTY);
+                    invqty = Convert.ToInt16(Invoice1.Sum(x => x.InvoiceQty));
                     if (sqty == invqty)
                         message = "Dispatched";
                     else
@@ -97,7 +99,7 @@ namespace CoreERP.Controllers.masters
                         repo.TblPurchaseOrder.Update(purchase);
                     }
                     repo.SaveChanges();
-                    
+
                 }
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Recored Added Failed." };
@@ -176,5 +178,42 @@ namespace CoreERP.Controllers.masters
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
         }
+
+        [HttpGet("GetDispatchList/{Custcode}")]
+        public async Task<IActionResult> GetDispatchList(string Custcode)
+        {
+            await using var repo = new Repository<TblDispatch>();
+
+            var dispatchList = await (
+                from td in repo.TblDispatch
+                join so in repo.TblSaleOrderMaster
+                    on td.SaleOrder equals so.SaleOrderNo into grGroup
+                from gr in grGroup.DefaultIfEmpty()
+                where gr == null || gr.CustomerCode == Custcode
+                orderby td.ID descending
+                select td
+            ).ToListAsync();
+
+            if (dispatchList.Any())
+            {
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.DispatchList = dispatchList;
+
+                return Ok(new APIResponse
+                {
+                    status = APIStatus.PASS.ToString(),
+                    response = expdoObj
+                });
+            }
+
+            return Ok(new APIResponse
+            {
+                status = APIStatus.FAIL.ToString(),
+                response = "No Data Found."
+            });
+        }
+
+
+
     }
 }
