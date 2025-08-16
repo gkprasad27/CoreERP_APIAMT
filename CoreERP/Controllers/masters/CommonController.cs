@@ -303,7 +303,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var saleOrderMaster = new TransactionsHelper().GetCustSaleOrderMasters(searchCriteria).Where(x => x.CustomerCode == searchCriteria.AddWwho);
+                    var saleOrderMaster = new TransactionsHelper().GetCustSaleOrderMasters(searchCriteria).Where(x => x.CustomerCode == searchCriteria.EditWho);
                     if (!saleOrderMaster.Any())
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Sale Order." });
                     dynamic expdoObj = new ExpandoObject();
