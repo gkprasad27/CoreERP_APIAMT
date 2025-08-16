@@ -1,6 +1,7 @@
 ﻿using CoreERP.BussinessLogic.GenerlLedger;
 using CoreERP.BussinessLogic.masterHlepers;
 using CoreERP.DataAccess.Repositories;
+using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -246,7 +247,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.BPList = _somRepository.Where(x => (x.Status != "Invoice Generated" && x.Status != "PO Created" && x.Status != "Dispatched" && x.ApprovalStatus =="Approved" && x.Company == CompanyCode)).Select(x => new { SaleOrderNo = x.SaleOrderNo, ProfitCenter = x.ProfitCenter }).ToList();
+                    expando.BPList = _somRepository.Where(x => (x.Status != "Invoice Generated" && x.Status != "PO Created" && x.Status != "Dispatched" && x.ApprovalStatus == "Approved" && x.Company == CompanyCode)).Select(x => new { SaleOrderNo = x.SaleOrderNo, ProfitCenter = x.ProfitCenter }).ToList();
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -295,16 +296,20 @@ namespace CoreERP.Controllers
             return result;
         }
 
-        [HttpGet("GetCustomerSaleOrder/{CompanyCode}/{VendorCode}")]
-        public async Task<IActionResult> GetCustomerSaleOrder(string CompanyCode, string VendorCode)
+        [HttpPost("GetCustomerSaleOrder")]
+        public async Task<IActionResult> GetCustomerSaleOrder([FromBody] SearchCriteria searchCriteria)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
-                    dynamic expando = new ExpandoObject();
-                    expando.SOList = _somRepository.Where(x => (x.Company == CompanyCode && x.CustomerCode== VendorCode)).Select(x => new { saleOrderNo = x.SaleOrderNo });
-                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    var saleOrderMaster = new TransactionsHelper().GetCustSaleOrderMasters(searchCriteria).Where(x => x.CustomerCode == searchCriteria.AddWwho);
+                    if (!saleOrderMaster.Any())
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for Sale Order." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.saleOrderMaster = saleOrderMaster;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
                 }
                 catch (Exception ex)
                 {
@@ -323,7 +328,7 @@ namespace CoreERP.Controllers
                 {
                     dynamic expando = new ExpandoObject();
 
-                    var BPList =CommonHelper.GetSaleOrderApprovedData();
+                    var BPList = CommonHelper.GetSaleOrderApprovedData();
                     expando.BPList = BPList.Where(x => ((x.Status == "SO Created" || x.Status == "PO Created" || x.Status == "Partial PO Created" || x.Status == "Material Received" || x.Status == "Material Partial Received")) && (x.Company == CompanyCode)).Select(x => new { saleOrderNo = x.SaleOrderNo });
 
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
@@ -603,7 +608,7 @@ namespace CoreERP.Controllers
                     dynamic expando = new ExpandoObject();
                     var saleOrderMasterList = CommonHelper.GetSaleOrderMastersById(saleorderno);
                     var vouchertypeList = CommonHelper.GetsaleOrdernoList(saleorderno);
-                    expando.saleordernoList = vouchertypeList.Where(x=>x.Billable=="Y");
+                    expando.saleordernoList = vouchertypeList.Where(x => x.Billable == "Y");
                     expando.saleOrderMasterList = saleOrderMasterList;
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
@@ -1056,7 +1061,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     //var empList = _employeeRepository.GetAll().Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName });
-                    var empList = EmployeeHelper.GetEmployeesByCompany(companycode).Where(y=>y.IsActive==true).Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName, Mobile=x.MobileNumber });
+                    var empList = EmployeeHelper.GetEmployeesByCompany(companycode).Where(y => y.IsActive == true).Select(x => new { ID = x.EmployeeCode, TEXT = x.EmployeeName, Mobile = x.MobileNumber });
                     if (empList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();

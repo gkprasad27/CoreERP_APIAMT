@@ -15,6 +15,31 @@ namespace CoreERP.Helpers.SharedModels
         private string _name;
         private int _saleOrderNo=0;
         private string _companyCode;
+        private string _addWho;
+        private string _editWho;
+
+        public string? AddWwho
+        {
+            get
+            {
+                return _addWho;
+            }
+            set
+            {
+                _addWho = value;
+            }
+        }
+        public string? EditWho
+        {
+            get
+            {
+                return _editWho;
+            }
+            set
+            {
+                _editWho = value;
+            }
+        }
         public string searchCriteria
         {
             get
