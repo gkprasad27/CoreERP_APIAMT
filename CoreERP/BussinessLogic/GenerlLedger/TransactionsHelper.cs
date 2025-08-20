@@ -3739,21 +3739,26 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(string number)
         {
             using var repo = new Repository<TblPurchaseOrderDetails>();
-            var material = repo.TblMaterialMaster.ToList();
-            var saleorder = repo.TblSaleOrderDetail.ToList();
-            var hsn = repo.TblHsnsac.ToList();
-            var UOM = repo.TblUnit.ToList();
+            var materialLookup = repo.TblMaterialMaster.ToList();
+            var saleOrderLookup = repo.TblSaleOrderDetail.ToList();
+            var hsnLookup = repo.TblHsnsac.ToList();
+            var uomLookup = repo.TblUnit.ToList();
 
-            repo.TblPurchaseOrderDetails.ToList().ForEach(c =>
+            var poList = repo.TblPurchaseOrderDetails
+    .Where(po => po.PurchaseOrderNumber == number)
+    .ToList();
+
+            foreach (var po in poList)
             {
-                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
-                c.AvailableQTY = Convert.ToInt32(material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
-                c.poQty = Convert.ToInt32(saleorder.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.POQty);
-                c.HSNSAC = hsn.FirstOrDefault(x => x.Code == c.HSNSAC)?.Description;
-                c.UomCode = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Uom;
-                c.Uom = UOM.FirstOrDefault(x => Convert.ToString(x.UnitId) == c.UomCode)?.UnitName;
-            });
-            return repo.TblPurchaseOrderDetails.Where(cd => cd.PurchaseOrderNumber == number).ToList();
+                po.MaterialName = materialLookup.FirstOrDefault(l => l.MaterialCode == po.MaterialCode)?.Description;
+                po.AvailableQTY = Convert.ToInt32(materialLookup.FirstOrDefault(l => l.MaterialCode == po.MaterialCode)?.ClosingQty);
+                po.poQty = Convert.ToInt32(saleOrderLookup.FirstOrDefault(l => l.MaterialCode == po.MaterialCode)?.POQty);
+                //po.HSNSAC = hsnLookup.FirstOrDefault(x => x.Code == po.HSNSAC)?.Description;
+                po.UomCode = materialLookup.FirstOrDefault(l => l.MaterialCode == po.MaterialCode)?.Uom;
+                po.Uom = uomLookup.FirstOrDefault(x => Convert.ToString(x.UnitId) == po.UomCode)?.UnitName;
+            }
+            return poList;
+
         }
 
         public List<TblPurchaseOrderDetails> GetPurchaseOrderDetails(string saleorder, string materialcode)
@@ -6090,4 +6095,5 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         #endregion
 
     }
+
 }
