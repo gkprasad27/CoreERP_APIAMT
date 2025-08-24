@@ -18,6 +18,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CoreERP.BussinessLogic.GenerlLedger
 {
@@ -5159,8 +5161,24 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public TblSaleOrderMaster GetSaleOrderMastersById(string saleOrderNo)
         {
             using var repo = new Repository<TblSaleOrderMaster>();
-            return repo.TblSaleOrderMaster
+
+            var saleOrder = repo.TblSaleOrderMaster
                 .FirstOrDefault(x => x.SaleOrderNo == saleOrderNo);
+
+            if (saleOrder != null)
+            {
+                var companyLookup = repo.TblCompany.ToList();
+
+                var company = companyLookup.FirstOrDefault(l => l.CompanyCode == saleOrder.Company);
+                if (company != null)
+                {
+                    saleOrder.CompanyName = company.CompanyName;
+                }
+            }
+
+            return saleOrder;
+
+
         }
 
         public tblJobworkMaster GetJobwrokMastersById(string jobWorkNumber)
@@ -5238,18 +5256,32 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblSaleOrderDetail> GetSaleOrdersDetails(string saleOrderNo)
         {
             using var repo = new Repository<TblSaleOrderDetail>();
-            var MaterialCodes = repo.TblMaterialMaster.ToList();
-            var BOMMaster = repo.TblBomDetails.ToList();
-            var BOMType = repo.TbBommaster.ToList();
 
-            repo.TblSaleOrderDetail.ToList().ForEach(c =>
+            var materialCodes = repo.TblMaterialMaster.ToList();
+            var bomDetails = repo.TblBomDetails.ToList();
+            var bomTypes = repo.TbBommaster.ToList();
+            var hsnLookup = repo.TblHsnsac.ToList();
+
+            var soList = repo.TblSaleOrderDetail
+                .Where(po => po.SaleOrderNo == saleOrderNo)
+                .ToList();
+
+            foreach (var so in soList)
             {
-                c.AvailableQTY = Convert.ToInt32(MaterialCodes.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.ClosingQty);
-                c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
-                c.BOMQTY = Convert.ToInt32(BOMMaster.Where(z => z.BomKey == c.BomKey).FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Qty);
-                c.BomType = BOMType.FirstOrDefault(b => b.Bomnumber == c.BomKey)?.Bomtype;
-            });
-            return repo.TblSaleOrderDetail.Where(cd => cd.SaleOrderNo == saleOrderNo).ToList();
+                var material = materialCodes.FirstOrDefault(m => m.MaterialCode == so.MaterialCode);
+                var bomDetail = bomDetails.FirstOrDefault(b => b.BomKey == so.BomKey && b.MaterialCode == so.MaterialCode);
+                var bomType = bomTypes.FirstOrDefault(b => b.Bomnumber == so.BomKey);
+                var hsn = hsnLookup.FirstOrDefault(h => h.Code == so.HSNSAC);
+
+                so.AvailableQTY = Convert.ToInt32(material?.ClosingQty ?? 0);
+                so.MaterialName = material?.Description;
+                so.BOMQTY = Convert.ToInt32(bomDetail?.Qty ?? 0);
+                so.BomType = bomType?.Bomtype;
+                so.HSNSAC = hsn?.Description;
+            }
+
+            return soList;
+
 
         }
 
