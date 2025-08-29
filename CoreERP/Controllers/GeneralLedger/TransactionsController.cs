@@ -2172,19 +2172,30 @@ namespace CoreERP.Controllers.masters
             }
         }
 
-        [HttpPost("SwapOrder")]
-        public async Task<IActionResult> SwapOrder([FromBody] JObject obj)
+        [HttpPost("SwapOrder/{swapType}/{fromSO}/{toSO}")]
+        public async Task<IActionResult> SwapOrder([FromBody] JObject obj, string swapType, string fromSO, string toSO)
         {
             try
             {
-                TblOrderSwap swap = obj.ToObject<TblOrderSwap>();
+                List<TblSaleOrderDetail> saleOrderDetails;
+                var saleOrderMaster = new TblSaleOrderMaster();
+                if (swapType != "Full")
+                {
+                    saleOrderDetails = obj["qsDtl"]?.ToObject<List<TblSaleOrderDetail>>() ?? new List<TblSaleOrderDetail>();
+                    saleOrderMaster = obj["qsHdr"].ToObject<TblSaleOrderMaster>();
+                }
+                else
+                {
+                    saleOrderDetails = new List<TblSaleOrderDetail> { new TblSaleOrderDetail() };
+                    saleOrderMaster = new TblSaleOrderMaster();
+                }
 
                 if (obj == null)
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
 
                 TransactionsHelper transactions = new TransactionsHelper();
-                if (transactions.SwapOrder(swap.FromSaleOrder, swap.ToSaleOrder))
-                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Swap Order {swap.FromSaleOrder}  successfully." });
+                if (transactions.SwapOrder(fromSO, toSO, swapType, saleOrderMaster, saleOrderDetails))
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = $"Swap Order {fromSO}  successfully." });
 
                 return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "error while Swap  Order." });
             }

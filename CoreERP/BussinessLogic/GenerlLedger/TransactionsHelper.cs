@@ -2583,12 +2583,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblPurchaseRequisitionDetails>();
 
             var result = repo.TblPurchaseRequisitionDetails.Where(cd => cd.PurchaseRequisitionNumber == number).ToList();
-            var hsn = repo.TblMaterialMaster.ToList();
-
+            var materiallookup = repo.TblMaterialMaster.ToList();
+            var hsnLookup = repo.TblHsnsac.ToList();
             result
                 .ForEach(c =>
                 {
-                    c.hsnsac = hsn.FirstOrDefault(l => l.MaterialCode == c.MaterialCode).Hsnsac;
+                    c.hsnsac = materiallookup.FirstOrDefault(l => l.MaterialCode == c.MaterialCode).Hsnsac;
+                    c.hsnsac = hsnLookup.FirstOrDefault(x => x.Code == c.hsnsac)?.Description;
                 });
 
             return result.ToList();
@@ -4467,7 +4468,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return true;
         }
 
-        public bool SwapOrder(string fromcode, string tocode)
+        public bool SwapOrder(string fromcode, string tocode, string SwapType, TblSaleOrderMaster saleOrderMaster, List<TblSaleOrderDetail> saleOrderDetails)
         {
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
@@ -4481,67 +4482,91 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var ICD = repo.TblInspectionCheckDetails.Where(im => im.saleOrderNumber == fromcode);
             var QCR = repo.tblQCResults.Where(im => im.saleOrderNumber == fromcode);
             var Swap = new TblOrderSwap();
-
-            if (GID != null)
+            if (SwapType == "Full")
             {
-                foreach (var item in GID)
+                if (GID != null)
                 {
-                    item.SaleOrderNumber = tocode;
-                    context.TblGoodsIssueDetails.Update(item);
+                    foreach (var item in GID)
+                    {
+                        item.SaleOrderNumber = tocode;
+                        context.TblGoodsIssueDetails.Update(item);
+                    }
+                }
+                if (GIM != null)
+                {
+                    GIM.SaleOrderNumber = tocode;
+                    context.TblGoodsIssueMaster.Update(GIM);
+                }
+
+                if (PD != null)
+                {
+                    foreach (var item in PD)
+                    {
+                        item.SaleOrderNumber = tocode;
+                        context.TblProductionDetails.Update(item);
+                    }
+                }
+                if (PS != null)
+                {
+                    foreach (var item in PS)
+                    {
+                        item.SaleOrderNumber = tocode;
+                        context.TblProductionStatus.Update(item);
+                    }
+                }
+                if (PM != null)
+                {
+                    PM.SaleOrderNumber = tocode;
+                    context.TblProductionMaster.Update(PM);
+                }
+
+
+                if (ICD != null)
+                {
+                    foreach (var item in ICD)
+                    {
+                        item.saleOrderNumber = tocode;
+                        context.TblInspectionCheckDetails.Update(item);
+                    }
+                }
+                if (ICM != null)
+                {
+                    ICM.saleOrderNumber = tocode;
+                    context.TblInspectionCheckMaster.Update(ICM);
+                }
+
+                if (QCR != null)
+                {
+                    foreach (var item in QCR)
+                    {
+                        item.saleOrderNumber = tocode;
+                        context.tblQCResults.Update(item);
+                    }
                 }
             }
-            if (GIM != null)
+            else
             {
-                GIM.SaleOrderNumber = tocode;
-                context.TblGoodsIssueMaster.Update(GIM);
-            }
-
-            if (PD != null)
-            {
-                foreach (var item in PD)
+                var GM = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == tocode);
+                var GD = repo.TblGoodsIssueDetails.Where(im => im.SaleOrderNumber == tocode);
+                if (GD != null)
                 {
-                    item.SaleOrderNumber = tocode;
-                    context.TblProductionDetails.Update(item);
+                    foreach (var item in GD)
+                    {
+                        item.SaleOrderNumber = tocode;
+                        context.TblGoodsIssueDetails.Update(item);
+                    }
+                }
+                if (GM != null)
+                {
+                    GM.SaleOrderNumber = tocode;
+                    context.TblGoodsIssueMaster.Update(GM);
+                }
+                else
+                {
+                    GIM.SaleOrderNumber = tocode;
+                    context.TblGoodsIssueMaster.Add(GIM);
                 }
             }
-            if (PS != null)
-            {
-                foreach (var item in PS)
-                {
-                    item.SaleOrderNumber = tocode;
-                    context.TblProductionStatus.Update(item);
-                }
-            }
-            if (PM != null)
-            {
-                PM.SaleOrderNumber = tocode;
-                context.TblProductionMaster.Update(PM);
-            }
-
-
-            if (ICD != null)
-            {
-                foreach (var item in ICD)
-                {
-                    item.saleOrderNumber = tocode;
-                    context.TblInspectionCheckDetails.Update(item);
-                }
-            }
-            if (ICM != null)
-            {
-                ICM.saleOrderNumber = tocode;
-                context.TblInspectionCheckMaster.Update(ICM);
-            }
-
-            if (QCR != null)
-            {
-                foreach (var item in QCR)
-                {
-                    item.saleOrderNumber = tocode;
-                    context.tblQCResults.Update(item);
-                }
-            }
-
             Swap.FromSaleOrder = fromcode;
             Swap.ToSaleOrder = tocode;
             Swap.AddDate = System.DateTime.Now;
