@@ -4547,13 +4547,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             else
             {
                 var GM = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == tocode);
-                var GD = repo.TblGoodsIssueDetails.Where(im => im.SaleOrderNumber == tocode);
-                if (GD != null)
+                foreach (var item in saleOrderDetails)
                 {
-                    foreach (var item in GD)
+                    var GD = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode);
+                    if (GD != null)
                     {
-                        item.SaleOrderNumber = tocode;
-                        context.TblGoodsIssueDetails.Update(item);
+                        GD.SaleOrderNumber = tocode;
+                        context.TblGoodsIssueDetails.Update(GD);
                     }
                 }
                 if (GM != null)
@@ -4565,6 +4565,64 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     GIM.SaleOrderNumber = tocode;
                     context.TblGoodsIssueMaster.Add(GIM);
+                }
+                foreach (var item in saleOrderDetails)
+                {
+                    var POD = repo.TblProductionDetails.FirstOrDefault(im => im.SaleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode);
+                    if (POD != null)
+                    {
+                        POD.SaleOrderNumber = tocode;
+                        context.TblProductionDetails.Update(POD);
+                    }
+                }
+                foreach (var item in saleOrderDetails)
+                {
+                    var POS = repo.TblProductionStatus.FirstOrDefault(im => im.SaleOrderNumber == fromcode);
+                    if (POS != null)
+                    {
+                        POS.SaleOrderNumber = tocode;
+                        context.TblProductionStatus.Update(POS);
+                    }
+                }
+                var POM = repo.TblProductionMaster.FirstOrDefault(im => im.SaleOrderNumber == tocode);
+                if (POM != null)
+                {
+                    POM.SaleOrderNumber = tocode;
+                    context.TblProductionMaster.Update(POM);
+                }
+                else
+                {
+                    PM.SaleOrderNumber = tocode;
+                    context.TblProductionMaster.Add(PM);
+                }
+                foreach (var item in saleOrderDetails)
+                {
+                    var IC = repo.TblInspectionCheckDetails.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode);
+                    if (IC != null)
+                    {
+                        IC.saleOrderNumber = tocode;
+                        context.TblInspectionCheckDetails.Update(IC);
+                    }
+                }
+                var IM = repo.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == tocode);
+                if (IM != null)
+                {
+                    IM.saleOrderNumber = tocode;
+                    context.TblInspectionCheckMaster.Update(IM);
+                }
+                else
+                {
+                    ICM.saleOrderNumber = tocode;
+                    context.TblInspectionCheckMaster.Update(ICM);
+                }
+                foreach (var item in saleOrderDetails)
+                {
+                    var QR = repo.tblQCResults.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode);
+                    if (QR != null)
+                    {
+                        QR.saleOrderNumber = tocode;
+                        context.tblQCResults.Update(QR);
+                    }
                 }
             }
             Swap.FromSaleOrder = fromcode;
