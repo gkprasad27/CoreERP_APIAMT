@@ -4595,9 +4595,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     PM.SaleOrderNumber = tocode;
                     context.TblProductionMaster.Add(PM);
                 }
+                var IC = new TblInspectionCheckDetails();
                 foreach (var item in saleOrderDetails)
                 {
-                    var IC = repo.TblInspectionCheckDetails.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode);
+                    if (saleOrderMaster.Company == "2000")
+                        IC = repo.TblInspectionCheckDetails.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode);
+                    else
+                        IC = repo.TblInspectionCheckDetails.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.BomKey == item.MaterialCode);
+
                     if (IC != null)
                     {
                         IC.saleOrderNumber = tocode;
@@ -4615,9 +4620,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     ICM.saleOrderNumber = tocode;
                     context.TblInspectionCheckMaster.Update(ICM);
                 }
+                var QR = new tblQCResults();
                 foreach (var item in saleOrderDetails)
                 {
-                    var QR = repo.tblQCResults.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode);
+                    if (saleOrderMaster.Company == "2000")
+                        QR = repo.tblQCResults.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode);
+                    else
+                        QR = repo.tblQCResults.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.MaterialCode == item.BomKey);
+
                     if (QR != null)
                     {
                         QR.saleOrderNumber = tocode;
