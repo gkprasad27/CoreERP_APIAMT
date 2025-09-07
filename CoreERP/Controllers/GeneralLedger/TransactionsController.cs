@@ -2135,6 +2135,24 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetLot/{code}")]
+        public IActionResult GetLot(string code)
+        {
+            try
+            {
+                var Lot = new TransactionsHelper().GetLot(code);
+                if (!Lot.Any())
+                    return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                dynamic expdoObj = new ExpandoObject();
+                expdoObj.Lot = Lot;
+                return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
 
         [HttpGet("ReturnGoodsReceipt/{code}")]
         public IActionResult ReturnGoodsReceipt(string code)

@@ -147,6 +147,7 @@ namespace CoreERP.Models
         public virtual DbSet<TblLogin> TblLogin { get; set; }
         public virtual DbSet<TblLotAssignment> TblLotAssignment { get; set; }
         public virtual DbSet<TblLotSeries> TblLotSeries { get; set; }
+        public virtual DbSet<tbllotwisematerial> Tbllotwisematerial { get; set; }
         public virtual DbSet<TblMainAssetMaster> TblMainAssetMaster { get; set; }
         public virtual DbSet<TblMainAssetMasterTransaction> TblMainAssetMasterTransaction { get; set; }
         public virtual DbSet<TblMaintenancearea> TblMaintenancearea { get; set; }
@@ -4152,6 +4153,24 @@ namespace CoreERP.Models
                 entity.Property(e => e.Description).HasMaxLength(50);
 
                 entity.Property(e => e.Prefix).HasMaxLength(5);
+            });
+
+            modelBuilder.Entity<tbllotwisematerial>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.ToTable("tbl_LotwiseMaterial");
+
+                entity.Property(e => e.LotNo).HasMaxLength(50);
+
+                entity.Property(e => e.Materialcode).HasMaxLength(50);
+
+                entity.Property(e => e.ReceivedQty).HasMaxLength(5);
+                entity.Property(e => e.RejectedQty).HasMaxLength(5);
+                entity.Property(e => e.InvoiceNo).HasMaxLength(50);
+                entity.Property(e => e.Vendor).HasMaxLength(50);
+                entity.Property(e => e.ReceivedDate).HasMaxLength(50);
+                entity.Property(e => e.Amount).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblMainAssetMaster>(entity =>

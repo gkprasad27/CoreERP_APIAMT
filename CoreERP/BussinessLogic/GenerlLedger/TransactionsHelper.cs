@@ -1,5 +1,6 @@
 ﻿using CoreERP.BussinessLogic.Common;
 using CoreERP.DataAccess;
+using CoreERP.DataAccess.Repositories;
 using CoreERP.Helpers;
 using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
@@ -14,6 +15,7 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -26,7 +28,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
     public class TransactionsHelper
     {
         #region VoucherNumber & TransactionType
-
+        private readonly IRepository<TblLotAssignment> _assignmentrepository;
+        private readonly IRepository<TblLotSeries> _seriesrepository;
         public string GetVoucherNumber(string voucherType)
         {
             var voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType, out var startNumber, out var endNumber);
@@ -215,6 +218,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblCashBankMaster>();
             return repo.TblCashBankMaster
                 .FirstOrDefault(x => x.VoucherNumber == voucherNumber);
+        }
+
+        public List<tbllotwisematerial> GetLot(string materialCode)
+        {
+            using var repo = new Repository<tbllotwisematerial>();
+            return repo.Tbllotwisematerial
+                .Where(x => x.Materialcode == materialCode && x.ReceivedQty > 0)
+                .ToList();
         }
 
         public List<TblCashBankDetails> GetCashBankDetails(string voucherNumber)
@@ -3967,13 +3978,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var Matdtl = new Repository<TblGoodsReceiptDetails>();
             var InvoiceMemoHeader = new TblInvoiceMemoHeader();
             var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
+            var lotwisematerial = new tbllotwisematerial();
             List<TblGoodsReceiptDetails> GoosQTY;
             var customer = repo.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == grdata.SupplierCode);
             string statusmessage = null;
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
-
+                var lotno = GetNextLotNumber("001");
                 currqtyrec = grdetails.Sum(v => v.ReceivedQty) ?? 0;// current received qty
                 currqtyrej = grdetails.Sum(v => v.RejectQty) ?? 0;//current rejected qty
 
@@ -4027,7 +4039,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                     }
                     grdata.ApprovalStatus = "Pending Approval";
-                    //grdata.Company = saleorder.Company;
+                    grdata.LotNo = lotno;
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
                 else if (totalqty < poqty)
@@ -4059,7 +4071,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     string detailstatus = null;
                     item.PurchaseOrderNo = grdata.PurchaseOrderNo;
-                    item.LotNo = grdata.LotNo;
+                    item.LotNo = lotno;
                     item.SupplierRefno = grdata.SupplierReferenceNo;
                     item.VehicleNumber = grdata.VehicleNo;
                     item.ReceivedDate = grdata.ReceivedDate;
@@ -4163,6 +4175,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     mathdr.ClosingQty = ((mathdr.ClosingQty ?? 0) + (item.ReceivedQty));
                     mathdr.EditDate = System.DateTime.Now;
                     context.TblMaterialMaster.Update(mathdr);
+
+                    //add lot serial with data
+                    lotwisematerial.LotNo = lotno;
+                    lotwisematerial.Materialcode = item.MaterialCode;
+                    lotwisematerial.ReceivedQty = item.ReceivedQty;
+                    lotwisematerial.RejectedQty = item.RejectQty;
+                    lotwisematerial.Vendor = grdata.SupplierCode;
+                    lotwisematerial.Amount = grdata.TotalAmount;
+                    lotwisematerial.InvoiceNo = grdata.SupplierReferenceNo;
+
                 }
                 if (customer != null)
                 {
@@ -6218,7 +6240,41 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
 
         #endregion
+        private string GetNextLotNumber(string code)
+        {
+            int lotnum = 0;
+
+            var assignment = _assignmentrepository.GetSingleOrDefault(x => x.MaterialType == code);
+            if (assignment == null) return Convert.ToString(lotnum);
+
+            var series = _seriesrepository.GetSingleOrDefault(x => x.SeriesKey == assignment.LotSeries);
+            if (series == null) return Convert.ToString(lotnum);
+
+            int currentLot = Convert.ToInt32(series.CurrentLot ?? 0);
+            int from = Convert.ToInt32(series.FromInterval);
+            int to = Convert.ToInt32(series.ToInterval);
+            string Prefix = series.Prefix;
+            bool isInRange(int value) => value >= from && value <= to;
+
+            if (currentLot == 0)
+            {
+                if (isInRange(from))
+                {
+                    lotnum = from + 1;
+                }
+            }
+            else
+            {
+                if (isInRange(currentLot))
+                {
+                    lotnum = currentLot + 1;
+                }
+            }
+
+            return Convert.ToString(Prefix + "-" + lotnum);
+        }
 
     }
+
 
 }
