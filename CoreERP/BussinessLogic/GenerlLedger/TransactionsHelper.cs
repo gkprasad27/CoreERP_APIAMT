@@ -6,6 +6,7 @@ using CoreERP.Helpers.SharedModels;
 using CoreERP.Models;
 using Humanizer;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using NuGet.Protocol.Core.Types;
@@ -28,8 +29,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
     public class TransactionsHelper
     {
         #region VoucherNumber & TransactionType
-        private readonly IRepository<TblLotAssignment> _assignmentrepository;
-        private readonly IRepository<TblLotSeries> _seriesrepository;
+
         public string GetVoucherNumber(string voucherType)
         {
             var voucerTypeNoseries = CommonHelper.GetVoucherNo(voucherType, out var startNumber, out var endNumber);
@@ -1493,7 +1493,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, ApprovalStatus = "Pending Approval", Company = "1000",LotNo=item.LotNo });
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, ApprovalStatus = "Pending Approval", Company = "1000", LotNo = item.LotNo });
                                 tagnum = tagnum + 1;
                             }
                         }
@@ -1610,7 +1610,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         foreach (var commit in result)
                         {
-                            ProductionStatus.Add(new TblProductionStatus { SaleOrderNumber = resultcommitment.SaleOrderNumber, ProductionTag = resultcommitment.ProductionTag, Status = message, WorkStatus = message, MaterialCode = resultcommitment.MaterialCode, TypeofWork = commit.Description, BomKey = resultcommitment.BomKey, BomName = resultcommitment.BomName ,LotNo= resultcommitment.LotNo});
+                            ProductionStatus.Add(new TblProductionStatus { SaleOrderNumber = resultcommitment.SaleOrderNumber, ProductionTag = resultcommitment.ProductionTag, Status = message, WorkStatus = message, MaterialCode = resultcommitment.MaterialCode, TypeofWork = commit.Description, BomKey = resultcommitment.BomKey, BomName = resultcommitment.BomName, LotNo = resultcommitment.LotNo });
                         }
                     }
                 }
@@ -1812,7 +1812,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             var SaleOrderDetail1 = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomKey == item.BomKey);
                             if (item.Company == "1000" && SaleOrderDetail1.Billable == "Y")
                             {
-                                NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.BomKey, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.MaterialCode, BomName = item.BomName,LotNo=item.LotNo });
+                                NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.BomKey, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.MaterialCode, BomName = item.BomName, LotNo = item.LotNo });
                             }
                             else if (item.Company == "2000")
                                 NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.BomKey, BomName = item.BomName, LotNo = item.LotNo });
@@ -3981,13 +3981,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var InvoiceMemoHeader = new TblInvoiceMemoHeader();
             var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
             var lotwisematerial = new tbllotwisematerial();
+            var lotSeries = new TblLotSeries();
             List<TblGoodsReceiptDetails> GoosQTY;
             var customer = repo.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == grdata.SupplierCode);
             string statusmessage = null;
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
-                var lotno = GetNextLotNumber("001");
+                lotSeries = GetNextLotNumber("01");
+
+                context.TblLotSeries.Update(lotSeries);
+
                 currqtyrec = grdetails.Sum(v => v.ReceivedQty) ?? 0;// current received qty
                 currqtyrej = grdetails.Sum(v => v.RejectQty) ?? 0;//current rejected qty
 
@@ -4041,7 +4045,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                     }
                     grdata.ApprovalStatus = "Pending Approval";
-                    grdata.LotNo = lotno;
+                    grdata.LotNo = (lotSeries.Prefix + "-" + lotSeries.CurrentLot);
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
                 else if (totalqty < poqty)
@@ -4073,7 +4077,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     string detailstatus = null;
                     item.PurchaseOrderNo = grdata.PurchaseOrderNo;
-                    item.LotNo = lotno;
+                    item.LotNo = (lotSeries.Prefix + "-" + lotSeries.CurrentLot);
                     item.SupplierRefno = grdata.SupplierReferenceNo;
                     item.VehicleNumber = grdata.VehicleNo;
                     item.ReceivedDate = grdata.ReceivedDate;
@@ -4179,7 +4183,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     context.TblMaterialMaster.Update(mathdr);
 
                     //add lot serial with data
-                    lotwisematerial.LotNo = lotno;
+                    lotwisematerial.LotNo = (lotSeries.Prefix + "-" + lotSeries.CurrentLot);
                     lotwisematerial.Materialcode = item.MaterialCode;
                     lotwisematerial.ReceivedQty = item.ReceivedQty;
                     lotwisematerial.RejectedQty = item.RejectQty;
@@ -6243,15 +6247,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         }
 
         #endregion
-        private string GetNextLotNumber(string code)
+        private TblLotSeries GetNextLotNumber(string code)
         {
-            int lotnum = 0;
+            using var repo = new Repository<TblLotSeries>();
+            TblLotSeries lotWiseMaterial = new TblLotSeries();
 
-            var assignment = _assignmentrepository.GetSingleOrDefault(x => x.MaterialType == code);
-            if (assignment == null) return Convert.ToString(lotnum);
+            var assignment = repo.TblLotAssignment.FirstOrDefault(x => x.MaterialType == code);
+            //if (assignment == null) return lotwisematerial;
 
-            var series = _seriesrepository.GetSingleOrDefault(x => x.SeriesKey == assignment.LotSeries);
-            if (series == null) return Convert.ToString(lotnum);
+            var series = repo.TblLotSeries.FirstOrDefault(x => x.SeriesKey == assignment.LotSeries);
+            //if (series == null) return lotwisematerial;
 
             int currentLot = Convert.ToInt32(series.CurrentLot ?? 0);
             int from = Convert.ToInt32(series.FromInterval);
@@ -6263,18 +6268,18 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 if (isInRange(from))
                 {
-                    lotnum = from + 1;
+                    series.CurrentLot = from + 1;
                 }
             }
             else
             {
                 if (isInRange(currentLot))
                 {
-                    lotnum = currentLot + 1;
+                    series.CurrentLot = currentLot + 1;
                 }
             }
 
-            return Convert.ToString(Prefix + "-" + lotnum);
+            return series;
         }
 
     }

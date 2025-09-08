@@ -2135,12 +2135,13 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
-        [HttpGet("GetLot/{code}")]
-        public IActionResult GetLot(string code)
+        [HttpPost("GetLot")]
+        public IActionResult GetLot([FromBody] JObject obj)
         {
             try
             {
-                var Lot = new TransactionsHelper().GetLot(code);
+                var lot = obj.First;
+                var Lot = new TransactionsHelper().GetLot(lot.First.ToString());
                 if (!Lot.Any())
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                 dynamic expdoObj = new ExpandoObject();
