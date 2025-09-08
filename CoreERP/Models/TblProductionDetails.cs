@@ -37,5 +37,6 @@ namespace CoreERP.Models
         public string? BomName { get; set; }
         public string? Company { get; set; }
         public string? ApprovalStatus { get; set; }
+        public string? LotNo { get; set; }
     }
 }

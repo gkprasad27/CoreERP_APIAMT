@@ -1493,7 +1493,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, ApprovalStatus = "Pending Approval", Company = "1000" });
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, ApprovalStatus = "Pending Approval", Company = "1000",LotNo=item.LotNo });
                                 tagnum = tagnum + 1;
                             }
                         }
@@ -1528,7 +1528,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                                 for (var i = 0; i < qty; i++)
                                 {
-                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company, ApprovalStatus = "Pending Approval" });
+                                    ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company, ApprovalStatus = "Pending Approval", LotNo = item.LotNo });
                                     tagnum = tagnum + 1;
                                 }
                             }
@@ -1539,7 +1539,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             //tagnum = tagnum + 1;
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company, ApprovalStatus = "Pending Approval" });
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMRIT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = sodata.BomKey, BomName = item.BomName, Company = sodata.Company, ApprovalStatus = "Pending Approval", LotNo = item.LotNo });
                                 tagnum = tagnum + 1;
                             }
                         }
@@ -1578,7 +1578,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             for (var i = 0; i < qty; i++)
                             {
-                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, Company = sodata.Company, ApprovalStatus = "Pending Approval" });
+                                ProductionDetails.Add(new TblProductionDetails { SaleOrderNumber = item.SaleOrderNumber, ProductionTag = "AMT-" + tagnum, Status = message, MaterialCode = item.MaterialCode, ProductionPlanDate = item.ProductionPlanDate, ProductionTargetDate = item.ProductionTargetDate, BomKey = item.BomNumber, BomName = sodata.BomName, Company = sodata.Company, ApprovalStatus = "Pending Approval", LotNo = item.LotNo });
                                 tagnum = tagnum + 1;
                             }
                         }
@@ -1610,7 +1610,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         foreach (var commit in result)
                         {
-                            ProductionStatus.Add(new TblProductionStatus { SaleOrderNumber = resultcommitment.SaleOrderNumber, ProductionTag = resultcommitment.ProductionTag, Status = message, WorkStatus = message, MaterialCode = resultcommitment.MaterialCode, TypeofWork = commit.Description, BomKey = resultcommitment.BomKey, BomName = resultcommitment.BomName });
+                            ProductionStatus.Add(new TblProductionStatus { SaleOrderNumber = resultcommitment.SaleOrderNumber, ProductionTag = resultcommitment.ProductionTag, Status = message, WorkStatus = message, MaterialCode = resultcommitment.MaterialCode, TypeofWork = commit.Description, BomKey = resultcommitment.BomKey, BomName = resultcommitment.BomName ,LotNo= resultcommitment.LotNo});
                         }
                     }
                 }
@@ -1812,10 +1812,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             var SaleOrderDetail1 = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomKey == item.BomKey);
                             if (item.Company == "1000" && SaleOrderDetail1.Billable == "Y")
                             {
-                                NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.BomKey, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.MaterialCode, BomName = item.BomName });
+                                NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.BomKey, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.MaterialCode, BomName = item.BomName,LotNo=item.LotNo });
                             }
                             else if (item.Company == "2000")
-                                NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.BomKey, BomName = item.BomName });
+                                NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.MaterialCode, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.BomKey, BomName = item.BomName, LotNo = item.LotNo });
                         }
                         else
                         {
@@ -1850,6 +1850,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             ProductionStatus.StartDate = item.StartDate;
                             ProductionStatus.EndDate = item.EndDate;
                             ProductionStatus.Mechine = item.Mechine;
+                            ProductionStatus.LotNo = item.LotNo;
                             context.TblProductionStatus.UpdateRange(ProductionStatus);
                         }
                         if (item.WorkStatus == "Rejected")

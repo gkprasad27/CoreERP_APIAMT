@@ -27,6 +27,7 @@ namespace CoreERP.Models
         public string? DrawingRevNo { get; set; }
         public string? BomKey { get; set; }
         public string? BomName { get; set; }
+        public string? LotNo { get; set; }
 
     }
 }
