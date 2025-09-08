@@ -1885,6 +1885,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             RejectionMaster.MaterialCode = item.MaterialCode;
                             RejectionMaster.TagNo = item.ProductionTag;
                             RejectionMaster.Reason = item.Remarks;
+                            RejectionMaster.LotNo = item.LotNo;
                             context.TblRejectionMaster.Add(RejectionMaster);
                             var POD = new TblPurchaseOrderDetails();
                             var GID = repo.TblGoodsIssueDetails.FirstOrDefault(z => z.SaleOrderNumber == item.SaleOrderNumber && z.MaterialCode == item.MaterialCode);
@@ -4830,6 +4831,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                         RejectionMaster.TagNo = x.productionTag;
                         RejectionMaster.Reason = x.Description;
+                        RejectionMaster.LotNo = x.LotNo;
                         context.TblRejectionMaster.Add(RejectionMaster);
 
                         sodata.POQty = ((sodata.POQty) - 1);
