@@ -1512,6 +1512,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                         else
                             throw new Exception("Material Code not Available" + item.MaterialCode);
+
+                        var lotwisety = repo.Tbllotwisematerial.FirstOrDefault(x => x.Materialcode == item.MaterialCode && x.LotNo == item.LotNo);
+                        if (materialmaster != null)
+                        {
+                            lotwisety.ReceivedQty = ((lotwisety.ReceivedQty) - qty);
+                            materialmaster.EditDate = System.DateTime.Now;
+                            context.Tbllotwisematerial.UpdateRange(lotwisety);
+                        }
                     }
                     else if (sodata != null && sodata.Company == "2000")
                     {
