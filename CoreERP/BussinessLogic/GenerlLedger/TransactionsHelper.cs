@@ -4198,7 +4198,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     lotwisematerial.Vendor = grdata.SupplierCode;
                     lotwisematerial.Amount = grdata.TotalAmount;
                     lotwisematerial.InvoiceNo = grdata.SupplierReferenceNo;
-
+                    context.Tbllotwisematerial.Add(lotwisematerial);
                 }
                 if (customer != null)
                 {
