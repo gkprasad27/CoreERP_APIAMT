@@ -5529,6 +5529,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         {
                             var IPO = repo.Counters.FirstOrDefault(x => x.CounterName == "IPO" && x.CompCode == saleOrderMaster.Company);
                             saleOrderMaster.PONumber = IPO.Prefix + "-" + IPO.LastNumber;
+                            IPO.LastNumber = (Pcenter.LastNumber + 1);
+                            context.Counters.UpdateRange(IPO);
+                            context.SaveChanges();
                         }
                         Pcenter.LastNumber = (Pcenter.LastNumber + 1);
                         context.Counters.UpdateRange(Pcenter);
