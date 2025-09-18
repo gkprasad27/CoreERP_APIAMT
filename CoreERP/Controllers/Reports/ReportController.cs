@@ -410,6 +410,29 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
+        [HttpGet("GetemployeeAbsentReport/{fromYear}/{fromMonth}/{toYear}/{toMonth}/{EmployeeCode}")]
+        public async Task<IActionResult> GetemployeeAbsentReport(string fromYear, string fromMonth,string toYear, string toMonth, string EmployeeCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    DataSet ds = ReportsHelperClass.GetemployeeAbsentReport(fromYear, fromMonth, toYear, toMonth, EmployeeCode);
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        expando.EMPAttendanceReport = ds.Tables[0];
+                    }
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("Employeeattendance/{fromDate}/{toDate}/{company}/{EmployeeCode}")]
         public async Task<IActionResult> Employeeattendance(DateTime fromDate, DateTime toDate, string company, string EmployeeCode)
         {
