@@ -4600,6 +4600,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 else
                 {
                     GIM.SaleOrderNumber = tocode;
+                    GIM.GoodsIssueId = 0;
                     context.TblGoodsIssueMaster.Add(GIM);
                 }
                 foreach (var item in saleOrderDetails)
@@ -4629,6 +4630,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 else
                 {
                     PM.SaleOrderNumber = tocode;
+                    PM.ID = 0;
                     context.TblProductionMaster.Add(PM);
                 }
                 var IC = new TblInspectionCheckDetails();

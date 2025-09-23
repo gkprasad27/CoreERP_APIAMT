@@ -2200,8 +2200,8 @@ namespace CoreERP.Controllers.masters
                 var saleOrderMaster = new TblSaleOrderMaster();
                 if (swapType != "Full")
                 {
-                    saleOrderDetails = obj["qsDtl"]?.ToObject<List<TblSaleOrderDetail>>() ?? new List<TblSaleOrderDetail>();
-                    saleOrderMaster = obj["qsHdr"].ToObject<TblSaleOrderMaster>();
+                    saleOrderDetails = obj["grDtl"]?.ToObject<List<TblSaleOrderDetail>>() ?? new List<TblSaleOrderDetail>();
+                    saleOrderMaster = obj["grHdr"].ToObject<TblSaleOrderMaster>();
                 }
                 else
                 {
