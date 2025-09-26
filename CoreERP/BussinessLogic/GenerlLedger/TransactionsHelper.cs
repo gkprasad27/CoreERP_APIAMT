@@ -4585,7 +4585,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 var GM = repo.TblGoodsIssueMaster.FirstOrDefault(im => im.SaleOrderNumber == tocode);
                 foreach (var item in saleOrderDetails)
                 {
-                    var GD = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode);
+                    var GD = repo.TblGoodsIssueDetails.FirstOrDefault(im => im.SaleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode && im.BomNumber==item.BomKey);
                     if (GD != null)
                     {
                         GD.SaleOrderNumber = tocode;
@@ -4605,7 +4605,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 foreach (var item in saleOrderDetails)
                 {
-                    var POD = repo.TblProductionDetails.FirstOrDefault(im => im.SaleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode);
+                    var POD = repo.TblProductionDetails.FirstOrDefault(im => im.SaleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode && im.BomKey==item.BomKey);
                     if (POD != null)
                     {
                         POD.SaleOrderNumber = tocode;
@@ -4614,7 +4614,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 foreach (var item in saleOrderDetails)
                 {
-                    var POS = repo.TblProductionStatus.FirstOrDefault(im => im.SaleOrderNumber == fromcode);
+                    var POS = repo.TblProductionStatus.FirstOrDefault(im => im.SaleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode && im.BomKey == item.BomKey);
                     if (POS != null)
                     {
                         POS.SaleOrderNumber = tocode;
@@ -4637,9 +4637,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 foreach (var item in saleOrderDetails)
                 {
                     if (saleOrderMaster.Company == "2000")
-                        IC = repo.TblInspectionCheckDetails.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode);
+                        IC = repo.TblInspectionCheckDetails.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode && im.BomKey==item.BomKey);
                     else
-                        IC = repo.TblInspectionCheckDetails.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.BomKey == item.MaterialCode);
+                        IC = repo.TblInspectionCheckDetails.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.BomKey == item.MaterialCode && im.MaterialCode==item.BomKey);
 
                     if (IC != null)
                     {
@@ -4664,7 +4664,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     if (saleOrderMaster.Company == "2000")
                         QR = repo.tblQCResults.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.MaterialCode == item.MaterialCode);
                     else
-                        QR = repo.tblQCResults.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.MaterialCode == item.BomKey);
+                        QR = repo.tblQCResults.FirstOrDefault(im => im.saleOrderNumber == fromcode && im.MaterialCode == item.BomKey );
 
                     if (QR != null)
                     {
