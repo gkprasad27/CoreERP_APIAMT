@@ -103,6 +103,10 @@ namespace CoreERP.Models
         public virtual DbSet<TblDownTimeReasons> TblDownTimeReasons { get; set; }
         public virtual DbSet<TblDynamicPages> TblDynamicPages { get; set; }
         public virtual DbSet<TblEmployee> TblEmployee { get; set; }
+
+        public virtual DbSet<TblExperiance> TblExperiance { get; set; }
+        public virtual DbSet<TblAddress> TblAddress { get; set; }
+        public virtual DbSet<TblEducation> TblEducation { get; set; }
         public virtual DbSet<TblEmployeeMaster> TblEmployeeMaster { get; set; }
         public virtual DbSet<TblFieldsConfiguration> TblFieldsConfiguration { get; set; }
         public virtual DbSet<TblFormMenuCollection> TblFormMenuCollection { get; set; }
