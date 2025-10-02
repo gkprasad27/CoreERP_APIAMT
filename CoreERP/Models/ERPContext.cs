@@ -103,8 +103,11 @@ namespace CoreERP.Models
         public virtual DbSet<TblDownTimeReasons> TblDownTimeReasons { get; set; }
         public virtual DbSet<TblDynamicPages> TblDynamicPages { get; set; }
         public virtual DbSet<TblEmployee> TblEmployee { get; set; }
-
+        public virtual DbSet<TblRecruitment> TblRecruitment { get; set; }
+        public virtual DbSet<TblRecruitmentAddress> TblRecruitmentAddress { get; set; }
         public virtual DbSet<TblExperiance> TblExperiance { get; set; }
+        public virtual DbSet<TblRecruitmentEducation> TblRecruitmentEducation { get; set; }
+        public virtual DbSet<TblRecruitmentExperiance> TblRecruitmentExperiance { get; set; }
         public virtual DbSet<TblAddress> TblAddress { get; set; }
         public virtual DbSet<TblEducation> TblEducation { get; set; }
         public virtual DbSet<TblEmployeeMaster> TblEmployeeMaster { get; set; }
@@ -303,7 +306,7 @@ namespace CoreERP.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server = 103.67.238.235,7912; Database = ERP_AMT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
+                optionsBuilder.UseSqlServer("Server = 103.67.238.235,2079; Database = ERP_AMRIT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
             }
         }
 
@@ -2201,7 +2204,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblAdvanceType>(entity =>
             {
-                entity.ToTable("Tbl_AdvanceType"); 
+                entity.ToTable("Tbl_AdvanceType");
 
                 entity.HasKey(e => e.Id); // Set primary key
 
@@ -8699,7 +8702,7 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.Status)
                     .HasMaxLength(50);
-               
+
             });
 
             modelBuilder.Entity<TblOpeningBalance>(entity =>
@@ -8804,7 +8807,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<AttendanceData>(entity =>
             {
-                entity.HasKey(e => e.ID);                
+                entity.HasKey(e => e.ID);
                 entity.Property(e => e.EmpCode);
                 entity.Property(e => e.DateTimeStamp);
                 entity.Property(e => e.InAndOut);

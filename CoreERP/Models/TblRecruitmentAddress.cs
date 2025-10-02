@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CoreERP.Models
 {
-    public partial class TblAddress
+    public partial class TblRecruitmentAddress
     {
         public int ID { get; set; }
         public string? EmpCode { get; set; }
