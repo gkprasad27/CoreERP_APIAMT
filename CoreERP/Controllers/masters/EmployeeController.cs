@@ -3,6 +3,7 @@ using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -59,7 +60,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var AddressList = _addressRepository.GetAll().Where(x=>x.EmpCode==empcode); //LanguageHelper.GetList();
+                    var AddressList = _addressRepository.GetAll().Where(x => x.EmpCode == empcode); //LanguageHelper.GetList();
                     if (AddressList.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -184,7 +185,7 @@ namespace CoreERP.Controllers
 
         [HttpPost("RegisterEducation")]
 
-        public async Task<IActionResult> RegisterEducation([FromBody] TblEducation education)
+        public async Task<IActionResult> RegisterEducation([FromBody] List<TblEducation> education)
         {
             APIResponse apiResponse;
             if (education == null)
@@ -193,7 +194,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    _edicationRepository.Add(education);
+                    _edicationRepository.AddRange(education);
                     if (_edicationRepository.SaveChanges() > 0)
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = education };
                     else
@@ -211,7 +212,7 @@ namespace CoreERP.Controllers
 
         [HttpPost("RegisterExperiance")]
 
-        public async Task<IActionResult> RegisterExperiance([FromBody] TblExperiance experiance)
+        public async Task<IActionResult> RegisterExperiance([FromBody] List<TblExperiance> experiance)
         {
             APIResponse apiResponse;
             if (experiance == null)
@@ -220,7 +221,7 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    _experianceRepository.Add(experiance);
+                    _experianceRepository.AddRange(experiance);
                     if (_experianceRepository.SaveChanges() > 0)
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = experiance };
                     else
@@ -285,7 +286,7 @@ namespace CoreERP.Controllers
 
         [HttpPut("UpdateEducation")]
 
-        public async Task<IActionResult> UpdateEducation([FromBody] TblEducation education)
+        public async Task<IActionResult> UpdateEducation([FromBody] List<TblEducation> education)
         {
             APIResponse apiResponse = null;
             if (education == null)
@@ -293,7 +294,7 @@ namespace CoreERP.Controllers
 
             try
             {
-                _edicationRepository.Update(education);
+                _edicationRepository.UpdateRange(education);
                 if (_edicationRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = education };
                 else
@@ -309,7 +310,7 @@ namespace CoreERP.Controllers
 
         [HttpPut("UpdateExperiance")]
 
-        public async Task<IActionResult> UpdateExperiance([FromBody] TblExperiance experiance)
+        public async Task<IActionResult> UpdateExperiance([FromBody] List<TblExperiance> experiance)
         {
             APIResponse apiResponse = null;
             if (experiance == null)
@@ -317,7 +318,7 @@ namespace CoreERP.Controllers
 
             try
             {
-                _experianceRepository.Update(experiance);
+                _experianceRepository.UpdateRange(experiance);
                 if (_experianceRepository.SaveChanges() > 0)
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = experiance };
                 else
