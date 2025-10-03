@@ -168,7 +168,17 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    _addressRepository.Add(address);
+                    //_addressRepository.Add(address);
+                    bool addressExists = address.ID > 0;
+                    bool addressNew = address.ID == 0;
+                    if (addressExists)
+                    {
+                        _addressRepository.Update(address);
+                    }
+                    else
+                    {
+                        _addressRepository.Add(address);
+                    }
                     if (_addressRepository.SaveChanges() > 0)
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = address };
                     else
@@ -195,7 +205,17 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    _edicationRepository.AddRange(education);
+                    //_edicationRepository.AddRange(education);
+                    bool educationExists = education.Any(x => x.ID > 0);
+                    bool educationNew = education.Any(x => x.ID > 0);
+                    if (educationExists)
+                    {
+                        _edicationRepository.UpdateRange(education);
+                    }
+                    else
+                    {
+                        _edicationRepository.AddRange(education);
+                    }
                     if (_edicationRepository.SaveChanges() > 0)
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = education };
                     else
@@ -222,7 +242,17 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    _experianceRepository.AddRange(experiance);
+                    //_experianceRepository.AddRange(experiance);
+                    bool experianceExists = experiance.Any(x => x.ID > 0);
+                    bool experianceNew = experiance.Any(x => x.ID > 0);
+                    if (experianceExists)
+                    {
+                        _experianceRepository.UpdateRange(experiance);
+                    }
+                    else
+                    {
+                        _experianceRepository.AddRange(experiance);
+                    }
                     if (_experianceRepository.SaveChanges() > 0)
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = experiance };
                     else

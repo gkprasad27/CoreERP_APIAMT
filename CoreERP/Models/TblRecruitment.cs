@@ -18,7 +18,7 @@ namespace CoreERP.Models
         public string? Email { get; set; }
         public DateTime? InterviewDate { get; set; }
         public DateTime? SelectedDate { get; set; }
-        public bool? IsActive { get; set; }
+        public string? Status { get; set; }
         public string? Narration { get; set; }
         public string? BloodGroup { get; set; }
         public string? PassportNo { get; set; }
