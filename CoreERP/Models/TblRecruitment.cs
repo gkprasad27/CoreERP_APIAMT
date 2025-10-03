@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
 {
+    [Table("Tbl_Recruitment")]
     public partial class TblRecruitment
     {
         public int ID { get; set; }
@@ -27,5 +29,9 @@ namespace CoreERP.Models
         public string? EsiNumber { get; set; }
         public string? AadharNumber { get; set; }
         public string? RecomendedBy { get; set; }
+        public string? AddWho { get; set; }
+        public string? EditWho { get; set; }
+        public DateTime? AddDate { get; set; }
+        public DateTime? EditDate { get; set; }
     }
 }

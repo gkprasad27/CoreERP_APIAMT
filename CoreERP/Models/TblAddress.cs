@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreERP.Models
 {
+    [Table("Tbl_Address")]
     public partial class TblAddress
     {
         public int ID { get; set; }

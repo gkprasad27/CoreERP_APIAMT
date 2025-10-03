@@ -38,5 +38,9 @@ namespace CoreERP.Models
         public string? EmployeeID { get; set; }
         public string? CompanyCode { get; set; }
         public string? DepartmentCode { get; set; }
+        public string? AddWho { get; set; }
+        public string? EditWho { get; set; }
+        public DateTime? AddDate { get; set; }
+        public DateTime? EditDate { get; set; }
     }
 }

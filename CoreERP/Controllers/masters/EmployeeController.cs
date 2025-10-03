@@ -36,7 +36,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     var employeesList = EmployeeHelper.GetEmployeesByCompany(companycode);
-                    if (employeesList.Count() > 0)
+                    if (employeesList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
                         expdoObj.employeesList = employeesList;
@@ -62,7 +62,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     var AddressList = _addressRepository.GetAll().Where(x => x.EmpCode == empcode); //LanguageHelper.GetList();
-                    if (AddressList.Count() > 0)
+                    if (AddressList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
                         expdoObj.AddressList = AddressList;
@@ -88,7 +88,7 @@ namespace CoreERP.Controllers
                 try
                 {
                     var EducationList = _edicationRepository.GetAll().Where(x => x.EmpCode == empcode); //LanguageHelper.GetList();
-                    if (EducationList.Count() > 0)
+                    if (EducationList.Any())
                     {
                         dynamic expdoObj = new ExpandoObject();
                         expdoObj.EducationList = EducationList;
@@ -112,15 +112,17 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var ExperianceList = _experianceRepository.GetAll().Where(x => x.EmpCode == empcode); //LanguageHelper.GetList();
-                    if (ExperianceList.Count() > 0)
+                    var experienceList = _experianceRepository.GetAll().Where(x => x.EmpCode == empcode);
+
+                    if (experienceList.Any())
                     {
-                        dynamic expdoObj = new ExpandoObject();
-                        expdoObj.ExperianceList = ExperianceList;
-                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                        var responseObj = new { ExperienceList = experienceList };
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = responseObj });
                     }
                     else
+                    {
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+                    }
                 }
                 catch (Exception ex)
                 {
