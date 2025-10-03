@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Dynamic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -19,7 +20,7 @@ namespace CoreERP.Controllers.masters
         }
 
         [HttpPost("RegisterState")]
-        public IActionResult RegisterState([FromBody]States state)
+        public IActionResult RegisterState([FromBody] States state)
         {
             if (state == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
@@ -85,7 +86,7 @@ namespace CoreERP.Controllers.masters
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = state };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
-                
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
@@ -109,13 +110,32 @@ namespace CoreERP.Controllers.masters
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+        }
+
+        [HttpGet("GetStatesList/{code}")]
+        public async Task<IActionResult> GetStatesList(string code)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.StatesList = _stateRepository.Where(x => x.CountryCode == code).Select(x => new { ID = x.StateCode, TEXT = x.StateName });
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
     }
