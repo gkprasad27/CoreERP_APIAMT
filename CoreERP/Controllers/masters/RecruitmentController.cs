@@ -27,6 +27,32 @@ namespace CoreERP.Controllers
             _experianceRepository = experianceRepository;
         }
 
+        [HttpGet("GetEmploeebycode/{empcode}")]
+
+        public async Task<IActionResult> GetEmploeebycode(string empcode)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var EducationList = _employeeRepository.GetAll().Where(x => x.EMPCode == empcode && x.Status=="Selected"); //LanguageHelper.GetList();
+                    if (EducationList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.EducationList = EducationList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetEmployeeList")]
 
         public async Task<IActionResult> GetEmployeeList()
