@@ -301,12 +301,13 @@ namespace CoreERP.Models
         public virtual DbSet<TblInvoiceMaster> TblInvoiceMaster { get; set; }
         public virtual DbSet<TblInvoiceMasterReturn> TblInvoiceMasterReturn { get; set; }
         public virtual DbSet<TblInvoiceReturnDetail> TblInvoiceReturnDetail { get; set; }
+        public virtual DbSet<TblOffer> TblOffer { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server = 103.67.238.235,7912; Database = ERP_AMRIT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
+                optionsBuilder.UseSqlServer("Server = 103.67.238.235,7902; Database = ERP_AMT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
             }
         }
 
