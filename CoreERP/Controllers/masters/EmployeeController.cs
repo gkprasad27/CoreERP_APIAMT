@@ -61,8 +61,8 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var AddressList = _addressRepository.GetAll().Where(x => x.EmpCode == empcode); //LanguageHelper.GetList();
-                    if (AddressList.Any())
+                    var AddressList = _addressRepository.GetAll().FirstOrDefault(x => x.EmpCode == empcode);
+                    if (AddressList != null)
                     {
                         dynamic expdoObj = new ExpandoObject();
                         expdoObj.AddressList = AddressList;
