@@ -17,5 +17,14 @@ namespace CoreERP.Models
         public string Status { get; set; }
         public decimal? Balance { get; set; }
         public decimal? DeductedAmount { get; set; }
+        public int ? StartMonth { get; set; }
+        public int? StartYear { get; set; }
+        public int? EndMonth { get; set; }
+        public int? EndYear { get; set; }
+        public string? AddWho { get; set; }
+        public string? EditWho { get; set; }
+        public DateTime? AddDate { get; set; }
+        public DateTime? EditDate { get; set; }
+
     }
 }

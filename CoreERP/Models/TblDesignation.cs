@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblDesignation
     {
-        public decimal DesignationId { get; set; }
+        public int DesignationId { get; set; }
         public string DesignationName { get; set; }
         public decimal? LeaveDays { get; set; }
         public decimal? AdvanceAmount { get; set; }

@@ -2794,7 +2794,6 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.DesignationId)
                     .HasColumnName("designationId")
-                    .HasColumnType("numeric(18, 0)")
                     .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.AdvanceAmount)

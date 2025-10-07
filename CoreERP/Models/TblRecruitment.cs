@@ -18,17 +18,20 @@ namespace CoreERP.Models
         public string? PhoneNumber { get; set; }
         public string? MobileNumber { get; set; }
         public string? Email { get; set; }
-        public DateTime? InterviewDate { get; set; }
-        public DateTime? SelectedDate { get; set; }
-        public string? Status { get; set; }
         public string? Narration { get; set; }
         public string? BloodGroup { get; set; }
         public string? PassportNo { get; set; }
         public string? PanNumber { get; set; }
+        public string? AadharNumber { get; set; }
         public string? PfNumber { get; set; }
         public string? EsiNumber { get; set; }
-        public string? AadharNumber { get; set; }
+        public string? Status { get; set; }
         public string? RecomendedBy { get; set; }
+        public DateTime? InterviewDate { get; set; }
+        public DateTime? SelectedDate { get; set; }
+        public string? InterViewPerson { get; set; }
+        public string? SelectedPerson { get; set; }
+        public string? Designation { get; set; }
         public string? AddWho { get; set; }
         public string? EditWho { get; set; }
         public DateTime? AddDate { get; set; }

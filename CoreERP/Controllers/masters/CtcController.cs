@@ -1,4 +1,5 @@
 ﻿using CoreERP.BussinessLogic.Payroll;
+using CoreERP.DataAccess;
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -16,9 +17,11 @@ namespace CoreERP.Controllers.masters
     public class CtcController : ControllerBase
     {
         private readonly IRepository<Ctcbreakup> _ctcRepository;
-        public CtcController(IRepository<Ctcbreakup> ctcRepository)
+        private readonly IRepository<TblEmployee> _employeeRepository;
+        public CtcController(IRepository<Ctcbreakup> ctcRepository, IRepository<TblEmployee> employeeRepository)
         {
             _ctcRepository = ctcRepository;
+            _employeeRepository = employeeRepository;
         }
 
         [HttpPost("RegisterctcTypes")]
@@ -58,7 +61,7 @@ namespace CoreERP.Controllers.masters
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    expando.structureList = new CTCHelper().GetStructures(structure,ctc);
+                    expando.structureList = new CTCHelper().GetStructures(structure, ctc);
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -140,7 +143,27 @@ namespace CoreERP.Controllers.masters
         {
             try
             {
-                var ctcTypesList = _ctcRepository.GetAll();
+                //var ctcTypesList = _ctcRepository.GetAll().DistinctBy(x => x.EmpCode).ToList();
+                var ctcTypesList = _ctcRepository.GetAll().Join(_employeeRepository.GetAll(),
+                                      ctc => ctc.EmpCode,
+                                      emp => emp.EmployeeCode,
+                                      (ctc, emp) => new
+                                      {
+                                          emp.EmployeeName,
+                                          ctc
+                                      })
+                                .DistinctBy(x => x.ctc.EmpCode)
+                                .ToList();
+
+                //using var repo = new Repository<TblSaleOrderDetail>();
+                //var ctcTypesList = _ctcRepository.GetAll().DistinctBy(x => x.EmpCode).ToList();
+                //var Employee = repo.TblEmployee.ToList();
+
+                //repo.Ctcbreakup.ToList().ForEach(c =>
+                //{
+                //    c.EmpName = Employee.FirstOrDefault(l => l.EmployeeCode == c.EmpCode)?.EmployeeName;
+                //});
+
                 if (ctcTypesList.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
@@ -150,7 +173,7 @@ namespace CoreERP.Controllers.masters
                 else
                     return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
 
-                
+
 
             }
             catch (Exception ex)
@@ -221,13 +244,13 @@ namespace CoreERP.Controllers.masters
                     apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
                 else
                     apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
-                
+
                 return Ok(apiResponse);
             }
             catch (Exception ex)
             {
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
-        }        
+        }
     }
 }
