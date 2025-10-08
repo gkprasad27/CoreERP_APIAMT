@@ -3988,7 +3988,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var Matdtl = new Repository<TblGoodsReceiptDetails>();
             var InvoiceMemoHeader = new TblInvoiceMemoHeader();
             var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
-            var lotwisematerial = new tbllotwisematerial();
+            //var lotwisematerial = new tbllotwisematerial();
             var lotSeries = new TblLotSeries();
             List<TblGoodsReceiptDetails> GoosQTY;
             var customer = repo.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == grdata.SupplierCode);
@@ -4191,6 +4191,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     context.TblMaterialMaster.Update(mathdr);
 
                     //add lot serial with data
+                    var lotwisematerial = new tbllotwisematerial();
                     lotwisematerial.LotNo = (lotSeries.Prefix + "-" + lotSeries.CurrentLot);
                     lotwisematerial.Materialcode = item.MaterialCode;
                     lotwisematerial.ReceivedQty = item.ReceivedQty;
@@ -4198,7 +4199,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     lotwisematerial.Vendor = grdata.SupplierCode;
                     lotwisematerial.Amount = grdata.TotalAmount;
                     lotwisematerial.InvoiceNo = grdata.SupplierReferenceNo;
-                    context.Tbllotwisematerial.AddRange(lotwisematerial);
+                    context.Tbllotwisematerial.Add(lotwisematerial);
                 }
                 if (customer != null)
                 {
