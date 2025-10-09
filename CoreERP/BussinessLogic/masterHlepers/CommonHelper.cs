@@ -95,11 +95,11 @@ namespace CoreERP
             //  Send to different numbers based on company
             if (company == "1000")
             {
-                MobileNumber = "9704288499"; 
+                MobileNumber = "9704288499";
             }
             else
             {
-                MobileNumber = "9666756333"; 
+                MobileNumber = "9666756333";
             }
             //  string sendSMSUri = $"https://dlt.fastsmsindia.com/messages/sendSmsApi?username=AMTpower&password=AMTpower@&drout=3&senderid=AMTHYD&intity_id=1201171169797828072&template_id=1207171644087137963&numbers={MobileNumber}&language=en&message=Hello,%{result}is%20your%20OTP%20to%20Access%20AMT%20ERP.%20-AMT%20Power%20Transmission";
             string sendSMSUri = $" https://www.bulksmsapps.com/api/apismsv2.aspx?apikey=e9ba82fb-ef76-41e6-8c98-63390b78096a&sender=AMTHYD&number={MobileNumber}&message=Hello,%20{result}%20is%20your%20OTP%20to%20Access%20AMT%20ERP.%20-AMT%20Power%20Transmission";
@@ -185,7 +185,7 @@ namespace CoreERP
                                            on so.SaleOrderNo equals gr.SaleorderNo into grGroup
                                            from gr in grGroup.DefaultIfEmpty()
                                            where gr == null || gr.ApprovalStatus == "Approved"
-                                           select so).ToList().OrderByDescending(x=>x.Id);
+                                           select so).ToList().OrderByDescending(x => x.Id);
 
 
                 //if (approvedSalesOrders.Count==0)
@@ -213,7 +213,7 @@ namespace CoreERP
         public static IEnumerable<tblJobworkDetails> GetJobWorkDetails(string JobworkNo)
         {
             using var repo = new Repository<tblJobworkDetails>();
-            var result = repo.tblJobworkDetails.Where(cd => cd.JobworkNumber == JobworkNo && cd.Status!= "Material Received").ToList();
+            var result = repo.tblJobworkDetails.Where(cd => cd.JobworkNumber == JobworkNo && cd.Status != "Material Received").ToList();
             var material = repo.TblMaterialMaster.ToList();
             repo.tblJobworkDetails.ToList().ForEach(c =>
             {
@@ -552,7 +552,7 @@ namespace CoreERP
                 c.MaterialName = materialtype.FirstOrDefault(l => l.Code == c.MaterialType)?.Description;
                 c.MaterialGroupName = materialgroup.FirstOrDefault(l => l.GroupKey == c.MaterialGroup)?.Description;
                 c.MaterialSizeName = materialsize.FirstOrDefault(l => l.unitId == c.Size)?.unitName;
-                c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToDecimal(c.Uom))?.UnitName;
+                c.UomName = uom.FirstOrDefault(l => l.UnitId == Convert.ToInt16(c.Uom))?.UnitName;
                 c.ModelPatternName = modelpattern.FirstOrDefault(l => l.Code == c.ModelPattern)?.Description;
                 c.DivisionName = division.FirstOrDefault(l => l.Code == c.Division)?.Description;
                 c.PurchaseGroupName = purchasegroup.FirstOrDefault(l => l.GroupKey == c.PurchasingGroup)?.Description;
@@ -1802,7 +1802,8 @@ namespace CoreERP
                         return screenConfig.ShowControl;
                     else
                         return null;
-                };
+                }
+                ;
             }
             catch (NullReferenceException Exception)
             {
@@ -1820,7 +1821,8 @@ namespace CoreERP
                 using (Repository<Menus> _repo = new Repository<Menus>())
                 {
                     return _repo.Menus.Where(m => m.OperationCode == operationCode).FirstOrDefault();
-                };
+                }
+                ;
             }
             catch (Exception ex)
             {
@@ -1973,7 +1975,7 @@ namespace CoreERP
         {
             using var repo = new Repository<TblPoQueue>();
             var Material = repo.TblMaterialMaster.ToList().Where(x => x.Company == CompanyCode);
-            var SOM = repo.TblSaleOrderMaster.ToList().Where(x => x.Company == CompanyCode && x.Status!= "Dispatched" && x.Status!= "Invoice Generated" && x.Status!= "PO Created");
+            var SOM = repo.TblSaleOrderMaster.ToList().Where(x => x.Company == CompanyCode && x.Status != "Dispatched" && x.Status != "Invoice Generated" && x.Status != "PO Created");
             var result = repo.TblPoQueue.Where(x => x.CompanyCode == CompanyCode).ToList();
 
             result.ForEach(c =>

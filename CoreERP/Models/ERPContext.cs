@@ -307,7 +307,7 @@ namespace CoreERP.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server = 103.67.238.235,7902; Database = ERP_AMT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
+                optionsBuilder.UseSqlServer("Server = 103.67.238.235,2899; Database = ERP_AMRIT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
             }
         }
 
@@ -7444,8 +7444,7 @@ namespace CoreERP.Models
                 entity.ToTable("tbl_Unit");
 
                 entity.Property(e => e.UnitId)
-                    .HasColumnName("unitId")
-                    .HasColumnType("numeric(18, 0)");
+                    .HasColumnName("unitId");
 
                 entity.Property(e => e.Narration)
                     .HasColumnName("narration")

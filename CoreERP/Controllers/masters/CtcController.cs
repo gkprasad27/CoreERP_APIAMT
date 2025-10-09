@@ -144,16 +144,40 @@ namespace CoreERP.Controllers.masters
             try
             {
                 //var ctcTypesList = _ctcRepository.GetAll().DistinctBy(x => x.EmpCode).ToList();
-                var ctcTypesList = _ctcRepository.GetAll().Join(_employeeRepository.GetAll(),
-                                      ctc => ctc.EmpCode,
-                                      emp => emp.EmployeeCode,
-                                      (ctc, emp) => new
-                                      {
-                                          emp.EmployeeName,
-                                          ctc
-                                      })
-                                .DistinctBy(x => x.ctc.EmpCode)
-                                .ToList();
+                var ctcTypesList = _ctcRepository.GetAll()
+    .Join(_employeeRepository.GetAll(),
+        ctc => ctc.EmpCode,
+        emp => emp.EmployeeCode,
+        (ctc, emp) => new
+        {
+            // Flattened structure: include EmployeeName directly in the CTC object
+            id = ctc.Id,
+            companyCode = ctc.CompanyCode,
+            empCode = ctc.EmpCode,
+            effectFrom = ctc.EffectFrom,
+            componentCode = ctc.ComponentCode,
+            earnDednAmount = ctc.EarnDednAmount,
+            ctc = ctc.Ctc,
+            usrid = ctc.Usrid,
+            timeStamp = ctc.TimeStamp,
+            upload = ctc.Upload,
+            description = ctc.Description,
+            empGrp = ctc.EmpGrp,
+            componentName = ctc.ComponentName,
+            structureName = ctc.StructureName,
+            cycleName = ctc.CycleName,
+            duration = ctc.Duration,
+            specificMonth = ctc.SpecificMonth,
+            active = ctc.Active,
+            ext1 = ctc.Ext1,
+            ext2 = ctc.Ext2,
+            pfType = ctc.PfType,
+            ptSlab = ctc.PtSlab,
+            employeeName = emp.EmployeeName
+        })
+    .DistinctBy(x => x.empCode)
+    .ToList();
+
 
                 //using var repo = new Repository<TblSaleOrderDetail>();
                 //var ctcTypesList = _ctcRepository.GetAll().DistinctBy(x => x.EmpCode).ToList();
