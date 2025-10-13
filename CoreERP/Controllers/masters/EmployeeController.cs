@@ -143,6 +143,10 @@ namespace CoreERP.Controllers
             {
                 try
                 {
+                    var record = _employeeRepository.GetSingleOrDefault(x => x.EmployeeCode.Equals(employee.EmployeeCode));
+                    if (record != null)
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = $"{nameof(record.EmployeeCode)} Already Exist use different Employee Code." });
+
                     _employeeRepository.Add(employee);
                     if (_employeeRepository.SaveChanges() > 0)
                         apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = employee };
