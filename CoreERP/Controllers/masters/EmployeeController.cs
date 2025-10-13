@@ -52,6 +52,30 @@ namespace CoreERP.Controllers
             });
             return result;
         }
+        [HttpGet("GetEmployee/{empCode}")]
+        public async Task<IActionResult> GetEmployee(string empCode)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var employeesList = EmployeeHelper.GetEmployesByID(empCode);
+                    if (employeesList.Any())
+                    {
+                        dynamic expdoObj = new ExpandoObject();
+                        expdoObj.employeesList = employeesList;
+                        return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+                    }
+                    else
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found for branches." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
 
         [HttpGet("GetAddressList/{empcode}")]
 
