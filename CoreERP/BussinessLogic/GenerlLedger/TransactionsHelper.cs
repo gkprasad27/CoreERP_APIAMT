@@ -3766,7 +3766,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var materialLookup = repo.TblMaterialMaster.ToList();
             var saleOrderLookup = repo.TblSaleOrderDetail.ToList();
             var hsnLookup = repo.TblHsnsac.ToList();
-            var uomLookup = repo.TblUnit.ToList();
+            var uomLookup = repo.TblMaterialSize.ToList();
 
             var poList = repo.TblPurchaseOrderDetails
     .Where(po => po.PurchaseOrderNumber == number)
@@ -3779,7 +3779,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 po.poQty = Convert.ToInt32(saleOrderLookup.FirstOrDefault(l => l.MaterialCode == po.MaterialCode)?.POQty);
                 //po.HSNSAC = hsnLookup.FirstOrDefault(x => x.Code == po.HSNSAC)?.Description;
                 po.UomCode = materialLookup.FirstOrDefault(l => l.MaterialCode == po.MaterialCode)?.Uom;
-                po.Uom = uomLookup.FirstOrDefault(x => Convert.ToString(x.UnitId) == po.UomCode)?.UnitName;
+                po.Uom = uomLookup.FirstOrDefault(x => Convert.ToString(x.unitId) == po.UomCode)?.unitName;
             }
             return poList;
 
