@@ -10,6 +10,7 @@ namespace CoreERP.Models
         public string? VoucherNumber { get; set; }
         public DateTime? VoucherDate { get; set; }
         public string? PartyInvoiceNo { get; set; }
+        public string? InvoiceNo { get; set; }
         public DateTime? PartyInvoiceDate { get; set; }
         public DateTime? DueDate { get; set; }
         public decimal? InvoiceAmount { get; set; }
