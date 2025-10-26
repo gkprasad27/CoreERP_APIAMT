@@ -46,7 +46,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
                 TblOpeningBalance _openingBalance = null;
                 using (Repository<TblOpeningBalance> _repo = new Repository<TblOpeningBalance>())
                 {
-                    _openingBalance = _repo.TblOpeningBalance.Where(x => x.BranchCode == branchCode).OrderByDescending(x => x.OpeningBalanceDate).FirstOrDefault();
+                    _openingBalance = _repo.TblOpeningBalance.Where(x => x.CompanyCode == branchCode).OrderByDescending(x => x.OpeningBalanceDate).FirstOrDefault();
 
                     if (_openingBalance != null)
                     {
@@ -100,6 +100,43 @@ namespace CoreERP.BussinessLogic.masterHlepers
                     return openingBalance;
 
                 return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static TblOpeningBalance Update(TblOpeningBalance openingBalance)
+        {
+            try
+            {
+                using Repository<TblOpeningBalance> repo = new Repository<TblOpeningBalance>();
+                repo.TblOpeningBalance.Update(openingBalance);
+                if (repo.SaveChanges() > 0)
+                    return openingBalance;
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static string Delete(int openingBalanceID)
+        {
+            try
+            {
+                using Repository<TblOpeningBalance> repo = new Repository<TblOpeningBalance>();
+                
+                var record =repo.TblOpeningBalance.Where(x => x.OpeningBalanceId == openingBalanceID).ToList();
+                repo.Remove(record);
+                if (repo.SaveChanges() > 0)
+                    return "Success";
+                else
+                    return null;
+
             }
             catch (Exception ex)
             {

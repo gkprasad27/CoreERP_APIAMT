@@ -2750,8 +2750,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblSupplierQuotationsMaster> GetSupplierQuotationsMasterr(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-400), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-400);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblSupplierQuotationsMaster>();
@@ -2780,7 +2780,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                               && Convert.ToString(x.QuotationNumber).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.QuotationNumber))
                               || Convert.ToString(x.SaleorderNo).Contains(searchCriteria.searchCriteria ?? Convert.ToString(x.SaleorderNo))
                               && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
-                }).OrderByDescending(x => x.QuotationNumber)
+                }).OrderByDescending(x => x.ID)
                 .ToList();
             }
             else
@@ -2795,7 +2795,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                               && Convert.ToDateTime(x.CreatedDate.Value) >= Convert.ToDateTime(searchCriteria.FromDate.Value.ToShortDateString())
                               || Convert.ToDateTime(x.CreatedDate.Value.ToShortDateString()) <= Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
                                && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
-                }).OrderByDescending(x => x.QuotationNumber)
+                }).OrderByDescending(x => x.ID)
                 .ToList();
             }
             //return repo.TblSupplierQuotationsMaster.AsEnumerable().ToList();

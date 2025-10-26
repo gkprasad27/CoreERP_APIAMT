@@ -100,8 +100,61 @@ namespace CoreERP.Controllers
             return result;
         }
 
+        [HttpDelete("DeleteOP/{code}")]
+        public IActionResult DeleteOP(int code)
+        {
+            try
+            {
+                var result = OpeningBalanceHelper.Delete(code);
+                APIResponse apiResponse;
+                if (result != null)
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Delete Failed." };
+                }
+
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("UpdateOpeningBalance")]
+        public IActionResult UpdateOpeningBalance([FromBody] TblOpeningBalance openingBalance)
+        {
+            if (openingBalance == null)
+                return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
+
+            try
+            {
+
+                var result = OpeningBalanceHelper.Update(openingBalance);
+                APIResponse apiResponse;
+                if (result != null)
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = result };
+                }
+                else
+                {
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
+                }
+
+                return Ok(apiResponse);
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
         [HttpPost("RegisterOpeningBalance")]
-        public IActionResult RegisterOpeningBalance([FromBody]TblOpeningBalance openingBalance)
+        public IActionResult RegisterOpeningBalance([FromBody] TblOpeningBalance openingBalance)
         {
             if (openingBalance == null)
                 return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = "object can not be null" });
