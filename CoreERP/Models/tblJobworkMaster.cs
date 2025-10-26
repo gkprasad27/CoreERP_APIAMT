@@ -26,6 +26,7 @@ namespace CoreERP.Models
         public string? InvoiceURL { get; set; }
         public string? CreatedBy { get; set; }
         public string? ContactNo { get; set; }
-
+        public string? SaleOrderNo { get; set; }
+        
     }
 }
