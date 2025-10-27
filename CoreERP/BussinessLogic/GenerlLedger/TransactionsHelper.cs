@@ -779,8 +779,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblPartyCashBankMaster> GetPaymentsReceiptsMaster(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-800), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-800);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblPartyCashBankMaster>();
@@ -796,8 +796,19 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 c.CustomerName = BP.FirstOrDefault(l => l.Bpnumber == c.PartyAccount)?.Name;
             });
 
-
-            return repo.TblPartyCashBankMaster.AsEnumerable()
+            if (searchCriteria.InvoiceNo != null)
+            {
+                return repo.TblPartyCashBankMaster.AsEnumerable()
+                .Where(x =>
+                {
+                    Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
+                    return
+                    x.VoucherNumber != null
+                           && x.VoucherNumber.Contains(searchCriteria.searchCriteria ?? x.VoucherNumber);
+                }).OrderByDescending(x => x.ID).ToList();
+            }
+            else
+                return repo.TblPartyCashBankMaster.AsEnumerable()
                 .Where(x =>
                 {
                     Debug.Assert(x.VoucherDate != null, "x.VoucherDate != null");
@@ -809,8 +820,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                            && Convert.ToDateTime(x.VoucherDate.Value.ToShortDateString()) <=
                            Convert.ToDateTime(searchCriteria.ToDate.Value.ToShortDateString())
                            && x.Company.ToString().Contains(searchCriteria.CompanyCode ?? x.Company.ToString());
-                })
-                .ToList();
+                }).OrderByDescending(x => x.ID).ToList();
 
 
         }
@@ -3872,13 +3882,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             var Company = repo.TblCompany.ToList();
             var profitCenters = repo.ProfitCenters.ToList();
-
+            var employee = repo.TblEmployee.ToList();
             repo.TblGoodsReceiptMaster.ToList()
                 .ForEach(c =>
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(l => l.Code == c.ProfitCenter).Name;
-
+                    c.ReceivedBy= employee.FirstOrDefault(l => l.EmployeeCode == c.ReceivedBy).EmployeeName;
                 });
             if (searchCriteria.InvoiceNo != null)
             {
@@ -4056,6 +4066,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                     }
                     grdata.ApprovalStatus = "Pending Approval";
+                    grdata.Status = statusmessage;
                     grdata.LotNo = (lotSeries.Prefix + "-" + lotSeries.CurrentLot);
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                 }
