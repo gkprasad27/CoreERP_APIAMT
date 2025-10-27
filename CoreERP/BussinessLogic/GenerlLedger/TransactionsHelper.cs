@@ -865,7 +865,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 decimal invoiceamount = 0;
                 foreach (var item in pcbDetails)
                 {
-                    invoicememoheader = context.TblInvoiceMemoHeader.FirstOrDefault(im => im.ReferenceNumber == item.InvoiceNo);
+                    //invoicememoheader = context.TblInvoiceMemoHeader.FirstOrDefault(im => im.ReferenceNumber == item.InvoiceNo || im.PartyInvoiceNo==item.InvoiceNo);
+                    invoicememoheader = context.TblInvoiceMemoHeader.FirstOrDefault(im => (im.ReferenceNumber != null && im.ReferenceNumber == item.InvoiceNo) || (im.PartyInvoiceNo != null && im.PartyInvoiceNo == item.PartyInvoiceNo));
+                    //var CashBankDetails = context.TblParyCashBankDetails.FirstOrDefault(im => (im.InvoiceNo != null && im.InvoiceNo == item.InvoiceNo) || (im.VoucherNumber != null && im.VoucherNumber == item.VoucherNumber));
+
                     var CashBankDetails = context.TblParyCashBankDetails.FirstOrDefault(im => im.InvoiceNo == item.InvoiceNo);
                     if (CashBankDetails != null)
                     {
