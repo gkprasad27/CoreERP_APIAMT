@@ -470,7 +470,7 @@ namespace CoreERP.Controllers
                 {
                     dynamic expando = new ExpandoObject();
                     var vouchertypeList = CommonHelper.GetPurchaseOrderMaster();
-                    expando.purchaseordernoList = vouchertypeList.Where(x => (x.Status == "PO Created" || x.Status == "Partial PO Created" || x.Status == "Material Partial Received") && x.Company == CompanyCode && (x.ApprovalStatus == "approve" || x.ApprovalStatus == "Approved")).Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.SupplierName, SupplierCode = x.SupplierCode });
+                    expando.purchaseordernoList = vouchertypeList.Where(x => (x.Status == "PO Created" || x.Status == "Partial PO Created" || x.Status == "Material Partial Received") && x.Company == CompanyCode && (x.ApprovalStatus == "approve" || x.ApprovalStatus == "Approved")).Select(x => new { ID = x.PurchaseOrderNumber, TEXT = x.SupplierName, SupplierCode = x.SupplierCode,x.HamaliCharges,x.OtherCharges,x.RoundOff,x.Fright,x.WeightBridge });
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)

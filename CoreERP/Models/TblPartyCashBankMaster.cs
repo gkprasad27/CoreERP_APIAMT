@@ -5,6 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblPartyCashBankMaster
     {
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
         public int? ID { get; set; }
         public string? Company { get; set; }
         public string? Branch { get; set; }
