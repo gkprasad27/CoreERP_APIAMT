@@ -92,6 +92,13 @@ namespace CoreERP.Models
 
     }
 
+    partial class TblMaterialSupplierDetails
+    {
+        [NotMapped]
+        public string SupplierName { get; set; }
+
+    }
+
     partial class tblJobworkDetails
     {
         [NotMapped]

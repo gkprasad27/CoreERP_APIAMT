@@ -7,7 +7,7 @@ namespace CoreERP.Models
     [Table("tbl_JobworkMaster")]
     public partial class tblJobworkMaster
     {
-        public int ID { get; set; }
+        public int? ID { get; set; }
         public string? JobWorkNumber { get; set; }
         public string? Vendor { get; set; }
         public string Company { get; set; }

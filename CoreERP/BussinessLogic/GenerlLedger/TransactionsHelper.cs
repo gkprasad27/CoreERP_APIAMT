@@ -2737,6 +2737,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblMaterialSupplierDetails> GetMaterialSupplierDetailsbyMaterialCode(string MaterialCode)
         {
             using var repo = new Repository<TblMaterialSupplierDetails>();
+            var customer = repo.TblBusinessPartnerAccount.ToList();
+
+            repo.TblMaterialSupplierDetails.ToList()
+                .ForEach(c =>
+                {
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode).Name;
+
+                });
             return repo.TblMaterialSupplierDetails.Where(cd => cd.MaterialCode == MaterialCode).ToList();
         }
         public bool ReturnMaterialSupplier(string code)

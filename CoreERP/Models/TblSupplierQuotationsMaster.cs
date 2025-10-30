@@ -6,7 +6,8 @@ namespace CoreERP.Models
 {
     public partial class TblSupplierQuotationsMaster
     {
-        public string? ID { get; set; }
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+        public int? ID { get; set; }
         public string? Company { get; set; }
         public string? Plant { get; set; }
         public string? QuotationNumber { get; set; }
