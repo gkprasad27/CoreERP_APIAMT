@@ -7,6 +7,7 @@ namespace CoreERP.Models
     [Table("tbl_JobworkDetails")]
     public partial class tblJobworkDetails
     {
+        [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         public string? JobworkNumber { get; set; }
         public string? MaterialCode { get; set; }
@@ -19,7 +20,7 @@ namespace CoreERP.Models
         public DateTime? AddDate { get; set; }
         public string? EditWho { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime? EditDate { get; set; }       
+        public DateTime? EditDate { get; set; }
         public string? Status { get; set; }
         public decimal? Amount { get; set; }
         public decimal? Total { get; set; }

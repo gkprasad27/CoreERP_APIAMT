@@ -8,7 +8,7 @@ namespace CoreERP.Models
     public partial class tblJobworkMaster
     {
         [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
-        public int? ID { get; set; }
+        public int ID { get; set; }
         public string? JobWorkNumber { get; set; }
         public string? Vendor { get; set; }
         public string Company { get; set; }
