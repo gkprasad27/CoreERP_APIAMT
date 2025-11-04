@@ -12,18 +12,20 @@ namespace CoreERP.Controllers
 {
     [ApiController]
     [Route("api/AssignGLaccounttoSubGroup")]
-   
+
     public class AssignGLaccounttoSubGroupController : ControllerBase
     {
         private readonly IRepository<TblAccountGroup> _glaugRepository;
+        private readonly IRepository<TblFinanceialStatement> _financeialStatementRepository;
         private readonly IRepository<AssignmentSubaccounttoGl> _assignmentSubaccounttoGlRepository;
-        
-        public AssignGLaccounttoSubGroupController(IRepository<TblAccountGroup> glaugRepository, IRepository<AssignmentSubaccounttoGl> assignmentSubaccounttoGlRepository)
+
+        public AssignGLaccounttoSubGroupController(IRepository<TblAccountGroup> glaugRepository, IRepository<AssignmentSubaccounttoGl> assignmentSubaccounttoGlRepository, IRepository<TblFinanceialStatement> financeialStatementRepository)
         {
             _glaugRepository = glaugRepository;
             _assignmentSubaccounttoGlRepository = assignmentSubaccounttoGlRepository;
+            _financeialStatementRepository = financeialStatementRepository;
         }
-        
+
         [HttpGet("GetAssignGLaccounttoSubGroupList")]
         public async Task<IActionResult> GetAssignGLaccounttoSubGroupList()
         {
@@ -34,7 +36,7 @@ namespace CoreERP.Controllers
                     var assignacckeyList = CommonHelper.GetAssignmentsubaccounttoGl();
                     if (!assignacckeyList.Any())
                         return Ok(new APIResponse
-                            {status = APIStatus.FAIL.ToString(), response = "No Data Found for assignacckeyList."});
+                        { status = APIStatus.FAIL.ToString(), response = "No Data Found for assignacckeyList." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.assignacckeyList = assignacckeyList;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
@@ -62,9 +64,9 @@ namespace CoreERP.Controllers
                 _assignmentSubaccounttoGlRepository.AddRange(assnacckey);
                 APIResponse apiResponse;
                 if (_assignmentSubaccounttoGlRepository.SaveChanges() <= 0)
-                    apiResponse = new APIResponse() {status = APIStatus.FAIL.ToString(), response = "Registration Failed."};
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Registration Failed." };
                 else
-                    apiResponse = new APIResponse() {status = APIStatus.PASS.ToString(), response = assnacckey};
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assnacckey };
 
                 return Ok(apiResponse);
             }
@@ -88,9 +90,9 @@ namespace CoreERP.Controllers
                 _assignmentSubaccounttoGlRepository.UpdateRange(assnacckey);
                 APIResponse apiResponse;
                 if (_assignmentSubaccounttoGlRepository.SaveChanges() <= 0)
-                    apiResponse = new APIResponse() {status = APIStatus.FAIL.ToString(), response = "Updation Failed."};
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Updation Failed." };
                 else
-                    apiResponse = new APIResponse() {status = APIStatus.PASS.ToString(), response = assnacckey};
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = assnacckey };
 
                 return Ok(apiResponse);
             }
@@ -105,13 +107,13 @@ namespace CoreERP.Controllers
         {
             try
             {
-                var record = _assignmentSubaccounttoGlRepository.Where(x => x.Code==code).SingleOrDefault();
+                var record = _assignmentSubaccounttoGlRepository.Where(x => x.Code == code).SingleOrDefault();
                 _assignmentSubaccounttoGlRepository.Remove(record);
                 APIResponse apiResponse;
                 if (_assignmentSubaccounttoGlRepository.SaveChanges() <= 0)
-                    apiResponse = new APIResponse() {status = APIStatus.FAIL.ToString(), response = "Deletion Failed."};
+                    apiResponse = new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Deletion Failed." };
                 else
-                    apiResponse = new APIResponse() {status = APIStatus.PASS.ToString(), response = record};
+                    apiResponse = new APIResponse() { status = APIStatus.PASS.ToString(), response = record };
 
                 return Ok(apiResponse);
             }
@@ -129,10 +131,10 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var getAccountNamelist = _glaugRepository.Where(x => x.Nature == undersubgroup&&x.IsDefault==1);
+                    var getAccountNamelist = _glaugRepository.Where(x => x.Nature == undersubgroup && x.IsDefault == 1);
                     if (!getAccountNamelist.Any())
                         return Ok(new APIResponse
-                            {status = APIStatus.FAIL.ToString(), response = "No Data Found for SubGroupList."});
+                        { status = APIStatus.FAIL.ToString(), response = "No Data Found for SubGroupList." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.GetAccountNamelist = getAccountNamelist;
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
@@ -156,10 +158,10 @@ namespace CoreERP.Controllers
             {
                 try
                 {
-                    var structkeyList = _glaugRepository.GetAll().Select(x=>x.StructureKey).Distinct();
+                    var structkeyList = _financeialStatementRepository.GetAll();
                     if (!structkeyList.Any())
                         return Ok(new APIResponse
-                            {status = APIStatus.FAIL.ToString(), response = "No Data Found for assignacckeyList."});
+                        { status = APIStatus.FAIL.ToString(), response = "No Data Found for assignacckeyList." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.structkeyList = structkeyList.ToArray();
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
