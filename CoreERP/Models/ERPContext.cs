@@ -302,12 +302,14 @@ namespace CoreERP.Models
         public virtual DbSet<TblInvoiceMasterReturn> TblInvoiceMasterReturn { get; set; }
         public virtual DbSet<TblInvoiceReturnDetail> TblInvoiceReturnDetail { get; set; }
         public virtual DbSet<TblOffer> TblOffer { get; set; }
+        public virtual DbSet<TblFinanceialStatement> TblFinanceialStatement { get; set; }
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server = 103.67.238.235,2899; Database = ERP_AMRIT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
+                optionsBuilder.UseSqlServer("Server = 103.67.238.235,2222; Database = ERP_AMRIT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
             }
         }
 
@@ -8706,45 +8708,13 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<TblOpeningBalance>(entity =>
             {
-                entity.HasKey(e => e.OpeningBalanceId)
-                    .HasName("PK__tbl_Open__5E1AFE196CCE70E6");
+                entity.HasKey(e => e.OpeningBalanceId);
 
                 entity.ToTable("tbl_OpeningBalance");
-
-                entity.Property(e => e.OpeningBalanceId)
-                    .HasColumnName("openingBalanceId")
-                    .HasColumnType("numeric(18, 0)")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.Amount)
-                    .HasColumnName("amount")
-                    .HasColumnType("numeric(18, 2)");
-
-                entity.Property(e => e.BranchCode)
-                    .IsRequired()
-                    .HasColumnName("branchCode")
-                    .HasMaxLength(80);
-
-                entity.Property(e => e.BranchId)
-                    .HasColumnName("branchID")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.BranchName)
-                    .IsRequired()
-                    .HasColumnName("branchName")
-                    .HasMaxLength(250);
-
-                entity.Property(e => e.EmployeeId)
-                    .HasColumnName("employeeId")
-                    .HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.LedgerCode)
                     .HasColumnName("ledgerCode")
                     .HasMaxLength(100);
-
-                entity.Property(e => e.LedgerId)
-                    .HasColumnName("ledgerId")
-                    .HasColumnType("numeric(18, 0)");
 
                 entity.Property(e => e.LedgerName)
                     .HasColumnName("ledgerName")
@@ -8758,26 +8728,8 @@ namespace CoreERP.Models
                     .HasColumnName("openingBalanceDate")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.PaymentTypeId)
-                    .HasColumnName("paymentTypeId")
-                    .HasColumnType("numeric(18, 0)");
-
                 entity.Property(e => e.PaymentTypeName)
                     .HasColumnName("paymentTypeName")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ShiftId)
-                    .HasColumnName("shiftId")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.UserId)
-                    .HasColumnName("userId")
-                    .HasColumnType("numeric(18, 0)");
-
-                entity.Property(e => e.UserName)
-                    .IsRequired()
-                    .HasColumnName("userName")
-                    .HasMaxLength(50)
                     .IsUnicode(false);
 
                 entity.Property(e => e.VoucherNo)

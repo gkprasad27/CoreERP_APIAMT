@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class GlaccGroup
     {
-        public string? GroupCode { get; set; }
+        public string GroupCode { get; set; }
         public string? GroupName { get; set; }
         public string? GroupType { get; set; }
         public string? Active { get; set; }
