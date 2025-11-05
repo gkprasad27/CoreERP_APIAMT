@@ -103,11 +103,11 @@ namespace CoreERP.Controllers
         }
 
         [HttpDelete("DeleteAssignGLaccounttoSubGroup/{code}")]
-        public async Task<IActionResult> DeleteAssignGLaccounttoSubGroup(string code)
+        public async Task<IActionResult> DeleteAssignGLaccounttoSubGroup(int code)
         {
             try
             {
-                var record = _assignmentSubaccounttoGlRepository.Where(x => x.Code == code).SingleOrDefault();
+                var record = _assignmentSubaccounttoGlRepository.Where(x => x.ID == code).SingleOrDefault();
                 _assignmentSubaccounttoGlRepository.Remove(record);
                 APIResponse apiResponse;
                 if (_assignmentSubaccounttoGlRepository.SaveChanges() <= 0)

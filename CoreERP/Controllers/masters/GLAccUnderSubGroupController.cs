@@ -14,7 +14,7 @@ namespace CoreERP.Controllers.GL
     {
         private readonly IRepository<TblAccountGroup> _glaugRepository;
         private readonly IRepository<GlaccGroup> _glgroupRepository;
-        public GLAccUnderSubGroupController(IRepository<TblAccountGroup> glaugRepository,IRepository<GlaccGroup>glgroupRepository)
+        public GLAccUnderSubGroupController(IRepository<TblAccountGroup> glaugRepository, IRepository<GlaccGroup> glgroupRepository)
         {
             _glaugRepository = glaugRepository;
             _glgroupRepository = glgroupRepository;
@@ -30,13 +30,34 @@ namespace CoreERP.Controllers.GL
             {
                 APIResponse apiResponse;
 
-                //tblAccGrp.IsDefault = false;
-                if(!string.IsNullOrWhiteSpace(tblAccGrp.Undersubaccount))
-                    tblAccGrp.AccountGroupId = tblAccGrp.Undersubaccount + "-" + tblAccGrp.AccountGroupId;
-                else 
-                    tblAccGrp.AccountGroupId = tblAccGrp.GroupUnder + "-" + tblAccGrp.AccountGroupId;
+                //if(!string.IsNullOrWhiteSpace(tblAccGrp.Undersubaccount))
+                //    tblAccGrp.AccountGroupId = tblAccGrp.Undersubaccount + "-" + tblAccGrp.AccountGroupId;
+                //else 
+                //    tblAccGrp.AccountGroupId = tblAccGrp.GroupUnder + "-" + tblAccGrp.AccountGroupId;
 
-                _glaugRepository.Add(tblAccGrp);
+                //_glaugRepository.Add(tblAccGrp);
+
+                if (!string.IsNullOrWhiteSpace(tblAccGrp.Undersubaccount))
+                {
+                    tblAccGrp.AccountGroupId = $"{tblAccGrp.Undersubaccount}-{tblAccGrp.AccountGroupId}";
+                }
+                else if (!string.IsNullOrWhiteSpace(tblAccGrp.GroupUnder))
+                {
+                    tblAccGrp.AccountGroupId = $"{tblAccGrp.GroupUnder}-{tblAccGrp.AccountGroupId}";
+                }
+                else
+                {
+                    // Optional: fallback if both are null or empty
+                    tblAccGrp.AccountGroupId = $"{tblAccGrp.AccountGroupId}";
+                }
+
+                // Optional: validate AccountGroupId before saving
+                if (!string.IsNullOrWhiteSpace(tblAccGrp.AccountGroupId))
+                {
+                    _glaugRepository.Add(tblAccGrp);
+                }
+
+
                 if (_glaugRepository.SaveChanges() > 0)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = tblAccGrp });
                 else
@@ -82,7 +103,7 @@ namespace CoreERP.Controllers.GL
             try
             {
                 APIResponse apiResponse;
-                var record = _glaugRepository.Where(x => x.AccountGroupId==code).SingleOrDefault();
+                var record = _glaugRepository.Where(x => x.AccountGroupId == code).SingleOrDefault();
                 _glaugRepository.Remove(record);
                 if (_glaugRepository.SaveChanges() > 0)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = record });
@@ -102,7 +123,7 @@ namespace CoreERP.Controllers.GL
             {
                 try
                 {
-                    var GetAccountNamelist = _glaugRepository.Where(x=>x.GroupUnder== undersubgroup);
+                    var GetAccountNamelist = _glaugRepository.Where(x => x.GroupUnder == undersubgroup);
                     if (GetAccountNamelist.Count() > 0)
                     {
                         dynamic expdoObj = new ExpandoObject();
@@ -151,7 +172,7 @@ namespace CoreERP.Controllers.GL
         {
             try
             {
-                
+
                 var GLAccGroupList = _glgroupRepository.GetAll().OrderBy(x => x.GroupCode);
                 if (GLAccGroupList.Count() > 0)
                 {
@@ -173,7 +194,7 @@ namespace CoreERP.Controllers.GL
         {
             try
             {
-              
+
                 var GetAccountNamelist = _glaugRepository.Where(x => x.Nature == nature);
                 if (GetAccountNamelist.Count() > 0)
                 {
@@ -196,7 +217,7 @@ namespace CoreERP.Controllers.GL
 
             try
             {
-               
+
                 var GetAccountSubGrouplist = _glaugRepository.Where(x => x.GroupUnder == glaccGroupCode);
                 if (GetAccountSubGrouplist.Count() > 0)
                 {

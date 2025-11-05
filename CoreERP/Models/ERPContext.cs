@@ -303,13 +303,13 @@ namespace CoreERP.Models
         public virtual DbSet<TblInvoiceReturnDetail> TblInvoiceReturnDetail { get; set; }
         public virtual DbSet<TblOffer> TblOffer { get; set; }
         public virtual DbSet<TblFinanceialStatement> TblFinanceialStatement { get; set; }
-        
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server = 103.67.238.235,2222; Database = ERP_AMRIT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
+                optionsBuilder.UseSqlServer("Server = 103.67.238.235,2222; Database = ERP_AMT; User Id = sa; pwd =Admin@7912; MultipleActiveResultSets = true; TrustServerCertificate = True");
             }
         }
 
@@ -385,7 +385,7 @@ namespace CoreERP.Models
 
             modelBuilder.Entity<AssignmentSubaccounttoGl>(entity =>
             {
-                entity.HasKey(e => e.Code);
+                entity.HasKey(e => e.ID);
 
                 entity.ToTable("AssignmentSubaccounttoGL");
 
