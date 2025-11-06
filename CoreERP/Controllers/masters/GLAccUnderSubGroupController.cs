@@ -195,7 +195,7 @@ namespace CoreERP.Controllers.GL
             try
             {
 
-                var GetAccountNamelist = _glaugRepository.Where(x => x.Nature == nature);
+                var GetAccountNamelist = _glaugRepository.Where(x => x.Nature == nature && x.IsDefault == 0);
                 if (GetAccountNamelist.Count() > 0)
                 {
                     dynamic expdoObj = new ExpandoObject();
