@@ -3931,8 +3931,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<tblJWReceiptMaster> GetJWReceipt(SearchCriteria searchCriteria)
         {
 
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-400), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-400);
             searchCriteria.ToDate ??= DateTime.Today;
             using var repo = new Repository<tblJWReceiptMaster>();
 
