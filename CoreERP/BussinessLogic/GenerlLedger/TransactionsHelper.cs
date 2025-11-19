@@ -1831,7 +1831,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         if (InspectionCheckDetails.Count == 0)
                         {
                             var SaleOrderDetail1 = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == item.SaleOrderNumber && im.MaterialCode == item.MaterialCode && im.BomKey == item.BomKey);
-                            if (item.Company == "1000" && SaleOrderDetail1.Billable == "Y")
+                            if (item.Company == "1000" && SaleOrderDetail1.MainComponent == "Y")
                             {
                                 NewInspectionCheckDetails.Add(new TblInspectionCheckDetails { InspectionCheckNo = masternumber, Status = item.WorkStatus, MaterialCode = item.BomKey, productionTag = item.ProductionTag, saleOrderNumber = item.SaleOrderNumber, CompletedBy = item.AllocatedPerson, CompletionDate = item.EndDate, Description = item.Remarks, BomKey = item.MaterialCode, BomName = item.BomName, LotNo = item.LotNo });
                             }
@@ -3896,7 +3896,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(l => l.Code == c.ProfitCenter).Name;
-                    c.ReceivedBy= employee.FirstOrDefault(l => l.EmployeeCode == c.ReceivedBy).EmployeeName;
+                    c.ReceivedBy = employee.FirstOrDefault(l => l.EmployeeCode == c.ReceivedBy).EmployeeName;
                 });
             if (searchCriteria.InvoiceNo != null)
             {
@@ -5449,10 +5449,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<tblJobworkDetails>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
             var UOM = repo.TblUnit.ToList();
+            var hsn = repo.TblHsnsac.ToList();
             repo.tblJobworkDetails.ToList().ForEach(c =>
             {
                 c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
                 c.Uom = UOM.FirstOrDefault(x => Convert.ToString(x.UnitId) == c.Uom)?.UnitName;
+                c.HsnSac = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Hsnsac;
+                c.HsnSac = hsn.FirstOrDefault(x => x.Code == c.HsnSac)?.Description;
             });
             return repo.tblJobworkDetails.Where(cd => cd.JobworkNumber == jobWorkNumber).ToList();
 
