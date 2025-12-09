@@ -1185,13 +1185,15 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             if (invoice.Company == "2000")
                             {
                                 vendorMobile = "9666756333";
+                                smsService.AmritSI(vendorMobile, soNumber, vendorName, invoice.Company);
                             }
                             else
                             {
                                 vendorMobile = "9704288499";
+                                smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, invoice.Company);
                             }
 
-                            smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, invoice.Company);
+                            
                             return true;
                         }
                         catch (Exception ex)

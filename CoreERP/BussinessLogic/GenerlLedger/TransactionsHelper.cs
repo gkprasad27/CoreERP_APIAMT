@@ -779,8 +779,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public List<TblPartyCashBankMaster> GetPaymentsReceiptsMaster(SearchCriteria searchCriteria)
         {
-            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-800), ToDate = DateTime.Today };
-            searchCriteria.FromDate ??= DateTime.Today.AddDays(-800);
+            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-400), ToDate = DateTime.Today };
+            searchCriteria.FromDate ??= DateTime.Today.AddDays(-400);
             searchCriteria.ToDate ??= DateTime.Today;
 
             using var repo = new Repository<TblPartyCashBankMaster>();
@@ -3443,9 +3443,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     context.TblPurchaseRequisitionMaster.Update(PRdata);
                 }
                 if (poDetailsExist.Count > 0)
+                {
                     context.TblPurchaseOrderDetails.UpdateRange(podetails);
+                }
                 else
+                {
                     context.TblPurchaseOrderDetails.AddRange(podetails);
+                }
 
                 context.SaveChanges();
 
@@ -3465,16 +3469,32 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 string soNumber = podata.PurchaseOrderNumber;
                 string vendorName = Name;
                 string vendorMobile;
-                if (podata.Company == "2000")
+                if (podata.PurchaseOrderNumber == null)
                 {
-                    vendorMobile = "9666756333";
+                    if (podata.Company == "2000")
+                    {
+                        vendorMobile = "9666756333";
+                        smsService.AmritSendPOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);
+                    }
+                    else
+                    {
+                        vendorMobile = "9704288499";
+                        smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);
+                    }
                 }
                 else
                 {
-                    vendorMobile = "9704288499";
+                    if (podata.Company == "2000")
+                    {
+                        vendorMobile = "9666756333";
+                        smsService.AmritPOAmended(vendorMobile, soNumber, vendorName, podata.Company);
+                    }
+                    else
+                    {
+                        vendorMobile = "9704288499";
+                        smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);
+                    }
                 }
-
-                smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);
                 return true;
             }
             catch (Exception)
@@ -5953,16 +5973,33 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 string soNumber = saleOrderMaster.SaleOrderNo;
                 string vendorName = Name;
                 string vendorMobile;
-                if (saleOrderMaster.Company == "2000")
+                if (repo.TblSaleOrderMaster.Any(v => v.SaleOrderNo == saleOrderMaster.SaleOrderNo))
                 {
-                    vendorMobile = "9666756333";
+                    if (saleOrderMaster.Company == "2000")
+                    {
+                        vendorMobile = "9666756333";
+                        smsService.AmritSendSOAmended(vendorMobile, soNumber, vendorName, saleOrderMaster.Company);
+                    }
+                    else
+                    {
+                        vendorMobile = "9704288499";
+                        smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, saleOrderMaster.Company);
+                    }
                 }
                 else
                 {
-                    vendorMobile = "9704288499";
-                }
+                    if (saleOrderMaster.Company == "2000")
+                    {
+                        vendorMobile = "9666756333";
+                        smsService.AmritSendSOCreationMessage(vendorMobile, soNumber, vendorName, saleOrderMaster.Company);
+                    }
+                    else
+                    {
+                        vendorMobile = "9704288499";
+                        smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, saleOrderMaster.Company);
+                    }
 
-                smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, saleOrderMaster.Company);
+                }
 
                 //// Declare and initialize the array with two mobile numbers
                 //string[] mobileNumbers = { "9346218049", "9133677733" };

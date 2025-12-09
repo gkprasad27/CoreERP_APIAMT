@@ -1,5 +1,6 @@
 ﻿using CoreERP.DataAccess;
 using CoreERP.DataAccess.Repositories;
+using CoreERP.Helpers;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -99,6 +100,31 @@ namespace CoreERP.Controllers.masters
                         repo.TblPurchaseOrder.Update(purchase);
                     }
                     repo.SaveChanges();
+
+                    // Call SMS notification here
+                    FastSMSService smsService = new FastSMSService();
+
+                    // You will need the SO number and vendor details here
+                    string customerCode = Invoice.CustomerName;
+
+                    var Name = repo.TblBusinessPartnerAccount
+                        .Where(bp => bp.Bpnumber == customerCode)
+                        .Select(bp => bp.Name)
+                        .FirstOrDefault();
+
+                    string soNumber = dispatch.LRNumber;
+                    string vendorName = Name;
+                    string vendorMobile;
+                    if (Invoice.Company == "2000")
+                    {
+                        vendorMobile = "9666756333";
+                        smsService.AmritDISPATCH(vendorMobile, soNumber, vendorName, Invoice.Company);
+                    }
+                    else
+                    {
+                        vendorMobile = "9704288499";
+                        smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, Invoice.Company);
+                    }
 
                 }
                 else
