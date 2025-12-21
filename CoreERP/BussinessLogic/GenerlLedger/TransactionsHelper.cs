@@ -3203,6 +3203,22 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var purchaseorder = repo.TblPurchaseOrderDetails.Where(im => im.SaleOrder == podata.SaleOrderNo);
             var SaleOrder = repo.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == podata.SaleOrderNo);
             var PRdata = repo.TblPurchaseRequisitionMaster.FirstOrDefault(im => im.RequisitionNumber == podata.SaleOrderNo);
+
+            // Call SMS notification here
+            FastSMSService smsService = new FastSMSService();
+
+            // You will need the SO number and vendor details here
+            string customerCode = podata.SupplierCode;
+
+            var Name = context.TblBusinessPartnerAccount
+                .Where(bp => bp.Bpnumber == customerCode)
+                .Select(bp => bp.Name)
+                .FirstOrDefault();
+
+            string soNumber = podata.PurchaseOrderNumber;
+            string vendorName = Name;
+            string vendorMobile;
+
             if (podata.PurchaseOrderNumber == null)
             {
                 if (Pcenter != null)
@@ -3212,8 +3228,21 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     context.SaveChanges();
                     purchaseordernumber = Pcenter.Prefix + "-" + Pcenter.LastNumber;
                 }
+                if (podata.Company == "2000")
+                {
+                    vendorMobile = "9666756333";
+                    smsService.AmritSendPOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);
+                }
             }
+            else
+            {
+                if (podata.Company == "2000")
+                {
+                    vendorMobile = "9666756333";
+                    smsService.AmritPOAmended(vendorMobile, soNumber, vendorName, podata.Company);
+                }
 
+            }
             if (SaleOrder != null)
                 CustPONumber = SaleOrder.PONumber;
             else if (PRdata != null)
@@ -3455,45 +3484,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
                 dbtrans.Commit();
 
-                // Call SMS notification here
-                FastSMSService smsService = new FastSMSService();
-
-                // You will need the SO number and vendor details here
-                string customerCode = podata.SupplierCode;
-
-                var Name = context.TblBusinessPartnerAccount
-                    .Where(bp => bp.Bpnumber == customerCode)
-                    .Select(bp => bp.Name)
-                    .FirstOrDefault();
-
-                string soNumber = podata.PurchaseOrderNumber;
-                string vendorName = Name;
-                string vendorMobile;
-                if (podata.PurchaseOrderNumber == null)
+                if (podata.Company == "1000")
                 {
-                    if (podata.Company == "2000")
-                    {
-                        vendorMobile = "9666756333";
-                        smsService.AmritSendPOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);
-                    }
-                    else
-                    {
-                        vendorMobile = "9704288499";
-                        smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);
-                    }
-                }
-                else
-                {
-                    if (podata.Company == "2000")
-                    {
-                        vendorMobile = "9666756333";
-                        smsService.AmritPOAmended(vendorMobile, soNumber, vendorName, podata.Company);
-                    }
-                    else
-                    {
-                        vendorMobile = "9704288499";
-                        smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);
-                    }
+                    vendorMobile = "9704288499";
+                    smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);
                 }
                 return true;
             }
