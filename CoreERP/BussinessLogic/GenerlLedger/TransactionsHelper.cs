@@ -175,6 +175,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             try
             {
                 cashBankMaster.Status = "N";
+                cashBankMaster.TotalAmount = cashBankDetails.Sum(x => x.Amount);
                 context.TblCashBankMaster.Add(cashBankMaster);
                 context.SaveChanges();
 
