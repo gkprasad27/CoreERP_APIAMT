@@ -3232,7 +3232,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 if (podata.Company == "2000")
                 {
                     vendorMobile = "9666756333";
-                    smsService.AmritSendPOCreationMessage(vendorMobile, soNumber, vendorName, podata.Company);
+                    smsService.AmritSendPOCreationMessage(vendorMobile, purchaseordernumber, vendorName, podata.Company);
                 }
             }
             else
