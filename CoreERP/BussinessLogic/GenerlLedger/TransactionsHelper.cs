@@ -4028,6 +4028,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             var lotSeries = new TblLotSeries();
             List<TblGoodsReceiptDetails> GoosQTY;
             var customer = repo.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == grdata.SupplierCode);
+            var OBCB = repo.TblOpeningBalance.FirstOrDefault(x => x.LedgerCode == grdata.SupplierCode);
             string statusmessage = null;
             using var dbtrans = context.Database.BeginTransaction();
             try
@@ -4242,6 +4243,27 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     customer.ClosingBalance = Convert.ToInt32(customer.ClosingBalance + Convert.ToInt32(grdata.TotalAmount));
                     context.Update(customer);
+                }
+                if (OBCB != null)
+                {
+                    OBCB.ClosingBalance = Convert.ToInt32(OBCB.ClosingBalance + Convert.ToInt32(grdata.TotalAmount));
+                    OBCB.Narration = "Material Received";
+                    OBCB.AddDate = DateTime.Now;
+                    OBCB.EditDate = DateTime.Now;
+                    OBCB.VoucherNo= grdata.SupplierReferenceNo;
+                    context.Update(OBCB);
+                }
+                else
+                {
+                    OBCB.ClosingBalance = Convert.ToInt32(grdata.TotalAmount);
+                    OBCB.VoucherNo = grdata.SupplierReferenceNo;
+                    OBCB.LedgerCode= grdata.SupplierCode;
+                    OBCB.LedgerId= grdata.SupplierCode;
+                    OBCB.LedgerName= customer.Name;
+                    OBCB.Narration = "Material Received";
+                    OBCB.AddDate = DateTime.Now;
+                    OBCB.EditDate = DateTime.Now;
+                    context.TblOpeningBalance.Add(OBCB);
                 }
                 string vouchernumber = GetVoucherNumber("PIN");
                 InvoiceMemoHeader.Company = grdata.Company;

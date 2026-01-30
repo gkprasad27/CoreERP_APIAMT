@@ -1037,6 +1037,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                 var Inspection = repo1.TblInspectionCheckMaster.FirstOrDefault(im => im.saleOrderNumber == invoice.SaleOrderNo && im.Company == invoice.Company);
                 var InvoiceHist = repo1.TblInvoiceDetail.Where(im => im.Saleorder == invoice.SaleOrderNo);
                 var customer = repo1.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == invoice.CustomerName);
+                var OBCB = repo1.TblOpeningBalance.FirstOrDefault(x => x.LedgerCode == invoice.CustomerName);
                 var InvoiceMemoHeader = new TblInvoiceMemoHeader();
                 var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
                 using (ERPContext repo = new ERPContext())
@@ -1166,6 +1167,27 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 customer.ClosingBalance = (Convert.ToInt32(customer.ClosingBalance) + (Convert.ToInt32(invoice.GrandTotal)));
                                 repo.TblBusinessPartnerAccount.Update(customer);
                             }
+                            if (OBCB != null)
+                            {
+                                OBCB.ClosingBalance = Convert.ToInt32(OBCB.ClosingBalance + Convert.ToInt32(invoice.GrandTotal));
+                                OBCB.Narration = "Material Received";
+                                OBCB.AddDate = DateTime.Now;
+                                OBCB.EditDate = DateTime.Now;
+                                OBCB.VoucherNo = invoice.VoucherNo;
+                                repo.Update(OBCB);
+                            }
+                            else
+                            {
+                                OBCB.ClosingBalance = Convert.ToInt32(invoice.GrandTotal);
+                                OBCB.VoucherNo = invoice.VoucherNo;
+                                OBCB.LedgerCode = invoice.CustomerName;
+                                OBCB.LedgerId = invoice.CustomerName;
+                                OBCB.LedgerName = customer.Name;
+                                OBCB.Narration = "Invoice";
+                                OBCB.AddDate = DateTime.Now;
+                                OBCB.EditDate = DateTime.Now;
+                                repo.TblOpeningBalance.Add(OBCB);
+                            }
                             repo.SaveChanges();
                             dbTransaction.Commit();
                             // Call SMS notification here
@@ -1193,7 +1215,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, invoice.Company);
                             }
 
-                            
+
                             return true;
                         }
                         catch (Exception ex)

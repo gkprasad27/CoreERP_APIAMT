@@ -14,11 +14,12 @@ namespace CoreERP.Models
         public string LedgerName { get; set; }
         public string PaymentTypeId { get; set; }
         public string PaymentTypeName { get; set; }
-        public decimal? Amount { get; set; }
+        public decimal? OpeningBalance { get; set; }
         public string Narration { get; set; }
         public string AddWho { get; set; }
         public string EditWho { get; set; }
         public DateTime AddDate { get; set; }
         public DateTime EditDate { get; set; }
+        public decimal? ClosingBalance { get; set; }
     }
 }
