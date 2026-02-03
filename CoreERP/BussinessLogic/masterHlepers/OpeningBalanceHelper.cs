@@ -1,5 +1,6 @@
 ﻿using CoreERP.DataAccess;
 using CoreERP.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,43 +95,55 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblOpeningBalance> repo = new Repository<TblOpeningBalance>();
-                repo.TblOpeningBalance.Add(openingBalance);
-                if (repo.SaveChanges() > 0)
-                    return openingBalance;
+                using (var repo = new Repository<TblOpeningBalance>())
+                {
+                    openingBalance.AddDate = DateTime.Now;
+                    openingBalance.EditDate = DateTime.Now;
+                    repo.Add(openingBalance);
+                    int result = repo.SaveChanges();
+                    if (result > 0)
+                        return openingBalance;
 
-                return null;
+                    return null;
+                }
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw; // preserve stack trace
             }
         }
+
 
         public static TblOpeningBalance Update(TblOpeningBalance openingBalance)
         {
             try
             {
-                using Repository<TblOpeningBalance> repo = new Repository<TblOpeningBalance>();
-                repo.TblOpeningBalance.Update(openingBalance);
-                if (repo.SaveChanges() > 0)
-                    return openingBalance;
+                using (var repo = new Repository<TblOpeningBalance>())
+                {
+                    repo.Attach(openingBalance);
+                    repo.Entry(openingBalance).State = EntityState.Modified;
 
-                return null;
+                    int result = repo.SaveChanges();
+                    if (result > 0)
+                        return openingBalance;
+
+                    return null;
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
+
 
         public static string Delete(int openingBalanceID)
         {
             try
             {
                 using Repository<TblOpeningBalance> repo = new Repository<TblOpeningBalance>();
-                
-                var record =repo.TblOpeningBalance.Where(x => x.OpeningBalanceId == openingBalanceID).ToList();
+
+                var record = repo.TblOpeningBalance.Where(x => x.OpeningBalanceId == openingBalanceID).ToList();
                 repo.Remove(record);
                 if (repo.SaveChanges() > 0)
                     return "Success";
