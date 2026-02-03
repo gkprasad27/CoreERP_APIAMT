@@ -141,20 +141,29 @@ namespace CoreERP.BussinessLogic.masterHlepers
         {
             try
             {
-                using Repository<TblOpeningBalance> repo = new Repository<TblOpeningBalance>();
+                using (var repo = new Repository<TblOpeningBalance>())
+                {
+                    // Fetch single record
+                    var record = repo.TblOpeningBalance
+                                     .FirstOrDefault(x => x.OpeningBalanceId == openingBalanceID);
 
-                var record = repo.TblOpeningBalance.Where(x => x.OpeningBalanceId == openingBalanceID).ToList();
-                repo.Remove(record);
-                if (repo.SaveChanges() > 0)
-                    return "Success";
-                else
-                    return null;
+                    if (record == null)
+                        return "Record not found";
 
+                    // Remove the entity
+                    repo.TblOpeningBalance.Remove(record);
+
+                    if (repo.SaveChanges() > 0)
+                        return "Success";
+
+                    return "Failed";
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw; // preserve stack trace
             }
         }
+
     }
 }

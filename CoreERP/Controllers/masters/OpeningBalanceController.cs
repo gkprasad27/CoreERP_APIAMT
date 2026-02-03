@@ -124,7 +124,7 @@ namespace CoreERP.Controllers
             }
         }
 
-        [HttpPost("UpdateOpeningBalance")]
+        [HttpPut("UpdateOpeningBalance")]
         public IActionResult UpdateOpeningBalance([FromBody] TblOpeningBalance openingBalance)
         {
             if (openingBalance == null)
