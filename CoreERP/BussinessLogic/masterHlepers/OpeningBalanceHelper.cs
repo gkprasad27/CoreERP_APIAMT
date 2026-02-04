@@ -95,7 +95,7 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblOpeningBalance> repo = new Repository<TblOpeningBalance>();
-                return repo.TblOpeningBalance.Where(x => x.VoucherNo == voucherNo).ToList();
+                return repo.TblOpeningBalance.Where(x => x.LedgerCode == voucherNo).ToList();
 
                 //return null;
             }

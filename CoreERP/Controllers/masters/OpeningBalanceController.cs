@@ -161,7 +161,7 @@ namespace CoreERP.Controllers
 
             try
             {
-                if (OpeningBalanceHelper.GetOBList(openingBalance.VoucherNo).Count() > 0)
+                if (OpeningBalanceHelper.GetOBList(openingBalance.LedgerCode).Count() > 0)
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = $"Voucher No{nameof(openingBalance.VoucherNo)} is already exists ,Please Use Different Code " });
 
                 var result = OpeningBalanceHelper.Register(openingBalance);
