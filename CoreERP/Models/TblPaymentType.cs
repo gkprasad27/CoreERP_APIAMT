@@ -5,7 +5,7 @@ namespace CoreERP.Models
 {
     public partial class TblPaymentType
     {
-        public decimal PaymentTypeId { get; set; }
+        public int PaymentTypeId { get; set; }
         public string PaymentTypeName { get; set; }
     }
 }

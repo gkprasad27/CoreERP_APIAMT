@@ -15,7 +15,17 @@ namespace CoreERP.BussinessLogic.masterHlepers
             try
             {
                 using Repository<TblOpeningBalance> repo = new Repository<TblOpeningBalance>();
-                return repo.TblOpeningBalance.ToList();
+
+                var BpType = repo.TblPaymentType.ToList();
+
+                var result = repo.TblOpeningBalance.ToList();
+
+                result.ForEach(c =>
+                {
+                    c.PaymentTypeId = BpType.FirstOrDefault(cur => cur.PaymentTypeId == Convert.ToInt16(c.PaymentTypeId))?.PaymentTypeName;
+                });
+                return result;
+
             }
             catch { throw; }
         }
