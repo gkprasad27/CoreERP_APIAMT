@@ -6,7 +6,7 @@ namespace CoreERP.Models
     public partial class TblOpeningBalance
     {
         [System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
-        public int OpeningBalanceId { get; set; }
+        public int? OpeningBalanceId { get; set; }
         public string CompanyCode { get; set; }
         public string VoucherNo { get; set; }
         public DateTime OpeningBalanceDate { get; set; }

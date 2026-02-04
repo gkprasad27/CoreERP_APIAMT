@@ -120,7 +120,9 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (var repo = new Repository<TblOpeningBalance>())
                 {
-                    repo.Attach(openingBalance);
+                    openingBalance.AddDate = DateTime.Now;
+                    openingBalance.EditDate = DateTime.Now;
+                    repo.Update(openingBalance);
                     repo.Entry(openingBalance).State = EntityState.Modified;
 
                     int result = repo.SaveChanges();
@@ -143,17 +145,14 @@ namespace CoreERP.BussinessLogic.masterHlepers
             {
                 using (var repo = new Repository<TblOpeningBalance>())
                 {
-                    // Fetch single record
-                    var record = repo.TblOpeningBalance
-                                     .FirstOrDefault(x => x.OpeningBalanceId == openingBalanceID);
+                    var record = repo.TblOpeningBalance.FirstOrDefault(x => x.OpeningBalanceId == openingBalanceID);
 
                     if (record == null)
                         return "Record not found";
+                    repo.Remove(record);
 
-                    // Remove the entity
-                    repo.TblOpeningBalance.Remove(record);
-
-                    if (repo.SaveChanges() > 0)
+                    int result = repo.SaveChanges();
+                    if (result > 0)
                         return "Success";
 
                     return "Failed";
