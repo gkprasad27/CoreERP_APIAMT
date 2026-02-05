@@ -1173,13 +1173,13 @@ namespace CoreERP.BussinessLogic.SalesHelper
                                 OBCB.Narration = "Material Received";
                                 OBCB.AddDate = DateTime.Now;
                                 OBCB.EditDate = DateTime.Now;
-                                OBCB.VoucherNo = invoice.VoucherNo;
+                                OBCB.VoucherNo = invoice_No;
                                 repo.Update(OBCB);
                             }
                             else
                             {
                                 OBCB.ClosingBalance = Convert.ToInt32(invoice.GrandTotal);
-                                OBCB.VoucherNo = invoice.VoucherNo;
+                                OBCB.VoucherNo = invoice_No;
                                 OBCB.LedgerCode = invoice.CustomerName;
                                 OBCB.LedgerId = invoice.CustomerName;
                                 OBCB.LedgerName = customer.Name;
