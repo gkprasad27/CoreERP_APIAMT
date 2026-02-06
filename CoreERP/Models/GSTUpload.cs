@@ -12,7 +12,7 @@ namespace CoreERP.Models
         public string SupplierName { get; set; }
         public string InvoiceNumber { get; set; }
         public string InvoiceType { get; set; }
-        public DateOnly InvoiceDate { get; set; }
+        public DateTime InvoiceDate { get; set; }
         public decimal InvoiceValue { get; set; }
         public string PlaceofSupply { get; set; }
         public int GSTRate { get; set; }
@@ -22,15 +22,15 @@ namespace CoreERP.Models
         public decimal SGST { get; set; }
         public decimal Cess { get; set; }
         public string GSTRFillingStatus { get; set; }
-        public DateOnly GSTRFillingDate { get; set; }
-        public DateOnly GSTRFillingPeriod { get; set; }
+        public DateTime GSTRFillingDate { get; set; }
+        public DateTime GSTRFillingPeriod { get; set; }
         public string GSTR3BFillingStatus { get; set; }
         public string AmmendementMade { get; set; }
         public string AmendedTaxPeriod { get; set; }
-        public DateOnly CancellationDate { get; set; }
+        public DateTime CancellationDate { get; set; }
         public string Source { get; set; }
         public string IRN { get; set; }
-        public DateOnly IRNDate { get; set; }
+        public DateTime IRNDate { get; set; }
         public string Ext1 { get; set; }
         public string Company { get; set; }
 
