@@ -6127,6 +6127,47 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
+        public bool GSTUpload(List<GSTUpload> tblGSTUpload)
+        {
+            List<GSTUpload> UploadNew;
+            List<GSTUpload> UploadExist;
+            using var context = new ERPContext();
+            using var dbtrans = context.Database.BeginTransaction();
+
+            try
+            {
+                UploadExist = tblGSTUpload.Where(x => x.ID > 0).ToList();
+                UploadNew = tblGSTUpload.Where(x => x.ID == 0).ToList();
+
+                if (UploadExist.Count > 0)
+                {
+                    context.GSTUpload.UpdateRange(UploadExist);
+                }
+                else if (UploadNew.Count > 0)
+                {
+                    context.GSTUpload.AddRange(UploadNew);
+                }
+
+                context.SaveChanges();
+
+                dbtrans.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                TblApi_Error_Log icdata = new TblApi_Error_Log();
+                using var context1 = new ERPContext();
+                icdata.ScreenName = "Job Work Order";
+                icdata.ErrorID = ex.HResult.ToString();
+                icdata.ErrorMessage = ex.ToString();
+                context1.TblApi_Error_Log.Add(icdata);
+                context1.SaveChanges();
+
+                dbtrans.Rollback();
+                throw;
+            }
+        }
+
         public bool AddMaterialIssue(TblMaterialIssueMaster materialIssueMaster, List<TblMaterialIssueDetails> materialIssueDetails)
         {
             using var repo = new Repository<TblMaterialIssueMaster>();

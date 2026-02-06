@@ -297,6 +297,7 @@ namespace CoreERP.Models
         public virtual DbSet<tblJWReceiptMaster> tblJWReceiptMaster { get; set; }
         public virtual DbSet<Counters> Counters { get; set; }
         public virtual DbSet<TblSaleOrderDetail> TblSaleOrderDetail { get; set; }
+        public virtual DbSet<GSTUpload> GSTUpload { get; set; }
         public virtual DbSet<TblInvoiceDetail> TblInvoiceDetail { get; set; }
         public virtual DbSet<TblInvoiceMaster> TblInvoiceMaster { get; set; }
         public virtual DbSet<TblInvoiceMasterReturn> TblInvoiceMasterReturn { get; set; }
@@ -3842,8 +3843,7 @@ namespace CoreERP.Models
                 entity.ToTable("tbl_PaymentType");
 
                 entity.Property(e => e.PaymentTypeId)
-                    .HasColumnName("paymentTypeId")
-                    .HasColumnType("numeric(18, 0)")
+                    .HasColumnName("paymentTypeId")                    
                     .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.PaymentTypeName)
@@ -8645,6 +8645,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.NetWeight);
 
+            });
+
+            modelBuilder.Entity<GSTUpload>(entity =>
+            {
+                entity.HasKey(e => e.ID);
             });
 
             modelBuilder.Entity<TblSaleOrderMaster>(entity =>

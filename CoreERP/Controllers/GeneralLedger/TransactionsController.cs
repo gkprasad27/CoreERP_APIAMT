@@ -2878,6 +2878,35 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        public async Task<IActionResult> GSTUpload([FromBody] JObject obj)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                    var Upload = obj["Dtl"].ToObject<List<GSTUpload>>();
+
+                    if (!new TransactionsHelper().GSTUpload(Upload))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.GSTUPLOAD = Upload;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    if (ex.HResult.ToString() == "-2146233088")
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Upload Data Exist, Please use another key " });
+                    else
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpPost("AddMaterialIssue")]
         public async Task<IActionResult> AddMaterialIssue([FromBody] JObject obj)
         {
