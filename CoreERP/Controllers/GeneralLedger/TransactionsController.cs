@@ -2877,7 +2877,7 @@ namespace CoreERP.Controllers.masters
             });
             return result;
         }
-
+        [HttpPost("GSTUpload")]
         public async Task<IActionResult> GSTUpload([FromBody] JObject obj)
         {
             var result = await Task.Run(() =>
