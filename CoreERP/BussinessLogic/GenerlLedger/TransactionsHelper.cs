@@ -4299,7 +4299,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     var totalamount = repo.TblGoodsReceiptMaster.Where(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo).FirstOrDefault();
                     grdata.EditDate = DateTime.Now;
-                    grdata.ReceiptDate = DateTime.Now;
                     grdata.TotalAmount = (totalamount.TotalAmount ?? 0) + (grdata.TotalAmount);
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                     grdata.Id = totalamount.Id;
@@ -4313,7 +4312,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 else
                 {
                     grdata.EditDate = DateTime.Now;
-                    grdata.ReceiptDate = DateTime.Now;
                     grdata.SaleorderNo = purchase.SaleOrderNo;
                     grdata.Fright = purchase.Fright;
                     grdata.HamaliCharges = purchase.HamaliCharges;
