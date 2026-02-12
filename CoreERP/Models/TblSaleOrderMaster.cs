@@ -43,6 +43,6 @@ namespace CoreERP.Models
         public DateTime? DispatchedDate { get; set; }
         public decimal? RoundOff { get; set; }
         public string? ApprovalStatus { get; set; }
-
+        public decimal AdvaceAmount { get; set; }
     }
 }
