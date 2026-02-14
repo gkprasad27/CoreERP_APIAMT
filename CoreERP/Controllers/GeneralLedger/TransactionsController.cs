@@ -2889,7 +2889,7 @@ namespace CoreERP.Controllers.masters
 
                     var Upload = obj["Dtl"].ToObject<List<GSTUpload>>();
 
-                    if (!new TransactionsHelper().GSTUpload(Upload))
+                    if (!new TransactionsHelper().GSTUploadData(Upload))
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.GSTUPLOAD = Upload;

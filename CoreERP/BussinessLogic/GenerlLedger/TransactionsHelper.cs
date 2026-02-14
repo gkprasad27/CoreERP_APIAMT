@@ -4250,16 +4250,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     OBCB.Narration = "Material Received";
                     OBCB.AddDate = DateTime.Now;
                     OBCB.EditDate = DateTime.Now;
-                    OBCB.VoucherNo= grdata.SupplierReferenceNo;
+                    OBCB.VoucherNo = grdata.SupplierReferenceNo;
                     context.Update(OBCB);
                 }
                 else
                 {
                     OBCB.ClosingBalance = Convert.ToInt32(grdata.TotalAmount);
                     OBCB.VoucherNo = grdata.SupplierReferenceNo;
-                    OBCB.LedgerCode= grdata.SupplierCode;
-                    OBCB.LedgerId= grdata.SupplierCode;
-                    OBCB.LedgerName= customer.Name;
+                    OBCB.LedgerCode = grdata.SupplierCode;
+                    OBCB.LedgerId = grdata.SupplierCode;
+                    OBCB.LedgerName = customer.Name;
                     OBCB.Narration = "Material Received";
                     OBCB.AddDate = DateTime.Now;
                     OBCB.EditDate = DateTime.Now;
@@ -6125,25 +6125,31 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             }
         }
 
-        public bool GSTUpload(List<GSTUpload> tblGSTUpload)
+        public bool GSTUploadData(List<GSTUpload> tblGSTUpload)
         {
-            List<GSTUpload> UploadNew;
             List<GSTUpload> UploadExist;
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
-
+            using var repo = new Repository<GSTUpload>();
             try
             {
-                UploadExist = tblGSTUpload.Where(x => x.ID > 0).ToList();
-                UploadNew = tblGSTUpload.Where(x => x.ID == 0).ToList();
-
-                if (UploadExist.Count > 0)
+                var dataexist = new GSTUpload();
+                foreach (var item in tblGSTUpload)
                 {
-                    context.GSTUpload.UpdateRange(UploadExist);
-                }
-                else if (UploadNew.Count > 0)
-                {
-                    context.GSTUpload.AddRange(UploadNew);
+                    dataexist = repo.GSTUpload.FirstOrDefault(x => x.GSTRFillingPeriod == item.GSTRFillingPeriod
+                                              && x.GSTNumber == item.GSTNumber
+                                              && x.InvoiceNumber == item.InvoiceNumber
+                                              && x.InvoiceDate == item.InvoiceDate
+                                              && x.GSTRFillingDate == item.GSTRFillingDate);
+                    if (dataexist != null)
+                    {
+                        item.ID = dataexist.ID;
+                        context.GSTUpload.UpdateRange(tblGSTUpload);
+                    }
+                    else
+                    {
+                        context.GSTUpload.AddRange(tblGSTUpload);
+                    }
                 }
 
                 context.SaveChanges();
