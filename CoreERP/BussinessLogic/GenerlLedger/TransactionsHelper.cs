@@ -5388,7 +5388,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return repo.TblMaterialIssueMaster
                 .FirstOrDefault(x => x.MaterialIssueId == materialIssueId);
         }
-
+        public GSTUpload GetGstUploadData(string MonYear)
+        {
+            using var repo = new Repository<GSTUpload>();
+            return repo.GSTUpload
+                .FirstOrDefault(x => x.GSTRFillingPeriod == MonYear);
+        }
 
         public TblSaleOrderMaster GetSaleOrderMaster(string saleOrderNo, string BomKey)
         {
@@ -6127,33 +6132,36 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public bool GSTUploadData(List<GSTUpload> tblGSTUpload)
         {
-            List<GSTUpload> UploadExist;
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
-            using var repo = new Repository<GSTUpload>();
             try
             {
-                var dataexist = new GSTUpload();
                 foreach (var item in tblGSTUpload)
                 {
-                    dataexist = repo.GSTUpload.FirstOrDefault(x => x.GSTRFillingPeriod == item.GSTRFillingPeriod
-                                              && x.GSTNumber == item.GSTNumber
-                                              && x.InvoiceNumber == item.InvoiceNumber
-                                              && x.InvoiceDate == item.InvoiceDate
-                                              && x.GSTRFillingDate == item.GSTRFillingDate);
+                    var dataexist = context.GSTUpload.FirstOrDefault(x =>
+                        x.GSTRFillingPeriod == item.GSTRFillingPeriod &&
+                        x.GSTNumber == item.GSTNumber &&
+                        x.InvoiceNumber == item.InvoiceNumber &&
+                        x.InvoiceDate == item.InvoiceDate &&
+                        x.GSTRFillingDate == item.GSTRFillingDate);
+
                     if (dataexist != null)
                     {
-                        item.ID = dataexist.ID;
-                        context.GSTUpload.UpdateRange(tblGSTUpload);
+                        // Assign the existing ID from DB
+                        dataexist.AddDate = dataexist.AddDate;
+                        dataexist.EditDate = DateTime.Now;
+                        dataexist.GSTRate = 24;
                     }
                     else
                     {
-                        context.GSTUpload.AddRange(tblGSTUpload);
+                        // Insert new record
+                        item.AddDate = System.DateTime.Now;
+                        item.EditDate = System.DateTime.Now;
+                        context.GSTUpload.Add(item);
                     }
                 }
 
                 context.SaveChanges();
-
                 dbtrans.Commit();
                 return true;
             }

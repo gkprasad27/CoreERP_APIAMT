@@ -2612,6 +2612,30 @@ namespace CoreERP.Controllers.masters
             return result;
         }
 
+        [HttpGet("GetGSTUploadData/{MonYear}")]
+        public async Task<IActionResult> GetGSTUploadData(string MonYear)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    var transactions = new TransactionsHelper();
+                    var GSTUploadData = transactions.GetGstUploadData(MonYear);
+                    if (GSTUploadData == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.GSTUploadData = GSTUploadData;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetSaleOrderDetailPO/{saleOrderNumber}")]
         public IActionResult GetSaleOrderDetailPO(string saleOrderNumber)
         {
