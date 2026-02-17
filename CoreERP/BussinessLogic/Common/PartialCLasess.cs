@@ -98,7 +98,13 @@ namespace CoreERP.Models
         public string SupplierName { get; set; }
 
     }
+    partial class TblCashBankDetails
+    {
+        [NotMapped]
+        public string GlaccountName { get; set; }
 
+    }
+    
     partial class tblJobworkDetails
     {
         [NotMapped]

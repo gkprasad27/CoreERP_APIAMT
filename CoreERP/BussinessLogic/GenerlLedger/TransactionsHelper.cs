@@ -232,7 +232,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblCashBankDetails> GetCashBankDetails(string voucherNumber)
         {
             using var repo = new Repository<TblCashBankDetails>();
-            return repo.TblCashBankDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
+            var GL = repo.Glaccounts.ToList();
+            var result= repo.TblCashBankDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
+            result.ForEach(c =>
+            {
+                c.GlaccountName = GL.FirstOrDefault(l => l.AccountNumber == c.Glaccount)?.GlaccountName;                
+            });
+            return result;
         }
 
         public bool ReturnCashBank(string voucherNumber)
@@ -5388,11 +5394,11 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return repo.TblMaterialIssueMaster
                 .FirstOrDefault(x => x.MaterialIssueId == materialIssueId);
         }
-        public GSTUpload GetGstUploadData(string MonYear)
+        public List<GSTUpload> GetGstUploadData(string MonYear)
         {
             using var repo = new Repository<GSTUpload>();
             return repo.GSTUpload
-                .FirstOrDefault(x => x.GSTRFillingPeriod == MonYear);
+                .Where(x => x.GSTRFillingPeriod == MonYear).ToList();
         }
 
         public TblSaleOrderMaster GetSaleOrderMaster(string saleOrderNo, string BomKey)
