@@ -4310,7 +4310,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
 
-                if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo))
+                if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo && v.SupplierReferenceNo==grdata.SupplierReferenceNo))
                 {
                     var totalamount = repo.TblGoodsReceiptMaster.Where(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo).FirstOrDefault();
                     grdata.EditDate = DateTime.Now;
