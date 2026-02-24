@@ -37,6 +37,7 @@ namespace CoreERP.Models
         public string? ProfitcenterName { get; set; }
         public string? CompanyName { get; set; }
         public int TotalQty { get; set; }
+        public string? DeliveryDate { get; set; }
 
     }
 }

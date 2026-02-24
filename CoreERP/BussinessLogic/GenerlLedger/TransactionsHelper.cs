@@ -1345,8 +1345,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new ERPContext();
             var tblProduction = new List<TblProductionStatus>();
+            var material = new List<TblMaterialMaster>();
 
             tblProduction = repo.TblProductionStatus.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.ProductionTag == gstag).ToList();
+
+            repo.TblProductionDetails.ToList().ForEach(c =>
+            {
+                foreach (var item in tblProduction)
+                {
+                    c.MaterialName = material.Where(l => l.MaterialCode == item.MaterialCode).Select(x => x.Description).ToString();
+                }
+            });
 
             return tblProduction.ToList();
 
