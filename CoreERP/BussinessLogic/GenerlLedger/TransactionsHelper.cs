@@ -870,12 +870,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             int lineno = 1;
 
-            pcbDetails.ForEach(x =>
-            {
-                x.VoucherNumber = cbmaster.VoucherNumber;
-                x.VoucherDate = cbmaster.VoucherDate;
-            });
-
             try
             {
 
@@ -920,6 +914,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                     }
 
+                    item.VoucherNumber = cbmaster.VoucherNumber;
+                    item.VoucherDate = cbmaster.VoucherDate;
+                    item.InvoiceAmount = cbmaster.Amount;
                 }
                 context.TblPartyCashBankMaster.Add(cbmaster);
                 context.TblParyCashBankDetails.AddRange(pcbDetails);
