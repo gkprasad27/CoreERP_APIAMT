@@ -197,8 +197,16 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-100), ToDate = DateTime.Today };
             searchCriteria.FromDate ??= DateTime.Today.AddDays(-100);
             searchCriteria.ToDate ??= DateTime.Today;
-
             using var repo = new Repository<TblCashBankMaster>();
+            var Glaccounts = repo.Glaccounts.ToList();
+            
+            repo.TblCashBankMaster.ToList().ForEach(c =>
+            {
+                c.Account = Glaccounts.FirstOrDefault(l => l.AccountNumber == c.Account)?.GlaccountName;
+                
+            });
+
+            
             return repo.TblCashBankMaster.AsEnumerable()
                 .Where(x =>
                 {
