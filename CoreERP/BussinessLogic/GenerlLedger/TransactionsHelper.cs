@@ -240,7 +240,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblCashBankDetails> GetCashBankDetails(string voucherNumber)
         {
             using var repo = new Repository<TblCashBankDetails>();
-            return repo.TblCashBankDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
+            var GL = repo.Glaccounts.ToList();
+            var result= repo.TblCashBankDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
+            result.ForEach(c =>
+            {
+                c.GlaccountName = GL.FirstOrDefault(l => l.AccountNumber == c.Glaccount)?.GlaccountName;                
+            });
+            return result;
         }
 
         public bool ReturnCashBank(string voucherNumber)
@@ -872,12 +878,6 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
             int lineno = 1;
 
-            pcbDetails.ForEach(x =>
-            {
-                x.VoucherNumber = cbmaster.VoucherNumber;
-                x.VoucherDate = cbmaster.VoucherDate;
-            });
-
             try
             {
 
@@ -922,6 +922,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                         }
                     }
 
+                    item.VoucherNumber = cbmaster.VoucherNumber;
+                    item.VoucherDate = cbmaster.VoucherDate;
+                    item.InvoiceAmount = cbmaster.Amount;
                 }
                 context.TblPartyCashBankMaster.Add(cbmaster);
                 context.TblParyCashBankDetails.AddRange(pcbDetails);
@@ -1347,8 +1350,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new ERPContext();
             var tblProduction = new List<TblProductionStatus>();
+            var material = new List<TblMaterialMaster>();
 
             tblProduction = repo.TblProductionStatus.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.ProductionTag == gstag).ToList();
+
+            repo.TblProductionDetails.ToList().ForEach(c =>
+            {
+                foreach (var item in tblProduction)
+                {
+                    c.MaterialName = material.Where(l => l.MaterialCode == item.MaterialCode).Select(x => x.Description).ToString();
+                }
+            });
 
             return tblProduction.ToList();
 
@@ -4303,7 +4315,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
 
-                if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo))
+                if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo && v.SupplierReferenceNo==grdata.SupplierReferenceNo))
                 {
                     var totalamount = repo.TblGoodsReceiptMaster.Where(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo).FirstOrDefault();
                     grdata.EditDate = DateTime.Now;
@@ -5396,7 +5408,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return repo.TblMaterialIssueMaster
                 .FirstOrDefault(x => x.MaterialIssueId == materialIssueId);
         }
-
+        public List<GSTUpload> GetGstUploadData(string MonYear)
+        {
+            using var repo = new Repository<GSTUpload>();
+            return repo.GSTUpload
+                .Where(x => x.GSTRFillingPeriod == MonYear).ToList();
+        }
 
         public TblSaleOrderMaster GetSaleOrderMaster(string saleOrderNo, string BomKey)
         {
@@ -6135,33 +6152,36 @@ namespace CoreERP.BussinessLogic.GenerlLedger
 
         public bool GSTUploadData(List<GSTUpload> tblGSTUpload)
         {
-            List<GSTUpload> UploadExist;
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
-            using var repo = new Repository<GSTUpload>();
             try
             {
-                var dataexist = new GSTUpload();
                 foreach (var item in tblGSTUpload)
                 {
-                    dataexist = repo.GSTUpload.FirstOrDefault(x => x.GSTRFillingPeriod == item.GSTRFillingPeriod
-                                              && x.GSTNumber == item.GSTNumber
-                                              && x.InvoiceNumber == item.InvoiceNumber
-                                              && x.InvoiceDate == item.InvoiceDate
-                                              && x.GSTRFillingDate == item.GSTRFillingDate);
+                    var dataexist = context.GSTUpload.FirstOrDefault(x =>
+                        x.GSTRFillingPeriod == item.GSTRFillingPeriod &&
+                        x.GSTNumber == item.GSTNumber &&
+                        x.InvoiceNumber == item.InvoiceNumber &&
+                        x.InvoiceDate == item.InvoiceDate &&
+                        x.GSTRFillingDate == item.GSTRFillingDate);
+
                     if (dataexist != null)
                     {
-                        item.ID = dataexist.ID;
-                        context.GSTUpload.UpdateRange(tblGSTUpload);
+                        // Assign the existing ID from DB
+                        dataexist.AddDate = dataexist.AddDate;
+                        dataexist.EditDate = DateTime.Now;
+                        dataexist.GSTRate = 24;
                     }
                     else
                     {
-                        context.GSTUpload.AddRange(tblGSTUpload);
+                        // Insert new record
+                        item.AddDate = System.DateTime.Now;
+                        item.EditDate = System.DateTime.Now;
+                        context.GSTUpload.Add(item);
                     }
                 }
 
                 context.SaveChanges();
-
                 dbtrans.Commit();
                 return true;
             }
