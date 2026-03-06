@@ -4373,9 +4373,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var Material = new Repository<TblMaterialMaster>();
             using var context = new ERPContext();
             using var Matdtl = new Repository<tblJobworkDetails>();
+            var InvoiceMemoHeader = new TblInvoiceMemoHeader();
+            var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
             List<tblJWReceiptDetails> GoosQTY;
             string Masterstatusmessage = null;
             string statusmessage = null;
+            var customer = repo.TblBusinessPartnerAccount.FirstOrDefault(x => x.Name == jwdata.Vendor);
+            var OBCB = repo.TblOpeningBalance.FirstOrDefault(x => x.LedgerCode == customer.Bpnumber);
             using var dbtrans = context.Database.BeginTransaction();
             try
             {
@@ -4487,6 +4491,63 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     sodata.Status = statusmessage;
                     context.tblJobworkDetails.Update(sodata);
                 }
+
+                if (customer != null)
+                {
+                    customer.ClosingBalance = Convert.ToInt32(customer.ClosingBalance + Convert.ToInt32(jwdata.TotalAmount));
+                    context.Update(customer);
+                }
+                if (OBCB != null)
+                {
+                    OBCB.ClosingBalance = Convert.ToInt32(OBCB.ClosingBalance + Convert.ToInt32(jwdata.TotalAmount));
+                    OBCB.Narration = "Material Received";
+                    OBCB.AddDate = DateTime.Now;
+                    OBCB.EditDate = DateTime.Now;
+                    OBCB.VoucherNo = jwdata.InvoiceNumber;
+                    context.Update(OBCB);
+                }
+                else
+                {
+                    OBCB.ClosingBalance = Convert.ToInt32(jwdata.TotalAmount);
+                    OBCB.VoucherNo = jwdata.InvoiceNumber;
+                    OBCB.LedgerCode = customer.Bpnumber;
+                    OBCB.LedgerId = customer.Bpnumber;
+                    OBCB.LedgerName = customer.Name;
+                    OBCB.Narration = "Material Received";
+                    OBCB.AddDate = DateTime.Now;
+                    OBCB.EditDate = DateTime.Now;
+                    context.TblOpeningBalance.Add(OBCB);
+                }
+                string vouchernumber = GetVoucherNumber("PIN");
+                InvoiceMemoHeader.Company = jwdata.Company;
+                InvoiceMemoHeader.VoucherClass = "16";
+                InvoiceMemoHeader.VoucherType = "PIN";
+                InvoiceMemoHeader.VoucherDate = System.DateTime.Now;
+                InvoiceMemoHeader.PostingDate = System.DateTime.Now;
+                InvoiceMemoHeader.VoucherNumber = vouchernumber;
+                InvoiceMemoHeader.TransactionType = "Invoice";
+                InvoiceMemoHeader.NatureofTransaction = "Purchase";
+                InvoiceMemoHeader.Bpcategory = "200";
+                InvoiceMemoHeader.PartyAccount = customer.Bpnumber;
+                InvoiceMemoHeader.AccountingIndicator = CRDRINDICATORS.Debit.ToString();
+                InvoiceMemoHeader.ReferenceNumber = jwdata.InvoiceNumber;
+                InvoiceMemoHeader.ReferenceDate = jwdata.ReceivedDate;
+                InvoiceMemoHeader.PartyInvoiceNo = jwdata.InvoiceNumber;
+                InvoiceMemoHeader.TotalAmount = jwdata.TotalAmount;
+                InvoiceMemoHeader.Status = "N";
+                InvoiceMemoHeader.SaleOrderNo = jwdata.JobWorkNumber;
+
+                context.TblInvoiceMemoHeader.AddRange(InvoiceMemoHeader);
+
+                int lineitem = 0;
+                foreach (var item in jwdetails)
+                {
+                    lineitem = (lineitem + 1);
+                    //InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = jwdata.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "150000", Amount = item.BillAmount, TaxCode = item.TaxCode, Cgstamount = item.CGST, Igstamount = item.IGST, Sgstamount = item.SGST, Hsnsac = item.HSNSAC, OrderNo = item.JobWorkNumber, AccountingIndicator = CRDRINDICATORS.Debit.ToString(), Status = "N" });
+                    InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = jwdata.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "150000", Amount = item.BillAmount,  OrderNo = item.JobWorkNumber, AccountingIndicator = CRDRINDICATORS.Debit.ToString(), Status = "N" });
+
+                }
+                context.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
 
                 context.tblJWReceiptDetails.AddRange(jwdetails);
                 context.SaveChanges();

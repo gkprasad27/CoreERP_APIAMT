@@ -30,8 +30,12 @@ namespace CoreERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? EditDate { get; set; }
 
-
+        public decimal? Igst { get; set; }
+        public decimal? Cgst { get; set; }
+        public decimal? Sgst { get; set; }
         public string? InvoiceDocument { get; set; }
+        public string? HanSac { get; set; }
+        public string? Taxcode { get; set; }
 
     }
 }
