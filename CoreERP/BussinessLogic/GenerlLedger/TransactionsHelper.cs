@@ -1351,18 +1351,13 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new ERPContext();
             var tblProduction = new List<TblProductionStatus>();
             var material = new List<TblMaterialMaster>();
-
-            tblProduction = repo.TblProductionStatus.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.ProductionTag == gstag).ToList();
-
-            repo.TblProductionDetails.ToList().ForEach(c =>
+            repo.TblProductionStatus.ToList().ForEach(c =>
             {
-                foreach (var item in tblProduction)
-                {
-                    c.MaterialName = material.Where(l => l.MaterialCode == item.MaterialCode).Select(x => x.Description).ToString();
-                }
-            });
+                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
 
-            return tblProduction.ToList();
+            });
+            var result = repo.TblProductionStatus.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.ProductionTag == gstag).ToList();
+            return result.ToList();
 
         }
 
@@ -1652,7 +1647,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         foreach (var commit in result)
                         {
-                            ProductionStatus.Add(new TblProductionStatus { SaleOrderNumber = resultcommitment.SaleOrderNumber, ProductionTag = resultcommitment.ProductionTag, Status = message, WorkStatus = message, MaterialCode = resultcommitment.MaterialCode, TypeofWork = commit.Description, BomKey = resultcommitment.BomKey, BomName = resultcommitment.BomName, LotNo = resultcommitment.LotNo });
+                            ProductionStatus.Add(new TblProductionStatus { MaterialName = resultcommitment.MaterialName, SaleOrderNumber = resultcommitment.SaleOrderNumber, ProductionTag = resultcommitment.ProductionTag, Status = message, WorkStatus = message, MaterialCode = resultcommitment.MaterialCode, TypeofWork = commit.Description, BomKey = resultcommitment.BomKey, BomName = resultcommitment.BomName, LotNo = resultcommitment.LotNo });
                         }
                     }
                 }
@@ -1893,6 +1888,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                             ProductionStatus.EndDate = item.EndDate;
                             ProductionStatus.Mechine = item.Mechine;
                             ProductionStatus.LotNo = item.LotNo;
+                            ProductionStatus.MaterialName = item.MaterialName;
                             context.TblProductionStatus.UpdateRange(ProductionStatus);
                         }
                         if (item.WorkStatus == "Rejected")
