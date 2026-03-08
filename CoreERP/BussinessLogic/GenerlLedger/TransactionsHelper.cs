@@ -3211,6 +3211,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var context = new ERPContext();
             List<TblPurchaseOrderDetails> poDetailsNew;
             List<TblPurchaseOrderDetails> poDetailsExist;
+            var InvoiceMemoHeader = new TblInvoiceMemoHeader();
+            var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
             int totalqty = 0;
             totalqty = (int)podetails.Sum(a => a.Qty);
             using var dbtrans = context.Database.BeginTransaction();
@@ -3495,6 +3497,38 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 else
                 {
                     context.TblPurchaseOrderDetails.AddRange(podetails);
+                }
+
+                if (podata.Advance > 0)
+                {
+                    string vouchernumber = GetVoucherNumber("PIN");
+                    InvoiceMemoHeader.Company = podata.Company;
+                    InvoiceMemoHeader.VoucherClass = "16";
+                    InvoiceMemoHeader.VoucherType = "PIN";
+                    InvoiceMemoHeader.VoucherDate = System.DateTime.Now;
+                    InvoiceMemoHeader.PostingDate = System.DateTime.Now;
+                    InvoiceMemoHeader.VoucherNumber = vouchernumber;
+                    InvoiceMemoHeader.TransactionType = "Invoice";
+                    InvoiceMemoHeader.NatureofTransaction = "Purchase";
+                    InvoiceMemoHeader.Bpcategory = "200";
+                    InvoiceMemoHeader.PartyAccount = podata.SupplierCode;
+                    InvoiceMemoHeader.AccountingIndicator = CRDRINDICATORS.Debit.ToString();
+                    InvoiceMemoHeader.ReferenceNumber = podata.CustPONumber;
+                    InvoiceMemoHeader.ReferenceDate = podata.PurchaseOrderDate;
+                    InvoiceMemoHeader.PartyInvoiceNo = podata.PurchaseOrderNumber;
+                    InvoiceMemoHeader.TotalAmount = podata.TotalAmount;
+                    InvoiceMemoHeader.Status = "N";
+                    InvoiceMemoHeader.SaleOrderNo = podata.SaleOrderNo;
+
+                    context.TblInvoiceMemoHeader.AddRange(InvoiceMemoHeader);
+
+                    int lineitem = 0;
+                    foreach (var item in podetails)
+                    {
+                        lineitem = (lineitem + 1);
+                        InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = podata.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "150000", Amount = item.Amount, TaxCode = item.TaxCode, Cgstamount = item.CGST, Igstamount = item.IGST, Sgstamount = item.SGST, Hsnsac = item.HSNSAC, OrderNo = item.SaleOrder, AccountingIndicator = CRDRINDICATORS.Debit.ToString(), Status = "N" });
+                    }
+                    context.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
                 }
 
                 context.SaveChanges();
@@ -5638,6 +5672,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new Repository<TblSaleOrderMaster>();
             List<TblSaleOrderDetail> saleOrderDetailsNew;
             List<TblSaleOrderDetail> saleOrderDetailsExist;
+            var InvoiceMemoHeader = new TblInvoiceMemoHeader();
+            var InvoiceMemoDetails = new List<TblInvoiceMemoDetails>();
             using var context = new ERPContext();
             using var dbtrans = context.Database.BeginTransaction();
             string SaleOrderNumber = string.Empty;
@@ -6052,6 +6088,37 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     context.TblSaleOrderDetail.AddRange(saleOrderDetails);
                 }
 
+                if(saleOrderMaster.AdvaceAmount>0)
+                {
+                    string vouchernumber = GetVoucherNumber("PIN");
+                    InvoiceMemoHeader.Company = saleOrderMaster.Company;
+                    InvoiceMemoHeader.VoucherClass = "16";
+                    InvoiceMemoHeader.VoucherType = "PIN";
+                    InvoiceMemoHeader.VoucherDate = System.DateTime.Now;
+                    InvoiceMemoHeader.PostingDate = System.DateTime.Now;
+                    InvoiceMemoHeader.VoucherNumber = vouchernumber;
+                    InvoiceMemoHeader.TransactionType = "Invoice";
+                    InvoiceMemoHeader.NatureofTransaction = "Purchase";
+                    InvoiceMemoHeader.Bpcategory = "200";
+                    InvoiceMemoHeader.PartyAccount = saleOrderMaster.CustomerCode;
+                    InvoiceMemoHeader.AccountingIndicator = CRDRINDICATORS.Debit.ToString();
+                    InvoiceMemoHeader.ReferenceNumber = saleOrderMaster.PONumber;
+                    InvoiceMemoHeader.ReferenceDate = saleOrderMaster.CreatedDate;
+                    InvoiceMemoHeader.PartyInvoiceNo = saleOrderMaster.PONumber;
+                    InvoiceMemoHeader.TotalAmount = saleOrderMaster.TotalAmount;
+                    InvoiceMemoHeader.Status = "N";
+                    InvoiceMemoHeader.SaleOrderNo = saleOrderMaster.SaleOrderNo;
+
+                    context.TblInvoiceMemoHeader.AddRange(InvoiceMemoHeader);
+
+                    int lineitem = 0;
+                    foreach (var item in saleOrderDetails)
+                    {
+                        lineitem = (lineitem + 1);
+                        InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = saleOrderMaster.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "150000", Amount = item.Amount, TaxCode = item.TaxCode, Cgstamount = item.CGST, Igstamount = item.IGST, Sgstamount = item.SGST, Hsnsac = item.HSNSAC, OrderNo = item.SaleOrderNo, AccountingIndicator = CRDRINDICATORS.Debit.ToString(), Status = "N" });
+                    }
+                    context.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
+                }
                 context.SaveChanges();
 
                 dbtrans.Commit();
