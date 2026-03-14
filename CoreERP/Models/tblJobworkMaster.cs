@@ -28,6 +28,7 @@ namespace CoreERP.Models
         public string CreatedBy { get; set; }
         public string ContactNo { get; set; }
         public string SaleOrderNo { get; set; }
-        
+        public string Notes { get; set; }
+
     }
 }
