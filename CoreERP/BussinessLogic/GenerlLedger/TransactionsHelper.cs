@@ -199,14 +199,14 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             searchCriteria.ToDate ??= DateTime.Today;
             using var repo = new Repository<TblCashBankMaster>();
             var Glaccounts = repo.Glaccounts.ToList();
-            
+
             repo.TblCashBankMaster.ToList().ForEach(c =>
             {
                 c.Account = Glaccounts.FirstOrDefault(l => l.AccountNumber == c.Account)?.GlaccountName;
-                
+
             });
 
-            
+
             return repo.TblCashBankMaster.AsEnumerable()
                 .Where(x =>
                 {
@@ -241,10 +241,10 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<TblCashBankDetails>();
             var GL = repo.Glaccounts.ToList();
-            var result= repo.TblCashBankDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
+            var result = repo.TblCashBankDetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
             result.ForEach(c =>
             {
-                c.GlaccountName = GL.FirstOrDefault(l => l.AccountNumber == c.Glaccount)?.GlaccountName;                
+                c.GlaccountName = GL.FirstOrDefault(l => l.AccountNumber == c.Glaccount)?.GlaccountName;
             });
             return result;
         }
@@ -1351,13 +1351,23 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             using var repo = new ERPContext();
             var tblProduction = new List<TblProductionStatus>();
             var material = new List<TblMaterialMaster>();
-            repo.TblProductionStatus.ToList().ForEach(c =>
-            {
-                c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
+            var result = (from ps in repo.TblProductionStatus
+                          join m in repo.TblMaterialMaster
+                              on ps.MaterialCode equals m.MaterialCode
+                          where ps.SaleOrderNumber == GoodsIssueId
+                             && ps.MaterialCode == Materialcode
+                             && ps.ProductionTag == gstag
+                          select new TblProductionStatus
+                          {
+                              SaleOrderNumber = ps.SaleOrderNumber,
+                              MaterialCode = ps.MaterialCode,
+                              ProductionTag = ps.ProductionTag,
+                              MaterialName = m.Description,
 
-            });
-            var result = repo.TblProductionStatus.Where(cd => cd.SaleOrderNumber == GoodsIssueId && cd.MaterialCode == Materialcode && cd.ProductionTag == gstag).ToList();
-            return result.ToList();
+                          }).ToList();
+
+            return result;
+
 
         }
 
@@ -4345,7 +4355,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 context.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
                 context.TblGoodsReceiptDetails.AddRange(grdetails);
 
-                if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo && v.SupplierReferenceNo==grdata.SupplierReferenceNo))
+                if (repo.TblGoodsReceiptMaster.Any(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo && v.SupplierReferenceNo == grdata.SupplierReferenceNo))
                 {
                     var totalamount = repo.TblGoodsReceiptMaster.Where(v => v.PurchaseOrderNo == grdata.PurchaseOrderNo).FirstOrDefault();
                     grdata.EditDate = DateTime.Now;
@@ -4574,7 +4584,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     lineitem = (lineitem + 1);
                     //InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = jwdata.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "150000", Amount = item.BillAmount, TaxCode = item.TaxCode, Cgstamount = item.CGST, Igstamount = item.IGST, Sgstamount = item.SGST, Hsnsac = item.HSNSAC, OrderNo = item.JobWorkNumber, AccountingIndicator = CRDRINDICATORS.Debit.ToString(), Status = "N" });
-                    InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = jwdata.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "150000", Amount = item.BillAmount,  OrderNo = item.JobWorkNumber, AccountingIndicator = CRDRINDICATORS.Debit.ToString(), Status = "N" });
+                    InvoiceMemoDetails.Add(new TblInvoiceMemoDetails { Company = jwdata.Company, VoucherNo = vouchernumber, VoucherDate = System.DateTime.Now, PostingDate = System.DateTime.Now, LineItemNo = lineitem.ToString(), Glaccount = "150000", Amount = item.BillAmount, OrderNo = item.JobWorkNumber, AccountingIndicator = CRDRINDICATORS.Debit.ToString(), Status = "N" });
 
                 }
                 context.TblInvoiceMemoDetails.AddRange(InvoiceMemoDetails);
@@ -6088,7 +6098,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     context.TblSaleOrderDetail.AddRange(saleOrderDetails);
                 }
 
-                if(saleOrderMaster.AdvaceAmount>0)
+                if (saleOrderMaster.AdvaceAmount > 0)
                 {
                     string vouchernumber = GetVoucherNumber("PIN");
                     InvoiceMemoHeader.Company = saleOrderMaster.Company;

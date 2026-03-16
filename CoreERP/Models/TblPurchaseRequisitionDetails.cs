@@ -37,5 +37,6 @@ namespace CoreERP.Models
         public int? POQty { get; set; }
         public string? Company { get; set; }
         public string? hsnsac { get; set; }
+        public string? Material { get; set; }
     }
 }
