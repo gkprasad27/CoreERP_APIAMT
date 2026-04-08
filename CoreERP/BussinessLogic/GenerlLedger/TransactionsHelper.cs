@@ -5609,12 +5609,12 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         {
             using var repo = new Repository<tblJobworkDetails>();
             var MaterialCodes = repo.TblMaterialMaster.ToList();
-            var UOM = repo.TblUnit.ToList();
+            var UOM = repo.TblMaterialSize.ToList();
             var hsn = repo.TblHsnsac.ToList();
             repo.tblJobworkDetails.ToList().ForEach(c =>
             {
                 c.MaterialName = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Description;
-                c.Uom = UOM.FirstOrDefault(x => Convert.ToString(x.UnitId) == c.Uom)?.UnitName;
+                c.Uom = UOM.FirstOrDefault(x => Convert.ToString(x.unitId) == c.Uom)?.unitName;
                 c.HsnSac = MaterialCodes.FirstOrDefault(z => z.MaterialCode == c.MaterialCode)?.Hsnsac;
                 c.HsnSac = hsn.FirstOrDefault(x => x.Code == c.HsnSac)?.Description;
             });
