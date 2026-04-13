@@ -116,8 +116,34 @@ namespace CoreERP.Controllers.Reports
             return result;
         }
 
+
+        [HttpGet("GetpurchaseagainestsaleorderReport/{company}/{CustomerCode}")]
+        public async Task<IActionResult> GetpurchaseagainestsaleorderReport(string company, string Saleorderno)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    dynamic expando = new ExpandoObject();
+                    DataSet ds = ReportsHelperClass.GetpurchaseagainestsaleorderReport(company, Saleorderno);
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        expando.GoodsReceiptReport = ds.Tables[0];
+                        expando.GoodsReceiptReportTotals = ds.Tables[1];
+
+                    }
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
         [HttpGet("GetGoodsReceiptsReport/{fromDate}/{toDate}/{company}/{CustomerCode}/{MaterialCode}")]
-        public async Task<IActionResult> GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company, string CustomerCode,string MaterialCode)
+        public async Task<IActionResult> GetGoodsReceiptsReport(DateTime fromDate, DateTime toDate, string company, string CustomerCode, string MaterialCode)
         {
             var result = await Task.Run(() =>
             {
@@ -142,7 +168,7 @@ namespace CoreERP.Controllers.Reports
         }
 
         [HttpGet("GetPurchaseReport/{fromDate}/{toDate}/{company}/{customerCode}/{MaterialCode}")]
-        public async Task<IActionResult> GetPurchaseReport(DateTime fromDate, DateTime toDate, string company,string customerCode, string MaterialCode)
+        public async Task<IActionResult> GetPurchaseReport(DateTime fromDate, DateTime toDate, string company, string customerCode, string MaterialCode)
         {
             string code = MaterialCode.Replace(@"\r", string.Empty).Trim();
             // Using HttpUtility.UrlDecode (requires System.Web)
@@ -152,7 +178,7 @@ namespace CoreERP.Controllers.Reports
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds =  ReportsHelperClass.GetPurchaseReport(fromDate, toDate, company, customerCode, decodedString);
+                    DataSet ds = ReportsHelperClass.GetPurchaseReport(fromDate, toDate, company, customerCode, decodedString);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.PurchaseReport = ds.Tables[0];
@@ -193,7 +219,7 @@ namespace CoreERP.Controllers.Reports
         }
 
         [HttpGet("GetStockValuation/{company}/{materialCode}")]
-        public async Task<IActionResult> GetStockValuation(string company,string materialCode)
+        public async Task<IActionResult> GetStockValuation(string company, string materialCode)
         {
             string code = materialCode.Replace(@"\r", string.Empty).Trim();
             // Using HttpUtility.UrlDecode (requires System.Web)
@@ -229,7 +255,7 @@ namespace CoreERP.Controllers.Reports
                         expando.PendingSOReport = ds.Tables[0];
                         expando.PendingSOReportTotals = ds.Tables[1];
                     }
-                    
+
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
@@ -241,14 +267,14 @@ namespace CoreERP.Controllers.Reports
         }
 
         [HttpGet("GetPendingJO/{company}/{vendorCode}")]
-        public async Task<IActionResult> GetPendingJO(string company,string vendorCode)
+        public async Task<IActionResult> GetPendingJO(string company, string vendorCode)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     dynamic expando = new ExpandoObject();
-                    DataSet ds = ReportsHelperClass.GetPendingJO(company,vendorCode);
+                    DataSet ds = ReportsHelperClass.GetPendingJO(company, vendorCode);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.PendingJOReport = ds.Tables[0];
@@ -411,7 +437,7 @@ namespace CoreERP.Controllers.Reports
         }
 
         [HttpGet("GetemployeeAbsentReport/{fromYear}/{fromMonth}/{toYear}/{toMonth}/{EmployeeCode}")]
-        public async Task<IActionResult> GetemployeeAbsentReport(string fromYear, string fromMonth,string toYear, string toMonth, string EmployeeCode)
+        public async Task<IActionResult> GetemployeeAbsentReport(string fromYear, string fromMonth, string toYear, string toMonth, string EmployeeCode)
         {
             var result = await Task.Run(() =>
             {
@@ -525,7 +551,7 @@ namespace CoreERP.Controllers.Reports
                     try
                     {
                         dynamic expando = new ExpandoObject();
-                        DataSet ds = ReportsHelperClass.GetPayslip(year, month, company,employee);
+                        DataSet ds = ReportsHelperClass.GetPayslip(year, month, company, employee);
                         if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                         {
                             expando.Payslip = ds.Tables[0];

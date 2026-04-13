@@ -261,6 +261,33 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             //else return null;
         }
 
+        public static DataSet GetpurchaseagainestsaleorderReport(string company, string Saleorderno)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "rpt_purchaseagainestsaleorder";
+            #region Parameters
+
+            DbParameter companyid = command.CreateParameter();
+            companyid.Direction = ParameterDirection.Input;
+            companyid.Value = (object)company ?? DBNull.Value;
+            companyid.ParameterName = "compcode";
+
+            DbParameter Customerid = command.CreateParameter();
+            Customerid.Direction = ParameterDirection.Input;
+            Customerid.Value = (object)Saleorderno ?? DBNull.Value;
+            Customerid.ParameterName = "Saleorderno";
+            #endregion
+            // Add parameter as specified in the store procedure
+
+            command.Parameters.Add(companyid);
+            command.Parameters.Add(Saleorderno);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+            
+        }
+
+
         public static DataSet GetPurchaseReport(DateTime fromDate, DateTime toDate, string company, string customerCode, string MaterialCode)
         {
             ScopeRepository scopeRepository = new ScopeRepository();
