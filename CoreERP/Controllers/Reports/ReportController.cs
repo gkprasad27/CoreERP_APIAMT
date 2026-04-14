@@ -117,7 +117,7 @@ namespace CoreERP.Controllers.Reports
         }
 
 
-        [HttpGet("GetpurchaseagainestsaleorderReport/{company}/{CustomerCode}")]
+        [HttpGet("GetpurchaseagainestsaleorderReport/{company}/{Saleorderno}")]
         public async Task<IActionResult> GetpurchaseagainestsaleorderReport(string company, string Saleorderno)
         {
             var result = await Task.Run(() =>
