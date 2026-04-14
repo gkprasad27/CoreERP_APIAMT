@@ -274,15 +274,15 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             companyid.Value = (object)company ?? DBNull.Value;
             companyid.ParameterName = "compcode";
 
-            DbParameter Customerid = command.CreateParameter();
-            Customerid.Direction = ParameterDirection.Input;
-            Customerid.Value = (object)Saleorderno ?? DBNull.Value;
-            Customerid.ParameterName = "Saleorderno";
+            DbParameter Saleorde = command.CreateParameter();
+            Saleorde.Direction = ParameterDirection.Input;
+            Saleorde.Value = (object)Saleorderno ?? DBNull.Value;
+            Saleorde.ParameterName = "Saleorderno";
             #endregion
             // Add parameter as specified in the store procedure
 
             command.Parameters.Add(companyid);
-            command.Parameters.Add(Saleorderno);
+            command.Parameters.Add(Saleorde);
             return scopeRepository.ExecuteParamerizedCommand(command);
             
         }
