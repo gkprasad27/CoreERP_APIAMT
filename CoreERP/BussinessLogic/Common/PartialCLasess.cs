@@ -318,6 +318,22 @@ namespace CoreERP.Models
 
 
     }
+
+    partial class TblProformaInvoiceMaster
+    {
+        [NotMapped]
+        public string poNo { get; set; }
+
+        [NotMapped]
+        public DateTime? poDate { get; set; }
+        [NotMapped]
+        public DateTime? dateOfSupply { get; set; }
+        [NotMapped]
+        public string CustName { get; set; }
+
+
+
+    }
     partial class TblGrnassignment
     {
         [NotMapped]

@@ -430,6 +430,33 @@ namespace CoreERP.Controllers
             return result;
         }
 
+        [HttpPost("GetProformaInvoiceList")]
+        public async Task<IActionResult> GetProformaInvoiceList([FromBody] SearchCriteria searchCriteria)
+        {
+            var result = await Task.Run(() =>
+            {
+
+                try
+                {
+                    var invoiceMasterList = new InvoiceHelper().GetProformaInvoiceMasters(searchCriteria);
+                    if (invoiceMasterList.Count > 0)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.InvoiceList = invoiceMasterList;
+                        return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
+                    }
+
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No Billing record found." });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
+        }
+
+
         [HttpGet("GetInvoiceData/{companycode}")]
         public async Task<IActionResult> GetInvoiceData(string companycode)
         {
@@ -575,9 +602,49 @@ namespace CoreERP.Controllers
             }
         }
 
-
-        [HttpPost("RegisterInvoice")]
+        [HttpPost("RegisterProfileInvoice")]
         public IActionResult RegisterBilling([FromBody] JObject objData)
+        {
+
+            if (objData == null)
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Request is empty" });
+            try
+            {
+                string errorMessage = string.Empty;
+
+                var _invoiceHdr = objData["grHdr"].ToObject<TblProformaInvoiceMaster>();
+                var _invoiceDtl = objData["grDtl"].ToObject<TblProformaInvoiceDetail[]>();
+
+                if (_invoiceHdr == null)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "No request records found to Save" });
+                }
+
+                if (_invoiceDtl == null || _invoiceDtl.Count() == 0)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "In request no product found in to save" });
+                }
+
+                var result = new InvoiceHelper().RegisterProfileBill(_configuration, _invoiceHdr, _invoiceDtl.ToList(), out errorMessage);
+                if (result)
+                {
+                    return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = _invoiceHdr });
+                }
+
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = "Registration failed.";
+                }
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = errorMessage });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+            }
+        }
+
+        [HttpPost("RegisterProformaBilling")]
+        public IActionResult RegisterProformaBilling([FromBody] JObject objData)
         {
 
             if (objData == null)

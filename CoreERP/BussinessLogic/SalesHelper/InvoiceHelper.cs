@@ -287,6 +287,75 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
 
         }
+
+        public List<TblProformaInvoiceMaster> GetProformaInvoiceMasters(SearchCriteria searchCriteria)
+        {
+            try
+            {
+
+                using (Repository<TblProformaInvoiceMaster> repo = new Repository<TblProformaInvoiceMaster>())
+                {
+                    List<TblProformaInvoiceMaster> _invoiceMasterList = null;
+                    if (searchCriteria.Role == 1 || searchCriteria.Role == 3 || searchCriteria.Role == 89)
+                    {
+                        if (searchCriteria.FromDate == null)
+                        {
+                            searchCriteria.FromDate = searchCriteria.FromDate ?? DateTime.Today;
+                            searchCriteria.ToDate = searchCriteria.ToDate ?? DateTime.Today;
+                            _invoiceMasterList = repo.TblProformaInvoiceMaster.AsEnumerable()
+                                .Where(inv =>
+                                     DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                   && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString()))
+                                .ToList();
+                        }
+                        else
+                        {
+                            _invoiceMasterList = repo.TblProformaInvoiceMaster.AsEnumerable()
+                             .Where(inv =>
+                                        DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString())
+                                        >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                      && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString())
+                                        <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                      && !inv.IsSalesReturned.Value
+                                )
+                              .ToList();
+                        }
+                    }
+                    else
+                    {
+                        if (searchCriteria.FromDate == null)
+                        {
+                            searchCriteria ??= new SearchCriteria() { FromDate = DateTime.Today.AddDays(-10000), ToDate = DateTime.Today };
+                            searchCriteria.FromDate ??= DateTime.Today.AddDays(-10000);
+                            searchCriteria.ToDate ??= DateTime.Today;
+                        }
+
+                        var customer = repo.TblBusinessPartnerAccount.ToList();
+
+                        repo.TblProformaInvoiceMaster.ToList()
+                            .ForEach(c =>
+                            {
+                                c.CustName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerName).Name;
+
+                            });
+
+                        _invoiceMasterList = repo.TblProformaInvoiceMaster.AsEnumerable()
+                          .Where(inv =>
+                                     DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) >= DateTime.Parse((searchCriteria.FromDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                   && DateTime.Parse(inv.InvoiceDate.Value.ToShortDateString()) <= DateTime.Parse((searchCriteria.ToDate ?? inv.InvoiceDate).Value.ToShortDateString())
+                                    && inv.Company.ToString().Contains(searchCriteria.CompanyCode ?? inv.Company.ToString())
+                             )
+                           .ToList();
+                    }
+                    return _invoiceMasterList.OrderByDescending(x => x.InvoiceMasterId).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
         public List<TblInvoiceMaster> GetInvoiceMasters(SearchCriteria searchCriteria, string branchCode)
         {
             try
@@ -1232,6 +1301,132 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
+        public bool RegisterProfileBill(IConfiguration configuration, TblProformaInvoiceMaster invoice, List<TblProformaInvoiceDetail> invoiceDetails, out string errorMessage)
+        {
+            try
+            {
+                errorMessage = string.Empty;
+                using var repo1 = new Repository<TblProformaInvoiceMaster>();
+                var SaleOrder = repo1.TblSaleOrderMaster.FirstOrDefault(im => im.SaleOrderNo == invoice.SaleOrderNo && im.Company == invoice.Company);
+                var customer = repo1.TblBusinessPartnerAccount.FirstOrDefault(x => x.Bpnumber == invoice.CustomerName);
+                using (ERPContext repo = new ERPContext())
+                {
+                    using (var dbTransaction = repo.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            string message = null;
+                            var invoice_No = invoice.InvoiceNo;
+                            if (string.IsNullOrEmpty(invoice_No))
+                                invoice_No = GenerateInvoiceNo(out errorMessage);
+
+                            if (!string.IsNullOrEmpty(invoice_No))
+                                invoice.InvoiceNo = invoice_No;
+
+                            invoice.ServerDateTime = DateTime.Now;
+                            invoice.InvoiceQty = invoiceDetails.Count();
+                            invoice.PONumber = SaleOrder.PONumber;
+                            invoice.Status = message;
+                            repo.TblProformaInvoiceMaster.Add(invoice);
+                            repo.SaveChanges();
+                            var SaleOrderDetails = new TblSaleOrderDetail();
+                            var materialmaster = new TblMaterialMaster();
+                            foreach (var invdtl in invoiceDetails)
+                            {
+                                //var SaleOrderDetails = new TblSaleOrderDetail();
+                                //var inspection = new TblInspectionCheckDetails();
+                                if (invoice.Company == "1000")
+                                {
+                                    SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.Bomkey);
+                                    materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.Bomkey);
+                                    invdtl.HsnNo = materialmaster.Hsnsac;
+                                    invdtl.uom = materialmaster.Uom;
+                                }
+                                else
+                                {
+                                    SaleOrderDetails = repo.TblSaleOrderDetail.FirstOrDefault(im => im.SaleOrderNo == invdtl.Saleorder && im.MaterialCode == invdtl.MaterialCode);
+                                    materialmaster = repo.TblMaterialMaster.FirstOrDefault(xx => xx.MaterialCode == invdtl.MaterialCode);
+                                    invdtl.HsnNo = materialmaster.Hsnsac;
+                                    invdtl.uom = materialmaster.Uom;
+                                }
+                                #region InvioceDetail
+                                invdtl.Qty = 1;
+                                invdtl.Status = message;
+                                invdtl.InvoiceNo = invoice.InvoiceNo;
+                                invdtl.InvoiceDate = invoice.InvoiceDate;
+                                invdtl.ServerDateTime = DateTime.Now;
+                                invdtl.UserId = invoice.UserId;
+                                repo.TblProformaInvoiceDetail.Add(invdtl);
+
+                                SaleOrderDetails.Status = message;
+                                repo.TblSaleOrderDetail.UpdateRange(SaleOrderDetails);
+
+                                materialmaster.OpeningQty = ((materialmaster.OpeningQty) - 1);
+                                materialmaster.EditDate = System.DateTime.Now;
+                                repo.TblMaterialMaster.UpdateRange(materialmaster);
+
+                                repo.SaveChanges();
+
+                                #endregion
+
+                            }
+                            TransactionsHelper transactionsHelper = new TransactionsHelper();
+                            string vouchernumber = transactionsHelper.GetVoucherNumber("IN");
+                            
+                            int lineitem = 0;
+                           
+                            SaleOrder.Status = message;
+                            repo.TblSaleOrderMaster.Update(SaleOrder);
+                            
+                            if (customer != null)
+                            {
+                                customer.ClosingBalance = (Convert.ToInt32(customer.ClosingBalance) + (Convert.ToInt32(invoice.GrandTotal)));
+                                repo.TblBusinessPartnerAccount.Update(customer);
+                            }
+                            
+                            repo.SaveChanges();
+                            dbTransaction.Commit();
+                            // Call SMS notification here
+                            FastSMSService smsService = new FastSMSService();
+
+                            // You will need the SO number and vendor details here
+                            string customerCode = invoice.CustomerName;
+
+                            var Name = repo.TblBusinessPartnerAccount
+                                .Where(bp => bp.Bpnumber == customerCode)
+                                .Select(bp => bp.Name)
+                                .FirstOrDefault();
+
+                            string soNumber = invoice.InvoiceNo;
+                            string vendorName = Name;
+                            string vendorMobile;
+                            if (invoice.Company == "2000")
+                            {
+                                vendorMobile = "9666756333";
+                                smsService.AmritSI(vendorMobile, soNumber, vendorName, invoice.Company);
+                            }
+                            else
+                            {
+                                vendorMobile = "9704288499";
+                                smsService.SendSOCreationMessage(vendorMobile, soNumber, vendorName, invoice.Company);
+                            }
+
+
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            dbTransaction.Rollback();
+                            throw ex;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public bool SwapOrder(IConfiguration configuration, TblOrderSwap invoice, List<TblOrderSwapDetails> invoiceDetails, string SaleOrderNumber, out string errorMessage)
         {
             try
