@@ -199,6 +199,37 @@ namespace CoreERP.BussinessLogic.SalesHelper
             }
         }
 
+        public string GenerateProformaInvoiceNo(out string errorMessage)
+        {
+            try
+            {
+                using var context = new ERPContext();
+                errorMessage = string.Empty;
+                string suffix = string.Empty, prefix = string.Empty, billno = string.Empty;
+                using var repo = new Repository<Counters>();
+                var Pcenter = repo.Counters.FirstOrDefault(x => x.CounterName == "Proforma Invoice");
+
+                if (Pcenter != null)
+                {
+                    Pcenter.LastNumber = (Pcenter.LastNumber + 1);
+                    context.Counters.UpdateRange(Pcenter);
+                    context.SaveChanges();
+                    billno = Pcenter.Prefix + "-" + Pcenter.LastNumber;
+                }
+
+                if (string.IsNullOrEmpty(billno))
+                {
+                    errorMessage = "Invoice no not gererated please enter manully.";
+                }
+
+                return billno;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public List<TblInvoiceMaster> GetInvoiceMasters(SearchCriteria searchCriteria)
         {
             try
@@ -1318,7 +1349,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                             string message = null;
                             var invoice_No = invoice.InvoiceNo;
                             if (string.IsNullOrEmpty(invoice_No))
-                                invoice_No = GenerateInvoiceNo(out errorMessage);
+                                invoice_No = GenerateProformaInvoiceNo(out errorMessage);
 
                             if (!string.IsNullOrEmpty(invoice_No))
                                 invoice.InvoiceNo = invoice_No;
@@ -1371,7 +1402,6 @@ namespace CoreERP.BussinessLogic.SalesHelper
 
                             }
                             TransactionsHelper transactionsHelper = new TransactionsHelper();
-                            string vouchernumber = transactionsHelper.GetVoucherNumber("IN");
                             
                             int lineitem = 0;
                            
