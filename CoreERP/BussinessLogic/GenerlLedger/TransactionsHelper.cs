@@ -2769,9 +2769,9 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             repo.TblMaterialSupplierDetails.ToList()
                 .ForEach(c =>
                 {
-                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode).Name;
-
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode)?.Name ?? "Unknown Supplier";
                 });
+
             return repo.TblMaterialSupplierDetails.Where(cd => cd.MaterialCode == MaterialCode).ToList();
         }
         public bool ReturnMaterialSupplier(string code)

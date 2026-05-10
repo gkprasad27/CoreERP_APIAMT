@@ -11,7 +11,17 @@ namespace CoreERP.Models
         public string CurrName { get; set; }
 
     }
-
+    partial class TblBankMaster
+    {
+        [NotMapped]
+        public string StateName { get; set; }
+        [NotMapped]
+        public string RegionName { get; set; }
+        [NotMapped]
+        public string CountryName { get; set; }
+        [NotMapped]
+        public string CurrencyName { get; set; }
+    }
     partial class TblGoodsIssueDetails
     {
         [NotMapped]
@@ -950,17 +960,6 @@ namespace CoreERP.Models
 
     }
 
-    partial class TblBankMaster
-    {
-        [NotMapped]
-        public string StateName { get; set; }
-        [NotMapped]
-        public string RegionName { get; set; }
-        [NotMapped]
-        public string CountryName { get; set; }
-        [NotMapped]
-        public string CurrencyName { get; set; }
-    }
 
     partial class Glaccounts
     {
