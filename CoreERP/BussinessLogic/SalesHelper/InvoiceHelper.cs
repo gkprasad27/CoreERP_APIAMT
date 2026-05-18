@@ -288,8 +288,8 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         repo.TblInvoiceMaster.ToList()
                             .ForEach(c =>
                             {
-                                c.CustName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerName).Name;
-
+                                //c.CustName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerName).Name;
+                                c.CustName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerName)?.Name ?? "Unknown Supplier";
                             });
 
                         _invoiceMasterList = repo.TblInvoiceMaster.AsEnumerable()

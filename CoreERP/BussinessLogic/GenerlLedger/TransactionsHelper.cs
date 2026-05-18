@@ -5292,8 +5292,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
-                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
-
+                    //c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode)?.Name ?? "Unknown Supplier";
                 });
             if (searchCriteria.InvoiceNo != null)
             {
