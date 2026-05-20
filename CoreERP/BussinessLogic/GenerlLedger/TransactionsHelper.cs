@@ -429,7 +429,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             repo.TblInvoiceMemoHeader.ToList().ForEach(c =>
             {
                 c.CompName = Company.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
-                c.CustomerName = BP.FirstOrDefault(l => l.Bpnumber == c.PartyAccount)?.Name;
+                //c.CustomerName = BP.FirstOrDefault(l => l.Bpnumber == c.PartyAccount)?.Name;
+                c.CustomerName = BP.FirstOrDefault(m => m.Bpnumber == c.PartyAccount)?.Name ?? "Unknown Supplier";
                 c.VoucherName = VoucherClass.FirstOrDefault(l => l.VoucherKey == c.VoucherClass)?.Description;
             });
             if (searchCriteria.InvoiceNo != null)
@@ -808,7 +809,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             {
                 c.CompName = Company.FirstOrDefault(l => l.CompanyCode == c.Company)?.CompanyName;
                 c.AccName = Glaccounts.FirstOrDefault(l => l.AccountNumber == c.Account)?.GlaccountName;
-                c.CustomerName = BP.FirstOrDefault(l => l.Bpnumber == c.PartyAccount)?.Name;
+                //c.CustomerName = BP.FirstOrDefault(l => l.Bpnumber == c.PartyAccount)?.Name;
+                c.CustomerName = BP.FirstOrDefault(m => m.Bpnumber == c.PartyAccount)?.Name ?? "Unknown Supplier";
             });
 
             if (searchCriteria.InvoiceNo != null)
@@ -1060,7 +1062,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.DepartmentName = FunctionalDepartment.FirstOrDefault(f => f.Code == c.Department).Description;
                     c.StoresPersonName = Employee.FirstOrDefault(f => f.EmployeeCode == c.StoresPerson).EmployeeName;
                     c.ProductionPersonName = Employee.FirstOrDefault(f => f.EmployeeCode == c.ProductionPerson).EmployeeName;
-                    c.CustomerName = businesspartner.FirstOrDefault(f => f.Bpnumber == c.CustomerCode).Name;
+                    //c.CustomerName = businesspartner.FirstOrDefault(f => f.Bpnumber == c.CustomerCode).Name;
+                    c.CustomerName = businesspartner.FirstOrDefault(m => m.Bpnumber == c.CustomerCode)?.Name ?? "Unknown Supplier";
                 });
 
             if (searchCriteria.InvoiceNo != null)
@@ -1104,7 +1107,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
-                    c.CustomerName = businesspartner.FirstOrDefault(p => p.Bpnumber == c.CustomerCode).Name;
+                    //c.CustomerName = businesspartner.FirstOrDefault(p => p.Bpnumber == c.CustomerCode).Name;
+                    c.CustomerName = businesspartner.FirstOrDefault(m => m.Bpnumber == c.CustomerCode)?.Name ?? "Unknown Supplier";
                 });
 
             if (searchCriteria.InvoiceNo != null)
@@ -2813,7 +2817,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
-                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
+                    //c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode)?.Name ?? "Unknown Supplier";
 
                 });
 
@@ -3072,7 +3077,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.PurchaseOrderName = PoType.FirstOrDefault(l => l.purchaseType == c.PurchaseOrderType).Description;
                     //c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
-                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode).Name;
+                    //c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode).Name;
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode)?.Name ?? "Unknown Supplier";
 
                 });
             if (searchCriteria.InvoiceNo != null)
@@ -3125,7 +3131,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.PurchaseOrderName = PoType.FirstOrDefault(l => l.purchaseType == c.PurchaseOrderType).Description;
                     //c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
-                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode).Name;
+                    //c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode).Name;
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.SupplierCode)?.Name ?? "Unknown Supplier";
 
                 });
 
@@ -3159,7 +3166,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             repo.TblSaleOrderMaster.ToList()
                 .ForEach(c =>
                 {
-                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
+                    //c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode)?.Name ?? "Unknown Supplier";
 
                 });
 
@@ -5343,7 +5351,8 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
-                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
+                    //c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode)?.Name ?? "Unknown Supplier";
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode)?.Name ?? "Unknown Supplier";
 
                 });
             if (searchCriteria.InvoiceNo != null)
@@ -5393,7 +5402,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 {
                     c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                     c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
-                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.Vendor).Name;
+                    c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.Vendor)?.Name ?? "Unknown Supplier";
 
                 });
             if (searchCriteria.InvoiceNo != null)
@@ -5531,7 +5540,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     {
                         c.CompanyName = Company.FirstOrDefault(l => l.CompanyCode == c.Company).CompanyName;
                         c.ProfitcenterName = profitCenters.FirstOrDefault(p => p.Code == c.ProfitCenter).Name;
-                        c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode).Name;
+                        c.SupplierName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerCode)?.Name ?? "Unknown Supplier";
                         c.MatQty = SaleordrDetails.FirstOrDefault(s => s.SaleOrderNo == saleOrderNo).QTY;
                     });
             }

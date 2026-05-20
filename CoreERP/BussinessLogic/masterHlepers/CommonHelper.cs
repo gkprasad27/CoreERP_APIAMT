@@ -78,7 +78,9 @@ namespace CoreERP
 
             repo.TblPurchaseOrder.ToList().ForEach(c =>
             {
-                c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.SupplierCode)?.Name;
+                //c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.SupplierCode)?.Name;
+                c.SupplierName = BP.FirstOrDefault(m => m.Bpnumber == c.SupplierCode)?.Name ?? "Unknown Supplier";
+
             });
             return result;
         }
@@ -159,7 +161,8 @@ namespace CoreERP
 
             repo.tblJobworkMaster.ToList().ForEach(c =>
             {
-                c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.Vendor)?.Name;
+                //c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.Vendor)?.Name;
+                c.SupplierName = BP.FirstOrDefault(m => m.Bpnumber == c.Vendor)?.Name ?? "Unknown Supplier";
             });
             return result;
         }
@@ -233,7 +236,7 @@ namespace CoreERP
 
             repo.TblSaleOrderMaster.ToList().ForEach(c =>
             {
-                c.SupplierName = BP.FirstOrDefault(l => l.Bpnumber == c.CustomerCode)?.Name;
+                c.SupplierName = BP.FirstOrDefault(m => m.Bpnumber == c.CustomerCode)?.Name ?? "Unknown Supplier";
             });
             return result;
         }
@@ -794,7 +797,7 @@ namespace CoreERP
             result.ForEach(c =>
             {
                 c.MaterialDescription = materialMasters.FirstOrDefault(cur => cur.MaterialCode == c.ItemCode)?.Description;
-                c.CustomerName = businesspartner.FirstOrDefault(x => x.Bpnumber == c.custoMer)?.Name;
+                c.CustomerName = businesspartner.FirstOrDefault(m => m.Bpnumber == c.custoMer)?.Name ?? "Unknown Supplier";
             });
             return result;
         }
@@ -814,7 +817,7 @@ namespace CoreERP
             result.ForEach(c =>
             {
                 c.MaterialDescription = materialMasters.FirstOrDefault(cur => cur.MaterialCode == c.ItemCode)?.Description;
-                c.CustomerName = businesspartner.FirstOrDefault(x => x.Bpnumber == c.custoMer)?.Name;
+                c.CustomerName = businesspartner.FirstOrDefault(m => m.Bpnumber == c.custoMer)?.Name ?? "Unknown Supplier";
             });
             return result;
         }

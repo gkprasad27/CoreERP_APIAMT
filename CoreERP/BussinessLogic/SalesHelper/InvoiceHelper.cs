@@ -366,7 +366,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         repo.TblProformaInvoiceMaster.ToList()
                             .ForEach(c =>
                             {
-                                c.CustName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerName).Name;
+                                c.CustName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerName)?.Name ?? "Unknown Supplier";
 
                             });
 
@@ -946,7 +946,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                         c.poNo = saleorder.PONumber;
                         c.poDate = saleorder.PODate;
                         c.dateOfSupply = saleorder.DateofSupply;
-                        c.CustName = customer.FirstOrDefault(z => z.Bpnumber == c.CustomerName)?.Name;
+                        c.CustName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerName)?.Name ?? "Unknown Supplier";
                     });
 
                 return repo.TblInvoiceMaster
@@ -1006,7 +1006,7 @@ namespace CoreERP.BussinessLogic.SalesHelper
                     .ForEach(c =>
                     {
 
-                        c.CustName = customer.FirstOrDefault(z => z.Bpnumber == c.CustomerName)?.Name;
+                        c.CustName = customer.FirstOrDefault(m => m.Bpnumber == c.CustomerName)?.Name ?? "Unknown Supplier";
 
                     });
 
