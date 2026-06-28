@@ -129,8 +129,8 @@ namespace CoreERP.Controllers.Reports
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         expando.GoodsReceiptReport = ds.Tables[0];
-                        expando.GoodsReceiptReportTotals = ds.Tables[1];
-
+                        expando.GoodsReceiptReportDet = ds.Tables[1];
+                        expando.GoodsReceiptReportTotals = ds.Tables[2];
                     }
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
