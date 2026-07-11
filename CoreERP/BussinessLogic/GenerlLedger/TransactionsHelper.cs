@@ -4323,14 +4323,17 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 }
                 else
                 {
-                    OBCB.ClosingBalance = Convert.ToInt32(grdata.TotalAmount);
-                    OBCB.VoucherNo = grdata.SupplierReferenceNo;
-                    OBCB.LedgerCode = grdata.SupplierCode;
-                    OBCB.LedgerId = grdata.SupplierCode;
-                    OBCB.LedgerName = customer.Name;
-                    OBCB.Narration = "Material Received";
-                    OBCB.AddDate = DateTime.Now;
-                    OBCB.EditDate = DateTime.Now;
+                    OBCB = new TblOpeningBalance
+                    {
+                        ClosingBalance = Convert.ToInt32(grdata.TotalAmount),
+                        VoucherNo = grdata.SupplierReferenceNo,
+                        LedgerCode = grdata.SupplierCode,
+                        LedgerId = grdata.SupplierCode,
+                        LedgerName = customer.Name,
+                        Narration = "Material Received",
+                        AddDate = DateTime.Now,
+                        EditDate = DateTime.Now
+                    };
                     context.TblOpeningBalance.Add(OBCB);
                 }
                 string vouchernumber = GetVoucherNumber("PIN");
