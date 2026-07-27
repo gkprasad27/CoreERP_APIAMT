@@ -2,9 +2,12 @@
 using CoreERP.DataAccess.Repositories;
 using CoreERP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CoreERP.Controllers.masters
 {
@@ -125,6 +128,36 @@ namespace CoreERP.Controllers.masters
                     return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Material already Exist, Please use another key " + " " + (mmaster.MaterialCode) });
                 return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
             }
+        }
+
+        [HttpPost("UploadMaterialMaster")]
+        public async Task<IActionResult> UploadMaterialMaster([FromBody] JObject obj)
+        {
+            var result = await Task.Run(() =>
+            {
+                try
+                {
+                    if (obj == null)
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "Request object canot be empty." });
+
+                    var Upload = obj["data"].ToObject<List<TblMaterialMaster>>();
+
+                    if (!new TransactionsHelper().UploadMaterialMaster(Upload))
+                        return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
+                    dynamic expdoObj = new ExpandoObject();
+                    expdoObj.mmasterList = Upload;
+                    return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
+
+                }
+                catch (Exception ex)
+                {
+                    if (ex.HResult.ToString() == "-2146233088")
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = "Upload Data Exist, Please use another key " });
+                    else
+                        return Ok(new APIResponse() { status = APIStatus.FAIL.ToString(), response = ex.Message });
+                }
+            });
+            return result;
         }
 
         [HttpGet("GetMaterialMasterList/{CompanyCode}")]
