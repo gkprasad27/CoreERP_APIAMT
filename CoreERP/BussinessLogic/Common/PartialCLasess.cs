@@ -11,6 +11,14 @@ namespace CoreERP.Models
         public string CurrName { get; set; }
 
     }
+
+    partial class TblJvdetails
+    {
+        [NotMapped]
+        public string LedName { get; set; }
+       
+
+    }
     partial class TblBankMaster
     {
         [NotMapped]

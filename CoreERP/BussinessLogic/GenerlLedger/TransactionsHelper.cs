@@ -390,8 +390,25 @@ namespace CoreERP.BussinessLogic.GenerlLedger
         public List<TblJvdetails> GetJvDetails(string voucherNumber)
         {
             using var repo = new Repository<TblJvdetails>();
-            return repo.TblJvdetails.Where(cd => cd.VoucherNumber == voucherNumber).ToList();
+
+            var accounts = repo.Glaccounts.ToList();
+
+            var jvDetails = repo.TblJvdetails
+                .Where(cd => cd.VoucherNumber == voucherNumber)
+                .ToList();
+
+            foreach (var detail in jvDetails)
+            {
+                var acc = accounts.FirstOrDefault(l => l.AccountNumber == detail.VoucherNumber);
+                if (acc != null)
+                {
+                    detail.LedName = acc.CompanyName;
+                }
+            }
+
+            return jvDetails;
         }
+
         public bool RetuenJournalVoucher(string voucherNumber)
         {
             using var repo = new ERPContext();
@@ -1367,7 +1384,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                               MaterialCode = ps.MaterialCode,
                               ProductionTag = ps.ProductionTag,
                               MaterialName = m.Description,
-
+                              TypeofWork = ps.TypeofWork
                           }).ToList();
 
             return result;
@@ -6110,7 +6127,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                     context.TblSaleOrderDetail.AddRange(saleOrderDetails);
                 }
 
-                if (saleOrderMaster.AdvaceAmount > 0)
+                if (saleOrderMaster.AdvanceAmount > 0)
                 {
                     string vouchernumber = GetVoucherNumber("PIN");
                     InvoiceMemoHeader.Company = saleOrderMaster.Company;
