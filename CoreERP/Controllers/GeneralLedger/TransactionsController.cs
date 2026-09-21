@@ -2029,20 +2029,20 @@ namespace CoreERP.Controllers.masters
         }
 
 
-        [HttpGet("GetGoodsReceiptDetail/{code}")]
-        public async Task<IActionResult> GetGoodsReceiptDetail(string code)
+        [HttpPost("GetGoodsReceiptDetail")]
+        public async Task<IActionResult> GetGoodsReceiptDetail([FromBody] SearchCriteria searchCriteria)
         {
             var result = await Task.Run(() =>
             {
                 try
                 {
                     var transactions = new TransactionsHelper();
-                    var grlist = transactions.GetGoodsReceiptMasterById(code);
+                    var grlist = transactions.GetGoodsReceiptMasterById(searchCriteria.PoNumber);
                     if (grlist == null)
                         return Ok(new APIResponse { status = APIStatus.FAIL.ToString(), response = "No Data Found." });
                     dynamic expdoObj = new ExpandoObject();
                     expdoObj.grmasters = grlist;
-                    expdoObj.grDetail = new TransactionsHelper().GetGoodsReceiptDetails(code);
+                    expdoObj.grDetail = new TransactionsHelper().GetGoodsReceiptDetails(searchCriteria.PoNumber, searchCriteria.InvoiceNo);
                     return Ok(new APIResponse { status = APIStatus.PASS.ToString(), response = expdoObj });
 
                 }

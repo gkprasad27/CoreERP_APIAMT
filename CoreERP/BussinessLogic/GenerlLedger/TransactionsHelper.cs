@@ -4666,7 +4666,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
             return repo.tblJWReceiptMaster
                 .FirstOrDefault(x => x.JobWorkNumber == id);
         }
-        public List<TblGoodsReceiptDetails> GetGoodsReceiptDetails(string number)
+        public List<TblGoodsReceiptDetails> GetGoodsReceiptDetails(string ponumber,string invoiceno)
         {
             using var repo = new Repository<TblGoodsReceiptDetails>();
             var material = repo.TblMaterialMaster.ToList();
@@ -4676,7 +4676,7 @@ namespace CoreERP.BussinessLogic.GenerlLedger
                 c.MaterialName = material.FirstOrDefault(l => l.MaterialCode == c.MaterialCode)?.Description;
             });
 
-            return repo.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == number).OrderByDescending(x => x.ReceivedDate).ToList();
+            return repo.TblGoodsReceiptDetails.Where(cd => cd.PurchaseOrderNo == ponumber && cd.InvoiceNo==invoiceno).OrderByDescending(x => x.ReceivedDate).ToList();
 
         }
 

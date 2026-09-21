@@ -11,6 +11,7 @@ namespace CoreERP.Helpers.SharedModels
         private DateTime? _fromDate;
         private DateTime? _toDate;
         private string _invoiceNo;
+        private string _poNumber;
         private string _jobWorkNumber;
         private string _name;
         private int _saleOrderNo=0;
@@ -106,6 +107,21 @@ namespace CoreERP.Helpers.SharedModels
                     _invoiceNo = null;
                 else
                     _invoiceNo = value;
+            }
+        }
+
+        public string PoNumber
+        {
+            get
+            {
+                return _poNumber;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    _poNumber = null;
+                else
+                    _poNumber = value;
             }
         }
         public int? Role { get; set; }

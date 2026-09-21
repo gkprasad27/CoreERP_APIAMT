@@ -3610,11 +3610,11 @@ namespace CoreERP.Models
 
                 entity.Property(e => e.EditWho).HasMaxLength(50);
 
-                entity.Property(e => e.saleOrderNumber).HasMaxLength(5);
+                entity.Property(e => e.saleOrderNumber).HasMaxLength(50);
 
                 entity.Property(e => e.ProfitCenter).HasMaxLength(5);
 
-                entity.Property(e => e.Status).HasMaxLength(15);
+                entity.Property(e => e.Status).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TblInspectionCheckDetails>(entity =>
