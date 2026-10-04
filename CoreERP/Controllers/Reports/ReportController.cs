@@ -153,9 +153,9 @@ namespace CoreERP.Controllers.Reports
                     DataSet ds = ReportsHelperClass.GetAccountLedgerReport(LedgerCode, FromDate, ToDate);
                     if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
-                        expando.GoodsReceiptReport = ds.Tables[0];
-                        expando.GoodsReceiptReportDet = ds.Tables[1];
-                        expando.GoodsReceiptReportTotals = ds.Tables[2];
+                        expando.AccountLedgerReport = ds.Tables[0];
+                        expando.AccountLedgerReportDet = ds.Tables[1];
+                        expando.AccountLedgerReportTotals = ds.Tables[2];
                     }
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
