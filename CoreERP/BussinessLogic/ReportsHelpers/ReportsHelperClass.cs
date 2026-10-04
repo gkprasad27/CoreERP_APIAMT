@@ -287,6 +287,38 @@ namespace CoreERP.BussinessLogic.ReportsHelpers
             
         }
 
+        public static DataSet GetAccountLedgerReport(string LedgerCode, DateTime FromDate, DateTime Todate)
+        {
+            ScopeRepository scopeRepository = new ScopeRepository();
+            using DbCommand command = scopeRepository.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "Usp_GetAccountLedgerReport";
+            #region Parameters
+
+            DbParameter LCode = command.CreateParameter();
+            LCode.Direction = ParameterDirection.Input;
+            LCode.Value = (object)LedgerCode ?? DBNull.Value;
+            LCode.ParameterName = "LedgerCode";
+
+            DbParameter Fdate = command.CreateParameter();
+            Fdate.Direction = ParameterDirection.Input;
+            Fdate.Value = (object)FromDate ?? DBNull.Value;
+            Fdate.ParameterName = "FromDate";
+
+            DbParameter Tdate = command.CreateParameter();
+            Tdate.Direction = ParameterDirection.Input;
+            Tdate.Value = (object)Todate ?? DBNull.Value;
+            Tdate.ParameterName = "Todate";
+            #endregion
+            // Add parameter as specified in the store procedure
+
+            command.Parameters.Add(LCode);
+            command.Parameters.Add(Fdate);
+            command.Parameters.Add(Tdate);
+            return scopeRepository.ExecuteParamerizedCommand(command);
+
+        }
+
 
         public static DataSet GetPurchaseReport(DateTime fromDate, DateTime toDate, string company, string customerCode, string MaterialCode)
         {
