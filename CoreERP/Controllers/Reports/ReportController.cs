@@ -156,7 +156,7 @@ namespace CoreERP.Controllers.Reports
                         expando.AccountLedgerReport = ds.Tables[0];
                         expando.AccountLedgerReportDet = ds.Tables[1];
                         expando.AccountLedgerReportTotals = ds.Tables[2];
-                    }
+                    } 
                     return Ok(new APIResponse() { status = APIStatus.PASS.ToString(), response = expando });
                 }
                 catch (Exception ex)
